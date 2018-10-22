@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-10-22</date>
+<date>2018-10-19</date>
 </info>
 <preface>
 <title></title>
@@ -410,9 +410,32 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
         assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
 }</programlisting>
 <simpara>The preceding example uses Spring&#8217;s <literal>MockMvc</literal> to run the tests. This is the default test
-mode for HTTP contracts. However, JAX-RX client and explicit HTTP invocations can also be
+mode for HTTP contracts. However, JAX-RS client and explicit HTTP invocations can also be
 used. (To do so, change the <literal>testMode</literal> property of the plugin to <literal>JAX-RS</literal> or <literal>EXPLICIT</literal>,
 respectively.)</simpara>
+<simpara>Since 2.1.0, it is also possible to use <literal>RestAssuredWebTestClient`with Spring&#8217;s reactive `WebTestClient</literal>
+run under the hood. This is particularly recommended while working with Reactive, <literal>Web-Flux</literal>-based applications.
+In order to use <literal>WebTestClient</literal> set <literal>testMode</literal> to <literal>WEBTESTCLIENT</literal>.</simpara>
+<simpara>Here is an example of a test generated in <literal>WEBTESTCLIENT</literal> test mode:</simpara>
+<literallayout class="monospaced">[source,java,indent=0]</literallayout>
+<screen>@Test
+	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
+		// given:
+			WebTestClientRequestSpecification request = given()
+					.header("Content-Type", "application/json")
+					.body("{\"age\":10}");
+
+		// when:
+			WebTestClientResponse response = given().spec(request)
+					.post("/check");
+
+		// then:
+			assertThat(response.statusCode()).isEqualTo(200);
+			assertThat(response.header("Content-Type")).matches("application/json.*");
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
+	}</screen>
 <simpara>Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
 <literal>testFramework</literal> property to either <literal>JUNIT5</literal> or <literal>Spock</literal>.</simpara>
 <tip>
@@ -2534,7 +2557,7 @@ shown here:</simpara>
 <itemizedlist>
 <listitem>
 <simpara><emphasis role="strong">testMode</emphasis>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring&#8217;s MockMvc. It can also be changed to <emphasis role="strong">JaxRsClient</emphasis> or to
+which is based on Spring&#8217;s MockMvc. It can also be changed to <emphasis role="strong">WebTestClient</emphasis>, <emphasis role="strong">JaxRsClient</emphasis> or to
 <emphasis role="strong">Explicit</emphasis> for real HTTP calls.</simpara>
 </listitem>
 <listitem>
@@ -2968,7 +2991,7 @@ definition or the <literal>execution</literal> definition, as shown here:</simpa
 <itemizedlist>
 <listitem>
 <simpara><emphasis role="strong">testMode</emphasis>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring&#8217;s MockMvc. It can also be changed to <emphasis role="strong">JaxRsClient</emphasis> or to
+which is based on Spring&#8217;s MockMvc. It can also be changed to <emphasis role="strong">WebTestClient</emphasis>, <emphasis role="strong">JaxRsClient</emphasis> or to
 <emphasis role="strong">Explicit</emphasis> for real HTTP calls.</simpara>
 </listitem>
 <listitem>
@@ -5828,48 +5851,7 @@ the <literal>Contract</literal> class: <literal>import org.springframework.cloud
 <simpara>Spring Cloud Contract supports defining multiple contracts in a single file.</simpara>
 </tip>
 <simpara>The following is a complete example of a Groovy contract definition:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method 'PUT'
-		url '/api/12'
-		headers {
-			header 'Content-Type': 'application/vnd.org.springframework.cloud.contract.verifier.twitter-places-analyzer.v1+json'
-		}
-		body '''\
-		[{
-			"created_at": "Sat Jul 26 09:38:57 +0000 2014",
-			"id": 492967299297845248,
-			"id_str": "492967299297845248",
-			"text": "Gonna see you at Warsaw",
-			"place":
-			{
-				"attributes":{},
-				"bounding_box":
-				{
-					"coordinates":
-						[[
-							[-77.119759,38.791645],
-							[-76.909393,38.791645],
-							[-76.909393,38.995548],
-							[-77.119759,38.995548]
-						]],
-					"type":"Polygon"
-				},
-				"country":"United States",
-				"country_code":"US",
-				"full_name":"Washington, DC",
-				"id":"01fbe706f872cb32",
-				"name":"Washington",
-				"place_type":"city",
-				"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
-			}
-		}]
-	'''
-	}
-	response {
-		status OK()
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered"></programlisting>
 <simpara>The following is a complete example of a YAML contract definition:</simpara>
 <programlisting language="yml" linenumbering="unnumbered">description: Some description
 name: some name
@@ -6446,50 +6428,7 @@ body:
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method "PUT"
-		url "/multipart"
-		headers {
-			contentType('multipart/form-data;boundary=AaB03x')
-		}
-		multipart(
-				// key (parameter name), value (parameter value) pair
-				formParameter: $(c(regex('".+"')), p('"formParameterValue"')),
-				someBooleanParameter: $(c(regex(anyBoolean())), p('true')),
-				// a named parameter (e.g. with `file` name) that represents file with
-				// `name` and `content`. You can also call `named("fileName", "fileContent")`
-				file: named(
-						// name of the file
-						name: $(c(regex(nonEmpty())), p('filename.csv')),
-						// content of the file
-						content: $(c(regex(nonEmpty())), p('file content')),
-						// content type for the part
-						contentType: $(c(regex(nonEmpty())), p('application/json')))
-		)
-	}
-	response {
-		status OK()
-	}
-}
-org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method "PUT"
-		url "/multipart"
-		headers {
-			contentType('multipart/form-data;boundary=AaB03x')
-		}
-		multipart(
-				file: named(
-						name: value(stub(regex('.+')), test('file')),
-						content: value(stub(regex('.+')), test([100, 117, 100, 97] as byte[]))
-				)
-		)
-	}
-	response {
-		status 200
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered"></programlisting>
 </para>
 </formalpara>
 <formalpara>
@@ -6714,27 +6653,7 @@ need to use patterns and not exact values both for your test and your server sid
 <simpara>You can also provide only one side of the communication with a regular expression. If you
 do so, then the contract engine automatically provides the generated string that matches
 the provided regular expression. The following code shows an example:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method 'PUT'
-		url value(consumer(regex('/foo/[0-9]{5}')))
-		body([
-			requestElement: $(consumer(regex('[0-9]{5}')))
-		])
-		headers {
-			header('header', $(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
-		}
-	}
-	response {
-		status OK()
-		body([
-			responseElement: $(producer(regex('[0-9]{7}')))
-		])
-		headers {
-			contentType("application/vnd.fraud.v1+json")
-		}
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered"></programlisting>
 <simpara>In the preceding example, the opposite side of the communication has the respective data
 generated for request and response.</simpara>
 <simpara>Spring Cloud Contract comes with a series of predefined regular expressions that you can
@@ -6840,30 +6759,7 @@ Pattern nonBlank() {
 	return NON_BLANK
 }</programlisting>
 <simpara>In your contract, you can use it as shown in the following example:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Contract dslWithOptionalsInString = Contract.make {
-	priority 1
-	request {
-		method POST()
-		url '/users/password'
-		headers {
-			contentType(applicationJson())
-		}
-		body(
-				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-				callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
-		)
-	}
-	response {
-		status 404
-		headers {
-			contentType(applicationJson())
-		}
-		body(
-				code: value(consumer("123123"), producer(optional("123123"))),
-				message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
-		)
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered"></programlisting>
 </section>
 <section xml:id="_passing_optional_parameters">
 <title>Passing Optional Parameters</title>
@@ -7032,16 +6928,16 @@ is applied for the whole body - not for parts of it.</simpara>
 </important>
 <simpara>The following example shows how to read an object from JSON:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">Contract contractDsl = Contract.make {
-	request {
-		method 'GET'
-		url '/something'
-		body(
-				$(c("foo"), p(execute("hashCode()")))
-		)
-	}
-	response {
-		status OK()
-	}
+    request {
+        method 'GET'
+        url '/something'
+        body(
+                $(c('foo'), p(execute('hashCode()')))
+        )
+    }
+    response {
+        status OK()
+    }
 }</programlisting>
 <simpara>The preceding example results in calling the <literal>hashCode()</literal> method in the request body.
 It should resemble the following code:</simpara>
@@ -7130,80 +7026,7 @@ matches the JSON Path. E.g. for json path <literal>$.foo</literal> - <literal>{{
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">Contract contractDsl = Contract.make {
-	request {
-		method 'GET'
-		url('/api/v1/xxxx') {
-			queryParameters {
-				parameter("foo", "bar")
-				parameter("foo", "bar2")
-			}
-		}
-		headers {
-			header(authorization(), "secret")
-			header(authorization(), "secret2")
-		}
-		body(foo: "bar", baz: 5)
-	}
-	response {
-		status OK()
-		headers {
-			header(authorization(), "foo ${fromRequest().header(authorization())} bar")
-		}
-		body(
-				url: fromRequest().url(),
-				path: fromRequest().path(),
-				pathIndex: fromRequest().path(1),
-				param: fromRequest().query("foo"),
-				paramIndex: fromRequest().query("foo", 1),
-				authorization: fromRequest().header("Authorization"),
-				authorization2: fromRequest().header("Authorization", 1),
-				fullBody: fromRequest().body(),
-				responseFoo: fromRequest().body('$.foo'),
-				responseBaz: fromRequest().body('$.baz'),
-				responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
-				rawUrl: fromRequest().rawUrl(),
-				rawPath: fromRequest().rawPath(),
-				rawPathIndex: fromRequest().rawPath(1),
-				rawParam: fromRequest().rawQuery("foo"),
-				rawParamIndex: fromRequest().rawQuery("foo", 1),
-				rawAuthorization: fromRequest().rawHeader("Authorization"),
-				rawAuthorization2: fromRequest().rawHeader("Authorization", 1),
-				rawResponseFoo: fromRequest().rawBody('$.foo'),
-				rawResponseBaz: fromRequest().rawBody('$.baz'),
-				rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
-		)
-	}
-}
-Contract contractDsl = Contract.make {
-	request {
-		method 'GET'
-		url('/api/v1/xxxx') {
-			queryParameters {
-				parameter("foo", "bar")
-				parameter("foo", "bar2")
-			}
-		}
-		headers {
-			header(authorization(), "secret")
-			header(authorization(), "secret2")
-		}
-		body(foo: "bar", baz: 5)
-	}
-	response {
-		status OK()
-		headers {
-			contentType(applicationJson())
-		}
-		body('''
-				{
-					"responseFoo": "{{{ jsonPath request.body '$.foo' }}}",
-					"responseBaz": {{{ jsonPath request.body '$.baz' }}},
-					"responseBaz2": "Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"
-				}
-		'''.toString())
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered"></programlisting>
 </para>
 </formalpara>
 <formalpara>
@@ -7561,122 +7384,122 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 <title>Groovy DSL</title>
 <para>
 <programlisting language="groovy" linenumbering="unnumbered">Contract contractDsl = Contract.make {
-	request {
-		method 'GET'
-		urlPath '/get'
-		body([
-				duck: 123,
-				alpha: "abc",
-				number: 123,
-				aBoolean: true,
-				date: "2017-01-01",
-				dateTime: "2017-01-01T01:23:45",
-				time: "01:02:34",
-				valueWithoutAMatcher: "foo",
-				valueWithTypeMatch: "string",
-				key: [
-						'complex.key' : 'foo'
-				]
-		])
-		bodyMatchers {
-			jsonPath('$.duck', byRegex("[0-9]{3}"))
-			jsonPath('$.duck', byEquality())
-			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-			jsonPath('$.alpha', byEquality())
-			jsonPath('$.number', byRegex(number()))
-			jsonPath('$.aBoolean', byRegex(anyBoolean()))
-			jsonPath('$.date', byDate())
-			jsonPath('$.dateTime', byTimestamp())
-			jsonPath('$.time', byTime())
-			jsonPath("\$.['key'].['complex.key']", byEquality())
-		}
-		headers {
-			contentType(applicationJson())
-		}
-	}
-	response {
-		status OK()
-		body([
-				duck: 123,
-				alpha: "abc",
-				number: 123,
-				positiveInteger: 1234567890,
-				negativeInteger: -1234567890,
-				positiveDecimalNumber: 123.4567890,
-				negativeDecimalNumber: -123.4567890,
-				aBoolean: true,
-				date: "2017-01-01",
-				dateTime: "2017-01-01T01:23:45",
-				time: "01:02:34",
-				valueWithoutAMatcher: "foo",
-				valueWithTypeMatch: "string",
-				valueWithMin: [
-					1,2,3
-				],
-				valueWithMax: [
-					1,2,3
-				],
-				valueWithMinMax: [
-					1,2,3
-				],
-				valueWithMinEmpty: [],
-				valueWithMaxEmpty: [],
-				key: [
-				        'complex.key' : 'foo'
-				],
-				nullValue: null
-		])
-		bodyMatchers {
-			// asserts the jsonpath value against manual regex
-			jsonPath('$.duck', byRegex("[0-9]{3}"))
-			// asserts the jsonpath value against the provided value
-			jsonPath('$.duck', byEquality())
-			// asserts the jsonpath value against some default regex
-			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-			jsonPath('$.alpha', byEquality())
-			jsonPath('$.number', byRegex(number()))
-			jsonPath('$.positiveInteger', byRegex(anInteger()))
-			jsonPath('$.negativeInteger', byRegex(anInteger()))
-			jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
-			jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
-			jsonPath('$.aBoolean', byRegex(anyBoolean()))
-			// asserts vs inbuilt time related regex
-			jsonPath('$.date', byDate())
-			jsonPath('$.dateTime', byTimestamp())
-			jsonPath('$.time', byTime())
-			// asserts that the resulting type is the same as in response body
-			jsonPath('$.valueWithTypeMatch', byType())
-			jsonPath('$.valueWithMin', byType {
-				// results in verification of size of array (min 1)
-				minOccurrence(1)
-			})
-			jsonPath('$.valueWithMax', byType {
-				// results in verification of size of array (max 3)
-				maxOccurrence(3)
-			})
-			jsonPath('$.valueWithMinMax', byType {
-				// results in verification of size of array (min 1 &amp; max 3)
-				minOccurrence(1)
-				maxOccurrence(3)
-			})
-			jsonPath('$.valueWithMinEmpty', byType {
-				// results in verification of size of array (min 0)
-				minOccurrence(0)
-			})
-			jsonPath('$.valueWithMaxEmpty', byType {
-				// results in verification of size of array (max 0)
-				maxOccurrence(0)
-			})
-			// will execute a method `assertThatValueIsANumber`
-			jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
-			jsonPath("\$.['key'].['complex.key']", byEquality())
-			jsonPath('$.nullValue', byNull())
-		}
-		headers {
-			contentType(applicationJson())
-			header('Some-Header', $(c('someValue'), p(regex('[a-zA-Z]{9}'))))
-		}
-	}
+    request {
+        method 'GET'
+        urlPath '/get'
+        body([
+                duck                : 123,
+                alpha               : 'abc',
+                number              : 123,
+                aBoolean            : true,
+                date                : '2017-01-01',
+                dateTime            : '2017-01-01T01:23:45',
+                time                : '01:02:34',
+                valueWithoutAMatcher: 'foo',
+                valueWithTypeMatch  : 'string',
+                key                 : [
+                        'complex.key': 'foo'
+                ]
+        ])
+        bodyMatchers {
+            jsonPath('$.duck', byRegex("[0-9]{3}"))
+            jsonPath('$.duck', byEquality())
+            jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+            jsonPath('$.alpha', byEquality())
+            jsonPath('$.number', byRegex(number()))
+            jsonPath('$.aBoolean', byRegex(anyBoolean()))
+            jsonPath('$.date', byDate())
+            jsonPath('$.dateTime', byTimestamp())
+            jsonPath('$.time', byTime())
+            jsonPath("\$.['key'].['complex.key']", byEquality())
+        }
+        headers {
+            contentType(applicationJson())
+        }
+    }
+    response {
+        status OK()
+        body([
+                duck                 : 123,
+                alpha                : 'abc',
+                number               : 123,
+                positiveInteger      : 1234567890,
+                negativeInteger      : -1234567890,
+                positiveDecimalNumber: 123.4567890,
+                negativeDecimalNumber: -123.4567890,
+                aBoolean             : true,
+                date                 : '2017-01-01',
+                dateTime             : '2017-01-01T01:23:45',
+                time                 : "01:02:34",
+                valueWithoutAMatcher : 'foo',
+                valueWithTypeMatch   : 'string',
+                valueWithMin         : [
+                        1, 2, 3
+                ],
+                valueWithMax         : [
+                        1, 2, 3
+                ],
+                valueWithMinMax      : [
+                        1, 2, 3
+                ],
+                valueWithMinEmpty    : [],
+                valueWithMaxEmpty    : [],
+                key                  : [
+                        'complex.key': 'foo'
+                ],
+                nullValue            : null
+        ])
+        bodyMatchers {
+            // asserts the jsonpath value against manual regex
+            jsonPath('$.duck', byRegex("[0-9]{3}"))
+            // asserts the jsonpath value against the provided value
+            jsonPath('$.duck', byEquality())
+            // asserts the jsonpath value against some default regex
+            jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+            jsonPath('$.alpha', byEquality())
+            jsonPath('$.number', byRegex(number()))
+            jsonPath('$.positiveInteger', byRegex(anInteger()))
+            jsonPath('$.negativeInteger', byRegex(anInteger()))
+            jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
+            jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
+            jsonPath('$.aBoolean', byRegex(anyBoolean()))
+            // asserts vs inbuilt time related regex
+            jsonPath('$.date', byDate())
+            jsonPath('$.dateTime', byTimestamp())
+            jsonPath('$.time', byTime())
+            // asserts that the resulting type is the same as in response body
+            jsonPath('$.valueWithTypeMatch', byType())
+            jsonPath('$.valueWithMin', byType {
+                // results in verification of size of array (min 1)
+                minOccurrence(1)
+            })
+            jsonPath('$.valueWithMax', byType {
+                // results in verification of size of array (max 3)
+                maxOccurrence(3)
+            })
+            jsonPath('$.valueWithMinMax', byType {
+                // results in verification of size of array (min 1 &amp; max 3)
+                minOccurrence(1)
+                maxOccurrence(3)
+            })
+            jsonPath('$.valueWithMinEmpty', byType {
+                // results in verification of size of array (min 0)
+                minOccurrence(0)
+            })
+            jsonPath('$.valueWithMaxEmpty', byType {
+                // results in verification of size of array (max 0)
+                maxOccurrence(0)
+            })
+            // will execute a method `assertThatValueIsANumber`
+            jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
+            jsonPath("\$.['key'].['complex.key']", byEquality())
+            jsonPath('$.nullValue', byNull())
+        }
+        headers {
+            contentType(applicationJson())
+            header('Some-Header', $(c('someValue'), p(regex('[a-zA-Z]{9}'))))
+        }
+    }
 }</programlisting>
 </para>
 </formalpara>
@@ -9701,8 +9524,7 @@ Example:</simpara>
 <title>Generating Stubs using REST Docs</title>
 <simpara><link xl:href="https://projects.spring.io/spring-restdocs">Spring REST Docs</link> can be used to generate
 documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc
-or <literal>WebTestClient</literal> or
-Rest Assured. At the same time that you generate documentation for your API, you can also
+or <literal>WebTestClient</literal> or Rest Assured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use <literal>@AutoConfigureRestDocs</literal> to have stubs be
 automatically generated in the REST Docs output directory. The following code shows an

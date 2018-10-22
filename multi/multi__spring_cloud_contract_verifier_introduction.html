@@ -171,9 +171,28 @@ compliance with the added contracts. By default, the generated tests are under
         assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['fraudCheckStatus']"</span>).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[A-Z]{5}"</span>);
         assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['rejection.reason']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>);
 }</pre><p>The preceding example uses Spring&#8217;s <code class="literal">MockMvc</code> to run the tests. This is the default test
-mode for HTTP contracts. However, JAX-RX client and explicit HTTP invocations can also be
+mode for HTTP contracts. However, JAX-RS client and explicit HTTP invocations can also be
 used. (To do so, change the <code class="literal">testMode</code> property of the plugin to <code class="literal">JAX-RS</code> or <code class="literal">EXPLICIT</code>,
-respectively.)</p><p>Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
+respectively.)</p><p>Since 2.1.0, it is also possible to use <code class="literal">RestAssuredWebTestClient`with Spring&#8217;s reactive `WebTestClient</code>
+run under the hood. This is particularly recommended while working with Reactive, <code class="literal">Web-Flux</code>-based applications.
+In order to use <code class="literal">WebTestClient</code> set <code class="literal">testMode</code> to <code class="literal">WEBTESTCLIENT</code>.</p><p>Here is an example of a test generated in <code class="literal">WEBTESTCLIENT</code> test mode:</p><pre class="literallayout">[source,java,indent=0]</pre><pre class="screen">@Test
+	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
+		// given:
+			WebTestClientRequestSpecification request = given()
+					.header("Content-Type", "application/json")
+					.body("{\"age\":10}");
+
+		// when:
+			WebTestClientResponse response = given().spec(request)
+					.post("/check");
+
+		// then:
+			assertThat(response.statusCode()).isEqualTo(200);
+			assertThat(response.header("Content-Type")).matches("application/json.*");
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
+	}</pre><p>Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
 <code class="literal">testFramework</code> property to either <code class="literal">JUNIT5</code> or <code class="literal">Spock</code>.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You can now also generate WireMock scenarios based on the contracts, by including an
 order number followed by an underscore at the beginning of the contract file names.</p></td></tr></table></div><p>The following example shows an auto-generated test in Spock for a messaging stub contract:</p><pre class="literallayout">[source,groovy,indent=0]</pre><pre class="screen">given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(

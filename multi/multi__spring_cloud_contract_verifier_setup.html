@@ -116,7 +116,7 @@ shown here:</p><pre class="programlisting">contracts {
 	baseClassForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.mycompany.tests'</span>
 	generatedTestSourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'src/generatedContract'</span>)
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="gradle-configuration-options" href="#gradle-configuration-options"></a>4.1.9&nbsp;Configuration Options</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>testMode</strong></span>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>JaxRsClient</strong></span> or to
+which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>WebTestClient</strong></span>, <span class="strong"><strong>JaxRsClient</strong></span> or to
 <span class="strong"><strong>Explicit</strong></span> for real HTTP calls.</li><li class="listitem"><span class="strong"><strong>imports</strong></span>: Creates an array with imports that should be included in generated tests
 (for example ['org.myorg.Matchers']). By default, it creates an empty array.</li><li class="listitem"><span class="strong"><strong>staticImports</strong></span>: Creates an array with static imports that should be included in
 generated tests(for example ['org.myorg.Matchers.*']). By default, it creates an empty
@@ -356,7 +356,7 @@ definition or the <code class="literal">execution</code> definition, as shown he
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassForTests&gt;</span>org.springframework.cloud.verifier.twitter.place.BaseMockMvcSpec<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassForTests&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-configuration-options" href="#maven-configuration-options"></a>4.2.7&nbsp;Configuration Options</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>testMode</strong></span>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>JaxRsClient</strong></span> or to
+which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>WebTestClient</strong></span>, <span class="strong"><strong>JaxRsClient</strong></span> or to
 <span class="strong"><strong>Explicit</strong></span> for real HTTP calls.</li><li class="listitem"><span class="strong"><strong>basePackageForTests</strong></span>: Specifies the base package for all generated tests. If not set,
 the value is picked from <code class="literal">baseClassForTests&#8217;s package and from `packageWithBaseClasses</code>.
 If neither of these values are set, then the value is set to

@@ -176,9 +176,28 @@ compliance with the added contracts. By default, the generated tests are under
         assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['fraudCheckStatus']"</span>).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[A-Z]{5}"</span>);
         assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['rejection.reason']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>);
 }</pre><p>The preceding example uses Spring&#8217;s <code class="literal">MockMvc</code> to run the tests. This is the default test
-mode for HTTP contracts. However, JAX-RX client and explicit HTTP invocations can also be
+mode for HTTP contracts. However, JAX-RS client and explicit HTTP invocations can also be
 used. (To do so, change the <code class="literal">testMode</code> property of the plugin to <code class="literal">JAX-RS</code> or <code class="literal">EXPLICIT</code>,
-respectively.)</p><p>Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
+respectively.)</p><p>Since 2.1.0, it is also possible to use <code class="literal">RestAssuredWebTestClient`with Spring&#8217;s reactive `WebTestClient</code>
+run under the hood. This is particularly recommended while working with Reactive, <code class="literal">Web-Flux</code>-based applications.
+In order to use <code class="literal">WebTestClient</code> set <code class="literal">testMode</code> to <code class="literal">WEBTESTCLIENT</code>.</p><p>Here is an example of a test generated in <code class="literal">WEBTESTCLIENT</code> test mode:</p><pre class="literallayout">[source,java,indent=0]</pre><pre class="screen">@Test
+	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
+		// given:
+			WebTestClientRequestSpecification request = given()
+					.header("Content-Type", "application/json")
+					.body("{\"age\":10}");
+
+		// when:
+			WebTestClientResponse response = given().spec(request)
+					.post("/check");
+
+		// then:
+			assertThat(response.statusCode()).isEqualTo(200);
+			assertThat(response.header("Content-Type")).matches("application/json.*");
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
+	}</pre><p>Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
 <code class="literal">testFramework</code> property to either <code class="literal">JUNIT5</code> or <code class="literal">Spock</code>.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You can now also generate WireMock scenarios based on the contracts, by including an
 order number followed by an underscore at the beginning of the contract file names.</p></td></tr></table></div><p>The following example shows an auto-generated test in Spock for a messaging stub contract:</p><pre class="literallayout">[source,groovy,indent=0]</pre><pre class="screen">given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
@@ -1499,7 +1518,7 @@ shown here:</p><pre class="programlisting">contracts {
 	baseClassForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.mycompany.tests'</span>
 	generatedTestSourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'src/generatedContract'</span>)
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="gradle-configuration-options" href="#gradle-configuration-options"></a>4.1.9&nbsp;Configuration Options</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>testMode</strong></span>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>JaxRsClient</strong></span> or to
+which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>WebTestClient</strong></span>, <span class="strong"><strong>JaxRsClient</strong></span> or to
 <span class="strong"><strong>Explicit</strong></span> for real HTTP calls.</li><li class="listitem"><span class="strong"><strong>imports</strong></span>: Creates an array with imports that should be included in generated tests
 (for example ['org.myorg.Matchers']). By default, it creates an empty array.</li><li class="listitem"><span class="strong"><strong>staticImports</strong></span>: Creates an array with static imports that should be included in
 generated tests(for example ['org.myorg.Matchers.*']). By default, it creates an empty
@@ -1739,7 +1758,7 @@ definition or the <code class="literal">execution</code> definition, as shown he
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassForTests&gt;</span>org.springframework.cloud.verifier.twitter.place.BaseMockMvcSpec<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassForTests&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-configuration-options" href="#maven-configuration-options"></a>4.2.7&nbsp;Configuration Options</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>testMode</strong></span>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>JaxRsClient</strong></span> or to
+which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>WebTestClient</strong></span>, <span class="strong"><strong>JaxRsClient</strong></span> or to
 <span class="strong"><strong>Explicit</strong></span> for real HTTP calls.</li><li class="listitem"><span class="strong"><strong>basePackageForTests</strong></span>: Specifies the base package for all generated tests. If not set,
 the value is picked from <code class="literal">baseClassForTests&#8217;s package and from `packageWithBaseClasses</code>.
 If neither of these values are set, then the value is set to
@@ -3380,48 +3399,7 @@ typed, to make it programmer-readable without any knowledge of the DSL itself.</
 qualified name to the <code class="literal">Contract</code> class and <code class="literal">make</code> static imports, such as
 <code class="literal">org.springframework.cloud.spec.Contract.make { &#8230;&#8203; }</code>. You can also provide an import to
 the <code class="literal">Contract</code> class: <code class="literal">import org.springframework.cloud.spec.Contract</code> and then call
-<code class="literal">Contract.make { &#8230;&#8203; }</code>.</p></td></tr></table></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>Spring Cloud Contract supports defining multiple contracts in a single file.</p></td></tr></table></div><p>The following is a complete example of a Groovy contract definition:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'PUT'</span>
-		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/api/12'</span>
-		headers {
-			header <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/vnd.org.springframework.cloud.contract.verifier.twitter-places-analyzer.v1+json'</span>
-		}
-		body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'\
-</span>		[{
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"created_at"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Sat Jul 26 09:38:57 +0000 2014"</span>,
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"id"</span>: <span class="hl-number">492967299297845248</span>,
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"id_str"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"492967299297845248"</span>,
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Gonna see you at Warsaw"</span>,
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"place"</span>:
-			{
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"attributes"</span>:{},
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bounding_box"</span>:
-				{
-					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"coordinates"</span>:
-						[[
-							[-<span class="hl-number">77.119759</span>,<span class="hl-number">38.791645</span>],
-							[-<span class="hl-number">76.909393</span>,<span class="hl-number">38.791645</span>],
-							[-<span class="hl-number">76.909393</span>,<span class="hl-number">38.995548</span>],
-							[-<span class="hl-number">77.119759</span>,<span class="hl-number">38.995548</span>]
-						]],
-					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"type"</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Polygon"</span>
-				},
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"country"</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"United States"</span>,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"country_code"</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"US"</span>,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"full_name"</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Washington, DC"</span>,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"id"</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"01fbe706f872cb32"</span>,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"name"</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Washington"</span>,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"place_type"</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"city"</span>,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"</span>
-			}
-		}]
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
-</span>	}
-	response {
-		status OK()
-	}
-}</pre><p>The following is a complete example of a YAML contract definition:</p><pre class="programlisting">description: Some description
+<code class="literal">Contract.make { &#8230;&#8203; }</code>.</p></td></tr></table></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>Spring Cloud Contract supports defining multiple contracts in a single file.</p></td></tr></table></div><p>The following is a complete example of a Groovy contract definition:</p><pre class="programlisting"></pre><p>The following is a complete example of a YAML contract definition:</p><pre class="programlisting">description: Some description
 name: some name
 priority: 8
 ignored: true
@@ -3826,50 +3804,7 @@ body:
   foo: bar</pre><p>
 </p><p><code class="literal">request</code> may contain <span class="strong"><strong>multipart</strong></span> elements. To include multipart elements, use the
 <code class="literal">multipart</code> method/section, as shown in the following examples</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUT"</span>
-		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/multipart"</span>
-		headers {
-			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'multipart/form-data;boundary=AaB03x'</span>)
-		}
-		multipart(
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// key (parameter name), value (parameter value) pair</span>
-				formParameter: $(c(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'".+"'</span>)), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'"formParameterValue"'</span>)),
-				someBooleanParameter: $(c(regex(anyBoolean())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'true'</span>)),
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// a named parameter (e.g. with `file` name) that represents file with</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// `name` and `content`. You can also call `named("fileName", "fileContent")`</span>
-				file: named(
-						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// name of the file</span>
-						name: $(c(regex(nonEmpty())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'filename.csv'</span>)),
-						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// content of the file</span>
-						content: $(c(regex(nonEmpty())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'file content'</span>)),
-						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// content type for the part</span>
-						contentType: $(c(regex(nonEmpty())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)))
-		)
-	}
-	response {
-		status OK()
-	}
-}
-org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUT"</span>
-		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/multipart"</span>
-		headers {
-			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'multipart/form-data;boundary=AaB03x'</span>)
-		}
-		multipart(
-				file: named(
-						name: value(stub(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.+'</span>)), test(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'file'</span>)),
-						content: value(stub(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.+'</span>)), test([<span class="hl-number">100</span>, <span class="hl-number">117</span>, <span class="hl-number">100</span>, <span class="hl-number">97</span>] as <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">byte</span>[]))
-				)
-		)
-	}
-	response {
-		status <span class="hl-number">200</span>
-	}
-}</pre><p>
+</p><pre class="programlisting"></pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">request:
   method: PUT
@@ -4009,27 +3944,7 @@ need to use patterns and not exact values both for your test and your server sid
 	}
 }</pre><p>You can also provide only one side of the communication with a regular expression. If you
 do so, then the contract engine automatically provides the generated string that matches
-the provided regular expression. The following code shows an example:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'PUT'</span>
-		url value(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/foo/[0-9]{5}'</span>)))
-		body([
-			requestElement: $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{5}'</span>)))
-		])
-		headers {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>, $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application\\/vnd\\.fraud\\.v1\\+json;.*'</span>))))
-		}
-	}
-	response {
-		status OK()
-		body([
-			responseElement: $(producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{7}'</span>)))
-		])
-		headers {
-			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>)
-		}
-	}
-}</pre><p>In the preceding example, the opposite side of the communication has the respective data
+the provided regular expression. The following code shows an example:</p><pre class="programlisting"></pre><p>In the preceding example, the opposite side of the communication has the respective data
 generated for request and response.</p><p>Spring Cloud Contract comes with a series of predefined regular expressions that you can
 use in your contracts, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ALPHA_NUMERIC = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9]+'</span>)
@@ -4130,30 +4045,7 @@ Pattern nonEmpty() {
 
 Pattern nonBlank() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_BLANK
-}</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting">Contract dslWithOptionalsInString = Contract.make {
-	priority <span class="hl-number">1</span>
-	request {
-		method POST()
-		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/password'</span>
-		headers {
-			contentType(applicationJson())
-		}
-		body(
-				email: $(consumer(optional(regex(email()))), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc@abc.com'</span>)),
-				callback_url: $(consumer(regex(hostname())), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://partners.com'</span>))
-		)
-	}
-	response {
-		status <span class="hl-number">404</span>
-		headers {
-			contentType(applicationJson())
-		}
-		body(
-				code: value(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>), producer(optional(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>))),
-				message: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"</span>
-		)
-	}
-}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_passing_optional_parameters" href="#_passing_optional_parameters"></a>8.5.3&nbsp;Passing Optional Parameters</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
+}</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting"></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_passing_optional_parameters" href="#_passing_optional_parameters"></a>8.5.3&nbsp;Passing Optional Parameters</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
 <a class="xref" href="#contract-matchers" title="8.5.7&nbsp;Dynamic Properties in the Matchers Sections">Section&nbsp;8.5.7, &#8220;Dynamic Properties in the Matchers Sections&#8221;</a> section for YAML examples of a similar feature.</p></td></tr></table></div><p>It is possible to provide optional parameters in your contract. However, you can provide
 optional parameters only for the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="emphasis"><em>STUB</em></span> side of the Request</li><li class="listitem"><span class="emphasis"><em>TEST</em></span> side of the Response</li></ul></div><p>The following example shows how to provide optional parameters:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	priority <span class="hl-number">1</span>
@@ -4263,16 +4155,16 @@ ensure that the <code class="literal">authToken()</code> method returns everythi
 JSON path:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">String</code>: If you point to a <code class="literal">String</code> value in the JSON.</li><li class="listitem"><code class="literal">JSONArray</code>: If you point to a <code class="literal">List</code> in the JSON.</li><li class="listitem"><code class="literal">Map</code>: If you point to a <code class="literal">Map</code> in the JSON.</li><li class="listitem"><code class="literal">Number</code>: If you point to <code class="literal">Integer</code>, <code class="literal">Double</code> etc. in the JSON.</li><li class="listitem"><code class="literal">Boolean</code>: If you point to a <code class="literal">Boolean</code> in the JSON.</li></ul></div><p>In the request part of the contract, you can specify that the <code class="literal">body</code> should be taken from
 a method.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>You must provide both the consumer and the producer side. The <code class="literal">execute</code> part
 is applied for the whole body - not for parts of it.</p></td></tr></table></div><p>The following example shows how to read an object from JSON:</p><pre class="programlisting">Contract contractDsl = Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
-		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/something'</span>
-		body(
-				$(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>), p(execute(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"hashCode()"</span>)))
-		)
-	}
-	response {
-		status OK()
-	}
+    request {
+        method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
+        url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/something'</span>
+        body(
+                $(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), p(execute(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'hashCode()'</span>)))
+        )
+    }
+    response {
+        status OK()
+    }
 }</pre><p>The preceding example results in calling the <code class="literal">hashCode()</code> method in the request body.
 It should resemble the following code:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
  MockMvcRequestSpecification request = given()
@@ -4294,80 +4186,7 @@ matches the JSON Path.</li></ul></div><p>If you&#8217;re using the YAML contract
 E.g. for key <code class="literal">foo</code>, first entry <code class="literal">{{{ request.query.foo.[0] }}}</code></li><li class="listitem"><code class="literal">{{{ request.path }}}</code>: Returns the full path.</li><li class="listitem"><code class="literal">{{{ request.path.[index] }}}</code>: Returns the nth path element. E.g.
 for first entry <code class="literal">`</code>{{{ request.path.[0] }}}</li><li class="listitem"><code class="literal">{{{ request.headers.key }}}</code>: Returns the first header with a given name.</li><li class="listitem"><code class="literal">{{{ request.headers.key.[index] }}}</code>: Returns the nth header with a given name.</li><li class="listitem"><code class="literal">{{{ request.body }}}</code>: Returns the full request body.</li><li class="listitem"><code class="literal">{{{ jsonpath this 'your.json.path' }}}</code>: Returns the element from the request that
 matches the JSON Path. E.g. for json path <code class="literal">$.foo</code> - <code class="literal">{{{ jsonpath this '$.foo' }}}</code></li></ul></div><p>Consider the following contract:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">Contract contractDsl = Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
-		url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/api/v1/xxxx'</span>) {
-			queryParameters {
-				parameter(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>)
-				parameter(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar2"</span>)
-			}
-		}
-		headers {
-			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"secret"</span>)
-			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"secret2"</span>)
-		}
-		body(foo: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>, baz: <span class="hl-number">5</span>)
-	}
-	response {
-		status OK()
-		headers {
-			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo ${fromRequest().header(authorization())} bar"</span>)
-		}
-		body(
-				url: fromRequest().url(),
-				path: fromRequest().path(),
-				pathIndex: fromRequest().path(<span class="hl-number">1</span>),
-				param: fromRequest().query(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>),
-				paramIndex: fromRequest().query(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span class="hl-number">1</span>),
-				authorization: fromRequest().header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>),
-				authorization2: fromRequest().header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>, <span class="hl-number">1</span>),
-				fullBody: fromRequest().body(),
-				responseFoo: fromRequest().body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.foo'</span>),
-				responseBaz: fromRequest().body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.baz'</span>),
-				responseBaz2: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla ${fromRequest().body('$.foo')} bla bla"</span>,
-				rawUrl: fromRequest().rawUrl(),
-				rawPath: fromRequest().rawPath(),
-				rawPathIndex: fromRequest().rawPath(<span class="hl-number">1</span>),
-				rawParam: fromRequest().rawQuery(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>),
-				rawParamIndex: fromRequest().rawQuery(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span class="hl-number">1</span>),
-				rawAuthorization: fromRequest().rawHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>),
-				rawAuthorization2: fromRequest().rawHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>, <span class="hl-number">1</span>),
-				rawResponseFoo: fromRequest().rawBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.foo'</span>),
-				rawResponseBaz: fromRequest().rawBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.baz'</span>),
-				rawResponseBaz2: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla ${fromRequest().rawBody('$.foo')} bla bla"</span>
-		)
-	}
-}
-Contract contractDsl = Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
-		url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/api/v1/xxxx'</span>) {
-			queryParameters {
-				parameter(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>)
-				parameter(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar2"</span>)
-			}
-		}
-		headers {
-			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"secret"</span>)
-			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"secret2"</span>)
-		}
-		body(foo: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>, baz: <span class="hl-number">5</span>)
-	}
-	response {
-		status OK()
-		headers {
-			contentType(applicationJson())
-		}
-		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
-</span>				{
-					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseFoo"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{{{ jsonPath request.body '$.foo' }}}"</span>,
-					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseBaz"</span>: {{{ jsonPath request.body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.baz'</span> }}},
-					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseBaz2"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"</span>
-				}
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.toString())
-</span>	}
-}</pre><p>
+</p><pre class="programlisting"></pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">request:
   method: GET
@@ -4537,122 +4356,122 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
   type: by_regex
   predefined: only_alpha_unicode</pre><p>Below you can find the allowed list of `type`s.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For <code class="literal">stubMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li></ul></div></li><li class="listitem"><p class="simpara">For <code class="literal">testMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li><li class="listitem"><p class="simpara"><code class="literal">by_type</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">there are 2 additional fields accepted: <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.</li></ul></div></li><li class="listitem"><code class="literal">by_command</code></li><li class="listitem"><code class="literal">by_null</code></li></ul></div></li></ul></div><p>Consider the following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">Contract contractDsl = Contract.make {
-	request {
-		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
-		urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
-		body([
-				duck: <span class="hl-number">123</span>,
-				alpha: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"abc"</span>,
-				number: <span class="hl-number">123</span>,
-				aBoolean: true,
-				date: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2017-01-01"</span>,
-				dateTime: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2017-01-01T01:23:45"</span>,
-				time: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"01:02:34"</span>,
-				valueWithoutAMatcher: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>,
-				valueWithTypeMatch: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"string"</span>,
-				key: [
-						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-				]
-		])
-		bodyMatchers {
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
-		}
-		headers {
-			contentType(applicationJson())
-		}
-	}
-	response {
-		status OK()
-		body([
-				duck: <span class="hl-number">123</span>,
-				alpha: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"abc"</span>,
-				number: <span class="hl-number">123</span>,
-				positiveInteger: <span class="hl-number">1234567890</span>,
-				negativeInteger: -<span class="hl-number">1234567890</span>,
-				positiveDecimalNumber: <span class="hl-number">123.4567890</span>,
-				negativeDecimalNumber: -<span class="hl-number">123.4567890</span>,
-				aBoolean: true,
-				date: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2017-01-01"</span>,
-				dateTime: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2017-01-01T01:23:45"</span>,
-				time: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"01:02:34"</span>,
-				valueWithoutAMatcher: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>,
-				valueWithTypeMatch: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"string"</span>,
-				valueWithMin: [
-					<span class="hl-number">1</span>,<span class="hl-number">2</span>,<span class="hl-number">3</span>
-				],
-				valueWithMax: [
-					<span class="hl-number">1</span>,<span class="hl-number">2</span>,<span class="hl-number">3</span>
-				],
-				valueWithMinMax: [
-					<span class="hl-number">1</span>,<span class="hl-number">2</span>,<span class="hl-number">3</span>
-				],
-				valueWithMinEmpty: [],
-				valueWithMaxEmpty: [],
-				key: [
-				        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-				],
-				nullValue: null
-		])
-		bodyMatchers {
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against manual regex</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against the provided value</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against some default regex</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveInteger'</span>, byRegex(anInteger()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeInteger'</span>, byRegex(anInteger()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveDecimalNumber'</span>, byRegex(aDouble()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeDecimalNumber'</span>, byRegex(aDouble()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts vs inbuilt time related regex</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts that the resulting type is the same as in response body</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithTypeMatch'</span>, byType())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMin'</span>, byType {
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1)</span>
-				minOccurrence(<span class="hl-number">1</span>)
-			})
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMax'</span>, byType {
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 3)</span>
-				maxOccurrence(<span class="hl-number">3</span>)
-			})
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinMax'</span>, byType {
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1 &amp; max 3)</span>
-				minOccurrence(<span class="hl-number">1</span>)
-				maxOccurrence(<span class="hl-number">3</span>)
-			})
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinEmpty'</span>, byType {
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 0)</span>
-				minOccurrence(<span class="hl-number">0</span>)
-			})
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMaxEmpty'</span>, byType {
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 0)</span>
-				maxOccurrence(<span class="hl-number">0</span>)
-			})
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// will execute a method `assertThatValueIsANumber`</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'assertThatValueIsANumber($it)'</span>))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.nullValue'</span>, byNull())
-		}
-		headers {
-			contentType(applicationJson())
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Some-Header'</span>, $(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'someValue'</span>), p(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z]{9}'</span>))))
-		}
-	}
+    request {
+        method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
+        urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
+        body([
+                duck                : <span class="hl-number">123</span>,
+                alpha               : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
+                number              : <span class="hl-number">123</span>,
+                aBoolean            : true,
+                date                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
+                dateTime            : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
+                time                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'01:02:34'</span>,
+                valueWithoutAMatcher: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>,
+                valueWithTypeMatch  : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'string'</span>,
+                key                 : [
+                        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+                ]
+        ])
+        bodyMatchers {
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
+        }
+        headers {
+            contentType(applicationJson())
+        }
+    }
+    response {
+        status OK()
+        body([
+                duck                 : <span class="hl-number">123</span>,
+                alpha                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
+                number               : <span class="hl-number">123</span>,
+                positiveInteger      : <span class="hl-number">1234567890</span>,
+                negativeInteger      : -<span class="hl-number">1234567890</span>,
+                positiveDecimalNumber: <span class="hl-number">123.4567890</span>,
+                negativeDecimalNumber: -<span class="hl-number">123.4567890</span>,
+                aBoolean             : true,
+                date                 : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
+                dateTime             : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
+                time                 : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"01:02:34"</span>,
+                valueWithoutAMatcher : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>,
+                valueWithTypeMatch   : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'string'</span>,
+                valueWithMin         : [
+                        <span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+                ],
+                valueWithMax         : [
+                        <span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+                ],
+                valueWithMinMax      : [
+                        <span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+                ],
+                valueWithMinEmpty    : [],
+                valueWithMaxEmpty    : [],
+                key                  : [
+                        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+                ],
+                nullValue            : null
+        ])
+        bodyMatchers {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against manual regex</span>
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against the provided value</span>
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against some default regex</span>
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveInteger'</span>, byRegex(anInteger()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeInteger'</span>, byRegex(anInteger()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveDecimalNumber'</span>, byRegex(aDouble()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeDecimalNumber'</span>, byRegex(aDouble()))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts vs inbuilt time related regex</span>
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts that the resulting type is the same as in response body</span>
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithTypeMatch'</span>, byType())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMin'</span>, byType {
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1)</span>
+                minOccurrence(<span class="hl-number">1</span>)
+            })
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMax'</span>, byType {
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 3)</span>
+                maxOccurrence(<span class="hl-number">3</span>)
+            })
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinMax'</span>, byType {
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1 &amp; max 3)</span>
+                minOccurrence(<span class="hl-number">1</span>)
+                maxOccurrence(<span class="hl-number">3</span>)
+            })
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinEmpty'</span>, byType {
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 0)</span>
+                minOccurrence(<span class="hl-number">0</span>)
+            })
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMaxEmpty'</span>, byType {
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 0)</span>
+                maxOccurrence(<span class="hl-number">0</span>)
+            })
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// will execute a method `assertThatValueIsANumber`</span>
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'assertThatValueIsANumber($it)'</span>))
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.nullValue'</span>, byNull())
+        }
+        headers {
+            contentType(applicationJson())
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Some-Header'</span>, $(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'someValue'</span>), p(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z]{9}'</span>))))
+        }
+    }
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">request:
@@ -5995,13 +5814,13 @@ to clone the repository and use it as a source of contracts
 to generate tests or stubs.</p><p>Either via environment variables, system properties, properties set
 inside the plugin or contracts repository configuration you can
 tweak the downloader&#8217;s behaviour. Below you can find the list of
-properties</p><div class="table"><a name="d0e7399" href="#d0e7399"></a><p class="title"><b>Table&nbsp;10.1.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table class="table" summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 1px solid ; border-bottom: 1px solid ; border-left: 1px solid ; border-right: 1px solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Type of a property</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Name of the property</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.branch</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.branch</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_BRANCH</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>master</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Which branch to checkout</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.username</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.username</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_USERNAME</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Git clone username</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.password</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.password</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_PASSWORD</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Git clone password</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.no-of-attempts</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.no-of-attempts</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>10</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Number of attempts to push the commits to <code class="literal">origin</code></p></td></tr><tr><td style="border-right: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.wait-between-attempts</code> (Plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.wait-between-attempts</code>  (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</code>  (env prop)</p></td><td style="border-right: 1px solid ; " align="left" valign="top"><p>1000</p></td><td style="" align="left" valign="top"><p>Number of millis to wait between attempts to push the commits to <code class="literal">origin</code></p></td></tr></tbody></table></div></div><br class="table-break"></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="pact-stub-downloader" href="#pact-stub-downloader"></a>10.7&nbsp;Using the Pact Stub Downloader</h2></div></div></div><p>Whenever the <code class="literal">repositoryRoot</code> starts with a Pact protocol
+properties</p><div class="table"><a name="d0e7426" href="#d0e7426"></a><p class="title"><b>Table&nbsp;10.1.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table class="table" summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 1px solid ; border-bottom: 1px solid ; border-left: 1px solid ; border-right: 1px solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Type of a property</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Name of the property</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.branch</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.branch</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_BRANCH</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>master</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Which branch to checkout</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.username</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.username</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_USERNAME</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Git clone username</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.password</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.password</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_PASSWORD</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Git clone password</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.no-of-attempts</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.no-of-attempts</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>10</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Number of attempts to push the commits to <code class="literal">origin</code></p></td></tr><tr><td style="border-right: 1px solid ; " align="left" valign="top"><p>* <code class="literal">git.wait-between-attempts</code> (Plugin prop)</p><p>* <code class="literal">stubrunner.properties.git.wait-between-attempts</code>  (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</code>  (env prop)</p></td><td style="border-right: 1px solid ; " align="left" valign="top"><p>1000</p></td><td style="" align="left" valign="top"><p>Number of millis to wait between attempts to push the commits to <code class="literal">origin</code></p></td></tr></tbody></table></div></div><br class="table-break"></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="pact-stub-downloader" href="#pact-stub-downloader"></a>10.7&nbsp;Using the Pact Stub Downloader</h2></div></div></div><p>Whenever the <code class="literal">repositoryRoot</code> starts with a Pact protocol
 (starts with <code class="literal">pact://</code>), the stub downloader will try
 to fetch the Pact contract definitions from the Pact Broker.
 Whatever is set after <code class="literal">pact://</code> will be parsed as the Pact Broker URL.</p><p>Either via environment variables, system properties, properties set
 inside the plugin or contracts repository configuration you can
 tweak the downloader&#8217;s behaviour. Below you can find the list of
-properties</p><div class="table"><a name="d0e7548" href="#d0e7548"></a><p class="title"><b>Table&nbsp;10.2.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table class="table" summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 1px solid ; border-bottom: 1px solid ; border-left: 1px solid ; border-right: 1px solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Name of a property</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Default</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.host</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.host</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_HOST</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Host from URL passed to <code class="literal">repositoryRoot</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What is the URL of Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.port</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.port</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_PORT</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Port from URL passed to <code class="literal">repositoryRoot</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What is the port of Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.protocol</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.protocol</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Protocol from URL passed to <code class="literal">repositoryRoot</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What is the protocol of Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.tags</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.tags</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Version of the stub, or <code class="literal">latest</code> if version is <code class="literal">+</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What tags should be used to fetch the stub</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.auth.scheme</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.auth.scheme</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p><code class="literal">Basic</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What kind of authentication should be used to connect to the Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.auth.username</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.auth.username</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>The username passed to <code class="literal">contractsRepositoryUsername</code> (maven) or <code class="literal">contractRepository.username</code> (gradle)</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Username used to connect to the Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.auth.password</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.auth.password</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>The password passed to <code class="literal">contractsRepositoryPassword</code> (maven) or <code class="literal">contractRepository.password</code> (gradle)</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Password used to connect to the Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.provider-name-with-group-id</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.provider-name-with-group-id</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</code> (env prop)</p></td><td style="border-right: 1px solid ; " align="left" valign="top"><p>false</p></td><td style="" align="left" valign="top"><p>When <code class="literal">true</code>, the provider name will be a combination of <code class="literal">groupId:artifactId</code>. If <code class="literal">false</code>, just <code class="literal">artifactId</code> is used</p></td></tr></tbody></table></div></div><br class="table-break"></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_spring_cloud_contract_wiremock" href="#_spring_cloud_contract_wiremock"></a>11.&nbsp;Spring Cloud Contract WireMock</h1></div></div></div><p>The Spring Cloud Contract WireMock modules let you use <a class="link" href="http://wiremock.org" target="_top">WireMock</a> in a
+properties</p><div class="table"><a name="d0e7575" href="#d0e7575"></a><p class="title"><b>Table&nbsp;10.2.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table class="table" summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 1px solid ; border-bottom: 1px solid ; border-left: 1px solid ; border-right: 1px solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Name of a property</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Default</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.host</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.host</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_HOST</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Host from URL passed to <code class="literal">repositoryRoot</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What is the URL of Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.port</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.port</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_PORT</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Port from URL passed to <code class="literal">repositoryRoot</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What is the port of Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.protocol</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.protocol</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Protocol from URL passed to <code class="literal">repositoryRoot</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What is the protocol of Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.tags</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.tags</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Version of the stub, or <code class="literal">latest</code> if version is <code class="literal">+</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What tags should be used to fetch the stub</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.auth.scheme</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.auth.scheme</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p><code class="literal">Basic</code></p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>What kind of authentication should be used to connect to the Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.auth.username</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.auth.username</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>The username passed to <code class="literal">contractsRepositoryUsername</code> (maven) or <code class="literal">contractRepository.username</code> (gradle)</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Username used to connect to the Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.auth.password</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.auth.password</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</code> (env prop)</p></td><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>The password passed to <code class="literal">contractsRepositoryPassword</code> (maven) or <code class="literal">contractRepository.password</code> (gradle)</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Password used to connect to the Pact Broker</p></td></tr><tr><td style="border-right: 1px solid ; " align="left" valign="top"><p>* <code class="literal">pactbroker.provider-name-with-group-id</code> (plugin prop)</p><p>* <code class="literal">stubrunner.properties.pactbroker.provider-name-with-group-id</code> (system prop)</p><p>* <code class="literal">STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</code> (env prop)</p></td><td style="border-right: 1px solid ; " align="left" valign="top"><p>false</p></td><td style="" align="left" valign="top"><p>When <code class="literal">true</code>, the provider name will be a combination of <code class="literal">groupId:artifactId</code>. If <code class="literal">false</code>, just <code class="literal">artifactId</code> is used</p></td></tr></tbody></table></div></div><br class="table-break"></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_spring_cloud_contract_wiremock" href="#_spring_cloud_contract_wiremock"></a>11.&nbsp;Spring Cloud Contract WireMock</h1></div></div></div><p>The Spring Cloud Contract WireMock modules let you use <a class="link" href="http://wiremock.org" target="_top">WireMock</a> in a
 Spring Boot application. Check out the
 <a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples" target="_top">samples</a>
 for more details.</p><p>If you have a Spring Boot application that uses Tomcat as an embedded server (which is
@@ -6163,8 +5982,7 @@ Example:</p><pre class="programlisting">		<em><span class="hl-annotation" style=
 			};
 		}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_stubs_using_rest_docs" href="#_generating_stubs_using_rest_docs"></a>11.7&nbsp;Generating Stubs using REST Docs</h2></div></div></div><p><a class="link" href="https://projects.spring.io/spring-restdocs" target="_top">Spring REST Docs</a> can be used to generate
 documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc
-or <code class="literal">WebTestClient</code> or
-Rest Assured. At the same time that you generate documentation for your API, you can also
+or <code class="literal">WebTestClient</code> or Rest Assured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use <code class="literal">@AutoConfigureRestDocs</code> to have stubs be
 automatically generated in the REST Docs output directory. The following code shows an
