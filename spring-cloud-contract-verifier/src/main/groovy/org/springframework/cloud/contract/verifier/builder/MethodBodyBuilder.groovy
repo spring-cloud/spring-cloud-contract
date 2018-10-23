@@ -498,7 +498,7 @@ abstract class MethodBodyBuilder {
 
 	protected void methodForNullCheck(BodyMatcher bodyMatcher, BlockBuilder bb) {
 		String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
-		String method = "assertThat(parsedJson.read(${quotedAndEscaptedPath})).isNull()"
+		String method = "assertThat((Object) parsedJson.read(${quotedAndEscaptedPath})).isNull()"
 		bb.addLine(postProcessJsonPathCall(method))
 		addColonIfRequired(bb)
 	}
