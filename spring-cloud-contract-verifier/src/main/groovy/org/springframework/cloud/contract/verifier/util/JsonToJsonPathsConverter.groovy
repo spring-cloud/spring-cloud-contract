@@ -22,7 +22,9 @@ import com.jayway.jsonpath.PathNotFoundException
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -30,6 +32,7 @@ import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.SerializationUtils
+import repackaged.nl.flotsam.xeger.Xeger
 
 import java.util.regex.Pattern
 /**
@@ -125,15 +128,8 @@ class JsonToJsonPathsConverter {
 
 	// Doing a clone doesn't work for nested lists...
 	private static Object cloneBody(Object object) {
-		if (object instanceof List) {
-			byte[] serializedObject = SerializationUtils.serialize(object)
-			return SerializationUtils.deserialize(serializedObject)
-		}
-		try {
-			return object.clone()
-		} catch (CloneNotSupportedException e) {
-			return object
-		}
+		byte[] serializedObject = SerializationUtils.serialize(object)
+		return SerializationUtils.deserialize(serializedObject)
 	}
 
 	/**
@@ -168,17 +164,30 @@ class JsonToJsonPathsConverter {
 		return path.contains("['")
 	}
 
+
+	@CompileStatic
+	static Object generatedValueIfNeeded(Object value) {
+		if (value instanceof Pattern) {
+			return StringEscapeUtils.escapeJava(new Xeger(((Pattern) value).pattern()).generate())
+		}
+		return value
+	}
+
 	private static String createComparison(BodyMatcher bodyMatcher, Object value, def body) {
 		if (bodyMatcher.matchingType() == MatchingType.EQUALITY) {
+			Object convertedBody = body
 			if (!body) {
 				throw new IllegalStateException("Body hasn't been passed")
 			}
 			try {
-				Object retrievedValue = JsonPath.parse(body).read(bodyMatcher.path())
+				convertedBody = MapConverter.transformValues(body) {
+					return generatedValueIfNeeded(it)
+				}
+				Object retrievedValue = JsonPath.parse(convertedBody).read(bodyMatcher.path())
 				String wrappedValue = retrievedValue instanceof Number ? retrievedValue : "'${retrievedValue.toString()}'"
 				return "== ${wrappedValue}"
 			} catch (PathNotFoundException e) {
-				throw new IllegalStateException("Value [${bodyMatcher.path()}] not found in JSON [${JsonOutput.toJson(body)}]", e)
+				throw new IllegalStateException("Value [${bodyMatcher.path()}] not found in JSON [${JsonOutput.toJson(convertedBody)}]", e)
 			}
 		} else {
 			String convertedValue = value.toString().replace('/', '\\\\/')
