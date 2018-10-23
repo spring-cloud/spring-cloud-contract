@@ -641,7 +641,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         Contract contractDsl = Contract.make {
             request {
                 method 'GET'
-                urlPath('/users') {
+                urlPath("/users/${value(regex("1"))}") {
                     queryParameters {
                         parameter 'limit': $(consumer(equalTo('20')), producer(equalTo('10')))
                         parameter 'offset': $(consumer(containing("20")), producer(equalTo('20')))
@@ -680,7 +680,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         test.contains('''.queryParam("age","99")''')
         test.contains('''.queryParam("name","Denis.Stepanov")''')
         test.contains('''.queryParam("email","bob@email.com")''')
-        test.contains('''.get("/users")''')
+        test.contains('''.get("/users/1")''')
         test.contains('assertThatJson(parsedJson).field("[\'property1\']").isEqualTo("a")')
         test.contains('assertThatJson(parsedJson).field("[\'property2\']").isEqualTo("b")')
         and:

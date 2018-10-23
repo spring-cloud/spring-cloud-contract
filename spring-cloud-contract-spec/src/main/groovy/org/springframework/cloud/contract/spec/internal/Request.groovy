@@ -101,11 +101,21 @@ class Request extends Common {
 		this.urlPath = new UrlPath(path)
 	}
 
+	void urlPath(GString path) {
+		this.urlPath = new UrlPath(path)
+	}
+
 	void urlPath(DslProperty path) {
 		this.urlPath = new UrlPath(path)
 	}
 
 	void urlPath(String path, @DelegatesTo(UrlPath) Closure closure) {
+		this.urlPath = new UrlPath(path)
+		closure.delegate = urlPath
+		closure()
+	}
+
+	void urlPath(GString path, @DelegatesTo(UrlPath) Closure closure) {
 		this.urlPath = new UrlPath(path)
 		closure.delegate = urlPath
 		closure()
