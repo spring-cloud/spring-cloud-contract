@@ -4356,122 +4356,122 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
   type: by_regex
   predefined: only_alpha_unicode</pre><p>Below you can find the allowed list of `type`s.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For <code class="literal">stubMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li></ul></div></li><li class="listitem"><p class="simpara">For <code class="literal">testMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li><li class="listitem"><p class="simpara"><code class="literal">by_type</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">there are 2 additional fields accepted: <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.</li></ul></div></li><li class="listitem"><code class="literal">by_command</code></li><li class="listitem"><code class="literal">by_null</code></li></ul></div></li></ul></div><p>Consider the following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">Contract contractDsl = Contract.make {
-    request {
-        method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
-        urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
-        body([
-                duck                : <span class="hl-number">123</span>,
-                alpha               : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
-                number              : <span class="hl-number">123</span>,
-                aBoolean            : true,
-                date                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
-                dateTime            : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
-                time                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'01:02:34'</span>,
-                valueWithoutAMatcher: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>,
-                valueWithTypeMatch  : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'string'</span>,
-                key                 : [
-                        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-                ]
-        ])
-        bodyMatchers {
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
-        }
-        headers {
-            contentType(applicationJson())
-        }
-    }
-    response {
-        status OK()
-        body([
-                duck                 : <span class="hl-number">123</span>,
-                alpha                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
-                number               : <span class="hl-number">123</span>,
-                positiveInteger      : <span class="hl-number">1234567890</span>,
-                negativeInteger      : -<span class="hl-number">1234567890</span>,
-                positiveDecimalNumber: <span class="hl-number">123.4567890</span>,
-                negativeDecimalNumber: -<span class="hl-number">123.4567890</span>,
-                aBoolean             : true,
-                date                 : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
-                dateTime             : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
-                time                 : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"01:02:34"</span>,
-                valueWithoutAMatcher : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>,
-                valueWithTypeMatch   : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'string'</span>,
-                valueWithMin         : [
-                        <span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
-                ],
-                valueWithMax         : [
-                        <span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
-                ],
-                valueWithMinMax      : [
-                        <span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
-                ],
-                valueWithMinEmpty    : [],
-                valueWithMaxEmpty    : [],
-                key                  : [
-                        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-                ],
-                nullValue            : null
-        ])
-        bodyMatchers {
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against manual regex</span>
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against the provided value</span>
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against some default regex</span>
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveInteger'</span>, byRegex(anInteger()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeInteger'</span>, byRegex(anInteger()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveDecimalNumber'</span>, byRegex(aDouble()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeDecimalNumber'</span>, byRegex(aDouble()))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts vs inbuilt time related regex</span>
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts that the resulting type is the same as in response body</span>
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithTypeMatch'</span>, byType())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMin'</span>, byType {
-                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1)</span>
-                minOccurrence(<span class="hl-number">1</span>)
-            })
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMax'</span>, byType {
-                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 3)</span>
-                maxOccurrence(<span class="hl-number">3</span>)
-            })
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinMax'</span>, byType {
-                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1 &amp; max 3)</span>
-                minOccurrence(<span class="hl-number">1</span>)
-                maxOccurrence(<span class="hl-number">3</span>)
-            })
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinEmpty'</span>, byType {
-                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 0)</span>
-                minOccurrence(<span class="hl-number">0</span>)
-            })
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMaxEmpty'</span>, byType {
-                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 0)</span>
-                maxOccurrence(<span class="hl-number">0</span>)
-            })
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// will execute a method `assertThatValueIsANumber`</span>
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'assertThatValueIsANumber($it)'</span>))
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
-            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.nullValue'</span>, byNull())
-        }
-        headers {
-            contentType(applicationJson())
-            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Some-Header'</span>, $(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'someValue'</span>), p(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z]{9}'</span>))))
-        }
-    }
+	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
+		urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
+		body([
+				duck                : <span class="hl-number">123</span>,
+				alpha               : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
+				number              : <span class="hl-number">123</span>,
+				aBoolean            : true,
+				date                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
+				dateTime            : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
+				time                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'01:02:34'</span>,
+				valueWithoutAMatcher: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>,
+				valueWithTypeMatch  : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'string'</span>,
+				key                 : [
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+				]
+		])
+		bodyMatchers {
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
+		}
+		headers {
+			contentType(applicationJson())
+		}
+	}
+	response {
+		status OK()
+		body([
+				duck                 : <span class="hl-number">123</span>,
+				alpha                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
+				number               : <span class="hl-number">123</span>,
+				positiveInteger      : <span class="hl-number">1234567890</span>,
+				negativeInteger      : -<span class="hl-number">1234567890</span>,
+				positiveDecimalNumber: <span class="hl-number">123.4567890</span>,
+				negativeDecimalNumber: -<span class="hl-number">123.4567890</span>,
+				aBoolean             : true,
+				date                 : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
+				dateTime             : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
+				time                 : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"01:02:34"</span>,
+				valueWithoutAMatcher : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>,
+				valueWithTypeMatch   : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'string'</span>,
+				valueWithMin         : [
+						<span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+				],
+				valueWithMax         : [
+						<span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+				],
+				valueWithMinMax      : [
+						<span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+				],
+				valueWithMinEmpty    : [],
+				valueWithMaxEmpty    : [],
+				key                  : [
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+				],
+				nullValue            : null
+		])
+		bodyMatchers {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against manual regex</span>
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against the provided value</span>
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against some default regex</span>
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveInteger'</span>, byRegex(anInteger()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeInteger'</span>, byRegex(anInteger()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveDecimalNumber'</span>, byRegex(aDouble()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeDecimalNumber'</span>, byRegex(aDouble()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts vs inbuilt time related regex</span>
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts that the resulting type is the same as in response body</span>
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithTypeMatch'</span>, byType())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMin'</span>, byType {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1)</span>
+				minOccurrence(<span class="hl-number">1</span>)
+			})
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMax'</span>, byType {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 3)</span>
+				maxOccurrence(<span class="hl-number">3</span>)
+			})
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinMax'</span>, byType {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1 &amp; max 3)</span>
+				minOccurrence(<span class="hl-number">1</span>)
+				maxOccurrence(<span class="hl-number">3</span>)
+			})
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinEmpty'</span>, byType {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 0)</span>
+				minOccurrence(<span class="hl-number">0</span>)
+			})
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMaxEmpty'</span>, byType {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 0)</span>
+				maxOccurrence(<span class="hl-number">0</span>)
+			})
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// will execute a method `assertThatValueIsANumber`</span>
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'assertThatValueIsANumber($it)'</span>))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.nullValue'</span>, byNull())
+		}
+		headers {
+			contentType(applicationJson())
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Some-Header'</span>, $(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'someValue'</span>), p(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z]{9}'</span>))))
+		}
+	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">request:
