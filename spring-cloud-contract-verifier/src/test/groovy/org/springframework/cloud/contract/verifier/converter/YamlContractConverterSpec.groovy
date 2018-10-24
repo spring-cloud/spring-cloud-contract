@@ -189,6 +189,8 @@ class YamlContractConverterSpec extends Specification {
 			RegexPatterns patterns = new RegexPatterns()
 			contract.request.headers.entries.find { it.name == "Content-Type" &&
 					((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json" }
+			((Pattern) contract.request.urlPath.clientValue).pattern() == "/get/[0-9]"
+			contract.request.urlPath.serverValue == "/get/1"
 			contract.request.urlPath.queryParameters.parameters.size() == 8
 			QueryParameters queryParameters = contract.request.urlPath.queryParameters
 			assertQueryParam(queryParameters, "limit", 10,
