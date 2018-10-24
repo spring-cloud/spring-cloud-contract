@@ -15,7 +15,6 @@ import org.yaml.snakeyaml.Yaml
 
 import java.nio.file.Files
 import java.util.regex.Pattern
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -63,7 +62,7 @@ class YamlToContracts {
 						request {
 							method(yamlContract.request?.method)
 							if (yamlContract.request?.url) {
-								url(yamlContract.request?.url) {
+								url(urlValue(yamlContract.request?.url, yamlContract.request?.matchers?.url)) {
 									if (yamlContract.request.queryParameters) {
 										queryParameters {
 											yamlContract.request.queryParameters.each { String key, Object value ->
@@ -80,7 +79,7 @@ class YamlToContracts {
 								}
 							}
 							if (yamlContract.request?.urlPath) {
-								urlPath(yamlContract.request?.urlPath) {
+								urlPath(urlValue(yamlContract.request?.urlPath, yamlContract.request?.matchers?.url)) {
 									if (yamlContract.request.queryParameters) {
 										queryParameters {
 											yamlContract.request.queryParameters.each { String key, Object value ->
@@ -406,6 +405,15 @@ class YamlToContracts {
 				}
 			}
 		}
+	}
+
+	protected DslProperty urlValue(String url, YamlContract.KeyValueMatcher urlMatcher) {
+		if (urlMatcher) {
+			return new DslProperty(urlMatcher.regex ? Pattern.compile(urlMatcher.regex) :
+			urlMatcher.command ? new ExecutionProperty(urlMatcher.command) :
+					urlMatcher.predefined ? predefinedToPattern(urlMatcher.predefined) : url, url)
+		}
+		return new DslProperty(url)
 	}
 
 	protected List<YamlContract> convert(ObjectMapper mapper, Object o) {
