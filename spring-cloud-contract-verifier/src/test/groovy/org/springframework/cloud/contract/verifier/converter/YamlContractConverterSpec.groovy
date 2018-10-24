@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.QueryParameters
 import spock.lang.Issue
 
 import java.util.regex.Pattern
@@ -187,6 +189,22 @@ class YamlContractConverterSpec extends Specification {
 			RegexPatterns patterns = new RegexPatterns()
 			contract.request.headers.entries.find { it.name == "Content-Type" &&
 					((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json" }
+			contract.request.urlPath.queryParameters.parameters.size() == 8
+			QueryParameters queryParameters = contract.request.urlPath.queryParameters
+			assertQueryParam(queryParameters, "limit", 10,
+					MatchingStrategy.Type.EQUAL_TO, 20)
+			assertQueryParam(queryParameters, "offset", 20,
+					MatchingStrategy.Type.CONTAINS, 20)
+			assertQueryParam(queryParameters, "sort", "name",
+					MatchingStrategy.Type.EQUAL_TO, "name")
+			assertQueryParam(queryParameters, "search", 55,
+					MatchingStrategy.Type.NOT_MATCHING, (~/^[0-9]{2}$/).pattern())
+			assertQueryParam(queryParameters, "age", 99,
+					MatchingStrategy.Type.NOT_MATCHING, "^\\\\w*\$")
+			assertQueryParam(queryParameters, "name", "John.Doe",
+					MatchingStrategy.Type.MATCHING, "John.*")
+			assertQueryParam(queryParameters, "hello", true,
+					MatchingStrategy.Type.ABSENT, null)
 			contract.request.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.duck'
 			contract.request.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
 			contract.request.bodyMatchers.jsonPathRegexMatchers[0].value() == '[0-9]{3}'
@@ -262,6 +280,17 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.bodyMatchers.jsonPathRegexMatchers[15].path() == '$.duck'
 			contract.response.bodyMatchers.jsonPathRegexMatchers[15].matchingType() == MatchingType.COMMAND
 			contract.response.bodyMatchers.jsonPathRegexMatchers[15].value() == new ExecutionProperty('assertThatValueIsANumber($it)')
+	}
+
+	protected Object assertQueryParam(QueryParameters queryParameters, String queryParamName, Object serverValue,
+									  MatchingStrategy.Type clientType, Object clientValue) {
+		if (clientType == MatchingStrategy.Type.ABSENT) {
+			return ! queryParameters.parameters.find { it.name == queryParamName}
+		}
+		return queryParameters.parameters.find { it.name == queryParamName &&
+				it.serverValue == serverValue &&
+				((MatchingStrategy) it.clientValue).type == clientType &&
+				((MatchingStrategy) it.clientValue).clientValue == clientValue  }
 	}
 
 	@Issue("#604")

@@ -209,5 +209,10 @@ class WireMockResponseStubStrategySpec extends Specification {
 			subject.buildClientRequestContent()
 		then:
 			noExceptionThrown()
+		when:
+			def response = new WireMockResponseStubStrategy(contract)
+			response.buildClientResponseContent()
+		then:
+			noExceptionThrown()
 	}
 }

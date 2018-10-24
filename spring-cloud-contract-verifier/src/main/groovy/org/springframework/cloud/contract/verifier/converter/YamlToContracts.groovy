@@ -1,20 +1,20 @@
 package org.springframework.cloud.contract.verifier.converter
 
-import java.nio.file.Files
-import java.util.regex.Pattern
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import org.yaml.snakeyaml.Yaml
-
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingTypeValue
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
+import org.springframework.cloud.contract.spec.internal.Request
+import org.yaml.snakeyaml.Yaml
+
+import java.nio.file.Files
+import java.util.regex.Pattern
 
 /**
  * @author Marcin Grzejszczak
@@ -86,10 +86,10 @@ class YamlToContracts {
 											yamlContract.request.queryParameters.each { String key, Object value ->
 												if (value instanceof List) {
 													((List) value).each {
-														parameter(key, it)
+														parameter(key, queryParamValue(yamlContract, key, it))
 													}
 												} else {
-													parameter(key, value)
+													parameter(key, queryParamValue(yamlContract, key, value))
 												}
 											}
 										}
@@ -202,8 +202,15 @@ class YamlToContracts {
 										case YamlContract.StubMatcherType.by_equality:
 											value = byEquality()
 											break
+										case YamlContract.StubMatcherType.by_null:
+											// do nothing
+											break
+										default:
+											throw new UnsupportedOperationException("The type [" + matcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 									}
-									jsonPath(matcher.path, value)
+									if (value) {
+										jsonPath(matcher.path, value)
+									}
 								}
 							}
 						}
@@ -282,6 +289,8 @@ class YamlToContracts {
 										case YamlContract.TestMatcherType.by_null:
 											value = byNull()
 											break
+										default:
+											throw new UnsupportedOperationException("The type [" + testMatcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 									}
 									if (testMatcher.path) {
 										jsonPath(testMatcher.path, value)
@@ -451,6 +460,33 @@ class YamlToContracts {
 		return clientValue
 	}
 
+	protected Object queryParamValue(YamlContract yamlContract, String key, Object value) {
+		Request request = new Request()
+		YamlContract.QueryParameterMatcher matcher = yamlContract.request.
+				matchers.queryParameters.find { it.key == key}
+		if (!matcher) {
+			return value
+		}
+		switch (matcher.type) {
+			case YamlContract.MatchingType.equal_to:
+				return new DslProperty(request.equalTo(matcher.value), value)
+			case YamlContract.MatchingType.containing:
+				return new DslProperty(request.containing(matcher.value), value)
+			case YamlContract.MatchingType.matching:
+				return new DslProperty(request.matching(matcher.value), value)
+			case YamlContract.MatchingType.not_matching:
+				return new DslProperty(request.notMatching(matcher.value), value)
+			case YamlContract.MatchingType.equal_to_json:
+				return new DslProperty(request.equalToJson(matcher.value), value)
+			case YamlContract.MatchingType.equal_to_xml:
+				return new DslProperty(request.equalToXml(matcher.value), value)
+			case YamlContract.MatchingType.absent:
+				return new DslProperty(request.absent(), null)
+			default:
+				throw new UnsupportedOperationException("The provided matching type [" + matcher + "] is unsupported. Use on of " + YamlContract.MatchingType.values())
+		}
+	}
+
 	protected Object serverValue(Object value, YamlContract.KeyValueMatcher matcher) {
 		Object serverValue = value
 		if (matcher?.command) {
@@ -499,6 +535,8 @@ class YamlToContracts {
 				return patterns.nonEmpty()
 			case YamlContract.PredefinedRegex.non_blank:
 				return patterns.nonBlank()
+			default:
+				throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex + "] is unsupported. Use on of " + YamlContract.PredefinedRegex.values())
 		}
 	}
 
