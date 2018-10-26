@@ -1280,6 +1280,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     Content-Type: application/json
   cookies:
     foo: 2
+    bar: 3
   queryParameters:
     limit: 10
     offset: 20
@@ -1307,7 +1308,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
       regex: /get/[0-9]
       # predefined:
       # execute a method
-      # command:
+      #command: 'equals($it)'
     queryParameters:
       - key: limit
         type: equal_to
@@ -1332,6 +1333,8 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     cookies:
       - key: foo
         regex: '[0-9]'
+      - key: bar
+        command: 'equals($it)'
     headers:
       - key: Content-Type
         regex: "application/json.*"
@@ -1364,6 +1367,9 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
         type: by_null
 response:
   status: 200
+  cookies:
+    foo: 1
+    bar: 2
   body:
     duck: 123
     alpha: "abc"
@@ -1395,6 +1401,11 @@ response:
     headers:
       - key: Content-Type
         regex: "application/json.*"
+    cookies:
+      - key: foo
+        regex: '[0-9]'
+      - key: bar
+        command: 'equals($it)'
     body:
       - path: $.duck
         type: by_regex
