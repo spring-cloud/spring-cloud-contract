@@ -103,13 +103,11 @@ class YamlToContracts {
 										matchers.each { YamlContract.KeyValueMatcher matcher ->
 											if (value instanceof List) {
 												((List) value).each {
-													Object clientValue = clientValue(it, matcher, key)
-													header(key, new DslProperty(clientValue,
-															it instanceof DslProperty ? it.serverValue : it))
+													header(key, clientValue(it, matcher, key).clientValue)
 												}
 											} else {
-												Object clientValue = clientValue(value, matcher, key)
-												header(key, new DslProperty(clientValue, serverValue(value, matcher)))
+												header(key, new DslProperty(clientValue(value, matcher, key).clientValue,
+														serverValue(value, matcher)))
 											}
 										}
 										if (!matchers) {
@@ -122,8 +120,7 @@ class YamlToContracts {
 								cookies {
 									yamlContract.request?.cookies?.each { String key, Object value ->
 										YamlContract.KeyValueMatcher matcher = yamlContract.request.matchers.cookies.find { it.key == key }
-										Object clientValue = clientValue(value, matcher, key)
-										cookie(key, new DslProperty(clientValue, value))
+										cookie(key, clientValue(value, matcher, key))
 									}
 								}
 							}
@@ -233,8 +230,8 @@ class YamlToContracts {
 								cookies {
 									yamlContract.response?.cookies?.each { String key, Object value ->
 										YamlContract.TestCookieMatcher matcher = yamlContract.response.matchers.cookies.find { it.key == key }
-										Object serverValue = serverCookieValue(value, matcher, key)
-										cookie(key, new DslProperty(value, serverValue))
+										DslProperty cookieValue = serverCookieValue(value, matcher, key)
+										cookie(key, cookieValue)
 									}
 								}
 							}
@@ -306,8 +303,7 @@ class YamlToContracts {
 							messageHeaders {
 								yamlContract.input?.messageHeaders?.each { String key, Object value ->
 									YamlContract.KeyValueMatcher matcher = yamlContract.input.matchers?.headers?.find { it.key == key }
-									Object clientValue = clientValue(value, matcher, key)
-									header(key, new DslProperty(clientValue, value))
+									header(key, clientValue(value, matcher, key))
 								}
 							}
 							if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
@@ -409,8 +405,10 @@ class YamlToContracts {
 
 	protected DslProperty urlValue(String url, YamlContract.KeyValueMatcher urlMatcher) {
 		if (urlMatcher) {
+			if (urlMatcher.command) {
+				return new DslProperty<Object>(url, new ExecutionProperty(urlMatcher.command))
+			}
 			return new DslProperty(urlMatcher.regex ? Pattern.compile(urlMatcher.regex) :
-			urlMatcher.command ? new ExecutionProperty(urlMatcher.command) :
 					urlMatcher.predefined ? predefinedToPattern(urlMatcher.predefined) : url, url)
 		}
 		return new DslProperty(url)
@@ -440,7 +438,7 @@ class YamlToContracts {
 		return serverValue
 	}
 
-	protected Object serverCookieValue(Object value, YamlContract.TestCookieMatcher matcher, String key) {
+	protected DslProperty serverCookieValue(Object value, YamlContract.TestCookieMatcher matcher, String key) {
 		Object serverValue = value
 		if (matcher?.regex) {
 			serverValue = Pattern.compile(matcher.regex)
@@ -450,11 +448,13 @@ class YamlToContracts {
 			Pattern pattern = predefinedToPattern(matcher.predefined)
 			serverValue = pattern
 			assertPatternMatched(pattern, value, key)
+		} else if (matcher?.command) {
+			return new DslProperty(new ExecutionProperty(matcher.command), value)
 		}
-		return serverValue
+		return new DslProperty(value, serverValue)
 	}
 
-	protected Object clientValue(Object value, YamlContract.KeyValueMatcher matcher, String key) {
+	protected DslProperty clientValue(Object value, YamlContract.KeyValueMatcher matcher, String key) {
 		Object clientValue = value instanceof DslProperty ? value.clientValue : value
 		if (matcher?.regex) {
 			clientValue = Pattern.compile(matcher.regex)
@@ -464,8 +464,10 @@ class YamlToContracts {
 			Pattern pattern = predefinedToPattern(matcher.predefined)
 			clientValue = pattern
 			assertPatternMatched(pattern, value, key)
+		} else if (matcher?.command) {
+			return new DslProperty(value, new ExecutionProperty(matcher.command))
 		}
-		return clientValue
+		return new DslProperty(clientValue, value)
 	}
 
 	protected Object queryParamValue(YamlContract yamlContract, String key, Object value) {

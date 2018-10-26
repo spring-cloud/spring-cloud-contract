@@ -234,6 +234,8 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.bodyMatchers.jsonPathRegexMatchers[8].value() == patterns.isoTime()
 			contract.request.bodyMatchers.jsonPathRegexMatchers[9].path() == "\$.['key'].['complex.key']"
 			contract.request.bodyMatchers.jsonPathRegexMatchers[9].matchingType() == MatchingType.EQUALITY
+			contract.request.cookies.entries.find { it.key == "foo" }.clientValue instanceof Pattern
+			contract.request.cookies.entries.find { it.key == "bar" }.serverValue == new ExecutionProperty('equals($it)')
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.duck'
