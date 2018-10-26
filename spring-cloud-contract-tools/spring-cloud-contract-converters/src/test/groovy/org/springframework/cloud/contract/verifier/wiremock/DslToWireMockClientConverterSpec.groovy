@@ -197,7 +197,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 	(1..2).collect { int index ->
 		org.springframework.cloud.contract.spec.Contract.make {
 			input {
-
+				triggeredBy("foo")
 			}
 		}
 	}

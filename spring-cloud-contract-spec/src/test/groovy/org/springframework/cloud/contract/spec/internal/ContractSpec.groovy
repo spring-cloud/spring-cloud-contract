@@ -26,6 +26,7 @@ class ContractSpec extends Specification {
 					])
 				}
 				response {
+					status 200
 					headers {
 						header([
 								foo2: 'bar'
@@ -39,6 +40,52 @@ class ContractSpec extends Specification {
 		then:
 			noExceptionThrown()
 	}
+
+	def 'should fail when no method is present'() {
+		when:
+			Contract.make {
+				request {
+					url('/foo')
+				}
+				response {
+					status 200
+				}
+			}
+		then:
+			IllegalStateException ex = thrown(IllegalStateException)
+			ex.message.contains("Method is missing for HTTP contract")
+	}
+
+	def 'should fail when no url is present'() {
+		when:
+			Contract.make {
+				request {
+					method("GET")
+				}
+				response {
+					status 200
+				}
+			}
+		then:
+			IllegalStateException ex = thrown(IllegalStateException)
+			ex.message.contains("URL is missing for HTTP contract")
+	}
+
+	def 'should fail when no status is present'() {
+		when:
+			Contract.make {
+				request {
+					url("/foo")
+					method("GET")
+				}
+				response {
+				}
+			}
+		then:
+			IllegalStateException ex = thrown(IllegalStateException)
+			ex.message.contains("Status is missing for HTTP contract")
+	}
+
 	def 'should work for messaging'() {
 		when:
 			Contract.make {
@@ -151,11 +198,13 @@ then:
 		expect:
 			def a = Contract.make {
 				request {
+					method("GET")
 					url("/1")
 			 	}
 			}
 			def b = Contract.make {
 					request {
+						method("GET")
 						url("/1")
 					}
 				}
@@ -166,10 +215,12 @@ then:
 		expect:
 			Contract.make {
 				request {
+					method("GET")
 					url($(c("/1"), p("/1")))
 			 	}
 			} == Contract.make {
 				request {
+					method("GET")
 					url($(c("/1"), p("/1")))
 				}
 			}

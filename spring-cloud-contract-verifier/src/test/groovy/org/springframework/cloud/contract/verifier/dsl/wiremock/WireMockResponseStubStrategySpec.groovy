@@ -12,6 +12,8 @@ class WireMockResponseStubStrategySpec extends Specification {
 			def irrelevantStatus = 200
 			def contract = Contract.make {
 				request {
+					method GET()
+					url "/foo"
 				}
 				response {
 					status irrelevantStatus
@@ -33,6 +35,8 @@ class WireMockResponseStubStrategySpec extends Specification {
 			def irrelevantStatus = 200
 			def contract = Contract.make {
 				request {
+					method GET()
+					url "/foo"
 				}
 				response {
 					status irrelevantStatus

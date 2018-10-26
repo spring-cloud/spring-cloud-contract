@@ -89,7 +89,22 @@ class Contract {
 		Contract dsl = new Contract()
 		closure.delegate = dsl
 		closure()
+		assertContract(dsl)
 		return dsl
+	}
+
+	static void assertContract(Contract dsl) {
+		if (dsl.request) {
+			if (!dsl.request.url && !dsl.request.urlPath)
+				throw new IllegalStateException("URL is missing for HTTP contract")
+			if (!dsl.request.method)
+				throw new IllegalStateException("Method is missing for HTTP contract")
+		}
+		if (dsl.response) {
+			if (!dsl.response.status)
+				throw new IllegalStateException("Status is missing for HTTP contract")
+		}
+		// Can't assert messaging part cause Pact doesn't require destinations it seems
 	}
 
 	void priority(int priority) {
