@@ -3579,6 +3579,8 @@ relative to the folder in which the contract lays.</p></div><div class="section"
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (this can be a valid request or invalid depending</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// on type of contract being specified).</span>
 	request {
+		method GET()
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
 	}
 
@@ -3587,6 +3589,7 @@ relative to the folder in which the contract lays.</p></div><div class="section"
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// with following response after receiving request</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// specified in "request" part above).</span>
 	response {
+		status <span class="hl-number">200</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
 	}
 
@@ -3615,6 +3618,7 @@ same information is mandatory in request definition of the Contract.</p><p><b>Gr
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		status <span class="hl-number">200</span>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -3632,6 +3636,7 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		status <span class="hl-number">200</span>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -3642,6 +3647,7 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		method GET()
 
 		urlPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users'</span>) {
 
@@ -3678,6 +3684,7 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		status <span class="hl-number">200</span>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -3737,6 +3744,8 @@ response:
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		method GET()
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>
 
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Each header is added in form `'Header-Name' : 'Header-Value'`.</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// there are also some helper methods</span>
@@ -3750,6 +3759,7 @@ response:
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		status <span class="hl-number">200</span>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -3762,6 +3772,8 @@ headers:
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		method GET()
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>
 
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Each Cookies is added in form `'Cookie-Key' : 'Cookie-Value'`.</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// there are also some helper methods</span>
@@ -3775,6 +3787,7 @@ headers:
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		status <span class="hl-number">200</span>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -3787,6 +3800,8 @@ cookies:
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		method GET()
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>
 
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Currently only JSON format of request body is supported.</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Format will be determined from a header or body's content.</span>
@@ -3795,6 +3810,7 @@ cookies:
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		status <span class="hl-number">200</span>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -3886,6 +3902,8 @@ following code shows an example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+		method GET()
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>
 	}
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Status code sent by the server</span>
@@ -4481,6 +4499,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     Content-Type: application/json
   cookies:
     foo: 2
+    bar: 3
   queryParameters:
     limit: 10
     offset: 20
@@ -4508,7 +4527,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
       regex: /get/[0-9]
       # predefined:
       # execute a method
-      # command:
+      #command: 'equals($it)'
     queryParameters:
       - key: limit
         type: equal_to
@@ -4533,6 +4552,8 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     cookies:
       - key: foo
         regex: '[0-9]'
+      - key: bar
+        command: 'equals($it)'
     headers:
       - key: Content-Type
         regex: "application/json.*"
@@ -4565,6 +4586,9 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
         type: by_null
 response:
   status: 200
+  cookies:
+    foo: 1
+    bar: 2
   body:
     duck: 123
     alpha: "abc"
@@ -4596,6 +4620,11 @@ response:
     headers:
       - key: Content-Type
         regex: "application/json.*"
+    cookies:
+      - key: foo
+        regex: '[0-9]'
+      - key: bar
+        command: 'equals($it)'
     body:
       - path: $.duck
         type: by_regex
