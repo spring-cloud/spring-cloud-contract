@@ -75,7 +75,9 @@ class CopyContracts {
 		}
 		if (this.config.isExcludeBuildFolders()) {
 			resource.addExclude("**/target/**");
+			resource.addExclude("**/.mvn/**");
 			resource.addExclude("**/build/**");
+			resource.addExclude("**/.gradle/**");
 		}
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
