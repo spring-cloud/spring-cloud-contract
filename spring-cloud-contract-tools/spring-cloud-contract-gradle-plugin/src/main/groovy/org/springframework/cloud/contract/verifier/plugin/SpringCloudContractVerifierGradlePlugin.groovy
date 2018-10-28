@@ -88,7 +88,6 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			generatedTestSourcesDir.mkdirs()
 			contractsDslDir = contractsDslDir ?: defaultContractsDir() //TODO: Use sourceset
 			contractsDslDir.mkdirs()
-			basePackageForTests = basePackageForTests ?: 'org.springframework.cloud.contract.verifier.tests'
 			stubsOutputDir = stubsOutputDir ?: project.file("${project.buildDir}/stubs/")
 			stubsOutputDir.mkdirs()
 		}
