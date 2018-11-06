@@ -395,8 +395,8 @@ Here is an example of a test generated in `WEBTESTCLIENT` test mode:
 	}
 ----
 
-Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
-`testFramework` property to either `JUNIT5` or `Spock`.
+Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the Maven plugin
+`testFramework` property or Gradle `targetFramework` property to either `JUNIT5` or `Spock`.
 
 TIP: You can now also generate WireMock scenarios based on the contracts, by including an
 order number followed by an underscore at the beginning of the contract file names.
