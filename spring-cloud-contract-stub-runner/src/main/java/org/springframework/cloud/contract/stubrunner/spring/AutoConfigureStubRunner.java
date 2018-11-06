@@ -120,4 +120,10 @@ public @interface AutoConfigureStubRunner {
 	 * @return the properties to add
 	 */
 	String[] properties() default {};
+
+	/**
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
+	 */
+	boolean deleteStubsAfterTest() default true;
 }
