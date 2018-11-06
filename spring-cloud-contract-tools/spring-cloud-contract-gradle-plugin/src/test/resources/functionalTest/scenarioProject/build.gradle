@@ -93,7 +93,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	contracts {
 		contractsMode = "REMOTE"
 		// tag::target_framework[]
-		targetFramework = 'Spock'
+		testFramework ='Spock'
 		// end::target_framework[]
 		testMode = 'MockMvc'
 		//baseClassForTests = 'org.springframework.cloud.MvcSpec'

@@ -54,7 +54,7 @@ contracts {
 	contractsDslDir = contractsDir
 //	generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
 	stubsOutputDir = stubsOutputDirRoot
-	targetFramework = 'Spock'
+	testFramework ='Spock'
 }
 
 generateContractTests.dependsOn generateClientStubs

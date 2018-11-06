@@ -124,7 +124,7 @@ configure(project(':fraudDetectionService')) {
 
 	contracts {
 		contractsMode = "REMOTE"
-		targetFramework = 'Spock'
+		testFramework ='Spock'
 		testMode = 'JaxRsClient'
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'
 		contractsRepositoryUrl = "file://" + file("${project.rootDir.absolutePath}/m2repo/repository").absolutePath

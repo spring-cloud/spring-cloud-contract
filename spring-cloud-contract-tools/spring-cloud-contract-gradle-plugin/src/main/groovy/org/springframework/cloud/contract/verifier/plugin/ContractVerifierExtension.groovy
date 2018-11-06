@@ -17,6 +17,8 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.ToString
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -27,10 +29,31 @@ import org.springframework.cloud.contract.verifier.config.TestMode
  */
 @ToString
 class ContractVerifierExtension {
+
+	private static final Log log = LogFactory.getLog(ContractVerifierExtension)
+
+	/**
+	 * For which unit test library tests should be generated
+	 * @deprecated - use {@code testFramework}
+	 */
+	@Deprecated
+	TestFramework targetFramework
+
+	@Deprecated
+	void setTargetFramework(TestFramework targetFramework) {
+		log.warn("Please use the [testFramework] field. This one is deprecated")
+		setTestFramework(targetFramework)
+	}
+
+	@Deprecated
+	TestFramework getTargetFramework() {
+		return getTestFramework()
+	}
+
 	/**
 	 * For which unit test library tests should be generated
 	 */
-	TestFramework targetFramework = TestFramework.JUNIT
+	TestFramework testFramework = TestFramework.JUNIT
 
 	/**
 	 * Which mechanism should be used to invoke REST calls during tests

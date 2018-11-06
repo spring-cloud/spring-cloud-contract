@@ -171,7 +171,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def 'should build test class for #testFramework'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
@@ -197,7 +197,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def 'should build test class for #testFramework when the path contains bizarre signs'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			properties.basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
 		and:
 			File newFolder = tmpFolder.newFolder('META_INF')
@@ -226,7 +226,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def 'should build test class for #testFramework with Rest Assured 2x'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order,
 					convertAsCollection(new File('/'), file))
@@ -299,7 +299,7 @@ class SingleTestGeneratorSpec extends Specification {
 ''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null,
 					convertAsCollection(new File('/'), file))
 			contract.ignored >> false
@@ -333,7 +333,7 @@ class SingleTestGeneratorSpec extends Specification {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testMode = TestMode.JAXRSCLIENT
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, null, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
@@ -375,7 +375,7 @@ class SingleTestGeneratorSpec extends Specification {
 		''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
 		and:
@@ -419,7 +419,7 @@ class SingleTestGeneratorSpec extends Specification {
 		''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 		and:
 			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
 			contract2.ignored >> false
@@ -484,7 +484,7 @@ class SingleTestGeneratorSpec extends Specification {
 		''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = JUNIT
+			properties.testFramework =JUNIT
 			properties.testMode = TestMode.EXPLICIT
 			properties.baseClassForTests = 'test.ContextPathTestingBaseClass'
 		and:
@@ -516,7 +516,7 @@ class SingleTestGeneratorSpec extends Specification {
 			''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
@@ -548,7 +548,7 @@ class SingleTestGeneratorSpec extends Specification {
 }''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
@@ -580,7 +580,7 @@ class SingleTestGeneratorSpec extends Specification {
 }''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
-			properties.targetFramework = testFramework
+			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
@@ -716,7 +716,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def 'should throw exception in JUnit5 when contract belongs to scenario'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.targetFramework = JUNIT5
+			properties.testFramework =JUNIT5
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 1, convertAsCollection(new File('/'), file))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
