@@ -9418,7 +9418,7 @@ public class WiremockForDocsTests {
 server port can be bound in the test application context with the "wiremock.server.port"
 property. Using <literal>@AutoConfigureWireMock</literal> adds a bean of type <literal>WiremockConfiguration</literal> to
 your test application context, where it will be cached in between methods and classes
-having the same context, the same as for Spring integration tests.</simpara>
+having the same context, the same as for Spring integration tests. Also you can inject a bean of type <literal>WireMockServer</literal> into your test.</simpara>
 <section xml:id="_registering_stubs_automatically">
 <title>Registering Stubs Automatically</title>
 <simpara>If you use <literal>@AutoConfigureWireMock</literal>, it registers WireMock JSON stubs from the file

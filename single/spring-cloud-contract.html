@@ -5922,7 +5922,7 @@ your test. The following code shows an example:</p><pre class="programlisting"><
 server port can be bound in the test application context with the "wiremock.server.port"
 property. Using <code class="literal">@AutoConfigureWireMock</code> adds a bean of type <code class="literal">WiremockConfiguration</code> to
 your test application context, where it will be cached in between methods and classes
-having the same context, the same as for Spring integration tests.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_registering_stubs_automatically" href="#_registering_stubs_automatically"></a>11.1&nbsp;Registering Stubs Automatically</h2></div></div></div><p>If you use <code class="literal">@AutoConfigureWireMock</code>, it registers WireMock JSON stubs from the file
+having the same context, the same as for Spring integration tests. Also you can inject a bean of type <code class="literal">WireMockServer</code> into your test.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_registering_stubs_automatically" href="#_registering_stubs_automatically"></a>11.1&nbsp;Registering Stubs Automatically</h2></div></div></div><p>If you use <code class="literal">@AutoConfigureWireMock</code>, it registers WireMock JSON stubs from the file
 system or classpath (by default, from <code class="literal">file:src/test/resources/mappings</code>). You can
 customize the locations using the <code class="literal">stubs</code> attribute in the annotation, which can be an
 Ant-style resource pattern or a directory. In the case of a directory, <code class="literal"><span class="strong"><strong>*/</strong></span>.json</code> is
