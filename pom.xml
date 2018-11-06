@@ -32,13 +32,13 @@
 		<spring-cloud-consul.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
 		<spring-cloud-commons.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.3</jopt-simple.version>
-		<cglib.version>3.2.4</cglib.version>
+		<cglib.version>3.2.9</cglib.version>
 		<spock-spring.version>1.0-groovy-2.4</spock-spring.version>
 		<spock-global-unroll.version>0.5.1</spock-global-unroll.version>
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
-		<commons-text.version>1.1</commons-text.version>
-		<handlebars.version>4.0.6</handlebars.version>
-		<jgit.version>4.6.0.201612231935-r</jgit.version>
+		<commons-text.version>1.6</commons-text.version>
+		<handlebars.version>4.1.2</handlebars.version>
+		<jgit.version>5.1.3.201810200350-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>2.4.15</groovy.version>
@@ -392,7 +392,7 @@
 				<plugin>
 					<groupId>org.codehaus.gmavenplus</groupId>
 					<artifactId>gmavenplus-plugin</artifactId>
-					<version>1.6.1</version>
+					<version>1.6.2</version>
 					<executions>
 						<execution>
 							<goals>

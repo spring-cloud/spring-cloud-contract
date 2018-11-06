@@ -44,7 +44,7 @@ import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
-import org.eclipse.jgit.api.errors.EmtpyCommitException;
+import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -164,7 +164,7 @@ class GitRepo {
 			log.info("Commited successfully with message [" + message + "]");
 			return CommitResult.SUCCESSFUL;
 		}
-		catch (EmtpyCommitException e) {
+		catch (EmptyCommitException e) {
 			log.info("There were no changes detected. Will not commit an empty commit");
 			return CommitResult.EMPTY;
 		}
