@@ -94,7 +94,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 						log.debug("Found a channel named [{}] with destination [{}]",
 								entry.getKey(), destination);
 					}
-					channels.put(entry.getKey().toLowerCase(), destination);
+					channels.put(entry.getKey(), destination);
 				}
 			}
 			if (channels.size() == 1) {
