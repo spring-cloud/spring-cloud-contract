@@ -68,7 +68,7 @@ with two methods:</p><div class="itemizedlist"><ul class="itemizedlist" style="l
 part of your build process, you need to do nothing more. If you just want to generate
 tests, invoke the <code class="literal">generateContractTests</code> task.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="gradle-default-setup" href="#gradle-default-setup"></a>4.1.7&nbsp;Default Setup</h3></div></div></div><p>The default Gradle Plugin setup creates the following Gradle part of the build (in
 pseudocode):</p><pre class="programlisting">contracts {
-    targetFramework = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'JUNIT'</span>
+    testFramework =<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'JUNIT'</span>
     testMode = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'MockMvc'</span>
     generatedTestSourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/generated-test-sources/contracts"</span>)
     contractsDslDir = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.rootDir}/src/test/resources/contracts"</span>

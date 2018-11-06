@@ -2498,7 +2498,7 @@ tests, invoke the <literal>generateContractTests</literal> task.</simpara>
 <simpara>The default Gradle Plugin setup creates the following Gradle part of the build (in
 pseudocode):</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">contracts {
-    targetFramework = 'JUNIT'
+    testFramework ='JUNIT'
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
