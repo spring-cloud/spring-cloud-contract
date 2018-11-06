@@ -106,4 +106,97 @@ class StreamStubMessagesSpec extends Specification {
 			messageInteraction << [ { StreamStubMessages stream -> stream.send("foo", [:], "verifications")},
 									{ StreamStubMessages stream -> stream.receive("verifications")}]
 	}
+
+	@Issue("694")
+	def "should resolve input channel if input and output have same destination and receive is called and channel name is camel case"() {
+		given:
+			ApplicationContext applicationContext = Mock(ApplicationContext)
+			BindingServiceProperties properties = new BindingServiceProperties(
+					bindings: [
+							input: new BindingProperties(destination: "verificationsChannel"),
+							output: new BindingProperties(destination: "verificationsChannel"),
+					]
+			)
+			MessageCollector collector = Stub(MessageCollector)
+		and:
+			applicationContext.getBean(BindingServiceProperties) >> properties
+			applicationContext.getBean(MessageCollector) >> collector
+		and:
+			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+		when:
+			messages.receive("verificationsChannel")
+		then:
+			1 * applicationContext.getBean("input", MessageChannel) >> null
+	}
+
+	@Issue("694")
+	def "should resolve output channel if input and output have same destination and send is called and channel name is camel case"() {
+		given:
+			ApplicationContext applicationContext = Mock(ApplicationContext)
+			BindingServiceProperties properties = new BindingServiceProperties(
+					bindings: [
+							input: new BindingProperties(destination: "verificationsChannel"),
+							output: new BindingProperties(destination: "verificationsChannel"),
+					]
+			)
+			MessageCollector collector = Stub(MessageCollector)
+			MessageChannel channel = Stub(MessageChannel)
+		and:
+			applicationContext.getBean(BindingServiceProperties) >> properties
+			applicationContext.getBean(MessageCollector) >> collector
+		and:
+			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+		when:
+			messages.send("foo", [:], "verificationsChannel")
+		then:
+			1 * applicationContext.getBean("output", MessageChannel) >> channel
+	}
+
+	def "should resolve channel via destination for send and receive and channel name is camel case"() {
+		given:
+			ApplicationContext applicationContext = Mock(ApplicationContext)
+			BindingServiceProperties properties = new BindingServiceProperties(
+					bindings: [
+							foo: new BindingProperties(destination: "verificationsChannel")
+					]
+			)
+			MessageCollector collector = Stub(MessageCollector)
+			MessageChannel channel = Stub(MessageChannel)
+		and:
+			applicationContext.getBean(BindingServiceProperties) >> properties
+			applicationContext.getBean(MessageCollector) >> collector
+		and:
+			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+		when:
+			messageInteraction(messages)
+		then:
+			1 * applicationContext.getBean("foo", MessageChannel) >> channel
+		where:
+			messageInteraction << [ { StreamStubMessages stream -> stream.send("foo", [:], "verificationsChannel")},
+									{ StreamStubMessages stream -> stream.receive("verificationsChannel")}]
+	}
+
+	def "should resolve channel via channel name for send and receive and channel name is camel case"() {
+		given:
+			ApplicationContext applicationContext = Mock(ApplicationContext)
+			BindingServiceProperties properties = new BindingServiceProperties(
+					bindings: [
+							verificationsChannel: new BindingProperties(destination: "bar")
+					]
+			)
+			MessageCollector collector = Stub(MessageCollector)
+			MessageChannel channel = Stub(MessageChannel)
+		and:
+			applicationContext.getBean(BindingServiceProperties) >> properties
+			applicationContext.getBean(MessageCollector) >> collector
+		and:
+			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+		when:
+			messageInteraction(messages)
+		then:
+			1 * applicationContext.getBean("verificationsChannel", MessageChannel) >> channel
+		where:
+			messageInteraction << [ { StreamStubMessages stream -> stream.send("foo", [:], "verificationsChannel")},
+									{ StreamStubMessages stream -> stream.receive("verificationsChannel")}]
+	}
 }
