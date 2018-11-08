@@ -18,6 +18,7 @@
 	<description>Spring Cloud Contract Tests</description>
 
 	<modules>
+		<module>samples-messaging-camel</module>
 		<module>samples-messaging-stream</module>
 		<module>samples-messaging-integration</module>
 		<module>samples-messaging-amqp</module>
