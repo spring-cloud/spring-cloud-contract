@@ -6,6 +6,7 @@ frameworks:
 
 * Spring Integration
 * Spring Cloud Stream
+* Apache Camel
 * Spring AMQP
 
 It also provides entry points to integrate with any other solution on the market.
@@ -64,6 +65,8 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_all,indent=0]
 ----
+
+include::{tests_path}/spring-cloud-contract-stub-runner-camel/README.adoc[]
 
 include::{tests_path}/spring-cloud-contract-stub-runner-integration/README.adoc[]
 
