@@ -236,6 +236,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							if (yamlContract.response.body) body(yamlContract.response.body)
 							if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
 							if (yamlContract.response.async) async()
+							if (yamlContract.response.fixedDelayMilliseconds) fixedDelayMilliseconds(yamlContract.response.fixedDelayMilliseconds)
 							testMatchers {
 								yamlContract.response?.matchers?.body?.each { BodyTestMatcher testMatcher ->
 									MatchingTypeValue value = null
@@ -522,6 +523,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 								maxOccurrence: matcher.maxTypeOccurrence()
 						)
 					}
+					fixedDelayMilliseconds = contract?.response?.delay?.clientValue as Integer
 				}
 			}
 			if (contract.input) {

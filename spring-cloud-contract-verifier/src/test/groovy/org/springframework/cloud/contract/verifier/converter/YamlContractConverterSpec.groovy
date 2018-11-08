@@ -118,6 +118,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.matchers.jsonPathRegexMatchers[0].value() == 'bar'
 		and:
 			contract.response.status.clientValue == 200
+			if (yamlFile == ymlWithRest) contract.response.delay.clientValue == 1000 else !contract.response.delay
 			contract.response.headers.entries.find { it.name == "foo2" &&
 					((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar" }
 			contract.response.headers.entries.find { it.name == "foo3" &&
@@ -533,6 +534,7 @@ class YamlContractConverterSpec extends Specification {
 					body([foo: "bar"])
 				}
 				response {
+					fixedDelayMilliseconds 1000
 					status(200)
 					headers {
 						header("foo2", "bar")
@@ -560,5 +562,6 @@ class YamlContractConverterSpec extends Specification {
 			yamlContract.response.body == [foo2: "bar"]
 			yamlContract.response.cookies.find { it.key == "foo" && it.value == "client" }
 			yamlContract.response.cookies.find { it.key == "bar" && it.value == "client" }
+			yamlContract.response.fixedDelayMilliseconds == 1000
 	}
 }

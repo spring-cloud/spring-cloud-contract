@@ -157,6 +157,7 @@ class YamlContract {
 		public String bodyFromFile
 		public TestMatchers matchers = new TestMatchers()
 		public Boolean async
+		public Integer fixedDelayMilliseconds
 	}
 
 	@CompileStatic
