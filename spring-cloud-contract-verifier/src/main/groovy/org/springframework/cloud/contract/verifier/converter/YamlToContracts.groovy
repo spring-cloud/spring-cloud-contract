@@ -250,6 +250,7 @@ class YamlToContracts {
 							}
 							if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
 							if (yamlContract.response.async) async()
+							if (yamlContract.response.fixedDelayMilliseconds) fixedDelayMilliseconds(yamlContract.response.fixedDelayMilliseconds)
 							bodyMatchers {
 								yamlContract.response?.matchers?.body?.each { YamlContract.BodyTestMatcher testMatcher ->
 									MatchingTypeValue value = null

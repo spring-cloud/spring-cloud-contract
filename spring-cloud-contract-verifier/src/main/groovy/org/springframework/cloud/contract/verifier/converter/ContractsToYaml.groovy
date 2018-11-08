@@ -212,6 +212,7 @@ class ContractsToYaml {
 		yamlContract.response = new YamlContract.Response()
 		yamlContract.response.with { YamlContract.Response response ->
 			response.async = contract.response.async
+			response.fixedDelayMilliseconds = contract.response?.delay?.clientValue as Integer
 			response.status = contract.response?.status?.clientValue as Integer
 			response.headers = (contract.response?.headers as Headers)?.asMap {
 				String headerName, DslProperty prop ->

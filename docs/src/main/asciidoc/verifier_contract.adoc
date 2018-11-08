@@ -1048,6 +1048,31 @@ response:
     async: true
 ----
 
+You can also use the `fixedDelayMilliseconds` method / property to add delay to your stubs.
+
+.Groovy DSL
+[source,groovy,indent=0]
+----
+org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method GET()
+        url '/get'
+    }
+    response {
+        status 200
+        body 'Passed'
+        fixedDelayMilliseconds 1000
+    }
+}
+----
+
+.YAML
+[source,yml,indent=0]
+----
+response:
+    fixedDelayMilliseconds: 1000
+----
+
 === Working with Context Paths
 
 Spring Cloud Contract supports context paths.
