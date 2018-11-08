@@ -15,14 +15,13 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -34,7 +33,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
-
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -295,7 +293,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 			File contractsDirectory) {
 		config.setContractsDslDir(contractsDirectory);
 		config.setGeneratedTestSourcesDir(this.generatedTestSourcesDir);
-		config.setTargetFramework(this.testFramework);
+		config.setTestFramework(this.testFramework);
 		config.setTestMode(this.testMode);
 		config.setBasePackageForTests(this.basePackageForTests);
 		config.setBaseClassForTests(this.baseClassForTests);
