@@ -217,15 +217,15 @@
 				<reportSets>
 					<reportSet>
 						<reports>
-							<report>cim</report>
+							<report>ci-management</report>
 							<report>help</report>
 							<report>index</report>
-							<report>issue-tracking</report>
-							<report>license</report>
+							<report>issue-management</report>
+							<report>licenses</report>
 							<report>modules</report>
 							<report>plugin-management</report>
 							<report>plugins</report>
-							<report>project-team</report>
+							<report>team</report>
 							<report>scm</report>
 							<report>summary</report>
 						</reports>

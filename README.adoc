@@ -1534,7 +1534,7 @@ To start the stub server on a different port use (for example),
 server port can be bound in the test application context with the "wiremock.server.port"
 property. Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to
 your test application context, where it will be cached in between methods and classes
-having the same context, the same as for Spring integration tests.
+having the same context, the same as for Spring integration tests. Also you can inject a bean of type `WireMockServer` into your test.
 
 === Registering Stubs Automatically
 
