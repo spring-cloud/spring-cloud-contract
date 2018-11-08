@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-11-07</date>
+<date>2018-11-08</date>
 </info>
 <preface>
 <title></title>
@@ -6413,6 +6413,7 @@ the recommended way, as doing so makes the tests <emphasis role="strong">host-in
         regex: bar
 response:
   status: 200
+  fixedDelayMilliseconds: 1000
   headers:
     foo2: bar
     foo3: foo33
@@ -8053,6 +8054,30 @@ provide an <literal>async()</literal> method in the <literal>response</literal> 
 <para>
 <programlisting language="yml" linenumbering="unnumbered">response:
     async: true</programlisting>
+</para>
+</formalpara>
+<simpara>You can also use the <literal>fixedDelayMilliseconds</literal> method / property to add delay to your stubs.</simpara>
+<formalpara>
+<title>Groovy DSL</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method GET()
+        url '/get'
+    }
+    response {
+        status 200
+        body 'Passed'
+        fixedDelayMilliseconds 1000
+    }
+}</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>YAML</title>
+<para>
+<programlisting language="yml" linenumbering="unnumbered">response:
+    fixedDelayMilliseconds: 1000</programlisting>
 </para>
 </formalpara>
 </section>
