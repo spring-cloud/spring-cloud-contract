@@ -42,7 +42,7 @@ import spock.util.concurrent.PollingConditions
 /**
  * @author Marcin Grzejszczak
  */
-//TODO: Speed up this test somehow
+//TODO: Speed up this test somehow (move it out of Spring Cloud Contract core to samples)
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.cloud.eureka.enabled=true",

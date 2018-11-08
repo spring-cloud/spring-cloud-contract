@@ -24,7 +24,12 @@ class StubRunnerIntegrationTransformerSpec extends Specification {
 
 	def 'should not transform the message if there is no output message'() {
 		given:
-			StubRunnerIntegrationTransformer transformer = new StubRunnerIntegrationTransformer(noOutputMessageContract)
+			StubRunnerIntegrationTransformer transformer = new StubRunnerIntegrationTransformer(noOutputMessageContract) {
+				@Override
+				Contract matchingContract(Message<?> source) {
+					return noOutputMessageContract
+				}
+			}
 		when:
 			def result = transformer.transform(message)
 		then:
@@ -55,7 +60,12 @@ class StubRunnerIntegrationTransformerSpec extends Specification {
 
 	def 'should convert dsl into message'() {
 		given:
-			StubRunnerIntegrationTransformer transformer = new StubRunnerIntegrationTransformer(dsl)
+			StubRunnerIntegrationTransformer transformer = new StubRunnerIntegrationTransformer(dsl) {
+				@Override
+				Contract matchingContract(Message<?> source) {
+					return dsl
+				}
+			}
 		when:
 			def result = transformer.transform(message)
 		then:
@@ -86,7 +96,12 @@ class StubRunnerIntegrationTransformerSpec extends Specification {
 
 	def 'should convert dsl into message with regex in GString'() {
 		given:
-			StubRunnerIntegrationTransformer transformer = new StubRunnerIntegrationTransformer(dslWithRegexInGString)
+			StubRunnerIntegrationTransformer transformer = new StubRunnerIntegrationTransformer(dslWithRegexInGString) {
+				@Override
+				Contract matchingContract(Message<?> source) {
+					return dslWithRegexInGString
+				}
+			}
 		when:
 			def result = transformer.transform(message)
 		then:

@@ -55,7 +55,12 @@ class StubRunnerStreamTransformerSpec extends Specification {
 
 	def 'should convert dsl into message'() {
 		given:
-			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(dsl)
+			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(dsl) {
+				@Override
+				Contract matchingContract(Message<?> source) {
+					return dsl
+				}
+			}
 		when:
 			def result = streamTransformer.transform(message)
 		then:
@@ -86,7 +91,12 @@ class StubRunnerStreamTransformerSpec extends Specification {
 
 	def 'should convert dsl into message with regex in GString'() {
 		given:
-			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(dslWithRegexInGString)
+			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(dslWithRegexInGString) {
+				@Override
+				Contract matchingContract(Message<?> source) {
+					return dslWithRegexInGString
+				}
+			}
 		when:
 			def result = streamTransformer.transform(message)
 		then:
@@ -122,7 +132,12 @@ class StubRunnerStreamTransformerSpec extends Specification {
 					)
 				}
 			}
-			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(contract)
+			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(contract) {
+				@Override
+				Contract matchingContract(Message<?> source) {
+					return contract
+				}
+			}
 		when:
 			def result = streamTransformer.transform(message)
 		then:

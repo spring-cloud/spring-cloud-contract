@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -32,23 +34,35 @@ import org.springframework.messaging.support.MessageBuilder;
  */
 class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Message<?>> {
 
-	private final Contract groovyDsl;
+	private final StubRunnerStreamMessageSelector selector;
 
 	StubRunnerStreamTransformer(Contract groovyDsl) {
-		this.groovyDsl = groovyDsl;
+		this(Collections.singletonList(groovyDsl));
+	}
+
+	StubRunnerStreamTransformer(List<Contract> groovyDsls) {
+		this.selector = new StubRunnerStreamMessageSelector(groovyDsls);
 	}
 
 	@Override
 	public Message<?> transform(Message<?> source) {
-		if (this.groovyDsl.getOutputMessage() == null) {
+		Contract groovyDsl = matchingContract(source);
+		if (groovyDsl == null || groovyDsl.getOutputMessage() == null) {
 			return source;
 		}
 		String payload = BodyExtractor
-				.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody());
-		Map<String, Object> headers = this.groovyDsl.getOutputMessage().getHeaders()
+				.extractStubValueFrom(groovyDsl.getOutputMessage().getBody());
+		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders()
 				.asStubSideMap();
-		return MessageBuilder.createMessage(payload.getBytes(),
-				new MessageHeaders(headers));
+		MessageHeaders messageHeaders = new MessageHeaders(headers);
+		Message<byte[]> message = MessageBuilder.createMessage(payload.getBytes(),
+				messageHeaders);
+		this.selector.updateCache(message, groovyDsl);
+		return message;
+	}
+
+	Contract matchingContract(Message<?> source) {
+		return this.selector.matchingContract(source);
 	}
 
 }

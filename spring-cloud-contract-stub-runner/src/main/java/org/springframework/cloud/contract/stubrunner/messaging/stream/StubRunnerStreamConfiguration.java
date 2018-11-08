@@ -17,12 +17,15 @@
 package org.springframework.cloud.contract.stubrunner.messaging.stream;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -46,6 +49,8 @@ import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.transformer.MessageTransformingHandler;
 import org.springframework.messaging.Message;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 /**
@@ -69,11 +74,15 @@ public class StubRunnerStreamConfiguration {
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
 				.getContracts();
+		IntegrationFlowBuilder dummyBuilder = IntegrationFlows.from(DummyMessageHandler.CHANNEL_NAME)
+				.handle(new DummyMessageHandler(), "handle");
+		beanFactory.initializeBean(dummyBuilder.get(), DummyMessageHandler.CHANNEL_NAME + ".flow");
 		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
 				.entrySet()) {
 			StubConfiguration key = entry.getKey();
 			Collection<Contract> value = entry.getValue();
 			String name = key.getGroupId() + "_" + key.getArtifactId();
+			MultiValueMap<String, Contract> map = new LinkedMultiValueMap<>();
 			for (Contract dsl : value) {
 				if (dsl == null) {
 					continue;
@@ -81,38 +90,9 @@ public class StubRunnerStreamConfiguration {
 				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
 						&& StringUtils.hasText(
 								dsl.getInput().getMessageFrom().getClientValue())) {
-					final String flowName = name + "_" + dsl.getLabel() + "_"
-							+ dsl.hashCode();
 					String from = resolvedDestination(beanFactory,
 							dsl.getInput().getMessageFrom().getClientValue());
-					IntegrationFlowBuilder builder = IntegrationFlows.from(from)
-							.filter(new StubRunnerStreamMessageSelector(dsl),
-									new Consumer<FilterEndpointSpec>() {
-										@Override
-										public void accept(FilterEndpointSpec e) {
-											e.id(flowName + ".filter");
-										}
-									})
-							.transform(new StubRunnerStreamTransformer(dsl),
-									new Consumer<GenericEndpointSpec<MessageTransformingHandler>>() {
-										@Override
-										public void accept(
-												GenericEndpointSpec<MessageTransformingHandler> e) {
-											e.id(flowName + ".transformer");
-										}
-									});
-					if (dsl.getOutputMessage() != null
-							&& dsl.getOutputMessage().getSentTo() != null) {
-						builder = builder.channel(resolvedDestination(beanFactory,
-								dsl.getOutputMessage().getSentTo().getClientValue()));
-					}
-					else {
-						builder = builder.handle(new DummyMessageHandler(), "handle");
-					}
-					beanFactory.initializeBean(builder.get(), flowName);
-					beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
-					beanFactory.getBean(flowName + ".transformer", Lifecycle.class)
-							.start();
+					map.add(from, dsl);
 				}
 				else if (dsl.getOutputMessage() != null
 						&& dsl.getOutputMessage().getSentTo() != null
@@ -124,11 +104,37 @@ public class StubRunnerStreamConfiguration {
 							dsl.getOutputMessage().getSentTo().getClientValue());
 				}
 			}
+			for (Entry<String, List<Contract>> entries : map.entrySet()) {
+				final String flowName = name + "_" + entries.getKey() + "_"
+						+ entries.getValue().hashCode();
+				IntegrationFlowBuilder builder = IntegrationFlows.from(entries.getKey())
+						.filter(new StubRunnerStreamMessageSelector(entries.getValue()),
+								new Consumer<FilterEndpointSpec>() {
+									@Override
+									public void accept(FilterEndpointSpec e) {
+										e.id(flowName + ".filter");
+									}
+								})
+						.transform(new StubRunnerStreamTransformer(entries.getValue()),
+								new Consumer<GenericEndpointSpec<MessageTransformingHandler>>() {
+									@Override
+									public void accept(
+											GenericEndpointSpec<MessageTransformingHandler> e) {
+										e.id(flowName + ".transformer");
+									}
+								})
+						.route(new StubRunnerMessageRouter(entries.getValue(), beanFactory));
+				beanFactory.initializeBean(builder.get(), flowName);
+				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
+				beanFactory.getBean(flowName + ".transformer", Lifecycle.class)
+						.start();
+			}
+
 		}
 		return new FlowRegistrar();
 	}
 
-	private String resolvedDestination(AutowireCapableBeanFactory context,
+	static String resolvedDestination(BeanFactory context,
 			String destination) {
 		Map<String, BindingProperties> bindings = bindingProperties(context);
 		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
@@ -147,12 +153,13 @@ public class StubRunnerStreamConfiguration {
 		return destination;
 	}
 
-	private Map<String, BindingProperties> bindingProperties(
-			AutowireCapableBeanFactory context) {
+	private static Map<String, BindingProperties> bindingProperties(BeanFactory context) {
 		return context.getBean(BindingServiceProperties.class).getBindings();
 	}
 
-	private static class DummyMessageHandler {
+	static class DummyMessageHandler {
+
+		static String CHANNEL_NAME = "stub_runner_dummy_channel";
 
 		public void handle(Message<?> message) {
 		}
