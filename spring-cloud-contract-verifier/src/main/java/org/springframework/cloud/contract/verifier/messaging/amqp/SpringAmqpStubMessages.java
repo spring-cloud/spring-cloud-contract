@@ -76,7 +76,7 @@ public class SpringAmqpStubMessages implements
 				.withBody(((String) payload).getBytes())
 				.andProperties(
 						MessagePropertiesBuilder.newInstance()
-								.setContentType((String) headers.get("contentType"))
+								.setContentType(header(headers, "contentType"))
 								.copyHeaders(headers).build())
 				.build();
 		if (headers != null && headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
@@ -84,9 +84,23 @@ public class SpringAmqpStubMessages implements
 		}
 		if (headers != null && headers.containsKey(AmqpHeaders.RECEIVED_ROUTING_KEY)) {
 			message.getMessageProperties()
-					.setReceivedRoutingKey((String) headers.get(AmqpHeaders.RECEIVED_ROUTING_KEY));
+					.setReceivedRoutingKey(header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
 		}
 		send(message, destination);
+	}
+
+	private String header(Map<String, Object> headers, String headerName) {
+		if (headers == null) {
+			return "";
+		}
+		Object value = headers.get(headerName);
+		if (value instanceof String) {
+			return (String) value;
+		} else if (value instanceof Iterable) {
+			Iterable values = ((Iterable) value);
+			return values.iterator().hasNext() ? (String) values.iterator().next() : "";
+		}
+		return value.toString();
 	}
 
 	@Override
