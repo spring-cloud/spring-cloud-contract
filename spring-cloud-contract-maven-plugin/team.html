@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20181108" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Spring Cloud Contract Maven Plugin &#x2013; Plugin Documentation</title>
+    <title>Spring Cloud Contract Maven Plugin &#x2013; Project Team</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -179,10 +179,12 @@
         Usage</a>
             </li>
                 
-      <li class="active">
+      <li>
   
-            <a href="#"><span class="none"></span>Goals</a>
-          </li>
+                          <a href="plugin-info.html" title="Goals">
+          <span class="none"></span>
+        Goals</a>
+            </li>
                 
       <li>
   
@@ -220,34 +222,83 @@
         Spring Cloud Contract</a>
             </li>
                               <li class="nav-header">Project Documentation</li>
-                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                          
       <li>
   
                           <a href="project-info.html" title="Project Information">
-          <span class="icon-chevron-right"></span>
-        Project Information</a>
-                  </li>
-                                                                                              
-      <li>
-  
-                          <a href="project-reports.html" title="Project Reports">
           <span class="icon-chevron-down"></span>
-        Project Reports</a>
+        Project Information</a>
                     <ul class="nav nav-list">
                     
       <li>
   
-                          <a href="checkstyle.html" title="Checkstyle">
+                          <a href="ci-management.html" title="CI Management">
           <span class="none"></span>
-        Checkstyle</a>
+        CI Management</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="index.html" title="About">
+          <span class="none"></span>
+        About</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="issue-management.html" title="Issue Management">
+          <span class="none"></span>
+        Issue Management</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="licenses.html" title="Licenses">
+          <span class="none"></span>
+        Licenses</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="plugin-management.html" title="Plugin Management">
+          <span class="none"></span>
+        Plugin Management</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="plugins.html" title="Plugins">
+          <span class="none"></span>
+        Plugins</a>
             </li>
                     
       <li class="active">
   
-            <a href="#"><span class="none"></span>Plugin Documentation</a>
+            <a href="#"><span class="none"></span>Team</a>
           </li>
+                    
+      <li>
+  
+                          <a href="scm.html" title="Source Code Management">
+          <span class="none"></span>
+        Source Code Management</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="summary.html" title="Summary">
+          <span class="none"></span>
+        Summary</a>
+            </li>
               </ul>
         </li>
+                                                                                    
+      <li>
+  
+                          <a href="project-reports.html" title="Project Reports">
+          <span class="icon-chevron-right"></span>
+        Project Reports</a>
+                  </li>
             </ul>
               
                 
@@ -269,86 +320,36 @@
         <div id="bodyColumn"  class="span10" >
                                   
             <div class="section">
-<h2><a name="Plugin_Documentation"></a>Plugin Documentation</h2><a name="Plugin_Documentation"></a>
-<p>Goals available for this plugin:</p>
+<h2><a name="Project_Team"></a>Project Team</h2><a name="Project_Team"></a>
+<p>A successful project requires many people to play many roles. Some members write code or documentation, while others are valuable as testers, submitting patches and suggestions.</p>
+<p>The project team is comprised of Members and Contributors. Members have direct access to the source of a project and actively evolve the code-base. Contributors improve the project through submission of patches and suggestions to the Members. The number of Contributors to the project is unbounded. Get involved today. All contributions to the project are greatly appreciated.</p>
+<div class="section">
+<h3><a name="Members"></a>Members</h3><a name="Members"></a>
+<p>The following is a list of developers with commit privileges that have directly contributed to the project in one way or another.</p>
 <table border="0" class="table table-striped">
 <tr class="a">
-<th>Goal</th>
-<th>Description</th></tr>
+<th>Image</th>
+<th>Id</th>
+<th>Name</th>
+<th>Email</th></tr>
 <tr class="b">
-<td><a href="convert-mojo.html">spring-cloud-contract:convert</a></td>
-<td>Convert Spring Cloud Contract Verifier contracts into WireMock
-stubs mappings. 
-<p>This goal allows you to generate `stubs-jar` or execute
-`spring-cloud-contract:run` with generated WireMock mappings.</p></td></tr>
+<td><img src="https://www.gravatar.com/avatar/cbbca82404e50c3e504384568456197a?d=mm&amp;s=60" alt="" /></td>
+<td><a name="mariuszs"></a>mariuszs</td>
+<td>Mariusz Smykula</td>
+<td><a href="mariuszs@gmail.com">mariuszs@gmail.com</a></td></tr>
 <tr class="a">
-<td><a href="generateStubs-mojo.html">spring-cloud-contract:generateStubs</a></td>
-<td>Picks the converted .json files and creates a jar. Requires convert
-to be executed first</td></tr>
+<td><img src="https://www.gravatar.com/avatar/b7639ec84d2cddb7acb11672403edac5?d=mm&amp;s=60" alt="" /></td>
+<td><a name="marcingrzejszczak"></a>marcingrzejszczak</td>
+<td>Marcin Grzejszczak</td>
+<td><a href="mgrzejszczak@pivotal.io">mgrzejszczak@pivotal.io</a></td></tr>
 <tr class="b">
-<td><a href="generateTests-mojo.html">spring-cloud-contract:generateTests</a></td>
-<td>From the provided directory with contracts generates the acceptance
-tests on the producer side</td></tr>
-<tr class="a">
-<td><a href="help-mojo.html">spring-cloud-contract:help</a></td>
-<td>Display help information on
-spring-cloud-contract-maven-plugin.<br />
-Call <code>mvn spring-cloud-contract:help -Ddetail=true
--Dgoal=&lt;goal-name&gt;</code> to display parameter details.</td></tr>
-<tr class="b">
-<td><a href="pushStubsToScm-mojo.html">spring-cloud-contract:pushStubsToScm</a></td>
-<td>The generated stubs get committed to the SCM repo and pushed to
-origin.</td></tr>
-<tr class="a">
-<td><a href="run-mojo.html">spring-cloud-contract:run</a></td>
-<td>No description.</td></tr></table>
+<td><img src="https://www.gravatar.com/avatar/035ae18f5f948ab3c8a5cbf40bbea383?d=mm&amp;s=60" alt="" /></td>
+<td><a name="dsyer"></a>dsyer</td>
+<td>David Syer</td>
+<td><a href="dsyer@pivotal.io">dsyer@pivotal.io</a></td></tr></table></div>
 <div class="section">
-<h3><a name="System_Requirements"></a>System Requirements</h3><a name="System_Requirements"></a>
-<p>The following specifies the minimum requirements to run this Maven plugin:</p>
-<table border="0" class="table table-striped">
-<tr class="a">
-<td>Maven</td>
-<td>3.2.5</td></tr>
-<tr class="b">
-<td>JDK</td>
-<td>1.8</td></tr>
-<tr class="a">
-<td>Memory</td>
-<td>No minimum requirement.</td></tr>
-<tr class="b">
-<td>Disk Space</td>
-<td>No minimum requirement.</td></tr></table></div>
-<div class="section">
-<h3><a name="Usage"></a>Usage</h3><a name="Usage"></a>
-<p>You should specify the version in your project's plugin configuration:</p>
-<div class="source"><pre class="prettyprint">&lt;project&gt;
-  ...
-  &lt;build&gt;
-    &lt;!-- To define the plugin version in your parent POM --&gt;
-    &lt;pluginManagement&gt;
-      &lt;plugins&gt;
-        &lt;plugin&gt;
-          &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-          &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-          &lt;version&gt;2.1.0.BUILD-SNAPSHOT&lt;/version&gt;
-        &lt;/plugin&gt;
-        ...
-      &lt;/plugins&gt;
-    &lt;/pluginManagement&gt;
-    &lt;!-- To use the plugin goals in your POM or parent POM --&gt;
-    &lt;plugins&gt;
-      &lt;plugin&gt;
-        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-        &lt;version&gt;2.1.0.BUILD-SNAPSHOT&lt;/version&gt;
-      &lt;/plugin&gt;
-      ...
-    &lt;/plugins&gt;
-  &lt;/build&gt;
-  ...
-&lt;/project&gt;
-</pre></div>
-<p>For more information, see <a class="externalLink" href="http://maven.apache.org/guides/mini/guide-configuring-plugins.html">&quot;Guide to Configuring Plug-ins&quot;</a></p></div></div>
+<h3><a name="Contributors"></a>Contributors</h3><a name="Contributors"></a>
+<p>There are no contributors listed for this project. Please check back again later.</p></div></div>
                   </div>
             </div>
           </div>
