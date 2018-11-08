@@ -52,6 +52,7 @@ response:
 #tag::response_obligatory[]
   status: 200
 #end::response_obligatory[]
+  fixedDelayMilliseconds: 1000
   headers:
     foo2: bar
     foo3: foo33
