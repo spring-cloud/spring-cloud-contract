@@ -50,3 +50,4 @@ public interface MessageVerifier<M> {
 	 */
 	M receive(String destination);
 }
+
