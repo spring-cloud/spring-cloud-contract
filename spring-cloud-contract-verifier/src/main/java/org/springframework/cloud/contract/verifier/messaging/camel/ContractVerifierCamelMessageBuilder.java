@@ -36,7 +36,9 @@ class ContractVerifierCamelMessageBuilder {
 	public <T> Message create(T payload, Map<String, Object> headers) {
 		DefaultMessage message = new DefaultMessage(this.context);
 		message.setBody(payload);
-		message.setHeaders(headers);
+		if (headers != null) {
+			message.setHeaders(headers);
+		}
 		return message;
 	}
 
