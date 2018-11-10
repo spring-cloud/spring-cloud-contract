@@ -22,7 +22,6 @@ import au.com.dius.pact.model.v3.messaging.MessagePact
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
-
 /**
  * Converter of JSON PACT file
  *
@@ -33,11 +32,10 @@ import org.springframework.cloud.contract.spec.ContractConverter
 @CompileStatic
 class PactContractConverter implements ContractConverter<Collection<Pact>> {
 
-	private RequestResponseSCContractCreator requestResponseSCContractCreator = new RequestResponseSCContractCreator()
-	private MessagingSCContractCreator messagingSCContractCreator = new MessagingSCContractCreator()
-
-	private RequestResponsePactCreator requestResponsePactCreator = new RequestResponsePactCreator()
-	private MessagePactCreator messagePactCreator = new MessagePactCreator()
+	private final RequestResponseSCContractCreator requestResponseSCContractCreator = new RequestResponseSCContractCreator()
+	private final MessagingSCContractCreator messagingSCContractCreator = new MessagingSCContractCreator()
+	private final RequestResponsePactCreator requestResponsePactCreator = new RequestResponsePactCreator()
+	private final MessagePactCreator messagePactCreator = new MessagePactCreator()
 
 	@Override
 	boolean isAccepted(File file) {
@@ -64,13 +62,14 @@ class PactContractConverter implements ContractConverter<Collection<Pact>> {
 	@Override
 	Collection<Pact> convertTo(Collection<Contract> contracts) {
 		List<Pact> pactContracts = new ArrayList<>()
-		for (Contract contract : contracts) {
-			if (contract.request) {
-				pactContracts.add(requestResponsePactCreator.createFromContract(contract))
-			}
-			if (contract.input) {
-				pactContracts.add(messagePactCreator.createFromContract(contract))
-			}
+		Map<String, List<Contract>> groupedContracts = contracts.groupBy { NamingUtil.name(it).toString() }
+		for (List<Contract> list : groupedContracts.values()) {
+			List<Contract> httpOnly = list.findAll { it.request }
+			List<Contract> messagingOnly = list.findAll { it.input }
+			RequestResponsePact responsePact = requestResponsePactCreator.createFromContract(httpOnly)
+			if (responsePact) pactContracts.add(responsePact)
+			MessagePact messagePact = messagePactCreator.createFromContract(messagingOnly)
+			if (messagePact) pactContracts.add(messagePact)
 		}
 		return pactContracts
 	}

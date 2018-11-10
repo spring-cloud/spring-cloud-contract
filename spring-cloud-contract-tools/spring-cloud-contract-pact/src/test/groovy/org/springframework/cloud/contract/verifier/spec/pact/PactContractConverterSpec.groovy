@@ -135,6 +135,7 @@ class PactContractConverterSpec extends Specification {
 		given:
 			Collection<Contract> inputContracts = [
 					Contract.make {
+						name("my_consumer___my_producer___testname")
 						description("a retrieve Mallory request")
 						request {
 							method(GET())
@@ -196,10 +197,10 @@ class PactContractConverterSpec extends Specification {
 		String expectedJson = '''
 {
   "provider": {
-    "name": "Provider"
+    "name": "my_producer"
   },
   "consumer": {
-    "name": "Consumer"
+    "name": "my_consumer"
   },
   "interactions": [
     {
@@ -400,6 +401,20 @@ class PactContractConverterSpec extends Specification {
 				println "File name [${it.key}]"
 				JSONAssert.assertEquals(jsonPacts.get(pactFileName), convertedPactAsText, true)
 			}
+	}
+
+	def "should convert contracts from grouped contracts to pacts"() {
+		given:
+			List<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(new File("/"),
+					new File("src/test/resources/contracts/grouped/shouldWorkWithBeer.groovy"))
+		when:
+			 Collection<Pact> pacts = converter.convertTo(contracts)
+		then:
+			pacts.size() == 1
+			String convertedPactAsText = JsonOutput.toJson(pacts.first().toMap(PactSpecVersion.V3))
+			JSONAssert.assertEquals(
+					new File("src/test/resources/contracts/grouped/shouldWorkWithBeer.json").text,
+					convertedPactAsText, false)
 	}
 
 	def "should convert from pact v2 to two SC contracts"() {
