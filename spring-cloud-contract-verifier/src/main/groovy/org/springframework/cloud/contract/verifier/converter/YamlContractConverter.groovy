@@ -16,9 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
-
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
-
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 /**
@@ -32,6 +31,7 @@ import org.springframework.cloud.contract.spec.ContractConverter
 class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 
 	public static final YamlContractConverter INSTANCE = new YamlContractConverter()
+	private final YAMLMapper mapper = new YAMLMapper()
 	private final YamlToContracts yamlToContracts = new YamlToContracts()
 	private final ContractsToYaml contractsToYaml = new ContractsToYaml()
 
@@ -49,5 +49,18 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 	@Override
 	List<YamlContract> convertTo(Collection<Contract> contracts) {
 		return this.contractsToYaml.convertTo(contracts)
+	}
+
+	@Override
+	Map<String, String> storeAsString(List<YamlContract> contracts) {
+		return contracts.collectEntries {
+			return [(name(it)) :
+							this.mapper.writeValueAsString(it)]
+		}
+	}
+
+	protected String name(YamlContract contract) {
+		return (contract.name ?:
+				String.valueOf(Math.abs(contract.hashCode()))) + ".yml"
 	}
 }

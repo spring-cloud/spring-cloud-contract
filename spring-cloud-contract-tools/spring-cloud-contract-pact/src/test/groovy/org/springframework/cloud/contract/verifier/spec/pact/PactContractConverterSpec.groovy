@@ -417,6 +417,23 @@ class PactContractConverterSpec extends Specification {
 					convertedPactAsText, false)
 	}
 
+	def "should convert pacts to strings"() {
+		given:
+			List<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(new File("/"),
+					new File("src/test/resources/contracts/grouped/shouldWorkWithBeer.groovy"))
+		and:
+			 Collection<Pact> pacts = converter.convertTo(contracts)
+		when:
+			Map<String, String> strings = converter.storeAsString(pacts)
+		then:
+			strings.size() == 1
+			strings.keySet().first().startsWith("10-04-pact-consumer_10-05-pact-producer_")
+			strings.keySet().first().endsWith(".json")
+			JSONAssert.assertEquals(
+					new File("src/test/resources/contracts/grouped/shouldWorkWithBeer.json").text,
+					strings.values().first(), false)
+	}
+
 	def "should convert from pact v2 to two SC contracts"() {
 		given:
 			Collection<Contract> expectedContracts = [

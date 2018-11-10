@@ -34,8 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
-import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
-import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter;
+import org.springframework.cloud.contract.verifier.util.ContractScanner;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
@@ -157,50 +156,11 @@ class StubRepository {
 	}
 
 	private Collection<Contract> contractDescriptors() {
-		return (this.path.exists() ? collectContractDescriptors(this.path)
+		return (this.path.exists() ?
+				ContractScanner.collectContractDescriptors(this.path, this::isStubPerConsumerPathMatching)
 				: Collections.<Contract>emptySet());
 	}
 
-	@SuppressWarnings("unchecked")
-	private Collection<Contract> collectContractDescriptors(
-			final File descriptorsDirectory) {
-		final List<Contract> contractDescriptors = new ArrayList<>();
-		try {
-			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
-					new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult visitFile(Path path,
-								BasicFileAttributes attrs) throws IOException {
-							File file = path.toFile();
-							ContractConverter converter = contractConverter(file);
-							if (isStubPerConsumerPathMatching(file)) {
-								if (isContractDescriptor(file)) {
-									contractDescriptors
-											.addAll(ContractVerifierDslConverter
-													.convertAsCollection(
-															file.getParentFile(), file));
-								}
-								else if (converter != null
-										&& converter.isAccepted(file)) {
-									contractDescriptors
-											.addAll(converter.convertFrom(file));
-								}
-								else if (YamlContractConverter.INSTANCE
-										.isAccepted(file)) {
-									contractDescriptors
-											.addAll(YamlContractConverter.INSTANCE
-													.convertFrom(file));
-								}
-							}
-							return super.visitFile(path, attrs);
-						}
-					});
-		}
-		catch (IOException e) {
-			log.warn("Exception occurred while trying to parse file", e);
-		}
-		return contractDescriptors;
-	}
 
 	private boolean isStubPerConsumerPathMatching(File file) {
 		if (!this.options.isStubsPerConsumer()) {
@@ -216,11 +176,6 @@ class StubRepository {
 					+ "]");
 		}
 		return stubPerConsumerMatching;
-	}
-
-	private static boolean isContractDescriptor(File file) {
-		// TODO: Consider script injections implications...
-		return file.isFile() && file.getName().endsWith(".groovy");
 	}
 
 }

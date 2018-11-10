@@ -16,23 +16,20 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
-import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.QueryParameters
-import spock.lang.Issue
-
-import java.util.regex.Pattern
-
-import spock.lang.Shared
-import spock.lang.Specification
-
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.util.MapConverter
+import spock.lang.Issue
+import spock.lang.Shared
+import spock.lang.Specification
 
+import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
@@ -536,6 +533,104 @@ class YamlContractConverterSpec extends Specification {
 		and:
 			contracts.first().request.url.clientValue == "/users/1"
 			contracts.last().request.url.clientValue == "/users/2"
+	}
+
+	def "should dump yml as string"() {
+		given:
+			String expectedYaml1 = '''\
+---
+request:
+  method: "POST"
+  url: "/users/1"
+  urlPath: null
+  queryParameters: {}
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  matchers:
+    url: null
+    body: []
+    headers: []
+    queryParameters: []
+    cookies: []
+    multipart: null
+  multipart: null
+response:
+  status: 200
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  matchers:
+    body: []
+    headers: []
+    cookies: []
+  async: null
+  fixedDelayMilliseconds: null
+input: null
+outputMessage: null
+description: null
+label: null
+name: "post1"
+priority: null
+ignored: false
+'''
+			String expectedYaml2 = '''\
+---
+request:
+  method: "POST"
+  url: "/users/2"
+  urlPath: null
+  queryParameters: {}
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  matchers:
+    url: null
+    body: []
+    headers: []
+    queryParameters: []
+    cookies: []
+    multipart: null
+  multipart: null
+response:
+  status: 200
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  matchers:
+    body: []
+    headers: []
+    cookies: []
+  async: null
+  fixedDelayMilliseconds: null
+input: null
+outputMessage: null
+description: null
+label: null
+name: "post2"
+priority: null
+ignored: false
+'''
+		when:
+			Map<String, String> strings = converter.storeAsString([
+			        new YamlContract(
+							name: "post1",
+							request: new YamlContract.Request(method: "POST", url: "/users/1"),
+							response: new YamlContract.Response(status: 200)
+					),new YamlContract(
+							name: "post2",
+							request: new YamlContract.Request(method: "POST", url: "/users/2"),
+							response: new YamlContract.Response(status: 200)
+					),
+			])
+		then:
+			strings.size() == 2
+			strings["post1.yml"].trim() == expectedYaml1.trim()
+			strings["post2.yml"].trim() == expectedYaml2.trim()
 	}
 
 	def "should parse messaging contract for [#file]"() {

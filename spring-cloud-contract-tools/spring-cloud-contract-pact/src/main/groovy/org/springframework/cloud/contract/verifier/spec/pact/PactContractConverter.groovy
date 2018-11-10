@@ -17,8 +17,10 @@ package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactReader
+import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.model.RequestResponsePact
 import au.com.dius.pact.model.v3.messaging.MessagePact
+import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
@@ -72,5 +74,16 @@ class PactContractConverter implements ContractConverter<Collection<Pact>> {
 			if (messagePact) pactContracts.add(messagePact)
 		}
 		return pactContracts
+	}
+
+	@Override
+	Map<String, String> storeAsString(Collection<Pact> contracts) {
+		return contracts.collectEntries {
+			return [(name(it)) : JsonOutput.prettyPrint(JsonOutput.toJson(it.toMap(PactSpecVersion.V3)))]
+		}
+	}
+
+	protected String name(Pact contract) {
+		return contract.consumer.name + "_" + contract.provider.name + "_" + String.valueOf(Math.abs(contract.hashCode())) + ".json"
 	}
 }
