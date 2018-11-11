@@ -13,7 +13,7 @@ class ExtensionToProperties {
 
 	protected static ContractVerifierConfigProperties fromExtension(ContractVerifierExtension extension) {
 		return new ContractVerifierConfigProperties(
-				targetFramework: extension.getTestFramework(),
+				testFramework: extension.getTestFramework(),
 				testMode: extension.getTestMode(),
 				basePackageForTests: extension.getBasePackageForTests(),
 				baseClassForTests: extension.getBaseClassForTests(),
