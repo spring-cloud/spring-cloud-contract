@@ -8909,7 +8909,7 @@ structure converter. The following code listing shows the <literal>ContractConve
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-interface ContractConverter&lt;T&gt; {
+interface ContractConverter&lt;T&gt; extends ContractStorer&lt;T&gt; {
 
 	/**
 	 * Should this file be accepted by the converter. Can use the file extension

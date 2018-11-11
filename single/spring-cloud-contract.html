@@ -5552,7 +5552,7 @@ structure converter. The following code listing shows the <code class="literal">
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */</strong>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> ContractConverter&lt;T&gt; {
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> ContractConverter&lt;T&gt; <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> ContractStorer&lt;T&gt; {
 
 	<strong class="hl-tag" style="color: blue">/**
 	 * Should this file be accepted by the converter. Can use the file extension
