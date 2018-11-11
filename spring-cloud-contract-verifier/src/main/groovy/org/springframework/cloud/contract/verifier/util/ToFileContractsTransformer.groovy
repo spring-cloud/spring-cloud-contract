@@ -46,6 +46,7 @@ final class ToFileContractsTransformer {
 		if (args.length == 0) {
 			throw new IllegalStateException(exceptionMessage())
 		}
+		log.warn("You're using an incubating feature. Note, that it can be changed / removed in the future")
 		String fqn = args[0]
 		String outputPath = args.length >= 2 ? args[1] : "target/converted-contracts"
 		String path = args.length >= 3 ? args[2] : "src/test/resources/contracts"
