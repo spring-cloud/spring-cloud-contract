@@ -64,9 +64,7 @@ class GradleContractsDownloader {
 	}
 
 	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
-		return [StubRunnerProperties.StubsMode.LOCAL, StubRunnerProperties.StubsMode.REMOTE].any {
-			it == extension.contractsMode } && (StringUtils.hasText(extension.contractDependency.artifactId) ||
-						StringUtils.hasText(extension.contractDependency.stringNotation))
+		return extension.contractsMode != StubRunnerProperties.StubsMode.CLASSPATH
 	}
 
 	protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
