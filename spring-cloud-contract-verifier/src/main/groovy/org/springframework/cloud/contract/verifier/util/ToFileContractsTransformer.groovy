@@ -75,16 +75,16 @@ final class ToFileContractsTransformer {
 			ContractConverter<Collection> contractConverter = (ContractConverter) name.newInstance()
 			Collection converted = contractConverter.convertTo(contracts)
 			log.info("Successfully converted contracts definitions")
-			Map<String, String> stored = contractConverter.storeAsString(converted)
+			Map<String, byte[]> stored = contractConverter.store(converted)
 			File outputFolder = new File(outputPath)
 			outputFolder.mkdirs()
 			int i = 1
-			Set<Map.Entry<String, String>> entries = stored.entrySet()
+			Set<Map.Entry<String, byte[]>> entries = stored.entrySet()
 			log.info("Will convert [" + entries.size() + "] contracts")
 			List<File> files = new ArrayList<>()
-			for (Map.Entry<String, String> entry : entries) {
+			for (Map.Entry<String, byte[]> entry : entries) {
 				File outputFile = new File(outputFolder, entry.getKey())
-				Files.write(outputFile.toPath(), entry.getValue().getBytes())
+				Files.write(outputFile.toPath(), entry.getValue())
 				log.info("[" + i + "/" + entries.size() + "] Successfully stored [" + outputFile.getName() + "]")
 				files.add(outputFile)
 			}

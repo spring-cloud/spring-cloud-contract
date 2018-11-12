@@ -616,7 +616,7 @@ priority: null
 ignored: false
 '''
 		when:
-			Map<String, String> strings = converter.storeAsString([
+			Map<String, byte[]> strings = converter.store([
 			        new YamlContract(
 							name: "post1",
 							request: new YamlContract.Request(method: "POST", url: "/users/1"),
@@ -629,8 +629,8 @@ ignored: false
 			])
 		then:
 			strings.size() == 2
-			strings["post1.yml"].trim() == expectedYaml1.trim()
-			strings["post2.yml"].trim() == expectedYaml2.trim()
+			new String(strings["post1.yml"]).trim() == expectedYaml1.trim()
+			new String(strings["post2.yml"]).trim() == expectedYaml2.trim()
 	}
 
 	def "should parse messaging contract for [#file]"() {

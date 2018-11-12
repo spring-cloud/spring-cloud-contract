@@ -424,14 +424,14 @@ class PactContractConverterSpec extends Specification {
 		and:
 			 Collection<Pact> pacts = converter.convertTo(contracts)
 		when:
-			Map<String, String> strings = converter.storeAsString(pacts)
+			Map<String, byte[]> strings = converter.store(pacts)
 		then:
 			strings.size() == 1
 			strings.keySet().first().startsWith("10-04-pact-consumer_10-05-pact-producer_")
 			strings.keySet().first().endsWith(".json")
 			JSONAssert.assertEquals(
 					new File("src/test/resources/contracts/grouped/shouldWorkWithBeer.json").text,
-					strings.values().first(), false)
+					new String(strings.values().first()), false)
 	}
 
 	def "should convert from pact v2 to two SC contracts"() {

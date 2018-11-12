@@ -52,10 +52,10 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 	}
 
 	@Override
-	Map<String, String> storeAsString(List<YamlContract> contracts) {
+	Map<String, byte[]> store(List<YamlContract> contracts) {
 		return contracts.collectEntries {
 			return [(name(it)) :
-							this.mapper.writeValueAsString(it)]
+							this.mapper.writeValueAsString(it).bytes]
 		}
 	}
 

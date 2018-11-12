@@ -77,9 +77,9 @@ class PactContractConverter implements ContractConverter<Collection<Pact>> {
 	}
 
 	@Override
-	Map<String, String> storeAsString(Collection<Pact> contracts) {
+	Map<String, byte[]> store(Collection<Pact> contracts) {
 		return contracts.collectEntries {
-			return [(name(it)) : JsonOutput.prettyPrint(JsonOutput.toJson(it.toMap(PactSpecVersion.V3)))]
+			return [(name(it)) : JsonOutput.prettyPrint(JsonOutput.toJson(it.toMap(PactSpecVersion.V3))).bytes]
 		}
 	}
 
