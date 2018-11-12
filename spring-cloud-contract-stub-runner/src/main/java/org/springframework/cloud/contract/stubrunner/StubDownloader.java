@@ -33,8 +33,11 @@ public interface StubDownloader {
 
 	/**
 	 * Returns a mapping of updated StubConfiguration (it will contain the resolved
-	 * version) and the location of the downloaded JAR. If there was no artifact this
+	 * version) and the location of the downloaded stubs. If there was no artifact this
 	 * method will return {@code null}.
+	 *
+	 * Note: Actually the artifact doesn't have to be a JAR. method name contains that suffix
+	 * or historical reasons.
 	 */
 	Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration);
