@@ -600,7 +600,7 @@ class SingleTestGeneratorSpec extends Specification {
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
 					basePackageForTests: 'a.b',
 					generatedTestSourcesDir:  temp
 			)
@@ -625,7 +625,7 @@ class SingleTestGeneratorSpec extends Specification {
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
 					basePackageForTests: 'a.b', generatedTestSourcesDir: temp
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
@@ -649,7 +649,7 @@ class SingleTestGeneratorSpec extends Specification {
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
 					baseClassForTests: 'a.b.SomeClass', generatedTestSourcesDir: temp
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
@@ -673,7 +673,7 @@ class SingleTestGeneratorSpec extends Specification {
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
 					packageWithBaseClasses: 'a.b', generatedTestSourcesDir: temp
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
@@ -697,7 +697,7 @@ class SingleTestGeneratorSpec extends Specification {
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
 					generatedTestSourcesDir:  temp
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)

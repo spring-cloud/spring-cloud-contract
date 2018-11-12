@@ -135,7 +135,7 @@ class TestGenerator {
 	}
 
 	private String resolveNameSuffix() {
-		return configProperties.nameSuffixForTests ?: configProperties.targetFramework.classNameSuffix
+		return configProperties.nameSuffixForTests ?: configProperties.testFramework.classNameSuffix
 	}
 
 	protected static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {

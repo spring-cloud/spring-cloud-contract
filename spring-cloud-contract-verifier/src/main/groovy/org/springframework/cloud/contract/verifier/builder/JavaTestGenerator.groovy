@@ -64,8 +64,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 			}
 		}
 		if (isScenarioClass(listOfFiles)) {
-			clazz.addImports(configProperties.targetFramework.getOrderAnnotationImports())
-			clazz.addClassLevelAnnotation(configProperties.targetFramework.getOrderAnnotation())
+			clazz.addImports(configProperties.testFramework.getOrderAnnotationImports())
+			clazz.addClassLevelAnnotation(configProperties.testFramework.getOrderAnnotation())
 		}
 		addJsonPathRelatedImports(clazz)
 		processContractFiles(listOfFiles, configProperties, clazz)
@@ -79,8 +79,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 		boolean toIgnore = listOfFiles.ignored.find {it}
 		contracts.each {ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
-				clazz.addImports(getImports(configProperties.targetFramework))
-				clazz.addStaticImports(getStaticImports(configProperties.targetFramework))
+				clazz.addImports(getImports(configProperties.testFramework))
+				clazz.addStaticImports(getStaticImports(configProperties.testFramework))
 				if (contracts.values().contains(TestType.HTTP)) {
 					addHttpRelatedEntries(clazz, configProperties)
 				}
@@ -97,14 +97,14 @@ class JavaTestGenerator implements SingleTestGenerator {
 		}
 
 		if (toIgnore) {
-			clazz.addImport(configProperties.targetFramework.getIgnoreClass())
+			clazz.addImport(configProperties.testFramework.getIgnoreClass())
 		}
 	}
 
 	private void addRule(ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
 		clazz.addImport(getRuleImport())
-		if (configProperties.targetFramework.annotationLevelRules()) {
-			clazz.addClassLevelAnnotation(configProperties.targetFramework
+		if (configProperties.testFramework.annotationLevelRules()) {
+			clazz.addClassLevelAnnotation(configProperties.testFramework
 					.getRuleAnnotation(configProperties.ruleClassForTests))
 		} else {
 			clazz.addRule(configProperties.ruleClassForTests)
@@ -113,8 +113,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	private void addHttpRelatedEntries(ClassBuilder clazz, ContractVerifierConfigProperties configProperties) {
 		HttpImportProvider httpImportProvider = new HttpImportProvider(getRestAssuredPackage())
-		clazz.addImports(httpImportProvider.getImports(configProperties.targetFramework, configProperties.testMode))
-		clazz.addStaticImports(httpImportProvider.getStaticImports(configProperties.targetFramework, configProperties.testMode))
+		clazz.addImports(httpImportProvider.getImports(configProperties.testFramework, configProperties.testMode))
+		clazz.addStaticImports(httpImportProvider.getStaticImports(configProperties.testFramework, configProperties.testMode))
 	}
 
 	// TODO for 2.2: leave only RestAssured 3
@@ -129,7 +129,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	@Override
 	String fileExtension(ContractVerifierConfigProperties properties) {
-		return properties.targetFramework.classExtension
+		return properties.testFramework.classExtension
 	}
 
 	private Map<ParsedDsl, TestType> mapContractsToTheirTestTypes(Collection<ContractMetadata> listOfFiles) {

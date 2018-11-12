@@ -41,7 +41,7 @@ class GeneratorScannerSpec extends Specification {
 
 	def "should create class with full package"() {
 		given:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(targetFramework: SPOCK)
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(testFramework: SPOCK)
 			properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/stubs/package").toURI())
 			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
 		when:

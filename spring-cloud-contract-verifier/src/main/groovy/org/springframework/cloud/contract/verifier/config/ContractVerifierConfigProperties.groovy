@@ -39,7 +39,7 @@ class ContractVerifierConfigProperties {
 
 	@Deprecated
 	void setTargetFramework(TestFramework targetFramework) {
-		log.warn("Please use the [testFramework] field. This one is deprecated")
+		log.warn("Please use the [testFramework] field. [targetFramework] is deprecated")
 		setTestFramework(targetFramework)
 	}
 

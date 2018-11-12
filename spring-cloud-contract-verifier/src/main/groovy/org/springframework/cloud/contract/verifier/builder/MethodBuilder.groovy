@@ -98,9 +98,9 @@ class MethodBuilder {
 			blockBuilder.addLine('@Test')
 		}
 		if (ignored) {
-			blockBuilder.addLine(configProperties.targetFramework.ignoreAnnotation)
+			blockBuilder.addLine(configProperties.testFramework.ignoreAnnotation)
 		}
-		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "validate_$methodName() throws Exception {")
+		blockBuilder.addLine(configProperties.testFramework.methodModifier + "validate_$methodName() throws Exception {")
 		getMethodBodyBuilder().appendTo(blockBuilder)
 		blockBuilder.addLine('}')
 	}
@@ -128,13 +128,13 @@ class MethodBuilder {
 			}
 			// in Groovy we're using def so we don't have to update the imports
 			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
-		} else if (configProperties.targetFramework == SPOCK) {
+		} else if (configProperties.testFramework == SPOCK) {
 			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 		}
 		return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties)
 	}
 
 	private boolean isJUnitType() {
-		return JUNIT == configProperties.targetFramework || JUNIT5 == configProperties.targetFramework
+		return JUNIT == configProperties.testFramework || JUNIT5 == configProperties.testFramework
 	}
 }
