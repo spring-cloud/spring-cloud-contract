@@ -2609,7 +2609,7 @@ from the Groovy DSL should be placed. By default its value is
 the Groovy DSL should be placed.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">targetFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<literal>TestFramework.JUNIT</literal> and
+<simpara><emphasis role="strong">testFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<literal>TestFramework.JUNIT</literal> and
 JUnit 5 are supported with JUnit 4 being the default framework.</simpara>
 </listitem>
 <listitem>

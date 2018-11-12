@@ -1534,7 +1534,7 @@ should be skipped. By default, it is an empty array.</li><li class="listitem"><s
 GroovyDSL. By default, its value is <code class="literal">$rootDir/src/test/resources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>generatedTestSourcesDir</strong></span>: Specifies the test source directory where tests generated
 from the Groovy DSL should be placed. By default its value is
 <code class="literal">$buildDir/generated-test-sources/contractVerifier</code>.</li><li class="listitem"><span class="strong"><strong>stubsOutputDir</strong></span>: Specifies the directory where the generated WireMock stubs from
-the Groovy DSL should be placed.</li><li class="listitem"><span class="strong"><strong>targetFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code> and
+the Groovy DSL should be placed.</li><li class="listitem"><span class="strong"><strong>testFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code> and
 JUnit 5 are supported with JUnit 4 being the default framework.</li><li class="listitem"><span class="strong"><strong>contractsProperties</strong></span>: a map containing properties to be passed to Spring Cloud Contract
 components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.</li></ul></div><p>The following properties are used when you want to specify the location of the JAR
 containing the contracts:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>contractDependency</strong></span>: Specifies the Dependency that provides
