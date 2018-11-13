@@ -5500,7 +5500,7 @@ Remember to annotate your test class with <literal>@AutoConfigureStubRunner</lit
 <simpara>So as to trigger a message via the <literal>return_book_1</literal> label we&#8217;ll use the <literal>StubTigger</literal> interface as follows</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('return_book_1')</programlisting>
 <simpara>Next we&#8217;ll want to listen to the output of the message sent to <literal>jms:output</literal></simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)</programlisting>
 <simpara>And the received message would pass the following assertions</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">receivedMessage != null
 assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
@@ -5509,9 +5509,9 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
 <section xml:id="_scenario_2_output_triggered_by_input_2">
 <title>Scenario 2 (output triggered by input)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>jms:output</literal> destination.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">producerTemplate.sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</programlisting>
 <simpara>Next we&#8217;ll want to listen to the output of the message sent to <literal>jms:output</literal></simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)</programlisting>
 <simpara>And the received message would pass the following assertions</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">receivedMessage != null
 assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
@@ -5520,7 +5520,7 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
 <section xml:id="_scenario_3_input_with_no_output">
 <title>Scenario 3 (input with no output)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>jms:output</literal> destination.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">producerTemplate.sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</programlisting>
 </section>
 </section>
 </section>
