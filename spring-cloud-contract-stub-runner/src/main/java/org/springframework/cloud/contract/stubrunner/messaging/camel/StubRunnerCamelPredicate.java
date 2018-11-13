@@ -16,25 +16,30 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.camel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
-import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.cloud.contract.spec.internal.BodyMatcher;
-import org.springframework.cloud.contract.spec.internal.BodyMatchers;
-import org.springframework.cloud.contract.spec.internal.Header;
-import org.springframework.cloud.contract.verifier.util.MapConverter;
-import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
-import org.springframework.cloud.contract.verifier.util.JsonPaths;
-import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
-import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.toomuchcoding.jsonassert.JsonAssertion;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Predicate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.internal.BodyMatcher;
+import org.springframework.cloud.contract.spec.internal.BodyMatchers;
+import org.springframework.cloud.contract.spec.internal.Header;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.util.JsonPaths;
+import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
+import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;
 
 /**
  * Passes through a message that matches the one defined in the DSL
@@ -43,50 +48,55 @@ import com.toomuchcoding.jsonassert.JsonAssertion;
  */
 class StubRunnerCamelPredicate implements Predicate {
 
-	private final Contract groovyDsl;
+	private static final Log log = LogFactory.getLog(StubRunnerCamelPredicate.class);
+
+	private final List<Contract> groovyDsls;
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();
 
-	public StubRunnerCamelPredicate(Contract groovyDsl) {
-		this.groovyDsl = groovyDsl;
+	public StubRunnerCamelPredicate(List<Contract> groovyDsls) {
+		this.groovyDsls = groovyDsls;
 	}
 
 	@Override
 	public boolean matches(Exchange exchange) {
-		if (!headersMatch(exchange.getIn().getHeaders())) {
+		Contract contract = getContract(exchange.getMessage());
+		if (log.isDebugEnabled()) {
+			log.debug("For exchange [" + exchange + "] found contract [" + contract + "]");
+		}
+		if (contract == null) {
 			return false;
 		}
-		Object inputMessage = exchange.getIn().getBody();
-		BodyMatchers matchers = this.groovyDsl.getInput().getBodyMatchers();
-		Object dslBody = MapConverter.getStubSideValues(this.groovyDsl.getInput().getMessageBody());
-
-		DocumentContext parsedJson = deserialize(inputMessage);
-		return matchMessage(matchers, dslBody, parsedJson);
+		exchange.getIn().setBody(new StubRunnerCamelPayload(contract));
+		return true;
 	}
 
-	private boolean matchMessage(BodyMatchers matchers, Object dslBody, DocumentContext parsedJson) {
-		boolean matches = true;
-		JsonPaths jsonPaths = getJsonPaths(matchers, dslBody);
-		for (MethodBufferingJsonVerifiable path : jsonPaths) {
-			matches &= matchesJsonPath(parsedJson, path.jsonPath());
-		}
-		if (matchers != null && matchers.hasMatchers()) {
-			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
-				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
-				matches &= matchesJsonPath(parsedJson, jsonPath);
+	private Contract getContract(Message message) {
+		for (Contract groovyDsl : this.groovyDsls) {
+			Contract contract = matchContract(message, groovyDsl);
+			if (contract != null) {
+				return contract;
 			}
 		}
-		return matches;
+		return null;
 	}
 
-	private JsonPaths getJsonPaths(BodyMatchers matchers, Object dslBody) {
+	private Contract matchContract(Message message, Contract groovyDsl) {
+		List<String> unmatchedHeaders = headersMatch(message, groovyDsl);
+		if (!unmatchedHeaders.isEmpty()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Contract [" + groovyDsl
+						+ "] hasn't matched the following headers " + unmatchedHeaders);
+			}
+			return null;
+		}
+		Object inputMessage = message.getBody();
+		BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
+		Object dslBody = MapConverter.getStubSideValues(groovyDsl.getInput().getMessageBody());
 		Object matchingInputMessage = JsonToJsonPathsConverter
 				.removeMatchingJsonPaths(dslBody, matchers);
-		return JsonToJsonPathsConverter
+		JsonPaths jsonPaths = JsonToJsonPathsConverter
 				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
 						matchingInputMessage);
-	}
-
-	private DocumentContext deserialize(Object inputMessage) {
 		DocumentContext parsedJson;
 		try {
 			parsedJson = JsonPath
@@ -95,32 +105,72 @@ class StubRunnerCamelPredicate implements Predicate {
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
 		}
-		return parsedJson;
+		List<String> unmatchedJsonPath = new ArrayList<>();
+		boolean matches = true;
+		for (MethodBufferingJsonVerifiable path : jsonPaths) {
+			matches &= matchesJsonPath(unmatchedJsonPath, parsedJson, path.jsonPath());
+		}
+		if (matchers != null && matchers.hasMatchers()) {
+			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
+				String jsonPath = JsonToJsonPathsConverter
+						.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
+				matches &= matchesJsonPath(unmatchedJsonPath, parsedJson, jsonPath);
+			}
+		}
+		if (!unmatchedJsonPath.isEmpty()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Contract [" + groovyDsl + "] didn't much the body due to "
+						+ unmatchedJsonPath);
+			}
+		}
+		if (matches) {
+			return groovyDsl;
+		}
+		return null;
 	}
 
-	private boolean matchesJsonPath(DocumentContext parsedJson, String jsonPath) {
+	private boolean matchesJsonPath(List<String> unmatchedJsonPath,
+			DocumentContext parsedJson, String jsonPath) {
 		try {
 			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonPath);
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
+			unmatchedJsonPath.add(e.getLocalizedMessage());
 			return false;
 		}
 	}
 
-	private boolean headersMatch(Map<String, Object> headers) {
-		boolean matches = true;
-		for (Header it : this.groovyDsl.getInput().getMessageHeaders().getEntries()) {
+	private List<String> headersMatch(Message message, Contract groovyDsl) {
+		List<String> unmatchedHeaders = new ArrayList<>();
+		Map<String, Object> headers = message.getHeaders();
+		for (Header it : groovyDsl.getInput().getMessageHeaders().getEntries()) {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
-			matches &= matchValue(value, valueInHeader);
+			boolean matches;
+			if (value instanceof Pattern) {
+				Pattern pattern = (Pattern) value;
+				matches = pattern.matcher(valueInHeader.toString()).matches();
+			}
+			else {
+				matches = valueInHeader != null
+						&& valueInHeader.toString().equals(value.toString());
+			}
+			if (!matches) {
+				unmatchedHeaders.add("Header with name [" + name + "] was supposed to "
+						+ unmatchedText(value) + " but the value is ["
+						+ (valueInHeader != null ? valueInHeader.toString() : "null")
+						+ "]");
+			}
 		}
-		return matches;
+		return unmatchedHeaders;
 	}
 
-	private boolean matchValue(Object value, Object valueInHeader) {
-		return value instanceof Pattern ?
-				((Pattern) value).matcher(valueInHeader.toString()).matches() :
-				valueInHeader!=null && valueInHeader.equals(value);
+	private String unmatchedText(Object expectedValue) {
+		return expectedValue instanceof Pattern
+				? "match pattern [" + ((Pattern) expectedValue).pattern() + "]"
+				: "be equal to [" + expectedValue + "]";
 	}
+
 }

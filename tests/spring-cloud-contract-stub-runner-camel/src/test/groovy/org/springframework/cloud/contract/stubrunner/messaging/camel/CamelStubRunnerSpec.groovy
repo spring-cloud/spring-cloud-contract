@@ -21,8 +21,14 @@ import groovy.json.JsonSlurper
 import org.apache.activemq.camel.component.ActiveMQComponent
 import org.apache.activemq.spring.ActiveMQConnectionFactory
 import org.apache.camel.CamelContext
+import org.apache.camel.ConsumerTemplate
 import org.apache.camel.Exchange
+import org.apache.camel.ProducerTemplate
 import org.apache.camel.component.jms.JmsConfiguration
+import org.apache.camel.impl.DefaultShutdownStrategy
+import spock.lang.IgnoreIf
+import spock.lang.Specification
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -34,34 +40,47 @@ import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRun
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.IgnoreIf
-import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = "debug=true")
 @AutoConfigureStubRunner
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @IgnoreIf({ os.windows })
 class CamelStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired CamelContext camelContext
+	ConsumerTemplate consumerTemplate
+	ProducerTemplate producerTemplate
 
 	def setup() {
+		consumerTemplate = camelContext.createConsumerTemplate()
+		producerTemplate = camelContext.createProducerTemplate()
+	}
+
+	def cleanup() {
 		// ensure that message were taken from the queue
-		camelContext.createConsumerTemplate().receive('jms:output', 100)
+		consumerTemplate.receive('jms:output', 100)
+		consumerTemplate.receive('jms:input', 100)
+		this.producerTemplate.stop()
+		this.consumerTemplate.stop()
+		def strategy = new DefaultShutdownStrategy(this.camelContext)
+		strategy.timeout = 1
+		this.camelContext.shutdownStrategy = strategy
 	}
 
 	def 'should download the stub and register a route for it'() {
 		when:
 		// tag::client_send[]
-			camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])
+			producerTemplate.sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])
 		// end::client_send[]
 		then:
 		// tag::client_receive[]
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
+			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		// end::client_receive[]
 		and:
 		// tag::client_receive_message[]
@@ -78,7 +97,7 @@ class CamelStubRunnerSpec extends Specification {
 		// end::client_trigger[]
 		then:
 		// tag::client_trigger_receive[]
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
+			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		// end::client_trigger_receive[]
 		and:
 		// tag::client_trigger_message[]
@@ -94,7 +113,7 @@ class CamelStubRunnerSpec extends Specification {
 			stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')
 		// end::trigger_group_artifact[]
 		then:
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
+			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		and:
 			receivedMessage != null
 			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
@@ -107,7 +126,7 @@ class CamelStubRunnerSpec extends Specification {
 			stubFinder.trigger('camelService', 'return_book_1')
 		// end::trigger_artifact[]
 		then:
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
+			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		and:
 			receivedMessage != null
 			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
@@ -134,7 +153,7 @@ class CamelStubRunnerSpec extends Specification {
 			stubFinder.trigger()
 		// end::trigger_all[]
 		then:
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
+			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		and:
 			receivedMessage != null
 			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
@@ -144,7 +163,7 @@ class CamelStubRunnerSpec extends Specification {
 	def 'should trigger a label with no output message'() {
 		when:
 		// tag::trigger_no_output[]
-			camelContext.createProducerTemplate().sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])
+			producerTemplate.sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])
 		// end::trigger_no_output[]
 		then:
 			noExceptionThrown()
@@ -152,9 +171,9 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should not trigger a message that does not match input'() {
 		when:
-			camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
+			producerTemplate.sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
 		then:
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 100)
+			Exchange receivedMessage = consumerTemplate.receive('jms:output', 100)
 		and:
 			receivedMessage == null
 	}

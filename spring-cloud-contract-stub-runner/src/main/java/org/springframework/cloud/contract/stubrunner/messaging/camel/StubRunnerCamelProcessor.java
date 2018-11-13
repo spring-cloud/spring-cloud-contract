@@ -16,12 +16,15 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.camel;
 
-import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Header;
+import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 
 /**
  * Sends forward a message defined in the DSL. Also removes headers from the input message
@@ -31,29 +34,45 @@ import org.springframework.cloud.contract.spec.internal.Header;
  */
 class StubRunnerCamelProcessor implements Processor {
 
-	private final Contract groovyDsl;
+	private static final Log log = LogFactory.getLog(StubRunnerCamelProcessor.class);
 
-	StubRunnerCamelProcessor(Contract groovyDsl) {
-		this.groovyDsl = groovyDsl;
-	}
+	private static final String DUMMY_BEAN_URL = "bean:dummyStubRunnerProcessor";
 
 	@Override
-	public void process(Exchange exchange) throws Exception {
+	public void process(Exchange exchange) {
 		Message input = exchange.getIn();
-		if (this.groovyDsl.getInput().getMessageHeaders() != null) {
-			for (Header entry : this.groovyDsl.getInput().getMessageHeaders().getEntries()) {
+		StubRunnerCamelPayload body = input.getBody(StubRunnerCamelPayload.class);
+		Contract groovyDsl = body.contract;
+		setStubRunnerDestinationHeader(exchange, body);
+		if (groovyDsl.getInput().getMessageHeaders() != null) {
+			for (Header entry : groovyDsl.getInput().getMessageHeaders().getEntries()) {
 				input.removeHeader(entry.getName());
 			}
 		}
-		if (this.groovyDsl.getOutputMessage() == null) {
+		if (groovyDsl.getOutputMessage() == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("No output message provided, will not modify the body");
+			}
 			return;
 		}
 		input.setBody(BodyExtractor
-				.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody()));
-		if (this.groovyDsl.getOutputMessage().getHeaders() != null) {
-			for (Header entry : this.groovyDsl.getOutputMessage().getHeaders().getEntries()) {
+				.extractStubValueFrom(groovyDsl.getOutputMessage().getBody()));
+		if (groovyDsl.getOutputMessage().getHeaders() != null) {
+			for (Header entry : groovyDsl.getOutputMessage().getHeaders().getEntries()) {
 				input.setHeader(entry.getName(), entry.getClientValue());
 			}
+		}
+	}
+
+	private void setStubRunnerDestinationHeader(Exchange exchange, StubRunnerCamelPayload body) {
+		boolean outputPart = body.contract.getOutputMessage() != null;
+		String url = DUMMY_BEAN_URL;
+		if (outputPart && body.contract.getOutputMessage().getSentTo() != null) {
+			url = body.contract.getOutputMessage().getSentTo().getClientValue();
+		}
+		exchange.getIn().setHeader(StubRunnerCamelConfiguration.STUBRUNNER_DESTINATION_URL_HEADER_NAME, url);
+		if (log.isDebugEnabled()) {
+			log.debug("Set stub runner destination header to [" + url + "]");
 		}
 	}
 }

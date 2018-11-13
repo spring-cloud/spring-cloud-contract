@@ -27,8 +27,9 @@ class StubRunnerCamelProcessorSpec extends Specification {
 
 	def 'should not process the message if there is no output message'() {
 		given:
-			StubRunnerCamelProcessor processor = new StubRunnerCamelProcessor(noOutputMessageContract)
+			StubRunnerCamelProcessor processor = new StubRunnerCamelProcessor()
 		when:
+			message.in.body = new StubRunnerCamelPayload(noOutputMessageContract)
 			processor.process(message)
 		then:
 			noExceptionThrown()
@@ -58,8 +59,9 @@ class StubRunnerCamelProcessorSpec extends Specification {
 
 	def 'should process message when it has an output message section'() {
 		given:
-			StubRunnerCamelProcessor processor = new StubRunnerCamelProcessor(dsl)
+			StubRunnerCamelProcessor processor = new StubRunnerCamelProcessor()
 		when:
+			message.in.body = new StubRunnerCamelPayload(dsl)
 			processor.process(message)
 		then:
 			message.getIn().getBody(String) == '{"responseId":"123"}'
@@ -89,8 +91,9 @@ class StubRunnerCamelProcessorSpec extends Specification {
 
 	def 'should convert dsl into message with regex in GString'() {
 		given:
-			StubRunnerCamelProcessor processor = new StubRunnerCamelProcessor(dslWithRegexInGString)
+			StubRunnerCamelProcessor processor = new StubRunnerCamelProcessor()
 		when:
+			message.in.body = new StubRunnerCamelPayload(dslWithRegexInGString)
 			processor.process(message)
 		then:
 			message.getIn().getBody(String) == '''{"id":"99","temperature":"123.45"}'''
