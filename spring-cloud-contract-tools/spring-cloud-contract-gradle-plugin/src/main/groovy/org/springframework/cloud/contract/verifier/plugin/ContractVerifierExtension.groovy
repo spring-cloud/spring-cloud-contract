@@ -127,24 +127,6 @@ class ContractVerifierExtension {
 	 */
 	Boolean assertJsonSize = false
 
-	/**
-	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
-	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
-	 * taken into consideration
-	 * 
-	 * @deprecated - use {@link ContractVerifierExtension#contractRepository(groovy.lang.Closure)}
-	 */
-	@Deprecated
-	String contractsRepositoryUrl
-
-	/*
-	 * @deprecated - use {@link ContractVerifierExtension#contractRepository(groovy.lang.Closure)}
-	 */
-	@Deprecated
-	void setContractsRepositoryUrl(String contractsRepositoryUrl) {
-		this.contractRepository.repositoryUrl(contractsRepositoryUrl)
-	}
-	
 	ContractRepository contractRepository = new ContractRepository()
 	
 	/**

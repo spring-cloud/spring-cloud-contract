@@ -77,34 +77,6 @@ class GradleContractsDownloaderSpec extends Specification {
 			stubConfig.classifier == "stubs"
 	}
 
-	def "should pick dependency from cache for a non snapshot contract dependency with old property"() {
-		given:
-			ContractVerifierExtension ext = new ContractVerifierExtension()
-			ext.with {
-				contractsMode = StubRunnerProperties.StubsMode.REMOTE
-				contractDependency {
-					groupId("com.example")
-					artifactId("foo")
-					version("1.0.0")
-					classifier("stubs")
-				}
-				contractsRepositoryUrl = "foo"
-			}
-		and:
-			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
-			final ContractDownloader contractDownloader = Mock(ContractDownloader)
-		and:
-			def gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
-		and:
-			StubConfiguration expectedStubConfig = new StubConfiguration("com.example:foo:1.0.0:stubs")
-			File expectedFileFromCache = new File("foo/bar")
-			GradleContractsDownloader.downloadedContract.put(expectedStubConfig, expectedFileFromCache)
-		when:
-			File file = gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
-		then:
-			file == expectedFileFromCache
-	}
-
 	def "should pick dependency from cache for a non snapshot contract dependency with new property"() {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()

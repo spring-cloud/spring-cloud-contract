@@ -62,8 +62,8 @@ class GradleContractsDownloader {
 	}
 
 	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
-		return extension.contractDependency != null &&
-				StringUtils.hasText(extension.contractDependency.getArtifactId()) ||
+		return StringUtils.hasText(extension.contractDependency.getArtifactId()) ||
+				StringUtils.hasText(extension.contractDependency.getStringNotation()) ||
 				StringUtils.hasText(extension.contractRepository.repositoryUrl)
 	}
 

@@ -123,8 +123,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			stubsOutputDir = { extension.stubsOutputDir }
 		}
 		task.onlyIf {
-			String contractRepoUrl = extension.contractsRepositoryUrl ?:
-					extension.contractRepository.repositoryUrl ?: ""
+			String contractRepoUrl = extension.contractRepository.repositoryUrl ?: ""
 			if (!contractRepoUrl || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
 				project.logger.info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't match any of the accepted protocols")
 				return false
