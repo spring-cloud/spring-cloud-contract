@@ -23,9 +23,13 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -140,6 +144,8 @@ public class ContractProjectUpdater {
 
 class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 
+	private static final List<String> FOLDERS_TO_DELETE = Arrays.asList("contracts", "mappings");
+
 	private static final Log log = LogFactory.getLog(DirectoryCopyingVisitor.class);
 	private final Path from;
 	private final Path to;
@@ -167,6 +173,16 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 		} else {
 			if (log.isDebugEnabled()) {
 				log.debug("Folder [" + targetPath.toString() + "] already exists");
+			}
+			if (FOLDERS_TO_DELETE.contains(targetPath.toFile().getName())) {
+				if (log.isDebugEnabled()) {
+					log.debug("Will remove the folder [" + targetPath.toString() + "]");
+				}
+				FileSystemUtils.deleteRecursively(targetPath);
+				Files.createDirectory(targetPath);
+				if (log.isDebugEnabled()) {
+					log.debug("Recreated folder [" + targetPath.toString() + "]");
+				}
 			}
 		}
 		return FileVisitResult.CONTINUE;
