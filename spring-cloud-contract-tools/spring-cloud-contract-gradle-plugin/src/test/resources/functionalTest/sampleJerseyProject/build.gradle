@@ -127,9 +127,11 @@ configure(project(':fraudDetectionService')) {
 		testFramework ='Spock'
 		testMode = 'JaxRsClient'
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'
-		contractsRepositoryUrl = "file://" + file("${project.rootDir.absolutePath}/m2repo/repository").absolutePath
 		contractDependency {
 			stringNotation("com.example:jersey-contracts:+:")
+		}
+		contractRepository {
+			repositoryUrl = "file://" + file("${project.rootDir.absolutePath}/m2repo/repository").absolutePath
 		}
 		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
 		stubsOutputDir = stubsOutputDirRoot
