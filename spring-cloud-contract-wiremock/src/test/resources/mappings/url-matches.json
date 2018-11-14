@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPattern": "^.*[0-9]{3}$"
+    "urlPattern": "^.*[0-9]{3}/hello-url-matcher/"
   },
   "response" : {
     "status" : 200,
