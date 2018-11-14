@@ -23,12 +23,27 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import javax.xml.xpath.XPathExpressionException;
 
+import com.github.tomakehurst.wiremock.common.Json;
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.MultiValue;
+import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
+import com.github.tomakehurst.wiremock.matching.MatchResult;
+import com.github.tomakehurst.wiremock.matching.MatchesJsonPathPattern;
+import com.github.tomakehurst.wiremock.matching.MatchesXPathPattern;
+import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
+import com.github.tomakehurst.wiremock.matching.RequestPattern;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.TypeSafeMatcher;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
@@ -46,17 +61,6 @@ import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
-import com.github.tomakehurst.wiremock.common.Json;
-import com.github.tomakehurst.wiremock.http.HttpHeader;
-import com.github.tomakehurst.wiremock.http.MultiValue;
-import com.github.tomakehurst.wiremock.http.ResponseDefinition;
-import com.github.tomakehurst.wiremock.matching.MatchResult;
-import com.github.tomakehurst.wiremock.matching.MatchesJsonPathPattern;
-import com.github.tomakehurst.wiremock.matching.MatchesXPathPattern;
-import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
-import com.github.tomakehurst.wiremock.matching.RequestPattern;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -194,16 +198,21 @@ public class WireMockRestServiceServer {
 			Collections.sort(mappings, new StubMappingComparator());
 		}
 		for (StubMapping mapping : mappings) {
-			ResponseActions expect = server
-					.expect(requestTo(request(mapping.getRequest())));
-			expect.andExpect(method(
-					HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
+			ResponseActions expect = responseActions(server, mapping);
+			expect.andExpect(method(HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
 			mapping.getRequest().getBodyPatterns();
 			bodyPatterns(expect, mapping.getRequest());
 			requestHeaders(expect, mapping.getRequest());
 			expect.andRespond(response(mapping.getResponse()));
 		}
 		return server;
+	}
+
+	private ResponseActions responseActions(MockRestServiceServer server, StubMapping mapping) {
+		if (StringUtils.hasText(mapping.getRequest().getUrl()) || StringUtils.hasText(mapping.getRequest().getUrlPath())) {
+			return server.expect(requestTo(request(mapping.getRequest())));
+		}
+		return server.expect(requestTo(requestMatcher(mapping.getRequest())));
 	}
 
 	private void bodyPatterns(ResponseActions expect, RequestPattern request) {
@@ -251,6 +260,27 @@ public class WireMockRestServiceServer {
 		return this.baseUrl + (request.getUrlPath() == null
 				? (request.getUrl() == null ? "/" : request.getUrl())
 				: request.getUrlPath());
+	}
+
+	private Matcher<String> requestMatcher(RequestPattern request) {
+		return new TypeSafeMatcher<String>() {
+			@Override
+			protected boolean matchesSafely(String item) {
+				if (request.getUrlMatcher() != null) {
+					return request.getUrlMatcher().match(item).isExactMatch();
+				} else if (request.getUrlPathPattern() != null) {
+					return Pattern.compile(request.getUrlPathPattern()).matcher(item).matches();
+				} else if (request.getUrlPattern() != null) {
+					return Pattern.compile(request.getUrlPattern()).matcher(item).matches();
+				}
+				return false;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+
+			}
+		};
 	}
 
 	private String pattern(String location) {

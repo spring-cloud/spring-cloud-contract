@@ -4,14 +4,14 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import org.junit.Test;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -399,6 +399,26 @@ public class WiremockMockServerApplicationTests {
 			fail("There was a response for a request that shouldn't be matched : "
 					+ response);
 		}
+	}
+
+	@Test
+	public void getWithUrlPathMatching() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/url-path-pattern.json").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/123",
+				String.class)).isEqualTo("Hello Url Path Matcher");
+		server.verify();
+	}
+
+	@Test
+	public void getWithUrlMatching() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/url-matches.json").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/123",
+				String.class)).isEqualTo("Hello Url Matcher");
+		server.verify();
 	}
 
 	public static class Things {
