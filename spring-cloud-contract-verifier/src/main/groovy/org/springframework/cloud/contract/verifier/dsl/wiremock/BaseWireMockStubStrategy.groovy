@@ -88,7 +88,7 @@ abstract class BaseWireMockStubStrategy {
 	/**
 	 * For the given {@link ContentType} returns the Boolean version of the body
 	 */
-	Boolean parseBody(Boolean value, ContentType contentType) {
+	String parseBody(Boolean value, ContentType contentType) {
 		return value
 	}
 

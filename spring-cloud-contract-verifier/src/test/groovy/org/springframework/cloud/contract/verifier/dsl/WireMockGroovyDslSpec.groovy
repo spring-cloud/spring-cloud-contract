@@ -2272,6 +2272,45 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
+	@Issue('#708')
+	def "should work with boolean body"() {
+		given:
+		Contract groovyDsl = Contract.make {
+			request {
+				method('DELETE')
+				urlPath("/item/1")
+			}
+			response {
+				status(200)
+				headers {
+					contentType(applicationJsonUtf8())
+				}
+				body("true")
+			}
+		}
+		when:
+		String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
+		then:
+		AssertionUtil.assertThatJsonsAreEqual('''
+				{
+				  "request" : {
+					"urlPath" : "/item/1",
+					"method" : "DELETE"
+				  },
+				  "response" : {
+					"status" : 200,
+					"body" : "true",
+					"headers" : {
+					  "Content-Type" : "application/json;charset=UTF-8"
+					},
+					"transformers" : [ "response-template", "foo-transformer" ]
+				  }
+				}
+				''', wireMockStub)
+		and:
+		stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
