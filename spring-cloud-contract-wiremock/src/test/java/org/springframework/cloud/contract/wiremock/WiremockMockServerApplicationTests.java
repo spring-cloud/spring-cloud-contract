@@ -387,7 +387,7 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
 				.stubs("classpath:/mappings/url-path-pattern.json").build();
-		assertThat(this.restTemplate.getForObject("http://example.org/123",
+		assertThat(this.restTemplate.getForObject("http://example.org/123/url-path-pattern/",
 				String.class)).isEqualTo("Hello Url Path Matcher");
 		server.verify();
 	}
@@ -397,7 +397,7 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
 				.stubs("classpath:/mappings/url-matches.json").build();
-		assertThat(this.restTemplate.getForObject("http://example.org/123",
+		assertThat(this.restTemplate.getForObject("http://example.org/123/hello-url-matcher/",
 				String.class)).isEqualTo("Hello Url Matcher");
 		server.verify();
 	}
