@@ -142,6 +142,9 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getResponseAsString() {
+		if (isBytes(outputMessage?.body)) {
+			return 'contractVerifierObjectMapper.writeValueAsBytes(response.payload)'
+		}
 		return 'contractVerifierObjectMapper.writeValueAsString(response.payload)'
 	}
 
@@ -173,6 +176,11 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected String getParsedXmlResponseBodyString(String responseString) {
 		return "def responseBody = new XmlSlurper().parseText($responseString)"
+	}
+
+	@Override
+	protected String getSimpleResponseBodyBytes(String responseString) {
+		return "byte[] responseBody = ($responseString)"
 	}
 
 	@Override

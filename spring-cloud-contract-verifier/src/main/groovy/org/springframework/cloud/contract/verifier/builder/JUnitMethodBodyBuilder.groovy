@@ -54,6 +54,9 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getResponseAsString() {
+		if (isBytes(this.response.body)) {
+			return "response.getBody().asByteArray()"
+		}
 		return "response.getBody().asString()"
 	}
 
@@ -120,6 +123,11 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	@Override
 	protected String getParsedXmlResponseBodyString(String responseString) {
 		return "Object responseBody = new XmlSlurper().parseText($responseString);"
+	}
+
+	@Override
+	protected String getSimpleResponseBodyBytes(String responseString) {
+		return "byte[] responseBody = $responseString;"
 	}
 
 	@Override
