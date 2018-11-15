@@ -188,6 +188,11 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected String getSimpleResponseBodyBytes(String responseString) {
+		return "byte[] responseBody = ($responseString);"
+	}
+
+	@Override
 	protected String getSimpleResponseBodyString(String responseString) {
 		return "Object responseBody = ($responseString);"
 	}

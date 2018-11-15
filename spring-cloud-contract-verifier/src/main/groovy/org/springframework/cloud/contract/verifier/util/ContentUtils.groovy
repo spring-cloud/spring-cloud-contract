@@ -337,6 +337,10 @@ class ContentUtils {
 		return ContentType.JSON
 	}
 
+	static ContentType recognizeContentTypeFromContent(byte[] bytes) {
+		return ContentType.UNKNOWN
+	}
+
 	static ContentType recognizeContentTypeFromContent(List jsonList) {
 		return ContentType.JSON
 	}

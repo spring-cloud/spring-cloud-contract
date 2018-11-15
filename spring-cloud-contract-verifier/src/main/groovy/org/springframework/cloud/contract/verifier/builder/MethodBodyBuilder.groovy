@@ -84,6 +84,10 @@ abstract class MethodBodyBuilder {
 		this.contract = contract
 	}
 
+	protected boolean isBytes(DslProperty property) {
+		return MapConverter.getTestSideValues(property) instanceof byte[]
+	}
+
 	private TemplateProcessor processor() {
 		return new HandlebarsTemplateProcessor()
 	}
@@ -215,6 +219,11 @@ abstract class MethodBodyBuilder {
 	protected abstract String getSimpleResponseBodyString(String responseString)
 
 	/**
+	 * Builds the code that returns bytes from a body that are bytes
+	 */
+	protected abstract String getSimpleResponseBodyBytes(String responseString)
+
+	/**
 	 * Builds the code that returns the "message". For messaging it will be an input
 	 * message. For REST it will be an input request.
 	 */
@@ -340,6 +349,10 @@ abstract class MethodBodyBuilder {
 	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
 		ContentType contentType = getResponseContentType()
 		Object convertedResponseBody = responseBody
+		if (convertedResponseBody instanceof byte[]) {
+			// TODO: byte
+			return
+		}
 		if (convertedResponseBody instanceof GString) {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}

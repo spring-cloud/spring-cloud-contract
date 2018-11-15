@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.nio.charset.Charset
+
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 
@@ -170,12 +172,39 @@ class Common {
 		return new ServerDslProperty(serverValue)
 	}
 
+	/**
+	 * Read file contents as String
+	 *
+	 * @param relativePath of the file to read
+	 * @return String file contents
+	 */
 	String file(String relativePath) {
+		return file(relativePath, Charset.forName("UTF-8"))
+	}
+
+	/**
+	 * Read file contents as String with the given Charset
+	 *
+	 * @param relativePath of the file to read
+	 * @param charset to use for converting the bytes to String
+	 * @return String file contents
+	 */
+	String file(String relativePath, Charset charset) {
+		return new String(fileAsBytes(relativePath), charset)
+	}
+
+	/**
+	 * Read file contents as array of bytes
+	 *
+	 * @param relativePath of the file to read
+	 * @return file contents as an array of bytes
+	 */
+	byte[] fileAsBytes(String relativePath) {
 		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath)
 		if (resource == null) {
 			throw new IllegalStateException("File [${relativePath}] is not present")
 		}
-		return new File(resource.toURI()).text
+		return new File(resource.toURI()).bytes
 	}
 
 	/**
