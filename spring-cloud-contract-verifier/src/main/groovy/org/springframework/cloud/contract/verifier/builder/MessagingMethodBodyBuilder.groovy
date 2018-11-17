@@ -46,8 +46,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final Input inputMessage
 	protected final OutputMessage outputMessage
 
-	MessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(configProperties, stubDefinition)
+	MessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+		super(configProperties, stubDefinition, methodName)
 		this.inputMessage = stubDefinition.input
 		this.outputMessage = stubDefinition.outputMessage
 	}
@@ -99,6 +99,12 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
 		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processHeaderElement(blockBuilder, property, gstringValue)
+	}
+
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, byte[] value) {
+		return "assertThat(java.util.Base64.getEncoder().encode(responseBody))\n" +
+				".isEqualTo(\"${Base64.getEncoder().encode(value)}\")"
 	}
 
 	protected ContentType getResponseContentType() {

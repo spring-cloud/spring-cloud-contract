@@ -16,16 +16,10 @@
 
 package org.springframework.cloud.contract.verifier
 
-import java.nio.charset.StandardCharsets
-import java.nio.file.Path
-import java.util.concurrent.atomic.AtomicInteger
-
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import wiremock.com.google.common.collect.ListMultimap
-
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
@@ -35,13 +29,17 @@ import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuild
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.core.io.support.SpringFactoriesLoader
 import org.springframework.util.StringUtils
+import wiremock.com.google.common.collect.ListMultimap
+
+import java.nio.charset.StandardCharsets
+import java.nio.file.Path
+import java.util.concurrent.atomic.AtomicInteger
 
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.afterLast
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeLast
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.convertIllegalPackageChars
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.directoryToPackage
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastDot
-
 /**
  * @author Jakub Kubrynski, codearte.io
  */
@@ -128,8 +126,11 @@ class TestGenerator {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
 			def convertedClassName = convertIllegalPackageChars(className)
 			def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
-			def classBytes = generator.buildClass(configProperties, contracts, convertedClassName, packageName, includedDirectoryRelativePath).getBytes(StandardCharsets.UTF_8)
-			saver.saveClassFile(convertedClassName, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()), classBytes)
+			Path dir = saver.generateTestBaseDir(basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()))
+			Path classPath = saver.pathToClass(dir, convertedClassName)
+			def classBytes = generator.buildClass(configProperties, contracts, includedDirectoryRelativePath,
+					new SingleTestGenerator.GeneratedClassData(className, packageName, classPath)).getBytes(StandardCharsets.UTF_8)
+			saver.saveClassFile(classPath, classBytes)
 			counter.incrementAndGet()
 		}
 	}

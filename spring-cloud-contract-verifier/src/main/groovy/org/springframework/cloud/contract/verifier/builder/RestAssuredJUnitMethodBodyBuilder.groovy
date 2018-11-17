@@ -38,8 +38,9 @@ import java.util.regex.Pattern
 @PackageScope
 class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
-	RestAssuredJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	RestAssuredJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties,
+									GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override

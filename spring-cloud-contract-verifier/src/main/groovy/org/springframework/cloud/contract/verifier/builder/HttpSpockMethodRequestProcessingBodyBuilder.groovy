@@ -36,8 +36,8 @@ import java.util.regex.Pattern
 @TypeChecked
 class HttpSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
-	HttpSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	HttpSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+		super(stubDefinition, configProperties, methodName)
 	}
 
 	@Override

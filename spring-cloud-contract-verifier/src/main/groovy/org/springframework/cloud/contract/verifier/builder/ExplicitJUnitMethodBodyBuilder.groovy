@@ -32,8 +32,8 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 @PackageScope
 class ExplicitJUnitMethodBodyBuilder extends RestAssuredJUnitMethodBodyBuilder {
 
-	ExplicitJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	ExplicitJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+		super(stubDefinition, configProperties, methodName)
 	}
 
 	@Override

@@ -50,8 +50,8 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 @TypeChecked
 class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
-	JUnitMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	JUnitMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+		super(stubDefinition, configProperties, methodName)
 	}
 
 	@Override
@@ -158,6 +158,9 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getResponseAsString() {
+		if (isBytes(this.outputMessage?.body)) {
+			return "contractVerifierObjectMapper.writeValueAsBytes(response.getPayload())"
+		}
 		return 'contractVerifierObjectMapper.writeValueAsString(response.getPayload())'
 	}
 

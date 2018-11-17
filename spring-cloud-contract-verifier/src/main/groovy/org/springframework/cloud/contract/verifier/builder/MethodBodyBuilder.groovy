@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import org.springframework.cloud.contract.spec.internal.Cookie
 
 import java.util.regex.Pattern
 
@@ -33,8 +32,10 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.MatchingType
@@ -76,16 +77,25 @@ abstract class MethodBodyBuilder {
 	protected final TemplateProcessor templateProcessor
 	protected final ContractTemplate contractTemplate
 	protected final Contract contract
+	protected final GeneratedClassDataForMethod classDataForMethod
 
-	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties, Contract contract) {
+	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties, Contract contract, GeneratedClassDataForMethod classDataForMethod) {
 		this.configProperties = configProperties
 		this.templateProcessor = processor()
 		this.contractTemplate = template()
 		this.contract = contract
+		this.classDataForMethod = classDataForMethod
 	}
 
 	protected boolean isBytes(DslProperty property) {
 		return MapConverter.getTestSideValues(property) instanceof byte[]
+	}
+
+	protected String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
+		String newFileName = this.classDataForMethod.methodName + "_" + side.name().toLowerCase() + ".bin"
+		File newFile = new File(this.classDataForMethod.testClassPath().parent.toFile(), newFileName)
+		newFile.bytes = property.asType(byte[])
+		return newFileName
 	}
 
 	private TemplateProcessor processor() {
@@ -131,6 +141,12 @@ abstract class MethodBodyBuilder {
 	 * the given Object {@code value}
 	 */
 	protected abstract String getResponseBodyPropertyComparisonString(String property, Object value)
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given byte[] {@code value}
+	 */
+	protected abstract String getResponseBodyPropertyComparisonString(String property, byte[] value)
 
 	/**
 	 * Builds the code that for the given {@code property} will compare it to
@@ -349,8 +365,8 @@ abstract class MethodBodyBuilder {
 	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
 		ContentType contentType = getResponseContentType()
 		Object convertedResponseBody = responseBody
-		if (convertedResponseBody instanceof byte[]) {
-			// TODO: byte
+		if (convertedResponseBody instanceof FromFileProperty) {
+			byteResponseBodyCheck(bb, convertedResponseBody)
 			return
 		}
 		if (convertedResponseBody instanceof GString) {
@@ -370,6 +386,12 @@ abstract class MethodBodyBuilder {
 		} else {
 			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
+	}
+
+	private void byteResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
+		bb.addLine(getResponseBodyPropertyComparisonString(getResponseAsString()))
+		processText(bb, "", convertedResponseBody)
+		addColonIfRequired(bb)
 	}
 
 	private void simpleTextResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
@@ -780,4 +802,7 @@ abstract class MethodBodyBuilder {
 	}
 
 
+	static enum CommunicationType {
+		REQUEST, RESPONSE, INPUT, OUTPUT
+	}
 }

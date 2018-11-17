@@ -49,6 +49,10 @@ class Body extends DslProperty {
 		this("${bodyAsValue}")
 	}
 
+	Body(byte[] bodyAsValue) {
+		super(bodyAsValue)
+	}
+
 	Body(Number bodyAsValue) {
 		super(bodyAsValue)
 	}

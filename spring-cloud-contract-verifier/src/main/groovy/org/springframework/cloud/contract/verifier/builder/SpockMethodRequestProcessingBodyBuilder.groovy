@@ -139,6 +139,8 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		String value
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
+		} else if (body instanceof byte[]) {
+			value = "java.lang.Base64.getDecoder().decode(${Base64.encoder.encodeToString((byte[]) body)})"
 		} else {
 			value = "'''$body'''"
 		}

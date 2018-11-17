@@ -44,8 +44,8 @@ import java.util.regex.Pattern
 @TypeChecked
 class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
-	JaxRsClientSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	JaxRsClientSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+		super(stubDefinition, configProperties, methodName)
 	}
 
 	@Override

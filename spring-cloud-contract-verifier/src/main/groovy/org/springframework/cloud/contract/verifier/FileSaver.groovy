@@ -46,13 +46,20 @@ class FileSaver {
 		this.properties = properties
 	}
 
-	void saveClassFile(String fileName, String basePackageClass, String includedDirectoryRelativePath, byte[] classBytes) {
+	void saveClassFile(Path classPath, byte[] classBytes) {
+		log.info("Creating new class file [$classPath]")
+		Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+	}
+
+	protected Path pathToClass(Path testBaseDir, String fileName) {
+		Paths.get(testBaseDir.toString(), capitalize(fileName) + generator.fileExtension(this.properties)).toAbsolutePath()
+	}
+
+	protected Path generateTestBaseDir(String basePackageClass, String includedDirectoryRelativePath) {
 		Path testBaseDir = Paths.get(targetDirectory.absolutePath, packageToDirectory(basePackageClass),
 				beforeLast(includedDirectoryRelativePath, File.separator))
 		Files.createDirectories(testBaseDir)
-		Path classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + generator.fileExtension(this.properties)).toAbsolutePath()
-		log.info("Creating new class file [$classPath]")
-		Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+		return testBaseDir
 	}
 
 }

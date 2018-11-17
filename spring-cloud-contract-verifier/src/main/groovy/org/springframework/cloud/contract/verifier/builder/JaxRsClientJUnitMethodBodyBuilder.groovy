@@ -47,8 +47,8 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 @PackageScope
 class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
-	JaxRsClientJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	JaxRsClientJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+		super(stubDefinition, configProperties, methodName)
 	}
 
 	@Override
