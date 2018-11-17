@@ -41,8 +41,8 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 @TypeChecked
 class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
-	SpockMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	SpockMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+		super(stubDefinition, configProperties, methodName)
 	}
 
 	@Override

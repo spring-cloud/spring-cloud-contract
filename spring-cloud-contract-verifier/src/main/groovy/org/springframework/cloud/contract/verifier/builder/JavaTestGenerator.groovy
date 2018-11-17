@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import groovy.transform.CompileStatic
+
 import java.lang.invoke.MethodHandles
 
 import groovy.transform.Canonical
@@ -40,18 +42,23 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.capital
  *
  * @since 1.1.0
  */
+@CompileStatic
 class JavaTestGenerator implements SingleTestGenerator {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass())
 
 	private static final String JSON_ASSERT_STATIC_IMPORT = 'com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson'
 	private static final String JSON_ASSERT_CLASS = 'com.toomuchcoding.jsonassert.JsonAssertion'
+	@Deprecated
+	// TODO: Remove in next major
 	private static final String REST_ASSURED_2_0_CLASS = 'com.jayway.restassured.RestAssured'
 
 	@PackageScope ClassPresenceChecker checker = new ClassPresenceChecker()
 
 	@Override
-	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
+	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
+		String className = generatedClassData.className
+		String classPackage = generatedClassData.classPackage
 		ClassBuilder clazz = ClassBuilder.createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
 		if (configProperties.imports) {
 			configProperties.imports.each {
@@ -68,12 +75,16 @@ class JavaTestGenerator implements SingleTestGenerator {
 			clazz.addClassLevelAnnotation(configProperties.testFramework.getOrderAnnotation())
 		}
 		addJsonPathRelatedImports(clazz)
-		processContractFiles(listOfFiles, configProperties, clazz)
+		processContractFiles(listOfFiles, configProperties, clazz, generatedClassData)
 		return clazz.build()
 	}
 
-	private void processContractFiles(Collection<ContractMetadata> listOfFiles,
-	                                  ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
+	@Override
+	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
+		return buildClass(configProperties, listOfFiles, includedDirectoryRelativePath, new GeneratedClassData(className, classPackage, null))
+	}
+
+	private void processContractFiles(Collection<ContractMetadata> listOfFiles, ContractVerifierConfigProperties configProperties, ClassBuilder clazz, GeneratedClassData generatedClassData) {
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
 		boolean conditionalImportsAdded = false
 		boolean toIgnore = listOfFiles.ignored.find {it}
@@ -93,7 +104,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 				conditionalImportsAdded = true
 			}
 			toIgnore = toIgnore ? true : key.groovyDsl.ignored
-			clazz.addMethod(MethodBuilder.createTestMethod(key.contract, key.stubsFile, key.groovyDsl, configProperties))
+			clazz.addMethod(MethodBuilder.createTestMethod(key.contract, key.stubsFile,
+					key.groovyDsl, configProperties, generatedClassData))
 		}
 
 		if (toIgnore) {
@@ -102,7 +114,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 	}
 
 	private void addRule(ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
-		clazz.addImport(getRuleImport())
+		clazz.addImport(getRuleImport(configProperties.testFramework))
 		if (configProperties.testFramework.annotationLevelRules()) {
 			clazz.addClassLevelAnnotation(configProperties.testFramework
 					.getRuleAnnotation(configProperties.ruleClassForTests))

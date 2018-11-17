@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Commons
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestMode
@@ -44,24 +45,28 @@ class MethodBuilder {
 	private final String methodName
 	private final Contract stubContent
 	private final ContractVerifierConfigProperties configProperties
+	private final GeneratedClassDataForMethod generatedClassData
 	private final boolean ignored
 
-	private MethodBuilder(String methodName, Contract stubContent, ContractVerifierConfigProperties configProperties, boolean ignored) {
+	private MethodBuilder(String methodName, Contract stubContent, ContractVerifierConfigProperties configProperties,
+						GeneratedClassDataForMethod generatedClassData, boolean ignored) {
 		this.ignored = ignored
 		this.stubContent = stubContent
 		this.methodName = methodName
 		this.configProperties = configProperties
+		this.generatedClassData = generatedClassData
 	}
 
 	/**
 	 * A factory method that creates a {@link MethodBuilder} for the given arguments
 	 */
-	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties) {
+	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties, SingleTestGenerator.GeneratedClassData generatedClassData) {
 		if (log.isDebugEnabled()) {
 			log.debug("Stub content Groovy DSL [$stubContent]")
 		}
-		String methodName = MethodBuilder.methodName(contract, stubsFile, stubContent)
-		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
+		String methodName = methodName(contract, stubsFile, stubContent)
+		return new MethodBuilder(methodName, stubContent, configProperties,
+				new GeneratedClassDataForMethod(generatedClassData, methodName), contract.ignored || stubContent.ignored)
 	}
 
 	static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
@@ -108,30 +113,30 @@ class MethodBuilder {
 	private MethodBodyBuilder getMethodBodyBuilder() {
 		if (stubContent.input || stubContent.outputMessage) {
 			if (isJUnitType()) {
-				return new JUnitMessagingMethodBodyBuilder(stubContent, configProperties)
+				return new JUnitMessagingMethodBodyBuilder(stubContent, configProperties, this.generatedClassData)
 			}
-			return new SpockMessagingMethodBodyBuilder(stubContent, configProperties)
+			return new SpockMessagingMethodBodyBuilder(stubContent, configProperties, this.generatedClassData)
 		}
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
 			if (isJUnitType()) {
-				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties)
+				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassData)
 			}
-			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassData)
 		} else if (configProperties.testMode == TestMode.WEBTESTCLIENT) {
 			if (isJUnitType()) {
-				return new WebTestClientJUnitMethodBodyBuilder(stubContent, configProperties)
+				return new WebTestClientJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassData)
 			}
-			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassData)
 		} else if (configProperties.testMode == TestMode.EXPLICIT) {
 			if (isJUnitType()) {
-				return new ExplicitJUnitMethodBodyBuilder(stubContent, configProperties)
+				return new ExplicitJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassData)
 			}
 			// in Groovy we're using def so we don't have to update the imports
-			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassData)
 		} else if (configProperties.testFramework == SPOCK) {
-			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassData)
 		}
-		return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties)
+		return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassData)
 	}
 
 	private boolean isJUnitType() {

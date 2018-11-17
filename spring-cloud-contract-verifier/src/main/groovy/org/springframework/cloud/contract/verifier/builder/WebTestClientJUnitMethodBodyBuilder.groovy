@@ -17,8 +17,8 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 @PackageScope
 class WebTestClientJUnitMethodBodyBuilder extends RestAssuredJUnitMethodBodyBuilder {
 
-    WebTestClientJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-        super(stubDefinition, configProperties)
+    WebTestClientJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
+        super(stubDefinition, configProperties, methodName)
     }
 
     @Override

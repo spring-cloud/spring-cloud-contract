@@ -22,6 +22,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
@@ -33,7 +34,6 @@ import java.util.regex.Pattern
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
-
 /**
  * Root class for JUnit method building
  *
@@ -48,8 +48,9 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJ
 @PackageScope
 abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
-	JUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	JUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties,
+						GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override
@@ -168,6 +169,8 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		String value
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
+		} else if (body instanceof FromFileProperty) {
+			value = generatedTestPath()
 		} else {
 			value = "\"$body\""
 		}

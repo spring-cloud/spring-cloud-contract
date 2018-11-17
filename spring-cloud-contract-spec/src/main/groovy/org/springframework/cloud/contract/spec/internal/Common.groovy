@@ -178,8 +178,18 @@ class Common {
 	 * @param relativePath of the file to read
 	 * @return String file contents
 	 */
-	String file(String relativePath) {
-		return file(relativePath, Charset.forName("UTF-8"))
+	FromFileProperty file(String relativePath) {
+		return file(relativePath, Charset.defaultCharset())
+	}
+
+	/**
+	 * Read file contents as bytes[]
+	 *
+	 * @param relativePath of the file to read
+	 * @return String file contents
+	 */
+	FromFileProperty fileAsBytes(String relativePath) {
+		return new FromFileProperty(fileLocation(relativePath), byte[])
 	}
 
 	/**
@@ -189,8 +199,8 @@ class Common {
 	 * @param charset to use for converting the bytes to String
 	 * @return String file contents
 	 */
-	String file(String relativePath, Charset charset) {
-		return new String(fileAsBytes(relativePath), charset)
+	FromFileProperty file(String relativePath, Charset charset) {
+		return new FromFileProperty(fileLocation(relativePath), String, charset)
 	}
 
 	/**
@@ -199,12 +209,12 @@ class Common {
 	 * @param relativePath of the file to read
 	 * @return file contents as an array of bytes
 	 */
-	byte[] fileAsBytes(String relativePath) {
+	private File fileLocation(String relativePath) {
 		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath)
 		if (resource == null) {
 			throw new IllegalStateException("File [${relativePath}] is not present")
 		}
-		return new File(resource.toURI()).bytes
+		return new File(resource.toURI())
 	}
 
 	/**
