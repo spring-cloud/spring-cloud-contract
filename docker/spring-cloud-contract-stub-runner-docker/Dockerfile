@@ -1,6 +1,6 @@
 FROM ubuntu:18.10
 
-ARG SDKMAN_JAVA_INSTALLATION=8.0.181-zulu
+ARG SDKMAN_JAVA_INSTALLATION=8.0.192-zulu
 
 MAINTAINER Marcin Grzejszczak <mgrzejszczak@pivotal.io>
 
