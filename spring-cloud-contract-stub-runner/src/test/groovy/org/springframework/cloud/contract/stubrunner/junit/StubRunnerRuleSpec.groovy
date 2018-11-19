@@ -32,8 +32,8 @@ class StubRunnerRuleSpec extends Specification {
 	@BeforeClass
 	@AfterClass
 	void setupProps() {
-		System.clearProperty("stubrunner.repository.root");
-		System.clearProperty("stubrunner.classifier");
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
 	}
 
 	// tag::classrule[]

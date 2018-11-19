@@ -159,7 +159,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	}
 
 	private static class CopyFileVisitor extends SimpleFileVisitor<Path> {
-		private final Path targetPath;
+		private final Path targetPath
 		private Path sourcePath = null
 		CopyFileVisitor(Path targetPath) {
 			this.targetPath = targetPath

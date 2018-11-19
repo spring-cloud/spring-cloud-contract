@@ -26,7 +26,7 @@ class WireMockResponseStubStrategySpec extends Specification {
 			def subject = new WireMockResponseStubStrategy(contract)
 			def content = subject.buildClientResponseContent()
 		then:
-			'{"value":1.5}'.equals(content.body)
+			'{"value":1.5}' == content.body
 	}
 
 	@Issue("#468")

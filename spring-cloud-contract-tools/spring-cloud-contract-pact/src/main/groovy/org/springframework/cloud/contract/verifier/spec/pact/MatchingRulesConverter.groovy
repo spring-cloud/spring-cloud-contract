@@ -82,11 +82,11 @@ class MatchingRulesConverter {
 					break
 				case MatchingType.REGEX:
 					String pattern = it.value().toString()
-					if (pattern.equals(regexPatterns.number().pattern())) {
+					if (pattern == regexPatterns.number().pattern()) {
 						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER))
-					} else if (pattern.equals(regexPatterns.anInteger().pattern())) {
+					} else if (pattern == regexPatterns.anInteger().pattern()) {
 						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
-					} else if (pattern.equals(regexPatterns.aDouble().pattern())) {
+					} else if (pattern == regexPatterns.aDouble().pattern()) {
 						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
 					} else {
 						category.addRule(key, new RegexMatcher(pattern))

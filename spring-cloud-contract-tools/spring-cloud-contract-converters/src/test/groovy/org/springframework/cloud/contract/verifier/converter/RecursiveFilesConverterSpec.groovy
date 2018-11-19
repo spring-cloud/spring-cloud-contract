@@ -37,7 +37,7 @@ class RecursiveFilesConverterSpec extends Specification {
 											 Paths.get("dir1/shouldHaveIndex1.json"), Paths.get("dir1/shouldHaveIndex2.json")]
 
 	@Rule
-	public TemporaryFolder tmpFolder = new TemporaryFolder();
+	public TemporaryFolder tmpFolder = new TemporaryFolder()
 
 	def "should recursively convert all matching files"() {
 		given:

@@ -44,6 +44,6 @@ class PublishStubsToScmTask extends ConventionTask {
 		String projectName = project.group.toString() + ":" + project.name.toString() + ":" + this.project.version.toString()
 		project.logger.info("Pushing Stubs to SCM for project [" + projectName + "]")
 		StubRunnerOptions options = getDownloader().options(getConfigProperties())
-		new ContractProjectUpdater(options).updateContractProject(projectName, getStubsOutputDir().toPath());
+		new ContractProjectUpdater(options).updateContractProject(projectName, getStubsOutputDir().toPath())
 	}
 }

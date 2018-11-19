@@ -77,7 +77,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	 * Returns {@code true} if a response body is expected
 	 */
 	protected boolean expectsResponseBody() {
-		return response.body != null;
+		return response.body != null
 	}
 
 	/**

@@ -19,7 +19,7 @@ package hello
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import spock.lang.Specification
 
-public class BaseAccurest extends Specification {
+class BaseAccurest extends Specification {
 
     def setup() {
         RestAssuredMockMvc.standaloneSetup(new GreetingController())

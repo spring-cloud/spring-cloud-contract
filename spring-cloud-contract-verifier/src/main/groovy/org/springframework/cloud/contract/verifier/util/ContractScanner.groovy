@@ -41,7 +41,7 @@ import java.util.function.Predicate
 @CompileStatic
 final class ContractScanner {
 
-	private static final Log log = LogFactory.getLog(ContractScanner.class);
+	private static final Log log = LogFactory.getLog(ContractScanner.class)
 
 	/**
 	 * Traverses through the directories, applies converters

@@ -64,8 +64,8 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 	@BeforeClass
 	@AfterClass
 	static void setupProps() {
-		System.clearProperty("stubrunner.stubs.repository.root");
-		System.clearProperty("stubrunner.stubs.classifier");
+		System.clearProperty("stubrunner.stubs.repository.root")
+		System.clearProperty("stubrunner.stubs.classifier")
 	}
 
 	def 'should make service discovery work for #serviceName'() {

@@ -515,7 +515,7 @@ class SingleTestGeneratorSpec extends Specification {
 							}
 			''')
 		and:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
@@ -547,7 +547,7 @@ class SingleTestGeneratorSpec extends Specification {
 	}
 }''')
 		and:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
@@ -579,7 +579,7 @@ class SingleTestGeneratorSpec extends Specification {
 	}
 }''')
 		and:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()

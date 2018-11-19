@@ -85,7 +85,7 @@ public abstract class AbstractGitTest {
 		return new GitRepo.JGitFactory().open(project);
 	}
 
-	File clonedProject(File baseDir, File projectToClone) throws IOException {
+	File clonedProject(File baseDir, File projectToClone) {
 		GitRepo projectRepo = new GitRepo(baseDir);
 		projectRepo.cloneProject(projectToClone.toURI());
 		return baseDir;

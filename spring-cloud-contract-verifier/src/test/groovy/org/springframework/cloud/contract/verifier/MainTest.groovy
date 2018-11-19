@@ -21,7 +21,8 @@ import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 
 class MainTest {
-	public static void main(String[] args) {
+
+	static void main(String[] args) {
 		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 				contractsDslDir: new File('/some/path/dsl'),
 				generatedTestSourcesDir: new File('/tmp/contracts'),

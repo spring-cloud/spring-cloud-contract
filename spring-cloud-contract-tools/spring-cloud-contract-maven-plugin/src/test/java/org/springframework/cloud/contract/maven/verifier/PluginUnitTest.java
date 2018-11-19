@@ -20,16 +20,18 @@ import java.io.File;
 
 import io.takari.maven.testing.TestMavenRuntime;
 import io.takari.maven.testing.TestResources;
-import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Rule;
 import org.junit.Test;
+
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.util.StringUtils;
 
 import static io.takari.maven.testing.TestMavenRuntime.newParameter;
 import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
 import static io.takari.maven.testing.TestResources.assertFilesPresent;
+import static java.nio.charset.Charset.defaultCharset;
+import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.assertj.core.api.BDDAssertions.then;
 
 public class PluginUnitTest {
@@ -99,7 +101,7 @@ public class PluginUnitTest {
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierSpec.groovy";
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
-		then(FileUtils.readFileToString(test)).contains("spock.lang.Ignore");
+		then(readFileToString(test, defaultCharset())).contains("spock.lang.Ignore");
 	}
 
 	@Test
@@ -127,7 +129,7 @@ public class PluginUnitTest {
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 		File test = new File(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
-		then(FileUtils.readFileToString(test)).doesNotContain("hasSize(4)");
+		then(readFileToString(test, defaultCharset())).doesNotContain("hasSize(4)");
 	}
 
 	@Test
@@ -139,7 +141,8 @@ public class PluginUnitTest {
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 		File test = new File(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
-		then(FileUtils.readFileToString(test)).contains("hasSize(4)");
+		then(readFileToString(test, defaultCharset()
+		)).contains("hasSize(4)");
 	}
 
 	@Test
@@ -252,7 +255,7 @@ public class PluginUnitTest {
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/hello/V1Test.java";
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
-		then(FileUtils.readFileToString(test)).contains("extends HelloV1Base")
+		then(readFileToString(test, defaultCharset())).contains("extends HelloV1Base")
 				.contains("import hello.HelloV1Base");
 	}
 
@@ -267,7 +270,7 @@ public class PluginUnitTest {
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/hello/V1Spec.groovy";
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
-		then(FileUtils.readFileToString(test)).contains("extends HelloV1Base")
+		then(readFileToString(test, defaultCharset())).contains("extends HelloV1Base")
 				.contains("import hello.HelloV1Base");
 	}
 
@@ -282,7 +285,7 @@ public class PluginUnitTest {
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Test.java";
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
-		then(FileUtils.readFileToString(test)).contains("extends TestBase")
+		then(readFileToString(test, defaultCharset())).contains("extends TestBase")
 				.contains("import com.example.TestBase");
 	}
 
@@ -297,7 +300,7 @@ public class PluginUnitTest {
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Spec.groovy";
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
-		then(FileUtils.readFileToString(test)).contains("extends TestBase")
+		then(readFileToString(test, defaultCharset())).contains("extends TestBase")
 				.contains("import com.example.TestBase");
 	}
 
@@ -312,7 +315,7 @@ public class PluginUnitTest {
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Test.java";
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
-		then(FileUtils.readFileToString(test))
+		then(readFileToString(test, defaultCharset()))
 				.contains("public void validate_should_post_a_user() throws Exception {")
 				.contains("public void validate_withList_1() throws Exception {");
 	}
@@ -329,12 +332,12 @@ public class PluginUnitTest {
 		File test = new File(basedir, firstFile);
 		assertFilesPresent(basedir,
 				"target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/1_WithList.json");
-		then(FileUtils.readFileToString(test)).contains("/users/1");
+		then(readFileToString(test, defaultCharset())).contains("/users/1");
 		String secondFile = "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/1_WithList.json";
 		File test2 = new File(basedir, secondFile);
 		assertFilesPresent(basedir,
 				"target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/should post a user.json");
-		then(FileUtils.readFileToString(test2)).contains("/users/2");
+		then(readFileToString(test2, defaultCharset())).contains("/users/2");
 	}
 
 	@Test
@@ -363,7 +366,7 @@ public class PluginUnitTest {
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 		File test = new File(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
-		String testContents = FileUtils.readFileToString(test);
+		String testContents = readFileToString(test, defaultCharset());
 		int countOccurrencesOf = StringUtils.countOccurrencesOf(testContents,
 				"\t\tMockMvcRequestSpecification");
 		then(countOccurrencesOf).isEqualTo(4);

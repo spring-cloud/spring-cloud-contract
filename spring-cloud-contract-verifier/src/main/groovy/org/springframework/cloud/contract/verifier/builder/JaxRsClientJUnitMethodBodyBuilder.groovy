@@ -170,7 +170,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	}
 
 	protected String getHeader(String name) {
-		return request.headers?.entries.find { it.name == name }?.serverValue
+		return request.headers?.entries?.find { it.name == name }?.serverValue
 	}
 
 	@Override

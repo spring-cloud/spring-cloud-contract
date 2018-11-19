@@ -49,7 +49,7 @@ class RequestResponsePactCreator {
 		Names names = NamingUtil.name(contracts.get(0))
 		PactDslWithProvider pactDslWithProvider = ConsumerPactBuilder
 				.consumer(names.consumer).hasPactWith(names.producer)
-		PactDslResponse pactDslResponse = null;
+		PactDslResponse pactDslResponse = null
 		contracts.each { Contract contract ->
 			assertNoExecutionProperty(contract)
 			PactDslRequestWithPath pactDslRequest = pactDslResponse ?

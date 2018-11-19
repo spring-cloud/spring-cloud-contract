@@ -45,9 +45,9 @@ import org.springframework.core.io.support.SpringFactoriesLoader
 @Commons
 class ContractFileScanner {
 
-	private static final String OS_NAME = System.getProperty("os.name");
-	private static final String OS_NAME_WINDOWS_PREFIX = "Windows";
-	protected static final boolean IS_OS_WINDOWS = getOSMatchesName(OS_NAME_WINDOWS_PREFIX);
+	private static final String OS_NAME = System.getProperty("os.name")
+	private static final String OS_NAME_WINDOWS_PREFIX = "Windows"
+	protected static final boolean IS_OS_WINDOWS = getOSMatchesName(OS_NAME_WINDOWS_PREFIX)
 
 	private static final String MATCH_PREFIX = "glob:"
 	private static final Pattern SCENARIO_STEP_FILENAME_PATTERN = Pattern.compile("[0-9]+_.*")
@@ -210,15 +210,15 @@ class ContractFileScanner {
 		if (path == null) {
 			return null
 		}
-		int extIndex = path.lastIndexOf('.');
+		int extIndex = path.lastIndexOf('.')
 		if (extIndex == -1) {
 			return null
 		}
-		int folderIndex = path.lastIndexOf('/');
+		int folderIndex = path.lastIndexOf('/')
 		if (folderIndex > extIndex) {
 			return null
 		}
-		return path.substring(extIndex + 1);
+		return path.substring(extIndex + 1)
 	}
 
 	/**
@@ -228,7 +228,7 @@ class ContractFileScanner {
 	 * @return true if matches, or false if not or can't determine
 	 */
 	private static boolean getOSMatchesName(final String osNamePrefix) {
-		return isOSNameMatch(OS_NAME, osNamePrefix);
+		return isOSNameMatch(OS_NAME, osNamePrefix)
 	}
 
 	/**
@@ -243,8 +243,8 @@ class ContractFileScanner {
 	 */
 	private static boolean isOSNameMatch(final String osName, final String osNamePrefix) {
 		if (osName == null) {
-			return false;
+			return false
 		}
-		return osName.startsWith(osNamePrefix);
+		return osName.startsWith(osNamePrefix)
 	}
 }
