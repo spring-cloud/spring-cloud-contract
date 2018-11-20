@@ -16,17 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.lang.reflect.InvocationTargetException
+
 import org.junit.Rule
-import org.springframework.boot.test.rule.OutputCapture
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
-import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
-import java.lang.reflect.InvocationTargetException
+import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
+import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 
 class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 

@@ -16,6 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
+import java.util.regex.Pattern
+
+import spock.lang.Issue
+import spock.lang.Shared
+import spock.lang.Specification
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
@@ -25,11 +31,7 @@ import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import spock.lang.Issue
-import spock.lang.Shared
-import spock.lang.Specification
 
-import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn

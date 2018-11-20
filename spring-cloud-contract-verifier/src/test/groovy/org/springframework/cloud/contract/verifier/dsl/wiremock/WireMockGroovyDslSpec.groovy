@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.dsl
+package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
@@ -22,19 +22,18 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemp
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import spock.lang.Issue
+import spock.lang.Specification
+
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper
-import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
-import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.util.SocketUtils
-import spock.lang.Issue
-import spock.lang.Specification
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
@@ -2397,6 +2396,52 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				''', wireMockStub)
 		and:
 		stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
+	def should_generate_stubs_with_request_body_matchers() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+					body([
+							duck                : 123,
+							alpha               : 'abc',
+							number              : 123,
+							aBoolean            : true,
+							date                : '2017-01-01',
+							dateTime            : '2017-01-01T01:23:45',
+							time                : '01:02:34',
+							valueWithoutAMatcher: 'foo',
+							valueWithTypeMatch  : 'string',
+							key                 : [
+									'complex.key': 'foo'
+							]
+					])
+					bodyMatchers {
+						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.duck', byEquality())
+						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byEquality())
+						jsonPath('$.number', byRegex(number()))
+						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						jsonPath('$.date', byDate())
+						jsonPath('$.dateTime', byTimestamp())
+						jsonPath('$.time', byTime())
+						jsonPath("\$.['key'].['complex.key']", byEquality())
+					}
+					headers {
+						contentType(applicationJson())
+					}
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+
+		then:
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	WireMockConfiguration config() {

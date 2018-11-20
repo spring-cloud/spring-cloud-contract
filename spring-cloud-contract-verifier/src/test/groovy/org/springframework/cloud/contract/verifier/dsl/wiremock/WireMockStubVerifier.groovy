@@ -14,16 +14,15 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.dsl
+package org.springframework.cloud.contract.verifier.dsl.wiremock
+
+import java.util.regex.Pattern
 
 import com.github.tomakehurst.wiremock.matching.RegexPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
-import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
-import java.util.regex.Pattern
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
 trait WireMockStubVerifier {
 
@@ -38,5 +37,4 @@ trait WireMockStubVerifier {
 	void stubMappingIsValidWireMockStub(Contract contractDsl) {
 		stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
 	}
-
 }
