@@ -87,15 +87,16 @@ abstract class MethodBodyBuilder {
 		this.classDataForMethod = classDataForMethod
 	}
 
-	protected boolean isBytes(DslProperty property) {
-		return MapConverter.getTestSideValues(property) instanceof byte[]
-	}
-
-	protected String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
+	private String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
 		String newFileName = this.classDataForMethod.methodName + "_" + side.name().toLowerCase() + ".bin"
 		File newFile = new File(this.classDataForMethod.testClassPath().parent.toFile(), newFileName)
 		newFile.bytes = property.asType(byte[])
 		return newFileName
+	}
+
+	protected String readBytesFromFileString(FromFileProperty property, CommunicationType side) {
+		String fileName = byteBodyToAFileForTestMethod(property, side)
+		return "java.nio.file.Files.readAllBytes(new java.io.File(\"${fileName}\").toPath())"
 	}
 
 	private TemplateProcessor processor() {
@@ -146,7 +147,7 @@ abstract class MethodBodyBuilder {
 	 * Builds the code that for the given {@code property} will compare it to
 	 * the given byte[] {@code value}
 	 */
-	protected abstract String getResponseBodyPropertyComparisonString(String property, byte[] value)
+	protected abstract String getResponseBodyPropertyComparisonString(String property, FromFileProperty value)
 
 	/**
 	 * Builds the code that for the given {@code property} will compare it to
@@ -233,11 +234,6 @@ abstract class MethodBodyBuilder {
 	 * Builds the code that returns String from a body that is plain text
 	 */
 	protected abstract String getSimpleResponseBodyString(String responseString)
-
-	/**
-	 * Builds the code that returns bytes from a body that are bytes
-	 */
-	protected abstract String getSimpleResponseBodyBytes(String responseString)
 
 	/**
 	 * Builds the code that returns the "message". For messaging it will be an input
@@ -388,8 +384,7 @@ abstract class MethodBodyBuilder {
 		}
 	}
 
-	private void byteResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
-		bb.addLine(getResponseBodyPropertyComparisonString(getResponseAsString()))
+	private void byteResponseBodyCheck(BlockBuilder bb, FromFileProperty convertedResponseBody) {
 		processText(bb, "", convertedResponseBody)
 		addColonIfRequired(bb)
 	}

@@ -22,6 +22,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -41,8 +42,10 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 @TypeChecked
 class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
-	SpockMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
-		super(stubDefinition, configProperties, methodName)
+	SpockMessagingMethodBodyBuilder(Contract stubDefinition,
+									ContractVerifierConfigProperties configProperties,
+									GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override
@@ -142,9 +145,6 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getResponseAsString() {
-		if (isBytes(outputMessage?.body)) {
-			return 'contractVerifierObjectMapper.writeValueAsBytes(response.payload)'
-		}
 		return 'contractVerifierObjectMapper.writeValueAsString(response.payload)'
 	}
 
@@ -164,6 +164,11 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		return null
+	}
+
+	@Override
 	protected String getPropertyInListString(String property, Integer listIndex) {
 		return "$property[$listIndex]" ?: ''
 	}
@@ -176,11 +181,6 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected String getParsedXmlResponseBodyString(String responseString) {
 		return "def responseBody = new XmlSlurper().parseText($responseString)"
-	}
-
-	@Override
-	protected String getSimpleResponseBodyBytes(String responseString) {
-		return "byte[] responseBody = ($responseString)"
 	}
 
 	@Override
