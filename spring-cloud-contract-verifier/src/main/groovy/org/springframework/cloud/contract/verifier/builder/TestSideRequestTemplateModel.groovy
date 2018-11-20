@@ -2,14 +2,13 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
-import groovy.transform.Immutable
 import org.apache.commons.text.StringEscapeUtils
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
 /**
  * Representation of the request side to be used for response templating in
  * the generated tests.
@@ -100,6 +99,8 @@ class TestSideRequestTemplateModel {
 		Object bodyValue = extractServerValueFromBody(body)
 		if (bodyValue instanceof GString || bodyValue instanceof String) {
 			return bodyValue.toString()
+		} else if (bodyValue instanceof FromFileProperty) {
+			return null
 		}
 		return bodyValue != null ? new JsonOutput().toJson(bodyValue) : bodyValue
 	}

@@ -119,9 +119,15 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		}
 
 		if (request.body) {
-			Object body = [ExecutionProperty, FromFileProperty]
-					.any { request.body.serverValue?.class?.isAssignableFrom(it) } ?
-					request.body?.serverValue : getBodyAsString()
+			Object body = null
+			switch (request.body.serverValue) {
+				case ExecutionProperty:
+				case FromFileProperty:
+					body = request.body?.serverValue
+					break;
+				default:
+					body = getBodyAsString()
+			}
 			bb.addLine(getBodyString(body))
 		}
 		if (request.multipart) {
@@ -219,12 +225,6 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, GString value) {
 		String gStringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processCookieElement(blockBuilder, key, gStringValue)
-	}
-
-	@Override
-	protected String getResponseBodyPropertyComparisonString(String property, byte[] value) {
-		return "assertThat(java.util.Base64.getEncoder().encode(responseBody))\n" +
-				".isEqualTo(\"${Base64.getEncoder().encodeToString(value)}\")"
 	}
 
 	@Override

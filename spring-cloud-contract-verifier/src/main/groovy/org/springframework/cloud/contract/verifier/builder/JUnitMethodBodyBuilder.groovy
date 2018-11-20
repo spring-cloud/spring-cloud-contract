@@ -16,9 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+
+import java.util.regex.Pattern
+
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -28,8 +32,6 @@ import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.RegexpBuilders
-
-import java.util.regex.Pattern
 
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
@@ -55,9 +57,6 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getResponseAsString() {
-		if (isBytes(this.response.body)) {
-			return "response.getBody().asByteArray()"
-		}
 		return "response.getBody().asString()"
 	}
 
@@ -122,13 +121,14 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	@Override
-	protected String getParsedXmlResponseBodyString(String responseString) {
-		return "Object responseBody = new XmlSlurper().parseText($responseString);"
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
+				readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
 	}
 
 	@Override
-	protected String getSimpleResponseBodyBytes(String responseString) {
-		return "byte[] responseBody = $responseString;"
+	protected String getParsedXmlResponseBodyString(String responseString) {
+		return "Object responseBody = new XmlSlurper().parseText($responseString);"
 	}
 
 	@Override
@@ -170,7 +170,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
 		} else if (body instanceof FromFileProperty) {
-			value = generatedTestPath()
+			value = readBytesFromFileString(body, CommunicationType.REQUEST)
 		} else {
 			value = "\"$body\""
 		}

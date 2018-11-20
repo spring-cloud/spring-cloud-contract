@@ -21,6 +21,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.QueryParameter
@@ -44,8 +45,10 @@ import java.util.regex.Pattern
 @TypeChecked
 class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
-	JaxRsClientSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
-		super(stubDefinition, configProperties, methodName)
+	JaxRsClientSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition,
+													   ContractVerifierConfigProperties configProperties,
+													   GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override
@@ -114,9 +117,16 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {
 			String contentType = getHeader('Content-Type') ?: getRequestContentType().mimeType
-			String body = request.body?.serverValue instanceof ExecutionProperty ?
-					request.body?.serverValue?.toString() : "'${bodyAsString}'"
-			bb.addLine(".method('${method.toUpperCase()}', entity(${body}, '$contentType'))")
+			Object body = request.body
+			String value
+			if (body instanceof ExecutionProperty) {
+				value = body.toString()
+			} else if (body instanceof FromFileProperty) {
+				value = readBytesFromFileString(body, CommunicationType.REQUEST)
+			} else {
+				value = "'${bodyAsString}'"
+			}
+			bb.addLine(".method('${method.toUpperCase()}', entity(${value}, '$contentType'))")
 		} else {
 			bb.addLine(".method('${method.toUpperCase()}')")
 		}

@@ -69,6 +69,10 @@ class Body extends DslProperty {
 		super(bodyAsValue.clientValue, bodyAsValue.serverValue)
 	}
 
+	Body(Serializable serializable) {
+		super(serializable, serializable)
+	}
+
 	Body(MatchingStrategy matchingStrategy) {
 		super(matchingStrategy, matchingStrategy)
 	}

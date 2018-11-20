@@ -61,12 +61,12 @@ class JavaTestGenerator implements SingleTestGenerator {
 		String classPackage = generatedClassData.classPackage
 		ClassBuilder clazz = ClassBuilder.createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
 		if (configProperties.imports) {
-			configProperties.imports.each {
+			configProperties.imports.each { String it ->
 				clazz.addImport(it)
 			}
 		}
 		if (configProperties.staticImports) {
-			configProperties.staticImports.each {
+			configProperties.staticImports.each { String it ->
 				clazz.addStaticImport(it)
 			}
 		}
@@ -87,7 +87,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 	private void processContractFiles(Collection<ContractMetadata> listOfFiles, ContractVerifierConfigProperties configProperties, ClassBuilder clazz, GeneratedClassData generatedClassData) {
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
 		boolean conditionalImportsAdded = false
-		boolean toIgnore = listOfFiles.ignored.find {it}
+		boolean toIgnore = listOfFiles.find { it.ignored }
 		contracts.each {ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
 				clazz.addImports(getImports(configProperties.testFramework))
@@ -151,7 +151,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 			if (log.isDebugEnabled()) {
 				log.debug("Stub content from file [${stubsFile.text}]")
 			}
-			List<Contract> stubContents = metadata.convertedContract
+			Collection<Contract> stubContents = metadata.convertedContract
 			Map<ParsedDsl, TestType> entries = stubContents.collectEntries { Contract stubContent ->
 				TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 				return [(new ParsedDsl(metadata, stubContent, stubsFile)): testType]
@@ -163,6 +163,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	@Canonical
 	@EqualsAndHashCode(includeFields = true)
+	@CompileStatic
 	private static class ParsedDsl {
 		ContractMetadata contract
 		Contract groovyDsl

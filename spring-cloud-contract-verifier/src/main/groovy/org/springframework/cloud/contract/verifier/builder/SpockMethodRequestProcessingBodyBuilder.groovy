@@ -21,6 +21,7 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
@@ -45,8 +46,10 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getG
 @TypeChecked
 abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
-	SpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	SpockMethodRequestProcessingBodyBuilder(Contract stubDefinition,
+											ContractVerifierConfigProperties configProperties,
+											GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override
@@ -105,8 +108,9 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	@Override
-	protected String getSimpleResponseBodyBytes(String responseString) {
-		return "byte[] responseBody = ($responseString)"
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		return "response.body.asByteArray() == " +
+				readBytesFromFileString(value, CommunicationType.RESPONSE)
 	}
 
 	@Override
@@ -139,8 +143,8 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		String value
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
-		} else if (body instanceof byte[]) {
-			value = "java.lang.Base64.getDecoder().decode(${Base64.encoder.encodeToString((byte[]) body)})"
+		} else if (body instanceof FromFileProperty) {
+			value = readBytesFromFileString(body, CommunicationType.REQUEST)
 		} else {
 			value = "'''$body'''"
 		}

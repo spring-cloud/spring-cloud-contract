@@ -20,6 +20,7 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
@@ -46,8 +47,10 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final Input inputMessage
 	protected final OutputMessage outputMessage
 
-	MessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, String methodName) {
-		super(configProperties, stubDefinition, methodName)
+	MessagingMethodBodyBuilder(Contract stubDefinition,
+							ContractVerifierConfigProperties configProperties,
+							   GeneratedClassDataForMethod classDataForMethod) {
+		super(configProperties, stubDefinition, classDataForMethod)
 		this.inputMessage = stubDefinition.input
 		this.outputMessage = stubDefinition.outputMessage
 	}
@@ -102,9 +105,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
-	protected String getResponseBodyPropertyComparisonString(String property, byte[] value) {
-		return "assertThat(java.util.Base64.getEncoder().encode(responseBody))\n" +
-				".isEqualTo(\"${Base64.getEncoder().encode(value)}\")"
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		return null
 	}
 
 	protected ContentType getResponseContentType() {
