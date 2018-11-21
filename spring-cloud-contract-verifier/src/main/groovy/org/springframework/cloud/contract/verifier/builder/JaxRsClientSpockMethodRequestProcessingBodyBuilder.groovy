@@ -117,12 +117,15 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {
 			String contentType = getHeader('Content-Type') ?: getRequestContentType().mimeType
-			Object body = request.body
+			Object body = request.body.serverValue
 			String value
 			if (body instanceof ExecutionProperty) {
 				value = body.toString()
 			} else if (body instanceof FromFileProperty) {
-				value = readBytesFromFileString(body, CommunicationType.REQUEST)
+				FromFileProperty fileProperty = (FromFileProperty) body
+				value = fileProperty.isByte() ?
+						readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
+						readStringFromFileString(fileProperty, CommunicationType.REQUEST)
 			} else {
 				value = "'${bodyAsString}'"
 			}
