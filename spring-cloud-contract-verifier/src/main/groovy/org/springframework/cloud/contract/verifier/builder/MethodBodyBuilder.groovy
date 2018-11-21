@@ -99,6 +99,10 @@ abstract class MethodBodyBuilder {
 		return "java.nio.file.Files.readAllBytes(new java.io.File(\"${fileName}\").toPath())"
 	}
 
+	protected String readStringFromFileString(FromFileProperty property, CommunicationType side) {
+		return "new String(" + readBytesFromFileString(property, side) + ")"
+	}
+
 	private TemplateProcessor processor() {
 		return new HandlebarsTemplateProcessor()
 	}
@@ -794,10 +798,5 @@ abstract class MethodBodyBuilder {
 			String prop = getPropertyInListString(property, listIndex as Integer)
 			processBodyElement(blockBuilder, property, prop, listElement)
 		}
-	}
-
-
-	static enum CommunicationType {
-		REQUEST, RESPONSE, INPUT, OUTPUT
 	}
 }

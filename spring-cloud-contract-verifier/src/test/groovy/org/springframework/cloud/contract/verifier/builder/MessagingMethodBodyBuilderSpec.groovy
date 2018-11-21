@@ -29,6 +29,8 @@ import spock.lang.Specification
 class MessagingMethodBodyBuilderSpec extends Specification {
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
+	@Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
+			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
 
 	def "should work for triggered based messaging with Spock"() {
 		given:
@@ -48,7 +50,7 @@ def contractDsl = Contract.make {
 	}
 }
 // end::trigger_method_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -90,7 +92,7 @@ def contractDsl = Contract.make {
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -142,7 +144,7 @@ def contractDsl = Contract.make {
 	}
 }
 		// end::trigger_message_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -195,7 +197,7 @@ and:
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -243,7 +245,7 @@ def contractDsl = Contract.make {
 	}
 }
 		// end::trigger_no_output_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -284,7 +286,7 @@ then:
 					assertThat('bookWasDeleted()')
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -329,7 +331,7 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -378,7 +380,7 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -431,7 +433,7 @@ Contract.make {
 	}
 }
 		// end::consumer_producer[]
-		MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+		MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 		BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 		builder.appendTo(blockBuilder)
@@ -478,7 +480,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -522,7 +524,7 @@ Contract.make {
                             ])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -614,8 +616,8 @@ Contract.make {
 			(error.message ? error.message : error.cause.message).contains('''doesn't match the JSON path [$[?(@.['shouldFail'] =~ ''')
 		where:
 			methodBuilderName                 | methodBuilder                                                            | endOfLineRegExSymbol
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties) } | '\\$'
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties) } | '$'
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '$'
 	}
 
 	@Issue("587")
@@ -639,7 +641,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -674,7 +676,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -717,7 +719,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -760,7 +762,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -803,7 +805,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -860,7 +862,7 @@ Contract.make {
 			test == expectedTest
 		where:
 			methodBuilderName                 | methodBuilder                                                            | expectedTest
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties) } | ''' when:
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' when:
   foo()
 
  then:
@@ -871,7 +873,7 @@ Contract.make {
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("['field']").isEqualTo("value")
 '''
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties) } | ''' // when:
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // when:
   foo();
 
  // then:

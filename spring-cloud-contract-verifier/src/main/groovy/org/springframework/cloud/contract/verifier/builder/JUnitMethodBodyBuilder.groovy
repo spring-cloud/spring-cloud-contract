@@ -122,8 +122,11 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
-		return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
-				readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
+		if (value.isByte()) {
+			return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
+					readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asType(String))
 	}
 
 	@Override
@@ -170,7 +173,10 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
 		} else if (body instanceof FromFileProperty) {
-			value = readBytesFromFileString(body, CommunicationType.REQUEST)
+			FromFileProperty fileProperty = (FromFileProperty) body
+			value = fileProperty.isByte() ?
+					readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
+					readStringFromFileString(fileProperty, CommunicationType.REQUEST)
 		} else {
 			value = "\"$body\""
 		}

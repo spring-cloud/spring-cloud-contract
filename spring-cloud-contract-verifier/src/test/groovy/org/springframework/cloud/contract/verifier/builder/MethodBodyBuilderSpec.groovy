@@ -895,13 +895,34 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			builder.appendTo(blockBuilder)
 		then:
 			String test = blockBuilder.toString()
-			test
+			requestMatcher(test)
+			responseMatcher(test)
 		where:
-			methodBuilderName                                             | methodBuilder
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			methodBuilderName                                             | methodBuilder                                                                                                   | requestMatcher | responseMatcher
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }        | { String string ->
+				string.contains('.body(java.nio.file.Files.readAllBytes(new java.io.File("some_method_request.bin").toPath()))')
+			}                                                                                                                                                                                                | { String string ->
+				string.contains('response.body.asByteArray() == java.nio.file.Files.readAllBytes(new java.io.File("some_method_response.bin").toPath())')
+			}
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                      | { String string ->
+				string.contains('.body(java.nio.file.Files.readAllBytes(new java.io.File("some_method_request.bin").toPath()));')
+			}                                                                                                                                                                                                | { String string ->
+				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(java.nio.file.Files.readAllBytes(new java.io.File("some_method_response.bin").toPath()));')
+			}
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String string ->
+				string.contains('entity(java.nio.file.Files.readAllBytes(new java.io.File("some_method_request.bin").toPath())')
+			}                                                                                                                                                                                                | { String string ->
+				string.contains('response.body.asByteArray() == java.nio.file.Files.readAllBytes(new java.io.File("some_method_response.bin").toPath())')
+			}
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                  | { String string ->
+				string.contains('entity(java.nio.file.Files.readAllBytes(new java.io.File("some_method_request.bin").toPath())')
+			}                                                                                                                                                                                                | { String string ->
+				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(java.nio.file.Files.readAllBytes(new java.io.File("some_method_response.bin").toPath()));')
+			}
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                | { String string ->
+				string.contains('.body(java.nio.file.Files.readAllBytes(new java.io.File("some_method_request.bin").toPath()));')
+			}                                                                                                                                                                                                | { String string ->
+				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(java.nio.file.Files.readAllBytes(new java.io.File("some_method_response.bin").toPath()));')
+			}
 	}
 }

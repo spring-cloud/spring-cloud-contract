@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
+import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
@@ -36,7 +37,7 @@ class GeneratorScannerSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("org.springframework.cloud.contract.verifier")
 		then:
-			6 * classGenerator.buildClass(_, _, _, _, _) >> "qwerty"
+			6 * classGenerator.buildClass(_, _, _, _) >> "qwerty"
 	}
 
 	def "should create class with full package"() {
@@ -47,9 +48,9 @@ class GeneratorScannerSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("org.springframework.cloud.contract.verifier")
 		then:
-			1 * classGenerator.buildClass(_, _, 'exceptionsSpec', 'org.springframework.cloud.contract.verifier', _) >> "spec"
-			1 * classGenerator.buildClass(_, _, 'exceptionsSpec', 'org.springframework.cloud.contract.verifier.v1', _) >> "spec1"
-			1 * classGenerator.buildClass(_, _, 'exceptionsSpec', 'org.springframework.cloud.contract.verifier.v2', _) >> "spec2"
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier'} ) >> "spec"
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v1'} ) >> "spec1"
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v2'} ) >> "spec2"
 	}
 
 }

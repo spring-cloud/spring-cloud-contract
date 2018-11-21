@@ -43,6 +43,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
     ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
             assertJsonSize: true
     )
+    
+    @Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
+            new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
 
     @Shared
     Contract contractDslWithCookiesValue = Contract.make {
@@ -201,9 +204,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#187')
@@ -237,9 +240,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#79')
@@ -275,9 +278,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#79')
@@ -316,9 +319,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#82')
@@ -348,9 +351,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """.body('''{\"items\":[\"HOP\"]}''')"""
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '.body("{\\"items\\":[\\"HOP\\"]}")'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '.body("{\\"items\\":[\\"HOP\\"]}")'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | """.body('''{\"items\":[\"HOP\"]}''')"""
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '.body("{\\"items\\":[\\"HOP\\"]}")'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '.body("{\\"items\\":[\\"HOP\\"]}")'
     }
 
     @Issue('#88')
@@ -380,9 +383,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         stubMappingIsValidWireMockStub(contractDsl)
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """.body('''property1=VAL1''')"""
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '.body("property1=VAL1")'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '.body("property1=VAL1")'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | """.body('''property1=VAL1''')"""
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '.body("property1=VAL1")'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '.body("property1=VAL1")'
     }
 
     @Issue('185')
@@ -416,9 +419,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate assertions for array in response body with #methodBuilderName'() {
@@ -452,9 +455,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate assertions for array inside response body element with #methodBuilderName'() {
@@ -487,9 +490,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate assertions for nested objects in response body with #methodBuilderName'() {
@@ -522,9 +525,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate regex assertions for map objects in response body with #methodBuilderName'() {
@@ -561,9 +564,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate regex assertions for string objects in response body with #methodBuilderName'() {
@@ -596,9 +599,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue(['#126', '#143'])
@@ -631,9 +634,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate a call with an url path and query parameters with #methodBuilderName'() {
@@ -689,9 +692,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#169')
@@ -748,9 +751,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate test for empty body with #methodBuilderName'() {
@@ -778,9 +781,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ".body('''''')"
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '.body("")'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '.body("")'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ".body('''''')"
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '.body("")'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '.body("")'
     }
 
     def 'should generate test for String in response body with #methodBuilderName'() {
@@ -809,9 +812,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyDefinitionString                                   | bodyEvaluationString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | 'def responseBody = (response.body.asString())'        | 'responseBody == "test"'
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | 'def responseBody = (response.body.asString())'        | 'responseBody == "test"'
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
     }
 
     @Issue('113')
@@ -851,9 +854,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | headerEvaluationString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
     }
 
     @Issue('115')
@@ -893,9 +896,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | headerEvaluationString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
     }
 
     def 'should work with more complex stuff and jsonpaths with #methodBuilderName'() {
@@ -937,9 +940,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should work properly with GString url with #methodBuilderName'() {
@@ -973,9 +976,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should resolve properties in GString with regular expression with #methodBuilderName'() {
@@ -1016,15 +1019,15 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('42')
     def 'should not omit the optional field in the test creation with MockMvcSpockMethodBodyBuilder'() {
         given:
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -1044,7 +1047,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
     @Issue('42')
     def "should not omit the optional field in the test creation with MockMvcJUnitMethodBodyBuilder"() {
         given:
-        MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -1110,9 +1113,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         }
         where:
         methodBuilderName                                      | methodBuilder                                                                        | assertionStrings
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason\'\'\'))''', '''assertThatLocationIsNull(response.header('Location'))''']
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ['''assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason\'\'\'))''', '''assertThatLocationIsNull(response.header('Location'))''']
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
     }
 
     def 'should support inner map and list definitions with #methodBuilderName'() {
@@ -1180,9 +1183,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '\\"street\\":\\"Light Street\\"'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '\\"street\\":\\"Light Street\\"'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '"street":"Light Street"'
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '\\"street\\":\\"Light Street\\"'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '\\"street\\":\\"Light Street\\"'
 
     }
 
@@ -1225,9 +1228,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '\\"street\\":\\"Light Street\\"'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '\\"street\\":\\"Light Street\\"'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '"street":"Light Street"'
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '\\"street\\":\\"Light Street\\"'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '\\"street\\":\\"Light Street\\"'
 
     }
 
@@ -1267,9 +1270,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('177')
@@ -1297,10 +1300,10 @@ World.''')
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """'''hello,
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | """'''hello,
 World.'''"""
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '"hello,\\nWorld."'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '"hello,\\nWorld."'
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '"hello,\\nWorld."'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '"hello,\\nWorld."'
     }
 
     @Issue('180')
@@ -1347,15 +1350,15 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | requestStrings
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          """.param('formParameter', '"formParameterValue"'""",
                                                                                                                                                          """.param('someBooleanParameter', 'true')""",
                                                                                                                                                          """.multiPart('file', 'filename.csv', 'file content'.bytes, 'application/json')"""]
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.param("formParameter", "\\"formParameterValue\\"")',
                                                                                                                                                          '.param("someBooleanParameter", "true")',
                                                                                                                                                          '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.param("formParameter", "\\"formParameterValue\\"")',
                                                                                                                                                          '.param("someBooleanParameter", "true")',
                                                                                                                                                          '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
@@ -1402,15 +1405,15 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | requestStrings
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          """.param('formParameter', '"formParameterValue"'""",
                                                                                                                                                          """.param('someBooleanParameter', 'true')""",
                                                                                                                                                          """.multiPart('file', 'filename.csv', 'file content'.bytes)"""]
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.param("formParameter", "\\"formParameterValue\\"")',
                                                                                                                                                          '.param("someBooleanParameter", "true")',
                                                                                                                                                          '.multiPart("file", "filename.csv", "file content".getBytes());']
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.param("formParameter", "\\"formParameterValue\\"")',
                                                                                                                                                          '.param("someBooleanParameter", "true")',
                                                                                                                                                          '.multiPart("file", "filename.csv", "file content".getBytes());']
@@ -1452,11 +1455,11 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | requestStrings
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          """.multiPart('file', 'file', [100, 117, 100, 97] as byte[])"""]
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
 
     }
@@ -1496,15 +1499,15 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | requestStrings
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          """.param('formParameter', '"formParameterValue"'""",
                                                                                                                                                          """.param('someBooleanParameter', 'true')""",
                                                                                                                                                          """.multiPart('file', toString(), 'file content'.bytes)"""]
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.param("formParameter", "\\"formParameterValue\\"")',
                                                                                                                                                          '.param("someBooleanParameter", "true")',
                                                                                                                                                          '.multiPart("file", toString(), "file content".getBytes());']
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
                                                                                                                                                          '.param("formParameter", "\\"formParameterValue\\"")',
                                                                                                                                                          '.param("someBooleanParameter", "true")',
                                                                                                                                                          '.multiPart("file", toString(), "file content".getBytes());']
@@ -1549,9 +1552,9 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#216')
@@ -1578,7 +1581,7 @@ World.'''"""
                 )
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -1613,7 +1616,7 @@ World.'''"""
                 )
             }
         }
-        MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -1650,9 +1653,9 @@ World.'''"""
         test.contains('''assertThatRejectionReasonIsNull(''')
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('262')
@@ -1677,7 +1680,7 @@ World.'''"""
                 }
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -1719,9 +1722,9 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('266')
@@ -1758,9 +1761,9 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('266')
@@ -1793,9 +1796,9 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('47')
@@ -1824,8 +1827,8 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder                                                                        | bodyDefinitionString
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '.when().async()'
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '.when().async()'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '.when().async()'
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '.when().async()'
     }
 
     @Issue('372')
@@ -1859,8 +1862,8 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate proper test code with array of primitives using #methodBuilderName'() {
@@ -1894,9 +1897,9 @@ World.'''"""
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#273')
@@ -1912,7 +1915,7 @@ World.'''"""
                 body(code: 9, message: $(consumer('Wrong credentials'), producer(regex('^(?!\\s*$).+'))))
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -1998,7 +2001,7 @@ World.'''"""
     def 'should generate the regular expression for the other side of communication'() {
         given:
         MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(
-                dslWithOnlyOneSideForDocs, properties)
+                dslWithOnlyOneSideForDocs, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -2033,7 +2036,7 @@ World.'''"""
                 ])
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.then(blockBuilder)
@@ -2067,7 +2070,7 @@ World.'''"""
                 ])
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.then(blockBuilder)
@@ -2097,7 +2100,7 @@ World.'''"""
                 ])
             }
         }
-        MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.then(blockBuilder)
@@ -2128,7 +2131,7 @@ World.'''"""
                 ])
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.given(blockBuilder)
@@ -2155,7 +2158,7 @@ World.'''"""
                 body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -2179,7 +2182,7 @@ World.'''"""
                 body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -2214,7 +2217,7 @@ World.'''"""
                 ])
             }
         }
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.given(blockBuilder)
@@ -2330,9 +2333,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
         where:
         methodBuilderName                                      | methodBuilder                                                                        | endOfLineRegExSymbol
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '$'
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '$'
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '$'
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '$'
     }
 
     @Issue('#162')
@@ -2364,9 +2367,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#173')
@@ -2402,9 +2405,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                      | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#172')
@@ -2436,9 +2439,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
         where:
         //order is inverted cause Intellij didn't parse this properly
         methodBuilderName                                      | methodBuilder                                                                        | expectedAssertion
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
     }
 
     @Issue('#443')
@@ -2470,11 +2473,11 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                                             | methodBuilder                                                                               | testAssertion
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }        | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
-        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
-        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
-        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
-        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }                | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
+        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
+        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
+        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
+        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
     }
 
     @Issue('#169')
@@ -2509,9 +2512,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
         where:
         //order is inverted cause Intellij didn't parse this properly
         methodBuilderName                                      | methodBuilder                                                                        | expectedAssertion
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
-        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }               | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
-        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
+        MockMvcJUnitMethodBodyBuilder.simpleName               | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }               | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+        WebTestClientJUnitMethodBodyBuilder.simpleName         | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
     }
 
     @Issue('#169')
@@ -2542,11 +2545,11 @@ DocumentContext parsedJson = JsonPath.parse(json);
         !test.contains("'executedMethod()'")
         where:
         methodBuilderName                                             | methodBuilder                                                                               | missingMethodAssertion
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }        | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
-        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(executedMethod())") }
-        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
-        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("path(executedMethod())") }
-        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }                | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(executedMethod())") }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
+        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(executedMethod())") }
+        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
+        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("path(executedMethod())") }
+        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(executedMethod())") }
     }
 
     @Issue('#203')
@@ -2578,11 +2581,11 @@ DocumentContext parsedJson = JsonPath.parse(json);
         !test.contains('assertThatJson(parsedJson).array("[\'foo\']").isEmpty()')
         where:
         methodBuilderName                                             | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     @Issue('#226')
@@ -2611,11 +2614,11 @@ DocumentContext parsedJson = JsonPath.parse(json);
         responseAssertion(test)
         where:
         methodBuilderName                                             | methodBuilder                                                                               | requestAssertion                                                                      | responseAssertion
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }        | { String body -> body.contains("body('''12000''')") }                                 | { String body -> body.contains('responseBody == "12000"') }
-        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
-        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains(""".method('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
-        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
-        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }                | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { String body -> body.contains("body('''12000''')") }                                 | { String body -> body.contains('responseBody == "12000"') }
+        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
+        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { String body -> body.contains(""".method('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
+        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
+        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
     }
 
     @Issue('#230')
@@ -2702,11 +2705,11 @@ DocumentContext parsedJson = JsonPath.parse(json);
         responseAssertion(test)
         where:
         methodBuilderName                                             | methodBuilder                                                                               | responseAssertion
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }        | { String body -> body.contains("response.header('Authorization')  == 'foo secret bar'") }
-        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
-        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
-        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
-        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }                | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { String body -> body.contains("response.header('Authorization')  == 'foo secret bar'") }
+        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
+        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
+        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
+        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
     }
 
     @Issue('#230')
@@ -2757,11 +2760,11 @@ DocumentContext parsedJson = JsonPath.parse(json);
         test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
         where:
         methodBuilderName                                             | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate JUnit assertions with cookies [#methodBuilderName]'() {
@@ -2779,8 +2782,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                              | methodBuilder
-        MockMvcJUnitMethodBodyBuilder.simpleName       | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        MockMvcJUnitMethodBodyBuilder.simpleName       | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate JUnit assertions with cookies pattern [#methodBuilderName]'() {
@@ -2798,8 +2801,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                              | methodBuilder
-        MockMvcJUnitMethodBodyBuilder.simpleName       | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        MockMvcJUnitMethodBodyBuilder.simpleName       | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should not generate JUnit cookie assertion with absent cookie [#methodBuilderName]'() {
@@ -2815,13 +2818,13 @@ DocumentContext parsedJson = JsonPath.parse(json);
         SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
         where:
         methodBuilderName                              | methodBuilder
-        MockMvcJUnitMethodBodyBuilder.simpleName       | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        MockMvcJUnitMethodBodyBuilder.simpleName       | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 
     def 'should generate spock assertions with cookies'() {
         given:
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesValue, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesValue, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -2836,7 +2839,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 
     def 'should generate spock assertions with cookies pattern'() {
         given:
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesPattern, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesPattern, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -2851,7 +2854,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 
     def 'should not generate spock cookie assertion with absent cookie'() {
         given:
-        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDslWithAbsentCookies, properties)
+        MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDslWithAbsentCookies, properties, generatedClassDataForMethod)
         BlockBuilder blockBuilder = new BlockBuilder(" ")
         when:
         builder.appendTo(blockBuilder)
@@ -2890,10 +2893,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
         test.contains('''assertThatJson(parsedJson).field("['anEmptyMap']").isEmpty()''')
         where:
         methodBuilderName                                             | methodBuilder
-        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
-        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties) }
+        HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+        WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
     }
 }

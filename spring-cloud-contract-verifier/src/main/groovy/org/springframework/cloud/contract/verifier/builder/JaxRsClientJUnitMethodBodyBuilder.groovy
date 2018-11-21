@@ -117,9 +117,12 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 			if (body instanceof ExecutionProperty) {
 				value = body.toString()
 			} else if (body instanceof FromFileProperty) {
-				value = readBytesFromFileString((FromFileProperty) body, CommunicationType.REQUEST)
+				FromFileProperty fileProperty = (FromFileProperty) body
+				value = fileProperty.isByte() ?
+						readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
+						readStringFromFileString(fileProperty, CommunicationType.REQUEST)
 			} else {
-				value = "\"${getBodyString(body)}\""
+				value = "\"${getBodyAsString()}\""
 			}
 			bb.addLine(".method(\"${method.toUpperCase()}\", entity(${value}, \"$contentType\"))")
 		} else {
