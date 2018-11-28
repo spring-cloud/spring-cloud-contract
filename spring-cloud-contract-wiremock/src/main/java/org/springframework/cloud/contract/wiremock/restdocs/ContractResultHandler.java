@@ -29,6 +29,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,12 +43,6 @@ import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.servlet.WireMockHttpServletMultipartAdapter;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
 import wiremock.com.google.common.base.Function;
 import wiremock.com.google.common.base.Joiner;
 import wiremock.com.google.common.base.Optional;
@@ -56,6 +51,13 @@ import wiremock.com.google.common.collect.ImmutableList;
 import wiremock.com.google.common.collect.ImmutableMultimap;
 import wiremock.com.google.common.collect.Maps;
 import wiremock.org.eclipse.jetty.util.MultiPartInputStreamParser;
+
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 
 import static com.github.tomakehurst.wiremock.common.Encoding.encodeBase64;
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
@@ -127,9 +129,10 @@ public class ContractResultHandler extends
 
 	@Override
 	protected byte[] getRequestBodyContent(MvcResult result) {
-		return new WireMockHttpServletRequestAdapter(result.getRequest()).getBody();
+		byte[] body = new WireMockHttpServletRequestAdapter(result.getRequest())
+				.getBody();
+		return body != null ? body : new byte[0];
 	}
-
 }
 
 // COPIED FROM WIREMOCK
