@@ -52,7 +52,7 @@ class ContractsToYaml {
 		yamlContract.outputMessage.sentTo = MapConverter.getStubSideValues(contract.outputMessage.sentTo)
 		yamlContract.outputMessage.headers = (contract.outputMessage?.headers as Headers)?.asStubSideMap()
 		yamlContract.outputMessage.body = MapConverter.getStubSideValues(contract.outputMessage?.body)
-		contract.outputMessage?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+		contract.outputMessage?.bodyMatchers?.matchers()?.each { BodyMatcher matcher ->
 			yamlContract.outputMessage.matchers.body << new YamlContract.BodyTestMatcher(
 					path: matcher.path(),
 					type: testMatcherType(matcher.matchingType()),
@@ -75,7 +75,7 @@ class ContractsToYaml {
 		yamlContract.input.messageHeaders = (contract.input?.messageHeaders as Headers)?.asTestSideMap()
 		yamlContract.input.messageBody = MapConverter.getTestSideValues(contract.input?.messageBody)
 		yamlContract.input.messageFrom = MapConverter.getTestSideValues(contract.input?.messageFrom)
-		contract.input?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+		contract.input?.bodyMatchers?.matchers()?.each { BodyMatcher matcher ->
 			yamlContract.input.matchers.body << new YamlContract.BodyStubMatcher(
 					path: matcher.path(),
 					type: stubMatcherType(matcher.matchingType()),
@@ -124,7 +124,7 @@ class ContractsToYaml {
 				}
 			}
 			request.matchers = new YamlContract.StubMatchers()
-			contract.request?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+			contract.request?.bodyMatchers?.matchers()?.each { BodyMatcher matcher ->
 				request.matchers.body << new YamlContract.BodyStubMatcher(
 						path: matcher.path(),
 						type: stubMatcherType(matcher.matchingType()),
@@ -220,7 +220,7 @@ class ContractsToYaml {
 			}
 			response.cookies = (contract.response?.cookies as Cookies)?.asStubSideMap()
 			response.body = MapConverter.getStubSideValues(contract.response?.body)
-			contract.response?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+			contract.response?.bodyMatchers?.matchers()?.each { BodyMatcher matcher ->
 				response.matchers.body << new YamlContract.BodyTestMatcher(
 						path: matcher.path(),
 						type: testMatcherType(matcher.matchingType()),

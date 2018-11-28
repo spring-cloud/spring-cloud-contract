@@ -10,8 +10,6 @@ import groovy.transform.ToString
  */
 @ToString(includePackage = false)
 @Canonical
-@CompileStatic
-@PackageScope
 abstract class PathBodyMatcher implements BodyMatcher {
 
 	String path

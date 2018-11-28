@@ -50,7 +50,7 @@ class MatchingRulesConverter {
 
 	private static Category matchingRulesFor(String categoryName, BodyMatchers bodyMatchers) {
 		Category category = new Category(categoryName)
-		bodyMatchers.jsonPathMatchers().forEach({ BodyMatcher it ->
+		bodyMatchers.matchers().forEach({ BodyMatcher it ->
 			String key = getMatcherKey(it.path())
 			MatchingType matchingType = it.matchingType()
 			switch (matchingType) {

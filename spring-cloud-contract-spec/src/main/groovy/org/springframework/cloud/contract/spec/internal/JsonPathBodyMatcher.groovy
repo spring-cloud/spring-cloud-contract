@@ -1,8 +1,6 @@
 package org.springframework.cloud.contract.spec.internal
 
-
 import groovy.transform.EqualsAndHashCode
-import groovy.transform.PackageScope
 import groovy.transform.ToString
 import groovy.transform.TupleConstructor
 
@@ -13,6 +11,5 @@ import groovy.transform.TupleConstructor
 @TupleConstructor(includeSuperFields = true)
 @ToString(includePackage = false)
 @EqualsAndHashCode
-@PackageScope
 class JsonPathBodyMatcher extends PathBodyMatcher {
 }

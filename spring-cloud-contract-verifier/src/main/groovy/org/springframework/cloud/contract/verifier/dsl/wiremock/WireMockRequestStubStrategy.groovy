@@ -34,6 +34,7 @@ import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
+import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -41,6 +42,7 @@ import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.spec.internal.XPathBodyMatcher
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
@@ -113,20 +115,22 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
 				}
 			}
-			if (request.bodyMatchers?.hasMatchers()) {
-				request.bodyMatchers.jsonPathMatchers().each {
+			request.bodyMatchers?.matchers()?.each {
 					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it, originalBody)
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
-				}
 			}
 		}
 		else if (contentType == ContentType.XML) {  // TODO
 			def originalBody = getMatchingStrategyFromBody(request.body)?.clientValue
 			def body = XmlToXmlPathsConverter.
 					removeMatchingXmlPaths(originalBody, request.bodyMatchers)
-			requestPattern.withRequestBody(WireMock.
-					equalToXml(getMatchingStrategy(request.body.clientValue)
-							.clientValue.toString()))
+			request.bodyMatchers?.matchers()?.each {
+				addWireMockStubMatchingSection(it, requestPattern)
+			}
+
+//			requestPattern.withRequestBody(WireMock.  // FIXME
+//					equalToXml(getMatchingStrategy(request.body.clientValue)
+//							.clientValue.toString()))
 		} else if (containsPattern(request?.body)) {
 				MatchingStrategy matchingStrategy = appendBodyRegexpMatchPattern(request.body)
 			requestPattern.withRequestBody(convertToValuePattern(matchingStrategy, contentType))
@@ -134,6 +138,18 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			requestPattern.withRequestBody(convertToValuePattern(
 					getMatchingStrategy(request.body.clientValue), contentType))
 		}
+	}
+
+	private static void addWireMockStubMatchingSection(BodyMatcher it,
+													   RequestPatternBuilder requestPattern) {
+		if (!it instanceof XPathBodyMatcher) {
+			throw new IllegalArgumentException("Only xPath matchers can be processed.")
+		}
+		XPathBodyMatcher matcher = it as XPathBodyMatcher
+		requestPattern.withRequestBody(WireMock.matchingXPath(matcher.path(),
+				XPathBodyMatcherToWireMockValuePatternConverter.
+						mapToPattern(matcher.operationType, matcher.
+								value() as String)))
 	}
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {

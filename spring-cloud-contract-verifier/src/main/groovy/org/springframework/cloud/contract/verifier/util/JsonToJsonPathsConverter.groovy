@@ -82,7 +82,7 @@ class JsonToJsonPathsConverter {
 		def jsonCopy = cloneBody(json)
 		DocumentContext context = JsonPath.parse(jsonCopy)
 		if (bodyMatchers?.hasMatchers()) {
-			bodyMatchers.jsonPathMatchers().each { BodyMatcher matcher ->
+			bodyMatchers.matchers().each { BodyMatcher matcher ->
 				try {
 					context.delete(matcher.path())
 					removeTrailingContainers(matcher, context)

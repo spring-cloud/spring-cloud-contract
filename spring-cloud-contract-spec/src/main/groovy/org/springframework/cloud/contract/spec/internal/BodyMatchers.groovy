@@ -20,14 +20,14 @@ import java.util.regex.Pattern
 import groovy.transform.Canonical
 import groovy.transform.ToString
 
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.ABSENT
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.ANYTHING
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.CASE_INSENSITIVE
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.CONTAINS
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.DOES_NOT_MATCH
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.EQUAL_TO
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.EQUAL_TO_XML
-import static org.springframework.cloud.contract.spec.internal.XmlPathBodyMatcher.OPERATION_TYPE.MATCHES
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.ABSENT
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.ANYTHING
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.CASE_INSENSITIVE
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.CONTAINS
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.DOES_NOT_MATCH
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.EQUAL_TO
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.EQUAL_TO_XML
+import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.MATCHES
 
 /**
  * Matching strategy of dynamic parts of the body.
@@ -47,43 +47,43 @@ class BodyMatchers {
 
 	// TODO: consider extracting xml-specific logic
 
-	void xmlPathMatches(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, MATCHES)
+	void xPathMatches(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, MATCHES)
 	}
 
-	void xmlPathContains(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, CONTAINS)
+	void xPathContains(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, CONTAINS)
 	}
 
-	void xmlPathDoesNotMatch(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, DOES_NOT_MATCH)
+	void xPathDoesNotMatch(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, DOES_NOT_MATCH)
 	}
 
-	void xmlPathAbsent(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, ABSENT)
+	void xPathAbsent(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, ABSENT)
 	}
 
-	void xmlPathEqualToXml(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, EQUAL_TO_XML)
+	void xPathEqualToXml(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, EQUAL_TO_XML)
 	}
 
-	void xmlPathAnything(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, ANYTHING)
+	void xPathAnything(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, ANYTHING)
 	}
 
-	void xmlPathEqualTo(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, EQUAL_TO)
+	void xPathEqualTo(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, EQUAL_TO)
 	}
 
-	void xmlPathCaseInsensitive(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XmlPathBodyMatcher(xmlPath, matchingTypeValue, CASE_INSENSITIVE)
+	void xPathCaseInsensitive(String xmlPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, CASE_INSENSITIVE)
 	}
 
 	boolean hasMatchers() {
 		return !this.matchers.empty
 	}
 
-	List<BodyMatcher> jsonPathMatchers() {
+	List<BodyMatcher> matchers() {
 		return this.matchers
 	}
 

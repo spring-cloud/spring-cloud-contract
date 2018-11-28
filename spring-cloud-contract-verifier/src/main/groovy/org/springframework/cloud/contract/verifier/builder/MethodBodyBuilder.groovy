@@ -403,7 +403,7 @@ abstract class MethodBodyBuilder {
 			bb.addLine(addCommentSignIfRequired('and:'))
 			bb.startBlock()
 			// for the rest we'll do JsonPath matching in brute force
-			bodyMatchers.jsonPathMatchers().each {
+			bodyMatchers.matchers().each {
 				if (it.matchingType() == MatchingType.NULL) {
 					methodForNullCheck(it, bb)
 				} else if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {

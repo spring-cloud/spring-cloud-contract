@@ -1,7 +1,7 @@
 package org.springframework.cloud.contract.spec.internal
 
 /**
- * A jsonPathMatchers for the given path.
+ * Matchers for the given path.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.3

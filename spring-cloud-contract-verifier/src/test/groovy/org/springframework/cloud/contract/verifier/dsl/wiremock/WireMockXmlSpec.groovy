@@ -1,6 +1,6 @@
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
-import spock.lang.Ignore
+
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
@@ -39,7 +39,6 @@ class WireMockXmlSpec extends Specification implements WireMockStubVerifier {
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
-	@Ignore // FIXME
 	def should_generate_stubs_with_request_body_matchers() {
 		given:
 			Contract contractDsl = Contract.make {
@@ -60,15 +59,15 @@ class WireMockXmlSpec extends Specification implements WireMockStubVerifier {
 </test>"""
 					// FIXME
 					bodyMatchers {
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						jsonPath('$.duck', byEquality())
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
-						jsonPath('$.date', byDate())
-						jsonPath('$.dateTime', byTimestamp())
-						jsonPath('$.time', byTime())
+						xPathMatches('/test/duck/text()', byRegex("[0-9]{3}"))
+//						jsonPath('/test/duck', byEquality())
+//						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+//						jsonPath('$.alpha', byEquality())
+//						jsonPath('$.number', byRegex(number()))
+//						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+//						jsonPath('$.date', byDate())
+//						jsonPath('$.dateTime', byTimestamp())
+//						jsonPath('$.time', byTime())
 //						jsonPath("\$.['key'].['complex.key']", byEquality())
 					}
 					headers {
