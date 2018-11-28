@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 public class StubRunnerStreamsIntegrationAutoConfiguration {
 
 	@Configuration
+	@ConditionalOnClass(TestSupportBinderAutoConfiguration.class)
 	@ConditionalOnBean(TestSupportBinder.class)
 	@ImportAutoConfiguration(classes = { TestSupportBinderAutoConfiguration.class,
 			MessageCollectorAutoConfiguration.class, IntegrationAutoConfiguration.class })
