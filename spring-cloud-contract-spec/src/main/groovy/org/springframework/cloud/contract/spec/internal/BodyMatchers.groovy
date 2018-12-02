@@ -20,15 +20,6 @@ import java.util.regex.Pattern
 import groovy.transform.Canonical
 import groovy.transform.ToString
 
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.ABSENT
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.ANYTHING
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.CASE_INSENSITIVE
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.CONTAINS
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.DOES_NOT_MATCH
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.EQUAL_TO
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.EQUAL_TO_XML
-import static org.springframework.cloud.contract.spec.internal.XPathBodyMatcher.OPERATION_TYPE.MATCHES
-
 /**
  * Matching strategy of dynamic parts of the body.
  *
@@ -42,41 +33,17 @@ class BodyMatchers {
 	protected final List<BodyMatcher> matchers = []
 
 	void jsonPath(String path, MatchingTypeValue matchingType) {
-		this.matchers << new JsonPathBodyMatcher(path, matchingType)
+		this.matchers << new PathBodyMatcher(path, matchingType)
 	}
 
-	// TODO: consider extracting xml-specific logic
-
-	void xPathMatches(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, MATCHES)
-	}
-
-	void xPathContains(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, CONTAINS)
-	}
-
-	void xPathDoesNotMatch(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, DOES_NOT_MATCH)
-	}
-
-	void xPathAbsent(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, ABSENT)
-	}
-
-	void xPathEqualToXml(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, EQUAL_TO_XML)
-	}
-
-	void xPathAnything(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, ANYTHING)
-	}
-
-	void xPathEqualTo(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, EQUAL_TO)
-	}
-
-	void xPathCaseInsensitive(String xmlPath, MatchingTypeValue matchingTypeValue) {
-		matchers << new XPathBodyMatcher(xmlPath, matchingTypeValue, CASE_INSENSITIVE)
+	/**
+	 * Adds xPath matcher; even though same implementation as in {@link BodyMatchers#jsonPath(java.lang.String, org.springframework.cloud.contract.spec.internal.MatchingTypeValue)},
+	 * added for logical coherence in xml
+	 * @param xPath the xPath used to find the element to match
+	 * @param matchingTypeValue to match the element found by the xPath against
+	 */
+	void xPath(String xPath, MatchingTypeValue matchingTypeValue) {
+		matchers << new PathBodyMatcher(xPath, matchingTypeValue)
 	}
 
 	boolean hasMatchers() {
@@ -112,6 +79,12 @@ class BodyMatchers {
 
 	MatchingTypeValue byEquality() {
 		return new MatchingTypeValue(MatchingType.EQUALITY, null)
+	}
+
+	MatchingTypeValue byXmlEquality(String xml
+	) {
+		return new MatchingTypeValue(MatchingType.XML_EQUALITY, xml
+		)
 	}
 
 	boolean equals(o) {

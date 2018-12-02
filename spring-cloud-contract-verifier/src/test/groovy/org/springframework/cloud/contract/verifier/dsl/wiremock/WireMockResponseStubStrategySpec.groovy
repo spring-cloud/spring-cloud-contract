@@ -1,9 +1,10 @@
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import groovy.json.JsonSlurper
-import org.springframework.cloud.contract.spec.Contract
 import spock.lang.Issue
 import spock.lang.Specification
+
+import org.springframework.cloud.contract.spec.Contract
 
 class WireMockResponseStubStrategySpec extends Specification {
 

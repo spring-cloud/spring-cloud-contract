@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.regex.Pattern
+
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
@@ -24,7 +26,9 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
+import repackaged.nl.flotsam.xeger.Xeger
+
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -32,9 +36,7 @@ import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.SerializationUtils
-import repackaged.nl.flotsam.xeger.Xeger
 
-import java.util.regex.Pattern
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of

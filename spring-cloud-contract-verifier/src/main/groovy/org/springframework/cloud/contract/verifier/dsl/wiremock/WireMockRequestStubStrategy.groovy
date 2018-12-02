@@ -39,20 +39,22 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.PathBodyMatcher
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.spec.internal.XPathBodyMatcher
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.XmlToXmlPathsConverter
 
+import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformToClientValues
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
+import static org.springframework.cloud.contract.verifier.util.XmlToXmlPathsConverter.retrieveValueFromBody
 
 /**
  * Converts a {@link Request} into {@link RequestPattern}
@@ -125,7 +127,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			def body = XmlToXmlPathsConverter.
 					removeMatchingXmlPaths(originalBody, request.bodyMatchers)
 			request.bodyMatchers?.matchers()?.each {
-				addWireMockStubMatchingSection(it, requestPattern)
+				addWireMockStubMatchingSection(it, requestPattern, originalBody)
 			}
 
 //			requestPattern.withRequestBody(WireMock.  // FIXME
@@ -140,17 +142,28 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	private static void addWireMockStubMatchingSection(BodyMatcher it,
-													   RequestPatternBuilder requestPattern) {
-		if (!it instanceof XPathBodyMatcher) {
-			throw new IllegalArgumentException("Only xPath matchers can be processed.")
+	private static void addWireMockStubMatchingSection(BodyMatcher matcher,
+													   RequestPatternBuilder requestPattern,
+													   Object body) {
+		if (!matcher instanceof PathBodyMatcher) {
+			throw new IllegalArgumentException("Only jsonPath and XPath matchers can be processed.")
 		}
-		XPathBodyMatcher matcher = it as XPathBodyMatcher
-		requestPattern.withRequestBody(WireMock.matchingXPath(matcher.path(),
+		String retrievedValue = Optional.ofNullable(matcher.value()).orElseGet({
+			if (EQUALITY == matcher.
+					matchingType()) {
+				return retrieveValueFromBody(matcher.path(), body)
+			}
+			else {
+				return ''
+			}
+		})  // TODO: check for cases other than equality
+		PathBodyMatcher pathMatcher = matcher as PathBodyMatcher
+		requestPattern.withRequestBody(WireMock.matchingXPath(pathMatcher.path(),
 				XPathBodyMatcherToWireMockValuePatternConverter.
-						mapToPattern(matcher.operationType, matcher.
-								value() as String)))
+						mapToPattern(pathMatcher.matchingType(), String.
+								valueOf(retrievedValue))))
 	}
+
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {
 		return !values.empty && !request.bodyMatchers?.hasMatchers() && values.every { it.assertsSize() }

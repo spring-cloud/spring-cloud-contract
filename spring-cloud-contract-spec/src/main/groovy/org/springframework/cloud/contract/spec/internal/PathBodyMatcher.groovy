@@ -2,7 +2,6 @@ package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
 import groovy.transform.ToString
 
 /**
@@ -10,7 +9,8 @@ import groovy.transform.ToString
  */
 @ToString(includePackage = false)
 @Canonical
-abstract class PathBodyMatcher implements BodyMatcher {
+@CompileStatic
+class PathBodyMatcher implements BodyMatcher {
 
 	String path
 	MatchingTypeValue matchingTypeValue

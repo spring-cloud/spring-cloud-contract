@@ -62,7 +62,9 @@ enum MatchingType {
 	/**
 	 * Verification if the value for the given path is null
 	 */
-	NULL
+	NULL,
+
+	XML_EQUALITY
 
 	static boolean regexRelated(MatchingType type) {
 		if (type == EQUALITY || type == TYPE || type == COMMAND || type == NULL ) {
