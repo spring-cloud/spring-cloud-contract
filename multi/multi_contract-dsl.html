@@ -572,7 +572,27 @@ need to use patterns and not exact values both for your test and your server sid
 	}
 }</pre><p>You can also provide only one side of the communication with a regular expression. If you
 do so, then the contract engine automatically provides the generated string that matches
-the provided regular expression. The following code shows an example:</p><pre class="programlisting"></pre><p>In the preceding example, the opposite side of the communication has the respective data
+the provided regular expression. The following code shows an example:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'PUT'</span>
+        url value(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/foo/[0-9]{5}'</span>)))
+        body([
+                requestElement: $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{5}'</span>)))
+        ])
+        headers {
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>, $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application\\/vnd\\.fraud\\.v1\\+json;.*'</span>))))
+        }
+    }
+    response {
+        status OK()
+        body([
+                responseElement: $(producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{7}'</span>)))
+        ])
+        headers {
+            contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>)
+        }
+    }
+}</pre><p>In the preceding example, the opposite side of the communication has the respective data
 generated for request and response.</p><p>Spring Cloud Contract comes with a series of predefined regular expressions that you can
 use in your contracts, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ALPHA_NUMERIC = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9]+'</span>)
@@ -673,7 +693,100 @@ Pattern nonEmpty() {
 
 Pattern nonBlank() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_BLANK
-}</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting"></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_passing_optional_parameters" href="#_passing_optional_parameters"></a>8.5.3&nbsp;Passing Optional Parameters</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
+}</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting">Contract dslWithOptionalsInString = Contract.make {
+    priority <span class="hl-number">1</span>
+    request {
+        method POST()
+        url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/password'</span>
+        headers {
+            contentType(applicationJson())
+        }
+        body(
+                email: $(consumer(optional(regex(email()))), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc@abc.com'</span>)),
+                callback_url: $(consumer(regex(hostname())), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://partners.com'</span>))
+        )
+    }
+    response {
+        status <span class="hl-number">404</span>
+        headers {
+            contentType(applicationJson())
+        }
+        body(
+                code: value(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>), producer(optional(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>))),
+                message: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"</span>
+        )
+    }
+}</pre><p>To make matters even simpler you can use a set of predefined objects that will automatically assume that you want a regular expression to be passed.
+All of those methods start with <code class="literal">any</code> prefix:</p><pre class="programlisting">T anyAlphaUnicode()
+
+T anyAlphaNumeric()
+
+T anyNumber()
+
+T anyInteger()
+
+T anyPositiveInt()
+
+T anyDouble()
+
+T anyHex()
+
+T aBoolean()
+
+T anyIpAddress()
+
+T anyHostname()
+
+T anyEmail()
+
+T anyUrl()
+
+T anyHttpsUrl()
+
+T anyUuid()
+
+T anyDate()
+
+T anyDateTime()
+
+T anyTime()
+
+T anyIso8601WithOffset()
+
+T anyNonBlankString()
+
+T anyNonEmptyString()
+
+T anyOf(String... values)</pre><p>and this is an example of how you can reference those methods:</p><pre class="programlisting">Contract contractDsl = Contract.make {
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'trigger_event'</span>
+	input {
+		triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'toString()'</span>)
+	}
+	outputMessage {
+		sentTo <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'topic.rateablequote'</span>
+		body([
+				alpha: $(anyAlphaUnicode()),
+				number: $(anyNumber()),
+				anInteger: $(anyInteger()),
+				positiveInt: $(anyPositiveInt()),
+				aDouble: $(anyDouble()),
+				aBoolean: $(aBoolean()),
+				ip: $(anyIpAddress()),
+				hostname: $(anyHostname()),
+				email: $(anyEmail()),
+				url: $(anyUrl()),
+				httpsUrl: $(anyHttpsUrl()),
+				uuid: $(anyUuid()),
+				date: $(anyDate()),
+				dateTime: $(anyDateTime()),
+				time: $(anyTime()),
+				iso8601WithOffset: $(anyIso8601WithOffset()),
+				nonBlankString: $(anyNonBlankString()),
+				nonEmptyString: $(anyNonEmptyString()),
+				anyOf: $(anyOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bar'</span>))
+		])
+	}
+}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_passing_optional_parameters" href="#_passing_optional_parameters"></a>8.5.3&nbsp;Passing Optional Parameters</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
 <a class="xref" href="multi_contract-dsl.html#contract-matchers" title="8.5.7&nbsp;Dynamic Properties in the Matchers Sections">Section&nbsp;8.5.7, &#8220;Dynamic Properties in the Matchers Sections&#8221;</a> section for YAML examples of a similar feature.</p></td></tr></table></div><p>It is possible to provide optional parameters in your contract. However, you can provide
 optional parameters only for the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="emphasis"><em>STUB</em></span> side of the Request</li><li class="listitem"><span class="emphasis"><em>TEST</em></span> side of the Response</li></ul></div><p>The following example shows how to provide optional parameters:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	priority <span class="hl-number">1</span>

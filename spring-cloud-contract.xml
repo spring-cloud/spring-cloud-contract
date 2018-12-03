@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-12-03</date>
+<date>2018-11-21</date>
 </info>
 <preface>
 <title></title>
@@ -6782,7 +6782,27 @@ need to use patterns and not exact values both for your test and your server sid
 <simpara>You can also provide only one side of the communication with a regular expression. If you
 do so, then the contract engine automatically provides the generated string that matches
 the provided regular expression. The following code shows an example:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered"></programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method 'PUT'
+        url value(consumer(regex('/foo/[0-9]{5}')))
+        body([
+                requestElement: $(consumer(regex('[0-9]{5}')))
+        ])
+        headers {
+            header('header', $(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
+        }
+    }
+    response {
+        status OK()
+        body([
+                responseElement: $(producer(regex('[0-9]{7}')))
+        ])
+        headers {
+            contentType("application/vnd.fraud.v1+json")
+        }
+    }
+}</programlisting>
 <simpara>In the preceding example, the opposite side of the communication has the respective data
 generated for request and response.</simpara>
 <simpara>Spring Cloud Contract comes with a series of predefined regular expressions that you can
@@ -6888,7 +6908,104 @@ Pattern nonBlank() {
 	return NON_BLANK
 }</programlisting>
 <simpara>In your contract, you can use it as shown in the following example:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered"></programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Contract dslWithOptionalsInString = Contract.make {
+    priority 1
+    request {
+        method POST()
+        url '/users/password'
+        headers {
+            contentType(applicationJson())
+        }
+        body(
+                email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+                callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+        )
+    }
+    response {
+        status 404
+        headers {
+            contentType(applicationJson())
+        }
+        body(
+                code: value(consumer("123123"), producer(optional("123123"))),
+                message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
+        )
+    }
+}</programlisting>
+<simpara>To make matters even simpler you can use a set of predefined objects that will automatically assume that you want a regular expression to be passed.
+All of those methods start with <literal>any</literal> prefix:</simpara>
+<programlisting language="groovy" linenumbering="unnumbered">T anyAlphaUnicode()
+
+T anyAlphaNumeric()
+
+T anyNumber()
+
+T anyInteger()
+
+T anyPositiveInt()
+
+T anyDouble()
+
+T anyHex()
+
+T aBoolean()
+
+T anyIpAddress()
+
+T anyHostname()
+
+T anyEmail()
+
+T anyUrl()
+
+T anyHttpsUrl()
+
+T anyUuid()
+
+T anyDate()
+
+T anyDateTime()
+
+T anyTime()
+
+T anyIso8601WithOffset()
+
+T anyNonBlankString()
+
+T anyNonEmptyString()
+
+T anyOf(String... values)</programlisting>
+<simpara>and this is an example of how you can reference those methods:</simpara>
+<programlisting language="groovy" linenumbering="unnumbered">Contract contractDsl = Contract.make {
+	label 'trigger_event'
+	input {
+		triggeredBy('toString()')
+	}
+	outputMessage {
+		sentTo 'topic.rateablequote'
+		body([
+				alpha: $(anyAlphaUnicode()),
+				number: $(anyNumber()),
+				anInteger: $(anyInteger()),
+				positiveInt: $(anyPositiveInt()),
+				aDouble: $(anyDouble()),
+				aBoolean: $(aBoolean()),
+				ip: $(anyIpAddress()),
+				hostname: $(anyHostname()),
+				email: $(anyEmail()),
+				url: $(anyUrl()),
+				httpsUrl: $(anyHttpsUrl()),
+				uuid: $(anyUuid()),
+				date: $(anyDate()),
+				dateTime: $(anyDateTime()),
+				time: $(anyTime()),
+				iso8601WithOffset: $(anyIso8601WithOffset()),
+				nonBlankString: $(anyNonBlankString()),
+				nonEmptyString: $(anyNonEmptyString()),
+				anyOf: $(anyOf('foo', 'bar'))
+		])
+	}
+}</programlisting>
 </section>
 <section xml:id="_passing_optional_parameters">
 <title>Passing Optional Parameters</title>
