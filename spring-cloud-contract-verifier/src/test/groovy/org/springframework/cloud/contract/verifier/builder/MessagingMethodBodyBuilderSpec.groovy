@@ -535,6 +535,7 @@ Contract.make {
 	@Issue('#587')
 	def "should allow easier way of providing dynamic values for [#methodBuilderName]"() {
 		given:
+			//tag::regex_creating_props[]
 		Contract contractDsl = Contract.make {
 			label 'trigger_event'
 			input {
@@ -565,6 +566,7 @@ Contract.make {
 				])
 			}
 		}
+			//end::regex_creating_props[]
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:

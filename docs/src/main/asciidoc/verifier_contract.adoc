@@ -449,7 +449,7 @@ the provided regular expression. The following code shows an example:
 
 [source,groovy,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=dsl_one_side_data_generation_example,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=dsl_one_side_data_generation_example,indent=0]
 ----
 
 In the preceding example, the opposite side of the communication has the respective data
@@ -467,7 +467,22 @@ In your contract, you can use it as shown in the following example:
 
 [source,groovy,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=contract_with_regex,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=contract_with_regex,indent=0]
+----
+
+To make matters even simpler you can use a set of predefined objects that will automatically assume that you want a regular expression to be passed.
+All of those methods start with `any` prefix:
+
+[source,groovy,indent=0]
+----
+include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/internal/RegexCreatingProperty.groovy[tags=regex_creating_props,indent=0]
+----
+
+and this is an example of how you can reference those methods:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=regex_creating_props,indent=0]
 ----
 
 ==== Passing Optional Parameters
