@@ -20,6 +20,7 @@ class ExtensionToProperties {
 				nameSuffixForTests: extension.getNameSuffixForTests(),
 				ruleClassForTests: extension.getRuleClassForTests(),
 				excludedFiles: extension.getExcludedFiles(),
+				includedFiles: extension.getIncludedFiles(),
 				ignoredFiles: extension.getIgnoredFiles(),
 				imports: extension.getImports(),
 				staticImports: extension.getStaticImports(),

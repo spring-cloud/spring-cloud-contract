@@ -86,6 +86,11 @@ class ContractVerifierExtension {
 	List<String> excludedFiles = []
 
 	/**
+	 * Patterns that should be taken into account for processing
+	 */
+	List<String> includedFiles = []
+
+	/**
 	 * Patterns for which generated tests should be @Ignored
 	 */
 	List<String> ignoredFiles = []
