@@ -132,7 +132,7 @@ should be skipped. By default, it is an empty array.</li><li class="listitem"><s
 GroovyDSL. By default, its value is <code class="literal">$rootDir/src/test/resources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>generatedTestSourcesDir</strong></span>: Specifies the test source directory where tests generated
 from the Groovy DSL should be placed. By default its value is
 <code class="literal">$buildDir/generated-test-sources/contractVerifier</code>.</li><li class="listitem"><span class="strong"><strong>stubsOutputDir</strong></span>: Specifies the directory where the generated WireMock stubs from
-the Groovy DSL should be placed.</li><li class="listitem"><span class="strong"><strong>testFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code> and
+the Groovy DSL should be placed.</li><li class="listitem"><span class="strong"><strong>testFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code>) and
 JUnit 5 are supported with JUnit 4 being the default framework.</li><li class="listitem"><span class="strong"><strong>contractsProperties</strong></span>: a map containing properties to be passed to Spring Cloud Contract
 components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.</li></ul></div><p>The following properties are used when you want to specify the location of the JAR
 containing the contracts:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>contractDependency</strong></span>: Specifies the Dependency that provides
@@ -363,8 +363,8 @@ If neither of these values are set, then the value is set to
 <code class="literal">org.springframework.cloud.contract.verifier.tests</code>.</li><li class="listitem"><span class="strong"><strong>ruleClassForTests</strong></span>: Specifies a rule that should be added to the generated test
 classes.</li><li class="listitem"><span class="strong"><strong>baseClassForTests</strong></span>: Creates a base class for all generated tests. By default, if you
 use Spock classes, the class is <code class="literal">spock.lang.Specification</code>.</li><li class="listitem"><span class="strong"><strong>contractsDirectory</strong></span>: Specifies a directory containing contracts written with the
-GroovyDSL. The default directory is <code class="literal">/src/test/resources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>testFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code> and
-6JUnit 5 are supported with JUnit 4 being the default framework.</li><li class="listitem"><span class="strong"><strong>packageWithBaseClasses</strong></span>: Defines a package where all the base classes reside. This
+GroovyDSL. The default directory is <code class="literal">/src/test/resources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>testFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code>) and
+JUnit 5 are supported with JUnit 4 being the default framework.</li><li class="listitem"><span class="strong"><strong>packageWithBaseClasses</strong></span>: Defines a package where all the base classes reside. This
 setting takes precedence over <span class="strong"><strong>baseClassForTests</strong></span>. The convention is such that, if you
 have a contract under (for example) <code class="literal">src/test/resources/contract/foo/bar/baz/</code> and set
 the value of the <code class="literal">packageWithBaseClasses</code> property to <code class="literal">com.example.base</code>, then Spring

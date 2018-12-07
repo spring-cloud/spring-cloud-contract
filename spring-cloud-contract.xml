@@ -2609,7 +2609,7 @@ from the Groovy DSL should be placed. By default its value is
 the Groovy DSL should be placed.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">testFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<literal>TestFramework.JUNIT</literal> and
+<simpara><emphasis role="strong">testFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<literal>TestFramework.JUNIT</literal>) and
 JUnit 5 are supported with JUnit 4 being the default framework.</simpara>
 </listitem>
 <listitem>
@@ -3013,8 +3013,8 @@ use Spock classes, the class is <literal>spock.lang.Specification</literal>.</si
 GroovyDSL. The default directory is <literal>/src/test/resources/contracts</literal>.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">testFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<literal>TestFramework.JUNIT</literal> and
-6JUnit 5 are supported with JUnit 4 being the default framework.</simpara>
+<simpara><emphasis role="strong">testFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<literal>TestFramework.JUNIT</literal>) and
+JUnit 5 are supported with JUnit 4 being the default framework.</simpara>
 </listitem>
 <listitem>
 <simpara><emphasis role="strong">packageWithBaseClasses</emphasis>: Defines a package where all the base classes reside. This
