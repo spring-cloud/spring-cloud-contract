@@ -51,6 +51,7 @@ class YamlContract {
 		public Map<String, Object> cookies = [:]
 		public Object body
 		public String bodyFromFile
+		public String bodyFromFileAsBytes
 		public StubMatchers matchers = new StubMatchers()
 		public Multipart multipart
 	}
@@ -215,6 +216,7 @@ class YamlContract {
 		public Map<String, Object> cookies = [:]
 		public Object body
 		public String bodyFromFile
+		public String bodyFromFileAsBytes
 		public TestMatchers matchers = new TestMatchers()
 		public Boolean async
 		public Integer fixedDelayMilliseconds
