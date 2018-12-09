@@ -126,6 +126,7 @@ class YamlToContracts {
 							}
 							if (yamlContract.request.body != null) body(yamlContract.request.body)
 							if (yamlContract.request.bodyFromFile != null) body(file(yamlContract.request.bodyFromFile))
+							if (yamlContract.request.bodyFromFileAsBytes != null) body(fileAsBytes(yamlContract.request.bodyFromFileAsBytes))
 							if (yamlContract.request.multipart) {
 								Map multipartMap = [:]
 								Map<String, DslProperty> multiPartParams = yamlContract.request
@@ -249,6 +250,7 @@ class YamlToContracts {
 								}
 							}
 							if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
+							if (yamlContract.response.bodyFromFileAsBytes) body(fileAsBytes(yamlContract.response.bodyFromFileAsBytes))
 							if (yamlContract.response.async) async()
 							if (yamlContract.response.fixedDelayMilliseconds) fixedDelayMilliseconds(yamlContract.response.fixedDelayMilliseconds)
 							bodyMatchers {

@@ -18,10 +18,10 @@ package org.springframework.cloud.contract.spec.internal
 
 import java.nio.charset.Charset
 
-import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 
 import java.util.regex.Pattern
+
 /**
  * Contains useful common methods for the DSL.
  *
@@ -31,7 +31,6 @@ import java.util.regex.Pattern
  * @since 1.0.0
  */
 @TypeChecked
-@PackageScope
 class Common {
 
 	@Delegate private final RegexPatterns regexPatterns = new RegexPatterns()
