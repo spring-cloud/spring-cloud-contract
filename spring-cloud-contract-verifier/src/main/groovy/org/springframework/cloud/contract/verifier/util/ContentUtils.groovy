@@ -16,13 +16,16 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
-import org.apache.commons.lang3.StringEscapeUtils
 import org.codehaus.groovy.runtime.GStringImpl
+
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
@@ -30,9 +33,6 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
-
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
@@ -44,7 +44,7 @@ import static org.apache.commons.text.StringEscapeUtils.unescapeXml
  *
  * @since 1.0.0
  */
-@TypeChecked
+@CompileStatic
 @Commons
 class ContentUtils {
 
@@ -134,7 +134,24 @@ class ContentUtils {
 	}
 
 	static ContentType getClientContentType(Object bodyAsValue) {
+		if (bodyAsValue instanceof GString) {
+			return getClientContentType((GString) bodyAsValue)
+		} else if (bodyAsValue instanceof String) {
+			return getClientContentType((String) bodyAsValue)
+		} else if (bodyAsValue instanceof Map) {
+			return getClientContentType((Map) bodyAsValue)
+		} else if (bodyAsValue instanceof List) {
+			return getClientContentType((List) bodyAsValue)
+		}
 		return ContentType.UNKNOWN
+	}
+
+	static ContentType getClientContentType(Object bodyAsValue, Headers headers) {
+		ContentType contentType = recognizeContentTypeFromHeader(headers)
+		if (contentType == ContentType.UNKNOWN) {
+			return getClientContentType(bodyAsValue)
+		}
+		return contentType;
 	}
 
 	static ContentType getClientContentType(Map bodyAsValue) {
@@ -194,6 +211,15 @@ class ContentUtils {
 	}
 
 	protected static Object transformJSONStringValue(Object obj, Closure valueProvider) {
+		if (obj instanceof DslProperty) {
+			return transformJSONStringValue((DslProperty) obj, valueProvider)
+		} else if (obj instanceof Pattern) {
+			return transformJSONStringValue((Pattern) obj, valueProvider)
+		} else if (obj instanceof OptionalProperty) {
+			return transformJSONStringValue((OptionalProperty) obj, valueProvider)
+		} else if (obj instanceof ExecutionProperty) {
+			return transformJSONStringValue((ExecutionProperty) obj, valueProvider)
+		}
 		return obj
 	}
 
@@ -214,6 +240,9 @@ class ContentUtils {
 	}
 
 	private static String transformXMLStringValue(Object obj, Closure valueProvider) {
+		if (obj instanceof DslProperty) {
+			return transformJSONStringValue((DslProperty) obj, valueProvider)
+		}
 		return escapeXml11(unescapeXml(obj.toString()))
 	}
 
@@ -288,7 +317,8 @@ class ContentUtils {
 	}
 
 	static ContentType recognizeContentTypeFromHeader(Headers headers, Closure<Object> closure) {
-		Header header = headers?.entries?.find { it.name == "Content-Type" }
+		Header header = headers?.entries?.find { it.name == "Content-Type" ||
+				it.name == "contentType" }
 		String content = closure(header)?.toString()
 		if (content?.contains("json")) {
 			return ContentType.JSON
@@ -358,7 +388,20 @@ class ContentUtils {
 		return ContentType.TEXT
 	}
 
-	static ContentType recognizeContentTypeFromContent(Object gstring) {
+	static ContentType recognizeContentTypeFromContent(Object object) {
+		if (object instanceof GString) {
+			return recognizeContentTypeFromContent((GString) object)
+		} else if (object instanceof Map) {
+			return recognizeContentTypeFromContent((Map) object)
+		} else if (object instanceof byte[]) {
+			return recognizeContentTypeFromContent((byte[]) object)
+		} else if (object instanceof List) {
+			return recognizeContentTypeFromContent((List) object)
+		} else if (object instanceof String) {
+			return recognizeContentTypeFromContent((String) object)
+		} else if (object instanceof Number) {
+			return recognizeContentTypeFromContent((Number) object)
+		}
 		return ContentType.UNKNOWN
 	}
 

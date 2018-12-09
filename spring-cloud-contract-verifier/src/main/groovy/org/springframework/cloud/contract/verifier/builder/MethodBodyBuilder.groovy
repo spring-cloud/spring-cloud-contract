@@ -90,13 +90,13 @@ abstract class MethodBodyBuilder {
 	private String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
 		String newFileName = this.classDataForMethod.methodName + "_" + side.name().toLowerCase() + ".bin"
 		File newFile = new File(this.classDataForMethod.testClassPath().parent.toFile(), newFileName)
-		newFile.bytes = property.asType(byte[])
+		newFile.bytes = property.asBytes()
 		return newFileName
 	}
 
 	protected String readBytesFromFileString(FromFileProperty property, CommunicationType side) {
 		String fileName = byteBodyToAFileForTestMethod(property, side)
-		return "java.nio.file.Files.readAllBytes(new java.io.File(\"${fileName}\").toPath())"
+		return "fileToBytes(this, \"${fileName}\")"
 	}
 
 	protected String readStringFromFileString(FromFileProperty property, CommunicationType side) {

@@ -113,7 +113,7 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 			return "response.body.asByteArray() == " +
 					readBytesFromFileString(value, CommunicationType.RESPONSE)
 		}
-		return getResponseBodyPropertyComparisonString(property, value.asType(String))
+		return getResponseBodyPropertyComparisonString(property, value.asString())
 	}
 
 	@Override

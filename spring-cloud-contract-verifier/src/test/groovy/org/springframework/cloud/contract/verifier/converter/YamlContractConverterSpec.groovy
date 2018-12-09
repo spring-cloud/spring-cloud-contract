@@ -585,6 +585,7 @@ request:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     url: null
     body: []
@@ -599,6 +600,7 @@ response:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     body: []
     headers: []
@@ -624,6 +626,7 @@ request:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     url: null
     body: []
@@ -638,6 +641,7 @@ response:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     body: []
     headers: []

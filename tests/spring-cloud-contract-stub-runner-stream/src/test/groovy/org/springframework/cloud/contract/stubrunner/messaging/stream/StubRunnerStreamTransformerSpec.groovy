@@ -144,4 +144,31 @@ class StubRunnerStreamTransformerSpec extends Specification {
 			result.payload == '''{"orderId":"40058c70-891c-4176-a033-f70bad0c5f77","description":"This is the order description"}'''.bytes
 	}
 
+	def 'should work for binary payloads from file'() {
+		given:
+			Contract contract = Contract.make  {
+				label 'send_order'
+				input {
+					triggeredBy('orderTrigger()')
+				}
+				outputMessage {
+					sentTo('orders')
+					headers {
+						messagingContentType(applicationOctetStream())
+					}
+					body(fileAsBytes("response.pdf"))
+				}
+			}
+			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(contract) {
+				@Override
+				Contract matchingContract(Message<?> source) {
+					return contract
+				}
+			}
+		when:
+			def result = streamTransformer.transform(message)
+		then:
+			result.payload == StubRunnerStreamTransformerSpec.getResource("/response.pdf").bytes
+	}
+
 }
