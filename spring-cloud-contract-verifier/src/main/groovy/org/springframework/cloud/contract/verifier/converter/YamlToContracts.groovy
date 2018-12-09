@@ -311,6 +311,7 @@ class YamlToContracts {
 							}
 							if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
 							if (yamlContract.input.messageBodyFromFile) messageBody(file(yamlContract.input.messageBodyFromFile))
+							if (yamlContract.input.messageBodyFromFileAsBytes) messageBody(fileAsBytes(yamlContract.input.messageBodyFromFileAsBytes))
 							bodyMatchers {
 								yamlContract.input.matchers.body?.each { YamlContract.BodyStubMatcher matcher ->
 									MatchingTypeValue value = null
@@ -356,6 +357,7 @@ class YamlToContracts {
 							}
 							if (outputMsg.body) body(outputMsg.body)
 							if (outputMsg.bodyFromFile) body(file(outputMsg.bodyFromFile))
+							if (outputMsg.bodyFromFileAsBytes) body(fileAsBytes(outputMsg.bodyFromFileAsBytes))
 							if (outputMsg.matchers) {
 								bodyMatchers {
 									yamlContract.outputMessage?.matchers?.body?.each { YamlContract.BodyTestMatcher testMatcher ->
