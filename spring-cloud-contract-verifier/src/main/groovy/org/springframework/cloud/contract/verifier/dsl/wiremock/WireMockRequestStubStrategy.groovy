@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
+import java.util.regex.Pattern
+
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.matching.RequestPattern
@@ -39,13 +41,11 @@ import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-
-import java.util.regex.Pattern
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
@@ -97,8 +97,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (!request.body) {
 			return
 		}
+		MatchingStrategy matchingStrategy = getMatchingStrategyFromBody(request.body)
 		if (contentType == ContentType.JSON) {
-			def originalBody = getMatchingStrategyFromBody(request.body)?.clientValue
+			def originalBody = matchingStrategy?.clientValue
 			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.bodyMatchers)
 			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
 			if ((values.empty && !request.bodyMatchers?.hasMatchers()) || onlySizeAssertionsArePresent(values)) {
@@ -117,12 +118,15 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		} else if (contentType == ContentType.XML) {
 			requestPattern.withRequestBody(WireMock.equalToXml(getMatchingStrategy(request.body.clientValue).clientValue.toString()))
 		} else if (containsPattern(request?.body)) {
-				MatchingStrategy matchingStrategy = appendBodyRegexpMatchPattern(request.body)
-			requestPattern.withRequestBody(convertToValuePattern(matchingStrategy, contentType))
+				requestPattern.withRequestBody(convertToValuePattern(appendBodyRegexpMatchPattern(request.body), contentType))
 		} else {
-			requestPattern.withRequestBody(convertToValuePattern(
-					getMatchingStrategy(request.body.clientValue), contentType))
+			requestBodyGuessedFromMatchingStrategy(requestPattern, contentType)
 		}
+	}
+
+	private RequestPatternBuilder requestBodyGuessedFromMatchingStrategy(RequestPatternBuilder requestPattern, ContentType contentType) {
+		return requestPattern.withRequestBody(convertToValuePattern(
+				getMatchingStrategy(request.body.clientValue), contentType))
 	}
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {
