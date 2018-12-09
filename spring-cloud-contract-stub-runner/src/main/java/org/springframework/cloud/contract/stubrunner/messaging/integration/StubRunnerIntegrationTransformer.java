@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 import org.springframework.integration.transformer.GenericTransformer;
 import org.springframework.messaging.Message;
@@ -51,15 +52,24 @@ class StubRunnerIntegrationTransformer
 		if (groovyDsl == null || groovyDsl.getOutputMessage() == null) {
 			return source;
 		}
-		String payload = BodyExtractor
-				.extractStubValueFrom(groovyDsl.getOutputMessage().getBody());
+		Object outputBody = outputBody(groovyDsl);
 		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders()
 				.asStubSideMap();
 		MessageHeaders messageHeaders = new MessageHeaders(headers);
-		Message<String> message = MessageBuilder.createMessage(payload,
+		Message<Object> message = MessageBuilder.createMessage(outputBody,
 				messageHeaders);
 		this.selector.updateCache(message, groovyDsl);
 		return message;
+	}
+
+	private Object outputBody(Contract groovyDsl) {
+		Object outputBody =
+				BodyExtractor.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
+		if (outputBody instanceof FromFileProperty) {
+			FromFileProperty property = (FromFileProperty) outputBody;
+			return property.asBytes();
+		}
+		return BodyExtractor.extractStubValueFrom(outputBody);
 	}
 
 	Contract matchingContract(Message<?> source) {
