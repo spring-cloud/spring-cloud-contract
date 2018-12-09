@@ -65,6 +65,8 @@ class YamlContractConverterSpec extends Specification {
 	File ymlCookies = new File(ymlCookiesUrl.toURI())
 	URL ymlBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_pdf.yml")
 	File ymlBytes = new File(ymlBytesUrl.toURI())
+	URL ymlMessagingBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_messaging_pdf.yml")
+	File ymlMessagingBytes = new File(ymlMessagingBytesUrl.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
 
 	def "should convert YAML with Cookies to DSL"() {
@@ -517,6 +519,21 @@ class YamlContractConverterSpec extends Specification {
 		and:
 			contract.response.body.clientValue instanceof FromFileProperty
 			((FromFileProperty) contract.response.body.clientValue).type == byte[]
+	}
+
+	def "should convert YAML with messaging binary body to DSL"() {
+		given:
+			assert converter.isAccepted(ymlMessagingBytes)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlMessagingBytes)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			contract.input.messageBody.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.input.messageBody.clientValue).type == byte[]
+		and:
+			contract.outputMessage.body.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.outputMessage.body.clientValue).type == byte[]
 	}
 
 	def "should assert request headers when converting YAML to DSL"() {
