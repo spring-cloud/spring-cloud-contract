@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 
@@ -55,13 +56,22 @@ class StubRunnerCamelProcessor implements Processor {
 			}
 			return;
 		}
-		input.setBody(BodyExtractor
-				.extractStubValueFrom(groovyDsl.getOutputMessage().getBody()));
+		input.setBody(outputBody(groovyDsl));
 		if (groovyDsl.getOutputMessage().getHeaders() != null) {
 			for (Header entry : groovyDsl.getOutputMessage().getHeaders().getEntries()) {
 				input.setHeader(entry.getName(), entry.getClientValue());
 			}
 		}
+	}
+
+	private Object outputBody(Contract groovyDsl) {
+		Object outputBody =
+				BodyExtractor.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
+		if (outputBody instanceof FromFileProperty) {
+			FromFileProperty property = (FromFileProperty) outputBody;
+			return property.asBytes();
+		}
+		return BodyExtractor.extractStubValueFrom(outputBody);
 	}
 
 	private void setStubRunnerDestinationHeader(Exchange exchange, StubRunnerCamelPayload body) {
