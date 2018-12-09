@@ -23,7 +23,8 @@ import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
-import groovy.util.logging.Commons
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.runtime.GStringImpl
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
@@ -38,15 +39,15 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
 import static org.apache.commons.text.StringEscapeUtils.escapeXml11
 import static org.apache.commons.text.StringEscapeUtils.unescapeXml
-
 /**
  * A utility class that can operate on a message body basing on the provided Content Type.
  *
  * @since 1.0.0
  */
 @CompileStatic
-@Commons
 class ContentUtils {
+
+	private static final Log log = LogFactory.getLog(ContentUtils)
 
 	public static final Closure GET_STUB_SIDE = {
 		it instanceof DslProperty ? it.clientValue : it
@@ -142,6 +143,22 @@ class ContentUtils {
 			return getClientContentType((Map) bodyAsValue)
 		} else if (bodyAsValue instanceof List) {
 			return getClientContentType((List) bodyAsValue)
+		} else if (bodyAsValue instanceof MatchingStrategy) {
+			return ContentType.UNKNOWN
+		}
+		return tryToGuessContentType(bodyAsValue)
+	}
+
+	private static ContentType tryToGuessContentType(Object bodyAsValue) {
+		try {
+			if (log.isDebugEnabled()) {
+				log.debug("No content type passed, will try to guess the type of payload")
+			}
+			return getClientContentType(JsonOutput.toJson(bodyAsValue))
+		} catch (Exception ex) {
+			if (log.isTraceEnabled()) {
+				log.trace("Failed to assume that body [" + bodyAsValue + "] is json")
+			}
 		}
 		return ContentType.UNKNOWN
 	}
