@@ -54,14 +54,12 @@ class FromFileProperty implements Serializable {
 		return this.type == byte[]
 	}
 
-	public <T> T asType(Class<T> clazz) {
-		switch (clazz) {
-			case String:
-				return (T) new String(file.bytes, this.charset)
-			case byte[]:
-				return (T) file.bytes
-			default:
-				throw new UnsupportedOperationException("${clazz} is not supported")
-		}
+	String asString() {
+		return new String(this.file.bytes, this.charset)
 	}
+
+	byte[] asBytes() {
+		return this.file.bytes
+	}
+
 }

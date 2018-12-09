@@ -165,7 +165,11 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
-		return null
+		if (value.isByte()) {
+			return "response.payloadAsByteArray == " +
+					readBytesFromFileString(value, CommunicationType.RESPONSE)
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString())
 	}
 
 	@Override
@@ -192,7 +196,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getInputString() {
 		String request = 'ContractVerifierMessage inputMessage = contractVerifierMessaging.create('
 		if (inputMessage.messageBody) {
-			request = "${request}'''${bodyAsString}'''\n    "
+			request = "${request}${getBodyAsString()}\n    "
 		}
 		if (inputMessage.messageHeaders) {
 			request = "${request},[\n"
@@ -206,6 +210,16 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 			request = "${request}\n    ]"
 		}
 		return "${request})"
+	}
+
+	@Override
+	protected String indentBody(String text) {
+		return "\n      ${text}\n"
+	}
+
+	@Override
+	protected String quotes() {
+		return "'''"
 	}
 
 	@Override

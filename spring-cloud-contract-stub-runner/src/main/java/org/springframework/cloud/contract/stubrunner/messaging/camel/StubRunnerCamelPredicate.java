@@ -119,7 +119,7 @@ class StubRunnerCamelPredicate implements Predicate {
 		}
 		if (!unmatchedJsonPath.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + groovyDsl + "] didn't much the body due to "
+				log.debug("Contract [" + groovyDsl + "] didn't match the body due to "
 						+ unmatchedJsonPath);
 			}
 		}

@@ -400,7 +400,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						header "Content-Type", "customtype/xml"
 					}
 					body """<foo><name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
-						value(consumer("<test>"), producer('1234567890'))
+						value(consumer("&lt;test&gt;"), producer('1234567890'))
 					}</jobId></foo>"""
 				}
 				response {
@@ -443,7 +443,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					method 'GET'
 					url "/users"
 					body """<user><name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
-						value(consumer("<test>"), producer('1234567890'))
+						value(consumer("&lt;test&gt;"), producer('1234567890'))
 					}</jobId></user>"""
 				}
 				response {
@@ -551,7 +551,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					method 'GET'
 					url "/users"
 					body equalToXml("""<foo><name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
-						value(consumer("<test>"), producer('1234567890'))
+						value(consumer("&lt;test&gt;"), producer('1234567890'))
 					}</jobId></foo>""")
 				}
 				response {

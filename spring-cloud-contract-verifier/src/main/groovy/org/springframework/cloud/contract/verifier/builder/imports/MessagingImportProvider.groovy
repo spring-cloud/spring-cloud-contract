@@ -27,6 +27,6 @@ class MessagingImportProvider {
 	 * @return list of static imports for messaging test contracts.
 	 */
 	static List<String> getStaticImports() {
-		return ['org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers']
+		return ['org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers','org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierUtil.fileToBytes']
 	}
 }

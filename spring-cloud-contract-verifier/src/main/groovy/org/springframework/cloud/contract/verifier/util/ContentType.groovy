@@ -15,7 +15,6 @@
  */
 
 package org.springframework.cloud.contract.verifier.util
-
 /**
  * Represents content type. Used to pick the way bodies are parsed.
  *
@@ -34,5 +33,4 @@ enum ContentType {
 	ContentType(String mimeType) {
 		this.mimeType = mimeType
 	}
-
 }
