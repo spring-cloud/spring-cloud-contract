@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-
 import java.util.regex.Pattern
 
 import com.jayway.jsonpath.DocumentContext
@@ -88,7 +87,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	private String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
-		String newFileName = this.classDataForMethod.methodName + "_" + side.name().toLowerCase() + ".bin"
+		String newFileName = this.classDataForMethod.methodName + "_" + side.name().toLowerCase() + "_" + property.fileName()
 		File newFile = new File(this.classDataForMethod.testClassPath().parent.toFile(), newFileName)
 		newFile.bytes = property.asBytes()
 		return newFileName
