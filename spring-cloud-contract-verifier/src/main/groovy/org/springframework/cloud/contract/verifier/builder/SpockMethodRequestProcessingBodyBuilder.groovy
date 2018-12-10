@@ -111,7 +111,7 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
 		if (value.isByte()) {
 			return "response.body.asByteArray() == " +
-					readBytesFromFileString(value, CommunicationType.RESPONSE)
+					readBytesFromFileString(value)
 		}
 		return getResponseBodyPropertyComparisonString(property, value.asString())
 	}
@@ -149,8 +149,8 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		} else if (body instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) body
 			value = fileProperty.isByte() ?
-					readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
-					readStringFromFileString(fileProperty, CommunicationType.REQUEST)
+					readBytesFromFileString(fileProperty) :
+					readStringFromFileString(fileProperty)
 		} else {
 			value = "'''$body'''"
 		}

@@ -5,21 +5,26 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package org.springframework.cloud.contract.verifier.builder
+package org.springframework.cloud.contract.verifier.builder;
 
-import groovy.transform.CompileStatic
+class GeneratedClassData {
+	final String className;
+	final String classPackage;
+	final java.nio.file.Path testClassPath;
 
-@CompileStatic
-enum CommunicationType {
-	REQUEST, RESPONSE, INPUT, OUTPUT
+	GeneratedClassData(String className, String classPackage,
+			java.nio.file.Path testClassPath) {
+		this.className = className;
+		this.classPackage = classPackage;
+		this.testClassPath = testClassPath;
+	}
 }

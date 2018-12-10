@@ -56,9 +56,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 	@PackageScope ClassPresenceChecker checker = new ClassPresenceChecker()
 
 	@Override
-	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		String className = generatedClassData.className
-		String classPackage = generatedClassData.classPackage
+	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
+		GeneratedClassData generatedClassData = new GeneratedClassData(className, classPackage, null)
 		ClassBuilder clazz = ClassBuilder.createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
 		if (configProperties.imports) {
 			configProperties.imports.each { String it ->
@@ -77,11 +76,6 @@ class JavaTestGenerator implements SingleTestGenerator {
 		addJsonPathRelatedImports(clazz)
 		processContractFiles(listOfFiles, configProperties, clazz, generatedClassData)
 		return clazz.build()
-	}
-
-	@Override
-	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
-		return buildClass(configProperties, listOfFiles, includedDirectoryRelativePath, new GeneratedClassData(className, classPackage, null))
 	}
 
 	private void processContractFiles(Collection<ContractMetadata> listOfFiles, ContractVerifierConfigProperties configProperties, ClassBuilder clazz, GeneratedClassData generatedClassData) {
@@ -152,7 +146,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 				log.debug("Stub content from file [${stubsFile.text}]")
 			}
 			Collection<Contract> stubContents = metadata.convertedContract
-			Map<ParsedDsl, TestType> entries = stubContents.collectEntries { Contract stubContent ->
+			Map<ParsedDsl, TestType> entries = stubContents.collectEntries { Object content ->
+				Contract stubContent = (Contract) content
 				TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 				return [(new ParsedDsl(metadata, stubContent, stubsFile)): testType]
 			}

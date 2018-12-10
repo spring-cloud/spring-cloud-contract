@@ -45,7 +45,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
     )
     
     @Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
-            new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
+            new GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
 
     @Shared
     Contract contractDslWithCookiesValue = Contract.make {

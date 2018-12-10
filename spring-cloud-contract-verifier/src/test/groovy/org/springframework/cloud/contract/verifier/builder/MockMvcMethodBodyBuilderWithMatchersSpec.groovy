@@ -37,7 +37,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 	)
 
 	@Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
-			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
+			new GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
 
 	@Issue('#185')
 	def 'should allow to set dynamic values via stub / test matchers for [#methodBuilderName]'() {

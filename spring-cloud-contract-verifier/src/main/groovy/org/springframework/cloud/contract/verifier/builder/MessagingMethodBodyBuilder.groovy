@@ -124,8 +124,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 		if (bodyValue instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) bodyValue
 			return fileProperty.isByte() ?
-					indentBody(readBytesFromFileString(fileProperty, CommunicationType.REQUEST)) :
-					indentStringBody(readStringFromFileString(fileProperty, CommunicationType.REQUEST))
+					indentBody(readBytesFromFileString(fileProperty)) :
+					indentStringBody(readStringFromFileString(fileProperty))
 		}
 		String json = new JsonOutput().toJson(bodyValue)
 		json = convertUnicodeEscapesIfRequired(json)

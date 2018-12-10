@@ -48,9 +48,9 @@ class GeneratorScannerSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("org.springframework.cloud.contract.verifier")
 		then:
-			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier'} ) >> "spec"
-			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v1'} ) >> "spec1"
-			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v2'} ) >> "spec2"
+			1 * classGenerator.buildClass(_, _, _, { GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier'} ) >> "spec"
+			1 * classGenerator.buildClass(_, _, _, { GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v1'} ) >> "spec1"
+			1 * classGenerator.buildClass(_, _, _, { GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v2'} ) >> "spec2"
 	}
 
 }

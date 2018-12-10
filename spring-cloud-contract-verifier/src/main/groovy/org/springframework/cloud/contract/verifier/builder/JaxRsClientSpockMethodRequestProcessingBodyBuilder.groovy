@@ -124,8 +124,8 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 			} else if (body instanceof FromFileProperty) {
 				FromFileProperty fileProperty = (FromFileProperty) body
 				value = fileProperty.isByte() ?
-						readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
-						readStringFromFileString(fileProperty, CommunicationType.REQUEST)
+						readBytesFromFileString(fileProperty) :
+						readStringFromFileString(fileProperty)
 			} else {
 				value = "'${bodyAsString}'"
 			}

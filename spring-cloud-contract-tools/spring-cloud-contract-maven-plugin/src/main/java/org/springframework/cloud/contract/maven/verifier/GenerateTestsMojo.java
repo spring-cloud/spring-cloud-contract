@@ -15,13 +15,12 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import javax.inject.Inject;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,6 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
+
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -308,15 +308,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
 		if (this.baseClassMappings != null) {
 			config.setBaseClassMappings(mappingsToMap());
-		}
-	}
-
-	private URL fileToUrl(File contractsDirectory) {
-		try {
-			return contractsDirectory.toURI().toURL();
-		}
-		catch (MalformedURLException e) {
-			throw new IllegalStateException(e);
 		}
 	}
 

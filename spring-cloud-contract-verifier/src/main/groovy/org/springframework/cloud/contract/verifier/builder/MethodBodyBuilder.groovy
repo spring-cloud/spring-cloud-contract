@@ -86,20 +86,18 @@ abstract class MethodBodyBuilder {
 		this.classDataForMethod = classDataForMethod
 	}
 
-	private String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
-		String newFileName = this.classDataForMethod.methodName + "_" + side.name().toLowerCase() + "_" + property.fileName()
-		File newFile = new File(this.classDataForMethod.testClassPath().parent.toFile(), newFileName)
-		newFile.bytes = property.asBytes()
-		return newFileName
+	private String byteBodyToAFileForTestMethod(FromFileProperty property) {
+		java.nio.file.Path relativePath = this.configProperties.contractsDslDir.toPath().relativize(property.file.toPath())
+		return relativePath.toString()
 	}
 
-	protected String readBytesFromFileString(FromFileProperty property, CommunicationType side) {
-		String fileName = byteBodyToAFileForTestMethod(property, side)
+	protected String readBytesFromFileString(FromFileProperty property) {
+		String fileName = byteBodyToAFileForTestMethod(property)
 		return "fileToBytes(this, \"${fileName}\")"
 	}
 
-	protected String readStringFromFileString(FromFileProperty property, CommunicationType side) {
-		return "new String(" + readBytesFromFileString(property, side) + ")"
+	protected String readStringFromFileString(FromFileProperty property) {
+		return "new String(" + readBytesFromFileString(property) + ")"
 	}
 
 	private TemplateProcessor processor() {

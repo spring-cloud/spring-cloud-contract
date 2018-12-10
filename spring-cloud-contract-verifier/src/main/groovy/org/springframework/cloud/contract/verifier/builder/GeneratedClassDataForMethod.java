@@ -21,27 +21,12 @@ package org.springframework.cloud.contract.verifier.builder;
  * @since
  */
 class GeneratedClassDataForMethod {
-	final SingleTestGenerator.GeneratedClassData generatedClassData;
+	final GeneratedClassData generatedClassData;
 	final String methodName;
 
-	GeneratedClassDataForMethod(SingleTestGenerator.GeneratedClassData generatedClassData,
+	GeneratedClassDataForMethod(GeneratedClassData generatedClassData,
 			String methodName) {
 		this.generatedClassData = generatedClassData;
 		this.methodName = methodName;
-	}
-
-	private SingleTestGenerator.GeneratedClassData assertClassData() {
-		if (this.generatedClassData == null) {
-			throw new IllegalStateException("No metadata was found for the generated test class");
-		}
-		return this.generatedClassData;
-	}
-
-	String className() {
-		return assertClassData().className;
-	}
-
-	java.nio.file.Path testClassPath() {
-		return assertClassData().testClassPath;
 	}
 }

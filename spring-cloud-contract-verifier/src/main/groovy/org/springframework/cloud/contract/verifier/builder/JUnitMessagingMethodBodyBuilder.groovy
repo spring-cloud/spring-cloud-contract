@@ -89,7 +89,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
 		if (value.isByte()) {
 			return "assertThat(response.getPayloadAsByteArray()).isEqualTo(" +
-					readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
+					readBytesFromFileString(value) + ")"
 		}
 		return getResponseBodyPropertyComparisonString(property, value.asString())
 	}

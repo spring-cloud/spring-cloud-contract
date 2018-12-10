@@ -44,7 +44,7 @@ class YamlMockMvcMethodBodyBuilderSpec extends Specification implements WireMock
     )
 
     @Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
-            new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
+            new GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
 
     static File textToFile(String text) {
         File temp = File.createTempFile("yaml", ".yml")

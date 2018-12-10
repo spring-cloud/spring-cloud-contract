@@ -60,7 +60,7 @@ class MethodBuilder {
 	/**
 	 * A factory method that creates a {@link MethodBuilder} for the given arguments
 	 */
-	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties, SingleTestGenerator.GeneratedClassData generatedClassData) {
+	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties, GeneratedClassData generatedClassData) {
 		if (log.isDebugEnabled()) {
 			log.debug("Stub content Groovy DSL [$stubContent]")
 		}

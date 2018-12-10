@@ -29,6 +29,7 @@ import org.codehaus.groovy.runtime.GStringImpl
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
@@ -496,6 +497,7 @@ class ContentUtils {
 			return property.value.serverValue.toString()
 		} else if (property.value.serverValue instanceof byte[]) {
 			byte[] bytes = (byte[]) property.value.serverValue
+			// TODO: Convert this to reading bytes from file
 			return "[" + bytes.collect { it }.join(", ") + "] as byte[]"
 		}
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".bytes"
@@ -506,6 +508,7 @@ class ContentUtils {
 			return property.value.serverValue.toString()
 		} else if (property.value.serverValue instanceof byte[]) {
 			byte[] bytes = (byte[]) property.value.serverValue
+			// TODO: Convert this to reading bytes from file
 			return "new byte[] {" + bytes.collect { it }.join(", ") + "}"
 		}
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"

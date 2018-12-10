@@ -305,7 +305,7 @@ class ContractHttpDocsSpec extends Specification {
 		given:
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 			new HttpSpockMethodRequestProcessingBodyBuilder(optionals, properties, new GeneratedClassDataForMethod(
-					new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method"))
+					new GeneratedClassData("foo", "bar", new File(".").toPath()), "method"))
 					.appendTo(blockBuilder)
 		expect:
 		String expectedTest =

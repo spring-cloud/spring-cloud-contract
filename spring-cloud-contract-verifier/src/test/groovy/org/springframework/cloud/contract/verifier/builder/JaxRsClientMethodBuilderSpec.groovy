@@ -34,7 +34,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
 	@Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
-			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
+			new GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
 	
 	@Shared
 	// tag::contract_with_cookies[]
