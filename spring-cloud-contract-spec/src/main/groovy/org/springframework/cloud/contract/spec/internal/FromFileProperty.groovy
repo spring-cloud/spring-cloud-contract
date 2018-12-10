@@ -58,6 +58,10 @@ class FromFileProperty implements Serializable {
 		return new String(this.file.bytes, this.charset)
 	}
 
+	String fileName() {
+		return this.file.getName()
+	}
+
 	byte[] asBytes() {
 		return this.file.bytes
 	}
