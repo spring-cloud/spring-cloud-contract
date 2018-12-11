@@ -162,7 +162,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@Override
 	public void start() {
 		this.server.start();
-		WireMock.configureFor("localhost", this.server.port());
+		WireMock.configureFor(new WireMock(this.server));
 		this.running = true;
 		if (log.isDebugEnabled()) {
 			log.debug("Started WireMock at port [" + this.server.port() + "]. It has ["
