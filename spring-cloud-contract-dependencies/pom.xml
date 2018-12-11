@@ -16,7 +16,6 @@
 	<properties>
 		<wiremock.version>2.19.0</wiremock.version>
 		<jsonassert.version>0.4.13</jsonassert.version>
-		<aether.version>1.1.0</aether.version>
 		<rest-assured.version>3.2.0</rest-assured.version>
 	</properties>
 	<dependencyManagement>
@@ -134,36 +133,6 @@
 				<groupId>io.rest-assured</groupId>
 				<artifactId>rest-assured</artifactId>
 				<version>${rest-assured.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-api</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-impl</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-transport-file</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-transport-http</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-connector-basic</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-aether-provider</artifactId>
-				<version>3.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven</groupId>
