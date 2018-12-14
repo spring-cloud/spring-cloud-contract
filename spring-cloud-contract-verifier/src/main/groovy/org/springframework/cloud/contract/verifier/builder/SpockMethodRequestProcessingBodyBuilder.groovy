@@ -159,7 +159,7 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	@Override
 	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return getGroovyMultipartFileParameterContent(propertyName, propertyValue)
+		return getGroovyMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty fileProp -> readBytesFromFileString(fileProp, CommunicationType.REQUEST) })
 	}
 
 	@Override

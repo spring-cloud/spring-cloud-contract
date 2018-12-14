@@ -185,7 +185,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return getJavaMultipartFileParameterContent(propertyName, propertyValue)
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty fileProp -> readBytesFromFileString(fileProp, CommunicationType.REQUEST) })
 	}
 
 	@Override
