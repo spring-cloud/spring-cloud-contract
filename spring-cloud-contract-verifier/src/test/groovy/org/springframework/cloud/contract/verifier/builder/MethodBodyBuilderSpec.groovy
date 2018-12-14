@@ -43,7 +43,8 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 
 	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-			assertJsonSize: true
+			assertJsonSize: true, generatedTestSourcesDir: new File("."),
+			generatedTestResourcesDir: new File(".")
 	)
 
 	@Issue('#251')
@@ -900,29 +901,29 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		where:
 			methodBuilderName                                             | methodBuilder                                                                                                   | requestMatcher | responseMatcher
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }        | { String string ->
-				string.contains('.body(fileToBytes(this, "some_method_request.bin"))')
+				string.contains('.body(fileToBytes(this, "some_method_request_request.pdf"))')
 			}                                                                                                                                                                                                | { String string ->
-				string.contains('response.body.asByteArray() == fileToBytes(this, "some_method_response.bin")')
+				string.contains('response.body.asByteArray() == fileToBytes(this, "some_method_response_response.pdf")')
 			}
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                      | { String string ->
-				string.contains('.body(fileToBytes(this, "some_method_request.bin"));')
+				string.contains('.body(fileToBytes(this, "some_method_request_request.pdf"));')
 			}                                                                                                                                                                                                | { String string ->
-				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response.bin"));')
+				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response_response.pdf"));')
 			}
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String string ->
-				string.contains('entity(fileToBytes(this, "some_method_request.bin")')
+				string.contains('entity(fileToBytes(this, "some_method_request_request.pdf")')
 			}                                                                                                                                                                                                | { String string ->
-				string.contains('response.body.asByteArray() == fileToBytes(this, "some_method_response.bin")')
+				string.contains('response.body.asByteArray() == fileToBytes(this, "some_method_response_response.pdf")')
 			}
 			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                  | { String string ->
-				string.contains('entity(fileToBytes(this, "some_method_request.bin")')
+				string.contains('entity(fileToBytes(this, "some_method_request_request.pdf")')
 			}                                                                                                                                                                                                | { String string ->
-				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response.bin"));')
+				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response_response.pdf"));')
 			}
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                | { String string ->
-				string.contains('.body(fileToBytes(this, "some_method_request.bin"));')
+				string.contains('.body(fileToBytes(this, "some_method_request_request.pdf"));')
 			}                                                                                                                                                                                                | { String string ->
-				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response.bin"));')
+				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response_response.pdf"));')
 			}
 	}
 }

@@ -89,8 +89,20 @@ abstract class MethodBodyBuilder {
 	private String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
 		String newFileName = this.classDataForMethod.methodName + "_" + side.name().toLowerCase() + "_" + property.fileName()
 		File newFile = new File(this.classDataForMethod.testClassPath().parent.toFile(), newFileName)
+		// for IDE
 		newFile.bytes = property.asBytes()
+		// for plugin
+		generatedTestResourcesFileBytes(property, newFile)
 		return newFileName
+	}
+
+	private void generatedTestResourcesFileBytes(FromFileProperty property, File newFile) {
+		java.nio.file.Path relativePath = this.configProperties.generatedTestSourcesDir.
+				toPath().relativize(newFile.toPath())
+		File newFileInGeneratedTestSources = new File(this.configProperties.generatedTestResourcesDir, relativePath.
+				toString())
+		newFileInGeneratedTestSources.parentFile.mkdirs()
+		newFileInGeneratedTestSources.bytes = property.asBytes()
 	}
 
 	protected String readBytesFromFileString(FromFileProperty property, CommunicationType side) {

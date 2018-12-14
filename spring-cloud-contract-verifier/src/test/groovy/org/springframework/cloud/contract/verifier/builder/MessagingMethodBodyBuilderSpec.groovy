@@ -28,7 +28,8 @@ import spock.lang.Specification
  */
 class MessagingMethodBodyBuilderSpec extends Specification {
 
-	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
+	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true, generatedTestSourcesDir: new File("."),
+			generatedTestResourcesDir: new File("."))
 	@Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
 			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File("target/test.java").toPath()), "method")
 
@@ -920,7 +921,7 @@ Contract.make {
 			methodBuilderName                 | methodBuilder                                                            | expectedTest
 			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' given:
   ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-      fileToBytes(this, "method_request.bin")
+      fileToBytes(this, "method_request_request.pdf")
 
     ,[
       "contentType": "application/octet-stream"
@@ -934,11 +935,11 @@ Contract.make {
   assert response != null
   response.getHeader('contentType')?.toString()  == 'application/octet-stream\'
  and:
-  response.payloadAsByteArray == fileToBytes(this, "method_response.bin")
+  response.payloadAsByteArray == fileToBytes(this, "method_response_response.pdf")
 '''
 			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // given:
   ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\tfileToBytes(this, "method_request.bin")
+\t\t\t\tfileToBytes(this, "method_request_request.pdf")
 \t\t\t\t, headers()
 \t\t\t\t\t\t.header("contentType", "application/octet-stream")
 \t\t\t);
@@ -952,7 +953,7 @@ Contract.make {
   assertThat(response.getHeader("contentType")).isNotNull();
   assertThat(response.getHeader("contentType").toString()).isEqualTo("application/octet-stream");
  // and:
-  assertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "method_response.bin"));
+  assertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "method_response_response.pdf"));
 '''
 	}
 }

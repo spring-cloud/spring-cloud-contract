@@ -114,6 +114,11 @@ class ContractVerifierConfigProperties {
 	File generatedTestSourcesDir
 
 	/**
+	 * Test resource directory where additional resources for tests will be set
+	 */
+	File generatedTestResourcesDir
+
+	/**
 	 * Dir where the generated stubs from the contracts should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */

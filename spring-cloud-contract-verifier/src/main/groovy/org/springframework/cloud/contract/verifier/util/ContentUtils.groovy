@@ -29,6 +29,7 @@ import org.codehaus.groovy.runtime.GStringImpl
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
@@ -144,6 +145,8 @@ class ContentUtils {
 		} else if (bodyAsValue instanceof List) {
 			return getClientContentType((List) bodyAsValue)
 		} else if (bodyAsValue instanceof MatchingStrategy) {
+			return ContentType.UNKNOWN
+		} else if (bodyAsValue instanceof FromFileProperty) {
 			return ContentType.UNKNOWN
 		}
 		return tryToGuessContentType(bodyAsValue)
@@ -507,6 +510,9 @@ class ContentUtils {
 		} else if (property.value.serverValue instanceof byte[]) {
 			byte[] bytes = (byte[]) property.value.serverValue
 			return "new byte[] {" + bytes.collect { it }.join(", ") + "}"
+		} else if (property.value.serverValue instanceof FromFileProperty) {
+			FromFileProperty fromFileProperty = (FromFileProperty) property.value.serverValue
+			return "new byte[] {" + fromFileProperty.asBytes().collect { it }.join(", ") + "}"
 		}
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}

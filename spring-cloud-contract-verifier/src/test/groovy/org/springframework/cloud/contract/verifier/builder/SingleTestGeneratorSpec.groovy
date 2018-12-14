@@ -171,7 +171,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def 'should build test class for #testFramework'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testFramework =testFramework
+			properties.testFramework = testFramework
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
@@ -197,7 +197,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def 'should build test class for #testFramework when the path contains bizarre signs'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testFramework =testFramework
+			properties.testFramework = testFramework
 			properties.basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
 		and:
 			File newFolder = tmpFolder.newFolder('META_INF')
@@ -208,6 +208,7 @@ class SingleTestGeneratorSpec extends Specification {
 			writeContract(newFile)
 			properties.contractsDslDir = newFolder
 			properties.generatedTestSourcesDir = newFolder.parentFile
+			properties.generatedTestResourcesDir = newFolder.parentFile
 		when:
 			int size = new TestGenerator(properties).generate()
 		then:
@@ -516,7 +517,7 @@ class SingleTestGeneratorSpec extends Specification {
 			''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testFramework =testFramework
+			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
@@ -548,7 +549,7 @@ class SingleTestGeneratorSpec extends Specification {
 }''')
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testFramework =testFramework
+			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
@@ -602,7 +603,8 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
 					basePackageForTests: 'a.b',
-					generatedTestSourcesDir:  temp
+					generatedTestSourcesDir:  temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -626,7 +628,8 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					basePackageForTests: 'a.b', generatedTestSourcesDir: temp
+					basePackageForTests: 'a.b', generatedTestSourcesDir: temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -650,7 +653,8 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					baseClassForTests: 'a.b.SomeClass', generatedTestSourcesDir: temp
+					baseClassForTests: 'a.b.SomeClass', generatedTestSourcesDir: temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -674,7 +678,8 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					packageWithBaseClasses: 'a.b', generatedTestSourcesDir: temp
+					packageWithBaseClasses: 'a.b', generatedTestSourcesDir: temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -698,7 +703,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 				testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					generatedTestSourcesDir:  temp
+					generatedTestSourcesDir:  temp, generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:

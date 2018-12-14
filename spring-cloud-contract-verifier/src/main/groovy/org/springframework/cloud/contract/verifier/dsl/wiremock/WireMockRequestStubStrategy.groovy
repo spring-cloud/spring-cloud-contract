@@ -20,6 +20,7 @@ import java.util.regex.Pattern
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.http.RequestMethod
+import com.github.tomakehurst.wiremock.matching.ContentPattern
 import com.github.tomakehurst.wiremock.matching.RequestPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
@@ -35,6 +36,7 @@ import groovy.util.logging.Commons
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
@@ -156,7 +158,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			return
 		}
 		request.headers.entries.each {
-			requestPattern.withHeader(it.name, convertToValuePattern(it.clientValue, contentType))
+			requestPattern.withHeader(it.name, (StringValuePattern) convertToValuePattern(it.clientValue, contentType))
 		}
 	}
 
@@ -165,7 +167,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			return
 		}
 		request.cookies.entries.each {
-			requestPattern.withCookie(it.key, convertToValuePattern(it.clientValue, contentType))
+			requestPattern.withCookie(it.key, (StringValuePattern) convertToValuePattern(it.clientValue, contentType))
 		}
 	}
 
@@ -214,12 +216,12 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private void appendQueryParameters(RequestPatternBuilder requestPattern, ContentType contentType) {
 		QueryParameters queryParameters = request?.urlPath?.queryParameters ?: request?.url?.queryParameters
 		queryParameters?.parameters?.each {
-			requestPattern.withQueryParam(it.name, convertToValuePattern(it.clientValue, contentType))
+			requestPattern.withQueryParam(it.name, (StringValuePattern) convertToValuePattern(it.clientValue, contentType))
 		}
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)
-	private static StringValuePattern convertToValuePattern(Object object, ContentType contentType) {
+	private static ContentPattern convertToValuePattern(Object object, ContentType contentType) {
 		switch (object) {
 			case Pattern:
 				Pattern value = object as Pattern
@@ -260,6 +262,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 					StringEscapeUtils.unescapeJavaScript(it.toString())
 				}.join("&")
 			}
+		} else if (bodyValue instanceof FromFileProperty) {
+			return bodyValue.isByte() ? bodyValue.asBytes() : bodyValue.asString()
 		}
 		return bodyValue
 	}
@@ -291,6 +295,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private MatchingStrategy getMatchingStrategy(Object bodyValue) {
 		return tryToFindMachingStrategy(bodyValue)
+	}
+
+	private MatchingStrategy getMatchingStrategy(FromFileProperty bodyValue) {
+		return new MatchingStrategy(bodyValue, MatchingStrategy.Type.BINARY_EQUAL_TO)
 	}
 
 	private MatchingStrategy tryToFindMachingStrategy(Object bodyValue) {

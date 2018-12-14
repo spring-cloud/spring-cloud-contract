@@ -22,6 +22,9 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemp
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import spock.lang.Issue
+import spock.lang.Specification
+
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
@@ -30,11 +33,10 @@ import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapp
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.util.SocketUtils
-import spock.lang.Issue
-import spock.lang.Specification
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
@@ -1801,6 +1803,33 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server?.shutdown()
 	}
 
+	@Issue("#664")
+	def "should work with byte arrays"() {
+		given:
+			File request = new File(WireMockGroovyDslSpec.getResource("/body_builder/request.pdf").file)
+			File response = new File(WireMockGroovyDslSpec.getResource("/body_builder/response.pdf").file)
+		and:
+			File file = new File(WireMockGroovyDslSpec.getResource("/body_builder/worksWithPdf.groovy").file)
+			Contract contract = ContractVerifierDslConverter.convertAsCollection(
+					file.parentFile, file
+			).first()
+		and:
+			def json = toWireMockClientJsonStub(contract)
+		and:
+			int port = SocketUtils.findAvailableTcpPort()
+			WireMockServer server = new WireMockServer(config().port(port))
+			server.start()
+		and:
+			server.addStubMapping(WireMockStubMapping.buildFrom(json))
+		when:
+			ResponseEntity<byte[]> entity = callBytes(port, request)
+		then:
+			entity.statusCodeValue == 200
+			entity.body == response.bytes
+		cleanup:
+			server?.shutdown()
+	}
+
 	@Issue('#540')
 	def "should generate a stub with standard WireMock request template"() {
 		given:
@@ -2416,6 +2445,13 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						.header("Authorization", "secret2")
 						.header("Cookie", "foo=bar")
 						.body("{\"foo\":\"bar\",\"baz\":5}"), String.class)
+	}
+
+	ResponseEntity<byte[]> callBytes(int port, File request) {
+		return new TestRestTemplate().exchange(
+				RequestEntity.put(URI.create("http://localhost:" + port + "/1"))
+						.header("Content-Type", "application/octet-stream")
+						.body(request.bytes), byte[].class)
 	}
 
 	String callApiCategories(int port) {

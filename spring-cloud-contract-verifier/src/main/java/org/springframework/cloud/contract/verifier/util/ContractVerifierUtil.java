@@ -15,7 +15,7 @@
  *
  */
 
-package org.springframework.cloud.contract.verifier.messaging.util;
+package org.springframework.cloud.contract.verifier.util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
