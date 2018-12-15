@@ -181,7 +181,40 @@ response:
   bodyFromFile: response.json</pre><p>
 </p><p>Further assume that the JSON files is as follows:</p><p><span class="strong"><strong>request.json</strong></span></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"REQUEST"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><p><span class="strong"><strong>response.json</strong></span></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"RESPONSE"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><p>When test or stub generation takes place, the contents of the file is passed to the body
 of a request or a response. The name of the file needs to be a file with location
-relative to the folder in which the contract lays.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-http-top-level-elements" href="#contract-dsl-http-top-level-elements"></a>8.2.5&nbsp;HTTP Top-Level Elements</h3></div></div></div><p>The following methods can be called in the top-level closure of a contract definition.
+relative to the folder in which the contract lays.</p><p>If you need to pass the contents of a file in a binary form
+it&#8217;s enough for you to use the <code class="literal">fileAsBytes</code> method in Groovy DSL or <code class="literal">bodyFromFileAsBytes</code> field in YAML.</p><p><b>Groovy DSL.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+	request {
+		url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/1"</span>)
+		method(PUT())
+		headers {
+			contentType(applicationOctetStream())
+		}
+		body(fileAsBytes(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request.pdf"</span>))
+	}
+	response {
+		status <span class="hl-number">200</span>
+		body(fileAsBytes(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response.pdf"</span>))
+		headers {
+			contentType(applicationOctetStream())
+		}
+	}
+}</pre><p>
+</p><p><b>YAML.&nbsp;</b>
+</p><pre class="programlisting">request:
+    url: /1
+    method: PUT
+    headers:
+        Content-Type: application/octet-stream
+    bodyFromFileAsBytes: request.pdf
+response:
+    status: 200
+    bodyFromFileAsBytes: response.pdf
+    headers:
+        Content-Type: application/octet-stream</pre><p>
+</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>You should use this approach whenever you want to work with binary payloads both for HTTP and messaging.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-http-top-level-elements" href="#contract-dsl-http-top-level-elements"></a>8.2.5&nbsp;HTTP Top-Level Elements</h3></div></div></div><p>The following methods can be called in the top-level closure of a contract definition.
 <code class="literal">request</code> and <code class="literal">response</code> are mandatory. <code class="literal">priority</code> is optional.</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Definition of HTTP request part of the contract</span>
@@ -896,16 +929,16 @@ ensure that the <code class="literal">authToken()</code> method returns everythi
 JSON path:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">String</code>: If you point to a <code class="literal">String</code> value in the JSON.</li><li class="listitem"><code class="literal">JSONArray</code>: If you point to a <code class="literal">List</code> in the JSON.</li><li class="listitem"><code class="literal">Map</code>: If you point to a <code class="literal">Map</code> in the JSON.</li><li class="listitem"><code class="literal">Number</code>: If you point to <code class="literal">Integer</code>, <code class="literal">Double</code> etc. in the JSON.</li><li class="listitem"><code class="literal">Boolean</code>: If you point to a <code class="literal">Boolean</code> in the JSON.</li></ul></div><p>In the request part of the contract, you can specify that the <code class="literal">body</code> should be taken from
 a method.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>You must provide both the consumer and the producer side. The <code class="literal">execute</code> part
 is applied for the whole body - not for parts of it.</p></td></tr></table></div><p>The following example shows how to read an object from JSON:</p><pre class="programlisting">Contract contractDsl = Contract.make {
-    request {
-        method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
-        url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/something'</span>
-        body(
-                $(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), p(execute(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'hashCode()'</span>)))
-        )
-    }
-    response {
-        status OK()
-    }
+	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/something'</span>
+		body(
+				$(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), p(execute(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'hashCode()'</span>)))
+		)
+	}
+	response {
+		status OK()
+	}
 }</pre><p>The preceding example results in calling the <code class="literal">hashCode()</code> method in the request body.
 It should resemble the following code:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
  MockMvcRequestSpecification request = given()

@@ -509,6 +509,17 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
           
 <tr class="a">
             
+<td><b><a href="#generatedTestResourcesDir">generatedTestResourcesDir</a></b></td>
+            
+<td><tt>File</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>(no description)<br /><b>Default value is</b>: <tt>${project.build.directory}/generated-test-resources/contracts</tt>.<br /></td>
+          </tr>
+          
+<tr class="b">
+            
 <td><b><a href="#generatedTestSourcesDir">generatedTestSourcesDir</a></b></td>
             
 <td><tt>File</tt></td>
@@ -518,7 +529,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>(no description)<br /><b>Default value is</b>: <tt>${project.build.directory}/generated-test-sources/contracts</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#ignoredFiles">ignoredFiles</a></b></td>
             
@@ -530,7 +541,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 @Ignored tests<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#imports">imports</a></b></td>
             
@@ -541,7 +552,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>Imports that should be added to generated tests<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#includedFiles">includedFiles</a></b></td>
             
@@ -552,7 +563,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>Patterns that should be taken into account for processing<br /><b>User property is</b>: <tt>includedFiles</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#mavenTestSkip">mavenTestSkip</a></b></td>
             
@@ -563,7 +574,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>maven.test.skip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#nameSuffixForTests">nameSuffixForTests</a></b></td>
             
@@ -574,7 +585,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>(no description)<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#packageWithBaseClasses">packageWithBaseClasses</a></b></td>
             
@@ -593,7 +604,7 @@ test source file that will have the package
 last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</b>: <tt>packageWithBaseClasses</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#ruleClassForTests">ruleClassForTests</a></b></td>
             
@@ -604,7 +615,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#skip">skip</a></b></td>
             
@@ -615,7 +626,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.skip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#skipTests">skipTests</a></b></td>
             
@@ -626,7 +637,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>skipTests</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#staticImports">staticImports</a></b></td>
             
@@ -637,7 +648,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>Static imports that should be added to generated tests<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#testFramework">testFramework</a></b></td>
             
@@ -648,7 +659,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /><b>Default value is</b>: <tt>JUNIT</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#testMode">testMode</a></b></td>
             
@@ -897,6 +908,18 @@ folder after running tests</div>
 <li><b>Type</b>: <tt>java.util.List</tt></li>
           
 <li><b>Required</b>: <tt>No</tt></li>
+        </ul><hr />
+<p><b><a name="generatedTestResourcesDir">generatedTestResourcesDir</a>:</b></p>
+        
+<div>(no description)</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.io.File</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>Default</b>: <tt>${project.build.directory}/generated-test-resources/contracts</tt></li>
         </ul><hr />
 <p><b><a name="generatedTestSourcesDir">generatedTestSourcesDir</a>:</b></p>
         

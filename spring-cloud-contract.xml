@@ -684,7 +684,7 @@ You would like to feed that instance with a proper stub definition.</simpara>
 				FraudServiceResponse.class);</programlisting>
 <simpara>Annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {</programlisting>
@@ -1142,7 +1142,7 @@ Application service</literal>):</simpara>
 collaborators. (Optional step) Because you&#8217;re playing with the collaborators offline, you
 can also provide the offline work switch (<literal>StubRunnerProperties.StubsMode.LOCAL</literal>).</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {</programlisting>
@@ -1205,9 +1205,8 @@ or whatever is necessary. In this case, use <link xl:href="http://rest-assured.i
 start the server side <literal>FraudDetectionController</literal>.</simpara>
 <programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
 
-import org.junit.Before;
-
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
 
 public class FraudBase {
 	@Before
@@ -2501,6 +2500,7 @@ pseudocode):</simpara>
     testFramework ='JUNIT'
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
@@ -2602,7 +2602,12 @@ GroovyDSL. By default, its value is <literal>$rootDir/src/test/resources/contrac
 <listitem>
 <simpara><emphasis role="strong">generatedTestSourcesDir</emphasis>: Specifies the test source directory where tests generated
 from the Groovy DSL should be placed. By default its value is
-<literal>$buildDir/generated-test-sources/contractVerifier</literal>.</simpara>
+<literal>$buildDir/generated-test-sources/contracts</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">generatedTestResourcesDir</emphasis>: Specifies the test resource directory where resources used by the tests generated
+from the Groovy DSL should be placed. By default its value is
+<literal>$buildDir/generated-test-resources/contracts</literal>.</simpara>
 </listitem>
 <listitem>
 <simpara><emphasis role="strong">stubsOutputDir</emphasis>: Specifies the directory where the generated WireMock stubs from
@@ -3011,6 +3016,14 @@ use Spock classes, the class is <literal>spock.lang.Specification</literal>.</si
 <listitem>
 <simpara><emphasis role="strong">contractsDirectory</emphasis>: Specifies a directory containing contracts written with the
 GroovyDSL. The default directory is <literal>/src/test/resources/contracts</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">generatedTestSourcesDir</emphasis>: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default its value is
+<literal>$buildDir/generated-test-sources/contracts</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">generatedTestResourcesDir</emphasis>: Specifies the test resource directory where resources used by the tests generated</simpara>
 </listitem>
 <listitem>
 <simpara><emphasis role="strong">testFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<literal>TestFramework.JUNIT</literal>) and
@@ -6230,6 +6243,51 @@ response:
 <simpara>When test or stub generation takes place, the contents of the file is passed to the body
 of a request or a response. The name of the file needs to be a file with location
 relative to the folder in which the contract lays.</simpara>
+<simpara>If you need to pass the contents of a file in a binary form
+it&#8217;s enough for you to use the <literal>fileAsBytes</literal> method in Groovy DSL or <literal>bodyFromFileAsBytes</literal> field in YAML.</simpara>
+<formalpara>
+<title>Groovy DSL</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+	request {
+		url("/1")
+		method(PUT())
+		headers {
+			contentType(applicationOctetStream())
+		}
+		body(fileAsBytes("request.pdf"))
+	}
+	response {
+		status 200
+		body(fileAsBytes("response.pdf"))
+		headers {
+			contentType(applicationOctetStream())
+		}
+	}
+}</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>YAML</title>
+<para>
+<programlisting language="yml" linenumbering="unnumbered">request:
+    url: /1
+    method: PUT
+    headers:
+        Content-Type: application/octet-stream
+    bodyFromFileAsBytes: request.pdf
+response:
+    status: 200
+    bodyFromFileAsBytes: response.pdf
+    headers:
+        Content-Type: application/octet-stream</programlisting>
+</para>
+</formalpara>
+<important>
+<simpara>You should use this approach whenever you want to work with binary payloads both for HTTP and messaging.</simpara>
+</important>
 </section>
 <section xml:id="contract-dsl-http-top-level-elements">
 <title>HTTP Top-Level Elements</title>
@@ -7174,16 +7232,16 @@ is applied for the whole body - not for parts of it.</simpara>
 </important>
 <simpara>The following example shows how to read an object from JSON:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">Contract contractDsl = Contract.make {
-    request {
-        method 'GET'
-        url '/something'
-        body(
-                $(c('foo'), p(execute('hashCode()')))
-        )
-    }
-    response {
-        status OK()
-    }
+	request {
+		method 'GET'
+		url '/something'
+		body(
+				$(c('foo'), p(execute('hashCode()')))
+		)
+	}
+	response {
+		status OK()
+	}
 }</programlisting>
 <simpara>The preceding example results in calling the <literal>hashCode()</literal> method in the request body.
 It should resemble the following code:</simpara>
@@ -9290,37 +9348,53 @@ current Pact version that you use.</simpara>
 way the verifier builds Java tests, you can register your own implementation.</simpara>
 <simpara>The <literal>SingleTestGenerator</literal> interface lets you register your own implementation.  The
 following code listing shows the <literal>SingleTestGenerator</literal> interface:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">package org.springframework.cloud.contract.verifier.builder
-
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
-/**
- * Builds a single test.
- *
- * @since 1.1.0
- */
-interface SingleTestGenerator {
+<programlisting language="groovy" linenumbering="unnumbered">	 *
+	 * @param properties                    - properties passed to the plugin
+	 * @param listOfFiles                   - list of parsed contracts with additional metadata
+	 * @param className                     - the name of the generated test class
+	 * @param classPackage                  - the name of the package in which the test class should be stored
+	 * @param includedDirectoryRelativePath - relative path to the included directory
+	 * @return contents of a single test class
+	 * @deprecated use {@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
+	 */
+	@Deprecated
+	String buildClass(ContractVerifierConfigProperties properties,
+			Collection&lt;ContractMetadata&gt; listOfFiles, String className, String classPackage, String includedDirectoryRelativePath);
 
 	/**
 	 * Creates contents of a single test class in which all test scenarios from
 	 * the contract metadata should be placed.
 	 *
-	 * @param properties - properties passed to the plugin
-	 * @param listOfFiles - list of parsed contracts with additional metadata
-	 * @param className - the name of the generated test class
-	 * @param classPackage - the name of the package in which the test class should be stored
+	 * @param properties                    - properties passed to the plugin
+	 * @param listOfFiles                   - list of parsed contracts with additional metadata
+	 * @param generatedClassData            - information about the generated class
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 */
-	String buildClass(ContractVerifierConfigProperties properties, Collection&lt;ContractMetadata&gt; listOfFiles,
-					  String className, String classPackage, String includedDirectoryRelativePath)
+	default String buildClass(ContractVerifierConfigProperties properties,
+			Collection&lt;ContractMetadata&gt; listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
+		return buildClass(properties, listOfFiles, generatedClassData.className, generatedClassData.classPackage, includedDirectoryRelativePath);
+	}
 
 	/**
 	 * Extension that should be appended to the generated test class. E.g. {@code .java} or {@code .php}
 	 *
 	 * @param properties - properties passed to the plugin
 	 */
-	String fileExtension(ContractVerifierConfigProperties properties)
+	String fileExtension(ContractVerifierConfigProperties properties);
+
+	class GeneratedClassData {
+		public final String className;
+		public final String classPackage;
+		public final java.nio.file.Path testClassPath;
+
+		public GeneratedClassData(String className, String classPackage,
+				java.nio.file.Path testClassPath) {
+			this.className = className;
+			this.classPackage = classPackage;
+			this.testClassPath = testClassPath;
+		}
+	}
 }</programlisting>
 <simpara>Again, you must provide a <literal>spring.factories</literal> file, such as the one shown in the following
 example:</simpara>
