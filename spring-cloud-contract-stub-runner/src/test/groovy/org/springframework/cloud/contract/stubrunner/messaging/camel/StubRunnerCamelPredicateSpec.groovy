@@ -87,6 +87,7 @@ class StubRunnerCamelPredicateSpec extends Specification {
 		expect:
 			!predicate.matches(exchange)
 	}
+
 	def "should return true if headers and body match"() {
 		given:
 			Contract dsl = Contract.make {
@@ -136,5 +137,53 @@ class StubRunnerCamelPredicateSpec extends Specification {
 			]
 		expect:
 			predicate.matches(exchange)
+	}
+
+	def "should return true if headers and byte body matches"() {
+		given:
+			Contract dsl = Contract.make {
+				input {
+					messageFrom "foo"
+					messageHeaders {
+						header("foo", 123)
+						messagingContentType(applicationOctetStream())
+					}
+					messageBody(fileAsBytes("request.pdf"))
+				}
+			}
+		and:
+			StubRunnerCamelPredicate predicate = new StubRunnerCamelPredicate([dsl])
+			exchange.in = message
+			message.headers = [
+					foo: 123,
+					contentType: "application/octet-stream"
+			]
+			message.body = StubRunnerCamelPredicate.getResource("/request.pdf").bytes
+		expect:
+			predicate.matches(exchange)
+	}
+
+	def "should return false if byte body types don't match for binary"() {
+		given:
+			Contract dsl = Contract.make {
+				input {
+					messageFrom "foo"
+					messageHeaders {
+						header("foo", 123)
+						messagingContentType(applicationOctetStream())
+					}
+					messageBody(fileAsBytes("request.pdf"))
+				}
+			}
+		and:
+			StubRunnerCamelPredicate predicate = new StubRunnerCamelPredicate([dsl])
+			exchange.in = message
+			message.headers = [
+					foo: 123,
+					contentType: "application/octet-stream"
+			]
+			message.body = "hello world"
+		expect:
+			!predicate.matches(exchange)
 	}
 }

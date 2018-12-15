@@ -156,6 +156,7 @@ contracts {
     testFramework ='JUNIT'
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
@@ -242,7 +243,10 @@ should be skipped. By default, it is an empty array.
 GroovyDSL. By default, its value is `$rootDir/src/test/resources/contracts`.
 * *generatedTestSourcesDir*: Specifies the test source directory where tests generated
 from the Groovy DSL should be placed. By default its value is
-`$buildDir/generated-test-sources/contractVerifier`.
+`$buildDir/generated-test-sources/contracts`.
+* *generatedTestResourcesDir*: Specifies the test resource directory where resources used by the tests generated
+from the Groovy DSL should be placed. By default its value is
+`$buildDir/generated-test-resources/contracts`.
 * *stubsOutputDir*: Specifies the directory where the generated WireMock stubs from
 the Groovy DSL should be placed.
 * *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`) and
@@ -581,6 +585,10 @@ classes.
 use Spock classes, the class is `spock.lang.Specification`.
 * *contractsDirectory*: Specifies a directory containing contracts written with the
 GroovyDSL. The default directory is `/src/test/resources/contracts`.
+* *generatedTestSourcesDir*: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default its value is
+`$buildDir/generated-test-sources/contracts`.
+* *generatedTestResourcesDir*: Specifies the test resource directory where resources used by the tests generated
 * *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`) and 
 JUnit 5 are supported with JUnit 4 being the default framework.
 * *packageWithBaseClasses*: Defines a package where all the base classes reside. This

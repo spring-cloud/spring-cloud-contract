@@ -32,8 +32,7 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 	private static final String LEGACY_JSON_PATH_TEMPLATE_NAME = HandlebarsJsonPathHelper.NAME
 	private static final String JSON_PATH_TEMPLATE_NAME = WireMockHelpers.jsonPath.name()
 
-	@Delegate
-	private final ContractTemplate contractTemplate = new CompositeContractTemplate()
+	final ContractTemplate contractTemplate = new CompositeContractTemplate()
 
 	@Override
 	String transform(Request request, String testContents) {
@@ -97,6 +96,136 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 		} catch (IOException e) {
 			throw new RuntimeException(e)
 		}
+	}
+
+	@Override
+	boolean startsWithTemplate(String text) {
+		return this.contractTemplate.startsWithTemplate(text)
+	}
+
+	@Override
+	boolean startsWithEscapedTemplate(String text) {
+		return this.contractTemplate.startsWithEscapedTemplate(text)
+	}
+
+	@Override
+	String openingTemplate() {
+		return this.contractTemplate.openingTemplate()
+	}
+
+	@Override
+	String closingTemplate() {
+		return this.contractTemplate.closingTemplate()
+	}
+
+	@Override
+	String escapedOpeningTemplate() {
+		return this.contractTemplate.escapedOpeningTemplate()
+	}
+
+	@Override
+	String escapedClosingTemplate() {
+		return this.contractTemplate.escapedClosingTemplate()
+	}
+
+	@Override
+	String url() {
+		return this.contractTemplate.url()
+	}
+
+	@Override
+	String query(String key) {
+		return this.contractTemplate.query(key)
+	}
+
+	@Override
+	String query(String key, int index) {
+		return this.contractTemplate.query(key, index)
+	}
+
+	@Override
+	String path() {
+		return this.contractTemplate.path()
+	}
+
+	@Override
+	String path(int index) {
+		return this.contractTemplate.path(index)
+	}
+
+	@Override
+	String header(String key) {
+		return this.contractTemplate.header(key)
+	}
+
+	@Override
+	String header(String key, int index) {
+		return this.contractTemplate.header(key, index)
+	}
+
+	@Override
+	String cookie(String key) {
+		return this.contractTemplate.cookie(key)
+	}
+
+	@Override
+	String body() {
+		return this.contractTemplate.body()
+	}
+
+	@Override
+	String body(String jsonPath) {
+		return this.contractTemplate.body(jsonPath)
+	}
+
+	@Override
+	String escapedUrl() {
+		return this.contractTemplate.escapedUrl()
+	}
+
+	@Override
+	String escapedQuery(String key) {
+		return this.contractTemplate.escapedQuery(key)
+	}
+
+	@Override
+	String escapedQuery(String key, int index) {
+		return this.contractTemplate.escapedQuery(key, index)
+	}
+
+	@Override
+	String escapedPath() {
+		return this.contractTemplate.escapedPath()
+	}
+
+	@Override
+	String escapedPath(int index) {
+		return this.contractTemplate.escapedPath(index)
+	}
+
+	@Override
+	String escapedHeader(String key) {
+		return this.contractTemplate.escapedHeader(key)
+	}
+
+	@Override
+	String escapedHeader(String key, int index) {
+		return this.contractTemplate.escapedHeader(key, index)
+	}
+
+	@Override
+	String escapedCookie(String key) {
+		return this.contractTemplate.escapedCookie(key)
+	}
+
+	@Override
+	String escapedBody() {
+		return this.contractTemplate.escapedBody()
+	}
+
+	@Override
+	String escapedBody(String jsonPath) {
+		return this.contractTemplate.escapedBody(jsonPath)
 	}
 }
 

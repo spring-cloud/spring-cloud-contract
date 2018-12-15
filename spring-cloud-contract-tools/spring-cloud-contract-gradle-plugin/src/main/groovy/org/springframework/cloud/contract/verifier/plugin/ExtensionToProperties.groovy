@@ -26,6 +26,7 @@ class ExtensionToProperties {
 				staticImports: extension.getStaticImports(),
 				contractsDslDir: extension.getContractsDslDir(),
 				generatedTestSourcesDir: extension.getGeneratedTestSourcesDir(),
+				generatedTestResourcesDir: extension.getGeneratedTestResourcesDir(),
 				stubsOutputDir: extension.getStubsOutputDir(),
 				stubsSuffix: extension.getStubsSuffix(),
 				assertJsonSize: extension.getAssertJsonSize(),

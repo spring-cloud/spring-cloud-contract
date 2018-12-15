@@ -26,6 +26,7 @@ import org.json.JSONObject
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
@@ -34,8 +35,8 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.getClientContentType
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues
+
 /**
  * Common abstraction over WireMock Request / Response conversion implementations
  *
@@ -83,6 +84,13 @@ abstract class BaseWireMockStubStrategy {
 	 */
 	String parseBody(Object value, ContentType contentType) {
 		return parseBody(value.toString(), contentType)
+	}
+
+	/**
+	 * Return body as String from file
+	 */
+	String parseBody(FromFileProperty value, ContentType contentType) {
+		return value.asString()
 	}
 
 	/**

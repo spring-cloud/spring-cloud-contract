@@ -81,6 +81,6 @@ class HttpImportProvider {
 	 */
 	List<String> getStaticImports(TestFramework testFramework, TestMode testMode) {
 		return TEST_MODE_SPECIFIC_IMPORTS.get(testMode).staticImports +
-				FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.get(new Tuple2(testFramework, testMode)).staticImports
+				FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.get(new Tuple2(testFramework, testMode)).staticImports + ['org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes']
 	}
 }

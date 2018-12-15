@@ -49,6 +49,10 @@ class Body extends DslProperty {
 		this("${bodyAsValue}")
 	}
 
+	Body(byte[] bodyAsValue) {
+		super(bodyAsValue)
+	}
+
 	Body(Number bodyAsValue) {
 		super(bodyAsValue)
 	}
@@ -63,6 +67,10 @@ class Body extends DslProperty {
 
 	Body(DslProperty bodyAsValue) {
 		super(bodyAsValue.clientValue, bodyAsValue.serverValue)
+	}
+
+	Body(Serializable serializable) {
+		super(serializable, serializable)
 	}
 
 	Body(MatchingStrategy matchingStrategy) {

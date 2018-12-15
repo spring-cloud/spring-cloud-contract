@@ -741,7 +741,7 @@ Annotate your test class with `@AutoConfigureStubRunner`. In the annotation prov
 [source,groovy,indent=0]
 ----
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
@@ -1226,7 +1226,7 @@ can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`
 [source,groovy,indent=0]
 ----
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
@@ -1323,9 +1323,8 @@ start the server side `FraudDetectionController`.
 ----
 package com.example.fraud;
 
-import org.junit.Before;
-
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
 
 public class FraudBase {
 	@Before

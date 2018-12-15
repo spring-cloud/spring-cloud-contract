@@ -28,7 +28,10 @@ import spock.lang.Specification
  */
 class MessagingMethodBodyBuilderSpec extends Specification {
 
-	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
+	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true, generatedTestSourcesDir: new File("."),
+			generatedTestResourcesDir: new File("."))
+	@Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
+			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File("target/test.java").toPath()), "method")
 
 	def "should work for triggered based messaging with Spock"() {
 		given:
@@ -48,7 +51,7 @@ def contractDsl = Contract.make {
 	}
 }
 // end::trigger_method_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -90,7 +93,7 @@ def contractDsl = Contract.make {
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -142,7 +145,7 @@ def contractDsl = Contract.make {
 	}
 }
 		// end::trigger_message_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -195,7 +198,7 @@ and:
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -243,7 +246,7 @@ def contractDsl = Contract.make {
 	}
 }
 		// end::trigger_no_output_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -284,7 +287,7 @@ then:
 					assertThat('bookWasDeleted()')
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -329,7 +332,7 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -378,7 +381,7 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -431,7 +434,7 @@ Contract.make {
 	}
 }
 		// end::consumer_producer[]
-		MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+		MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 		BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 		builder.appendTo(blockBuilder)
@@ -478,7 +481,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -522,7 +525,7 @@ Contract.make {
                             ])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -614,8 +617,8 @@ Contract.make {
 			(error.message ? error.message : error.cause.message).contains('''doesn't match the JSON path [$[?(@.['shouldFail'] =~ ''')
 		where:
 			methodBuilderName                 | methodBuilder                                                            | endOfLineRegExSymbol
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties) } | '\\$'
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties) } | '$'
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '$'
 	}
 
 	@Issue("587")
@@ -639,7 +642,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -674,7 +677,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -717,7 +720,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -760,7 +763,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -803,7 +806,7 @@ Contract.make {
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -860,7 +863,7 @@ Contract.make {
 			test == expectedTest
 		where:
 			methodBuilderName                 | methodBuilder                                                            | expectedTest
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties) } | ''' when:
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' when:
   foo()
 
  then:
@@ -871,7 +874,7 @@ Contract.make {
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("['field']").isEqualTo("value")
 '''
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties) } | ''' // when:
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // when:
   foo();
 
  // then:
@@ -885,4 +888,72 @@ Contract.make {
 '''
 	}
 
+	@Issue('#664')
+	def "should generate tests for messages having binary payloads [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				label 'shouldPublishMessage'
+				input {
+					messageFrom("foo")
+					messageBody(fileAsBytes("body_builder/request.pdf"))
+					messageHeaders {
+						messagingContentType(applicationOctetStream())
+					}
+				}
+				outputMessage {
+					sentTo('messageExchange')
+					body(fileAsBytes("body_builder/response.pdf"))
+					headers {
+						messagingContentType(applicationOctetStream())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('cursor')
+			!test.contains('REGEXP>>')
+			test == expectedTest
+		where:
+			methodBuilderName                 | methodBuilder                                                            | expectedTest
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' given:
+  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+      fileToBytes(this, "method_request_request.pdf")
+
+    ,[
+      "contentType": "application/octet-stream"
+    ])
+
+ when:
+  contractVerifierMessaging.send(inputMessage, 'foo')
+
+ then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive('messageExchange')
+  assert response != null
+  response.getHeader('contentType')?.toString()  == 'application/octet-stream\'
+ and:
+  response.payloadAsByteArray == fileToBytes(this, "method_response_response.pdf")
+'''
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // given:
+  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\tfileToBytes(this, "method_request_request.pdf")
+\t\t\t\t, headers()
+\t\t\t\t\t\t.header("contentType", "application/octet-stream")
+\t\t\t);
+
+ // when:
+  contractVerifierMessaging.send(inputMessage, "foo");
+
+ // then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
+  assertThat(response).isNotNull();
+  assertThat(response.getHeader("contentType")).isNotNull();
+  assertThat(response.getHeader("contentType").toString()).isEqualTo("application/octet-stream");
+ // and:
+  assertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "method_response_response.pdf"));
+'''
+	}
 }

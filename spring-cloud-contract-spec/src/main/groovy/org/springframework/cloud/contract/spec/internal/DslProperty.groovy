@@ -25,7 +25,7 @@ import groovy.transform.ToString
  */
 @CompileStatic
 @ToString(includePackage = false, includeNames = true)
-class DslProperty<T> {
+class DslProperty<T> implements Serializable {
 
 	final T clientValue
 	final T serverValue

@@ -69,13 +69,14 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		addIdeaTestSources(project, extension)
 	}
 
-	private addIdeaTestSources(Project project, extension) {
+	private addIdeaTestSources(Project project, ContractVerifierExtension extension) {
 		def hasIdea = new File(project.rootDir, ".idea").exists()
 		if (hasIdea) {
 			project.apply(plugin: 'idea')
 			project.idea {
 				module {
 					testSourceDirs += extension.generatedTestSourcesDir
+					testSourceDirs += extension.generatedTestResourcesDir
 					testSourceDirs += extension.contractsDslDir
 				}
 			}
@@ -86,6 +87,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		extension.with {
 			generatedTestSourcesDir = generatedTestSourcesDir ?: project.file("${project.buildDir}/generated-test-sources/contracts")
 			generatedTestSourcesDir.mkdirs()
+			generatedTestResourcesDir = generatedTestResourcesDir ?: project.file("${project.buildDir}/generated-test-resources/contracts")
+			generatedTestResourcesDir.mkdirs()
 			contractsDslDir = contractsDslDir ?: defaultContractsDir() //TODO: Use sourceset
 			contractsDslDir.mkdirs()
 			stubsOutputDir = stubsOutputDir ?: project.file("${project.buildDir}/stubs/")

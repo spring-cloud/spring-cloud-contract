@@ -116,6 +116,11 @@ class ContractVerifierExtension {
 	File generatedTestSourcesDir
 
 	/**
+	 * Test resource directory where tests generated from Groovy DSL should be referenced
+	 */
+	File generatedTestResourcesDir
+
+	/**
 	 * Dir where the generated stubs from Groovy DSL should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */

@@ -15,15 +15,15 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import javax.inject.Inject;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,6 +33,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
+
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -56,6 +57,9 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${project.build.directory}/generated-test-sources/contracts")
 	private File generatedTestSourcesDir;
+
+	@Parameter(defaultValue = "${project.build.directory}/generated-test-resources/contracts")
+	private File generatedTestResourcesDir;
 
 	@Parameter
 	private String basePackageForTests;
@@ -260,12 +264,16 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
 				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
-						this.contractsDirectory);
+				this.contractsDirectory);
 		getLog().info(
 				"Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project
 				.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
+		Resource resource = new Resource();
+		resource.setDirectory(this.generatedTestResourcesDir.getAbsolutePath());
+		this.project
+				.addTestResource(resource);
 		if (getLog().isInfoEnabled()) {
 			getLog().info("Test Source directory: "
 					+ this.generatedTestSourcesDir.getAbsolutePath() + " added.");
@@ -293,6 +301,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 			File contractsDirectory) {
 		config.setContractsDslDir(contractsDirectory);
 		config.setGeneratedTestSourcesDir(this.generatedTestSourcesDir);
+		config.setGeneratedTestResourcesDir(this.generatedTestResourcesDir);
 		config.setTestFramework(this.testFramework);
 		config.setTestMode(this.testMode);
 		config.setBasePackageForTests(this.basePackageForTests);
@@ -308,15 +317,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
 		if (this.baseClassMappings != null) {
 			config.setBaseClassMappings(mappingsToMap());
-		}
-	}
-
-	private URL fileToUrl(File contractsDirectory) {
-		try {
-			return contractsDirectory.toURI().toURL();
-		}
-		catch (MalformedURLException e) {
-			throw new IllegalStateException(e);
 		}
 	}
 
