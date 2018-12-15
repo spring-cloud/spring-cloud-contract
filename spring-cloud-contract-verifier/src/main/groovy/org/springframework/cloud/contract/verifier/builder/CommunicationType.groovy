@@ -19,6 +19,12 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.CompileStatic
 
+/**
+ * Describes the type of communication
+ *
+ * @author Marcin Grzejszczak
+ * @since 2.1.0
+ */
 @CompileStatic
 enum CommunicationType {
 	REQUEST, RESPONSE, INPUT, OUTPUT

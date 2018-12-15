@@ -169,7 +169,7 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 			predicate.accept(message)
 	}
 
-	def "should return false if byte body types don't much for binary"() {
+	def "should return false if byte body types don't match for binary"() {
 		given:
 			Contract dsl = Contract.make {
 				input {
