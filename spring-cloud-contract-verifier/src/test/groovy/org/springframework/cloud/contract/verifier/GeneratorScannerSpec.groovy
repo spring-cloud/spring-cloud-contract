@@ -53,4 +53,15 @@ class GeneratorScannerSpec extends Specification {
 			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v2'} ) >> "spec2"
 	}
 
+	def "should create class with name with hyphen"() {
+		given:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(testFramework: SPOCK)
+			properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/name-with-hyphen").toURI())
+			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
+		when:
+			testGenerator.generateTestClasses("org.springframework.cloud.contract.verifier")
+		then:
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'car_rentalSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier'} ) >> "spec"
+	}
+
 }

@@ -105,7 +105,7 @@ class TestGenerator {
 	void generateTestClasses(final String basePackageName) {
 		ListMultimap<Path, ContractMetadata> contracts = contractFileScanner.findContracts()
 		contracts.asMap().entrySet().each {
-			Map.Entry<Path, Collection<ContractMetadata>> entry -> processIncludedDirectory(relativizeContractPath(entry), entry.getValue(), basePackageName)
+			Map.Entry<Path, Collection<ContractMetadata>> entry -> processIncludedDirectory(relativizeContractPath(entry), (Collection<ContractMetadata>) entry.getValue(), basePackageName)
 		}
 	}
 
@@ -129,7 +129,7 @@ class TestGenerator {
 			Path dir = saver.generateTestBaseDir(basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()))
 			Path classPath = saver.pathToClass(dir, convertedClassName)
 			def classBytes = generator.buildClass(configProperties, contracts, includedDirectoryRelativePath,
-					new SingleTestGenerator.GeneratedClassData(className, packageName, classPath)).getBytes(StandardCharsets.UTF_8)
+					new SingleTestGenerator.GeneratedClassData(convertedClassName, packageName, classPath)).getBytes(StandardCharsets.UTF_8)
 			saver.saveClassFile(classPath, classBytes)
 			counter.incrementAndGet()
 		}
