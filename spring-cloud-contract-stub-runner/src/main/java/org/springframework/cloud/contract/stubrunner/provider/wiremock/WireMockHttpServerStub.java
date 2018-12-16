@@ -1,3 +1,20 @@
+/*
+ * Copyright 2013-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 
 import java.io.File;
@@ -20,6 +37,8 @@ import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import wiremock.com.github.jknack.handlebars.Helper;
+
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
@@ -31,7 +50,6 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-import wiremock.com.github.jknack.handlebars.Helper;
 
 /**
  * Abstraction over WireMock as a HTTP Server Stub
@@ -115,7 +133,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			log.debug("Started WireMock at port [" + port + "]");
 		}
 		if (!SERVERS.containsKey(this)) {
-			SERVERS.put(this, new PortAndMappings(port, new ArrayList<StubMapping>()));
+			SERVERS.put(this, new PortAndMappings(port, new ArrayList<>()));
 		}
 		return this;
 	}
