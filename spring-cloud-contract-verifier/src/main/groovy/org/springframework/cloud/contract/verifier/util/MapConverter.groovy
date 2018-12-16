@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.util
 
 import groovy.json.JsonSlurper
 import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 /**
@@ -131,8 +130,6 @@ class MapConverter {
 					}
 					return it
 				})
-			} else if (it instanceof FromFileProperty) {
-				return it.isByte() ? it.asBytes() : it.asString()
 			}
 			return it
 		}

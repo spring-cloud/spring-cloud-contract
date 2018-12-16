@@ -33,7 +33,7 @@ import java.nio.charset.Charset
 class FromFileProperty implements Serializable {
 
 	final File file
-	final String charset
+	final Charset charset
 	final Class type
 
 	FromFileProperty(File file, Class type) {
@@ -43,7 +43,7 @@ class FromFileProperty implements Serializable {
 	FromFileProperty(File file, Class type, Charset charset) {
 		this.file = file
 		this.type = type
-		this.charset = charset.toString()
+		this.charset = charset
 	}
 
 	boolean isString() {

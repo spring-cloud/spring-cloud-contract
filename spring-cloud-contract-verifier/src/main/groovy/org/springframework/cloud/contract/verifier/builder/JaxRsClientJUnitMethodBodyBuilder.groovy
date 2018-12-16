@@ -165,15 +165,6 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	}
 
 	@Override
-	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
-		if (value.isByte()) {
-			return "assertThat(response.readEntity(byte[].class)).isEqualTo(" +
-					readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
-		}
-		return "assertThat(response.readEntity(String.class)).isEqualTo(" + readStringFromFileString(value, CommunicationType.RESPONSE) + ")"
-	}
-
-	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		response.headers?.executeForEachHeader { Header header ->
 			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?

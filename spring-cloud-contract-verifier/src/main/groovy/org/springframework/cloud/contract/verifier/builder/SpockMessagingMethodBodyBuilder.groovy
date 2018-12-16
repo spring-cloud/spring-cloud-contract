@@ -169,8 +169,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 			return "response.payloadAsByteArray == " +
 					readBytesFromFileString(value, CommunicationType.RESPONSE)
 		}
-		return "response.payload == " +
-				readStringFromFileString(value, CommunicationType.RESPONSE)
+		return getResponseBodyPropertyComparisonString(property, value.asString())
 	}
 
 	@Override

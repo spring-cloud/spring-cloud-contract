@@ -67,7 +67,6 @@ class SyntaxChecker {
 			"${RestAssuredMockMvc.name}.when",
 			"${RestAssured.name}.*",
 			"${Entity.name}.*",
-			"${ContractVerifierUtil.name}.fileToBytes",
 			"${ContractVerifierMessagingUtil.name}.headers",
 			"${JsonAssertion.name}.assertThatJson",
 			"${SpringCloudContractAssertions.name}.assertThat"
@@ -76,7 +75,6 @@ class SyntaxChecker {
 	private static final String WEB_TEST_CLIENT_STATIC_IMPORTS = [
 			"${RestAssuredWebTestClient.name}.*",
 			"${Entity.name}.*",
-			"${ContractVerifierUtil.name}.fileToBytes",
 			"${ContractVerifierMessagingUtil.name}.headers",
 			"${JsonAssertion.name}.assertThatJson",
 			"${SpringCloudContractAssertions.name}.assertThat"

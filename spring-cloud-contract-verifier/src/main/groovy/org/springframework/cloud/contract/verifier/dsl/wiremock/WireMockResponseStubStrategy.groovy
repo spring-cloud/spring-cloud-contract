@@ -90,9 +90,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 			if (contentType == ContentType.UNKNOWN) {
 				contentType = recognizeContentTypeFromContent(body)
 			}
-			if (body instanceof byte[]) {
-				builder.withBody(body)
-			} else if (body instanceof FromFileProperty && body.isByte()) {
+			if (body instanceof FromFileProperty && body.isByte()) {
 				builder.withBody(body.asBytes())
 			} else {
 				builder.withBody(parseBody(body, contentType))
