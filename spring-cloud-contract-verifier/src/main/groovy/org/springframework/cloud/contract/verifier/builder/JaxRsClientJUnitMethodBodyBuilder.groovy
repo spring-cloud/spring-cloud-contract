@@ -108,6 +108,15 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		}
 	}
 
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "assertThat(response.readEntity(byte[].class)).isEqualTo(" +
+					readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString())
+	}
+
 	protected void appendMethodAndBody(BlockBuilder bb) {
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {

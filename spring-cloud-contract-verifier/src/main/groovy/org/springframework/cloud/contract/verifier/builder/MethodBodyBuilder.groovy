@@ -377,8 +377,11 @@ abstract class MethodBodyBuilder {
 		ContentType contentType = getResponseContentType()
 		Object convertedResponseBody = responseBody
 		if (convertedResponseBody instanceof FromFileProperty) {
-			byteResponseBodyCheck(bb, convertedResponseBody)
-			return
+			if (convertedResponseBody.isByte()) {
+				byteResponseBodyCheck(bb, convertedResponseBody)
+				return
+			}
+			convertedResponseBody = convertedResponseBody.asString()
 		}
 		if (convertedResponseBody instanceof GString) {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })

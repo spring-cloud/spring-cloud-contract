@@ -785,6 +785,45 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
 	}
 
+	def 'should work with files that have new lines [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method('PUT')
+					headers {
+						contentType(applicationJson())
+					}
+					body(file("classpath/request.json"))
+					url("/1")
+				}
+				response {
+					status OK()
+					body(file("classpath/response.json"))
+					headers {
+						contentType(applicationJson())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(' ')
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains('''assertThatJson(parsedJson).field("['status']").isEqualTo("RESPONSE")''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+	}
+
+
 	@Issue('#509')
 	def 'classToCheck() should return class of object'() {
 		given:
@@ -898,6 +937,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			String test = blockBuilder.toString()
 			requestMatcher(test)
 			responseMatcher(test)
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName                                             | methodBuilder                                                                                                   | requestMatcher | responseMatcher
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }        | { String string ->
@@ -913,12 +953,12 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String string ->
 				string.contains('entity(fileToBytes(this, "some_method_request_request.pdf")')
 			}                                                                                                                                                                                                | { String string ->
-				string.contains('response.body.asByteArray() == fileToBytes(this, "some_method_response_response.pdf")')
+				string.contains('response.readEntity(byte[]) == fileToBytes(this, "some_method_response_response.pdf")')
 			}
 			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                  | { String string ->
 				string.contains('entity(fileToBytes(this, "some_method_request_request.pdf")')
 			}                                                                                                                                                                                                | { String string ->
-				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response_response.pdf"));')
+				string.contains('assertThat(response.readEntity(byte[].class)).isEqualTo(fileToBytes(this, "some_method_response_response.pdf"));')
 			}
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                | { String string ->
 				string.contains('.body(fileToBytes(this, "some_method_request_request.pdf"));')

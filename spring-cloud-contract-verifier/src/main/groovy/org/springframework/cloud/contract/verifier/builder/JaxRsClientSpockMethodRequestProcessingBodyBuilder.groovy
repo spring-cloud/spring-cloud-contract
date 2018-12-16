@@ -113,6 +113,15 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		}
 	}
 
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "response.readEntity(byte[]) == " +
+					readBytesFromFileString(value, CommunicationType.RESPONSE)
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString())
+	}
+
 	protected void appendMethodAndBody(BlockBuilder bb) {
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {
