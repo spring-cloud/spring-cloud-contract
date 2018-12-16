@@ -937,3 +937,39 @@ started will be attached.
 Yes! With version 1.2.0 we've added such a possibility. It's enough to call `file(...)` method in the
 DSL and provide a path relative to where the contract lays.
 If you're using YAML just use the `bodyFromFile` property.
+
+==== Why do I sometimes get `SocketException`
+
+When using an HTTP client (e.g. `RestTemplate`) and running several tests that share a Spring context, you might sometimes get the following exception:
+
+```
+java.net.SocketException: Unexpected end of file from server
+```
+
+Tom Akehurst, the creator of WireMock did the following analysis of this issue.
+
+> I looked at tcpdump while running the failing test. `HttpUrlConnection` is doing something weird - it's creating a connection in a previous test case, which works fine, then the usual `fin` -> `fin ack` etc. ending handshake happens. But it seems it isn't discarded, but reused after that. Because the server thinks (rightly) that the connection is closed, it just sends a RST packet. Calling the `/__admin` endpoint just happened to remove the dead connection from the pool. This also fixes the problem (which using the Java HTTP client): System.setProperty("http.keepAlive", "false");
+
+There are the ways to solve this problem.
+
+First, just use a different HTTP client for `RestTemplate`. Example for using Apache HTTP client:
+
+.pom.xml
+[source,xml,indent=0]
+----
+include::{standalone_restdocs_path}/http-client/pom.xml[tags=httpclient,indent=0]
+----
+
+[source,java,indent=0]
+----
+include::{standalone_restdocs_path}/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=custom_request_factory,indent=0]
+----
+
+Second option is to set the system property. You can set it either in code or pass it to your tests via a plugin.
+
+[source,java,indent=0]
+----
+static {
+	 System.setProperty("http.keepAlive", "false");
+}
+----
