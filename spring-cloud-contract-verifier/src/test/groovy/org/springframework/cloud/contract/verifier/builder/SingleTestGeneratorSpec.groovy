@@ -614,7 +614,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			String test = new File(temp, "a/b/ContractVerifier${getTestName(testFramework)}").text
 			test.contains('readFromFile_request_request.json')
-			test.contains('RESPONSE')
+			test.contains('readFromFile_response_response.json')
 		where:
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
@@ -639,7 +639,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			String test = new File(temp, "a/b/ContractVerifier${getTestName(testFramework)}").text
 			test.contains('readFromFile_request_request.json')
-			test.contains('RESPONSE')
+			test.contains('readFromFile_response_response.json')
 		where:
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
@@ -664,7 +664,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			String test = new File(temp, "a/b/ContractVerifier${getTestName(testFramework)}").text
 			test.contains('readFromFile_request_request.json')
-			test.contains('RESPONSE')
+			test.contains('readFromFile_response_response.json')
 		where:
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
@@ -689,7 +689,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			String test = new File(temp, "a/b/ContractVerifier${getTestName(testFramework)}").text
 			test.contains('readFromFile_request_request.json')
-			test.contains('RESPONSE')
+			test.contains('readFromFile_response_response.json')
 		where:
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
@@ -713,7 +713,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			String test = new File(temp, "org/springframework/cloud/contract/verifier/tests/ContractVerifier${getTestName(testFramework)}").text
 			test.contains('readFromFile_request_request.json')
-			test.contains('RESPONSE')
+			test.contains('readFromFile_response_response.json')
 		where:
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}

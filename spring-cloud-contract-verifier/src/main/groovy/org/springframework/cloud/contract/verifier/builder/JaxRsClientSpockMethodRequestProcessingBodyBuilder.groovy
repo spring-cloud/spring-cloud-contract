@@ -77,6 +77,15 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		}
 	}
 
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "response.readEntity(byte[]) == " +
+					readBytesFromFileString(value, CommunicationType.RESPONSE)
+		}
+		return "response.readEntity(String) == " + readStringFromFileString(value, CommunicationType.RESPONSE)
+	}
+
 	protected void appendRequestWithRequiredResponseContentType(BlockBuilder bb) {
 		String acceptHeader = getHeader("Accept")
 		if (acceptHeader) {

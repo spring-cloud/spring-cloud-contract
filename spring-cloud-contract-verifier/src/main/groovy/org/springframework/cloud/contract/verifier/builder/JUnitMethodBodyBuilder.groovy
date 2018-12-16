@@ -126,7 +126,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 			return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
 					readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
 		}
-		return getResponseBodyPropertyComparisonString(property, value.asString())
+		return "assertThat(response.getBody()).isEqualTo(" + readStringFromFileString(value, CommunicationType.RESPONSE) + ")"
 	}
 
 	@Override
