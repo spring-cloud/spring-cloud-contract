@@ -1,5 +1,15 @@
 package org.springframework.cloud.contract.wiremock.restdocs;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToXmlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
@@ -7,10 +17,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Answers;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+
 import org.springframework.cloud.contract.wiremock.WireMockStubMapping;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,26 +32,15 @@ import org.springframework.restdocs.operation.OperationResponse;
 import org.springframework.restdocs.operation.Parameters;
 import org.springframework.restdocs.operation.RequestCookie;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.Collection;
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 
 /**
  * @author Marcin Grzejszczak
  */
-@RunWith(MockitoJUnitRunner.class)
 public class WireMockSnippetTests {
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
 	Operation operation;
+	RestDocumentationContext context;
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder();
 	private File outputFolder;
@@ -52,20 +48,16 @@ public class WireMockSnippetTests {
 	@Before
 	public void setup() throws IOException {
 		this.outputFolder = this.tmp.newFolder();
-		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder.getAbsolutePath());
+		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder
+				.getAbsolutePath());
 		restDocumentation.beforeTest(this.getClass(), "method");
-		RestDocumentationContext context = restDocumentation.beforeOperation();
-		given(this.operation.getAttributes().get(anyString())).willReturn(null);
-		given(this.operation.getAttributes()
-				.get(RestDocumentationContext.class.getName())).willReturn(context);
-		given(this.operation.getRequest()).willReturn(request());
-		given(this.operation.getResponse()).willReturn(response());
+		this.context = restDocumentation.beforeOperation();
+		this.operation = operation(request(), response(), this.context);
 	}
 
 	@Test
 	public void should_maintain_the_response_status_when_generating_stub()
 			throws Exception {
-		given(this.operation.getName()).willReturn("foo");
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -81,7 +73,8 @@ public class WireMockSnippetTests {
 	@Test
 	public void should_use_placeholders_in_stub_file_name()
 			throws Exception {
-		given(this.operation.getName()).willReturn("{method-name}/{step}");
+		this.operation = operation("{method-name}/{step}",
+				request(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -97,9 +90,8 @@ public class WireMockSnippetTests {
 	@Test
 	public void should_use_equal_to_json_pattern_for_body_when_request_content_type_is_json_when_generating_stub()
 			throws Exception {
-		given(this.operation.getName()).willReturn("foo");
+		this.operation = operation(requestPostWithJsonContentType(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
-		given(this.operation.getRequest()).willReturn(requestPostWithJsonContentType());
 
 		snippet.document(this.operation);
 
@@ -116,9 +108,8 @@ public class WireMockSnippetTests {
 	@Test
 	public void should_use_equal_to_xml_pattern_for_body_when_request_content_type_is_xml_when_generating_stub()
 			throws Exception {
-		given(this.operation.getName()).willReturn("foo");
+		this.operation = operation(requestPostWithXmlContentType(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
-		given(this.operation.getRequest()).willReturn(requestPostWithXmlContentType());
 
 		snippet.document(this.operation);
 
@@ -134,9 +125,8 @@ public class WireMockSnippetTests {
 
 	@Test
 	public void should_handle_empty_request_body() throws IOException {
-		given(this.operation.getName()).willReturn("foo");
+		this.operation = operation(requestPostWithEmptyBody(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
-		given(this.operation.getRequest()).willReturn(requestPostWithEmptyBody());
 
 		snippet.document(this.operation);
 
@@ -147,6 +137,40 @@ public class WireMockSnippetTests {
 		assertThat(stubMapping.getRequest().getBodyPatterns()).isNullOrEmpty();
 		assertThat(stubMapping.getResponse().getStatus())
 				.isEqualTo(HttpStatus.ACCEPTED.value());
+	}
+
+	private Operation operation(OperationRequest request, OperationResponse response,
+			RestDocumentationContext context) {
+		return operation("foo", request, response, context);
+	}
+
+	private Operation operation(String name, OperationRequest request, OperationResponse response,
+			RestDocumentationContext context) {
+		return new Operation() {
+
+			Map<String, Object> map = new HashMap<>();
+
+			@Override
+			public Map<String, Object> getAttributes() {
+				this.map.put(RestDocumentationContext.class.getName(), context);
+				return this.map;
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+
+			@Override
+			public OperationRequest getRequest() {
+				return request;
+			}
+
+			@Override
+			public OperationResponse getResponse() {
+				return response;
+			}
+		};
 	}
 
 	private OperationResponse response() {
@@ -308,7 +332,8 @@ public class WireMockSnippetTests {
 				return URI.create("http://foo/bar");
 			}
 
-			@Override public Collection<RequestCookie> getCookies() {
+			@Override
+			public Collection<RequestCookie> getCookies() {
 				return Collections.emptySet();
 			}
 		};
@@ -329,7 +354,8 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpHeaders getHeaders() {
 				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+				httpHeaders
+						.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 				return httpHeaders;
 			}
 
@@ -353,7 +379,8 @@ public class WireMockSnippetTests {
 				return URI.create("http://foo/bar");
 			}
 
-			@Override public Collection<RequestCookie> getCookies() {
+			@Override
+			public Collection<RequestCookie> getCookies() {
 				return Collections.emptySet();
 			}
 		};
