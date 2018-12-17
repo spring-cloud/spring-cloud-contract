@@ -1,16 +1,16 @@
-package org.springframework.cloud.contract.verifier.builder;
+package org.springframework.cloud.contract.verifier.builder
 
-import java.util.Collection;
 
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
-import org.springframework.cloud.contract.verifier.file.ContractMetadata;
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.file.ContractMetadata 
 
 /**
  * Builds a single test.
  *
  * @since 1.1.0
  */
-public interface SingleTestGenerator {
+trait SingleTestGenerator {
+
 	/**
 	 * Creates contents of a single test class in which all test scenarios from
 	 * the contract metadata should be placed.
@@ -24,8 +24,8 @@ public interface SingleTestGenerator {
 	 * @deprecated use {@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
 	 */
 	@Deprecated
-	String buildClass(ContractVerifierConfigProperties properties,
-			Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath);
+	abstract String buildClass(ContractVerifierConfigProperties properties,
+			Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath)
 
 	/**
 	 * Creates contents of a single test class in which all test scenarios from
@@ -37,9 +37,9 @@ public interface SingleTestGenerator {
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 */
-	default String buildClass(ContractVerifierConfigProperties properties,
+	String buildClass(ContractVerifierConfigProperties properties,
 			Collection<ContractMetadata> listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		return buildClass(properties, listOfFiles, generatedClassData.className, generatedClassData.classPackage, includedDirectoryRelativePath);
+		return buildClass(properties, listOfFiles, generatedClassData.className, generatedClassData.classPackage, includedDirectoryRelativePath)
 	}
 
 	/**
@@ -47,18 +47,18 @@ public interface SingleTestGenerator {
 	 *
 	 * @param properties - properties passed to the plugin
 	 */
-	String fileExtension(ContractVerifierConfigProperties properties);
+	abstract String fileExtension(ContractVerifierConfigProperties properties)
 
-	class GeneratedClassData {
-		public final String className;
-		public final String classPackage;
-		public final java.nio.file.Path testClassPath;
+	static class GeneratedClassData {
+		public final String className
+		public final String classPackage
+		public final java.nio.file.Path testClassPath
 
-		public GeneratedClassData(String className, String classPackage,
+		GeneratedClassData(String className, String classPackage,
 				java.nio.file.Path testClassPath) {
-			this.className = className;
-			this.classPackage = classPackage;
-			this.testClassPath = testClassPath;
+			this.className = className
+			this.classPackage = classPackage
+			this.testClassPath = testClassPath
 		}
 	}
 }

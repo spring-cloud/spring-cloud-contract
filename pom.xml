@@ -428,6 +428,11 @@
 			<name>David Syer</name>
 			<email>dsyer@pivotal.io</email>
 		</developer>
+		<developer>
+			<id>OlgaMaciaszek</id>
+			<name>Olga Maciaszek-Sharma</name>
+			<email>omaciaszeksharma@pivotal.io</email>
+		</developer>
 	</developers>
 
 	<scm>
