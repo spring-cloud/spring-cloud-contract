@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,6 +59,7 @@ class Service {
 
 	public Service(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
+		this.restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 	}
 
 	public String go() {
