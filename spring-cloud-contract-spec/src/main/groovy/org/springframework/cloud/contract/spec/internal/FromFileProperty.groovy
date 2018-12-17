@@ -66,4 +66,14 @@ class FromFileProperty implements Serializable {
 		return this.file.bytes
 	}
 
+	public <T> T asType(T type) {
+		switch (type) {
+			case String:
+				return (T) asString()
+			case byte[]:
+				return (T) asBytes()
+		}
+		throw new UnsupportedOperationException("Can't cast to type [${type}]")
+	}
+
 }
