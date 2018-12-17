@@ -16,9 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import spock.lang.Shared
 import spock.lang.Specification
+
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**
  * Tests used for the documentation
@@ -303,7 +304,9 @@ class ContractHttpDocsSpec extends Specification {
 	def 'should convert dsl with optionals to proper Spock test'() {
 		given:
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
-			new HttpSpockMethodRequestProcessingBodyBuilder(optionals, properties).appendTo(blockBuilder)
+			new HttpSpockMethodRequestProcessingBodyBuilder(optionals, properties, new GeneratedClassDataForMethod(
+					new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method"))
+					.appendTo(blockBuilder)
 		expect:
 		String expectedTest =
 // tag::optionals_test[]

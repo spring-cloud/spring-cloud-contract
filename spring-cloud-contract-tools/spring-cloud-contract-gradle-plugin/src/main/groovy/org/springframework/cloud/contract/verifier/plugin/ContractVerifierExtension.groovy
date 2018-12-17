@@ -86,6 +86,11 @@ class ContractVerifierExtension {
 	List<String> excludedFiles = []
 
 	/**
+	 * Patterns that should be taken into account for processing
+	 */
+	List<String> includedFiles = []
+
+	/**
 	 * Patterns for which generated tests should be @Ignored
 	 */
 	List<String> ignoredFiles = []
@@ -109,6 +114,11 @@ class ContractVerifierExtension {
 	 * Test source directory where tests generated from Groovy DSL should be placed
 	 */
 	File generatedTestSourcesDir
+
+	/**
+	 * Test resource directory where tests generated from Groovy DSL should be referenced
+	 */
+	File generatedTestResourcesDir
 
 	/**
 	 * Dir where the generated stubs from Groovy DSL should be placed.

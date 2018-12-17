@@ -47,4 +47,12 @@ public class ContractVerifierObjectMapper {
 		return this.objectMapper.writeValueAsString(payload);
 	}
 
+	public byte[] writeValueAsBytes(Object payload) throws JsonProcessingException {
+		if (payload instanceof String) {
+			return payload.toString().getBytes();
+		} else if (payload instanceof byte[]) {
+			return (byte[]) payload;
+		}
+		return this.objectMapper.writeValueAsBytes(payload);
+	}
 }

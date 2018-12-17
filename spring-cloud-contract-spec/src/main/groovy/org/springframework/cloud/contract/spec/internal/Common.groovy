@@ -16,10 +16,12 @@
 
 package org.springframework.cloud.contract.spec.internal
 
-import groovy.transform.PackageScope
+import java.nio.charset.Charset
+
 import groovy.transform.TypeChecked
 
 import java.util.regex.Pattern
+
 /**
  * Contains useful common methods for the DSL.
  *
@@ -29,7 +31,6 @@ import java.util.regex.Pattern
  * @since 1.0.0
  */
 @TypeChecked
-@PackageScope
 class Common {
 
 	@Delegate private final RegexPatterns regexPatterns = new RegexPatterns()
@@ -170,12 +171,49 @@ class Common {
 		return new ServerDslProperty(serverValue)
 	}
 
-	String file(String relativePath) {
+	/**
+	 * Read file contents as String
+	 *
+	 * @param relativePath of the file to read
+	 * @return String file contents
+	 */
+	FromFileProperty file(String relativePath) {
+		return file(relativePath, Charset.defaultCharset())
+	}
+
+	/**
+	 * Read file contents as bytes[]
+	 *
+	 * @param relativePath of the file to read
+	 * @return String file contents
+	 */
+	FromFileProperty fileAsBytes(String relativePath) {
+		return new FromFileProperty(fileLocation(relativePath), byte[])
+	}
+
+	/**
+	 * Read file contents as String with the given Charset
+	 *
+	 * @param relativePath of the file to read
+	 * @param charset to use for converting the bytes to String
+	 * @return String file contents
+	 */
+	FromFileProperty file(String relativePath, Charset charset) {
+		return new FromFileProperty(fileLocation(relativePath), String, charset)
+	}
+
+	/**
+	 * Read file contents as array of bytes
+	 *
+	 * @param relativePath of the file to read
+	 * @return file contents as an array of bytes
+	 */
+	private File fileLocation(String relativePath) {
 		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath)
 		if (resource == null) {
 			throw new IllegalStateException("File [${relativePath}] is not present")
 		}
-		return new File(resource.toURI()).text
+		return new File(resource.toURI())
 	}
 
 	/**

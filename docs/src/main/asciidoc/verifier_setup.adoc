@@ -156,6 +156,7 @@ contracts {
     testFramework ='JUNIT'
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
@@ -242,10 +243,13 @@ should be skipped. By default, it is an empty array.
 GroovyDSL. By default, its value is `$rootDir/src/test/resources/contracts`.
 * *generatedTestSourcesDir*: Specifies the test source directory where tests generated
 from the Groovy DSL should be placed. By default its value is
-`$buildDir/generated-test-sources/contractVerifier`.
+`$buildDir/generated-test-sources/contracts`.
+* *generatedTestResourcesDir*: Specifies the test resource directory where resources used by the tests generated
+from the Groovy DSL should be placed. By default its value is
+`$buildDir/generated-test-resources/contracts`.
 * *stubsOutputDir*: Specifies the directory where the generated WireMock stubs from
 the Groovy DSL should be placed.
-* *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT` and
+* *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`) and
 JUnit 5 are supported with JUnit 4 being the default framework.
 * *contractsProperties*: a map containing properties to be passed to Spring Cloud Contract
 components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.
@@ -581,8 +585,12 @@ classes.
 use Spock classes, the class is `spock.lang.Specification`.
 * *contractsDirectory*: Specifies a directory containing contracts written with the
 GroovyDSL. The default directory is `/src/test/resources/contracts`.
-* *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT` and
-6JUnit 5 are supported with JUnit 4 being the default framework.
+* *generatedTestSourcesDir*: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default its value is
+`$buildDir/generated-test-sources/contracts`.
+* *generatedTestResourcesDir*: Specifies the test resource directory where resources used by the tests generated
+* *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`) and 
+JUnit 5 are supported with JUnit 4 being the default framework.
 * *packageWithBaseClasses*: Defines a package where all the base classes reside. This
 setting takes precedence over *baseClassForTests*. The convention is such that, if you
 have a contract under (for example) `src/test/resources/contract/foo/bar/baz/` and set

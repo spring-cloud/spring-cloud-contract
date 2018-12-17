@@ -24,6 +24,7 @@ import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -62,6 +63,10 @@ class YamlContractConverterSpec extends Specification {
 	File ymlMessagingMatchers = new File(ymlMessagingMatchersFile.toURI())
 	URL ymlCookiesUrl = YamlContractConverterSpec.getResource("/yml/contract_cookies.yml")
 	File ymlCookies = new File(ymlCookiesUrl.toURI())
+	URL ymlBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_pdf.yml")
+	File ymlBytes = new File(ymlBytesUrl.toURI())
+	URL ymlMessagingBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_messaging_pdf.yml")
+	File ymlMessagingBytes = new File(ymlMessagingBytesUrl.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
 
 	def "should convert YAML with Cookies to DSL"() {
@@ -501,6 +506,36 @@ class YamlContractConverterSpec extends Specification {
 			contract.outputMessage.body.clientValue == [bookName: "foo"]
 	}
 
+	def "should convert YAML with HTTP binary body to DSL"() {
+		given:
+			assert converter.isAccepted(ymlBytes)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlBytes)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			contract.request.body.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.request.body.clientValue).type == byte[]
+		and:
+			contract.response.body.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.response.body.clientValue).type == byte[]
+	}
+
+	def "should convert YAML with messaging binary body to DSL"() {
+		given:
+			assert converter.isAccepted(ymlMessagingBytes)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlMessagingBytes)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			contract.input.messageBody.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.input.messageBody.clientValue).type == byte[]
+		and:
+			contract.outputMessage.body.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.outputMessage.body.clientValue).type == byte[]
+	}
+
 	def "should assert request headers when converting YAML to DSL"() {
 		given:
 			File yml = new File(YamlContractConverterSpec.getResource("/yml/contract_broken_request_headers.yml").toURI())
@@ -550,6 +585,7 @@ request:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     url: null
     body: []
@@ -564,6 +600,7 @@ response:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     body: []
     headers: []
@@ -589,6 +626,7 @@ request:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     url: null
     body: []
@@ -603,6 +641,7 @@ response:
   cookies: {}
   body: null
   bodyFromFile: null
+  bodyFromFileAsBytes: null
   matchers:
     body: []
     headers: []

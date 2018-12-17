@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.stubrunner.messaging.stream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +34,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.util.ContentType;
+import org.springframework.cloud.contract.verifier.util.ContentUtils;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
@@ -51,7 +55,7 @@ import org.springframework.messaging.Message;
 class StubRunnerStreamMessageSelector implements MessageSelector {
 
 	private static final Map<Message, Contract> CACHE =
-			Collections.synchronizedMap(new WeakHashMap<Message, Contract>());
+			Collections.synchronizedMap(new WeakHashMap<>());
 
 	private static final Log log = LogFactory
 			.getLog(StubRunnerStreamMessageSelector.class);
@@ -108,9 +112,63 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 			return null;
 		}
 		Object inputMessage = message.getPayload();
-		BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
 		Object dslBody = MapConverter
 				.getStubSideValues(groovyDsl.getInput().getMessageBody());
+		if (dslBody instanceof FromFileProperty) {
+			if (log.isDebugEnabled()) {
+				log.debug("Will compare file content");
+			}
+			FromFileProperty property = (FromFileProperty) dslBody;
+			if (property.isString()) {
+				// continue processing as if body was pure string
+				dslBody = property.asString();
+			}
+			else if (!(inputMessage instanceof byte[])) {
+				if (log.isDebugEnabled()) {
+					log.debug("Contract provided byte comparison, but the input message is of type [" + inputMessage.getClass() + "]. Can't compare the two.");
+				}
+				return null;
+			}
+			else {
+				boolean matches = Arrays.equals(property.asBytes(), (byte[]) inputMessage);
+				if (log.isDebugEnabled() && !matches) {
+					log.debug("Contract provided byte comparison, but the byte arrays don't match");
+				}
+				return matches ? groovyDsl : null;
+			}
+		}
+		if (matchViaContent(groovyDsl, inputMessage, dslBody)) {
+			return groovyDsl;
+		}
+		return null;
+	}
+
+	private boolean matchViaContent(Contract groovyDsl, Object inputMessage, Object dslBody) {
+		boolean matches;
+		ContentType type = ContentUtils.getClientContentType(inputMessage, groovyDsl.getInput().getMessageHeaders());
+		if (type == ContentType.JSON) {
+			BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
+			matches = matchesForJsonPayload(groovyDsl, inputMessage, matchers, dslBody);
+		}
+		else if (dslBody instanceof Pattern && inputMessage instanceof String) {
+			Pattern pattern = (Pattern) dslBody;
+			matches = pattern.matcher((String) inputMessage).matches();
+			bodyUnmatchedLog(dslBody, matches, pattern);
+		} else {
+			matches = dslBody.equals(inputMessage);
+			bodyUnmatchedLog(dslBody, matches, inputMessage);
+		}
+		return matches;
+	}
+
+	private void bodyUnmatchedLog(Object dslBody, boolean matches, Object pattern) {
+		if (log.isDebugEnabled() && !matches) {
+			log.debug("Body was supposed to " + unmatchedText(pattern) + " but the value is [" + dslBody
+					.toString() + "]");
+		}
+	}
+
+	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage, BodyMatchers matchers, Object dslBody) {
 		Object matchingInputMessage = JsonToJsonPathsConverter
 				.removeMatchingJsonPaths(dslBody, matchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
@@ -138,14 +196,11 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 		}
 		if (!unmatchedJsonPath.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + groovyDsl + "] didn't much the body due to "
+				log.debug("Contract [" + groovyDsl + "] didn't match the body due to "
 						+ unmatchedJsonPath);
 			}
 		}
-		if (matches) {
-			return groovyDsl;
-		}
-		return null;
+		return matches;
 	}
 
 	private boolean matchesJsonPath(List<String> unmatchedJsonPath,

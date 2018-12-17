@@ -16,37 +16,39 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import groovy.transform.TypeChecked
-import groovy.util.logging.Commons
-import org.apache.commons.lang3.StringEscapeUtils
+import groovy.transform.CompileStatic
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.runtime.GStringImpl
+
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
 import static org.apache.commons.text.StringEscapeUtils.escapeXml11
 import static org.apache.commons.text.StringEscapeUtils.unescapeXml
-
 /**
  * A utility class that can operate on a message body basing on the provided Content Type.
  *
  * @since 1.0.0
  */
-@TypeChecked
-@Commons
+@CompileStatic
 class ContentUtils {
+
+	private static final Log log = LogFactory.getLog(ContentUtils)
 
 	public static final Closure GET_STUB_SIDE = {
 		it instanceof DslProperty ? it.clientValue : it
@@ -134,7 +136,42 @@ class ContentUtils {
 	}
 
 	static ContentType getClientContentType(Object bodyAsValue) {
+		if (bodyAsValue instanceof GString) {
+			return getClientContentType((GString) bodyAsValue)
+		} else if (bodyAsValue instanceof String) {
+			return getClientContentType((String) bodyAsValue)
+		} else if (bodyAsValue instanceof Map) {
+			return getClientContentType((Map) bodyAsValue)
+		} else if (bodyAsValue instanceof List) {
+			return getClientContentType((List) bodyAsValue)
+		} else if (bodyAsValue instanceof MatchingStrategy) {
+			return ContentType.UNKNOWN
+		} else if (bodyAsValue instanceof FromFileProperty) {
+			return ContentType.UNKNOWN
+		}
+		return tryToGuessContentType(bodyAsValue)
+	}
+
+	private static ContentType tryToGuessContentType(Object bodyAsValue) {
+		try {
+			if (log.isDebugEnabled()) {
+				log.debug("No content type passed, will try to guess the type of payload")
+			}
+			return getClientContentType(JsonOutput.toJson(bodyAsValue))
+		} catch (Exception ex) {
+			if (log.isTraceEnabled()) {
+				log.trace("Failed to assume that body [" + bodyAsValue + "] is json")
+			}
+		}
 		return ContentType.UNKNOWN
+	}
+
+	static ContentType getClientContentType(Object bodyAsValue, Headers headers) {
+		ContentType contentType = recognizeContentTypeFromHeader(headers)
+		if (contentType == ContentType.UNKNOWN) {
+			return getClientContentType(bodyAsValue)
+		}
+		return contentType;
 	}
 
 	static ContentType getClientContentType(Map bodyAsValue) {
@@ -194,6 +231,15 @@ class ContentUtils {
 	}
 
 	protected static Object transformJSONStringValue(Object obj, Closure valueProvider) {
+		if (obj instanceof DslProperty) {
+			return transformJSONStringValue((DslProperty) obj, valueProvider)
+		} else if (obj instanceof Pattern) {
+			return transformJSONStringValue((Pattern) obj, valueProvider)
+		} else if (obj instanceof OptionalProperty) {
+			return transformJSONStringValue((OptionalProperty) obj, valueProvider)
+		} else if (obj instanceof ExecutionProperty) {
+			return transformJSONStringValue((ExecutionProperty) obj, valueProvider)
+		}
 		return obj
 	}
 
@@ -214,6 +260,9 @@ class ContentUtils {
 	}
 
 	private static String transformXMLStringValue(Object obj, Closure valueProvider) {
+		if (obj instanceof DslProperty) {
+			return transformJSONStringValue((DslProperty) obj, valueProvider)
+		}
 		return escapeXml11(unescapeXml(obj.toString()))
 	}
 
@@ -288,7 +337,8 @@ class ContentUtils {
 	}
 
 	static ContentType recognizeContentTypeFromHeader(Headers headers, Closure<Object> closure) {
-		Header header = headers?.entries?.find { it.name == "Content-Type" }
+		Header header = headers?.entries?.find { it.name == "Content-Type" ||
+				it.name == "contentType" }
 		String content = closure(header)?.toString()
 		if (content?.contains("json")) {
 			return ContentType.JSON
@@ -337,6 +387,10 @@ class ContentUtils {
 		return ContentType.JSON
 	}
 
+	static ContentType recognizeContentTypeFromContent(byte[] bytes) {
+		return ContentType.UNKNOWN
+	}
+
 	static ContentType recognizeContentTypeFromContent(List jsonList) {
 		return ContentType.JSON
 	}
@@ -354,7 +408,20 @@ class ContentUtils {
 		return ContentType.TEXT
 	}
 
-	static ContentType recognizeContentTypeFromContent(Object gstring) {
+	static ContentType recognizeContentTypeFromContent(Object object) {
+		if (object instanceof GString) {
+			return recognizeContentTypeFromContent((GString) object)
+		} else if (object instanceof Map) {
+			return recognizeContentTypeFromContent((Map) object)
+		} else if (object instanceof byte[]) {
+			return recognizeContentTypeFromContent((byte[]) object)
+		} else if (object instanceof List) {
+			return recognizeContentTypeFromContent((List) object)
+		} else if (object instanceof String) {
+			return recognizeContentTypeFromContent((String) object)
+		} else if (object instanceof Number) {
+			return recognizeContentTypeFromContent((Number) object)
+		}
 		return ContentType.UNKNOWN
 	}
 
@@ -403,14 +470,16 @@ class ContentUtils {
 		return ContentType.UNKNOWN
 	}
 
-	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
+	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Closure<String> bytesFromFile) {
 		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
-				"${groovyNamedPropertyValue(propertyValue, "'")}" + namedContentTypeNameIfPresent(propertyValue, "'")
+				"${groovyNamedPropertyValue(propertyValue, "'", bytesFromFile)}" + namedContentTypeNameIfPresent(propertyValue, "'")
 	}
 
-	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
+	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Closure<String> bytesFromFile) {
 		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, """ +
-				"""${javaNamedPropertyValue(propertyValue, '"')}${namedContentTypeNameIfPresent(propertyValue, '"')}"""
+				"""${javaNamedPropertyValue(propertyValue, '"', bytesFromFile)}${namedContentTypeNameIfPresent(propertyValue, '"')}"""
 	}
 
 	static String namedPropertyName(NamedProperty property, String quote) {
@@ -427,22 +496,34 @@ class ContentUtils {
 		return ", " + contentType
 	}
 
-	static String groovyNamedPropertyValue(NamedProperty property, String quote) {
+	static String groovyNamedPropertyValue(NamedProperty property, String quote, Closure<String> bytesFromFile) {
 		if (property.value.serverValue instanceof ExecutionProperty) {
 			return property.value.serverValue.toString()
 		} else if (property.value.serverValue instanceof byte[]) {
 			byte[] bytes = (byte[]) property.value.serverValue
 			return "[" + bytes.collect { it }.join(", ") + "] as byte[]"
+		} else if (property.value.serverValue instanceof FromFileProperty) {
+			FromFileProperty fromFileProperty = (FromFileProperty) property.value.serverValue
+			if (fromFileProperty.isByte()) {
+				return bytesFromFile(fromFileProperty)
+			}
+			return "[" + fromFileProperty.asBytes().collect { it }.join(", ") + "] as byte[]"
 		}
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".bytes"
 	}
 
-	static String javaNamedPropertyValue(NamedProperty property, String quote) {
+	static String javaNamedPropertyValue(NamedProperty property, String quote, Closure<String> bytesFromFile) {
 		if (property.value.serverValue instanceof ExecutionProperty) {
 			return property.value.serverValue.toString()
 		} else if (property.value.serverValue instanceof byte[]) {
 			byte[] bytes = (byte[]) property.value.serverValue
 			return "new byte[] {" + bytes.collect { it }.join(", ") + "}"
+		} else if (property.value.serverValue instanceof FromFileProperty) {
+			FromFileProperty fromFileProperty = (FromFileProperty) property.value.serverValue
+			if (fromFileProperty.isByte()) {
+				return bytesFromFile(fromFileProperty)
+			}
+			return "new byte[] {" + fromFileProperty.asBytes().collect { it }.join(", ") + "}"
 		}
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}

@@ -126,6 +126,7 @@ class YamlToContracts {
 							}
 							if (yamlContract.request.body != null) body(yamlContract.request.body)
 							if (yamlContract.request.bodyFromFile != null) body(file(yamlContract.request.bodyFromFile))
+							if (yamlContract.request.bodyFromFileAsBytes != null) body(fileAsBytes(yamlContract.request.bodyFromFileAsBytes))
 							if (yamlContract.request.multipart) {
 								Map multipartMap = [:]
 								Map<String, DslProperty> multiPartParams = yamlContract.request
@@ -249,6 +250,7 @@ class YamlToContracts {
 								}
 							}
 							if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
+							if (yamlContract.response.bodyFromFileAsBytes) body(fileAsBytes(yamlContract.response.bodyFromFileAsBytes))
 							if (yamlContract.response.async) async()
 							if (yamlContract.response.fixedDelayMilliseconds) fixedDelayMilliseconds(yamlContract.response.fixedDelayMilliseconds)
 							bodyMatchers {
@@ -309,6 +311,7 @@ class YamlToContracts {
 							}
 							if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
 							if (yamlContract.input.messageBodyFromFile) messageBody(file(yamlContract.input.messageBodyFromFile))
+							if (yamlContract.input.messageBodyFromFileAsBytes) messageBody(fileAsBytes(yamlContract.input.messageBodyFromFileAsBytes))
 							bodyMatchers {
 								yamlContract.input.matchers.body?.each { YamlContract.BodyStubMatcher matcher ->
 									MatchingTypeValue value = null
@@ -354,6 +357,7 @@ class YamlToContracts {
 							}
 							if (outputMsg.body) body(outputMsg.body)
 							if (outputMsg.bodyFromFile) body(file(outputMsg.bodyFromFile))
+							if (outputMsg.bodyFromFileAsBytes) body(fileAsBytes(outputMsg.bodyFromFileAsBytes))
 							if (outputMsg.matchers) {
 								bodyMatchers {
 									yamlContract.outputMessage?.matchers?.body?.each { YamlContract.BodyTestMatcher testMatcher ->

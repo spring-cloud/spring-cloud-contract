@@ -123,6 +123,75 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 			predicate.accept(message)
 	}
 
+	def "should return true if headers and text body matches"() {
+		given:
+			Contract dsl = Contract.make {
+				input {
+					messageFrom "foo"
+					messageHeaders {
+						header("foo", 123)
+						messagingContentType(textPlain())
+					}
+					messageBody($(c(regex("[0-9]{3}")), p("123")))
+				}
+			}
+		and:
+			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
+			message.headers >> [
+					foo: 123,
+					contentType: "text/plain"
+			]
+			message.payload >> "123"
+		expect:
+			predicate.accept(message)
+	}
+
+	def "should return true if headers and byte body matches"() {
+		given:
+			Contract dsl = Contract.make {
+				input {
+					messageFrom "foo"
+					messageHeaders {
+						header("foo", 123)
+						messagingContentType(applicationOctetStream())
+					}
+					messageBody(fileAsBytes("request.pdf"))
+				}
+			}
+		and:
+			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
+			message.headers >> [
+					foo: 123,
+					contentType: "application/octet-stream"
+			]
+			message.payload >> StubRunnerStreamMessageSelectorSpec.getResource("/request.pdf").bytes
+		expect:
+			predicate.accept(message)
+	}
+
+	def "should return false if byte body types don't match for binary"() {
+		given:
+			Contract dsl = Contract.make {
+				input {
+					messageFrom "foo"
+					messageHeaders {
+						header("foo", 123)
+						messagingContentType(applicationOctetStream())
+					}
+					messageBody(fileAsBytes("request.pdf"))
+				}
+			}
+		and:
+			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
+			message.headers >> [
+					foo: 123,
+					contentType: "application/octet-stream"
+			]
+			message.payload >> "hello world"
+		expect:
+			!predicate.accept(message)
+	}
+
 	def "should return true if headers and body using matchers match"() {
 		given:
 			Contract dsl = Contract.make {

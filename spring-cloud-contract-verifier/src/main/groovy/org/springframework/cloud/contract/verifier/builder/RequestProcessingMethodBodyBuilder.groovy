@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -57,8 +58,8 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	private static final String DOUBLE_QUOTE = '"'
 	private static final String QUERY_PARAM_METHOD = 'queryParam'
 
-	RequestProcessingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(configProperties, stubDefinition)
+	RequestProcessingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties, GeneratedClassDataForMethod classDataForMethod) {
+		super(configProperties, stubDefinition, classDataForMethod)
 		this.request = stubDefinition.request
 		this.response = stubDefinition.response
 	}
@@ -118,8 +119,15 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		}
 
 		if (request.body) {
-			Object body = request.body?.serverValue instanceof ExecutionProperty ?
-					request.body?.serverValue : bodyAsString
+			Object body = null
+			switch (request.body.serverValue) {
+				case ExecutionProperty:
+				case FromFileProperty:
+					body = request.body?.serverValue
+					break;
+				default:
+					body = getBodyAsString()
+			}
 			bb.addLine(getBodyString(body))
 		}
 		if (request.multipart) {

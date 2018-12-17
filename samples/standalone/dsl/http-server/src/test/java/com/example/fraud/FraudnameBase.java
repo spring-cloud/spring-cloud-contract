@@ -1,8 +1,7 @@
 package com.example.fraud;
 
-import org.junit.Before;
-
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
 
 public class FraudnameBase {
 

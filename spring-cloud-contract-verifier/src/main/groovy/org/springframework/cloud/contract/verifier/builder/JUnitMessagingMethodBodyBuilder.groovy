@@ -25,6 +25,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -50,8 +51,10 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 @TypeChecked
 class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
-	JUnitMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	JUnitMessagingMethodBodyBuilder(Contract stubDefinition,
+									ContractVerifierConfigProperties configProperties,
+									GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override
@@ -80,6 +83,15 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
 		return ""
+	}
+
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "assertThat(response.getPayloadAsByteArray()).isEqualTo(" +
+					readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString())
 	}
 
 	@Override
@@ -196,15 +208,27 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getInputString() {
 		String request = 'ContractVerifierMessage inputMessage = contractVerifierMessaging.create('
 		if (inputMessage.messageBody) {
-			request = "${request}\n\t\t\t\t\"${escapeJava(bodyAsString)}\"\n"
+			request = "${request}${getBodyAsString()}"
 		}
 		if (inputMessage.messageHeaders) {
-			request = "${request}\t\t\t\t, headers()"
+			request = "${request}${indentHeadersString()}"
 		}
 		inputMessage.messageHeaders?.executeForEachHeader { Header header ->
-			request = "${request}\n\t\t\t\t\t\t${getHeaderString(header)}"
+			request = "${request}${indentedHeaderString(header)}"
 		}
-		return "${request}\n\t\t\t)"
+		return finishIndentation(request)
+	}
+
+	private String indentHeadersString() {
+		return "\t\t\t\t, headers()"
+	}
+
+	private String indentedHeaderString(Header header) {
+		return "\n\t\t\t\t\t\t${getHeaderString(header)}"
+	}
+
+	private String finishIndentation(String text) {
+		return "${text}\n\t\t\t)"
 	}
 
 	@Override

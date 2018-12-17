@@ -13,7 +13,7 @@ Contract.make {
 		status OK()
 		body(file("response.json"))
 		headers {
-			contentType(textPlain())
+			contentType(applicationJson())
 		}
 	}
 }

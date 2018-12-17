@@ -25,10 +25,10 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.verifier.util.ContentType
-import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
 
@@ -90,7 +90,13 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 			if (contentType == ContentType.UNKNOWN) {
 				contentType = recognizeContentTypeFromContent(body)
 			}
-			builder.withBody(parseBody(body, contentType))
+			if (body instanceof byte[]) {
+				builder.withBody(body)
+			} else if (body instanceof FromFileProperty && body.isByte()) {
+				builder.withBody(body.asBytes())
+			} else {
+				builder.withBody(parseBody(body, contentType))
+			}
 		}
 	}
 

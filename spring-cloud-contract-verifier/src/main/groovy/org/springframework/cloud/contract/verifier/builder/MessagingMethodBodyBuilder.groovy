@@ -19,13 +19,16 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 
+import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
 
@@ -46,8 +49,10 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final Input inputMessage
 	protected final OutputMessage outputMessage
 
-	MessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(configProperties, stubDefinition)
+	MessagingMethodBodyBuilder(Contract stubDefinition,
+							ContractVerifierConfigProperties configProperties,
+							   GeneratedClassDataForMethod classDataForMethod) {
+		super(configProperties, stubDefinition, classDataForMethod)
 		this.inputMessage = stubDefinition.input
 		this.outputMessage = stubDefinition.outputMessage
 	}
@@ -101,6 +106,11 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		return null
+	}
+
 	protected ContentType getResponseContentType() {
 		ContentType contentType = recognizeContentTypeFromHeader(outputMessage.headers)
 		if (contentType == ContentType.UNKNOWN) {
@@ -111,9 +121,27 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 
 	protected String getBodyAsString() {
 		Object bodyValue = extractServerValueFromBody(inputMessage.messageBody.serverValue)
+		if (bodyValue instanceof FromFileProperty) {
+			FromFileProperty fileProperty = (FromFileProperty) bodyValue
+			return fileProperty.isByte() ?
+					indentBody(readBytesFromFileString(fileProperty, CommunicationType.REQUEST)) :
+					indentStringBody(readStringFromFileString(fileProperty, CommunicationType.REQUEST))
+		}
 		String json = new JsonOutput().toJson(bodyValue)
 		json = convertUnicodeEscapesIfRequired(json)
-		return trimRepeatedQuotes(json)
+		return indentStringBody(trimRepeatedQuotes(json))
+	}
+
+	protected String indentBody(String text) {
+		return "\n\t\t\t\t${text}\n"
+	}
+
+	protected String indentStringBody(String text) {
+		return indentBody("${quotes()}${escapeJava(text)}${quotes()}")
+	}
+
+	protected String quotes() {
+		return "\""
 	}
 
 }

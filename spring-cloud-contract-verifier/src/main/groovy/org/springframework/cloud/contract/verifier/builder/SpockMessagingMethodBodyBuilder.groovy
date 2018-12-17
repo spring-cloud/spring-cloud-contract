@@ -22,6 +22,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -41,8 +42,10 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 @TypeChecked
 class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
-	SpockMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	SpockMessagingMethodBodyBuilder(Contract stubDefinition,
+									ContractVerifierConfigProperties configProperties,
+									GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override
@@ -161,6 +164,15 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "response.payloadAsByteArray == " +
+					readBytesFromFileString(value, CommunicationType.RESPONSE)
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString())
+	}
+
+	@Override
 	protected String getPropertyInListString(String property, Integer listIndex) {
 		return "$property[$listIndex]" ?: ''
 	}
@@ -184,7 +196,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getInputString() {
 		String request = 'ContractVerifierMessage inputMessage = contractVerifierMessaging.create('
 		if (inputMessage.messageBody) {
-			request = "${request}'''${bodyAsString}'''\n    "
+			request = "${request}${getBodyAsString()}\n    "
 		}
 		if (inputMessage.messageHeaders) {
 			request = "${request},[\n"
@@ -198,6 +210,16 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 			request = "${request}\n    ]"
 		}
 		return "${request})"
+	}
+
+	@Override
+	protected String indentBody(String text) {
+		return "\n      ${text}\n"
+	}
+
+	@Override
+	protected String quotes() {
+		return "'''"
 	}
 
 	@Override

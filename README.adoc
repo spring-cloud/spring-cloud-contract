@@ -5,6 +5,7 @@ image::https://badges.gitter.im/Join%20Chat.svg[Gitter, link="https://gitter.im/
 image::https://codecov.io/gh/spring-cloud/spring-cloud-contract/branch/{branch}/graph/badge.svg["codecov", link="https://codecov.io/gh/spring-cloud/spring-cloud-contract"]
 image::https://circleci.com/gh/spring-cloud/spring-cloud-contract.svg?style=svg["CircleCI", link="https://circleci.com/gh/spring-cloud/spring-cloud-contract"]
 :introduction_url: ../../../..
+:verifier_core_path: ../../../../spring-cloud-contract-verifier
 
 == Spring Cloud Contract
 
@@ -336,14 +337,33 @@ The following example shows a Camel messaging contract expressed in Groovy DSL:
 
 [source,groovy]
 ----
-Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
+def contractDsl = Contract.make {
+	label 'some_label'
+	input {
+		messageFrom('jms:delete')
+		messageBody([
+				bookName: 'foo'
+		])
+		messageHeaders {
+			header('sample', 'header')
+		}
+		assertThat('bookWasDeleted()')
+	}
+}
 ----
 
 The following example shows the same contract expressed in YAML:
 
 [source,yml,indent=0]
 ----
-Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
+label: some_label
+input:
+  messageFrom: jms:delete
+  messageBody:
+    bookName: 'foo'
+  messageHeaders:
+    sample: header
+  assertThat: bookWasDeleted()
 ----
 
 Then you can add Spring Cloud Contract Verifier dependency and plugin to your build file,
@@ -721,7 +741,7 @@ Annotate your test class with `@AutoConfigureStubRunner`. In the annotation prov
 [source,groovy,indent=0]
 ----
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
@@ -1206,7 +1226,7 @@ can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`
 [source,groovy,indent=0]
 ----
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
@@ -1303,9 +1323,8 @@ start the server side `FraudDetectionController`.
 ----
 package com.example.fraud;
 
-import org.junit.Before;
-
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
 
 public class FraudBase {
 	@Before
