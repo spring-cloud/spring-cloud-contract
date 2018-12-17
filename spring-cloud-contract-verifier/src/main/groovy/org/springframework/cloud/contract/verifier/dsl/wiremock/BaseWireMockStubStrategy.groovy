@@ -35,6 +35,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.getClientContentType
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues
 
 /**
