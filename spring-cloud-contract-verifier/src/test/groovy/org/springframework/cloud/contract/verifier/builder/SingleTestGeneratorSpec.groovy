@@ -27,6 +27,7 @@ import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
+import org.springframework.util.FileSystemUtils
 import org.springframework.util.StringUtils
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
