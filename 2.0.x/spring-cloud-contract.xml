@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-12-18</date>
+<date>2018-12-17</date>
 </info>
 <preface>
 <title></title>
@@ -2359,33 +2359,6 @@ started will be attached.</simpara>
 <simpara>Yes! With version 1.2.0 we&#8217;ve added such a possibility. It&#8217;s enough to call <literal>file(&#8230;&#8203;)</literal> method in the
 DSL and provide a path relative to where the contract lays.
 If you&#8217;re using YAML just use the <literal>bodyFromFile</literal> property.</simpara>
-</section>
-<section xml:id="_why_do_i_sometimes_get_literal_socketexception_literal">
-<title>Why do I sometimes get <literal>SocketException</literal></title>
-<simpara>When using an HTTP client (e.g. <literal>RestTemplate</literal>) and running several tests that share a Spring context, you might sometimes get the following exception:</simpara>
-<screen>java.net.SocketException: Unexpected end of file from server</screen>
-<simpara>Tom Akehurst, the creator of WireMock did the following analysis of this issue.</simpara>
-<blockquote>
-<simpara>I looked at tcpdump while running the failing test. <literal>HttpUrlConnection</literal> is doing something weird - it&#8217;s creating a connection in a previous test case, which works fine, then the usual <literal>fin</literal> &#8594; <literal>fin ack</literal> etc. ending handshake happens. But it seems it isn&#8217;t discarded, but reused after that. Because the server thinks (rightly) that the connection is closed, it just sends a RST packet. Calling the <literal>/__admin</literal> endpoint just happened to remove the dead connection from the pool. This also fixes the problem (which using the Java HTTP client): System.setProperty("http.keepAlive", "false");</simpara>
-</blockquote>
-<simpara>There are the ways to solve this problem.</simpara>
-<simpara>First, just use a different HTTP client for <literal>RestTemplate</literal>. Example for using Apache HTTP client:</simpara>
-<formalpara>
-<title>pom.xml</title>
-<para>
-<programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
-	&lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
-	&lt;artifactId&gt;httpclient&lt;/artifactId&gt;
-	&lt;scope&gt;compile&lt;/scope&gt;
-&lt;/dependency&gt;</programlisting>
-</para>
-</formalpara>
-<programlisting language="java" linenumbering="unnumbered">this.restTemplate
-		.setRequestFactory(new HttpComponentsClientHttpRequestFactory());</programlisting>
-<simpara>Second option is to set the system property. You can set it either in code or pass it to your tests via a plugin.</simpara>
-<programlisting language="java" linenumbering="unnumbered">static {
-	 System.setProperty("http.keepAlive", "false");
-}</programlisting>
 </section>
 </section>
 </chapter>
