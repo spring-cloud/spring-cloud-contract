@@ -121,7 +121,10 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 			return this;
 		}
-		return start(SocketUtils.findAvailableTcpPort());
+		int port = SocketUtils.findAvailableTcpPort();
+		HttpServerStub serverStub = start(port);
+		cacheStubServer(true, port);
+		return serverStub;
 	}
 
 	@Override
@@ -132,10 +135,18 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		if (log.isDebugEnabled()) {
 			log.debug("Started WireMock at port [" + port + "]");
 		}
-		if (!SERVERS.containsKey(this)) {
-			SERVERS.put(this, new PortAndMappings(port, new ArrayList<>()));
-		}
+		cacheStubServer(false, port);
 		return this;
+	}
+
+	@Override
+	public HttpServerStub reset() {
+		this.wireMockServer.resetAll();
+		return this;
+	}
+
+	private void cacheStubServer(boolean random, int port) {
+		SERVERS.put(this, new PortAndMappings(random, port, new ArrayList<>()));
 	}
 
 	@Override
@@ -220,7 +231,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 		}
 		PortAndMappings portAndMappings = SERVERS.get(this);
-		SERVERS.put(this, new PortAndMappings(portAndMappings.port, stubMappings));
+		SERVERS.put(this, new PortAndMappings(portAndMappings.random, portAndMappings.port, stubMappings));
 	}
 
 	private StubMapping registerDescriptor(WireMock wireMock, File mappingDescriptor) {
@@ -252,19 +263,22 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 class PortAndMappings {
 
+	final boolean random;
 	final Integer port;
-
 	final List<StubMapping> mappings;
 
-	PortAndMappings(Integer port, List<StubMapping> mappings) {
+	PortAndMappings(boolean random, Integer port, List<StubMapping> mappings) {
+		this.random = random;
 		this.port = port;
 		this.mappings = mappings;
 	}
 
 	@Override
 	public String toString() {
-		return "PortAndMappings{" + "port=" + this.port + ", mappings="
-				+ this.mappings.size() + '}';
+		return "PortAndMappings{" +
+				"random=" + this.random +
+				", port=" + this.port +
+				", mappings=" + this.mappings +
+				'}';
 	}
-
 }

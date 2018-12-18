@@ -37,6 +37,13 @@ public interface HttpServerStub {
 	HttpServerStub stop();
 
 	/**
+	 * Resets the server. Should return itself to allow chaining.
+	 */
+	default HttpServerStub reset() {
+		return this;
+	}
+
+	/**
 	 * Registers the stub files in the HTTP server stub. Should return itself to allow
 	 * chaining.
 	 */
@@ -51,5 +58,4 @@ public interface HttpServerStub {
 	 * Returns {@code true} if the file is a valid stub mapping
 	 */
 	boolean isAccepted(File file);
-
 }

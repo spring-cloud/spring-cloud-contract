@@ -25,7 +25,7 @@ public abstract class MvcTest {
 
 	@BeforeClass
 	public static void setupTest() throws Exception {
-		int port = findAvailableTcpPort(8000);
+		int port = findAvailableTcpPort(10000);
 		URI baseUri = UriBuilder.fromUri("http://localhost").port(port).build();
 		// Create Server
 		Server server = new Server(port);

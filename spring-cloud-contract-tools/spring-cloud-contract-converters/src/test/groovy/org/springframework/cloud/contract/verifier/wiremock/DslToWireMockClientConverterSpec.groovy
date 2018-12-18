@@ -42,7 +42,7 @@ import org.springframework.util.SocketUtils
 
 class DslToWireMockClientConverterSpec extends Specification {
 
-	static int port = SocketUtils.findAvailableTcpPort()
+	int port = SocketUtils.findAvailableTcpPort()
 	@Rule public WireMockRule wireMockRule = new WireMockRule(port)
 	@Rule public TemporaryFolder tmpFolder = new TemporaryFolder()
 	TestRestTemplate restTemplate = new TestRestTemplate()
