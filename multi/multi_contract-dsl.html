@@ -167,7 +167,7 @@ Contract.make {
 		status OK()
 		body(file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response.json"</span>))
 		headers {
-			contentType(textPlain())
+			contentType(applicationJson())
 		}
 	}
 }</pre><p>
@@ -179,7 +179,11 @@ Contract.make {
 response:
   status: 200
   bodyFromFile: response.json</pre><p>
-</p><p>Further assume that the JSON files is as follows:</p><p><span class="strong"><strong>request.json</strong></span></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"REQUEST"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><p><span class="strong"><strong>response.json</strong></span></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"RESPONSE"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><p>When test or stub generation takes place, the contents of the file is passed to the body
+</p><p>Further assume that the JSON files is as follows:</p><p><span class="strong"><strong>request.json</strong></span></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"REQUEST"</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><p><span class="strong"><strong>response.json</strong></span></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"RESPONSE"</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><p>When test or stub generation takes place, the contents of the file is passed to the body
 of a request or a response. The name of the file needs to be a file with location
 relative to the folder in which the contract lays.</p><p>If you need to pass the contents of a file in a binary form
 it&#8217;s enough for you to use the <code class="literal">fileAsBytes</code> method in Groovy DSL or <code class="literal">bodyFromFileAsBytes</code> field in YAML.</p><p><b>Groovy DSL.&nbsp;</b>
