@@ -77,7 +77,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private DefaultListableBeanFactory beanFactory;
 
 	@Autowired
-	private WireMockProperties wireMock;
+	WireMockProperties wireMock;
 
 	@Autowired
 	private ResourceLoader resourceLoader;
@@ -100,6 +100,11 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (this.server == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("Creating a new server at "
+						+ "http port [" + this.wireMock.getServer().getPort() + "] and "
+						+ "https port [" + this.wireMock.getServer().getHttpsPort() + "]");
+			}
 			this.server = new WireMockServer(this.options);
 		}
 		registerStubs();
@@ -126,21 +131,23 @@ public class WireMockConfiguration implements SmartLifecycle {
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
 					this.server.addStubMapping(WireMockStubMapping
-							.buildFrom(StreamUtils.copyToString(resource.getInputStream(), Charset.forName("UTF-8"))));
+							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
+									Charset.forName("UTF-8"))));
 				}
 			}
 		}
 	}
 
-	int port() {
-		return this.server.port();
-	}
-
 	void reset() {
+		if (log.isDebugEnabled()) {
+			log.debug("Resetting stubs");
+		}
 		this.server.resetAll();
 	}
 
-	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
+	private void registerFiles(
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory)
+			throws IOException {
 		List<Resource> resources = new ArrayList<>();
 		for (String files : this.wireMock.getServer().getFiles()) {
 			if (StringUtils.hasText(files)) {
@@ -154,31 +161,46 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (!resources.isEmpty()) {
-			ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
+			ResourcesFileSource fileSource = new ResourcesFileSource(
+					resources.toArray(new Resource[0]));
 			factory.fileSource(fileSource);
 		}
 	}
 
 	@Override
 	public void start() {
+		if (isRunning()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Server is already running");
+			}
+			return;
+		}
 		this.server.start();
-		WireMock.configureFor("localhost", this.server.port());
+		updateCurrentServer();
+	}
+
+	private void updateCurrentServer() {
+		WireMock.configureFor(new WireMock(this.server));
 		this.running = true;
 		if (log.isDebugEnabled()) {
-			log.debug("Started WireMock at port [" + this.server.port() + "]. It has [" + this.server.getStubMappings().size() + "] mappings registered");
+			log.debug("Started WireMock at port [" + this.server.port() + "]. It has ["
+					+ this.server.getStubMappings().size() + "] mappings registered");
 		}
-		WireMockUtils.getMappingsEndpoint(this.port());
 	}
 
 	@Override
 	public void stop() {
 		if (this.running) {
-			reset();
-			this.server.shutdownServer();
+			this.server.stop();
+			this.server = null;
 			this.running = false;
+			this.options = null;
 			if (log.isDebugEnabled()) {
 				log.debug("Stopped WireMock instance");
 			}
+			this.beanFactory.destroySingleton(WIREMOCK_SERVER_BEAN_NAME);
+		} else if (log.isDebugEnabled()) {
+			log.debug("Server already stopped");
 		}
 	}
 
@@ -202,7 +224,6 @@ public class WireMockConfiguration implements SmartLifecycle {
 		stop();
 		callback.run();
 	}
-
 }
 
 @ConfigurationProperties("wiremock")
@@ -269,6 +290,7 @@ class WireMockProperties {
 		public void setFiles(String[] files) {
 			this.files = files;
 		}
+
 	}
 
 }

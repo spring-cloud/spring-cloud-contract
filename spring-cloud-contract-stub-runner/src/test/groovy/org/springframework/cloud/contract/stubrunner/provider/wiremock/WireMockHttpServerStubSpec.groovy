@@ -51,7 +51,7 @@ class WireMockHttpServerStubSpec extends Specification {
 		expect:
 			"surprise!" == new RestTemplate().getForObject("http://localhost:" + mappingDescriptor.port() + "/ping", String.class)
 		cleanup:
-			mappingDescriptor.stop()
+			mappingDescriptor?.stop()
 	}
 
 	def 'should make WireMock print out logs on INFO'() {
@@ -69,6 +69,6 @@ class WireMockHttpServerStubSpec extends Specification {
 		capture.toString().contains("Matched response definition")
 
 		cleanup:
-		mappingDescriptor.stop()
+		mappingDescriptor?.stop()
 	}
 }
