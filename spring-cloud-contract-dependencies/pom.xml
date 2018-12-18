@@ -17,6 +17,7 @@
 		<wiremock.version>2.19.0</wiremock.version>
 		<jsonassert.version>0.4.13</jsonassert.version>
 		<rest-assured.version>3.2.0</rest-assured.version>
+		<xmlassert.version>0.0.2</xmlassert.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -94,6 +95,11 @@
 				<groupId>com.toomuchcoding.jsonassert</groupId>
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.toomuchcoding.xmlassert</groupId>
+				<artifactId>xmlassert</artifactId>
+				<version>${xmlassert.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.rest-assured</groupId>

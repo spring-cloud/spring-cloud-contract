@@ -39,6 +39,44 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
+	def should_generate_stubs_from_plain_xml() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+					body """
+<test>
+<duck type='xtype'>123</duck>
+<alpha>abc</alpha>
+<number>123</number>
+<aBoolean>true</aBoolean>
+<date>2017-01-01</date>
+<dateTime>2017-01-01T01:23:45</dateTime>
+<time>01:02:34</time>
+<valueWithoutAMatcher>foo</valueWithoutAMatcher>
+<valueWithTypeMatch>string</valueWithTypeMatch>
+<key><complex>foo</complex></key>
+</test>"""
+					headers {
+						contentType(applicationXml())
+					}
+				}
+				response {
+					status(OK())
+					headers {
+						contentType(applicationXml())
+					}
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+		then:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	def should_generate_stubs_with_request_body_matchers() {
 		given:
 			Contract contractDsl = Contract.make {

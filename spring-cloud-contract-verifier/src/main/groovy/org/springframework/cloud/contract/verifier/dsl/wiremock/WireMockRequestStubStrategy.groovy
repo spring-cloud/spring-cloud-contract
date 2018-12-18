@@ -50,14 +50,14 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.cloud.contract.verifier.util.XmlToXmlPathsConverter
+import org.springframework.cloud.contract.verifier.util.XmlToXPathsConverter
 
 import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO
 import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
-import static org.springframework.cloud.contract.verifier.util.XmlToXmlPathsConverter.retrieveValueFromBody
+import static org.springframework.cloud.contract.verifier.util.XmlToXPathsConverter.retrieveValueFromBody
 
 /**
  * Converts a {@link Request} into {@link RequestPattern}
@@ -115,7 +115,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.bodyMatchers)
 			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
 			if ((values.empty && !request.bodyMatchers?.hasMatchers()) || onlySizeAssertionsArePresent(values)) {
-				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
+				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
+						getMatchingStrategy(request.body.clientValue).clientValue),
+						false, false))
 			} else {
 				values.findAll{ !it.assertsSize() }.each {
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
@@ -128,8 +130,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		else if (contentType == ContentType.XML) {  // TODO
 			def originalBody = matchingStrategy?.clientValue
-			def body = XmlToXmlPathsConverter.
+			def body = XmlToXPathsConverter.
 					removeMatchingXmlPaths(originalBody, request.bodyMatchers)
+			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
+					.mapToMatchers(body)
 			request.bodyMatchers?.matchers()?.each {
 				addWireMockStubMatchingSection(it, requestPattern, originalBody)
 			}
