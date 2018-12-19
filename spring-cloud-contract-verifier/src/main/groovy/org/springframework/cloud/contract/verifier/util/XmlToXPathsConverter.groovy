@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2018 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.util
 
 
@@ -47,10 +63,10 @@ class XmlToXPathsConverter {
 
 	static Object removeMatchingXmlPaths(def body, BodyMatchers bodyMatchers) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
-		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().
-				newDocumentBuilder()
-		Document parsedXml = documentBuilder.
-				parse(new InputSource(new StringReader(body as String)))
+		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder()
+		Document parsedXml = documentBuilder
+				.parse(new InputSource(new StringReader(body as String)))
 		bodyMatchers?.matchers()?.each({
 			Object node = xPath.evaluate(it.path(), parsedXml.documentElement, NODE)
 			removeNode(node)
@@ -69,8 +85,8 @@ class XmlToXPathsConverter {
 
 	private static Node getNode(String path, Object body) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
-		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().
-				newDocumentBuilder()
+		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder()
 		Document parsedXml = documentBuilder.
 				parse(new InputSource(new StringReader(body as String)))
 		return xPath.evaluate(path, parsedXml.documentElement, NODE) as Node
@@ -106,7 +122,7 @@ class XmlToXPathsConverter {
 		return writer.toString()
 	}
 
-	List<BodyMatcher> mapToMatchers(Object xml) {
+	static List<BodyMatcher> mapToMatchers(Object xml) {
 		DocumentBuilder documentBuilder = DocumentBuilderFactory
 				.newInstance()
 				.newDocumentBuilder()
@@ -124,14 +140,35 @@ class XmlToXPathsConverter {
 
 	static String buildXPath(List<Node> nodes) {
 		XmlVerifiable xmlVerifiable = XPathBuilder.builder()
-		nodes.reverse().each {
-			xmlVerifiable = it instanceof Attr ? xmlVerifiable.withAttribute(it.nodeName) :
-					xmlVerifiable.node(it.nodeName)
+		if (!nodes) {
+			return xmlVerifiable.xPath()
 		}
+		List<Node> reverted = nodes.reverse()
+		reverted.subList(0, reverted.size() - 1).each {
+			xmlVerifiable = processNode(xmlVerifiable, it)
+		}
+		Node closingNode = reverted.get(reverted.size() - 1)
+		xmlVerifiable = processClosingNode(xmlVerifiable, closingNode)
 		return xmlVerifiable.xPath()
 	}
 
-	private List<List<Node>> getValueNodesWithParents(Node node) {
+	private static XmlVerifiable processNode(XmlVerifiable xmlVerifiable, Node node) {
+		return xmlVerifiable.node(node.nodeName)
+	}
+
+	private static XmlVerifiable processNode(XmlVerifiable xmlVerifiable, Attr attribute) {
+		return xmlVerifiable.withAttribute(attribute.nodeName)
+	}
+
+	private static XmlVerifiable processClosingNode(XmlVerifiable xmlVerifiable, Node node) {
+		return xmlVerifiable.text()
+	}
+
+	private static XmlVerifiable processClosingNode(XmlVerifiable xmlVerifiable, Attr attribute) {
+		return processNode(xmlVerifiable, attribute)
+	}
+
+	private static List<List<Node>> getValueNodesWithParents(Node node) {
 		List<List<Node>> valueNodes = []
 		List<Node> attributes = []
 		addValueNodes(node, valueNodes, attributes)
@@ -141,7 +178,7 @@ class XmlToXPathsConverter {
 		return valueNodes
 	}
 
-	private List<Node> addValueNodes(Node node, List<List<Node>> valueNodes, List<Node> attributes) {
+	private static List<Node> addValueNodes(Node node, List<List<Node>> valueNodes, List<Node> attributes) {
 		getChildNodesAsList(node).each {
 			attributes.addAll(getAttributesAsList(node))
 			if (isValueNode(it) && !isBlank(it.nodeValue)) {
@@ -169,20 +206,20 @@ class XmlToXPathsConverter {
 				.collect(toList())
 	}
 
-	List<Node> withParents(Node node) {
+	private static List<Node> withParents(Node node) {
 		List<Node> nodeList = new ArrayList<>()
 		nodeList << node
 		return addParents(node, nodeList)
 	}
 
-	List<Node> withParents(Attr attribute) {
+	private static List<Node> withParents(Attr attribute) {
 		List<Node> nodeList = new ArrayList<>()
 		nodeList << attribute
 		Node ownerNode = attribute.getOwnerElement()
 		return addParents(ownerNode, nodeList)
 	}
 
-	private List<Node> addParents(Node node, nodeList) {
+	private static List<Node> addParents(Node node, nodeList) {
 		Node parentNode = node.getParentNode()
 		if (parentNode != null && DOCUMENT_NODE != parentNode.nodeType) {
 			nodeList << parentNode

@@ -128,19 +128,18 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
 			}
 		}
-		else if (contentType == ContentType.XML) {  // TODO
+		else if (contentType == ContentType.XML) {
 			def originalBody = matchingStrategy?.clientValue
-			def body = XmlToXPathsConverter.
-					removeMatchingXmlPaths(originalBody, request.bodyMatchers)
+			def body = XmlToXPathsConverter
+					.removeMatchingXmlPaths(originalBody, request.bodyMatchers)
 			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
 					.mapToMatchers(body)
+			byEqualityMatchersFromXml.each {
+				addWireMockStubMatchingSection(it, requestPattern, originalBody)
+			}
 			request.bodyMatchers?.matchers()?.each {
 				addWireMockStubMatchingSection(it, requestPattern, originalBody)
 			}
-
-//			requestPattern.withRequestBody(WireMock.  // FIXME
-//					equalToXml(getMatchingStrategy(request.body.clientValue)
-//							.clientValue.toString()))
 		} else if (containsPattern(request?.body)) {
 			requestPattern.withRequestBody(
 					convertToValuePattern(appendBodyRegexpMatchPattern(request.body)))
@@ -161,14 +160,13 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			throw new IllegalArgumentException("Only jsonPath and XPath matchers can be processed.")
 		}
 		String retrievedValue = Optional.ofNullable(matcher.value()).orElseGet({
-			if (EQUALITY == matcher.
-					matchingType()) {
+			if (EQUALITY == matcher.matchingType()) {
 				return retrieveValueFromBody(matcher.path(), body)
 			}
 			else {
 				return ''
 			}
-		})  // TODO: check for cases other than equality
+		})
 		PathBodyMatcher pathMatcher = matcher as PathBodyMatcher
 		requestPattern.withRequestBody(WireMock.matchingXPath(pathMatcher.path(),
 				XPathBodyMatcherToWireMockValuePatternConverter.
