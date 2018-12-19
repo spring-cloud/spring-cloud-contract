@@ -129,8 +129,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			}
 		}
 		else if (contentType == ContentType.XML) {
-			def originalBody = matchingStrategy?.clientValue
-			def body = XmlToXPathsConverter
+			Object originalBody = matchingStrategy?.clientValue
+			Object body = XmlToXPathsConverter
 					.removeMatchingXmlPaths(originalBody, request.bodyMatchers)
 			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
 					.mapToMatchers(body)

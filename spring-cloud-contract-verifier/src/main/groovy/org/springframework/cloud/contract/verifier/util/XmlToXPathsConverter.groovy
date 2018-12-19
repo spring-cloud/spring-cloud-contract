@@ -30,6 +30,8 @@ import javax.xml.xpath.XPathFactory
 
 import com.toomuchcoding.xmlassert.XPathBuilder
 import com.toomuchcoding.xmlassert.XmlVerifiable
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.w3c.dom.Attr
 import org.w3c.dom.Document
 import org.w3c.dom.NamedNodeMap
@@ -59,6 +61,7 @@ import static org.w3c.dom.Node.TEXT_NODE
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
+@CompileStatic
 class XmlToXPathsConverter {
 
 	static Object removeMatchingXmlPaths(def body, BodyMatchers bodyMatchers) {
@@ -68,7 +71,7 @@ class XmlToXPathsConverter {
 		Document parsedXml = documentBuilder
 				.parse(new InputSource(new StringReader(body as String)))
 		bodyMatchers?.matchers()?.each({
-			Object node = xPath.evaluate(it.path(), parsedXml.documentElement, NODE)
+			Node node = xPath.evaluate(it.path(), parsedXml.documentElement, NODE) as Node
 			removeNode(node)
 		})
 		parsedXml.normalizeDocument()
@@ -92,7 +95,7 @@ class XmlToXPathsConverter {
 		return xPath.evaluate(path, parsedXml.documentElement, NODE) as Node
 	}
 
-	private static void removeNode(Object node) {
+	private static void removeNode(Node node) {
 		Optional.ofNullable(node).ifPresent() {
 			if (isValueNode(node as Node)) {
 				node.getParentNode().removeChild(node)
@@ -195,14 +198,16 @@ class XmlToXPathsConverter {
 		return getNodeCollectionElements(nodeList)
 	}
 
+	@CompileDynamic
 	private static List<Node> getAttributesAsList(Node node) {
 		NamedNodeMap nodeMap = node.getAttributes()
 		return nodeMap != null ? getNodeCollectionElements(nodeMap) : []
 	}
 
+	@CompileDynamic
 	private static List<Node> getNodeCollectionElements(def nodeCollection) {
 		return IntStream.range(0, nodeCollection.getLength())
-				.mapToObj({ nodeCollection.item(it) })
+				.mapToObj({ nodeCollection.item(it) as Node })
 				.collect(toList())
 	}
 
@@ -219,7 +224,7 @@ class XmlToXPathsConverter {
 		return addParents(ownerNode, nodeList)
 	}
 
-	private static List<Node> addParents(Node node, nodeList) {
+	private static List<Node> addParents(Node node, List<Node> nodeList) {
 		Node parentNode = node.getParentNode()
 		if (parentNode != null && DOCUMENT_NODE != parentNode.nodeType) {
 			nodeList << parentNode
