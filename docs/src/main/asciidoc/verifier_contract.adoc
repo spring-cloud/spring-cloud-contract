@@ -821,7 +821,7 @@ match the regex for an ISO DateTime value.
 the regex for an ISO Time value.
 ** `byType()`: The value taken from the producer's response via the provided JSON Path needs to be
 of the same type as the type defined in the body of the response in the contract.
-`byType` can take a closure, in which you can set `minOccurrence` and `maxOccurrence`. For the request side, you should use the closure to assert size of the collection.	
+`byType` can take a closure, in which you can set `minOccurrence` and `maxOccurrence`. For the request side, you should use the closure to assert size of the collection.
 That way, you can assert the size of the flattened collection. To check the size of an
 unflattened collection, use a custom method with the `byCommand(...)` testMatcher.
 ** `byCommand(...)`: The value taken from the producer's response via the provided JSON Path is
