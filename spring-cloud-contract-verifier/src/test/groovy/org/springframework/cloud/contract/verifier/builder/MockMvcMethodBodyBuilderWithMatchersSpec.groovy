@@ -475,7 +475,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					bodyMatchers {
 						jsonPath('$.items[*].id', byRegex(nonBlank()))
 						jsonPath('$.items[*].title', byRegex(nonBlank()))
-						jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
+						jsonPath('$.items[*]', byType { occurrence(2) })
 					}
 					headers { header 'content-type', 'application/...json;charset=UTF-8' }
 				}

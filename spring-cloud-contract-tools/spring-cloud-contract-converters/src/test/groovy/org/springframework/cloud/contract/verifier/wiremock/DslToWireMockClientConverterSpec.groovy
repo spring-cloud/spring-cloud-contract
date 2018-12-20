@@ -581,6 +581,15 @@ class DslToWireMockClientConverterSpec extends Specification {
 										anothervalue: 4
 									]
 								]
+							],
+							valueWithMin: [
+								1,2,3
+							],
+							valueWithMax: [
+								1,2,3
+							],
+							valueWithMinMax: [
+								1,2,3
 							]
 					])
 					bodyMatchers {
@@ -594,6 +603,23 @@ class DslToWireMockClientConverterSpec extends Specification {
 						jsonPath('$.dateTime', byTimestamp())
 						jsonPath('$.time', byTime())
 						jsonPath('$.list.some.nested.json', byRegex(".*"))
+						jsonPath('$.valueWithMin', byType {
+							// results in verification of size of array (min 1)
+							minOccurrence(1)
+						})
+						jsonPath('$.valueWithMax', byType {
+							// results in verification of size of array (max 3)
+							maxOccurrence(3)
+						})
+						jsonPath('$.valueWithMinMax', byType {
+							// results in verification of size of array (min 1 & max 3)
+							minOccurrence(1)
+							maxOccurrence(3)
+						})
+						jsonPath('$.valueWithOccurrence', byType {
+							// results in verification of size of array (min 4 & max 4)
+							occurrence(4)
+						})
 					}
 					headers {
 						contentType(applicationJson())
@@ -619,6 +645,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 							],
 							valueWithMinMax: [
 								1,2,3
+							],
+							valueWithOccurrence: [
+								1,2,3,4
 							],
 					])
 					bodyMatchers {
@@ -649,6 +678,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 							minOccurrence(1)
 							maxOccurrence(3)
 						})
+						jsonPath('$.valueWithOccurrence', byType {
+							// results in verification of size of array (min 4 & max 4)
+							occurrence(4)
+						})
 					}
 					headers {
 						contentType(applicationJson())
@@ -664,51 +697,60 @@ class DslToWireMockClientConverterSpec extends Specification {
 				'''
 {
   "request" : {
-	"urlPath" : "/get",
-	"method" : "POST",
-	"headers" : {
-	  "Content-Type" : {
-		"matches" : "application/json.*"
-	  }
-	},
-	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
-	}, {
-	  "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
-	}, {
-	  "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
-	}, {
-	  "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.duck == 123)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
-	}, {
-	  "matchesJsonPath" : "$.list.some.nested[?(@.json =~ /(.*)/)]"
-	} ]
+    "urlPath" : "/get",
+    "method" : "POST",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "application/json.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
+    }, {
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
+    }, {
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.duck == 123)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+    }, {
+      "matchesJsonPath" : "$.list.some.nested[?(@.json =~ /(.*)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithMin.size() >= 1)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithMax.size() <= 3)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithMinMax.size() >= 1 && @.valueWithMinMax.size() <= 3)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithOccurrence.size() >= 4 && @.valueWithOccurrence.size() <= 4)]"
+    } ]
   },
   "response" : {
-	"status" : 200,
-	"body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"number\\":123,\\"aBoolean\\":true,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
-	"headers" : {
-	  "Content-Type" : "application/json"
-	}
+    "status" : 200,
+    "body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"aBoolean\\":true,\\"valueWithMax\\":[1,2,3],\\"valueWithOccurrence\\":[1,2,3,4],\\"number\\":123,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    },
+    "transformers" : [ "response-template" ]
   }
 }
 '''
@@ -744,6 +786,18 @@ class DslToWireMockClientConverterSpec extends Specification {
 																		anothervalue: 4
 																]
 														]
+												],
+												valueWithMin: [
+														1,2,3
+												],
+												valueWithMax: [
+														1,2,3
+												],
+												valueWithMinMax: [
+														1,2,3
+												],
+												valueWithOccurrence: [
+														1,2,3,4
 												]
 										]))
 					, String)
@@ -767,6 +821,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 					],
 					valueWithMinMax: [
 							1,2,3
+					],
+					valueWithOccurrence: [
+							1,2,3,4
 					],
 			]), response.body, false)
 	}

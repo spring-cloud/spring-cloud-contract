@@ -1192,7 +1192,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		where:
 			methodBuilderName									| methodBuilder																																	| endOfLineRegexSymbol
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder"| { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }			| '\\$'
-			"JaxRsClientJUnitMethodBodyBuilder"					| { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }							| '$'
+			"JaxRsClientJUnitMethodBodyBuilder"					| { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }| '$'
 	}
 
 	private String stripped(String string) {

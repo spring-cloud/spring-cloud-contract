@@ -64,10 +64,6 @@ test {
 	}
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.2'
-}
-
 clean.doFirst {
 	delete "~/.m2/repository/com/example/http-server-pact-gradle"
 }
