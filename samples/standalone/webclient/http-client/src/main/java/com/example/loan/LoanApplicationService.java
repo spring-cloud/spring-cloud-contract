@@ -47,7 +47,7 @@ public class LoanApplicationService {
 
 		// tag::client_call_server[]
 		ResponseEntity<FraudServiceResponse> response =
-				restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+				this.restTemplate.exchange("http://localhost:" + this.port + "/fraudcheck", HttpMethod.PUT,
 						new HttpEntity<>(request, httpHeaders),
 						FraudServiceResponse.class);
 		// end::client_call_server[]

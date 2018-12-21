@@ -52,6 +52,7 @@ public class ContractVerifierIntegrationConfiguration {
 			MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
 	}
+
 }
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
@@ -64,4 +65,5 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 	protected ContractVerifierMessage convert(Message<?> receive) {
 		return new ContractVerifierMessage(receive.getPayload(), receive.getHeaders());
 	}
+
 }

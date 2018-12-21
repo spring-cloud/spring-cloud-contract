@@ -35,11 +35,11 @@ import org.springframework.context.annotation.Configuration;
  * Autoconfiguration for registering stubs in a Zookeeper Service discovery
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 @Configuration
-@AutoConfigureAfter({ StubRunnerConfiguration.class, CuratorServiceDiscoveryAutoConfiguration.class })
+@AutoConfigureAfter({ StubRunnerConfiguration.class,
+		CuratorServiceDiscoveryAutoConfiguration.class })
 @ConditionalOnClass(org.apache.curator.x.discovery.ServiceInstance.class)
 @ConditionalOnStubbedDiscoveryDisabled
 @ConditionalOnZookeeperDiscoveryEnabled
@@ -47,8 +47,11 @@ import org.springframework.context.annotation.Configuration;
 public class StubRunnerSpringCloudZookeeperAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")
-	public StubsRegistrar stubsRegistrar(StubRunning stubRunning, CuratorFramework curatorFramework,
-			StubMapperProperties stubMapperProperties, ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperStubsRegistrar(stubRunning, curatorFramework, stubMapperProperties, zookeeperDiscoveryProperties);
+	public StubsRegistrar stubsRegistrar(StubRunning stubRunning,
+			CuratorFramework curatorFramework, StubMapperProperties stubMapperProperties,
+			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		return new ZookeeperStubsRegistrar(stubRunning, curatorFramework,
+				stubMapperProperties, zookeeperDiscoveryProperties);
 	}
+
 }

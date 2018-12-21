@@ -914,7 +914,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 	}
 
 	private void assertThatJsonPathsInMapAreValid(String json, JsonPaths pathAndValues) {
-		DocumentContext parsedJson = JsonPath.using(Configuration.builder().options(Option.ALWAYS_RETURN_LIST).build()).parse(json);
+		DocumentContext parsedJson = JsonPath.using(Configuration.builder().options(Option.ALWAYS_RETURN_LIST).build()).parse(json)
 		pathAndValues.each {
 			assert !parsedJson.read(it.jsonPath(), JSONArray).empty
 		}

@@ -10,7 +10,7 @@ buildscript {
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.0.M3"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.1.RELEASE"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
@@ -57,6 +57,14 @@ test {
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'
+	}
+	afterSuite { desc, result ->
+		if (!desc.parent) {
+			println "Results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+			if (result.testCount == 0) {
+				throw new IllegalStateException("No tests were found. Failing the build")
+			}
+		}
 	}
 }
 

@@ -42,18 +42,29 @@ import org.springframework.cloud.contract.spec.internal.Response
 @PackageScope
 class RequestResponsePactCreator {
 
-	RequestResponsePact createFromContract(Contract contract) {
-		assertNoExecutionProperty(contract)
-		PactDslWithProvider pactDslWithProvider = ConsumerPactBuilder.consumer("Consumer")
-				.hasPactWith("Provider")
-		PactDslRequestWithPath pactDslRequest = createPactDslRequestWithPath(contract, pactDslWithProvider)
-		PactDslResponse pactDslResponse = createPactDslResponse(contract, pactDslRequest)
+	RequestResponsePact createFromContract(List<Contract> contracts) {
+		if (contracts.empty) {
+			return null
+		}
+		Names names = NamingUtil.name(contracts.get(0))
+		PactDslWithProvider pactDslWithProvider = ConsumerPactBuilder
+				.consumer(names.consumer).hasPactWith(names.producer)
+		PactDslResponse pactDslResponse = null
+		contracts.each { Contract contract ->
+			assertNoExecutionProperty(contract)
+			PactDslRequestWithPath pactDslRequest = pactDslResponse ?
+					createPactDslRequestWithPath(contract, pactDslResponse) :
+					createPactDslRequestWithPath(contract, pactDslWithProvider)
+			pactDslResponse = createPactDslResponse(contract, pactDslRequest)
+		}
 		return pactDslResponse.toPact()
 	}
 
 	private void assertNoExecutionProperty(Contract contract) {
-		assertNoExecutionPropertyInBody(contract.request.body, { DslProperty dslProperty -> dslProperty.serverValue })
-		assertNoExecutionPropertyInBody(contract.response.body, { DslProperty dslProperty -> dslProperty.clientValue })
+		assertNoExecutionPropertyInBody(contract.request.body,
+				{ DslProperty dslProperty -> dslProperty.serverValue })
+		assertNoExecutionPropertyInBody(contract.response.body,
+				{ DslProperty dslProperty -> dslProperty.clientValue })
 	}
 
 	private void assertNoExecutionPropertyInBody(Body body, Closure dslPropertyValueExtractor) {
@@ -74,6 +85,32 @@ class RequestResponsePactCreator {
 		} else {
 			closure(value)
 		}
+	}
+
+	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract, PactDslResponse pactDslResponse) {
+		Request request = contract.request
+		PactDslRequestWithPath pactDslRequest = pactDslResponse
+				.uponReceiving(contract.description ?: "")
+				.path(url(request))
+				.method(request.method.serverValue.toString())
+		String query = query(request)
+		if (query) {
+			pactDslRequest = pactDslRequest.encodedQuery(query)
+		}
+		if (request.headers) {
+			request.headers.entries.each { Header header ->
+				pactDslRequest = processHeader(pactDslRequest, header)
+			}
+		}
+		if (request.body) {
+			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, { DslProperty property -> property.serverValue })
+			if (request.bodyMatchers) {
+				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.bodyMatchers))
+			}
+			pactRequestBody.setGenerators(ValueGeneratorConverter.extract(request.body, { DslProperty dslProperty -> dslProperty.clientValue }))
+			pactDslRequest = pactDslRequest.body(pactRequestBody)
+		}
+		return pactDslRequest
 	}
 
 	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract, PactDslWithProvider pactDslWithProvider) {

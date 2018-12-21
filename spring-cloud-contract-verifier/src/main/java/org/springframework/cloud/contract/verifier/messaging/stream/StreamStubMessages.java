@@ -39,7 +39,9 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	private static final Log log = LogFactory.getLog(StreamStubMessages.class);
 
 	private final ApplicationContext context;
+
 	private final MessageCollector messageCollector;
+
 	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
 
 	public StreamStubMessages(ApplicationContext context) {
@@ -55,8 +57,9 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	@Override
 	public void send(Message<?> message, String destination) {
 		try {
-			MessageChannel messageChannel = this.context
-					.getBean(resolvedDestination(destination, DefaultChannels.OUTPUT), MessageChannel.class);
+			MessageChannel messageChannel = this.context.getBean(
+					resolvedDestination(destination, DefaultChannels.OUTPUT),
+					MessageChannel.class);
 			messageChannel.send(message);
 		}
 		catch (Exception e) {
@@ -69,9 +72,11 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	@Override
 	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
-			MessageChannel messageChannel = this.context
-					.getBean(resolvedDestination(destination, DefaultChannels.INPUT), MessageChannel.class);
-			return this.messageCollector.forChannel(messageChannel).poll(timeout, timeUnit);
+			MessageChannel messageChannel = this.context.getBean(
+					resolvedDestination(destination, DefaultChannels.INPUT),
+					MessageChannel.class);
+			return this.messageCollector.forChannel(messageChannel).poll(timeout,
+					timeUnit);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "
@@ -80,7 +85,8 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 		}
 	}
 
-	private String resolvedDestination(String destination, DefaultChannels defaultChannel) {
+	private String resolvedDestination(String destination,
+			DefaultChannels defaultChannel) {
 		try {
 			BindingServiceProperties channelBindingServiceProperties = this.context
 					.getBean(BindingServiceProperties.class);
@@ -89,32 +95,41 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 					.getBindings().entrySet()) {
 				if (destination.equals(entry.getValue().getDestination())) {
 					if (log.isDebugEnabled()) {
-						log.debug("Found a channel named [" +
-								entry.getKey() + "] with destination [" + destination + "]");
+						log.debug("Found a channel named [" + entry.getKey()
+								+ "] with destination [" + destination + "]");
 					}
-					channels.put(entry.getKey().toLowerCase(), destination);
+					channels.put(entry.getKey(), destination);
 				}
 			}
 			if (channels.size() == 1) {
 				return channels.keySet().iterator().next();
-			} else if (channels.size() > 0) {
+			}
+			else if (channels.size() > 0) {
 				if (log.isDebugEnabled()) {
-					log.debug("Found following channels [" + channels + "] for destination [" + destination + "]. "
-									+ "Will pick the one that matches the default channel name or the first one if none is matching");
+					log.debug("Found following channels [" + channels
+							+ "] for destination [" + destination + "]. "
+							+ "Will pick the one that matches the default channel name or the first one if none is matching");
 				}
-				String defaultChannelName = channels.get(defaultChannel.name().toLowerCase());
-				String matchingChannelName = StringUtils.hasText(defaultChannelName) ? defaultChannel.name().toLowerCase() : channels.keySet().iterator().next();
+				String defaultChannelName = channels
+						.get(defaultChannel.name().toLowerCase());
+				String matchingChannelName = StringUtils.hasText(defaultChannelName)
+						? defaultChannel.name().toLowerCase()
+						: channels.keySet().iterator().next();
 				if (log.isDebugEnabled()) {
 					log.debug("Picked channel name is [" + matchingChannelName + "]");
 				}
 				return matchingChannelName;
 			}
-		} catch (Exception e) {
-			log.error("Exception took place while trying to resolve the destination. Will assume the name [" + destination + "]", e);
+		}
+		catch (Exception e) {
+			log.error(
+					"Exception took place while trying to resolve the destination. Will assume the name ["
+							+ destination + "]",
+					e);
 		}
 		if (log.isDebugEnabled()) {
-			log.debug(
-					"No destination named [" + destination + "] was found. Assuming that the destination equals the channel name");
+			log.debug("No destination named [" + destination
+					+ "] was found. Assuming that the destination equals the channel name");
 		}
 		return destination;
 	}
@@ -126,7 +141,8 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 
 }
 
-
 enum DefaultChannels {
+
 	INPUT, OUTPUT
+
 }

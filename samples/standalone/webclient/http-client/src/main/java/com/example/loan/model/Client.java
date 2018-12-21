@@ -12,7 +12,7 @@ public class Client {
 	}
 
 	public String getPesel() {
-		return pesel;
+		return this.pesel;
 	}
 
 	public void setPesel(String pesel) {

@@ -48,7 +48,8 @@ public class BookListener {
 	 * upon receiving message on the output messageFrom
 	 */
 	public void bookDeleted(BookDeleted bookDeleted) {
-		log.info("Deleting book [ "+ bookDeleted + "]");
+		log.info("Deleting book [ " + bookDeleted + "]");
 		this.bookSuccessfullyDeleted.set(true);
 	}
+
 }

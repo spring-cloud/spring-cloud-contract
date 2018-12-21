@@ -27,11 +27,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
- * Uses {@code META-INF/spring.factories} to read {@link ProtocolResolver} list
- * that gets added to {@link DefaultResourceLoader}. Each implementor of a new
- * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}, if
- * one uses a new protocol, should register their own {@link ProtocolResolver} so
- * that Stub Runner can convert a {@link String} version of a URI to a {@link Resource}.
+ * Uses {@code META-INF/spring.factories} to read {@link ProtocolResolver} list that gets
+ * added to {@link DefaultResourceLoader}. Each implementor of a new
+ * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}, if one
+ * uses a new protocol, should register their own {@link ProtocolResolver} so that Stub
+ * Runner can convert a {@link String} version of a URI to a {@link Resource}.
  *
  * IMPORTANT! Internal tool. Do not use.
  *
@@ -41,14 +41,16 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 public class ResourceResolver {
 
 	private static final Log log = LogFactory.getLog(ResourceResolver.class);
+
 	private static final List<ProtocolResolver> RESOLVERS = new ArrayList<>();
+
 	private static final DefaultResourceLoader LOADER = new DefaultResourceLoader();
 
 	static {
 		RESOLVERS.addAll(
-				SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null)
-		);
-		RESOLVERS.addAll(new StubDownloaderBuilderProvider().defaultStubDownloaderBuilders());
+				SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null));
+		RESOLVERS.addAll(
+				new StubDownloaderBuilderProvider().defaultStubDownloaderBuilders());
 		for (ProtocolResolver resolver : RESOLVERS) {
 			LOADER.addProtocolResolver(resolver);
 		}
@@ -61,9 +63,13 @@ public class ResourceResolver {
 	public static Resource resource(String url) {
 		try {
 			return LOADER.getResource(url);
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to read the resource [" + url + "]", e);
+		}
+		catch (Exception e) {
+			log.error(
+					"Exception occurred while trying to read the resource [" + url + "]",
+					e);
 			return null;
 		}
 	}
+
 }

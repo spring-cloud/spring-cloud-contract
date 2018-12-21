@@ -115,7 +115,9 @@ public class RunMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.skipTestOnly) {
-			getLog().info("Skipping verifier execution: spring.cloud.contract.verifier.skip=" + this.skip);
+			getLog().info(
+					"Skipping verifier execution: spring.cloud.contract.verifier.skip="
+							+ this.skip);
 			return;
 		}
 		BatchStubRunner batchStubRunner = null;
@@ -123,22 +125,22 @@ public class RunMojo extends AbstractMojo {
 				.withStubsClassifier(this.stubsClassifier);
 		if (StringUtils.isEmpty(this.stubs)) {
 			StubRunnerOptions options = optionsBuilder
-					.withMinMaxPort(this.httpPort, this.httpPort)
-					.build();
-			StubRunner stubRunner = this.localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
+					.withMinMaxPort(this.httpPort, this.httpPort).build();
+			StubRunner stubRunner = this.localStubRunner
+					.run(resolveStubsDirectory().getAbsolutePath(), options);
 			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));
-		} else {
-			StubRunnerOptions options = optionsBuilder
-					.withStubs(this.stubs)
-					.withMinMaxPort(this.minPort, this.maxPort)
-					.build();
+		}
+		else {
+			StubRunnerOptions options = optionsBuilder.withStubs(this.stubs)
+					.withMinMaxPort(this.minPort, this.maxPort).build();
 			batchStubRunner = this.remoteStubRunner.run(options, this.repoSession);
 		}
 		pressAnyKeyToContinue();
 		if (batchStubRunner != null) {
 			try {
 				batchStubRunner.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				throw new MojoExecutionException("Fail to close batch stub runner", e);
 			}
 		}
@@ -147,7 +149,8 @@ public class RunMojo extends AbstractMojo {
 	private File resolveStubsDirectory() {
 		if (isInsideProject()) {
 			return this.stubsDirectory;
-		} else {
+		}
+		else {
 			return this.destination;
 		}
 	}
@@ -159,7 +162,8 @@ public class RunMojo extends AbstractMojo {
 		getLog().info("Press ENTER to continue...");
 		try {
 			System.in.read();
-		} catch (Exception ignored) {
+		}
+		catch (Exception ignored) {
 		}
 	}
 

@@ -23,13 +23,18 @@ import org.springframework.util.StringUtils;
  * groupId:artifactId:version:classifier notation
  */
 public class StubConfiguration {
+
 	private static final String STUB_COLON_DELIMITER = ":";
 	static final String DEFAULT_VERSION = "+";
+
 	public static final String DEFAULT_CLASSIFIER = "stubs";
 
 	final String groupId;
+
 	final String artifactId;
+
 	final String version;
+
 	final String classifier;
 
 	public StubConfiguration(String groupId, String artifactId, String version) {
@@ -87,18 +92,16 @@ public class StubConfiguration {
 	}
 
 	/**
-	 * Returns a colon separated representation of the stub configuration
-	 * (e.g. groupid:artifactid:version:classifier)
+	 * Returns a colon separated representation of the stub configuration (e.g.
+	 * groupid:artifactid:version:classifier)
 	 */
 	public String toColonSeparatedDependencyNotation() {
 		if (!isDefined()) {
 			return "";
 		}
 		return StringUtils.arrayToDelimitedString(
-				new String[] { nullCheck(this.groupId),
-						nullCheck(this.artifactId),
-						nullCheck(this.version),
-						nullCheck(this.classifier) },
+				new String[] { nullCheck(this.groupId), nullCheck(this.artifactId),
+						nullCheck(this.version), nullCheck(this.classifier) },
 				STUB_COLON_DELIMITER);
 	}
 
@@ -108,10 +111,9 @@ public class StubConfiguration {
 
 	/**
 	 * Checks if ivy notation matches group and artifact ids
-	 *
 	 * @param ivyNotationAsString - e.g. group:artifact:version:classifier
-	 * @return {@code true} if artifact id matches and there's no group id. Or if
-	 * both group id and artifact id are present and matching
+	 * @return {@code true} if artifact id matches and there's no group id. Or if both
+	 * group id and artifact id are present and matching
 	 */
 	public boolean groupIdAndArtifactMatches(String ivyNotationAsString) {
 		String[] parts = ivyNotationFrom(ivyNotationAsString);
@@ -127,8 +129,8 @@ public class StubConfiguration {
 	 * Returns {@code true} for a snapshot or a LATEST (+) version
 	 */
 	public boolean isVersionChanging() {
-		return DEFAULT_VERSION.equals(this.version) ||
-				this.version.toLowerCase().contains("snapshot");
+		return DEFAULT_VERSION.equals(this.version)
+				|| this.version.toLowerCase().contains("snapshot");
 	}
 
 	public String getGroupId() {
@@ -151,7 +153,8 @@ public class StubConfiguration {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.artifactId == null) ? 0 : this.artifactId.hashCode());
+		result = prime * result
+				+ ((this.artifactId == null) ? 0 : this.artifactId.hashCode());
 		result = prime * result + ((this.groupId == null) ? 0 : this.groupId.hashCode());
 		return result;
 	}
@@ -185,13 +188,16 @@ public class StubConfiguration {
 		if (strings.length == 1) {
 			return this.artifactId.equals(ivyNotationAsString);
 		}
-		if (strings.length >= 2 && !(this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1]))) {
+		if (strings.length >= 2 && !(this.groupId.equals(strings[0])
+				&& this.artifactId.equals(strings[1]))) {
 			return false;
 		}
-		if (strings.length >= 3 && !(this.version.equals(strings[2]) || DEFAULT_VERSION.equals(strings[2]))) {
+		if (strings.length >= 3 && !(this.version.equals(strings[2])
+				|| DEFAULT_VERSION.equals(strings[2]))) {
 			return false;
 		}
-		if (strings.length == 4 && !(this.classifier.equals(strings[3]) || DEFAULT_CLASSIFIER.equals(strings[3]))) {
+		if (strings.length == 4 && !(this.classifier.equals(strings[3])
+				|| DEFAULT_CLASSIFIER.equals(strings[3]))) {
 			return false;
 		}
 		return true;
@@ -210,4 +216,5 @@ public class StubConfiguration {
 	public String toString() {
 		return toColonSeparatedDependencyNotation();
 	}
+
 }

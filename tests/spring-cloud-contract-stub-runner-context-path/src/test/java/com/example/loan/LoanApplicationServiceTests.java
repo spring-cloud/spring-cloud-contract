@@ -22,26 +22,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
-@AutoConfigureStubRunner(repositoryRoot = "classpath:m2repo/repository/",
-		ids = { "org.springframework.cloud.contract.verifier.stubs:contextPathFraudDetectionServer" },
-		stubsMode = StubRunnerProperties.StubsMode.REMOTE)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureStubRunner(repositoryRoot = "classpath:m2repo/repository/", ids = {
+		"org.springframework.cloud.contract.verifier.stubs:contextPathFraudDetectionServer" }, stubsMode = StubRunnerProperties.StubsMode.REMOTE)
 public class LoanApplicationServiceTests {
-// end::autoconfigure_stubrunner[]
 
-	@Autowired private LoanApplicationService service;
-	@Autowired private StubFinder stubFinder;
-	@LocalServerPort Integer port;
+	// end::autoconfigure_stubrunner[]
+
+	@Autowired
+	private LoanApplicationService service;
+
+	@Autowired
+	private StubFinder stubFinder;
+
+	@LocalServerPort
+	Integer port;
 
 	@Before
 	public void setPort() {
-		this.service.setFraudUrl(this.stubFinder.findStubUrl("contextPathFraudDetectionServer").toString() + "/fraud-path/");
+		this.service.setFraudUrl(
+				this.stubFinder.findStubUrl("contextPathFraudDetectionServer").toString()
+						+ "/fraud-path/");
 	}
 
 	@Test
 	public void shouldStartThisAppWithContextPath() {
-		String response = new RestTemplate()
-				.getForObject("http://localhost:" + this.port + "/my-path/foo", String.class);
+		String response = new RestTemplate().getForObject(
+				"http://localhost:" + this.port + "/my-path/foo", String.class);
 
 		assertThat(response).isNotEmpty();
 	}

@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 /**
- * Conditional that checks if the user turned on the stubbed discovery mode.
- * The feature is turned on by default.
+ * Conditional that checks if the user turned on the stubbed discovery mode. The feature
+ * is turned on by default.
  *
  * @author Marcin Grzejszczak
  *
@@ -37,4 +37,5 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 @Documented
 @ConditionalOnProperty(value = "stubrunner.cloud.stubbed.discovery.enabled", havingValue = "true", matchIfMissing = true)
 public @interface ConditionalOnStubbedDiscoveryEnabled {
+
 }

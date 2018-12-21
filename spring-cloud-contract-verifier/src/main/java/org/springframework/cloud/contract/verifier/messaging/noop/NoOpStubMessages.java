@@ -25,12 +25,13 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  * @author Marcin Grzejszczak
  */
 public class NoOpStubMessages implements MessageVerifier<Object> {
+
 	@Override
 	public void send(Object message, String destination) {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String,Object> headers, String destination) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination) {
 	}
 
 	@Override

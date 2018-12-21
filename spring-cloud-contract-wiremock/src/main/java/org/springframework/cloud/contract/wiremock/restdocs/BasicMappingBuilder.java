@@ -26,14 +26,23 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 class BasicMappingBuilder implements ScenarioMappingBuilder {
 
 	private RequestPatternBuilder requestPatternBuilder;
+
 	private ResponseDefinitionBuilder responseDefBuilder;
+
 	private Integer priority;
+
 	private String scenarioName;
+
 	private String requiredScenarioState;
+
 	private String newScenarioState;
+
 	private UUID id = UUID.randomUUID();
+
 	private String name;
+
 	private boolean isPersistent = false;
+
 	private Map<String, Parameters> postServeActions = new LinkedHashMap<>();
 
 	BasicMappingBuilder(RequestMethod method, UrlPattern urlPattern) {
@@ -55,7 +64,8 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 		return this;
 	}
 
-	@Override public BasicMappingBuilder atPriority(Integer priority) {
+	@Override
+	public BasicMappingBuilder atPriority(Integer priority) {
 		this.priority = priority;
 		return this;
 	}
@@ -66,19 +76,22 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 		return this;
 	}
 
-	@Override public BasicMappingBuilder withCookie(String name,
+	@Override
+	public BasicMappingBuilder withCookie(String name,
 			StringValuePattern cookieValuePattern) {
 		this.requestPatternBuilder.withCookie(name, cookieValuePattern);
 		return this;
 	}
 
-	@Override public BasicMappingBuilder withQueryParam(String key,
+	@Override
+	public BasicMappingBuilder withQueryParam(String key,
 			StringValuePattern queryParamPattern) {
 		this.requestPatternBuilder.withQueryParam(key, queryParamPattern);
 		return this;
 	}
 
-	@Override public ScenarioMappingBuilder withQueryParams(
+	@Override
+	public ScenarioMappingBuilder withQueryParams(
 			Map<String, StringValuePattern> queryParams) {
 		for (Map.Entry<String, StringValuePattern> entry : queryParams.entrySet()) {
 			this.requestPatternBuilder.withQueryParam(entry.getKey(), entry.getValue());
@@ -86,85 +99,96 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 		return this;
 	}
 
-	@Override public ScenarioMappingBuilder withRequestBody(
-			ContentPattern<?> bodyPattern) {
+	@Override
+	public ScenarioMappingBuilder withRequestBody(ContentPattern<?> bodyPattern) {
 		this.requestPatternBuilder.withRequestBody(bodyPattern);
 		return this;
 	}
 
-	@Override public ScenarioMappingBuilder withMultipartRequestBody(
+	@Override
+	public ScenarioMappingBuilder withMultipartRequestBody(
 			MultipartValuePatternBuilder multipartPatternBuilder) {
 		this.requestPatternBuilder.withRequestBodyPart(multipartPatternBuilder.build());
 		return this;
 	}
 
-	@Override public BasicMappingBuilder inScenario(String scenarioName) {
+	@Override
+	public BasicMappingBuilder inScenario(String scenarioName) {
 		this.scenarioName = scenarioName;
 		return this;
 	}
 
-	@Override public BasicMappingBuilder whenScenarioStateIs(String stateName) {
+	@Override
+	public BasicMappingBuilder whenScenarioStateIs(String stateName) {
 		this.requiredScenarioState = stateName;
 		return this;
 	}
 
-	@Override public BasicMappingBuilder willSetStateTo(String stateName) {
+	@Override
+	public BasicMappingBuilder willSetStateTo(String stateName) {
 		this.newScenarioState = stateName;
 		return this;
 	}
 
-	@Override public BasicMappingBuilder withId(UUID id) {
+	@Override
+	public BasicMappingBuilder withId(UUID id) {
 		this.id = id;
 		return this;
 	}
 
-	@Override public BasicMappingBuilder withName(String name) {
+	@Override
+	public BasicMappingBuilder withName(String name) {
 		this.name = name;
 		return this;
 	}
 
-	@Override public ScenarioMappingBuilder persistent() {
+	@Override
+	public ScenarioMappingBuilder persistent() {
 		this.isPersistent = true;
 		return this;
 	}
 
-	@Override public BasicMappingBuilder withBasicAuth(String username, String password) {
+	@Override
+	public BasicMappingBuilder withBasicAuth(String username, String password) {
 		this.requestPatternBuilder
 				.withBasicAuth(new BasicCredentials(username, password));
 		return this;
 	}
 
-	@Override public <P> BasicMappingBuilder withPostServeAction(String extensionName,
+	@Override
+	public <P> BasicMappingBuilder withPostServeAction(String extensionName,
 			P parameters) {
-		Parameters params = parameters instanceof Parameters ?
-				(Parameters) parameters :
-				Parameters.of(parameters);
+		Parameters params = parameters instanceof Parameters ? (Parameters) parameters
+				: Parameters.of(parameters);
 		this.postServeActions.put(extensionName, params);
 		return this;
 	}
 
-	@Override public ScenarioMappingBuilder withMetadata(Map<String, ?> map) {
+	@Override
+	public ScenarioMappingBuilder withMetadata(Map<String, ?> map) {
 		throw new UnsupportedOperationException("Metadata not supported");
 	}
 
-	@Override public ScenarioMappingBuilder withMetadata(Metadata metadata) {
+	@Override
+	public ScenarioMappingBuilder withMetadata(Metadata metadata) {
 		throw new UnsupportedOperationException("Metadata not supported");
 	}
 
-	@Override public ScenarioMappingBuilder withMetadata(Metadata.Builder builder) {
+	@Override
+	public ScenarioMappingBuilder withMetadata(Metadata.Builder builder) {
 		throw new UnsupportedOperationException("Metadata not supported");
 	}
 
-	@Override public StubMapping build() {
+	@Override
+	public StubMapping build() {
 		if (this.scenarioName == null && (this.requiredScenarioState != null
 				|| this.newScenarioState != null)) {
 			throw new IllegalStateException(
 					"Scenario name must be specified to require or set a new scenario state");
 		}
 		RequestPattern requestPattern = this.requestPatternBuilder.build();
-		ResponseDefinition response = (this.responseDefBuilder != null ?
-				this.responseDefBuilder :
-				aResponse()).build();
+		ResponseDefinition response = (this.responseDefBuilder != null
+				? this.responseDefBuilder : aResponse()).build();
 		StubMapping mapping = new StubMapping(requestPattern, response);
 		mapping.setPriority(this.priority);
 		mapping.setScenarioName(this.scenarioName);

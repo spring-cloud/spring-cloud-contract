@@ -37,7 +37,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class NoOpContractVerifierAutoConfiguration {
 
-	@Autowired(required = false) ObjectMapper objectMapper;
+	@Autowired(required = false)
+	ObjectMapper objectMapper;
 
 	@Bean
 	@ConditionalOnMissingBean

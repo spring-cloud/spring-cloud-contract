@@ -40,13 +40,13 @@ public class LoanApplicationServiceTests {
 
 	@Test
 	public void shouldSuccessfullyApplyForLoan() throws Exception {
-		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
-				markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
+		this.server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
+				this.markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				123.123);
 		// when:
-		LoanApplicationResult loanApplication = service.loanApplication(application);
+		LoanApplicationResult loanApplication = this.service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLIED);
@@ -55,13 +55,13 @@ public class LoanApplicationServiceTests {
 
 	@Test
 	public void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
-		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
-				markClientAsFraud.getInputStream(), Charset.forName("UTF-8"))));
+		this.server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
+				this.markClientAsFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				99999);
 		// when:
-		LoanApplicationResult loanApplication = service.loanApplication(application);
+		LoanApplicationResult loanApplication = this.service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);

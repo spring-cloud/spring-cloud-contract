@@ -38,8 +38,8 @@ class StubRunnerPropertyUtils {
 	static PropertyFetcher FETCHER = new PropertyFetcher();
 
 	/**
-	 * For Env vars takes the prop name, converts dots to underscores and applies
-	 * upper case
+	 * For Env vars takes the prop name, converts dots to underscores and applies upper
+	 * case
 	 */
 	static boolean isPropertySet(String propName) {
 		String value = getProperty(new HashMap<>(), propName);
@@ -47,8 +47,7 @@ class StubRunnerPropertyUtils {
 	}
 
 	/**
-	 * For options, system props and env vars returns {@code true}
-	 * when property is set
+	 * For options, system props and env vars returns {@code true} when property is set
 	 */
 	static boolean hasProperty(Map<String, String> options, String propName) {
 		String value = getProperty(options, propName);
@@ -56,14 +55,15 @@ class StubRunnerPropertyUtils {
 	}
 
 	/**
-	 * Tries to pick a value from options, for Env vars takes the prop name, converts
-	 * dots to underscores and applies upper case
+	 * Tries to pick a value from options, for Env vars takes the prop name, converts dots
+	 * to underscores and applies upper case
 	 */
 	static String getProperty(Map<String, String> options, String propName) {
 		if (options != null && options.containsKey(propName)) {
 			String value = options.get(propName);
 			if (log.isTraceEnabled()) {
-				log.trace("Options map contains the prop [" + propName + "] with value [" + value + "]");
+				log.trace("Options map contains the prop [" + propName + "] with value ["
+						+ value + "]");
 			}
 			return value;
 		}
@@ -81,7 +81,8 @@ class StubRunnerPropertyUtils {
 		String systemProp = FETCHER.systemProp(stubRunnerProp);
 		if (StringUtils.hasText(systemProp)) {
 			if (log.isTraceEnabled()) {
-				log.trace("System property [" + stubRunnerProp + "] has value [" + systemProp + "]");
+				log.trace("System property [" + stubRunnerProp + "] has value ["
+						+ systemProp + "]");
 			}
 			return systemProp;
 		}
@@ -89,17 +90,22 @@ class StubRunnerPropertyUtils {
 				.replaceAll("-", "_").toUpperCase();
 		String envVar = FETCHER.envVar(convertedEnvProp);
 		if (log.isTraceEnabled()) {
-			log.trace("Environment variable [" + convertedEnvProp + "] has value [" + envVar + "]");
+			log.trace("Environment variable [" + convertedEnvProp + "] has value ["
+					+ envVar + "]");
 		}
 		return envVar;
 	}
+
 }
 
 class PropertyFetcher {
+
 	String systemProp(String prop) {
 		return System.getProperty(prop);
 	}
+
 	String envVar(String prop) {
 		return System.getenv(prop);
 	}
+
 }

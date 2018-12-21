@@ -42,9 +42,9 @@ class TemporaryFileStorage {
 	private static final Log log = LogFactory.getLog(TemporaryFileStorage.class);
 
 	/**
-	 * There are problems with removal of stubs unpacked to a temporary folder.
-	 * That's why we're creating a bounded in-memory storage of unpacked files
-	 * and later we register a shutdown hook to remove all these files.
+	 * There are problems with removal of stubs unpacked to a temporary folder. That's why
+	 * we're creating a bounded in-memory storage of unpacked files and later we register
+	 * a shutdown hook to remove all these files.
 	 */
 	private static final Queue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(1000);
 
@@ -66,8 +66,8 @@ class TemporaryFileStorage {
 				if (file.isDirectory()) {
 					Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
 						@Override
-						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws
-								IOException {
+						public FileVisitResult visitFile(Path file,
+								BasicFileAttributes attrs) throws IOException {
 							if (log.isTraceEnabled()) {
 								log.trace("Removing file [" + file + "]");
 							}
@@ -76,7 +76,8 @@ class TemporaryFileStorage {
 						}
 
 						@Override
-						public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+						public FileVisitResult postVisitDirectory(Path dir,
+								IOException exc) throws IOException {
 							if (log.isTraceEnabled()) {
 								log.trace("Removing dir [" + dir + "]");
 							}
@@ -84,11 +85,13 @@ class TemporaryFileStorage {
 							return FileVisitResult.CONTINUE;
 						}
 					});
-				} else {
+				}
+				else {
 					Files.delete(file.toPath());
 				}
 			}
-		} catch (NoClassDefFoundError | IOException e) {
+		}
+		catch (NoClassDefFoundError | IOException e) {
 			// Added NoClassDefFoundError cause sometimes it's visible in the builds
 			// this error is completely harmless
 			if (log.isTraceEnabled()) {
@@ -99,12 +102,12 @@ class TemporaryFileStorage {
 
 	static File createTempDir(String tempDirPrefix) {
 		try {
-			return createTempDirectory(tempDirPrefix)
-					.toFile();
+			return createTempDirectory(tempDirPrefix).toFile();
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(
 					"Cannot create tmp dir with prefix: [" + tempDirPrefix + "]", e);
 		}
 	}
+
 }

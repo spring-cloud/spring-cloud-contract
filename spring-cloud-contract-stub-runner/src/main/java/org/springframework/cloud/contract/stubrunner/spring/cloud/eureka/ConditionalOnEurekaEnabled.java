@@ -36,4 +36,5 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 @Documented
 @ConditionalOnProperty(value = "eureka.client.enabled", havingValue = "true", matchIfMissing = true)
 @interface ConditionalOnEurekaEnabled {
+
 }

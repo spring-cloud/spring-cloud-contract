@@ -41,4 +41,5 @@ public class LoanApplication {
 	public void setLoanApplicationId(String loanApplicationId) {
 		this.loanApplicationId = loanApplicationId;
 	}
+
 }

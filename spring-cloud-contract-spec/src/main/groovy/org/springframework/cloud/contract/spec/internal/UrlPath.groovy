@@ -35,6 +35,10 @@ class UrlPath extends Url {
 		super(path)
 	}
 
+	UrlPath(GString path) {
+		super(path)
+	}
+
 	UrlPath(DslProperty path) {
 		super(path)
 	}

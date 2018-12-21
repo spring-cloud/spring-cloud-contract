@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
+import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
@@ -27,7 +28,7 @@ class GeneratorScannerSpec extends Specification {
 
 	private JavaTestGenerator classGenerator = Mock(JavaTestGenerator)
 
-	def "should find all .json files and generate 6 classes for them"() {
+	def "should find all json files and generate 6 classes for them"() {
 		given:
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
@@ -36,20 +37,31 @@ class GeneratorScannerSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("org.springframework.cloud.contract.verifier")
 		then:
-			6 * classGenerator.buildClass(_, _, _, _, _) >> "qwerty"
+			6 * classGenerator.buildClass(_, _, _, _) >> "qwerty"
 	}
 
 	def "should create class with full package"() {
 		given:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(targetFramework: SPOCK)
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(testFramework: SPOCK)
 			properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/stubs/package").toURI())
 			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
 		when:
 			testGenerator.generateTestClasses("org.springframework.cloud.contract.verifier")
 		then:
-			1 * classGenerator.buildClass(_, _, 'exceptionsSpec', 'org.springframework.cloud.contract.verifier', _) >> "spec"
-			1 * classGenerator.buildClass(_, _, 'exceptionsSpec', 'org.springframework.cloud.contract.verifier.v1', _) >> "spec1"
-			1 * classGenerator.buildClass(_, _, 'exceptionsSpec', 'org.springframework.cloud.contract.verifier.v2', _) >> "spec2"
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier'} ) >> "spec"
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v1'} ) >> "spec1"
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'exceptionsSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier.v2'} ) >> "spec2"
+	}
+
+	def "should create class with name with hyphen"() {
+		given:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(testFramework: SPOCK)
+			properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/name-with-hyphen").toURI())
+			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
+		when:
+			testGenerator.generateTestClasses("org.springframework.cloud.contract.verifier")
+		then:
+			1 * classGenerator.buildClass(_, _, _, { SingleTestGenerator.GeneratedClassData it -> it.className == 'car_rentalSpec' && it.classPackage == 'org.springframework.cloud.contract.verifier'} ) >> "spec"
 	}
 
 }

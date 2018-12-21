@@ -33,22 +33,37 @@ import org.springframework.util.StringUtils;
 public class StubRunnerOptionsBuilder {
 
 	private static final String DELIMITER = ":";
+
 	private LinkedList<String> stubs = new LinkedList<>();
+
 	private Collection<StubConfiguration> stubConfigurations = new ArrayList<>();
+
 	private Map<StubConfiguration, Integer> stubIdsToPortMapping = new LinkedHashMap<>();
 
 	private Integer minPortValue = 10000;
+
 	private Integer maxPortValue = 15000;
+
 	private Resource stubRepositoryRoot;
+
 	private String stubsClassifier = "stubs";
+
 	private String username;
+
 	private String password;
+
 	private StubRunnerOptions.StubRunnerProxyOptions stubRunnerProxyOptions;
+
 	private boolean stubsPerConsumer = false;
+
 	private String consumerName;
+
 	private String mappingsOutputFolder;
+
 	private StubRunnerProperties.StubsMode stubsMode;
+
 	private boolean deleteStubsAfterTest = true;
+
 	private Map<String, String> properties = new HashMap<>();
 
 	public StubRunnerOptionsBuilder() {
@@ -70,7 +85,8 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withMinMaxPort(Integer minPortValue, Integer maxPortValue) {
+	public StubRunnerOptionsBuilder withMinMaxPort(Integer minPortValue,
+			Integer maxPortValue) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		return this;
@@ -98,7 +114,8 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withStubsMode(StubRunnerProperties.StubsMode stubsMode) {
+	public StubRunnerOptionsBuilder withStubsMode(
+			StubRunnerProperties.StubsMode stubsMode) {
 		this.stubsMode = stubsMode;
 		return this;
 	}
@@ -131,21 +148,23 @@ public class StubRunnerOptionsBuilder {
 		this.stubsPerConsumer = options.isStubsPerConsumer();
 		this.consumerName = options.getConsumerName();
 		this.mappingsOutputFolder = options.getMappingsOutputFolder();
-		this.stubConfigurations = options.dependencies != null ?
-				options.dependencies : new ArrayList<>();
-		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null ?
-				options.stubIdsToPortMapping : new LinkedHashMap<>();
+		this.stubConfigurations = options.dependencies != null ? options.dependencies
+				: new ArrayList<>();
+		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null
+				? options.stubIdsToPortMapping : new LinkedHashMap<>();
 		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
 		this.properties = options.getProperties();
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withMappingsOutputFolder(String mappingsOutputFolder) {
+	public StubRunnerOptionsBuilder withMappingsOutputFolder(
+			String mappingsOutputFolder) {
 		this.mappingsOutputFolder = mappingsOutputFolder;
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
+	public StubRunnerOptionsBuilder withDeleteStubsAfterTest(
+			boolean deleteStubsAfterTest) {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		return this;
 	}
@@ -156,15 +175,17 @@ public class StubRunnerOptionsBuilder {
 	}
 
 	public StubRunnerOptions build() {
-		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
-				this.stubsMode, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
-				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
-				this.mappingsOutputFolder, this.deleteStubsAfterTest, this.properties);
+		return new StubRunnerOptions(this.minPortValue, this.maxPortValue,
+				this.stubRepositoryRoot, this.stubsMode, this.stubsClassifier,
+				buildDependencies(), this.stubIdsToPortMapping, this.username,
+				this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer,
+				this.consumerName, this.mappingsOutputFolder, this.deleteStubsAfterTest,
+				this.properties);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
-		List<StubConfiguration> stubConfigurations = StubsParser
-				.fromString(this.stubs, this.stubsClassifier);
+		List<StubConfiguration> stubConfigurations = StubsParser.fromString(this.stubs,
+				this.stubsClassifier);
 		this.stubConfigurations.addAll(stubConfigurations);
 		return this.stubConfigurations;
 	}
@@ -174,14 +195,17 @@ public class StubRunnerOptionsBuilder {
 		if (stubIdsToPortMapping.length == 1 && !containsRange(stubIdsToPortMapping[0])) {
 			list.addAll(StringUtils.commaDelimitedListToSet(stubIdsToPortMapping[0]));
 			return list;
-		} else if (stubIdsToPortMapping.length == 1 && containsRange(stubIdsToPortMapping[0])) {
+		}
+		else if (stubIdsToPortMapping.length == 1
+				&& containsRange(stubIdsToPortMapping[0])) {
 			LinkedList<String> linkedList = new LinkedList<>();
 			String[] split = stubIdsToPortMapping[0].split(",");
 			for (String string : split) {
 				if (containsClosingRange(string)) {
 					String last = linkedList.pop();
 					linkedList.push(last + "," + string);
-				} else {
+				}
+				else {
 					linkedList.push(string);
 				}
 			}
@@ -210,7 +234,8 @@ public class StubRunnerOptionsBuilder {
 		if (StubsParser.hasPort(notation)) {
 			addPort(notation);
 			this.stubs.add(StubsParser.ivyFromStringWithPort(notation));
-		} else {
+		}
+		else {
 			this.stubs.add(notation);
 		}
 	}
@@ -234,8 +259,10 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withProxy(final String proxyHost, final int proxyPort) {
-		this.stubRunnerProxyOptions = new StubRunnerOptions.StubRunnerProxyOptions(proxyHost, proxyPort);
+	public StubRunnerOptionsBuilder withProxy(final String proxyHost,
+			final int proxyPort) {
+		this.stubRunnerProxyOptions = new StubRunnerOptions.StubRunnerProxyOptions(
+				proxyHost, proxyPort);
 		return this;
 	}
 
@@ -248,4 +275,5 @@ public class StubRunnerOptionsBuilder {
 		this.consumerName = consumerName;
 		return this;
 	}
+
 }

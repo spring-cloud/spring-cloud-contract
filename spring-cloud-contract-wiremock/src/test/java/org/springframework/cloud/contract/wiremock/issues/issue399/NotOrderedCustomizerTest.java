@@ -20,10 +20,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 @AutoConfigureWireMock(port = 0)
 public class NotOrderedCustomizerTest {
 
-	@Value("${wiremock.server.port}") Integer port;
-	@Autowired RestTemplateBuilder restTemplateBuilder;
+	@Value("${wiremock.server.port}")
+	Integer port;
 
-	@Test 
+	@Autowired
+	RestTemplateBuilder restTemplateBuilder;
+
+	@Test
 	public void should_not_fail_when_ordered_customizer_added_interceptor_to_rest_template() {
 		stubFor(get(urlEqualTo("/some-url"))
 				.willReturn(aResponse().withStatus(200).withBody("Yeah!")));
@@ -34,4 +37,5 @@ public class NotOrderedCustomizerTest {
 
 		BDDAssertions.then(body).isEqualTo("Yeah!");
 	}
+
 }

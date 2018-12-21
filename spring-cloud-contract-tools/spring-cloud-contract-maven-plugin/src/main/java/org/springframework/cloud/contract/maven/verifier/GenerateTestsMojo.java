@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -49,23 +50,23 @@ import org.springframework.cloud.contract.verifier.converter.GroovyToYamlConvert
 import org.springframework.util.FileSystemUtils;
 
 /**
- * From the provided directory with contracts generates the acceptance
- * tests on the producer side
+ * From the provided directory with contracts generates the acceptance tests on the
+ * producer side
  */
-@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
-		requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
 
-	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
-			defaultValue = "${project.basedir}/src/test/resources/contracts")
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
 
-	@Parameter(
-			defaultValue = "${project.build.directory}/generated-test-sources/contracts")
+	@Parameter(defaultValue = "${project.build.directory}/generated-test-sources/contracts")
 	private File generatedTestSourcesDir;
+
+	@Parameter(defaultValue = "${project.build.directory}/generated-test-resources/contracts")
+	private File generatedTestResourcesDir;
 
 	@Parameter
 	private String basePackageForTests;
@@ -113,8 +114,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	 * Incubating feature. You can check the size of JSON arrays. If not turned on
 	 * explicitly will be disabled.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.assert.size",
-			defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.assert.size", defaultValue = "false")
 	private boolean assertJsonSize;
 
 	/**
@@ -132,12 +132,13 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "maven.test.skip", defaultValue = "false")
 	private boolean mavenTestSkip;
 
-	@Parameter(property = "skipTests", defaultValue = "false") private boolean skipTests;
+	@Parameter(property = "skipTests", defaultValue = "false")
+	private boolean skipTests;
 
 	/**
-	 * The URL from which a contracts should get downloaded. If not provided
-	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
-	 * taken into consideration
+	 * The URL from which a contracts should get downloaded. If not provided but
+	 * artifactid / coordinates notation was provided then the current Maven's build
+	 * repositories will be taken into consideration
 	 */
 	@Parameter(property = "contractsRepositoryUrl")
 	private String contractsRepositoryUrl;
@@ -146,11 +147,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private Dependency contractDependency;
 
 	/**
-	 * The path in the JAR with all the contracts where contracts for this particular service lay.
-	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
+	 * The path in the JAR with all the contracts where contracts for this particular
+	 * service lay. If not provided will be resolved to {@code groupid/artifactid}.
+	 * Example:
 	 * </p>
-	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
-	 * {@code /com/example/artifactid}
+	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service}
+	 * then the resolved path will be {@code /com/example/artifactid}
 	 */
 	@Parameter(property = "contractsPath")
 	private String contractsPath;
@@ -162,25 +164,29 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private StubRunnerProperties.StubsMode contractsMode;
 
 	/**
-	 * A package that contains all the base clases for generated tests. If your contract resides in a location
-	 * {@code src/test/resources/contracts/com/example/v1/} and you provide the {@code packageWithBaseClasses}
-	 * value to {@code com.example.contracts.base} then we will search for a test source file that will
-	 * have the package {@code com.example.contracts.base} and name {@code ExampleV1Base}. As you can see
-	 * it will take the two last folders to and attach {@code Base} to its name.
+	 * A package that contains all the base clases for generated tests. If your contract
+	 * resides in a location {@code src/test/resources/contracts/com/example/v1/} and you
+	 * provide the {@code packageWithBaseClasses} value to
+	 * {@code com.example.contracts.base} then we will search for a test source file that
+	 * will have the package {@code com.example.contracts.base} and name
+	 * {@code ExampleV1Base}. As you can see it will take the two last folders to and
+	 * attach {@code Base} to its name.
 	 */
 	@Parameter(property = "packageWithBaseClasses")
 	private String packageWithBaseClasses;
 
 	/**
-	 * A way to override any base class mappings. The keys are regular expressions on the package name of the contract
-	 * and the values FQN to a base class for that given expression.
+	 * A way to override any base class mappings. The keys are regular expressions on the
+	 * package name of the contract and the values FQN to a base class for that given
+	 * expression.
 	 * </p>
 	 * Example of a mapping
 	 * </p>
 	 * {@code .*.com.example.v1..*} -> {@code com.example.SomeBaseClass}
 	 * </p>
-	 * When a contract's package matches the provided regular expression then extending class will be the one
-	 * provided in the map - in this case {@code com.example.SomeBaseClass}
+	 * When a contract's package matches the provided regular expression then extending
+	 * class will be the one provided in the map - in this case
+	 * {@code com.example.SomeBaseClass}
 	 */
 	@Parameter(property = "baseClassMappings")
 	private List<BaseClassMapping> baseClassMappings;
@@ -210,9 +216,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private Integer contractsRepositoryProxyPort;
 
 	/**
-	 * If {@code true} then will not assert whether a stub / contract
-	 * JAR was downloaded from local or remote location
-	 *
+	 * If {@code true} then will not assert whether a stub / contract JAR was downloaded
+	 * from local or remote location
 	 * @deprecated - with 2.1.0 this option is redundant
 	 */
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
@@ -220,14 +225,15 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private boolean contractsSnapshotCheckSkip;
 
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary
-	 * folder after running tests
+	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
+	 * tests
 	 */
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
 	/**
-	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * Map of properties that can be passed to custom
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
@@ -241,9 +247,18 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.mavenTestSkip || this.skipTests) {
-			if (this.skip) getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + this.skip);
-			if (this.mavenTestSkip) getLog().info("Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + this.mavenTestSkip);
-			if (this.skipTests) getLog().info("Skipping Spring Cloud Contract Verifier execution: skipTests" + this.skipTests);
+			if (this.skip)
+				getLog().info(
+						"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
+								+ this.skip);
+			if (this.mavenTestSkip)
+				getLog().info(
+						"Skipping Spring Cloud Contract Verifier execution: maven.test.skip="
+								+ this.mavenTestSkip);
+			if (this.skipTests)
+				getLog().info(
+						"Skipping Spring Cloud Contract Verifier execution: skipTests"
+								+ this.skipTests);
 			return;
 		}
 		getLog().info(
@@ -258,15 +273,21 @@ public class GenerateTestsMojo extends AbstractMojo {
 //		contractsDirectory = copyContractsToATempDirectory(contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
-		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
+		this.project
+				.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
+		Resource resource = new Resource();
+		resource.setDirectory(this.generatedTestResourcesDir.getAbsolutePath());
+		this.project
+				.addTestResource(resource);
 		if (getLog().isInfoEnabled()) {
-			getLog().info(
-					"Test Source directory: " + this.generatedTestSourcesDir.getAbsolutePath()
-							+ " added.");
+			getLog().info("Test Source directory: "
+					+ this.generatedTestSourcesDir.getAbsolutePath() + " added.");
 			getLog().info("Using [" + config.getBaseClassForTests()
-					+ "] as base class for test classes, [" + config.getBasePackageForTests() + "] as base "
-					+ "package for tests, [" + config.getPackageWithBaseClasses() + "] as package with "
-					+ "base classes, base class mappings " + this.baseClassMappings);
+					+ "] as base class for test classes, ["
+					+ config.getBasePackageForTests() + "] as base "
+					+ "package for tests, [" + config.getPackageWithBaseClasses()
+					+ "] as package with " + "base classes, base class mappings "
+					+ this.baseClassMappings);
 		}
 		try {
 			TestGenerator generator = new TestGenerator(config);
@@ -276,7 +297,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 		catch (ContractVerifierException e) {
 			throw new MojoExecutionException(
 					String.format("Spring Cloud Contract Verifier Plugin exception: %s",
-							e.getMessage()), e);
+							e.getMessage()),
+					e);
 		}
 	}
 
@@ -298,7 +320,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 			File contractsDirectory) {
 		config.setContractsDslDir(contractsDirectory);
 		config.setGeneratedTestSourcesDir(this.generatedTestSourcesDir);
-		config.setTargetFramework(this.testFramework);
+		config.setGeneratedTestResourcesDir(this.generatedTestResourcesDir);
+		config.setTestFramework(this.testFramework);
 		config.setTestMode(this.testMode);
 		config.setBasePackageForTests(this.basePackageForTests);
 		config.setBaseClassForTests(this.baseClassForTests);
@@ -313,14 +336,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
 		if (this.baseClassMappings != null) {
 			config.setBaseClassMappings(mappingsToMap());
-		}
-	}
-
-	private URL fileToUrl(File contractsDirectory) {
-		try {
-			return contractsDirectory.toURI().toURL();
-		} catch (MalformedURLException e) {
-			throw new IllegalStateException(e);
 		}
 	}
 
@@ -358,4 +373,5 @@ public class GenerateTestsMojo extends AbstractMojo {
 	public void setAssertJsonSize(boolean assertJsonSize) {
 		this.assertJsonSize = assertJsonSize;
 	}
+
 }

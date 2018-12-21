@@ -31,8 +31,11 @@ class StubServer {
 	private static final Log log = LogFactory.getLog(StubServer.class);
 
 	private final HttpServerStub httpServerStub;
+
 	final StubConfiguration stubConfiguration;
+
 	final Collection<File> mappings;
+
 	final Collection<Contract> contracts;
 
 	StubServer(StubConfiguration stubConfiguration, Collection<File> mappings,
@@ -54,7 +57,8 @@ class StubServer {
 	}
 
 	private StubServer stubServer() {
-		log.info("Started stub server for project [" + this.stubConfiguration.toColonSeparatedDependencyNotation()
+		log.info("Started stub server for project ["
+				+ this.stubConfiguration.toColonSeparatedDependencyNotation()
 				+ "] on port " + this.httpServerStub.port());
 		this.httpServerStub.registerMappings(this.mappings);
 		return this;
@@ -103,22 +107,26 @@ class StubServer {
 		return this.httpServerStub.registeredMappings();
 	}
 
-	@Override public boolean equals(Object o) {
+	@Override
+	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
 		StubServer that = (StubServer) o;
-		return Objects.equals(this.stubConfiguration, that.stubConfiguration) && Objects
-				.equals(this.contracts, that.contracts);
+		return Objects.equals(this.stubConfiguration, that.stubConfiguration)
+				&& Objects.equals(this.contracts, that.contracts);
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return Objects.hash(this.stubConfiguration, this.contracts);
 	}
 
-	@Override public String toString() {
-		return "StubServer{" + "stubConfiguration=" + this.stubConfiguration + ", mappingsSize="
-				+ this.mappings.size() + '}';
+	@Override
+	public String toString() {
+		return "StubServer{" + "stubConfiguration=" + this.stubConfiguration
+				+ ", mappingsSize=" + this.mappings.size() + '}';
 	}
+
 }

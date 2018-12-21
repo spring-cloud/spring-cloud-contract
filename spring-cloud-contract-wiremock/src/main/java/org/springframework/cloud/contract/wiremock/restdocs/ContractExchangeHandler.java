@@ -54,8 +54,8 @@ import wiremock.org.eclipse.jetty.server.handler.ContextHandler;
  * @author Dave Syer
  *
  */
-public class ContractExchangeHandler extends
-		WireMockVerifyHelper<EntityExchangeResult<?>, ContractExchangeHandler>
+public class ContractExchangeHandler
+		extends WireMockVerifyHelper<EntityExchangeResult<?>, ContractExchangeHandler>
 		implements Consumer<EntityExchangeResult<byte[]>> {
 
 	@Override
@@ -119,47 +119,56 @@ class WireMockHttpRequestAdapter implements Request {
 		this.result = result;
 	}
 
-	@Override public String getUrl() {
+	@Override
+	public String getUrl() {
 		return this.result.getUrl().getRawPath();
 	}
 
-	@Override public String getAbsoluteUrl() {
+	@Override
+	public String getAbsoluteUrl() {
 		return this.result.getUrl().toString();
 	}
 
-	@Override public RequestMethod getMethod() {
+	@Override
+	public RequestMethod getMethod() {
 		return new RequestMethod(this.result.getMethod().name());
 	}
 
-	@Override public String getScheme() {
+	@Override
+	public String getScheme() {
 		return this.result.getUrl().getScheme();
 	}
 
-	@Override public String getHost() {
+	@Override
+	public String getHost() {
 		return this.result.getUrl().getHost();
 	}
 
-	@Override public int getPort() {
+	@Override
+	public int getPort() {
 		return this.result.getUrl().getPort();
 	}
 
-	@Override public String getClientIp() {
+	@Override
+	public String getClientIp() {
 		return "127.0.0.1";
 	}
 
-	@Override public String getHeader(String key) {
+	@Override
+	public String getHeader(String key) {
 		HttpHeaders headers = this.result.getRequestHeaders();
 		return headers.containsKey(key) ? headers.getFirst(key) : null;
 	}
 
-	@Override public HttpHeader header(String key) {
+	@Override
+	public HttpHeader header(String key) {
 		HttpHeaders headers = this.result.getRequestHeaders();
-		return headers.containsKey(key) ?
-				new HttpHeader(key, headers.getValuesAsList(key)) :
-				null;
+		return headers.containsKey(key)
+				? new HttpHeader(key, headers.getValuesAsList(key)) : null;
 	}
 
-	@Override public ContentTypeHeader contentTypeHeader() {
+	@Override
+	public ContentTypeHeader contentTypeHeader() {
 		MediaType contentType = this.result.getRequestHeaders().getContentType();
 		if (contentType == null) {
 			return null;
@@ -167,7 +176,8 @@ class WireMockHttpRequestAdapter implements Request {
 		return new ContentTypeHeader(contentType.toString());
 	}
 
-	@Override public com.github.tomakehurst.wiremock.http.HttpHeaders getHeaders() {
+	@Override
+	public com.github.tomakehurst.wiremock.http.HttpHeaders getHeaders() {
 		com.github.tomakehurst.wiremock.http.HttpHeaders target = new com.github.tomakehurst.wiremock.http.HttpHeaders();
 		HttpHeaders headers = this.result.getRequestHeaders();
 		for (String key : headers.keySet()) {
@@ -176,19 +186,23 @@ class WireMockHttpRequestAdapter implements Request {
 		return target;
 	}
 
-	@Override public boolean containsHeader(String key) {
+	@Override
+	public boolean containsHeader(String key) {
 		return this.result.getRequestHeaders().containsKey(key);
 	}
 
-	@Override public Set<String> getAllHeaderKeys() {
+	@Override
+	public Set<String> getAllHeaderKeys() {
 		return this.result.getRequestHeaders().keySet();
 	}
 
-	@Override public Map<String, Cookie> getCookies() {
+	@Override
+	public Map<String, Cookie> getCookies() {
 		return new LinkedHashMap<>();
 	}
 
-	@Override public QueryParameter queryParameter(String key) {
+	@Override
+	public QueryParameter queryParameter(String key) {
 		String query = this.result.getUrl().getRawQuery();
 		if (query == null) {
 			return null;
@@ -212,24 +226,29 @@ class WireMockHttpRequestAdapter implements Request {
 		return new QueryParameter(key, values);
 	}
 
-	@Override public byte[] getBody() {
+	@Override
+	public byte[] getBody() {
 		return this.result.getRequestBodyContent();
 	}
 
-	@Override public String getBodyAsString() {
+	@Override
+	public String getBodyAsString() {
 		return new String(this.result.getRequestBodyContent(), Charset.forName("UTF-8"));
 	}
 
-	@Override public String getBodyAsBase64() {
+	@Override
+	public String getBodyAsBase64() {
 		return Base64.encodeBase64String(this.result.getRequestBodyContent());
 	}
 
-	@Override public boolean isMultipart() {
+	@Override
+	public boolean isMultipart() {
 		return MediaType.MULTIPART_FORM_DATA
 				.isCompatibleWith(this.result.getRequestHeaders().getContentType());
 	}
 
-	@Override public Collection<Part> getParts() {
+	@Override
+	public Collection<Part> getParts() {
 		try {
 			return getWireMockParts();
 		}
@@ -257,15 +276,18 @@ class WireMockHttpRequestAdapter implements Request {
 	private Part partFromServletPart(javax.servlet.http.Part part) {
 		return new Part() {
 
-			@Override public String getName() {
+			@Override
+			public String getName() {
 				return part.getName();
 			}
 
-			@Override public HttpHeader getHeader(String name) {
+			@Override
+			public HttpHeader getHeader(String name) {
 				return new HttpHeader(name, part.getHeader(name));
 			}
 
-			@Override public com.github.tomakehurst.wiremock.http.HttpHeaders getHeaders() {
+			@Override
+			public com.github.tomakehurst.wiremock.http.HttpHeaders getHeaders() {
 				com.github.tomakehurst.wiremock.http.HttpHeaders headers = new com.github.tomakehurst.wiremock.http.HttpHeaders();
 				for (String s : part.getHeaderNames()) {
 					headers.plus(new HttpHeader(s, part.getHeader(s)));
@@ -273,7 +295,8 @@ class WireMockHttpRequestAdapter implements Request {
 				return headers;
 			}
 
-			@Override public Body getBody() {
+			@Override
+			public Body getBody() {
 				try {
 					byte[] targetArray = new byte[part.getInputStream().available()];
 					return new Body(targetArray);
@@ -286,17 +309,19 @@ class WireMockHttpRequestAdapter implements Request {
 	}
 
 	// TODO: Consider caching this
-	@Override public Part getPart(String name) {
-		return getWireMockParts().stream()
-				.filter(part -> name.equals(part.getName()))
+	@Override
+	public Part getPart(String name) {
+		return getWireMockParts().stream().filter(part -> name.equals(part.getName()))
 				.findFirst().get();
 	}
 
-	@Override public boolean isBrowserProxyRequest() {
+	@Override
+	public boolean isBrowserProxyRequest() {
 		return false;
 	}
 
-	@Override public Optional<Request> getOriginalRequest() {
+	@Override
+	public Optional<Request> getOriginalRequest() {
 		return Optional.absent();
 	}
 

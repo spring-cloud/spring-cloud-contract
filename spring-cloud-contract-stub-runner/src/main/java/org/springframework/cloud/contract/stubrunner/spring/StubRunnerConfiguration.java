@@ -54,9 +54,12 @@ public class StubRunnerConfiguration {
 
 	@Autowired(required = false)
 	private MessageVerifier<?> contractVerifierMessaging;
+
 	private StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
+
 	@Autowired
 	private StubRunnerProperties props;
+
 	@Autowired
 	private ConfigurableEnvironment environment;
 
@@ -84,18 +87,17 @@ public class StubRunnerConfiguration {
 
 	private StubRunnerOptionsBuilder builder() throws IOException {
 		return new StubRunnerOptionsBuilder()
-					.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
-					.withStubRepositoryRoot(this.props.getRepositoryRoot())
-					.withStubsMode(this.props.getStubsMode())
-					.withStubsClassifier(this.props.getClassifier())
-					.withStubs(this.props.getIds())
-					.withUsername(this.props.getUsername())
-					.withPassword(this.props.getPassword())
-					.withStubPerConsumer(this.props.isStubsPerConsumer())
-					.withConsumerName(consumerName())
-					.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
-					.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest())
-					.withProperties(this.props.getProperties());
+				.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
+				.withStubRepositoryRoot(this.props.getRepositoryRoot())
+				.withStubsMode(this.props.getStubsMode())
+				.withStubsClassifier(this.props.getClassifier())
+				.withStubs(this.props.getIds()).withUsername(this.props.getUsername())
+				.withPassword(this.props.getPassword())
+				.withStubPerConsumer(this.props.isStubsPerConsumer())
+				.withConsumerName(consumerName())
+				.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
+				.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest())
+				.withProperties(this.props.getProperties());
 	}
 
 	private String consumerName() {
@@ -108,15 +110,19 @@ public class StubRunnerConfiguration {
 	private void registerPort(RunningStubs runStubs) {
 		MutablePropertySources propertySources = this.environment.getPropertySources();
 		if (!propertySources.contains(STUBRUNNER_PREFIX)) {
-			propertySources.addFirst(
-					new MapPropertySource(STUBRUNNER_PREFIX, new HashMap<String, Object>()));
+			propertySources.addFirst(new MapPropertySource(STUBRUNNER_PREFIX,
+					new HashMap<String, Object>()));
 		}
 		Map<String, Object> source = ((MapPropertySource) propertySources
 				.get(STUBRUNNER_PREFIX)).getSource();
-		for (Map.Entry<StubConfiguration, Integer> entry : runStubs.validNamesAndPorts().entrySet()) {
-			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
-			// there are projects where artifact id is the same, what differs is the group id
-			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
+		for (Map.Entry<StubConfiguration, Integer> entry : runStubs.validNamesAndPorts()
+				.entrySet()) {
+			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getArtifactId() + ".port",
+					entry.getValue());
+			// there are projects where artifact id is the same, what differs is the group
+			// id
+			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "."
+					+ entry.getKey().getArtifactId() + ".port", entry.getValue());
 		}
 	}
 

@@ -33,18 +33,16 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 /**
- * Picks the converted .json files and creates a jar. Requires convert to be executed first
+ * Picks the converted .json files and creates a jar. Requires convert to be executed
+ * first
  */
-@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE,
-		requiresProject = true)
+@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true)
 public class GenerateStubsMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
-			required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "stubsDirectory",
-			defaultValue = "${project.build.directory}/stubs")
+	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -81,22 +79,24 @@ public class GenerateStubsMojo extends AbstractMojo {
 		if (this.skip || this.jarSkip) {
 			getLog().info(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
-							+ this.skip + ", spring.cloud.contract.verifier.jar.skip=" + this.jarSkip);
+							+ this.skip + ", spring.cloud.contract.verifier.jar.skip="
+							+ this.jarSkip);
 			return;
 		}
 		File stubsJarFile = createStubJar(this.outputDirectory);
-		this.projectHelper.attachArtifact(this.project, "jar", this.classifier, stubsJarFile);
+		this.projectHelper.attachArtifact(this.project, "jar", this.classifier,
+				stubsJarFile);
 	}
 
 	private File createStubJar(File stubsOutputDir)
 			throws MojoFailureException, MojoExecutionException {
 		if (!stubsOutputDir.exists()) {
-			throw new MojoExecutionException(
-					"Stubs could not be found: [" + stubsOutputDir.getAbsolutePath()
-							+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
+			throw new MojoExecutionException("Stubs could not be found: ["
+					+ stubsOutputDir.getAbsolutePath()
+					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
-		String stubArchiveName =
-				this.project.getBuild().getFinalName() + "-" + this.classifier + ".jar";
+		String stubArchiveName = this.project.getBuild().getFinalName() + "-"
+				+ this.classifier + ".jar";
 		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
 		String[] excludes = excludes();
 		getLog().info("Files matching this pattern will be excluded from "
@@ -106,7 +106,8 @@ public class GenerateStubsMojo extends AbstractMojo {
 					excludedFilesEmpty() ? new String[0] : this.excludedFiles);
 			this.archiver.setCompress(true);
 			this.archiver.setDestFile(stubsJarFile);
-			this.archiver.addConfiguredManifest(ManifestCreator.createManifest(this.project));
+			this.archiver
+					.addConfiguredManifest(ManifestCreator.createManifest(this.project));
 			this.archiver.createArchive();
 		}
 		catch (Exception e) {

@@ -1,3 +1,5 @@
+import org.gradle.api.JavaVersion
+
 buildscript {
 	repositories {
 		mavenCentral()
@@ -21,13 +23,17 @@ ext {
 			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
 			"WORK_OFFLINE" : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
+	JavaVersion javaVer = JavaVersion.current()
+	println "Current Java version equal to [${javaVer}]"
+	javaVersionNumber = javaVer.toString()
+	incompatibleJdk = javaVer.ordinal() > 8
 }
 
 project.version = findProperty('verifierVersion')
 apply plugin: 'groovy'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'
-apply plugin: "jacoco"
+//apply plugin: "jacoco"
 apply plugin: 'checkstyle'
 
 group = 'org.springframework.cloud'
@@ -75,7 +81,7 @@ dependencies {
 	}
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
-	checkstyle 'org.springframework.cloud:spring-cloud-build:2.1.0.BUILD-SNAPSHOT'
+	checkstyle "org.springframework.cloud:spring-cloud-build:${springCloudBuildVersion}"
 
 }
 
@@ -85,12 +91,21 @@ task libtest() {
 	}
 }
 
+task checkJdkVersion {
+	doLast {
+		if (incompatibleJdk) {
+			logger.warn("Java Version is equal to [${javaVersionNumber}]. The tests will be disabled (due to issues with compilation)")
+		}
+	}
+}
+
 test {
 	testLogging {
 		exceptionFormat = 'full'
 	}
 	systemProperties = testSystemProperties
-	enabled = !project.hasProperty('fast')
+	dependsOn(checkJdkVersion)
+	enabled = !project.hasProperty('fast') && !incompatibleJdk
 }
 
 groovydoc {
@@ -104,6 +119,7 @@ dependencies {
 }
 
 task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
+	enabled = !incompatibleJdk
 	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
 	into contractVerifierGradlePluginLibsDir
 }
@@ -111,7 +127,7 @@ task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
 archiveContractVerifierGradlePluginLibsDependencies.dependsOn project.tasks.jar
 test.dependsOn archiveContractVerifierGradlePluginLibsDependencies
 
-jacoco {
+/*jacoco {
 	toolVersion = "0.7.7.201606060606"
 }
 
@@ -119,7 +135,7 @@ jacocoTestReport {
 	reports {
 		xml.enabled true
 	}
-}
+}*/
 
 task resolveDependencies {
 	doLast {
@@ -135,5 +151,5 @@ task resolveDependencies {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.0.2'
+	gradleVersion = '4.10.2'
 }

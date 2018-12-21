@@ -69,7 +69,7 @@ class MessagingSCContractCreator {
 										throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
 									}
 
-									if (FULL_BODY.equals(key)) {
+									if (FULL_BODY == key) {
 										JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(message.contents.value)
 										jsonPaths.each {
 											jsonPath(it.keyBeforeChecking(), byType())

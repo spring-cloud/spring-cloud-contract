@@ -27,10 +27,9 @@ import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation
  * {@link org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs @AutoConfigureRestDocs}
  * in your test case and this class is available. JSON stubs are generated and added to
  * the restdocs path under "stubs".
- * 
+ *
  * @see WireMockRestDocs for a convenient entry point for customizing and asserting the
  * stub behaviour
- * 
  * @author Dave Syer
  *
  */

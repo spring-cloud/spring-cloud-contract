@@ -20,14 +20,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.stereotype.Component;
 
-@EnableBinding({ DeleteSink.class, Sink.class })
+@Component
 public class BookListener {
 
 	private static final Logger log = LoggerFactory.getLogger(BookListener.class);
@@ -54,7 +55,7 @@ public class BookListener {
 	 * server side: will send a message to input, verify the message contents and await
 	 * upon receiving message on the output messageFrom
 	 */
-	@StreamListener(DeleteSink.INPUT)
+	@StreamListener(DeleteSink.MYINPUT)
 	public void bookDeleted(BookDeleted bookDeleted) {
 		log.info("Deleting book " + bookDeleted);
 		// ... doing some work
@@ -62,4 +63,5 @@ public class BookListener {
 	}
 
 	public AtomicBoolean bookSuccessfulyDeleted = new AtomicBoolean(false);
+
 }

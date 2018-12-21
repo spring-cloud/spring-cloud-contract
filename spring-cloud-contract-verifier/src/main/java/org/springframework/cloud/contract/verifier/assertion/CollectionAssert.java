@@ -13,6 +13,7 @@ import org.assertj.core.api.IterableAssert;
  * @since 1.1.0
  */
 public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
+
 	public CollectionAssert(Iterable<? extends ELEMENT> actual) {
 		super(actual);
 	}
@@ -46,44 +47,53 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 	}
 
 	/**
-	 * Flattens the collection and checks whether size is greater than or equal to the provided value
-	 * @param size - the flattened collection should have size greater than or equal to this value
+	 * Flattens the collection and checks whether size is greater than or equal to the
+	 * provided value
+	 * @param size - the flattened collection should have size greater than or equal to
+	 * this value
 	 * @return this
 	 */
 	public CollectionAssert hasFlattenedSizeGreaterThanOrEqualTo(int size) {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize >= size)) {
-			failWithMessage("The flattened size <%s> is not greater or equal to <%s>", flattenedSize, size);
+			failWithMessage("The flattened size <%s> is not greater or equal to <%s>",
+					flattenedSize, size);
 		}
 		return this;
 	}
 
 	/**
-	 * Flattens the collection and checks whether size is less than or equal to the provided value
-	 * @param size - the flattened collection should have size less than or equal to this value
+	 * Flattens the collection and checks whether size is less than or equal to the
+	 * provided value
+	 * @param size - the flattened collection should have size less than or equal to this
+	 * value
 	 * @return this
 	 */
 	public CollectionAssert hasFlattenedSizeLessThanOrEqualTo(int size) {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize <= size)) {
-			failWithMessage("The flattened size <%s> is not less or equal to <%s>", flattenedSize, size);
+			failWithMessage("The flattened size <%s> is not less or equal to <%s>",
+					flattenedSize, size);
 		}
 		return this;
 	}
 
 	/**
 	 * Flattens the collection and checks whether size is between the provided value
-	 * @param lowerBound - the flattened collection should have size greater than or equal to this value
-	 * @param higherBound - the flattened collection should have size less than or equal to this value
+	 * @param lowerBound - the flattened collection should have size greater than or equal
+	 * to this value
+	 * @param higherBound - the flattened collection should have size less than or equal
+	 * to this value
 	 * @return this
 	 */
 	public CollectionAssert hasFlattenedSizeBetween(int lowerBound, int higherBound) {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize >= lowerBound && flattenedSize <= higherBound)) {
-			failWithMessage("The flattened size <%s> is not between <%s> and <%s>", flattenedSize, lowerBound, higherBound);
+			failWithMessage("The flattened size <%s> is not between <%s> and <%s>",
+					flattenedSize, lowerBound, higherBound);
 		}
 		return this;
 	}
@@ -97,7 +107,8 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int actualSize = size(this.actual);
 		if (!(actualSize >= size)) {
-			failWithMessage("The size <%s> is not greater or equal to <%s>", actualSize, size);
+			failWithMessage("The size <%s> is not greater or equal to <%s>", actualSize,
+					size);
 		}
 		return this;
 	}
@@ -111,41 +122,48 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int actualSize = size(this.actual);
 		if (!(actualSize <= size)) {
-			failWithMessage("The size <%s> is not less or equal to <%s>", actualSize, size);
+			failWithMessage("The size <%s> is not less or equal to <%s>", actualSize,
+					size);
 		}
 		return this;
 	}
 
 	/**
 	 * Checks whether size is between the provided value
-	 * @param lowerBound - the collection should have size greater than or equal to this value
-	 * @param higherBound - the collection should have size less than or equal to this value
+	 * @param lowerBound - the collection should have size greater than or equal to this
+	 * value
+	 * @param higherBound - the collection should have size less than or equal to this
+	 * value
 	 * @return this
 	 */
 	public CollectionAssert hasSizeBetween(int lowerBound, int higherBound) {
 		isNotNull();
 		int size = size(this.actual);
 		if (!(size >= lowerBound && size <= higherBound)) {
-			failWithMessage("The size <%s> is not between <%s> and <%s>", size, lowerBound, higherBound);
+			failWithMessage("The size <%s> is not between <%s> and <%s>", size,
+					lowerBound, higherBound);
 		}
 		return this;
 	}
 
-	@Override public CollectionAssert<ELEMENT> as(String description, Object... args) {
+	@Override
+	public CollectionAssert<ELEMENT> as(String description, Object... args) {
 		return (CollectionAssert<ELEMENT>) super.as(description, args);
 	}
 
 	private int flattenedSize(int counter, Object object) {
 		if (object instanceof Map) {
 			return counter + ((Map) object).size();
-		} else if (object instanceof Iterator) {
+		}
+		else if (object instanceof Iterator) {
 			Iterator iterator = ((Iterator) object);
 			while (iterator.hasNext()) {
 				Object next = iterator.next();
 				counter = flattenedSize(counter, next);
 			}
 			return counter;
-		} else if (object instanceof Collection) {
+		}
+		else if (object instanceof Collection) {
 			return flattenedSize(counter, ((Collection) object).iterator());
 		}
 		return counter;
@@ -158,4 +176,5 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		}
 		return size;
 	}
+
 }

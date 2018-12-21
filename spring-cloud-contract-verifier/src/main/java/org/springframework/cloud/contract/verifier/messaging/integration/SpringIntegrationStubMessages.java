@@ -31,12 +31,12 @@ import org.springframework.messaging.PollableChannel;
 /**
  * @author Marcin Grzejszczak
  */
-public class SpringIntegrationStubMessages implements
-		MessageVerifier<Message<?>> {
+public class SpringIntegrationStubMessages implements MessageVerifier<Message<?>> {
 
 	private static final Log log = LogFactory.getLog(SpringIntegrationStubMessages.class);
 
 	private final ApplicationContext context;
+
 	private final ContractVerifierIntegrationMessageBuilder builder = new ContractVerifierIntegrationMessageBuilder();
 
 	@Autowired
@@ -52,11 +52,13 @@ public class SpringIntegrationStubMessages implements
 	@Override
 	public void send(Message<?> message, String destination) {
 		try {
-			MessageChannel messageChannel = this.context.getBean(destination, MessageChannel.class);
+			MessageChannel messageChannel = this.context.getBean(destination,
+					MessageChannel.class);
 			messageChannel.send(message);
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to send a message [" + message + "] " +
-					"to a channel with name [" + destination + "]", e);
+		}
+		catch (Exception e) {
+			log.error("Exception occurred while trying to send a message [" + message
+					+ "] " + "to a channel with name [" + destination + "]", e);
 			throw e;
 		}
 	}
@@ -64,11 +66,13 @@ public class SpringIntegrationStubMessages implements
 	@Override
 	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
-			PollableChannel messageChannel = this.context.getBean(destination, PollableChannel.class);
+			PollableChannel messageChannel = this.context.getBean(destination,
+					PollableChannel.class);
 			return messageChannel.receive(timeUnit.toMillis(timeout));
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to read a message from " +
-					" a channel with name [" + destination + "]", e);
+		}
+		catch (Exception e) {
+			log.error("Exception occurred while trying to read a message from "
+					+ " a channel with name [" + destination + "]", e);
 			throw new IllegalStateException(e);
 		}
 	}

@@ -23,4 +23,5 @@ package org.springframework.cloud.contract.stubrunner;
  */
 @SuppressWarnings("serial")
 class MessageNotMatchingException extends RuntimeException {
+
 }

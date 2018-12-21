@@ -24,7 +24,8 @@ import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringUtils;
 
 /**
- * A {@link org.springframework.restdocs.snippet.Snippet} that documents the Spring Cloud Contract Groovy DSL.
+ * A {@link org.springframework.restdocs.snippet.Snippet} that documents the Spring Cloud
+ * Contract Groovy DSL.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.4
@@ -32,11 +33,14 @@ import org.springframework.util.StringUtils;
 public class ContractDslSnippet extends TemplatedSnippet {
 
 	private static final String CONTRACTS_FOLDER = "contracts";
+
 	private static final String SNIPPET_NAME = "dsl-contract";
 
 	private Map<String, Object> model = new HashMap<>();
-	private static final Set<String> IGNORED_HEADERS =
-			new HashSet<>(Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
+
+	private static final Set<String> IGNORED_HEADERS = new HashSet<>(
+			Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
+
 	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper(
 			"{", "}");
 
@@ -50,7 +54,6 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	/**
 	 * Creates a new {@code ContractDslSnippet} with the given additional
 	 * {@code attributes} that will be included in the model during template rendering.
-	 *
 	 * @param attributes The additional attributes
 	 */
 	protected ContractDslSnippet(Map<String, Object> attributes) {
@@ -64,8 +67,10 @@ public class ContractDslSnippet extends TemplatedSnippet {
 
 	@Override
 	public void document(Operation operation) throws IOException {
-		TemplateEngine templateEngine = (TemplateEngine) operation.getAttributes().get(TemplateEngine.class.getName());
-		String renderedContract = templateEngine.compileTemplate("default-dsl-contract-only")
+		TemplateEngine templateEngine = (TemplateEngine) operation.getAttributes()
+				.get(TemplateEngine.class.getName());
+		String renderedContract = templateEngine
+				.compileTemplate("default-dsl-contract-only")
 				.render(createModelForContract(operation));
 		this.model.put("contract", renderedContract);
 		storeDslContract(operation, renderedContract);
@@ -77,7 +82,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("response_status", response.getStatus().value());
 		model.put("response_body_present", response.getContent().length > 0);
 		model.put("response_body", response.getContentAsString());
-		Map<String, String> headers = response.getHeaders().toSingleValueMap();
+		Map<String, String> headers = new HashMap<>(response.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("response_headers_present", !headers.isEmpty());
 		model.put("response_headers", headers.entrySet());
@@ -100,13 +105,15 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("request_url", prepareRequestUrl(request.getUri()));
 		model.put("request_body_present", request.getContent().length > 0);
 		model.put("request_body", request.getContentAsString());
-		Map<String, String> headers = request.getHeaders().toSingleValueMap();
+		Map<String, String> headers = new HashMap<>(request.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("request_headers_present", !headers.isEmpty());
 		model.put("request_headers", headers.entrySet());
-		@SuppressWarnings("unchecked") Set<String> jsonPaths = (Set<String>) operation.getAttributes()
+		@SuppressWarnings("unchecked")
+		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
 				.get("contract.jsonPaths");
-		model.put("request_json_paths_present", jsonPaths != null && !jsonPaths.isEmpty());
+		model.put("request_json_paths_present",
+				jsonPaths != null && !jsonPaths.isEmpty());
 		model.put("request_json_paths", jsonPaths(jsonPaths));
 	}
 
@@ -138,23 +145,27 @@ public class ContractDslSnippet extends TemplatedSnippet {
 			throws IOException {
 		RestDocumentationContext context = (RestDocumentationContext) operation
 				.getAttributes().get(RestDocumentationContext.class.getName());
-		RestDocumentationContextPlaceholderResolver resolver = new
-				RestDocumentationContextPlaceholderResolver(context);
+		RestDocumentationContextPlaceholderResolver resolver = new RestDocumentationContextPlaceholderResolver(
+				context);
 		String resolvedName = replacePlaceholders(resolver, operation.getName());
 		File output = new File(context.getOutputDirectory(),
 				CONTRACTS_FOLDER + "/" + resolvedName + ".groovy");
 		output.getParentFile().mkdirs();
-		try (Writer writer = new OutputStreamWriter(Files.newOutputStream(output.toPath()))) {
+		try (Writer writer = new OutputStreamWriter(
+				Files.newOutputStream(output.toPath()))) {
 			writer.append(content);
 		}
 	}
 
-	private String replacePlaceholders(PropertyPlaceholderHelper.PlaceholderResolver resolver, String input) {
+	private String replacePlaceholders(
+			PropertyPlaceholderHelper.PlaceholderResolver resolver, String input) {
 		return this.propertyPlaceholderHelper.replacePlaceholders(input, resolver);
 	}
+
 }
 
 class JsonPaths {
+
 	private final String jsonPath;
 
 	JsonPaths(String jsonPath) {
@@ -164,4 +175,5 @@ class JsonPaths {
 	public String getJsonPath() {
 		return this.jsonPath;
 	}
+
 }

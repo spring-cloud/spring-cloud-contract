@@ -40,6 +40,13 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<failIfNoTests>false</failIfNoTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.0.0</version>
 				<configuration>
@@ -113,7 +120,7 @@
 									<executable>./gradlew</executable>
 									<arguments>
 										<argument>build</argument>
-										<argument>jacocoTestReport</argument>
+										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
 								</configuration>
@@ -147,7 +154,7 @@
 									<executable>gradlew.bat</executable>
 									<arguments>
 										<argument>build</argument>
-										<argument>jacocoTestReport</argument>
+										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
 								</configuration>
@@ -179,7 +186,7 @@
 									<executable>./gradlew</executable>
 									<arguments>
 										<argument>build</argument>
-										<argument>jacocoTestReport</argument>
+										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-Pfast</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>

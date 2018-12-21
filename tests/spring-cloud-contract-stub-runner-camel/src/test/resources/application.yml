@@ -1,0 +1,8 @@
+stubrunner:
+  repository-root: classpath:m2repo/repository/
+  ids: org.springframework.cloud.contract.verifier.stubs:camelService:0.0.1-SNAPSHOT:stubs
+  stubs-mode: remote
+server:
+  port: 0
+debug: true
+logging.level.org.springframework.cloud.contract: debug

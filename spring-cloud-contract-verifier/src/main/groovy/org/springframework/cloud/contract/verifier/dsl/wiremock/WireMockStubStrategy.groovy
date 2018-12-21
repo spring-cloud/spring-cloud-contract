@@ -16,21 +16,17 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
-import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
-
 import com.github.tomakehurst.wiremock.http.ResponseDefinition
 import com.github.tomakehurst.wiremock.matching.RequestPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 /**
  * Converts a {@link ContractMetadata} into a WireMock stub
  *
  * @since 1.0.0
  */
-@CompileStatic
 class WireMockStubStrategy {
 
 	private static final String STEP_START = "Started"
@@ -54,7 +50,6 @@ class WireMockStubStrategy {
 	/**
 	 * Converts {@link ContractMetadata} to String version of {@link StubMapping}
 	 */
-	@CompileDynamic
 	String toWireMockClientStub() {
 		StubMapping stubMapping = new StubMapping()
 

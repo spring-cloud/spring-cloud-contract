@@ -67,7 +67,9 @@ public class ResourcesFileSource implements FileSource {
 				sources[i] = fileOrFallbackToClasspath(resource);
 			}
 			else {
-				throw new IllegalArgumentException("Unsupported resource type for file source: " + resource.getClass());
+				throw new IllegalArgumentException(
+						"Unsupported resource type for file source: "
+								+ resource.getClass());
 			}
 		}
 		return sources;
@@ -81,8 +83,9 @@ public class ResourcesFileSource implements FileSource {
 				return new ClasspathFileSource(pathFromCompressed(uri));
 			}
 			return new SingleRootFileSource(getFile(file));
-		} catch (IOException e) {
-				throw new IllegalStateException(e);
+		}
+		catch (IOException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -120,13 +123,15 @@ public class ResourcesFileSource implements FileSource {
 		throw new IllegalStateException("Cannot create file for " + name);
 	}
 
-	@Override public TextFile getTextFileNamed(String name) {
+	@Override
+	public TextFile getTextFileNamed(String name) {
 		for (FileSource resource : this.sources) {
 			TextFile file = resource.getTextFileNamed(name);
 			try {
 				file.readContentsAsString();
 				return file;
-			} catch (RuntimeException e) {
+			}
+			catch (RuntimeException e) {
 				// Ignore
 			}
 		}
@@ -143,7 +148,8 @@ public class ResourcesFileSource implements FileSource {
 		List<FileSource> childSources = new ArrayList<>();
 		for (FileSource resource : this.sources) {
 			try {
-				UrlResource uri = new UrlResource(resource.child(subDirectoryName).getUri());
+				UrlResource uri = new UrlResource(
+						resource.child(subDirectoryName).getUri());
 				if (uri.createRelative(subDirectoryName).exists()) {
 					childSources.add(resource.child(subDirectoryName));
 				}
@@ -219,7 +225,8 @@ public class ResourcesFileSource implements FileSource {
 		return false;
 	}
 
-	@Override public void deleteFile(String name) {
+	@Override
+	public void deleteFile(String name) {
 
 	}
 

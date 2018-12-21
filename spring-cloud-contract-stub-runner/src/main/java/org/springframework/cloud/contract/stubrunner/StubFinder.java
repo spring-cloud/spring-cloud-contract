@@ -23,19 +23,20 @@ import java.util.Map;
 import org.springframework.cloud.contract.spec.Contract;
 
 public interface StubFinder extends StubTrigger {
+
 	/**
-	 * For the given groupId and artifactId tries to find the matching
-	 * URL of the running stub.
-	 *
-	 * @param groupId - might be null. In that case a search only via artifactId takes place
+	 * For the given groupId and artifactId tries to find the matching URL of the running
+	 * stub.
+	 * @param groupId - might be null. In that case a search only via artifactId takes
+	 * place
 	 * @return URL of a running stub or throws exception if not found
 	 */
 	URL findStubUrl(String groupId, String artifactId) throws StubNotFoundException;
 
 	/**
-	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]} tries to
-	 * find the matching URL of the running stub. You can also pass only {@code artifactId}.
-	 *
+	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]}
+	 * tries to find the matching URL of the running stub. You can also pass only
+	 * {@code artifactId}.
 	 * @param ivyNotation - Ivy representation of the Maven artifact
 	 * @return URL of a running stub or throws exception if not found
 	 */
@@ -50,4 +51,5 @@ public interface StubFinder extends StubTrigger {
 	 * Returns the list of Contracts
 	 */
 	Map<StubConfiguration, Collection<Contract>> getContracts();
+
 }

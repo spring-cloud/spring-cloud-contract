@@ -5,4 +5,5 @@ public class MessageSubscriber {
 	public void handleMessage(Person person) {
 
 	}
+
 }

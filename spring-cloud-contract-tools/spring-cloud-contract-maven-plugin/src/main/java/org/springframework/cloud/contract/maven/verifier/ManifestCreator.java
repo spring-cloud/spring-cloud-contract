@@ -24,19 +24,23 @@ import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 
 class ManifestCreator {
+
 	public static Manifest createManifest(MavenProject project) throws ManifestException {
 		Manifest manifest = new Manifest();
 		Plugin verifierMavenPlugin = findMavenPlugin(project.getBuildPlugins());
 		if (verifierMavenPlugin != null) {
-			manifest.addConfiguredAttribute(new Manifest.Attribute(
-					"Spring-Cloud-Contract-Maven-Plugin-Version", verifierMavenPlugin.getVersion()));
+			manifest.addConfiguredAttribute(
+					new Manifest.Attribute("Spring-Cloud-Contract-Maven-Plugin-Version",
+							verifierMavenPlugin.getVersion()));
 		}
-		if (verifierMavenPlugin != null && !verifierMavenPlugin.getDependencies().isEmpty()) {
-			Dependency verifierDependency = findVerifierDependency(verifierMavenPlugin.getDependencies());
+		if (verifierMavenPlugin != null
+				&& !verifierMavenPlugin.getDependencies().isEmpty()) {
+			Dependency verifierDependency = findVerifierDependency(
+					verifierMavenPlugin.getDependencies());
 			if (verifierDependency != null) {
 				String verifierVersion = verifierDependency.getVersion();
-				manifest.addConfiguredAttribute(new Manifest.Attribute("Spring-Cloud-Contract-Verifier-Version",
-						verifierVersion));
+				manifest.addConfiguredAttribute(new Manifest.Attribute(
+						"Spring-Cloud-Contract-Verifier-Version", verifierVersion));
 			}
 		}
 		return manifest;

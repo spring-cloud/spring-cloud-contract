@@ -56,6 +56,7 @@ public class StubRunnerBootEurekaExample {
 
 -Dstubrunner.cloud.eureka.enabled=true
 -Dstubrunner.repositoryRoot=classpath:m2repo/repository/
+-Dstubrunner.camel.enabled=false
 -Dspring.cloud.zookeeper.enabled=false
 -Dspring.cloud.zookeeper.discovery.enabled=false
 -Ddebug=true

@@ -18,7 +18,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Spring rabbit test utility that provides a mock ConnectionFactory to avoid having to connect against a running broker.
+ * Spring rabbit test utility that provides a mock ConnectionFactory to avoid having to
+ * connect against a running broker.
  *
  * Set verifier.amqp.mockConnection=true to enable the mocked ConnectionFactory
  *
@@ -34,16 +35,19 @@ public class RabbitMockConnectionFactoryAutoConfiguration {
 	public ConnectionFactory connectionFactory() {
 		final Connection mockConnection = mock(Connection.class);
 		final AMQP.Queue.DeclareOk mockDeclareOk = mock(AMQP.Queue.DeclareOk.class);
-		com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(com.rabbitmq.client.ConnectionFactory.class, new Answer() {
-			@Override public Object answer(InvocationOnMock invocationOnMock)
-					throws Throwable {
-				// hack for keeping backward compatibility with #303
-				if ("newConnection".equals(invocationOnMock.getMethod().getName())) {
-					return mockConnection;
-				}
-				return Mockito.RETURNS_DEFAULTS.answer(invocationOnMock);
-			}
-		});
+		com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(
+				com.rabbitmq.client.ConnectionFactory.class, new Answer() {
+					@Override
+					public Object answer(InvocationOnMock invocationOnMock)
+							throws Throwable {
+						// hack for keeping backward compatibility with #303
+						if ("newConnection"
+								.equals(invocationOnMock.getMethod().getName())) {
+							return mockConnection;
+						}
+						return Mockito.RETURNS_DEFAULTS.answer(invocationOnMock);
+					}
+				});
 		try {
 			final Channel mockChannel = mock(Channel.class, invocationOnMock -> {
 				if ("queueDeclare".equals(invocationOnMock.getMethod().getName())) {
@@ -54,11 +58,13 @@ public class RabbitMockConnectionFactoryAutoConfiguration {
 			when(mockConnection.isOpen()).thenReturn(true);
 			when(mockConnection.createChannel()).thenReturn(mockChannel);
 			when(mockConnection.createChannel(Mockito.anyInt())).thenReturn(mockChannel);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		return new CachingConnectionFactory(mockConnectionFactory) {
 
 		};
 	}
+
 }

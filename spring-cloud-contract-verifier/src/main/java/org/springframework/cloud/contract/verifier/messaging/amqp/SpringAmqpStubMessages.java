@@ -42,19 +42,20 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFAULT_CLASSID_FIELD_NAME;
 
 /**
- * {@link MessageVerifier} implementation to integrate with plain spring-amqp/spring-rabbit.
- * It is meant to be used without interacting with a running bus.
+ * {@link MessageVerifier} implementation to integrate with plain
+ * spring-amqp/spring-rabbit. It is meant to be used without interacting with a running
+ * bus.
  *
  * It relies on the RabbitTemplate to be a spy to be able to capture send messages.
  *
- * Messages are not sent to the bus - but are handed over to a {@link SimpleMessageListenerContainer} which
- * allows us to test the full deserialization and listener invocation.
+ * Messages are not sent to the bus - but are handed over to a
+ * {@link SimpleMessageListenerContainer} which allows us to test the full deserialization
+ * and listener invocation.
  *
  * @author Mathias Düsterhöft
  * @since 1.0.2
  */
-public class SpringAmqpStubMessages implements
-		MessageVerifier<Message> {
+public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 
 	private static final Log log = LogFactory.getLog(SpringAmqpStubMessages.class);
 
@@ -63,10 +64,20 @@ public class SpringAmqpStubMessages implements
 	private final MessageListenerAccessor messageListenerAccessor;
 
 	@Autowired
-	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAccessor messageListenerAccessor) {
+	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate,
+			MessageListenerAccessor messageListenerAccessor) {
 		Assert.notNull(rabbitTemplate, "RabbitTemplate must be set");
-		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock(),
-				"StubRunner AMQP will work only if RabbiTemplate is a spy"); //we get send messages by capturing arguments on the spy
+		Assert.isTrue(
+				mockingDetails(rabbitTemplate).isSpy()
+						|| mockingDetails(rabbitTemplate).isMock(),
+				"StubRunner AMQP will work only if RabbiTemplate is a spy"); // we get
+																				// send
+																				// messages
+																				// by
+																				// capturing
+																				// arguments
+																				// on the
+																				// spy
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
 	}
@@ -77,37 +88,57 @@ public class SpringAmqpStubMessages implements
 				.withBody(((String) payload).getBytes())
 				.andProperties(
 						MessagePropertiesBuilder.newInstance()
-								.setContentType((String) headers.get("contentType"))
+								.setContentType(header(headers, "contentType"))
 								.copyHeaders(headers).build())
 				.build();
 		if (headers != null && headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
-			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME, headers.get(DEFAULT_CLASSID_FIELD_NAME));
+			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME,
+					headers.get(DEFAULT_CLASSID_FIELD_NAME));
 		}
 		if (headers != null && headers.containsKey(AmqpHeaders.RECEIVED_ROUTING_KEY)) {
 			message.getMessageProperties()
-					.setReceivedRoutingKey((String) headers.get(AmqpHeaders.RECEIVED_ROUTING_KEY));
+					.setReceivedRoutingKey(header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
 		}
 		send(message, destination);
+	}
+
+	private String header(Map<String, Object> headers, String headerName) {
+		if (headers == null) {
+			return "";
+		}
+		Object value = headers.get(headerName);
+		if (value instanceof String) {
+			return (String) value;
+		} else if (value instanceof Iterable) {
+			Iterable values = ((Iterable) value);
+			return values.iterator().hasNext() ? (String) values.iterator().next() : "";
+		}
+		return value.toString();
 	}
 
 	@Override
 	public void send(Message message, String destination) {
 		final String routingKey = message.getMessageProperties().getReceivedRoutingKey();
-		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor.getListenerContainersForDestination(destination, routingKey);
+		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor
+				.getListenerContainersForDestination(destination, routingKey);
 		if (listenerContainers.isEmpty()) {
-			throw new IllegalStateException("no listeners found for destination " + destination);
+			throw new IllegalStateException(
+					"no listeners found for destination " + destination);
 		}
 		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
 			Object messageListener = listenerContainer.getMessageListener();
-			if (messageListener instanceof ChannelAwareMessageListener && listenerContainer.getConnectionFactory() != null) {
+			if (messageListener instanceof ChannelAwareMessageListener
+					&& listenerContainer.getConnectionFactory() != null) {
 				try {
 					((ChannelAwareMessageListener) messageListener).onMessage(message,
-							listenerContainer.getConnectionFactory().createConnection().createChannel(true));
+							listenerContainer.getConnectionFactory().createConnection()
+									.createChannel(true));
 				}
 				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
-			} else {
+			}
+			else {
 				((MessageListener) messageListener).onMessage(message);
 			}
 		}
@@ -117,13 +148,16 @@ public class SpringAmqpStubMessages implements
 	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
 		ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
 		ArgumentCaptor<String> routingKeyCaptor = ArgumentCaptor.forClass(String.class);
-		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination), routingKeyCaptor.capture(),
-				messageCaptor.capture(), ArgumentMatchers.any());
+		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination),
+				routingKeyCaptor.capture(), messageCaptor.capture(),
+				ArgumentMatchers.any());
 		if (messageCaptor.getAllValues().isEmpty()) {
 			log.info("no messages found on destination [" + destination + "]");
 			return null;
-		} else if (messageCaptor.getAllValues().size() > 1) {
-			log.info("multiple messages found on destination [" + destination + "] returning last one");
+		}
+		else if (messageCaptor.getAllValues().size() > 1) {
+			log.info("multiple messages found on destination [" + destination
+					+ "] returning last one");
 			return messageCaptor.getValue();
 		}
 		Message message = messageCaptor.getValue();

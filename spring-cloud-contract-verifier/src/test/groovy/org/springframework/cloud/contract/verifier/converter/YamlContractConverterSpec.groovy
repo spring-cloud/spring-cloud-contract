@@ -16,17 +16,19 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
-import spock.lang.Issue
-
 import java.util.regex.Pattern
 
+import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.util.MapConverter
@@ -61,6 +63,10 @@ class YamlContractConverterSpec extends Specification {
 	File ymlMessagingMatchers = new File(ymlMessagingMatchersFile.toURI())
 	URL ymlCookiesUrl = YamlContractConverterSpec.getResource("/yml/contract_cookies.yml")
 	File ymlCookies = new File(ymlCookiesUrl.toURI())
+	URL ymlBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_pdf.yml")
+	File ymlBytes = new File(ymlBytesUrl.toURI())
+	URL ymlMessagingBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_messaging_pdf.yml")
+	File ymlMessagingBytes = new File(ymlMessagingBytesUrl.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
 
 	def "should convert YAML with Cookies to DSL"() {
@@ -119,6 +125,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.bodyMatchers.jsonPathRegexMatchers[0].value() == 'bar'
 		and:
 			contract.response.status.clientValue == 200
+			if (yamlFile == ymlWithRest) contract.response.delay.clientValue == 1000 else !contract.response.delay
 			contract.response.headers.entries.find { it.name == "foo2" &&
 					((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar" }
 			contract.response.headers.entries.find { it.name == "foo3" &&
@@ -187,6 +194,24 @@ class YamlContractConverterSpec extends Specification {
 			RegexPatterns patterns = new RegexPatterns()
 			contract.request.headers.entries.find { it.name == "Content-Type" &&
 					((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json" }
+			((Pattern) contract.request.urlPath.clientValue).pattern() == "/get/[0-9]"
+			contract.request.urlPath.serverValue == "/get/1"
+			contract.request.urlPath.queryParameters.parameters.size() == 8
+			QueryParameters queryParameters = contract.request.urlPath.queryParameters
+			assertQueryParam(queryParameters, "limit", 10,
+					MatchingStrategy.Type.EQUAL_TO, 20)
+			assertQueryParam(queryParameters, "offset", 20,
+					MatchingStrategy.Type.CONTAINS, 20)
+			assertQueryParam(queryParameters, "sort", "name",
+					MatchingStrategy.Type.EQUAL_TO, "name")
+			assertQueryParam(queryParameters, "search", 55,
+					MatchingStrategy.Type.NOT_MATCHING, (~/^[0-9]{2}$/).pattern())
+			assertQueryParam(queryParameters, "age", 99,
+					MatchingStrategy.Type.NOT_MATCHING, "^\\\\w*\$")
+			assertQueryParam(queryParameters, "name", "John.Doe",
+					MatchingStrategy.Type.MATCHING, "John.*")
+			assertQueryParam(queryParameters, "hello", true,
+					MatchingStrategy.Type.ABSENT, null)
 			contract.request.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.duck'
 			contract.request.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
 			contract.request.bodyMatchers.jsonPathRegexMatchers[0].value() == '[0-9]{3}'
@@ -214,6 +239,18 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.bodyMatchers.jsonPathRegexMatchers[8].value() == patterns.isoTime()
 			contract.request.bodyMatchers.jsonPathRegexMatchers[9].path() == "\$.['key'].['complex.key']"
 			contract.request.bodyMatchers.jsonPathRegexMatchers[9].matchingType() == MatchingType.EQUALITY
+			contract.request.bodyMatchers.jsonPathRegexMatchers[10].path() == '$.valueWithMin'
+			contract.request.bodyMatchers.jsonPathRegexMatchers[10].matchingType() == MatchingType.TYPE
+			contract.request.bodyMatchers.jsonPathRegexMatchers[10].minTypeOccurrence() == 1
+			contract.request.bodyMatchers.jsonPathRegexMatchers[11].path() == '$.valueWithMax'
+			contract.request.bodyMatchers.jsonPathRegexMatchers[11].matchingType() == MatchingType.TYPE
+			contract.request.bodyMatchers.jsonPathRegexMatchers[11].maxTypeOccurrence() == 3
+			contract.request.bodyMatchers.jsonPathRegexMatchers[12].path() == '$.valueWithMinMax'
+			contract.request.bodyMatchers.jsonPathRegexMatchers[12].matchingType() == MatchingType.TYPE
+			contract.request.bodyMatchers.jsonPathRegexMatchers[12].minTypeOccurrence() == 1
+			contract.request.bodyMatchers.jsonPathRegexMatchers[12].maxTypeOccurrence() == 3
+			contract.request.cookies.entries.find { it.key == "foo" }.clientValue instanceof Pattern
+			contract.request.cookies.entries.find { it.key == "bar" }.serverValue == new ExecutionProperty('equals($it)')
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.duck'
@@ -262,6 +299,17 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.bodyMatchers.jsonPathRegexMatchers[15].path() == '$.duck'
 			contract.response.bodyMatchers.jsonPathRegexMatchers[15].matchingType() == MatchingType.COMMAND
 			contract.response.bodyMatchers.jsonPathRegexMatchers[15].value() == new ExecutionProperty('assertThatValueIsANumber($it)')
+	}
+
+	protected Object assertQueryParam(QueryParameters queryParameters, String queryParamName, Object serverValue,
+									  MatchingStrategy.Type clientType, Object clientValue) {
+		if (clientType == MatchingStrategy.Type.ABSENT) {
+			return ! queryParameters.parameters.find { it.name == queryParamName}
+		}
+		return queryParameters.parameters.find { it.name == queryParamName &&
+				it.serverValue == serverValue &&
+				((MatchingStrategy) it.clientValue).type == clientType &&
+				((MatchingStrategy) it.clientValue).clientValue == clientValue  }
 	}
 
 	@Issue("#604")
@@ -468,6 +516,36 @@ class YamlContractConverterSpec extends Specification {
 			contract.outputMessage.body.clientValue == [bookName: "foo"]
 	}
 
+	def "should convert YAML with HTTP binary body to DSL"() {
+		given:
+			assert converter.isAccepted(ymlBytes)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlBytes)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			contract.request.body.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.request.body.clientValue).type == byte[]
+		and:
+			contract.response.body.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.response.body.clientValue).type == byte[]
+	}
+
+	def "should convert YAML with messaging binary body to DSL"() {
+		given:
+			assert converter.isAccepted(ymlMessagingBytes)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlMessagingBytes)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			contract.input.messageBody.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.input.messageBody.clientValue).type == byte[]
+		and:
+			contract.outputMessage.body.clientValue instanceof FromFileProperty
+			((FromFileProperty) contract.outputMessage.body.clientValue).type == byte[]
+	}
+
 	def "should assert request headers when converting YAML to DSL"() {
 		given:
 			File yml = new File(YamlContractConverterSpec.getResource("/yml/contract_broken_request_headers.yml").toURI())
@@ -504,6 +582,108 @@ class YamlContractConverterSpec extends Specification {
 			contracts.last().request.url.clientValue == "/users/2"
 	}
 
+	def "should dump yml as string"() {
+		given:
+			String expectedYaml1 = '''\
+---
+request:
+  method: "POST"
+  url: "/users/1"
+  urlPath: null
+  queryParameters: {}
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  matchers:
+    url: null
+    body: []
+    headers: []
+    queryParameters: []
+    cookies: []
+    multipart: null
+  multipart: null
+response:
+  status: 200
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  matchers:
+    body: []
+    headers: []
+    cookies: []
+  async: null
+  fixedDelayMilliseconds: null
+input: null
+outputMessage: null
+description: null
+label: null
+name: "post1"
+priority: null
+ignored: false
+'''
+			String expectedYaml2 = '''\
+---
+request:
+  method: "POST"
+  url: "/users/2"
+  urlPath: null
+  queryParameters: {}
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  matchers:
+    url: null
+    body: []
+    headers: []
+    queryParameters: []
+    cookies: []
+    multipart: null
+  multipart: null
+response:
+  status: 200
+  headers: {}
+  cookies: {}
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  matchers:
+    body: []
+    headers: []
+    cookies: []
+  async: null
+  fixedDelayMilliseconds: null
+input: null
+outputMessage: null
+description: null
+label: null
+name: "post2"
+priority: null
+ignored: false
+'''
+		when:
+			Map<String, byte[]> strings = converter.store([
+			        new YamlContract(
+							name: "post1",
+							request: new YamlContract.Request(method: "POST", url: "/users/1"),
+							response: new YamlContract.Response(status: 200)
+					),new YamlContract(
+							name: "post2",
+							request: new YamlContract.Request(method: "POST", url: "/users/2"),
+							response: new YamlContract.Response(status: 200)
+					),
+			])
+		then:
+			strings.size() == 2
+			new String(strings["post1.yml"]).trim() == expectedYaml1.trim()
+			new String(strings["post2.yml"]).trim() == expectedYaml2.trim()
+	}
+
 	def "should parse messaging contract for [#file]"() {
 		given:
 			assert converter.isAccepted(file)
@@ -537,6 +717,7 @@ class YamlContractConverterSpec extends Specification {
 					body([foo: "bar"])
 				}
 				response {
+					fixedDelayMilliseconds 1000
 					status(200)
 					headers {
 						header("foo2", "bar")
@@ -564,6 +745,7 @@ class YamlContractConverterSpec extends Specification {
 			yamlContract.response.body == [foo2: "bar"]
 			yamlContract.response.cookies.find { it.key == "foo" && it.value == "client" }
 			yamlContract.response.cookies.find { it.key == "bar" && it.value == "client" }
+			yamlContract.response.fixedDelayMilliseconds == 1000
 	}
 
 	def "should convert multiple messaging DSLs to YAML"() {

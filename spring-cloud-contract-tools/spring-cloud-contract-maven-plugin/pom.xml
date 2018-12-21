@@ -22,15 +22,28 @@
 	<url>https://github.com/spring-cloud/spring-cloud-contract</url>
 
 	<properties>
-		<maven.version>3.2.5</maven.version>
-		<maven.plugin.plugin.version>3.5</maven.plugin.plugin.version>
-
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
+		<maven.plugin.plugin.version>3.5</maven.plugin.plugin.version>
 
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
+		<asciidoctor-maven-plugin.version>1.5.7.1</asciidoctor-maven-plugin.version>
+		<maven-filtering.version>3.1.1</maven-filtering.version>
+		<takari-plugin-testing.version>2.9.2</takari-plugin-testing.version>
+		<takari-plugin-integration-testing.version>2.9.2
+		</takari-plugin-integration-testing.version>
+		<jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
+		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
+		<maven-project-info-reports-plugin.version>3.0.0
+		</maven-project-info-reports-plugin.version>
+		<maven-plugin-annotations.version>3.5.2</maven-plugin-annotations.version>
+		<maven-archiver.version>3.2.0</maven-archiver.version>
+		<plexus-archiver.version>3.6.0</plexus-archiver.version>
+		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+		<maven-site-plugin.version>3.7.1</maven-site-plugin.version>
+		<plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
+		<takari-lifecycle-plugin.version>1.13.7</takari-lifecycle-plugin.version>
 	</properties>
 
 	<version>2.1.0.BUILD-SNAPSHOT</version>
@@ -55,6 +68,7 @@
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
+				<version>${plexus-component-metadata.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -67,6 +81,7 @@
 			<plugin>
 				<groupId>io.takari.maven.plugins</groupId>
 				<artifactId>takari-lifecycle-plugin</artifactId>
+				<version>${takari-lifecycle-plugin.version}</version>
 				<extensions>true</extensions>
 				<executions>
 					<execution>
@@ -81,7 +96,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.20</version>
+				<version>${maven-failsafe-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -94,7 +109,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
+				<version>${jacoco-maven-plugin.version}</version>
 				<configuration>
 					<excludes>
 						<exclude>**/HelpMojo.class</exclude>
@@ -112,11 +127,12 @@
 			<plugin>
 				<groupId>org.eluder.coveralls</groupId>
 				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>${coveralls-maven-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.4</version>
+				<version>${maven-site-plugin.version}</version>
 				<configuration>
 					<skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
 					<!-- disable generateReports if you don't want to include the built-in reports -->
@@ -140,19 +156,14 @@
 					<dependency>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
-						<version>1.5.3</version>
-					</dependency>
-					<dependency>
-						<groupId>commons-lang</groupId>
-						<artifactId>commons-lang</artifactId>
-						<version>2.6</version>
+						<version>${asciidoctor-maven-plugin.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-scm-publish-plugin</artifactId>
-				<version>1.1</version>
+				<version>${maven-scm-publish-plugin.version}</version>
 				<configuration>
 					<content>${project.reporting.outputDirectory}</content>
 				</configuration>
@@ -198,24 +209,23 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-plugin-plugin</artifactId>
-				<version>${maven.plugin.plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.9</version>
+				<version>${maven-project-info-reports-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
-							<report>cim</report>
+							<report>ci-management</report>
 							<report>help</report>
 							<report>index</report>
-							<report>issue-tracking</report>
-							<report>license</report>
+							<report>issue-management</report>
+							<report>licenses</report>
 							<report>modules</report>
 							<report>plugin-management</report>
 							<report>plugins</report>
-							<report>project-team</report>
+							<report>team</report>
 							<report>scm</report>
 							<report>summary</report>
 						</reports>
@@ -292,7 +302,7 @@
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>
 			<artifactId>maven-filtering</artifactId>
-			<version>3.1.0</version>
+			<version>${maven-filtering.version}</version>
 		</dependency>
 
 		<dependency>
@@ -340,31 +350,31 @@
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
-			<version>${maven.plugin.plugin.version}</version>
+			<version>${maven-plugin-annotations.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-archiver</artifactId>
-			<version>3.0.0</version>
+			<version>${maven-archiver.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-archiver</artifactId>
-			<version>3.1</version>
+			<version>${plexus-archiver.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.takari.maven.plugins</groupId>
 			<artifactId>takari-plugin-testing</artifactId>
-			<version>2.9.0</version>
+			<version>${takari-plugin-testing.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.takari.maven.plugins</groupId>
 			<artifactId>takari-plugin-integration-testing</artifactId>
-			<version>2.9.0</version>
+			<version>${takari-plugin-integration-testing.version}</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>

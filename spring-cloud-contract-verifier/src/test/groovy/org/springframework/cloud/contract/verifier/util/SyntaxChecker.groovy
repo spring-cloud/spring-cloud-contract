@@ -1,17 +1,14 @@
 package org.springframework.cloud.contract.verifier.util
 
-import java.lang.reflect.Method
-import javax.inject.Inject
-import javax.ws.rs.client.Entity
-import javax.ws.rs.client.WebTarget
-import javax.ws.rs.core.Response
-
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.transform.CompileStatic
 import io.restassured.RestAssured
 import io.restassured.module.mockmvc.RestAssuredMockMvc
+import io.restassured.module.webtestclient.RestAssuredWebTestClient
+import io.restassured.module.webtestclient.response.WebTestClientResponse
+import io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification
 import io.restassured.response.ResponseOptions
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
@@ -19,7 +16,6 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.junit.Rule
 import org.junit.Test
 import org.mdkt.compiler.InMemoryJavaCompiler
-
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
@@ -27,6 +23,12 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil
 import org.springframework.util.ReflectionUtils
+
+import javax.inject.Inject
+import javax.ws.rs.client.Entity
+import javax.ws.rs.client.WebTarget
+import javax.ws.rs.core.Response
+import java.lang.reflect.Method
 
 /**
  * checking the syntax of produced scripts
@@ -40,8 +42,8 @@ class SyntaxChecker {
 	private static final String[] DEFAULT_IMPORTS = [
 			Contract.name,
 			ResponseOptions.name,
-			"io.restassured.module.mockmvc.specification.*",
-			"io.restassured.module.mockmvc.*",
+			'io.restassured.module.mockmvc.specification.*',
+			'io.restassured.module.mockmvc.*',
 			Test.name,
 			Rule.name,
 			DocumentContext.name,
@@ -51,7 +53,9 @@ class SyntaxChecker {
 			ContractVerifierMessage.name,
 			ContractVerifierMessaging.name,
 			WebTarget.name,
-			Response.name
+			Response.name,
+			WebTestClientRequestSpecification.name,
+			WebTestClientResponse.name
 	]
 
 	private static final String DEFAULT_IMPORTS_AS_STRING = DEFAULT_IMPORTS.collect {
@@ -63,25 +67,35 @@ class SyntaxChecker {
 			"${RestAssuredMockMvc.name}.when",
 			"${RestAssured.name}.*",
 			"${Entity.name}.*",
+			"${ContractVerifierUtil.name}.fileToBytes",
 			"${ContractVerifierMessagingUtil.name}.headers",
 			"${JsonAssertion.name}.assertThatJson",
 			"${SpringCloudContractAssertions.name}.assertThat"
 	].collect { "import static ${it};"}.join("\n")
 
+	private static final String WEB_TEST_CLIENT_STATIC_IMPORTS = [
+			"${RestAssuredWebTestClient.name}.*",
+			"${Entity.name}.*",
+			"${ContractVerifierUtil.name}.fileToBytes",
+			"${ContractVerifierMessagingUtil.name}.headers",
+			"${JsonAssertion.name}.assertThatJson",
+			"${SpringCloudContractAssertions.name}.assertThat"
+	].collect { "import static ${it};" }.join("\n")
+
 	static void tryToCompile(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
-			tryToCompileGroovy(test)
+			tryToCompileGroovy(builderName, test)
 		} else {
-			tryToCompileJava(test)
+			tryToCompileJava(builderName, test)
 		}
 	}
 
 	static void tryToRun(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
-			Script script = tryToCompileGroovy(test)
+			Script script = tryToCompileGroovy(builderName, test)
 			script.run()
 		} else {
-			Class clazz = tryToCompileJava(test)
+			Class clazz = tryToCompileJava(builderName, test)
 			Method method = ReflectionUtils.findMethod(clazz, "method")
 			method.invoke(clazz.newInstance())
 		}
@@ -90,13 +104,13 @@ class SyntaxChecker {
 	// no static compilation due to bug in Groovy https://issues.apache.org/jira/browse/GROOVY-8055
 	static void tryToCompileWithoutCompileStatic(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
-			tryToCompileGroovy(test, false)
+			tryToCompileGroovy(builderName, test, false)
 		} else {
-			tryToCompileJava(test)
+			tryToCompileJava(builderName, test)
 		}
 	}
 
-	static Script tryToCompileGroovy(String test, boolean compileStatic = true) {
+	static Script tryToCompileGroovy(String builderName, String test, boolean compileStatic = true) {
 		def imports = new ImportCustomizer()
 		CompilerConfiguration configuration = new CompilerConfiguration()
 		if (compileStatic) {
@@ -106,7 +120,7 @@ class SyntaxChecker {
 		configuration.addCompilationCustomizers(imports)
 		StringBuilder sourceCode = new StringBuilder()
 		sourceCode.append("${DEFAULT_IMPORTS_AS_STRING}\n")
-		sourceCode.append("${STATIC_IMPORTS}\n")
+		sourceCode.append(getStaticImports(builderName))
 		sourceCode.append("\n")
 		sourceCode.append("WebTarget webTarget")
 		sourceCode.append("\n")
@@ -114,7 +128,14 @@ class SyntaxChecker {
 		return new GroovyShell(SyntaxChecker.classLoader, configuration).parse(sourceCode.toString())
 	}
 
-	static Class tryToCompileJava(String test) {
+	private static GString getStaticImports(String builderName) {
+		if (builderName.toLowerCase().contains('webtestclient')) {
+			return "$WEB_TEST_CLIENT_STATIC_IMPORTS\n"
+		}
+		return "$STATIC_IMPORTS\n"
+	}
+
+	static Class tryToCompileJava(String builderName, String test) {
 		Random random = new Random()
 		int first = Math.abs(random.nextInt())
 		int hashCode = Math.abs(test.hashCode())
@@ -123,7 +144,7 @@ class SyntaxChecker {
 		String fqnClassName = "com.example.${className}"
 		sourceCode.append("package com.example;\n")
 		sourceCode.append("${DEFAULT_IMPORTS_AS_STRING}\n")
-		sourceCode.append("${STATIC_IMPORTS}\n")
+		sourceCode.append(getStaticImports(builderName))
 		sourceCode.append("\n")
 		sourceCode.append("public class ${className} {\n")
 		sourceCode.append("\n")

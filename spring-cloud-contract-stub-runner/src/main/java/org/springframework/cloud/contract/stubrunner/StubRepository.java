@@ -34,8 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
-import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
-import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter;
+import org.springframework.cloud.contract.verifier.util.ContractScanner;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
@@ -46,10 +45,15 @@ class StubRepository {
 	private static final Log log = LogFactory.getLog(StubRepository.class);
 
 	private final File path;
+
 	final List<File> stubs;
+
 	final Collection<Contract> contracts;
+
 	private final List<ContractConverter> contractConverters;
+
 	private final List<HttpServerStub> httpServerStubs;
+
 	private final StubRunnerOptions options;
 
 	StubRepository(File repository, List<HttpServerStub> httpServerStubs,
@@ -58,9 +62,11 @@ class StubRepository {
 			throw new IllegalArgumentException(
 					"Missing descriptor repository under path [" + repository + "]");
 		}
-		this.contractConverters = SpringFactoriesLoader.loadFactories(ContractConverter.class, null);
+		this.contractConverters = SpringFactoriesLoader
+				.loadFactories(ContractConverter.class, null);
 		if (log.isTraceEnabled()) {
-			log.trace("Found the following contract converters " + this.contractConverters);
+			log.trace(
+					"Found the following contract converters " + this.contractConverters);
 		}
 		this.httpServerStubs = httpServerStubs;
 		this.path = repository;
@@ -107,8 +113,7 @@ class StubRepository {
 				: Collections.<File>emptyList();
 	}
 
-	private List<File> collectMappings(
-			File descriptorsDirectory) {
+	private List<File> collectMappings(File descriptorsDirectory) {
 		final List<File> mappingDescriptors = new ArrayList<>();
 		try {
 			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
@@ -117,7 +122,8 @@ class StubRepository {
 						public FileVisitResult visitFile(Path path,
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
-							if (httpServerStubAccepts(file) && isStubPerConsumerPathMatching(file)) {
+							if (httpServerStubAccepts(file)
+									&& isStubPerConsumerPathMatching(file)) {
 								mappingDescriptors.add(file);
 							}
 							return super.visitFile(path, attrs);
@@ -150,40 +156,11 @@ class StubRepository {
 	}
 
 	private Collection<Contract> contractDescriptors() {
-		return (this.path.exists() ? collectContractDescriptors(this.path)
+		return (this.path.exists() ?
+				ContractScanner.collectContractDescriptors(this.path, this::isStubPerConsumerPathMatching)
 				: Collections.<Contract>emptySet());
 	}
 
-	@SuppressWarnings("unchecked")
-	private Collection<Contract> collectContractDescriptors(final File descriptorsDirectory) {
-		final List<Contract> contractDescriptors = new ArrayList<>();
-		try {
-			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
-					new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult visitFile(Path path,
-								BasicFileAttributes attrs) throws IOException {
-							File file = path.toFile();
-							ContractConverter converter = contractConverter(file);
-							if (isStubPerConsumerPathMatching(file)) {
-								if (isContractDescriptor(file)) {
-									contractDescriptors
-											.addAll(ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file));
-								} else if (converter != null && converter.isAccepted(file)) {
-									contractDescriptors.addAll(converter.convertFrom(file));
-								} else if (YamlContractConverter.INSTANCE.isAccepted(file)) {
-									contractDescriptors.addAll(YamlContractConverter.INSTANCE.convertFrom(file));
-								}
-							}
-							return super.visitFile(path, attrs);
-						}
-					});
-		}
-		catch (IOException e) {
-			log.warn("Exception occurred while trying to parse file", e);
-		}
-		return contractDescriptors;
-	}
 
 	private boolean isStubPerConsumerPathMatching(File file) {
 		if (!this.options.isStubsPerConsumer()) {
@@ -194,14 +171,11 @@ class StubRepository {
 		String absolutePath = file.getAbsolutePath();
 		boolean stubPerConsumerMatching = absolutePath.contains(searchedConsumerName);
 		if (log.isDebugEnabled()) {
-			log.debug("Absolute path [" + absolutePath + "] contains [" + searchedConsumerName + "] in its path [" + stubPerConsumerMatching + "]");
+			log.debug("Absolute path [" + absolutePath + "] contains ["
+					+ searchedConsumerName + "] in its path [" + stubPerConsumerMatching
+					+ "]");
 		}
 		return stubPerConsumerMatching;
-	}
-
-	private static boolean isContractDescriptor(File file) {
-		// TODO: Consider script injections implications...
-		return file.isFile() && file.getName().endsWith(".groovy");
 	}
 
 }

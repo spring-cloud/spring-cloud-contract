@@ -53,7 +53,7 @@ class BodyExtractor {
 	 * client side.
 	 */
 	static String extractStubValueFrom(Object body) {
-		Object bodyValue = extractClientValueFromBody(body);
+		Object bodyValue = extractClientValueFromBody(body)
 		String json = new JsonOutput().toJson(bodyValue)
 		json = StringEscapeUtils.unescapeJavaScript(json)
 		return trimRepeatedQuotes(json)

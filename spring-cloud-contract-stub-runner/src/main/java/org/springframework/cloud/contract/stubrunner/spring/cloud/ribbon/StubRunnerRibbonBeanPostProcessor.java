@@ -26,18 +26,20 @@ import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.ServerList;
 
 /**
- * Ribbon AutoConfiguration that manipulates the service id to make the service
- * be picked from the list of available WireMock instance if one is available.
+ * Ribbon AutoConfiguration that manipulates the service id to make the service be picked
+ * from the list of available WireMock instance if one is available.
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 class StubRunnerRibbonBeanPostProcessor implements BeanPostProcessor {
 
 	private final BeanFactory beanFactory;
+
 	private StubFinder stubFinder;
+
 	private StubMapperProperties stubMapperProperties;
+
 	private IClientConfig clientConfig;
 
 	StubRunnerRibbonBeanPostProcessor(BeanFactory beanFactory) {
@@ -53,7 +55,8 @@ class StubRunnerRibbonBeanPostProcessor implements BeanPostProcessor {
 
 	private StubMapperProperties stubMapperProperties() {
 		if (this.stubMapperProperties == null) {
-			this.stubMapperProperties = this.beanFactory.getBean(StubMapperProperties.class);
+			this.stubMapperProperties = this.beanFactory
+					.getBean(StubMapperProperties.class);
 		}
 		return this.stubMapperProperties;
 	}
@@ -66,15 +69,19 @@ class StubRunnerRibbonBeanPostProcessor implements BeanPostProcessor {
 	}
 
 	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+	public Object postProcessBeforeInitialization(Object bean, String beanName)
+			throws BeansException {
 		if (bean instanceof ServerList && !(bean instanceof StubRunnerRibbonServerList)) {
-			return new StubRunnerRibbonServerList(stubFinder(), stubMapperProperties(), clientConfig());
+			return new StubRunnerRibbonServerList(stubFinder(), stubMapperProperties(),
+					clientConfig());
 		}
 		return bean;
 	}
 
 	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+	public Object postProcessAfterInitialization(Object bean, String beanName)
+			throws BeansException {
 		return bean;
 	}
+
 }

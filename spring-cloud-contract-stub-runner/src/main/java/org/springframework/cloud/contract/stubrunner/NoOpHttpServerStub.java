@@ -7,6 +7,7 @@ import java.util.Collection;
  * @author Marcin Grzejszczak
  */
 class NoOpHttpServerStub implements HttpServerStub {
+
 	@Override
 	public int port() {
 		return -1;
@@ -37,11 +38,14 @@ class NoOpHttpServerStub implements HttpServerStub {
 		return this;
 	}
 
-	@Override public String registeredMappings() {
+	@Override
+	public String registeredMappings() {
 		return "";
 	}
 
-	@Override public boolean isAccepted(File file) {
+	@Override
+	public boolean isAccepted(File file) {
 		return true;
 	}
+
 }

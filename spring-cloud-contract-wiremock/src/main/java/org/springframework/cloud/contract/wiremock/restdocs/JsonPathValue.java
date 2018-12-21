@@ -23,7 +23,9 @@ import org.springframework.util.StringUtils;
 class JsonPathValue {
 
 	private final JsonPath jsonPath;
+
 	private final String expression;
+
 	private final CharSequence actual;
 
 	JsonPathValue(JsonPath jsonPath, CharSequence actual) {

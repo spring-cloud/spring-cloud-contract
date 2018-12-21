@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString;
+import groovy.transform.ToString
 
 /**
  * Represents a matching strategy for a JSON
@@ -55,7 +55,7 @@ class MatchingStrategy extends DslProperty {
 
 	enum Type {
 		EQUAL_TO("equalTo"), CONTAINS("containing"), MATCHING("matching"), NOT_MATCHING("notMatching"),
-		EQUAL_TO_JSON("equalToJson"), EQUAL_TO_XML("equalToXml"), ABSENT("absent")
+		EQUAL_TO_JSON("equalToJson"), EQUAL_TO_XML("equalToXml"), ABSENT("absent"),  BINARY_EQUAL_TO("binaryEqualTo")
 
 		final String name
 

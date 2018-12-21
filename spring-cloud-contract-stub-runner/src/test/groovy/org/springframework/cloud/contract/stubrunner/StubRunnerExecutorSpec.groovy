@@ -177,23 +177,23 @@ class StubRunnerExecutorSpec extends Specification {
 	private class AssertingStubMessages implements MessageVerifier<Object> {
 		
 		@Override
-		public void send(Object message, String destination) {
+		void send(Object message, String destination) {
 			throw new UnsupportedOperationException()
 		}
 
 		@Override
-		public <T> void send(T payload, Map<String, Object> headers, String destination) {
+		<T> void send(T payload, Map<String, Object> headers, String destination) {
 			assert !(JsonOutput.toJson(payload).contains("serverValue"))
 			assert headers.entrySet().every { !(it.value.toString().contains("serverValue")) }
 		}
 
 		@Override
-		public Object receive(String destination, long timeout, TimeUnit timeUnit) {
+		Object receive(String destination, long timeout, TimeUnit timeUnit) {
 			throw new UnsupportedOperationException()
 		}
 
 		@Override
-		public Object receive(String destination) {
+		Object receive(String destination) {
 			throw new UnsupportedOperationException()
 		}
 

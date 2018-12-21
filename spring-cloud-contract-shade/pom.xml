@@ -2,6 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<org.eclipse.sisu.inject.version>0.1.1</org.eclipse.sisu.inject.version>
+		<org.eclipse.sisu.plexus.version>0.1.1</org.eclipse.sisu.plexus.version>
+		<sisu-guice.version>3.1.6</sisu-guice.version>
+
+		<maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+		<maven-dependency-plugin.version>3.0.0</maven-dependency-plugin.version>
+		<build-helper-maven-plugin.version>1.12</build-helper-maven-plugin.version>
+	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
@@ -51,14 +60,14 @@
 		<dependency>
 			<groupId>org.eclipse.sisu</groupId>
 			<artifactId>org.eclipse.sisu.inject</artifactId>
-			<version>0.1.1</version>
+			<version>${org.eclipse.sisu.inject.version}</version>
 			<optional>true</optional>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.sisu</groupId>
 			<artifactId>org.eclipse.sisu.plexus</artifactId>
-			<version>0.1.1</version>
+			<version>${org.eclipse.sisu.plexus.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.enterprise</groupId>
@@ -71,7 +80,7 @@
 		<dependency>
 			<groupId>org.sonatype.sisu</groupId>
 			<artifactId>sisu-guice</artifactId>
-			<version>3.1.6</version>
+			<version>${sisu-guice.version}</version>
 			<classifier>no_aop</classifier>
 			<exclusions>
 				<exclusion>
@@ -92,7 +101,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.4.3</version>
+				<version>${maven-shade-plugin.version}</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -145,7 +154,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>${maven-dependency-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>unpack-dependencies</id>
@@ -172,7 +181,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.12</version>
+				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -187,6 +196,13 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<failIfNoTests>false</failIfNoTests>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

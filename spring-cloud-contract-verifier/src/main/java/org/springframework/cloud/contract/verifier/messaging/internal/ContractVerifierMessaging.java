@@ -25,9 +25,9 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  *
  */
 public class ContractVerifierMessaging<M> {
-	
+
 	private final MessageVerifier<M> exchange;
-	
+
 	public ContractVerifierMessaging(MessageVerifier<M> exchange) {
 		this.exchange = exchange;
 	}
@@ -35,7 +35,7 @@ public class ContractVerifierMessaging<M> {
 	public void send(ContractVerifierMessage message, String destination) {
 		this.exchange.send(message.getPayload(), message.getHeaders(), destination);
 	}
-	
+
 	public ContractVerifierMessage receive(String destination) {
 		return convert(this.exchange.receive(destination));
 	}

@@ -16,22 +16,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=https://localhost:8443")
+@SpringBootTest(classes = WiremockTestsApplication.class, properties = "app.baseUrl=https://localhost:8443")
 public class WiremockHttpsServerApplicationTests {
 
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options()
-					.port(5433)
-					.httpsPort(8443));
+			WireMockSpring.options().port(5433).httpsPort(8443));
 
 	@Autowired
 	private Service service;
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		stubFor(get(urlEqualTo("/test")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 

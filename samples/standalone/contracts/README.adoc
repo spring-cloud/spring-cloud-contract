@@ -57,7 +57,7 @@ and for Gradle:
 [source,groovy]
 ----
 contracts {
-    targetFramework = 'Spock'
+    testFramework ='Spock'
     testMode = 'JaxRsClient'
     baseClassForTests = 'org.springframework.cloud.MvcSpec'
     stubsMode = 'LOCAL'

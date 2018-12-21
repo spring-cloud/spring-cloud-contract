@@ -44,7 +44,7 @@ import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
-import org.eclipse.jgit.api.errors.EmtpyCommitException;
+import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -60,8 +60,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 
 /**
- * Abstraction over a Git repo. Can cloned repo from a given location
- * and check its branch.
+ * Abstraction over a Git repo. Can cloned repo from a given location and check its
+ * branch.
  *
  * taken from: https://github.com/spring-cloud/spring-cloud-release-tools
  *
@@ -101,7 +101,7 @@ class GitRepo {
 	 */
 	File cloneProject(URI projectUri) {
 		try {
-			log.info("Cloning repo from [" +  projectUri + "] to [" + this.basedir + "]");
+			log.info("Cloning repo from [" + projectUri + "] to [" + this.basedir + "]");
 			Git git = cloneToBasedir(projectUri, this.basedir);
 			if (git != null) {
 				git.close();
@@ -158,29 +158,34 @@ class GitRepo {
 	 * @param message - commit message
 	 */
 	CommitResult commit(File project, String message) {
-		try(Git git = this.gitFactory.open(file(project))) {
+		try (Git git = this.gitFactory.open(file(project))) {
 			git.add().addFilepattern(".").call();
 			git.commit().setAllowEmpty(false).setMessage(message).call();
 			log.info("Commited successfully with message [" + message + "]");
 			return CommitResult.SUCCESSFUL;
-		} catch (EmtpyCommitException e) {
+		}
+		catch (EmptyCommitException e) {
 			log.info("There were no changes detected. Will not commit an empty commit");
 			return CommitResult.EMPTY;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	void reset(File project) {
-		try(Git git = this.gitFactory.open(file(project))) {
+		try (Git git = this.gitFactory.open(file(project))) {
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	enum CommitResult {
+
 		SUCCESSFUL, EMPTY
+
 	}
 
 	/**
@@ -188,9 +193,10 @@ class GitRepo {
 	 * @param project - Git project
 	 */
 	void pushCurrentBranch(File project) {
-		try(Git git = this.gitFactory.open(file(project))) {
+		try (Git git = this.gitFactory.open(file(project))) {
 			this.gitFactory.push(git).call();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -223,8 +229,7 @@ class GitRepo {
 		}
 	}
 
-	private Ref checkoutBranch(File projectDir, String branch)
-			throws GitAPIException {
+	private Ref checkoutBranch(File projectDir, String branch) throws GitAPIException {
 		Git git = this.gitFactory.open(projectDir);
 		CheckoutCommand command = git.checkout().setName(branch);
 		try {
@@ -236,7 +241,8 @@ class GitRepo {
 		catch (GitAPIException e) {
 			deleteBaseDirIfExists();
 			throw e;
-		} finally {
+		}
+		finally {
 			git.close();
 		}
 	}
@@ -272,8 +278,8 @@ class GitRepo {
 		return containsBranch(git, label, null);
 	}
 
-	private boolean containsBranch(Git git, String label, ListBranchCommand.ListMode listMode)
-			throws GitAPIException {
+	private boolean containsBranch(Git git, String label,
+			ListBranchCommand.ListMode listMode) throws GitAPIException {
 		ListBranchCommand command = git.branchList();
 		if (listMode != null) {
 			command.setListMode(listMode);
@@ -299,35 +305,42 @@ class GitRepo {
 	}
 
 	/**
-	 * Wraps the static method calls to {@link Git} and
-	 * {@link CloneCommand} allowing for easier unit testing.
+	 * Wraps the static method calls to {@link Git} and {@link CloneCommand} allowing for
+	 * easier unit testing.
 	 */
 	static class JGitFactory {
-		private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+		private static final Logger log = LoggerFactory
+				.getLogger(MethodHandles.lookup().lookupClass());
 
 		private final JschConfigSessionFactory factory = new JschConfigSessionFactory() {
 
-			@Override protected void configure(OpenSshConfig.Host host, Session session) {
+			@Override
+			protected void configure(OpenSshConfig.Host host, Session session) {
 			}
 
 			@Override
 			protected JSch createDefaultJSch(FS fs) throws JSchException {
 				Connector connector = null;
 				try {
-					if(SSHAgentConnector.isConnectorAvailable()){
+					if (SSHAgentConnector.isConnectorAvailable()) {
 						USocketFactory usf = new JNAUSocketFactory();
 						connector = new SSHAgentConnector(usf);
 					}
 					log.info("Successfully connected to an agent");
-				} catch (AgentProxyException e) {
-					log.error("Exception occurred while trying to connect to agent. Will create"
-							+ "the default JSch connection", e);
+				}
+				catch (AgentProxyException e) {
+					log.error(
+							"Exception occurred while trying to connect to agent. Will create"
+									+ "the default JSch connection",
+							e);
 					return super.createDefaultJSch(fs);
 				}
 				final JSch jsch = super.createDefaultJSch(fs);
 				if (connector != null) {
 					JSch.setConfig("PreferredAuthentications", "publickey,password");
-					IdentityRepository identityRepository = new RemoteIdentityRepository(connector);
+					IdentityRepository identityRepository = new RemoteIdentityRepository(
+							connector);
 					jsch.setIdentityRepository(identityRepository);
 				}
 				return jsch;
@@ -338,9 +351,11 @@ class GitRepo {
 
 		JGitFactory(GitStubDownloaderProperties properties) {
 			if (org.springframework.util.StringUtils.hasText(properties.username)) {
-				log.info("Passed username and password - will set a custom credentials provider");
+				log.info(
+						"Passed username and password - will set a custom credentials provider");
 				this.provider = credentialsProvider(properties);
-			} else {
+			}
+			else {
 				if (log.isDebugEnabled()) {
 					log.debug("No custom credentials provider will be set");
 				}
@@ -349,8 +364,7 @@ class GitRepo {
 		}
 
 		CredentialsProvider credentialsProvider(GitStubDownloaderProperties properties) {
-			return new UsernamePasswordCredentialsProvider(
-					properties.username,
+			return new UsernamePasswordCredentialsProvider(properties.username,
 					properties.password);
 		}
 
@@ -367,20 +381,17 @@ class GitRepo {
 		};
 
 		CloneCommand getCloneCommandByCloneRepository() {
-			return Git.cloneRepository()
-					.setCredentialsProvider(this.provider)
+			return Git.cloneRepository().setCredentialsProvider(this.provider)
 					.setTransportConfigCallback(this.callback);
 		}
 
 		PushCommand push(Git git) {
-			return git.push()
-					.setCredentialsProvider(this.provider)
+			return git.push().setCredentialsProvider(this.provider)
 					.setTransportConfigCallback(this.callback);
 		}
 
 		PullCommand pull(Git git) {
-			return git.pull()
-					.setCredentialsProvider(this.provider)
+			return git.pull().setCredentialsProvider(this.provider)
 					.setTransportConfigCallback(this.callback);
 		}
 
@@ -392,5 +403,7 @@ class GitRepo {
 				throw new IllegalStateException(e);
 			}
 		}
+
 	}
+
 }

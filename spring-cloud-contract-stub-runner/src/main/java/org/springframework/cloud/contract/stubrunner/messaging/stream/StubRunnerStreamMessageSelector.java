@@ -17,28 +17,34 @@
 package org.springframework.cloud.contract.stubrunner.messaging.stream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.toomuchcoding.jsonassert.JsonAssertion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.util.ContentType;
+import org.springframework.cloud.contract.verifier.util.ContentUtils;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;
 import org.springframework.integration.core.MessageSelector;
 import org.springframework.messaging.Message;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-import com.toomuchcoding.jsonassert.JsonAssertion;
 
 /**
  * Passes through a message that matches the one defined in the DSL
@@ -48,27 +54,121 @@ import com.toomuchcoding.jsonassert.JsonAssertion;
  */
 class StubRunnerStreamMessageSelector implements MessageSelector {
 
-	private static final Log log = LogFactory.getLog(StubRunnerStreamMessageSelector.class);
+	private static final Map<Message, Contract> CACHE =
+			Collections.synchronizedMap(new WeakHashMap<>());
 
-	private final Contract groovyDsl;
+	private static final Log log = LogFactory
+			.getLog(StubRunnerStreamMessageSelector.class);
+
+	private final List<Contract> groovyDsls;
+
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();
 
 	StubRunnerStreamMessageSelector(Contract groovyDsl) {
-		this.groovyDsl = groovyDsl;
+		this(Collections.singletonList(groovyDsl));
+	}
+
+	StubRunnerStreamMessageSelector(List<Contract> groovyDsls) {
+		this.groovyDsls = groovyDsls;
 	}
 
 	@Override
 	public boolean accept(Message<?> message) {
-		List<String> unmatchedHeaders = headersMatch(message);
+		return matchingContract(message) != null;
+	}
+
+	Contract matchingContract(Message<?> message) {
+		if (CACHE.containsKey(message)) {
+			return CACHE.get(message);
+		}
+		Contract contract = getContract(message);
+		if (contract != null) {
+			CACHE.put(message, contract);
+		}
+		return contract;
+	}
+
+	void updateCache(Message<?> message, Contract contract) {
+		CACHE.put(message, contract);
+	}
+
+	private Contract getContract(Message<?> message) {
+		for (Contract groovyDsl : this.groovyDsls) {
+			Contract contract = matchContract(message, groovyDsl);
+			if (contract != null) {
+				return contract;
+			}
+		}
+		return null;
+	}
+
+	private Contract matchContract(Message<?> message, Contract groovyDsl) {
+		List<String> unmatchedHeaders = headersMatch(message, groovyDsl);
 		if (!unmatchedHeaders.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + this.groovyDsl + "] hasn't matched the following headers " + unmatchedHeaders);
+				log.debug("Contract [" + groovyDsl
+						+ "] hasn't matched the following headers " + unmatchedHeaders);
 			}
-			return false;
+			return null;
 		}
 		Object inputMessage = message.getPayload();
-		BodyMatchers matchers = this.groovyDsl.getInput().getBodyMatchers();
-		Object dslBody = MapConverter.getStubSideValues(this.groovyDsl.getInput().getMessageBody());
+		Object dslBody = MapConverter
+				.getStubSideValues(groovyDsl.getInput().getMessageBody());
+		if (dslBody instanceof FromFileProperty) {
+			if (log.isDebugEnabled()) {
+				log.debug("Will compare file content");
+			}
+			FromFileProperty property = (FromFileProperty) dslBody;
+			if (property.isString()) {
+				// continue processing as if body was pure string
+				dslBody = property.asString();
+			}
+			else if (!(inputMessage instanceof byte[])) {
+				if (log.isDebugEnabled()) {
+					log.debug("Contract provided byte comparison, but the input message is of type [" + inputMessage.getClass() + "]. Can't compare the two.");
+				}
+				return null;
+			}
+			else {
+				boolean matches = Arrays.equals(property.asBytes(), (byte[]) inputMessage);
+				if (log.isDebugEnabled() && !matches) {
+					log.debug("Contract provided byte comparison, but the byte arrays don't match");
+				}
+				return matches ? groovyDsl : null;
+			}
+		}
+		if (matchViaContent(groovyDsl, inputMessage, dslBody)) {
+			return groovyDsl;
+		}
+		return null;
+	}
+
+	private boolean matchViaContent(Contract groovyDsl, Object inputMessage, Object dslBody) {
+		boolean matches;
+		ContentType type = ContentUtils.getClientContentType(inputMessage, groovyDsl.getInput().getMessageHeaders());
+		if (type == ContentType.JSON) {
+			BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
+			matches = matchesForJsonPayload(groovyDsl, inputMessage, matchers, dslBody);
+		}
+		else if (dslBody instanceof Pattern && inputMessage instanceof String) {
+			Pattern pattern = (Pattern) dslBody;
+			matches = pattern.matcher((String) inputMessage).matches();
+			bodyUnmatchedLog(dslBody, matches, pattern);
+		} else {
+			matches = dslBody.equals(inputMessage);
+			bodyUnmatchedLog(dslBody, matches, inputMessage);
+		}
+		return matches;
+	}
+
+	private void bodyUnmatchedLog(Object dslBody, boolean matches, Object pattern) {
+		if (log.isDebugEnabled() && !matches) {
+			log.debug("Body was supposed to " + unmatchedText(pattern) + " but the value is [" + dslBody
+					.toString() + "]");
+		}
+	}
+
+	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage, BodyMatchers matchers, Object dslBody) {
 		Object matchingInputMessage = JsonToJsonPathsConverter
 				.removeMatchingJsonPaths(dslBody, matchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
@@ -76,7 +176,8 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 						matchingInputMessage);
 		DocumentContext parsedJson;
 		try {
-			parsedJson = JsonPath.parse(this.objectMapper.writeValueAsString(inputMessage));
+			parsedJson = JsonPath
+					.parse(this.objectMapper.writeValueAsString(inputMessage));
 		}
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
@@ -88,32 +189,36 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 		}
 		if (matchers != null && matchers.hasMatchers()) {
 			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
-				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
+				String jsonPath = JsonToJsonPathsConverter
+						.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
 				matches &= matchesJsonPath(unmatchedJsonPath, parsedJson, jsonPath);
 			}
 		}
 		if (!unmatchedJsonPath.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + this.groovyDsl + "] didn't much the body due to " + unmatchedJsonPath);
+				log.debug("Contract [" + groovyDsl + "] didn't match the body due to "
+						+ unmatchedJsonPath);
 			}
 		}
 		return matches;
 	}
 
-	private boolean matchesJsonPath(List<String> unmatchedJsonPath, DocumentContext parsedJson, String jsonPath) {
+	private boolean matchesJsonPath(List<String> unmatchedJsonPath,
+			DocumentContext parsedJson, String jsonPath) {
 		try {
 			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonPath);
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			unmatchedJsonPath.add(e.getLocalizedMessage());
 			return false;
 		}
 	}
 
-	private List<String> headersMatch(Message<?> message) {
+	private List<String> headersMatch(Message<?> message, Contract groovyDsl) {
 		List<String> unmatchedHeaders = new ArrayList<>();
 		Map<String, Object> headers = message.getHeaders();
-		for (Header it : this.groovyDsl.getInput().getMessageHeaders().getEntries()) {
+		for (Header it : groovyDsl.getInput().getMessageHeaders().getEntries()) {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
@@ -121,20 +226,24 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 			if (value instanceof Pattern) {
 				Pattern pattern = (Pattern) value;
 				matches = pattern.matcher(valueInHeader.toString()).matches();
-			} else {
-				matches = valueInHeader != null && valueInHeader.toString().equals(value.toString());
+			}
+			else {
+				matches = valueInHeader != null
+						&& valueInHeader.toString().equals(value.toString());
 			}
 			if (!matches) {
-				unmatchedHeaders.add("Header with name [" + name + "] was supposed to " +
-				unmatchedText(value) + " but the value is [" + (valueInHeader != null ?
-						valueInHeader.toString() : "null") + "]");
+				unmatchedHeaders.add("Header with name [" + name + "] was supposed to "
+						+ unmatchedText(value) + " but the value is ["
+						+ (valueInHeader != null ? valueInHeader.toString() : "null")
+						+ "]");
 			}
 		}
 		return unmatchedHeaders;
 	}
 
 	private String unmatchedText(Object expectedValue) {
-		return expectedValue instanceof Pattern ? "match pattern [" + ((Pattern) expectedValue).pattern() + "]" :
-				"be equal to [" + expectedValue + "]";
+		return expectedValue instanceof Pattern
+				? "match pattern [" + ((Pattern) expectedValue).pattern() + "]"
+				: "be equal to [" + expectedValue + "]";
 	}
 }

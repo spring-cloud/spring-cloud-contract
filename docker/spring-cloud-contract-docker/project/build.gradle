@@ -65,8 +65,10 @@ contracts {
 		// tests - contracts from an artifact
 		contractsPath = getProp("EXTERNAL_CONTRACTS_PATH") ?: ""
 		if (Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) == false) {
-			contractsRepositoryUrl = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
-					getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+			contractRepository {
+				repositoryUrl = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
+						getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+			}
 		}
 		contractDependency {
 			groupId = getProp("EXTERNAL_CONTRACTS_GROUP_ID") ?: "com.example"

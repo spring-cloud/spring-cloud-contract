@@ -16,9 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import spock.lang.Shared
 import spock.lang.Specification
+
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**
  * Tests used for the documentation
@@ -36,6 +37,8 @@ class ContractHttpDocsSpec extends Specification {
 			// (this can be a valid request or invalid depending
 			// on type of contract being specified).
 			request {
+				method GET()
+				url "/foo"
 				//...
 			}
 
@@ -44,6 +47,7 @@ class ContractHttpDocsSpec extends Specification {
 			// with following response after receiving request
 			// specified in "request" part above).
 			response {
+				status 200
 				//...
 			}
 
@@ -66,6 +70,7 @@ class ContractHttpDocsSpec extends Specification {
 
 			response {
 				//...
+				status 200
 			}
 		}
 		// end::request[]
@@ -82,6 +87,7 @@ class ContractHttpDocsSpec extends Specification {
 
 			response {
 				//...
+				status 200
 			}
 		}
 		// end::url[]
@@ -91,6 +97,7 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
+				method GET()
 
 				urlPath('/users') {
 
@@ -127,6 +134,7 @@ class ContractHttpDocsSpec extends Specification {
 
 			response {
 				//...
+				status 200
 			}
 		}
 		// end::urlpath[]
@@ -136,6 +144,8 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
+				method GET()
+				url "/foo"
 
 				// Each header is added in form `'Header-Name' : 'Header-Value'`.
 				// there are also some helper methods
@@ -149,6 +159,7 @@ class ContractHttpDocsSpec extends Specification {
 
 			response {
 				//...
+				status 200
 			}
 		}
 		// end::headers[]
@@ -158,6 +169,8 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
+				method GET()
+				url "/foo"
 
 				// Each Cookies is added in form `'Cookie-Key' : 'Cookie-Value'`.
 				// there are also some helper methods
@@ -171,6 +184,7 @@ class ContractHttpDocsSpec extends Specification {
 
 			response {
 				//...
+				status 200
 			}
 		}
 		// end::cookies[]
@@ -180,6 +194,8 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
+				method GET()
+				url "/foo"
 
 				// Currently only JSON format of request body is supported.
 				// Format will be determined from a header or body's content.
@@ -188,6 +204,7 @@ class ContractHttpDocsSpec extends Specification {
 
 			response {
 				//...
+				status 200
 			}
 		}
 		// end::body[]
@@ -197,6 +214,8 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
+				method GET()
+				url "/foo"
 
 				// In this case body will be formatted as XML.
 				body equalToXml(
@@ -206,6 +225,7 @@ class ContractHttpDocsSpec extends Specification {
 
 			response {
 				//...
+				status 200
 			}
 		}
 		// end::bodyAsXml[]
@@ -215,6 +235,8 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
+				method GET()
+				url "/foo"
 			}
 			response {
 				// Status code sent by the server
@@ -282,7 +304,9 @@ class ContractHttpDocsSpec extends Specification {
 	def 'should convert dsl with optionals to proper Spock test'() {
 		given:
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
-			new MockMvcSpockMethodRequestProcessingBodyBuilder(optionals, properties).appendTo(blockBuilder)
+			new HttpSpockMethodRequestProcessingBodyBuilder(optionals, properties, new GeneratedClassDataForMethod(
+					new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method"))
+					.appendTo(blockBuilder)
 		expect:
 		String expectedTest =
 // tag::optionals_test[]

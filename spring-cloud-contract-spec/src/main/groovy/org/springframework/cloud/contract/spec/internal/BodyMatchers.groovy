@@ -73,6 +73,13 @@ class BodyMatchers {
 		return new MatchingTypeValue(MatchingType.EQUALITY, null)
 	}
 
+	MatchingTypeValue byType(@DelegatesTo(MatchingTypeValueHolder) Closure closure) {
+		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder()
+		closure.delegate = matchingTypeValue
+		closure()
+		return matchingTypeValue.matchingTypeValue
+	}
+
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (this.getClass() != o.class) return false
@@ -146,4 +153,27 @@ class MatchingTypeValue {
 	 * Max occurrence when matching by type
 	 */
 	Integer maxTypeOccurrence
+}
+
+@CompileStatic
+@ToString(includePackage = false)
+@EqualsAndHashCode
+class MatchingTypeValueHolder {
+	MatchingTypeValue matchingTypeValue = new MatchingTypeValue(type: MatchingType.TYPE)
+
+	MatchingTypeValue minOccurrence(int number) {
+		this.matchingTypeValue.minTypeOccurrence = number
+		return this.matchingTypeValue
+	}
+
+	MatchingTypeValue maxOccurrence(int number) {
+		this.matchingTypeValue.maxTypeOccurrence = number
+		return this.matchingTypeValue
+	}
+
+	MatchingTypeValue occurrence(int number) {
+		this.matchingTypeValue.minTypeOccurrence = number
+		this.matchingTypeValue.maxTypeOccurrence = number
+		return this.matchingTypeValue
+	}
 }

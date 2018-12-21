@@ -13,24 +13,26 @@ class ExtensionToProperties {
 
 	protected static ContractVerifierConfigProperties fromExtension(ContractVerifierExtension extension) {
 		return new ContractVerifierConfigProperties(
-				targetFramework: extension.targetFramework,
-				testMode: extension.testMode,
-				basePackageForTests: extension.basePackageForTests,
-				baseClassForTests: extension.baseClassForTests,
-				nameSuffixForTests: extension.nameSuffixForTests,
-				ruleClassForTests: extension.ruleClassForTests,
-				excludedFiles: extension.excludedFiles,
-				ignoredFiles: extension.ignoredFiles,
-				imports: extension.imports,
-				staticImports: extension.staticImports,
-				contractsDslDir: extension.contractsDslDir,
-				generatedTestSourcesDir: extension.generatedTestSourcesDir,
-				stubsOutputDir: extension.stubsOutputDir,
-				stubsSuffix: extension.stubsSuffix,
-				assertJsonSize: extension.assertJsonSize,
-				packageWithBaseClasses: extension.packageWithBaseClasses,
-				baseClassMappings: extension.baseClassMappings,
-				excludeBuildFolders: extension.excludeBuildFolders
+				testFramework: extension.getTestFramework(),
+				testMode: extension.getTestMode(),
+				basePackageForTests: extension.getBasePackageForTests(),
+				baseClassForTests: extension.getBaseClassForTests(),
+				nameSuffixForTests: extension.getNameSuffixForTests(),
+				ruleClassForTests: extension.getRuleClassForTests(),
+				excludedFiles: extension.getExcludedFiles(),
+				includedFiles: extension.getIncludedFiles(),
+				ignoredFiles: extension.getIgnoredFiles(),
+				imports: extension.getImports(),
+				staticImports: extension.getStaticImports(),
+				contractsDslDir: extension.getContractsDslDir(),
+				generatedTestSourcesDir: extension.getGeneratedTestSourcesDir(),
+				generatedTestResourcesDir: extension.getGeneratedTestResourcesDir(),
+				stubsOutputDir: extension.getStubsOutputDir(),
+				stubsSuffix: extension.getStubsSuffix(),
+				assertJsonSize: extension.getAssertJsonSize(),
+				packageWithBaseClasses: extension.getPackageWithBaseClasses(),
+				baseClassMappings: extension.getBaseClassMappings(),
+				excludeBuildFolders: extension.getExcludeBuildFolders()
 		)
 	}
 }

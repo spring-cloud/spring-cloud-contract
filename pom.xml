@@ -23,6 +23,9 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
+		<activemq.version>5.12.1</activemq.version>
+		<camel.version>2.22.1</camel.version>
+		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>3.5.13</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-build.version>
@@ -32,16 +35,19 @@
 		<spring-cloud-consul.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
 		<spring-cloud-commons.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.3</jopt-simple.version>
-		<cglib.version>3.2.4</cglib.version>
+		<cglib.version>3.2.9</cglib.version>
 		<spock-spring.version>1.0-groovy-2.4</spock-spring.version>
 		<spock-global-unroll.version>0.5.1</spock-global-unroll.version>
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
-		<commons-text.version>1.1</commons-text.version>
-		<handlebars.version>4.0.6</handlebars.version>
-		<jgit.version>4.6.0.201612231935-r</jgit.version>
+		<commons-text.version>1.6</commons-text.version>
+		<handlebars.version>4.1.2</handlebars.version>
+		<jgit.version>5.1.3.201810200350-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>2.4.15</groovy.version>
+		<!-- For Takari plugin -->
+		<maven.version>3.2.1</maven.version>
+		<aether.version>1.1.0</aether.version>
 	</properties>
 
 	<modules>
@@ -68,6 +74,51 @@
 				<version>${spring-cloud-commons.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-boot-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-boot</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-core</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-kafka</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jackson</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jms</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-camel</artifactId>
+				<version>${activemq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-pool</artifactId>
+				<version>${activemq.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
@@ -314,6 +365,41 @@
 				<artifactId>groovy-xml</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-aether-provider</artifactId>
+				<version>${maven.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-settings-builder</artifactId>
+				<version>${maven.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.aether</groupId>
+				<artifactId>aether-api</artifactId>
+				<version>${aether.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.aether</groupId>
+				<artifactId>aether-impl</artifactId>
+				<version>${aether.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.aether</groupId>
+				<artifactId>aether-transport-file</artifactId>
+				<version>${aether.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.aether</groupId>
+				<artifactId>aether-transport-http</artifactId>
+				<version>${aether.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.aether</groupId>
+				<artifactId>aether-connector-basic</artifactId>
+				<version>${aether.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -342,6 +428,11 @@
 			<name>David Syer</name>
 			<email>dsyer@pivotal.io</email>
 		</developer>
+		<developer>
+			<id>OlgaMaciaszek</id>
+			<name>Olga Maciaszek-Sharma</name>
+			<email>omaciaszeksharma@pivotal.io</email>
+		</developer>
 	</developers>
 
 	<scm>
@@ -367,7 +458,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.20</version>
 					<configuration>
 						<includes>
 							<include>**/*Spec.*</include>
@@ -375,31 +465,23 @@
 							<include>**/*Test.*</include>
 						</includes>
 						<reportFormat>plain</reportFormat>
+						<failIfNoTests>true</failIfNoTests>
 					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-component-metadata</artifactId>
-					<version>1.6</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-plugin-plugin</artifactId>
-					<version>${maven.plugin.plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>io.takari.maven.plugins</groupId>
-					<artifactId>takari-lifecycle-plugin</artifactId>
-					<version>1.12.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eluder.coveralls</groupId>
-					<artifactId>coveralls-maven-plugin</artifactId>
-					<version>4.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.gmavenplus</groupId>
 					<artifactId>gmavenplus-plugin</artifactId>
-					<version>1.5</version>
+					<version>1.6.2</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>addSources</goal>
+								<goal>addTestSources</goal>
+								<goal>compile</goal>
+								<goal>compileTests</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -529,7 +611,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.20</version>
 						<configuration>
 							<!-- Sets the VM argument line used when unit tests are run. -->
 							<argLine>${surefireArgLine}</argLine>

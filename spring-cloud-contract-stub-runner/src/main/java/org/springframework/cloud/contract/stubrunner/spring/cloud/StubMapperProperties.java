@@ -24,30 +24,27 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.util.StringUtils;
 
 /**
- * Maps Ivy based ids to service Ids. You might want to name the service you're calling
- * in another way than artifact id. If that's the case then this class should be used
- * to change do the proper mapping.
+ * Maps Ivy based ids to service Ids. You might want to name the service you're calling in
+ * another way than artifact id. If that's the case then this class should be used to
+ * change do the proper mapping.
  *
  * Just provide in your properties file for example:
  *
- * stubrunner.idsToServiceIds:
- *     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
+ * stubrunner.idsToServiceIds: fraudDetectionServer:
+ * someNameThatShouldMapFraudDetectionServer
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 @ConfigurationProperties("stubrunner")
 public class StubMapperProperties {
 
 	/**
-	 * Mapping of Ivy notation based ids to serviceIds
-	 * inside your application
+	 * Mapping of Ivy notation based ids to serviceIds inside your application
 	 *
 	 * Example
 	 *
-	 * "a:b"			->		"myService"
-	 * "artifactId"		->		"myOtherService"
+	 * "a:b" -> "myService" "artifactId" -> "myOtherService"
 	 */
 	private Map<String, String> idsToServiceIds = new HashMap<>();
 
@@ -65,8 +62,8 @@ public class StubMapperProperties {
 		if (StringUtils.hasText(id)) {
 			return id;
 		}
-		String groupAndArtifact = this.idsToServiceIds.get(stubConfiguration.getGroupId() +
-				":" + stubConfiguration.getArtifactId());
+		String groupAndArtifact = this.idsToServiceIds.get(
+				stubConfiguration.getGroupId() + ":" + stubConfiguration.getArtifactId());
 		if (StringUtils.hasText(groupAndArtifact)) {
 			return groupAndArtifact;
 		}
@@ -81,4 +78,5 @@ public class StubMapperProperties {
 		}
 		return null;
 	}
+
 }

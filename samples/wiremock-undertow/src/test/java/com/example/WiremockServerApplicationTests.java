@@ -18,19 +18,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties="app.baseUrl=http://localhost:7071", webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(properties = "app.baseUrl=http://localhost:7071", webEnvironment = WebEnvironment.NONE)
 public class WiremockServerApplicationTests {
 
 	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.options().port(7071));
+	public static WireMockClassRule wiremock = new WireMockClassRule(
+			WireMockSpring.options().port(7071));
 
 	@Autowired
 	private Service service;
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 

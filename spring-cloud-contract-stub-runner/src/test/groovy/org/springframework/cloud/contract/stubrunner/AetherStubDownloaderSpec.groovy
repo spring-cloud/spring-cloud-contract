@@ -65,7 +65,7 @@ class AetherStubDownloaderSpec extends Specification {
 					ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + m2repoFolder).getAbsolutePath() + '</localRepository></settings>'
 			System.setProperty("org.apache.maven.user-settings", tempSettings.getAbsolutePath())
 			RepositorySystemSession repositorySystemSession =
-					AetherFactories.newSession(AetherFactories.newRepositorySystem(), true);
+					AetherFactories.newSession(AetherFactories.newRepositorySystem(), true)
 
 		and:
 			StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()

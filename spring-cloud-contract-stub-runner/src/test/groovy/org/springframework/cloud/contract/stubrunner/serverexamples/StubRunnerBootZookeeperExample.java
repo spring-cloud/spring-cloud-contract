@@ -42,6 +42,7 @@ public class StubRunnerBootZookeeperExample {
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer
 -Dstubrunner.cloud.stubbed.discovery.enabled=false
 -Dstubrunner.cloud.zookeepr.enabled=true
+-Dstubrunner.camel.enabled=false
 -Dstubrunner.repositoryRoot=classpath:m2repo/repository/
 -Deureka.client.enabled=false
 -Ddebug=true

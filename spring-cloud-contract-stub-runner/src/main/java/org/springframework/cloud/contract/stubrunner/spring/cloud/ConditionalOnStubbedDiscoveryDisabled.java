@@ -36,4 +36,5 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 @Documented
 @ConditionalOnProperty(value = "stubrunner.cloud.stubbed.discovery.enabled", havingValue = "false")
 public @interface ConditionalOnStubbedDiscoveryDisabled {
+
 }

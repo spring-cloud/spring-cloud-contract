@@ -21,6 +21,7 @@ public class WiremockTestsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WiremockTestsApplication.class, args);
 	}
+
 }
 
 @RestController
@@ -36,6 +37,7 @@ class Controller {
 	public String home() {
 		return this.service.go();
 	}
+
 }
 
 @Component
@@ -51,6 +53,8 @@ class Service {
 	}
 
 	public String go() {
-		return this.restTemplate.getForEntity(this.base + "/resource", String.class).getBody();
+		return this.restTemplate.getForEntity(this.base + "/resource", String.class)
+				.getBody();
 	}
+
 }

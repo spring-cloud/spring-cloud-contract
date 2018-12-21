@@ -7,13 +7,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotated field with this annotation will have the port of a running stub
- * injected.
+ * The annotated field with this annotation will have the port of a running stub injected.
  *
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface StubRunnerPort {

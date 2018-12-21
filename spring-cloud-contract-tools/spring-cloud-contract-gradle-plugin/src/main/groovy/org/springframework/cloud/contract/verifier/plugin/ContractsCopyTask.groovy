@@ -66,7 +66,7 @@ class ContractsCopyTask extends ConventionTask {
 			// ...we also want to allow dot separation
 			include(slashSeparatedAntPattern)
 			if (props.isExcludeBuildFolders()) {
-				exclude "**/target/**", "**/build/**"
+				exclude "**/target/**", "**/build/**", "**/.mvn/**", "**/.gradle/**"
 			}
 			into(outputContractsFolder)
 		}

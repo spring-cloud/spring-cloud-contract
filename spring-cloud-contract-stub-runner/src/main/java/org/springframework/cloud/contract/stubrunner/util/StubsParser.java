@@ -31,8 +31,8 @@ import org.springframework.util.StringUtils;
 public class StubsParser {
 
 	/**
-	 * The string is expected to be a map with entry called "stubs"
-	 * that contains a list of Strings in the format
+	 * The string is expected to be a map with entry called "stubs" that contains a list
+	 * of Strings in the format
 	 *
 	 * <ul>
 	 * <li>groupid:artifactid:version:classifier:port</li>
@@ -47,7 +47,8 @@ public class StubsParser {
 	 *
 	 * "a:b,c:d:e"
 	 */
-	public static List<StubConfiguration> fromString(Collection<String> collection, String defaultClassifier) {
+	public static List<StubConfiguration> fromString(Collection<String> collection,
+			String defaultClassifier) {
 		List<StubConfiguration> stubs = new ArrayList<>();
 		for (String config : collection) {
 			if (StringUtils.hasText(config)) {
@@ -58,7 +59,8 @@ public class StubsParser {
 	}
 
 	public static Map<StubConfiguration, Integer> fromStringWithPort(String notation) {
-		StubSpecification stub = StubSpecification.parse(notation, StubConfiguration.DEFAULT_CLASSIFIER);
+		StubSpecification stub = StubSpecification.parse(notation,
+				StubConfiguration.DEFAULT_CLASSIFIER);
 		if (!stub.hasPort()) {
 			return Collections.emptyMap();
 		}
@@ -66,7 +68,8 @@ public class StubsParser {
 	}
 
 	public static String ivyFromStringWithPort(String notation) {
-		StubSpecification stub = StubSpecification.parse(notation, StubConfiguration.DEFAULT_CLASSIFIER);
+		StubSpecification stub = StubSpecification.parse(notation,
+				StubConfiguration.DEFAULT_CLASSIFIER);
 		if (!stub.hasPort()) {
 			return "";
 		}
@@ -76,16 +79,18 @@ public class StubsParser {
 	public static boolean hasPort(String id) {
 		String[] splitEntry = id.split(":");
 		try {
-			Integer.valueOf(splitEntry[splitEntry.length-1]);
+			Integer.valueOf(splitEntry[splitEntry.length - 1]);
 			return true;
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			return false;
 		}
 	}
-	
+
 	private static class StubSpecification {
 
 		private final StubConfiguration stub;
+
 		private final Integer port;
 
 		public StubSpecification(StubConfiguration stub, Integer port) {
@@ -96,16 +101,20 @@ public class StubsParser {
 		public boolean hasPort() {
 			return this.port != null;
 		}
-		
+
 		private static StubSpecification parse(String id, String defaultClassifier) {
 			String[] splitEntry = id.split(":");
 			Integer port = null;
 			try {
-				port = Integer.valueOf(splitEntry[splitEntry.length-1]);
+				port = Integer.valueOf(splitEntry[splitEntry.length - 1]);
 				id = id.substring(0, id.lastIndexOf(":"));
-			} catch (NumberFormatException e) {}
-			return new StubSpecification(new StubConfiguration(id, defaultClassifier), port);
+			}
+			catch (NumberFormatException e) {
+			}
+			return new StubSpecification(new StubConfiguration(id, defaultClassifier),
+					port);
 		}
 
 	}
+
 }

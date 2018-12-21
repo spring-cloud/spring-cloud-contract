@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
- * Provider for {@link StubDownloaderBuilder}. It can also pick a default
- * downloader if none is provided
+ * Provider for {@link StubDownloaderBuilder}. It can also pick a default downloader if
+ * none is provided
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
@@ -28,8 +28,10 @@ public class StubDownloaderBuilderProvider {
 
 	/**
 	 * @param stubRunnerOptions
-	 * @param additionalBuilders - optional array of {@link StubDownloaderBuilder}s to append to the list of builders
-	 * @return composite {@link StubDownloader} that iterates over a list of stub downloaders
+	 * @param additionalBuilders - optional array of {@link StubDownloaderBuilder}s to
+	 * append to the list of builders
+	 * @return composite {@link StubDownloader} that iterates over a list of stub
+	 * downloaders
 	 */
 	public StubDownloader get(StubRunnerOptions stubRunnerOptions,
 			StubDownloaderBuilder... additionalBuilders) {
@@ -43,8 +45,8 @@ public class StubDownloaderBuilderProvider {
 	}
 
 	List<StubDownloaderBuilder> defaultStubDownloaderBuilders() {
-		return Arrays
-					.asList(new ScmStubDownloaderBuilder(), new ClasspathStubProvider(),
-							new AetherStubDownloaderBuilder());
+		return Arrays.asList(new ScmStubDownloaderBuilder(), new ClasspathStubProvider(),
+				new AetherStubDownloaderBuilder());
 	}
+
 }

@@ -1,21 +1,19 @@
 package org.springframework.cloud.contract.verifier.plugin
 
-import java.util.concurrent.ConcurrentHashMap
-
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
-
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubDownloader
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.StringUtils
+
+import java.util.concurrent.ConcurrentHashMap
 /**
  * @author Marcin Grzejszczak
  */
@@ -64,9 +62,9 @@ class GradleContractsDownloader {
 	}
 
 	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
-		return [StubRunnerProperties.StubsMode.LOCAL, StubRunnerProperties.StubsMode.REMOTE].any {
-			it == extension.contractsMode } && (StringUtils.hasText(extension.contractDependency.artifactId) ||
-						StringUtils.hasText(extension.contractDependency.stringNotation))
+		return StringUtils.hasText(extension.contractDependency.getArtifactId()) ||
+				StringUtils.hasText(extension.contractDependency.getStringNotation()) ||
+				StringUtils.hasText(extension.contractRepository.repositoryUrl)
 	}
 
 	protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {

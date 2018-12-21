@@ -28,35 +28,44 @@ import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessag
 public class BatchStubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions;
+
 	private final StubDownloader stubDownloader;
+
 	private final MessageVerifier<?> contractVerifierMessaging;
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions) {
 		this(stubRunnerOptions, new NoOpStubMessages());
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, MessageVerifier verifier) {
+	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
+			MessageVerifier verifier) {
 		this(stubRunnerOptions, aetherStubDownloader(stubRunnerOptions), verifier);
 	}
 
-	private static StubDownloader aetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
+	private static StubDownloader aetherStubDownloader(
+			StubRunnerOptions stubRunnerOptions) {
 		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
 		return provider.get(stubRunnerOptions);
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {
+	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
+			StubDownloader stubDownloader) {
 		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages());
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader, MessageVerifier<?> contractVerifierMessaging) {
+	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
+			StubDownloader stubDownloader, MessageVerifier<?> contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;
 	}
 
 	public BatchStubRunner buildBatchStubRunner() {
-		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(this.stubRunnerOptions, this.stubDownloader, this.contractVerifierMessaging);
-		return new BatchStubRunner(stubRunnerFactory.createStubsFromServiceConfiguration());
+		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(
+				this.stubRunnerOptions, this.stubDownloader,
+				this.contractVerifierMessaging);
+		return new BatchStubRunner(
+				stubRunnerFactory.createStubsFromServiceConfiguration());
 	}
 
 }

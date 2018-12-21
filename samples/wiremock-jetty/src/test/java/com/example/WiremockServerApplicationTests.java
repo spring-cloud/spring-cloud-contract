@@ -26,11 +26,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties="app.baseUrl=http://localhost:6061", webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(properties = "app.baseUrl=http://localhost:6061", webEnvironment = WebEnvironment.NONE)
 public class WiremockServerApplicationTests {
 
 	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.options().port(6061));
+	public static WireMockClassRule wiremock = new WireMockClassRule(
+			WireMockSpring.options().port(6061));
 
 	@Rule
 	public ExpectedException expected = ExpectedException.none();
@@ -40,8 +41,8 @@ public class WiremockServerApplicationTests {
 
 	@Test
 	public void hello() throws Exception {
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 

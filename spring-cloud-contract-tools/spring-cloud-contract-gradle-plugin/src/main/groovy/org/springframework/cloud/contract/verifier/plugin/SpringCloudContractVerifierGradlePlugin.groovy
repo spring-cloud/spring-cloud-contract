@@ -69,13 +69,14 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		addIdeaTestSources(project, extension)
 	}
 
-	private addIdeaTestSources(Project project, extension) {
+	private addIdeaTestSources(Project project, ContractVerifierExtension extension) {
 		def hasIdea = new File(project.rootDir, ".idea").exists()
 		if (hasIdea) {
 			project.apply(plugin: 'idea')
 			project.idea {
 				module {
 					testSourceDirs += extension.generatedTestSourcesDir
+					testSourceDirs += extension.generatedTestResourcesDir
 					testSourceDirs += extension.contractsDslDir
 				}
 			}
@@ -86,9 +87,10 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		extension.with {
 			generatedTestSourcesDir = generatedTestSourcesDir ?: project.file("${project.buildDir}/generated-test-sources/contracts")
 			generatedTestSourcesDir.mkdirs()
+			generatedTestResourcesDir = generatedTestResourcesDir ?: project.file("${project.buildDir}/generated-test-resources/contracts")
+			generatedTestResourcesDir.mkdirs()
 			contractsDslDir = contractsDslDir ?: defaultContractsDir() //TODO: Use sourceset
 			contractsDslDir.mkdirs()
-			basePackageForTests = basePackageForTests ?: 'org.springframework.cloud.contract.verifier.tests'
 			stubsOutputDir = stubsOutputDir ?: project.file("${project.buildDir}/stubs/")
 			stubsOutputDir.mkdirs()
 		}
@@ -124,10 +126,9 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			stubsOutputDir = { extension.stubsOutputDir }
 		}
 		task.onlyIf {
-			String contractRepoUrl = extension.contractsRepositoryUrl ?:
-					extension.contractRepository.repositoryUrl ?: ""
+			String contractRepoUrl = extension.contractRepository.repositoryUrl ?: ""
 			if (!contractRepoUrl || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
-				project.logger.info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't match any of the accepted protocols")
+				project.logger.info("Skipping pushing stubs to scm since your contracts repository URL doesn't match any of the accepted protocols")
 				return false
 			}
 			return true

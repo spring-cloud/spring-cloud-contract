@@ -35,6 +35,36 @@
           "body": {}
         }
       }
+    },
+    {
+      "description": "",
+      "request": {
+        "method": "GET",
+        "path": "/drunks"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/vnd.fraud.v1+json"
+        },
+        "body": {
+          "count": 100
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body": {}
+        }
+      }
     }
   ],
   "metadata": {

@@ -17,16 +17,16 @@
 package com.example;
 
 import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.messaging.SubscribableChannel;
 
 /**
  * @author Marcin Grzejszczak
  */
-interface DeleteSink extends Sink {
+interface DeleteSink {
 
-	String INPUT = "delete";
+	String MYINPUT = "delete";
 
-	@Input(DeleteSink.INPUT)
+	@Input(DeleteSink.MYINPUT)
 	SubscribableChannel delete();
+
 }

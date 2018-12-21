@@ -13,15 +13,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes={WiremockTestsApplication.class,
-		AutoConfigureWireMockConfigurationCustomizerTests.Config.class},
-		properties="app.baseUrl=http://localhost:${wiremock.server.port}",
-		webEnvironment=WebEnvironment.NONE)
-@AutoConfigureWireMock(port=0, stubs="file:src/test/resources/io.stubs/mappings")
+@SpringBootTest(classes = { WiremockTestsApplication.class,
+		AutoConfigureWireMockConfigurationCustomizerTests.Config.class }, properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
+@AutoConfigureWireMock(port = 0, stubs = "file:src/test/resources/io.stubs/mappings")
 public class AutoConfigureWireMockConfigurationCustomizerTests {
 
 	@Autowired
 	private Service service;
+
 	@Autowired
 	private Config config;
 
@@ -37,9 +36,11 @@ public class AutoConfigureWireMockConfigurationCustomizerTests {
 		boolean executed = false;
 
 		// tag::customizer_1[]
-		@Bean WireMockConfigurationCustomizer optionsCustomizer() {
+		@Bean
+		WireMockConfigurationCustomizer optionsCustomizer() {
 			return new WireMockConfigurationCustomizer() {
-				@Override public void customize(WireMockConfiguration options) {
+				@Override
+				public void customize(WireMockConfiguration options) {
 					// end::customizer_1[]
 					assertThat(options.portNumber()).isGreaterThan(0);
 					Config.this.executed = true;
@@ -52,5 +53,7 @@ public class AutoConfigureWireMockConfigurationCustomizerTests {
 		public boolean isExecuted() {
 			return executed;
 		}
+
 	}
+
 }

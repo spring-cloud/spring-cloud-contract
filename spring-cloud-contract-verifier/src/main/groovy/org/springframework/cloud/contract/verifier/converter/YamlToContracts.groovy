@@ -1,21 +1,20 @@
 package org.springframework.cloud.contract.verifier.converter
 
-import java.nio.file.Files
-import java.util.regex.Pattern
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import org.yaml.snakeyaml.Yaml
-
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingTypeValue
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
+import org.springframework.cloud.contract.spec.internal.Request
+import org.yaml.snakeyaml.Yaml
 
+import java.nio.file.Files
+import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  */
@@ -63,7 +62,7 @@ class YamlToContracts {
 						request {
 							method(yamlContract.request?.method)
 							if (yamlContract.request?.url) {
-								url(yamlContract.request?.url) {
+								url(urlValue(yamlContract.request?.url, yamlContract.request?.matchers?.url)) {
 									if (yamlContract.request.queryParameters) {
 										queryParameters {
 											yamlContract.request.queryParameters.each { String key, Object value ->
@@ -80,16 +79,16 @@ class YamlToContracts {
 								}
 							}
 							if (yamlContract.request?.urlPath) {
-								urlPath(yamlContract.request?.urlPath) {
+								urlPath(urlValue(yamlContract.request?.urlPath, yamlContract.request?.matchers?.url)) {
 									if (yamlContract.request.queryParameters) {
 										queryParameters {
 											yamlContract.request.queryParameters.each { String key, Object value ->
 												if (value instanceof List) {
 													((List) value).each {
-														parameter(key, it)
+														parameter(key, queryParamValue(yamlContract, key, it))
 													}
 												} else {
-													parameter(key, value)
+													parameter(key, queryParamValue(yamlContract, key, value))
 												}
 											}
 										}
@@ -104,13 +103,11 @@ class YamlToContracts {
 										matchers.each { YamlContract.KeyValueMatcher matcher ->
 											if (value instanceof List) {
 												((List) value).each {
-													Object clientValue = clientValue(it, matcher, key)
-													header(key, new DslProperty(clientValue,
-															it instanceof DslProperty ? it.serverValue : it))
+													header(key, clientValue(it, matcher, key).clientValue)
 												}
 											} else {
-												Object clientValue = clientValue(value, matcher, key)
-												header(key, new DslProperty(clientValue, serverValue(value, matcher)))
+												header(key, new DslProperty(clientValue(value, matcher, key).clientValue,
+														serverValue(value, matcher)))
 											}
 										}
 										if (!matchers) {
@@ -123,13 +120,13 @@ class YamlToContracts {
 								cookies {
 									yamlContract.request?.cookies?.each { String key, Object value ->
 										YamlContract.KeyValueMatcher matcher = yamlContract.request.matchers.cookies.find { it.key == key }
-										Object clientValue = clientValue(value, matcher, key)
-										cookie(key, new DslProperty(clientValue, value))
+										cookie(key, clientValue(value, matcher, key))
 									}
 								}
 							}
 							if (yamlContract.request.body != null) body(yamlContract.request.body)
 							if (yamlContract.request.bodyFromFile != null) body(file(yamlContract.request.bodyFromFile))
+							if (yamlContract.request.bodyFromFileAsBytes != null) body(fileAsBytes(yamlContract.request.bodyFromFileAsBytes))
 							if (yamlContract.request.multipart) {
 								Map multipartMap = [:]
 								Map<String, DslProperty> multiPartParams = yamlContract.request
@@ -202,8 +199,21 @@ class YamlToContracts {
 										case YamlContract.StubMatcherType.by_equality:
 											value = byEquality()
 											break
+										case YamlContract.StubMatcherType.by_type:
+											value = byType {
+												if (matcher.minOccurrence != null) minOccurrence(matcher.minOccurrence)
+												if (matcher.maxOccurrence != null) maxOccurrence(matcher.maxOccurrence)
+											}
+											break
+										case YamlContract.StubMatcherType.by_null:
+											// do nothing
+											break
+										default:
+											throw new UnsupportedOperationException("The type [" + matcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 									}
-									jsonPath(matcher.path, value)
+									if (value) {
+										jsonPath(matcher.path, value)
+									}
 								}
 							}
 						}
@@ -227,8 +237,8 @@ class YamlToContracts {
 								cookies {
 									yamlContract.response?.cookies?.each { String key, Object value ->
 										YamlContract.TestCookieMatcher matcher = yamlContract.response.matchers.cookies.find { it.key == key }
-										Object serverValue = serverCookieValue(value, matcher, key)
-										cookie(key, new DslProperty(value, serverValue))
+										DslProperty cookieValue = serverCookieValue(value, matcher, key)
+										cookie(key, cookieValue)
 									}
 								}
 							}
@@ -246,7 +256,9 @@ class YamlToContracts {
 								}
 							}
 							if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
+							if (yamlContract.response.bodyFromFileAsBytes) body(fileAsBytes(yamlContract.response.bodyFromFileAsBytes))
 							if (yamlContract.response.async) async()
+							if (yamlContract.response.fixedDelayMilliseconds) fixedDelayMilliseconds(yamlContract.response.fixedDelayMilliseconds)
 							bodyMatchers {
 								yamlContract.response?.matchers?.body?.each { YamlContract.BodyTestMatcher testMatcher ->
 									MatchingTypeValue value = null
@@ -282,6 +294,8 @@ class YamlToContracts {
 										case YamlContract.TestMatcherType.by_null:
 											value = byNull()
 											break
+										default:
+											throw new UnsupportedOperationException("The type [" + testMatcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 									}
 									if (testMatcher.path) {
 										jsonPath(testMatcher.path, value)
@@ -298,12 +312,12 @@ class YamlToContracts {
 							messageHeaders {
 								yamlContract.input?.messageHeaders?.each { String key, Object value ->
 									YamlContract.KeyValueMatcher matcher = yamlContract.input.matchers?.headers?.find { it.key == key }
-									Object clientValue = clientValue(value, matcher, key)
-									header(key, new DslProperty(clientValue, value))
+									header(key, clientValue(value, matcher, key))
 								}
 							}
 							if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
 							if (yamlContract.input.messageBodyFromFile) messageBody(file(yamlContract.input.messageBodyFromFile))
+							if (yamlContract.input.messageBodyFromFileAsBytes) messageBody(fileAsBytes(yamlContract.input.messageBodyFromFileAsBytes))
 							bodyMatchers {
 								yamlContract.input.matchers.body?.each { YamlContract.BodyStubMatcher matcher ->
 									MatchingTypeValue value = null
@@ -349,6 +363,7 @@ class YamlToContracts {
 							}
 							if (outputMsg.body) body(outputMsg.body)
 							if (outputMsg.bodyFromFile) body(file(outputMsg.bodyFromFile))
+							if (outputMsg.bodyFromFileAsBytes) body(fileAsBytes(outputMsg.bodyFromFileAsBytes))
 							if (outputMsg.matchers) {
 								bodyMatchers {
 									yamlContract.outputMessage?.matchers?.body?.each { YamlContract.BodyTestMatcher testMatcher ->
@@ -399,6 +414,17 @@ class YamlToContracts {
 		}
 	}
 
+	protected DslProperty urlValue(String url, YamlContract.KeyValueMatcher urlMatcher) {
+		if (urlMatcher) {
+			if (urlMatcher.command) {
+				return new DslProperty<Object>(url, new ExecutionProperty(urlMatcher.command))
+			}
+			return new DslProperty(urlMatcher.regex ? Pattern.compile(urlMatcher.regex) :
+					urlMatcher.predefined ? predefinedToPattern(urlMatcher.predefined) : url, url)
+		}
+		return new DslProperty(url)
+	}
+
 	protected List<YamlContract> convert(ObjectMapper mapper, Object o) {
 		try {
 			return Arrays.asList(mapper.convertValue(o, YamlContract[].class))
@@ -423,7 +449,7 @@ class YamlToContracts {
 		return serverValue
 	}
 
-	protected Object serverCookieValue(Object value, YamlContract.TestCookieMatcher matcher, String key) {
+	protected DslProperty serverCookieValue(Object value, YamlContract.TestCookieMatcher matcher, String key) {
 		Object serverValue = value
 		if (matcher?.regex) {
 			serverValue = Pattern.compile(matcher.regex)
@@ -433,11 +459,13 @@ class YamlToContracts {
 			Pattern pattern = predefinedToPattern(matcher.predefined)
 			serverValue = pattern
 			assertPatternMatched(pattern, value, key)
+		} else if (matcher?.command) {
+			return new DslProperty(new ExecutionProperty(matcher.command), value)
 		}
-		return serverValue
+		return new DslProperty(value, serverValue)
 	}
 
-	protected Object clientValue(Object value, YamlContract.KeyValueMatcher matcher, String key) {
+	protected DslProperty clientValue(Object value, YamlContract.KeyValueMatcher matcher, String key) {
 		Object clientValue = value instanceof DslProperty ? value.clientValue : value
 		if (matcher?.regex) {
 			clientValue = Pattern.compile(matcher.regex)
@@ -447,8 +475,37 @@ class YamlToContracts {
 			Pattern pattern = predefinedToPattern(matcher.predefined)
 			clientValue = pattern
 			assertPatternMatched(pattern, value, key)
+		} else if (matcher?.command) {
+			return new DslProperty(value, new ExecutionProperty(matcher.command))
 		}
-		return clientValue
+		return new DslProperty(clientValue, value)
+	}
+
+	protected Object queryParamValue(YamlContract yamlContract, String key, Object value) {
+		Request request = new Request()
+		YamlContract.QueryParameterMatcher matcher = yamlContract.request.
+				matchers.queryParameters.find { it.key == key}
+		if (!matcher) {
+			return value
+		}
+		switch (matcher.type) {
+			case YamlContract.MatchingType.equal_to:
+				return new DslProperty(request.equalTo(matcher.value), value)
+			case YamlContract.MatchingType.containing:
+				return new DslProperty(request.containing(matcher.value), value)
+			case YamlContract.MatchingType.matching:
+				return new DslProperty(request.matching(matcher.value), value)
+			case YamlContract.MatchingType.not_matching:
+				return new DslProperty(request.notMatching(matcher.value), value)
+			case YamlContract.MatchingType.equal_to_json:
+				return new DslProperty(request.equalToJson(matcher.value), value)
+			case YamlContract.MatchingType.equal_to_xml:
+				return new DslProperty(request.equalToXml(matcher.value), value)
+			case YamlContract.MatchingType.absent:
+				return new DslProperty(request.absent(), null)
+			default:
+				throw new UnsupportedOperationException("The provided matching type [" + matcher + "] is unsupported. Use on of " + YamlContract.MatchingType.values())
+		}
 	}
 
 	protected Object serverValue(Object value, YamlContract.KeyValueMatcher matcher) {
@@ -499,6 +556,8 @@ class YamlToContracts {
 				return patterns.nonEmpty()
 			case YamlContract.PredefinedRegex.non_blank:
 				return patterns.nonBlank()
+			default:
+				throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex + "] is unsupported. Use on of " + YamlContract.PredefinedRegex.values())
 		}
 	}
 

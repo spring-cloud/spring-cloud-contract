@@ -17,6 +17,8 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.ToString
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -27,10 +29,31 @@ import org.springframework.cloud.contract.verifier.config.TestMode
  */
 @ToString
 class ContractVerifierExtension {
+
+	private static final Log log = LogFactory.getLog(ContractVerifierExtension)
+
+	/**
+	 * For which unit test library tests should be generated
+	 * @deprecated - use {@code testFramework}
+	 */
+	@Deprecated
+	TestFramework targetFramework
+
+	@Deprecated
+	void setTargetFramework(TestFramework targetFramework) {
+		log.warn("Please use the [testFramework] field. This one is deprecated")
+		setTestFramework(targetFramework)
+	}
+
+	@Deprecated
+	TestFramework getTargetFramework() {
+		return getTestFramework()
+	}
+
 	/**
 	 * For which unit test library tests should be generated
 	 */
-	TestFramework targetFramework = TestFramework.JUNIT
+	TestFramework testFramework = TestFramework.JUNIT
 
 	/**
 	 * Which mechanism should be used to invoke REST calls during tests
@@ -63,6 +86,11 @@ class ContractVerifierExtension {
 	List<String> excludedFiles = []
 
 	/**
+	 * Patterns that should be taken into account for processing
+	 */
+	List<String> includedFiles = []
+
+	/**
 	 * Patterns for which generated tests should be @Ignored
 	 */
 	List<String> ignoredFiles = []
@@ -88,6 +116,11 @@ class ContractVerifierExtension {
 	File generatedTestSourcesDir
 
 	/**
+	 * Test resource directory where tests generated from Groovy DSL should be referenced
+	 */
+	File generatedTestResourcesDir
+
+	/**
 	 * Dir where the generated stubs from Groovy DSL should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
@@ -104,24 +137,6 @@ class ContractVerifierExtension {
 	 */
 	Boolean assertJsonSize = false
 
-	/**
-	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
-	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
-	 * taken into consideration
-	 * 
-	 * @deprecated - use {@link ContractVerifierExtension#contractRepository(groovy.lang.Closure)}
-	 */
-	@Deprecated
-	String contractsRepositoryUrl
-
-	/*
-	 * @deprecated - use {@link ContractVerifierExtension#contractRepository(groovy.lang.Closure)}
-	 */
-	@Deprecated
-	void setContractsRepositoryUrl(String contractsRepositoryUrl) {
-		this.contractRepository.repositoryUrl(contractsRepositoryUrl)
-	}
-	
 	ContractRepository contractRepository = new ContractRepository()
 	
 	/**

@@ -21,11 +21,12 @@ import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 
 class MainTest {
-	public static void main(String[] args) {
+
+	static void main(String[] args) {
 		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 				contractsDslDir: new File('/some/path/dsl'),
 				generatedTestSourcesDir: new File('/tmp/contracts'),
-				targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test',
+				testFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test',
 				staticImports: ['com.package.Test.*'], imports: ['org.package.Test'], excludedFiles: ["**/other"])
 		println new TestGenerator(properties).generate()
 	}

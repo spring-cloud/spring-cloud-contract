@@ -33,5 +33,6 @@ public class WiremockForDocsMockServerApplicationTests {
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
 	}
+
 }
 // end::wiremock_test[]

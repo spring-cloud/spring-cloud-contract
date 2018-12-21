@@ -30,15 +30,16 @@ import org.springframework.util.ClassUtils;
 /**
  * Convenience factory class for a {@link WireMockConfiguration} that knows how to use
  * Spring Boot to create a stub server. Use, for example, in a JUnit rule:
- * 
+ *
  * <pre>
  * &#64;ClassRule
  * public static WireMockClassRule wiremock = new WireMockClassRule(
  * 		WireMockSpring.config());
  * </pre>
- * 
- * and then use {@link com.github.tomakehurst.wiremock.client.WireMock} as normal in your test methods.
- * 
+ *
+ * and then use {@link com.github.tomakehurst.wiremock.client.WireMock} as normal in your
+ * test methods.
+ *
  * @author Dave Syer
  *
  */
@@ -53,11 +54,9 @@ public abstract class WireMockSpring {
 				HttpsURLConnection
 						.setDefaultHostnameVerifier(NoopHostnameVerifier.INSTANCE);
 				try {
-					HttpsURLConnection
-							.setDefaultSSLSocketFactory(SSLContexts.custom()
-									.loadTrustMaterial(null,
-											TrustSelfSignedStrategy.INSTANCE)
-									.build().getSocketFactory());
+					HttpsURLConnection.setDefaultSSLSocketFactory(SSLContexts.custom()
+							.loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE)
+							.build().getSocketFactory());
 				}
 				catch (Exception e) {
 					Assert.fail("Cannot install custom socket factory: [" + e.getMessage()

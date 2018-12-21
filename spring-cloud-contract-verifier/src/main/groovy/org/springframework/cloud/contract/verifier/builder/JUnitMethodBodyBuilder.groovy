@@ -16,24 +16,26 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+
+import java.util.regex.Pattern
+
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.RegexpBuilders
 
-import java.util.regex.Pattern
-
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
-
 /**
  * Root class for JUnit method building
  *
@@ -48,8 +50,9 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJ
 @PackageScope
 abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
-	JUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(stubDefinition, configProperties)
+	JUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties,
+						GeneratedClassDataForMethod classDataForMethod) {
+		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
 	@Override
@@ -118,6 +121,15 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
+					readBytesFromFileString(value, CommunicationType.RESPONSE) + ")"
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString())
+	}
+
+	@Override
 	protected String getParsedXmlResponseBodyString(String responseString) {
 		return "Object responseBody = new XmlSlurper().parseText($responseString);"
 	}
@@ -160,6 +172,11 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		String value
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
+		} else if (body instanceof FromFileProperty) {
+			FromFileProperty fileProperty = (FromFileProperty) body
+			value = fileProperty.isByte() ?
+					readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
+					readStringFromFileString(fileProperty, CommunicationType.REQUEST)
 		} else {
 			value = "\"$body\""
 		}
@@ -168,7 +185,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return getJavaMultipartFileParameterContent(propertyName, propertyValue)
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty fileProp -> readBytesFromFileString(fileProp, CommunicationType.REQUEST) })
 	}
 
 	@Override

@@ -36,8 +36,8 @@ import org.springframework.util.Assert;
  * @author Marcin Grzejszczak
  */
 @Configuration
-@ConditionalOnClass({EnableBinding.class, MessageCollector.class})
-@ConditionalOnProperty(name="stubrunner.stream.enabled", havingValue="true", matchIfMissing=true)
+@ConditionalOnClass({ EnableBinding.class, MessageCollector.class })
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 public class ContractVerifierStreamAutoConfiguration {
 
@@ -54,12 +54,12 @@ public class ContractVerifierStreamAutoConfiguration {
 			MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
 	}
+
 }
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
-	public ContractVerifierHelper(
-			MessageVerifier<Message<?>> exchange) {
+	public ContractVerifierHelper(MessageVerifier<Message<?>> exchange) {
 		super(exchange);
 	}
 
@@ -68,5 +68,5 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 		Assert.notNull(receive, "Message must not be null!");
 		return new ContractVerifierMessage(receive.getPayload(), receive.getHeaders());
 	}
-}
 
+}

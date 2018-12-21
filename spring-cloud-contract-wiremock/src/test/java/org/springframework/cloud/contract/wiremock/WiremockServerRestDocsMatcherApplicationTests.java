@@ -1,10 +1,12 @@
 package org.springframework.cloud.contract.wiremock;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.ComparisonFailure;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
@@ -33,14 +33,15 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Rule
 	public ExpectedException expected = ExpectedException.none();
 
 	@Test
 	public void matchesRequest() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
-				.contentType(MediaType.TEXT_PLAIN))
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
+						.contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()
 						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
@@ -52,8 +53,9 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 	public void doesNotMatch() throws Exception {
 		this.expected.expect(AssertionError.class);
 		this.expected.expectMessage("wiremock did not match");
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
-				.contentType(MediaType.TEXT_PLAIN))
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
+						.contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()
 						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))

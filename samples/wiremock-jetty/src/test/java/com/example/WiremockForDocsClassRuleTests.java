@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @ActiveProfiles("classrule")
-//tag::wiremock_test1[]
+// tag::wiremock_test1[]
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class WiremockForDocsClassRuleTests {
@@ -29,12 +29,14 @@ public class WiremockForDocsClassRuleTests {
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
-//end::wiremock_test1[]
+
+	// end::wiremock_test1[]
 	@Before
 	public void setup() {
 		this.service.setBase("http://localhost:" + wiremock.port());
 	}
-//tag::wiremock_test2[]
+
+	// tag::wiremock_test2[]
 	// A service that calls out over HTTP to localhost:${wiremock.port}
 	@Autowired
 	private Service service;
@@ -43,11 +45,11 @@ public class WiremockForDocsClassRuleTests {
 	@Test
 	public void contextLoads() throws Exception {
 		// Stubbing WireMock
-		wiremock.stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		wiremock.stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
 }
-//end::wiremock_test2[]
+// end::wiremock_test2[]

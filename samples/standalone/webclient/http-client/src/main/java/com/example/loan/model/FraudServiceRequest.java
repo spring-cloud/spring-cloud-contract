@@ -17,7 +17,7 @@ public class FraudServiceRequest {
 	}
 
 	public String getClientId() {
-		return clientId;
+		return this.clientId;
 	}
 
 	public void setClientId(String clientId) {
@@ -25,7 +25,7 @@ public class FraudServiceRequest {
 	}
 
 	public BigDecimal getLoanAmount() {
-		return loanAmount;
+		return this.loanAmount;
 	}
 
 	public void setLoanAmount(BigDecimal loanAmount) {

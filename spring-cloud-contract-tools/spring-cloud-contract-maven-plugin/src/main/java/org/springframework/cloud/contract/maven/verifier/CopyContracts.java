@@ -33,8 +33,11 @@ class CopyContracts {
 	private static final Log log = LogFactory.getLog(CopyContracts.class);
 
 	private final MavenProject project;
+
 	private final MavenSession mavenSession;
+
 	private final MavenResourcesFiltering mavenResourcesFiltering;
+
 	private final ContractVerifierConfigProperties config;
 
 	CopyContracts(MavenProject project, MavenSession mavenSession,
@@ -53,11 +56,12 @@ class CopyContracts {
 				+ ". Only files matching [" + this.config.getIncludedContracts() + "] pattern will end up in "
 				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
-		String includedRootFolderAntPattern = this.config.getIncludedRootFolderAntPattern() + "*.*";
-		String slashSeparatedGroupIdAntPattern =
-				slashSeparatedGroupIdAntPattern(includedRootFolderAntPattern);
-		String dotSeparatedGroupIdAntPattern =
-				dotSeparatedGroupIdAntPattern(includedRootFolderAntPattern);
+		String includedRootFolderAntPattern = this.config
+				.getIncludedRootFolderAntPattern() + "*.*";
+		String slashSeparatedGroupIdAntPattern = slashSeparatedGroupIdAntPattern(
+				includedRootFolderAntPattern);
+		String dotSeparatedGroupIdAntPattern = dotSeparatedGroupIdAntPattern(
+				includedRootFolderAntPattern);
 		// by default group id is slash separated...
 		resource.addInclude(slashSeparatedGroupIdAntPattern);
 		if (!slashSeparatedGroupIdAntPattern.equals(dotSeparatedGroupIdAntPattern)) {
@@ -66,7 +70,9 @@ class CopyContracts {
 		}
 		if (this.config.isExcludeBuildFolders()) {
 			resource.addExclude("**/target/**");
+			resource.addExclude("**/.mvn/**");
 			resource.addExclude("**/build/**");
+			resource.addExclude("**/.gradle/**");
 		}
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
@@ -90,8 +96,10 @@ class CopyContracts {
 	private String slashSeparatedGroupIdAntPattern(String includedRootFolderAntPattern) {
 		if (includedRootFolderAntPattern.contains(slashSeparatedGroupId())) {
 			return includedRootFolderAntPattern;
-		} else if (includedRootFolderAntPattern.contains(dotSeparatedGroupId())) {
-			return includedRootFolderAntPattern.replace(dotSeparatedGroupId(), slashSeparatedGroupId());
+		}
+		else if (includedRootFolderAntPattern.contains(dotSeparatedGroupId())) {
+			return includedRootFolderAntPattern.replace(dotSeparatedGroupId(),
+					slashSeparatedGroupId());
 		}
 		return includedRootFolderAntPattern;
 	}
@@ -99,8 +107,10 @@ class CopyContracts {
 	private String dotSeparatedGroupIdAntPattern(String includedRootFolderAntPattern) {
 		if (includedRootFolderAntPattern.contains(dotSeparatedGroupId())) {
 			return includedRootFolderAntPattern;
-		} else if (includedRootFolderAntPattern.contains(slashSeparatedGroupId())) {
-			return includedRootFolderAntPattern.replace(slashSeparatedGroupId(), dotSeparatedGroupId());
+		}
+		else if (includedRootFolderAntPattern.contains(slashSeparatedGroupId())) {
+			return includedRootFolderAntPattern.replace(slashSeparatedGroupId(),
+					dotSeparatedGroupId());
 		}
 		return includedRootFolderAntPattern;
 	}

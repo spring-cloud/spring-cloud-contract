@@ -45,24 +45,28 @@ class MethodBuilder {
 	private final String methodName
 	private final Contract stubContent
 	private final ContractVerifierConfigProperties configProperties
+	private final GeneratedClassDataForMethod generatedClassDataForMethod
 	private final boolean ignored
 
-	private MethodBuilder(String methodName, Contract stubContent, ContractVerifierConfigProperties configProperties, boolean ignored) {
+	private MethodBuilder(String methodName, Contract stubContent, ContractVerifierConfigProperties configProperties,
+						  GeneratedClassDataForMethod generatedClassDataForMethod, boolean ignored) {
 		this.ignored = ignored
 		this.stubContent = stubContent
 		this.methodName = methodName
 		this.configProperties = configProperties
+		this.generatedClassDataForMethod = generatedClassDataForMethod
 	}
 
 	/**
 	 * A factory method that creates a {@link MethodBuilder} for the given arguments
 	 */
-	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties) {
+	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties, SingleTestGenerator.GeneratedClassData generatedClassData) {
 		if (log.isDebugEnabled()) {
 			log.debug("Stub content Groovy DSL [$stubContent]")
 		}
-		String methodName = MethodBuilder.methodName(contract, stubsFile, stubContent)
-		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
+		String methodName = methodName(contract, stubsFile, stubContent)
+		return new MethodBuilder(methodName, stubContent, configProperties,
+				new GeneratedClassDataForMethod(generatedClassData, methodName), contract.ignored || stubContent.ignored)
 	}
 
 	static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
@@ -99,9 +103,9 @@ class MethodBuilder {
 			blockBuilder.addLine('@Test')
 		}
 		if (ignored) {
-			blockBuilder.addLine(configProperties.targetFramework.ignoreAnnotation)
+			blockBuilder.addLine(configProperties.testFramework.ignoreAnnotation)
 		}
-		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "validate_$methodName() throws Exception {")
+		blockBuilder.addLine(configProperties.testFramework.methodModifier + "validate_$methodName() throws Exception {")
 		getMethodBodyBuilder().appendTo(blockBuilder)
 		blockBuilder.addLine('}')
 	}
@@ -109,28 +113,33 @@ class MethodBuilder {
 	private MethodBodyBuilder getMethodBodyBuilder() {
 		if (stubContent.input || stubContent.outputMessage) {
 			if (isJUnitType()) {
-				return new JUnitMessagingMethodBodyBuilder(stubContent, configProperties)
+				return new JUnitMessagingMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 			}
-			return new SpockMessagingMethodBodyBuilder(stubContent, configProperties)
+			return new SpockMessagingMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 		}
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
 			if (isJUnitType()) {
-				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties)
+				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 			}
-			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
+		} else if (configProperties.testMode == TestMode.WEBTESTCLIENT) {
+			if (isJUnitType()) {
+				return new WebTestClientJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
+			}
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 		} else if (configProperties.testMode == TestMode.EXPLICIT) {
 			if (isJUnitType()) {
-				return new ExplicitJUnitMethodBodyBuilder(stubContent, configProperties)
+				return new ExplicitJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 			}
 			// in Groovy we're using def so we don't have to update the imports
-			return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
-		} else if (configProperties.targetFramework == SPOCK) {
-			return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
+		} else if (configProperties.testFramework == SPOCK) {
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 		}
-		return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties)
+		return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 	}
 
 	private boolean isJUnitType() {
-		return JUNIT == configProperties.targetFramework || JUNIT5 == configProperties.targetFramework
+		return JUNIT == configProperties.testFramework || JUNIT5 == configProperties.testFramework
 	}
 }

@@ -363,9 +363,37 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 ----
 
 The preceding example uses Spring's `MockMvc` to run the tests. This is the default test
-mode for HTTP contracts. However, JAX-RX client and explicit HTTP invocations can also be
+mode for HTTP contracts. However, JAX-RS client and explicit HTTP invocations can also be
 used. (To do so, change the `testMode` property of the plugin to `JAX-RS` or `EXPLICIT`,
 respectively.)
+
+Since 2.1.0, it is also possible to use `RestAssuredWebTestClient`with Spring's reactive `WebTestClient`
+run under the hood. This is particularly recommended while working with Reactive, `Web-Flux`-based applications.
+In order to use `WebTestClient` set `testMode` to `WEBTESTCLIENT`.
+
+Here is an example of a test generated in `WEBTESTCLIENT` test mode:
+
+ [source,java,indent=0]
+----
+@Test
+	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
+		// given:
+			WebTestClientRequestSpecification request = given()
+					.header("Content-Type", "application/json")
+					.body("{\"age\":10}");
+
+		// when:
+			WebTestClientResponse response = given().spec(request)
+					.post("/check");
+
+		// then:
+			assertThat(response.statusCode()).isEqualTo(200);
+			assertThat(response.header("Content-Type")).matches("application/json.*");
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
+	}
+----
 
 Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
 `testFramework` property to either `JUNIT5` or `Spock`.

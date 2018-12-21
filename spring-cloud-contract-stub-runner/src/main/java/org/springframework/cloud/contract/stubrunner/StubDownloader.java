@@ -20,11 +20,11 @@ import java.io.File;
 import java.util.Map;
 
 /**
- * Contract for providing a tuple containing configuration of a downloaded
- * and unpacked stub, together with the file location of that extracted artifact.
+ * Contract for providing a tuple containing configuration of a downloaded and unpacked
+ * stub, together with the file location of that extracted artifact.
  *
- * Note: Actually the artifact doesn't have to be a JAR. method name contains
- * that suffix for historical reasons.
+ * Note: Actually the artifact doesn't have to be a JAR. method name contains that suffix
+ * for historical reasons.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -32,8 +32,14 @@ import java.util.Map;
 public interface StubDownloader {
 
 	/**
-	 * Returns a mapping of updated StubConfiguration (it will contain the resolved version) and the location of the downloaded JAR.
-	 * If there was no artifact this method will return {@code null}.
+	 * Returns a mapping of updated StubConfiguration (it will contain the resolved
+	 * version) and the location of the downloaded stubs. If there was no artifact this
+	 * method will return {@code null}.
+	 *
+	 * Note: Actually the artifact doesn't have to be a JAR. method name contains that suffix
+	 * or historical reasons.
 	 */
-	Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration);
+	Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+			StubConfiguration stubConfiguration);
+
 }

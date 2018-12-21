@@ -45,7 +45,8 @@ public class WireMockRestTemplateConfiguration {
 		return new RestTemplateCustomizer() {
 			@Override
 			public void customize(RestTemplate restTemplate) {
-				if (restTemplate.getRequestFactory() instanceof HttpComponentsClientHttpRequestFactory) {
+				if (restTemplate
+						.getRequestFactory() instanceof HttpComponentsClientHttpRequestFactory) {
 					HttpComponentsClientHttpRequestFactory factory = (HttpComponentsClientHttpRequestFactory) restTemplate
 							.getRequestFactory();
 					factory.setHttpClient(createSslHttpClient());
@@ -68,5 +69,5 @@ public class WireMockRestTemplateConfiguration {
 			}
 		};
 	}
-	
+
 }

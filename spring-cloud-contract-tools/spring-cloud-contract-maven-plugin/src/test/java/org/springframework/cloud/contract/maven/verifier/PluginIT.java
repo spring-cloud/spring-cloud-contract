@@ -32,7 +32,7 @@ import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
 import org.springframework.util.SocketUtils;
 
 @RunWith(MavenJUnitTestRunner.class)
-@MavenVersions({ "3.3.3" })
+@MavenVersions({ "3.5.0" })
 public class PluginIT {
 
 	@Rule
@@ -58,56 +58,53 @@ public class PluginIT {
 	@Test
 	public void should_build_project_Spring_Boot_Groovy_with_Accurest() throws Exception {
 		File basedir = this.resources.getBasedir("spring-boot-groovy");
-		this.maven.forProject(basedir)
-				.execute("package")
-				.assertErrorFreeLog()
-				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
+		this.maven.forProject(basedir).execute("package").assertErrorFreeLog()
+				.assertLogText(
+						"Generating server tests source code for Spring Cloud Contract Verifier contract verification")
 				.assertLogText("Generated 1 test classes.")
-				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
+				.assertLogText(
+						"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new stub")
-				.assertLogText("Running hello.ContractVerifierSpec")
-				.assertErrorFreeLog();
+				.assertLogText("Running hello.ContractVerifierSpec").assertErrorFreeLog();
 	}
 
 	@Test
 	public void should_build_project_Spring_Boot_Java_with_Accurest() throws Exception {
 		File basedir = this.resources.getBasedir("spring-boot-java");
-		this.maven.forProject(basedir)
-				.execute("package")
-				.assertErrorFreeLog()
-				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
+		this.maven.forProject(basedir).execute("package").assertErrorFreeLog()
+				.assertLogText(
+						"Generating server tests source code for Spring Cloud Contract Verifier contract verification")
 				.assertLogText("Generated 1 test classes.")
-				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
+				.assertLogText(
+						"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new stub")
-				.assertLogText("Running hello.ContractVerifierTest")
-				.assertErrorFreeLog();
+				.assertLogText("Running hello.ContractVerifierTest").assertErrorFreeLog();
 	}
 
 	@Test
 	public void should_build_project_with_plugin_extension() throws Exception {
 		File basedir = this.resources.getBasedir("plugin-extension");
-		this.maven.forProject(basedir)
-				.execute("package")
-				.assertErrorFreeLog()
-				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
+		this.maven.forProject(basedir).execute("package").assertErrorFreeLog()
+				.assertLogText(
+						"Generating server tests source code for Spring Cloud Contract Verifier contract verification")
 				.assertLogText("Generated 1 test classes.")
-				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
+				.assertLogText(
+						"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new stub")
-				.assertLogText("Running hello.ContractVerifierTest")
-				.assertErrorFreeLog();
+				.assertLogText("Running hello.ContractVerifierTest").assertErrorFreeLog();
 	}
 
 	@Test
-	public void should_convert_Accurest_Contracts_to_WireMock_Stubs_mappings() throws Exception {
+	public void should_convert_Accurest_Contracts_to_WireMock_Stubs_mappings()
+			throws Exception {
 		File basedir = this.resources.getBasedir("pomless");
 		this.properties.getPluginVersion();
-		this.maven.forProject(basedir)
-				.withCliOption("-X")
-				.execute(String.format("org.springframework.cloud:spring-cloud-contract-maven-plugin:%s:convert",
-						this.properties.getPluginVersion()))
-				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
-				.assertLogText("Creating new stub")
-				.assertErrorFreeLog();
+		this.maven.forProject(basedir).withCliOption("-X").execute(String.format(
+				"org.springframework.cloud:spring-cloud-contract-maven-plugin:%s:convert",
+				this.properties.getPluginVersion()))
+				.assertLogText(
+						"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
+				.assertLogText("Creating new stub").assertErrorFreeLog();
 	}
 
 	@Test
@@ -115,13 +112,17 @@ public class PluginIT {
 		int availableTcpPort = SocketUtils.findAvailableTcpPort();
 		File basedir = this.resources.getBasedir("generatedStubsOnly");
 		this.properties.getPluginVersion();
-		this.maven.forProject(basedir)
-				.withCliOption("-X")
-				.withCliOption("-Dspring.cloud.contract.verifier.http.port=" + availableTcpPort)
-				.withCliOption("-Dspring.cloud.contract.verifier.wait-for-key-pressed=false")
-				.execute(String.format("org.springframework.cloud:spring-cloud-contract-maven-plugin:%s:run",
+		this.maven.forProject(basedir).withCliOption("-X")
+				.withCliOption(
+						"-Dspring.cloud.contract.verifier.http.port=" + availableTcpPort)
+				.withCliOption(
+						"-Dspring.cloud.contract.verifier.wait-for-key-pressed=false")
+				.execute(String.format(
+						"org.springframework.cloud:spring-cloud-contract-maven-plugin:%s:run",
 						this.properties.getPluginVersion()))
-				.assertLogText("All stubs are now running RunningStubs [namesAndPorts={=" + availableTcpPort + "}]")
+				.assertLogText("All stubs are now running RunningStubs [namesAndPorts={="
+						+ availableTcpPort + "}]")
 				.assertErrorFreeLog();
 	}
+
 }

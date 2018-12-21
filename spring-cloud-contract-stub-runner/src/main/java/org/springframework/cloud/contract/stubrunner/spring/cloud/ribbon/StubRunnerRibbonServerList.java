@@ -36,12 +36,12 @@ import org.springframework.util.StringUtils;
  * Stub Runner representation of a server list
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 class StubRunnerRibbonServerList implements ServerList<Server> {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory
+			.getLog(MethodHandles.lookup().lookupClass());
 
 	private final ServerList<Server> serverList;
 
@@ -50,10 +50,12 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 			final IClientConfig clientConfig) {
 		String serviceName = clientConfig.getClientName();
 		String mappedServiceName = StringUtils
-				.hasText(stubMapperProperties.fromServiceIdToIvyNotation(serviceName)) ?
-				stubMapperProperties.fromServiceIdToIvyNotation(serviceName) : serviceName;
+				.hasText(stubMapperProperties.fromServiceIdToIvyNotation(serviceName))
+						? stubMapperProperties.fromServiceIdToIvyNotation(serviceName)
+						: serviceName;
 		RunningStubs runningStubs = stubFinder.findAllRunningStubs();
-		final Map.Entry<StubConfiguration, Integer> entry = runningStubs.getEntry(mappedServiceName);
+		final Map.Entry<StubConfiguration, Integer> entry = runningStubs
+				.getEntry(mappedServiceName);
 		final List<Server> servers = new ArrayList<>();
 		if (entry != null) {
 			servers.add(new Server("localhost", entry.getValue()) {
@@ -62,7 +64,8 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 					return new MetaInfo() {
 						@Override
 						public String getAppName() {
-							return stubMapperProperties.fromIvyNotationToId(entry.getKey().toColonSeparatedDependencyNotation());
+							return stubMapperProperties.fromIvyNotationToId(
+									entry.getKey().toColonSeparatedDependencyNotation());
 						}
 
 						@Override
@@ -72,12 +75,14 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 
 						@Override
 						public String getServiceIdForDiscovery() {
-							return stubMapperProperties.fromIvyNotationToId(entry.getKey().getArtifactId());
+							return stubMapperProperties
+									.fromIvyNotationToId(entry.getKey().getArtifactId());
 						}
 
 						@Override
 						public String getInstanceId() {
-							return stubMapperProperties.fromIvyNotationToId(entry.getKey().getArtifactId());
+							return stubMapperProperties
+									.fromIvyNotationToId(entry.getKey().getArtifactId());
 						}
 					};
 				}
@@ -105,4 +110,5 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 	public List<Server> getUpdatedListOfServers() {
 		return this.serverList.getUpdatedListOfServers();
 	}
+
 }

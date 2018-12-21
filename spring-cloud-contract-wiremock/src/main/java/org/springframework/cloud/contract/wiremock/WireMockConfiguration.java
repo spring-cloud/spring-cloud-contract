@@ -1,17 +1,18 @@
 /*
- * Copyright 2012-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.springframework.cloud.contract.wiremock;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -28,6 +30,7 @@ import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -38,10 +41,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Configuration and lifecycle for a Spring Application context that wants to run a
@@ -50,7 +51,7 @@ import org.springframework.web.client.RestTemplate;
  * configure the properties of the wiremock server you can use the AutoConfigureWireMock
  * annotation, or add a bean of type {@link Options} (via
  * {@link WireMockSpring#options()}) to your test context.
- * 
+ *
  * @author Dave Syer
  *
  */
@@ -76,7 +77,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private DefaultListableBeanFactory beanFactory;
 
 	@Autowired
-	private WireMockProperties wireMock;
+	WireMockProperties wireMock;
 
 	@Autowired
 	private ResourceLoader resourceLoader;
@@ -99,11 +100,17 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (this.server == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("Creating a new server at "
+						+ "http port [" + this.wireMock.getServer().getPort() + "] and "
+						+ "https port [" + this.wireMock.getServer().getHttpsPort() + "]");
+			}
 			this.server = new WireMockServer(this.options);
 		}
 		registerStubs();
 		if (log.isDebugEnabled()) {
-			log.debug("WireMock server has [" + this.server.getStubMappings().size() + "] registered");
+			log.debug("WireMock server has [" + this.server.getStubMappings().size()
+					+ "] stubs registered");
 		}
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
@@ -124,17 +131,23 @@ public class WireMockConfiguration implements SmartLifecycle {
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
 					this.server.addStubMapping(WireMockStubMapping
-							.buildFrom(StreamUtils.copyToString(resource.getInputStream(), Charset.forName("UTF-8"))));
+							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
+									Charset.forName("UTF-8"))));
 				}
 			}
 		}
 	}
 
 	void reset() {
+		if (log.isDebugEnabled()) {
+			log.debug("Resetting stubs");
+		}
 		this.server.resetAll();
 	}
 
-	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
+	private void registerFiles(
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory)
+			throws IOException {
 		List<Resource> resources = new ArrayList<>();
 		for (String files : this.wireMock.getServer().getFiles()) {
 			if (StringUtils.hasText(files)) {
@@ -148,39 +161,46 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (!resources.isEmpty()) {
-			ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
+			ResourcesFileSource fileSource = new ResourcesFileSource(
+					resources.toArray(new Resource[0]));
 			factory.fileSource(fileSource);
 		}
 	}
 
 	@Override
 	public void start() {
+		if (isRunning()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Server is already running");
+			}
+			return;
+		}
 		this.server.start();
-		WireMock.configureFor("localhost", this.server.port());
+		updateCurrentServer();
+	}
+
+	private void updateCurrentServer() {
+		WireMock.configureFor(new WireMock(this.server));
 		this.running = true;
 		if (log.isDebugEnabled()) {
-			log.debug("Started WireMock at port [" + this.server.port() + "]. It has [" + this.server.getStubMappings().size() + "] mappings registered");
+			log.debug("Started WireMock at port [" + this.server.port() + "]. It has ["
+					+ this.server.getStubMappings().size() + "] mappings registered");
 		}
-		/*
-		Thanks to Tom Akehurst:
-		I looked at tcpdump while running the failing test. HttpUrlConnection is doing something weird - it's creating a connection in a
-		previous test case, which works fine, then the usual fin -> fin ack etc. etc. ending handshake happens. But it seems it
-		isn't discarded, but reused after that. Because the server thinks (rightly) that the connection is closed, it just sends a RST packet.
-		Calling the admin endpoint just happened to remove the dead connection from the pool.
-		This also fixes the problem (which using the Java HTTP client): System.setProperty("http.keepAlive", "false");
-		 */
-		Assert.isTrue(new RestTemplate().getForEntity("http://localhost:" + this.server.port() + "/__admin/mappings", String.class)
-				.getStatusCode().is2xxSuccessful(), "__admin/mappings endpoint wasn't accessible");
 	}
 
 	@Override
 	public void stop() {
 		if (this.running) {
 			this.server.stop();
+			this.server = null;
 			this.running = false;
+			this.options = null;
 			if (log.isDebugEnabled()) {
 				log.debug("Stopped WireMock instance");
 			}
+			this.beanFactory.destroySingleton(WIREMOCK_SERVER_BEAN_NAME);
+		} else if (log.isDebugEnabled()) {
+			log.debug("Server already stopped");
 		}
 	}
 
@@ -204,7 +224,6 @@ public class WireMockConfiguration implements SmartLifecycle {
 		stop();
 		callback.run();
 	}
-
 }
 
 @ConfigurationProperties("wiremock")
@@ -271,6 +290,7 @@ class WireMockProperties {
 		public void setFiles(String[] files) {
 			this.files = files;
 		}
+
 	}
 
 }

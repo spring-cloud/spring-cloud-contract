@@ -67,13 +67,13 @@ class ClassBuilder {
 	static ClassBuilder createClass(String className, String classPackage, ContractVerifierConfigProperties properties,
 									String includedDirectoryRelativePath) {
 		String baseClassForTests
-		if (properties.targetFramework == TestFramework.SPOCK && !properties.baseClassForTests
+		if (properties.testFramework == TestFramework.SPOCK && !properties.baseClassForTests
 				&& !properties.packageWithBaseClasses && !properties.baseClassMappings) {
 			baseClassForTests = 'spock.lang.Specification'
 		} else {
 			baseClassForTests = retrieveBaseClass(properties, includedDirectoryRelativePath)
 		}
-		return new ClassBuilder(className, classPackage, baseClassForTests, properties.targetFramework)
+		return new ClassBuilder(className, classPackage, baseClassForTests, properties.testFramework)
 	}
 
 	protected static String retrieveBaseClass(ContractVerifierConfigProperties properties, String includedDirectoryRelativePath) {

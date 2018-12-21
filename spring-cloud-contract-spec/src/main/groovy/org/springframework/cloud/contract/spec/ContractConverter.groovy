@@ -25,7 +25,7 @@ package org.springframework.cloud.contract.spec
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-interface ContractConverter<T> {
+interface ContractConverter<T> extends ContractStorer<T> {
 
 	/**
 	 * Should this file be accepted by the converter. Can use the file extension

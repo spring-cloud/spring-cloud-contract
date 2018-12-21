@@ -7,7 +7,7 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.0.M3"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.1.RELEASE"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 // Example of using Rest Assured 3.x. If you don't add this section Rest Assured 2.9.0 will be used
 //		classpath "com.jayway.restassured:rest-assured:2.9.0"
@@ -85,6 +85,14 @@ test {
 	testLogging {
 		exceptionFormat = 'full'
 	}
+	afterSuite { desc, result ->
+		if (!desc.parent) {
+			println "Results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+			if (result.testCount == 0) {
+				throw new IllegalStateException("No tests were found. Failing the build")
+			}
+		}
+	}
 }
 
 clean.doFirst {
@@ -102,8 +110,4 @@ task resolveDependencies {
 			}
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.0.2'
 }

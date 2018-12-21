@@ -60,9 +60,10 @@ public final class ScmStubDownloaderBuilder implements StubDownloaderBuilder {
 		return ACCEPTABLE_PROTOCOLS.stream().anyMatch(url::startsWith);
 	}
 
-	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
-		if (stubRunnerOptions.getStubsMode() == StubRunnerProperties.StubsMode.CLASSPATH ||
-				stubRunnerOptions.getStubRepositoryRoot() == null) {
+	@Override
+	public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
+		if (stubRunnerOptions.getStubsMode() == StubRunnerProperties.StubsMode.CLASSPATH
+				|| stubRunnerOptions.getStubRepositoryRoot() == null) {
 			return null;
 		}
 		Resource resource = stubRunnerOptions.getStubRepositoryRoot();
@@ -72,14 +73,15 @@ public final class ScmStubDownloaderBuilder implements StubDownloaderBuilder {
 		return new GitStubDownloader(stubRunnerOptions);
 	}
 
-	@Override public Resource resolve(String location, ResourceLoader resourceLoader) {
+	@Override
+	public Resource resolve(String location, ResourceLoader resourceLoader) {
 		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
 		return new GitResource(location);
 	}
-}
 
+}
 
 /**
  * Primitive version of a Git {@link Resource}
@@ -92,17 +94,21 @@ class GitResource extends AbstractResource {
 		this.rawLocation = location;
 	}
 
-	@Override public String getDescription() {
+	@Override
+	public String getDescription() {
 		return this.rawLocation;
 	}
 
-	@Override public InputStream getInputStream() throws IOException {
+	@Override
+	public InputStream getInputStream() throws IOException {
 		return null;
 	}
 
-	@Override public URI getURI() throws IOException {
+	@Override
+	public URI getURI() throws IOException {
 		return URI.create(this.rawLocation);
 	}
+
 }
 
 class GitContractsRepo {
@@ -120,34 +126,43 @@ class GitContractsRepo {
 
 	File clonedRepo(Resource repo) {
 		File file = CACHED_LOCATIONS.get(repo);
-		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repo, this.options);
+		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repo,
+				this.options);
 		if (file == null) {
-			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
+			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage
+					.createTempDir(TEMP_DIR_PREFIX);
 			GitRepo gitRepo = new GitRepo(tmpDirWhereStubsWillBeUnzipped, properties);
 			file = gitRepo.cloneProject(properties.url);
 			gitRepo.checkout(file, properties.branch);
 			CACHED_LOCATIONS.put(repo, file);
 			if (log.isDebugEnabled()) {
-				log.debug("The project hasn't already been cloned. Cloned it to [" + file + "]");
+				log.debug("The project hasn't already been cloned. Cloned it to [" + file
+						+ "]");
 			}
-		} else {
+		}
+		else {
 			if (log.isDebugEnabled()) {
-				log.debug("The project has already been cloned to [" + file + "]. Will reset any changes.");
+				log.debug("The project has already been cloned to [" + file
+						+ "]. Will reset any changes.");
 			}
 			new GitRepo(file, properties).reset(file);
 		}
 		return file;
 	}
+
 }
 
 class GitStubDownloader implements StubDownloader {
+
 	private static final Log log = LogFactory.getLog(GitStubDownloader.class);
 
 	// Preloading class for the shutdown hook not to throw ClassNotFound
 	private static final Class CLAZZ = TemporaryFileStorage.class;
 
 	private final StubRunnerOptions stubRunnerOptions;
+
 	private final boolean deleteStubsAfterTest;
+
 	private final GitContractsRepo gitContractsRepo;
 
 	GitStubDownloader(StubRunnerOptions stubRunnerOptions) {
@@ -157,48 +172,62 @@ class GitStubDownloader implements StubDownloader {
 		registerShutdownHook();
 	}
 
-	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+	@Override
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
-		if (StringUtils.isEmpty(stubConfiguration.version) || "+".equals(stubConfiguration.version)) {
-			throw new IllegalStateException("Concrete version wasn't passed for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
+		if (StringUtils.isEmpty(stubConfiguration.version)
+				|| "+".equals(stubConfiguration.version)) {
+			throw new IllegalStateException("Concrete version wasn't passed for ["
+					+ stubConfiguration.toColonSeparatedDependencyNotation() + "]");
 		}
 		try {
 			if (log.isDebugEnabled()) {
-				log.debug("Trying to find a contract for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
+				log.debug("Trying to find a contract for ["
+						+ stubConfiguration.toColonSeparatedDependencyNotation() + "]");
 			}
 			Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
 			File clonedRepo = this.gitContractsRepo.clonedRepo(repo);
 			FileWalker walker = new FileWalker(stubConfiguration);
 			Files.walkFileTree(clonedRepo.toPath(), walker);
 			if (walker.foundFile != null) {
-				return new AbstractMap.SimpleEntry<>(stubConfiguration, walker.foundFile.toFile());
+				return new AbstractMap.SimpleEntry<>(stubConfiguration,
+						walker.foundFile.toFile());
 			}
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
 		if (log.isDebugEnabled()) {
-			log.debug("No matching contracts were found in the repo for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]. Returning null");
+			log.debug("No matching contracts were found in the repo for ["
+					+ stubConfiguration.toColonSeparatedDependencyNotation()
+					+ "]. Returning null");
 		}
 		return null;
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(
-				() -> TemporaryFileStorage.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> TemporaryFileStorage
+				.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
 	}
+
 }
 
 class GitStubDownloaderProperties {
+
 	private static final Log log = LogFactory.getLog(GitStubDownloaderProperties.class);
 
 	private static final String GIT_BRANCH_PROPERTY = "git.branch";
+
 	private static final String GIT_USERNAME_PROPERTY = "git.username";
+
 	private static final String GIT_PASSWORD_PROPERTY = "git.password";
 
 	final URI url;
+
 	final String username;
+
 	final String password;
+
 	final String branch;
 
 	GitStubDownloaderProperties(Resource repo, StubRunnerOptions options) {
@@ -206,24 +235,28 @@ class GitStubDownloaderProperties {
 		Map<String, String> args = options.getProperties();
 		try {
 			repoUrl = schemeSpecificPart(repo.getURI());
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
 		// if we had git://https://... we want the part starting from https
 		// if we had git://git@... we want the full address again
 		// if the URL starts with git@... and ends with .git, we want to remove it
-		String modifiedRepo = repoUrl.startsWith("git@") ? modifyUrlForGitRepo(repoUrl) : repoUrl;
+		String modifiedRepo = repoUrl.startsWith("git@") ? modifyUrlForGitRepo(repoUrl)
+				: repoUrl;
 		this.url = URI.create(modifiedRepo);
-		String username = StubRunnerPropertyUtils.getProperty(args, GIT_USERNAME_PROPERTY);
+		String username = StubRunnerPropertyUtils.getProperty(args,
+				GIT_USERNAME_PROPERTY);
 		this.username = StringUtils.hasText(username) ? username : options.getUsername();
-		String password = StubRunnerPropertyUtils.getProperty(args, GIT_PASSWORD_PROPERTY);
+		String password = StubRunnerPropertyUtils.getProperty(args,
+				GIT_PASSWORD_PROPERTY);
 		this.password = StringUtils.hasText(password) ? password : options.getPassword();
 		String branch = StubRunnerPropertyUtils.getProperty(args, GIT_BRANCH_PROPERTY);
 		this.branch = StringUtils.hasText(branch) ? branch : "master";
 		if (log.isDebugEnabled()) {
-			log.debug("Repo url is [" + repoUrl + "], modified url string "
-					+ "is [" + modifiedRepo + "] URL is [" + this.url + "] and "
-					+ "branch is [" + this.branch + "]");
+			log.debug("Repo url is [" + repoUrl + "], modified url string " + "is ["
+					+ modifiedRepo + "] URL is [" + this.url + "] and " + "branch is ["
+					+ this.branch + "]");
 		}
 	}
 
@@ -238,12 +271,15 @@ class GitStubDownloaderProperties {
 	private String modifyUrlForGitRepo(String gitRepo) {
 		return "git:" + gitRepo;
 	}
+
 }
 
 class FileWalker extends SimpleFileVisitor<Path> {
 
 	private final PathMatcher matcherWithDot;
+
 	private final PathMatcher matcherWithoutDot;
+
 	Path foundFile;
 
 	FileWalker(StubConfiguration stubConfiguration) {
@@ -253,20 +289,21 @@ class FileWalker extends SimpleFileVisitor<Path> {
 				.getPathMatcher("glob:" + matcherGlob(stubConfiguration, "/"));
 	}
 
-	private String matcherGlob(StubConfiguration stubConfiguration, String groupArtifactSeparator) {
+	private String matcherGlob(StubConfiguration stubConfiguration,
+			String groupArtifactSeparator) {
 		return "**" + stubConfiguration.groupId + groupArtifactSeparator
-				+ stubConfiguration.artifactId + "/"
-				+ stubConfiguration.version;
+				+ stubConfiguration.artifactId + "/" + stubConfiguration.version;
 	}
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
 			throws IOException {
-		if (this.matcherWithDot.matches(dir.toAbsolutePath()) ||
-				this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
+		if (this.matcherWithDot.matches(dir.toAbsolutePath())
+				|| this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
 			this.foundFile = dir;
 			return FileVisitResult.TERMINATE;
 		}
 		return FileVisitResult.CONTINUE;
 	}
+
 }

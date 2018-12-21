@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Import;
 /**
  * Annotation for test classes that want to install a RestTemplateCustomizer that sets up
  * a Spring Boot app to ignore SSL errors. Use only in tests!
- * 
+ *
  * @author Dave Syer
  *
  */
@@ -38,4 +38,5 @@ import org.springframework.context.annotation.Import;
 @Import(WireMockRestTemplateConfiguration.class)
 @PropertyMapping("wiremock.server")
 public @interface AutoConfigureHttpClient {
+
 }

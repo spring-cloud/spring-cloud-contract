@@ -51,17 +51,23 @@ class StubRunnerExecutor implements StubFinder {
 	static final Set<StubServer> STUB_SERVERS = new ConcurrentHashSet<>();
 
 	private final AvailablePortScanner portScanner;
+
 	private final MessageVerifier<?> contractVerifierMessaging;
+
 	private StubServer stubServer;
+
 	private final List<HttpServerStub> serverStubs;
 
-	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifier<?> contractVerifierMessaging, List<HttpServerStub> serverStubs) {
+	StubRunnerExecutor(AvailablePortScanner portScanner,
+			MessageVerifier<?> contractVerifierMessaging,
+			List<HttpServerStub> serverStubs) {
 		this.portScanner = portScanner;
 		this.contractVerifierMessaging = contractVerifierMessaging;
 		this.serverStubs = serverStubs;
 	}
 
-	StubRunnerExecutor(AvailablePortScanner portScanner, List<HttpServerStub> serverStubs) {
+	StubRunnerExecutor(AvailablePortScanner portScanner,
+			List<HttpServerStub> serverStubs) {
 		this(portScanner, new NoOpStubMessages(), serverStubs);
 	}
 
@@ -69,12 +75,12 @@ class StubRunnerExecutor implements StubFinder {
 		this(portScanner, new NoOpStubMessages(), new ArrayList<HttpServerStub>());
 	}
 
-	public RunningStubs runStubs(StubRunnerOptions stubRunnerOptions, StubRepository repository,
-			StubConfiguration stubConfiguration) {
+	public RunningStubs runStubs(StubRunnerOptions stubRunnerOptions,
+			StubRepository repository, StubConfiguration stubConfiguration) {
 		if (this.stubServer != null) {
 			if (log.isDebugEnabled()) {
-				log.debug("Returning cached version of stubs [" + stubConfiguration.toColonSeparatedDependencyNotation()
-						+ "]");
+				log.debug("Returning cached version of stubs ["
+						+ stubConfiguration.toColonSeparatedDependencyNotation() + "]");
 			}
 			return runningStubs();
 		}
@@ -85,8 +91,8 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	private RunningStubs runningStubs() {
-		return new RunningStubs(
-				Collections.singletonMap(this.stubServer.getStubConfiguration(), this.stubServer.getPort()));
+		return new RunningStubs(Collections.singletonMap(
+				this.stubServer.getStubConfiguration(), this.stubServer.getPort()));
 	}
 
 	public void shutdown() {
@@ -103,11 +109,13 @@ class StubRunnerExecutor implements StubFinder {
 	public URL findStubUrl(String groupId, String artifactId) {
 		URL url = null;
 		if (groupId == null) {
-			url = findStubUrl(this.stubServer.stubConfiguration.artifactId.equals(artifactId));
+			url = findStubUrl(
+					this.stubServer.stubConfiguration.artifactId.equals(artifactId));
 		}
 		if (url == null) {
-			url = findStubUrl(this.stubServer.stubConfiguration.artifactId.equals(artifactId)
-					&& this.stubServer.stubConfiguration.groupId.equals(groupId));
+			url = findStubUrl(
+					this.stubServer.stubConfiguration.artifactId.equals(artifactId)
+							&& this.stubServer.stubConfiguration.groupId.equals(groupId));
 		}
 		if (url == null) {
 			throw new StubNotFoundException(groupId, artifactId);
@@ -119,8 +127,8 @@ class StubRunnerExecutor implements StubFinder {
 	public URL findStubUrl(String ivyNotation) {
 		String[] splitString = ivyNotation.split(":", -1);
 		if (splitString.length > 4) {
-			throw new IllegalArgumentException(
-					"[" + ivyNotation + "] is an invalid notation. Pass [groupId]:artifactId[:version][:classifier].");
+			throw new IllegalArgumentException("[" + ivyNotation
+					+ "] is an invalid notation. Pass [groupId]:artifactId[:version][:classifier].");
 		}
 		else if (splitString.length == 1) {
 			return findStubUrl(null, splitString[0]);
@@ -131,7 +139,8 @@ class StubRunnerExecutor implements StubFinder {
 		else if (splitString.length == 3) {
 			return findStubUrl(groupIdArtifactVersionMatches(splitString));
 		}
-		return findStubUrl(groupIdArtifactVersionMatches(splitString) && classifierMatches(splitString));
+		return findStubUrl(groupIdArtifactVersionMatches(splitString)
+				&& classifierMatches(splitString));
 	}
 
 	private boolean classifierMatches(String[] splitString) {
@@ -150,18 +159,21 @@ class StubRunnerExecutor implements StubFinder {
 
 	@Override
 	public RunningStubs findAllRunningStubs() {
-		return new RunningStubs(Collections.singletonMap(this.stubServer.stubConfiguration, this.stubServer.getPort()));
+		return new RunningStubs(Collections.singletonMap(
+				this.stubServer.stubConfiguration, this.stubServer.getPort()));
 	}
 
 	@Override
 	public Map<StubConfiguration, Collection<Contract>> getContracts() {
-		return Collections.singletonMap(this.stubServer.stubConfiguration, this.stubServer.getContracts());
+		return Collections.singletonMap(this.stubServer.stubConfiguration,
+				this.stubServer.getContracts());
 	}
 
 	@Override
 	public boolean trigger(String ivyNotationAsString, String labelName) {
 		Collection<Contract> matchingContracts = new ArrayList<>();
-		for (Entry<StubConfiguration, Collection<Contract>> it : getContracts().entrySet()) {
+		for (Entry<StubConfiguration, Collection<Contract>> it : getContracts()
+				.entrySet()) {
 			if (it.getKey().groupIdAndArtifactMatches(ivyNotationAsString)) {
 				matchingContracts.addAll(it.getValue());
 			}
@@ -181,7 +193,8 @@ class StubRunnerExecutor implements StubFinder {
 	private boolean triggerForDsls(Collection<Contract> dsls, String labelName) {
 		Collection<Contract> matchingDsls = new ArrayList<>();
 		for (Contract contract : dsls) {
-			if (labelName.equals(contract.getLabel()) && contract.getOutputMessage() != null) {
+			if (labelName.equals(contract.getLabel())
+					&& contract.getOutputMessage() != null) {
 				matchingDsls.add(contract);
 			}
 		}
@@ -216,7 +229,8 @@ class StubRunnerExecutor implements StubFinder {
 	@Override
 	public Map<String, Collection<String>> labels() {
 		Map<String, Collection<String>> labels = new LinkedHashMap<>();
-		for (Entry<StubConfiguration, Collection<Contract>> it : getContracts().entrySet()) {
+		for (Entry<StubConfiguration, Collection<Contract>> it : getContracts()
+				.entrySet()) {
 			Collection<String> values = new ArrayList<>();
 			for (Contract contract : it.getValue()) {
 				if (contract.getLabel() != null) {
@@ -233,17 +247,18 @@ class StubRunnerExecutor implements StubFinder {
 		DslProperty<?> body = outputMessage.getBody();
 		Headers headers = outputMessage.getHeaders();
 		this.contractVerifierMessaging.send(
-				JsonOutput
-						.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue())),
-				headers == null ? null : headers.asStubSideMap(), outputMessage.getSentTo().getClientValue());
+				JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(
+						body == null ? null : body.getClientValue())),
+				headers == null ? null : headers.asStubSideMap(),
+				outputMessage.getSentTo().getClientValue());
 	}
 
 	private URL returnStubUrlIfMatches(boolean condition) {
 		return condition ? this.stubServer.getStubUrl() : null;
 	}
 
-	private void startStubServers(final StubRunnerOptions stubRunnerOptions, final StubConfiguration stubConfiguration,
-			StubRepository repository) {
+	private void startStubServers(final StubRunnerOptions stubRunnerOptions,
+			final StubConfiguration stubConfiguration, StubRepository repository) {
 		final List<File> mappings = repository.getStubs();
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
@@ -251,20 +266,23 @@ class StubRunnerExecutor implements StubFinder {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
 			}
-			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub()).start();
+			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
+					new NoOpHttpServerStub()).start();
 			return;
 		}
 		if (port != null && port >= 0) {
-			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, httpServerStub()).start(port);
+			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
+					httpServerStub()).start(port);
 		}
 		else {
-			this.stubServer = this.portScanner.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
-				@Override
-				public StubServer call(int availablePort) {
-					return new StubServer(stubConfiguration, mappings, contracts,
-							httpServerStub()).start(availablePort);
-				}
-			});
+			this.stubServer = this.portScanner
+					.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
+						@Override
+						public StubServer call(int availablePort) {
+							return new StubServer(stubConfiguration, mappings, contracts,
+									httpServerStub()).start(availablePort);
+						}
+					});
 		}
 		STUB_SERVERS.add(this.stubServer);
 	}

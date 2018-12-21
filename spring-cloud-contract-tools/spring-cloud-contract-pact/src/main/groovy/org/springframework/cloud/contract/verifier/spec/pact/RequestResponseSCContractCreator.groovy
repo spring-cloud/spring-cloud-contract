@@ -168,7 +168,7 @@ class RequestResponseSCContractCreator {
 									throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
 								}
 
-								if (FULL_BODY.equals(key)) {
+								if (FULL_BODY == key) {
 									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value)
 									jsonPaths.each {
 										jsonPath(it.keyBeforeChecking(), byType())

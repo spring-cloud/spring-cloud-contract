@@ -25,6 +25,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 
 @Named
 public class LocalStubRunner {
+
 	private static final Log log = LogFactory.getLog(LocalStubRunner.class);
 
 	public StubRunner run(final String contractsDir, StubRunnerOptions options) {
@@ -34,4 +35,5 @@ public class LocalStubRunner {
 		stubRunner.runStubs();
 		return stubRunner;
 	}
+
 }
