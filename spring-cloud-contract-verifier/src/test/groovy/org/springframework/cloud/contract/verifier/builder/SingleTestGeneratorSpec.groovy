@@ -185,13 +185,13 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			asserter(clazz)
 		where:
-			testFramework | order | mode              | classStrings                           | asserter
-			JUNIT         | 2     | MOCKMVC           | mockMvcJUnitRestAssured3ClassStrings   | JAVA_ASSERTER
-			JUNIT         | 2     | TestMode.EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER
-			JUNIT5        | null  | MOCKMVC           | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER
-			JUNIT5        | null  | TestMode.EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER
-			SPOCK         | 2     | MOCKMVC           | spockClassRestAssured3Strings          | GROOVY_ASSERTER
-			SPOCK         | 2     | TestMode.EXPLICIT | explicitSpockRestAssured3ClassStrings  | GROOVY_ASSERTER
+			testFramework | order | mode     | classStrings                           | asserter
+			JUNIT         | 2     | MOCKMVC  | mockMvcJUnitRestAssured3ClassStrings   | JAVA_ASSERTER
+			JUNIT         | 2     | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER
+			JUNIT5        | null  | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER
+			JUNIT5        | null  | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER
+			SPOCK         | 2     | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER
+			SPOCK         | 2     | EXPLICIT | explicitSpockRestAssured3ClassStrings  | GROOVY_ASSERTER
 	}
 
 	def 'should build test class for #testFramework when the path contains bizarre signs'() {
@@ -215,13 +215,13 @@ class SingleTestGeneratorSpec extends Specification {
 			size > 0
 			asserter(new File(newFolder.parent, '/org/springframework/cloud/contract/verifier/tests/com_uscm/dale_api44_spec/0_1_0_dev_1_uncommitted_d1174dd/' + testName).text)
 		where:
-			testFramework | mode              | asserter        | testName
-			JUNIT         | MOCKMVC           | JAVA_ASSERTER   | 'ContractsTest.java'
-			JUNIT         | TestMode.EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
-			JUNIT5        | MOCKMVC           | JAVA_ASSERTER   | 'ContractsTest.java'
-			JUNIT5        | TestMode.EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
-			SPOCK         | MOCKMVC           | GROOVY_ASSERTER | 'ContractsSpec.groovy'
-			SPOCK         | TestMode.EXPLICIT | GROOVY_ASSERTER | 'ContractsSpec.groovy'
+			testFramework | mode     | asserter        | testName
+			JUNIT         | MOCKMVC  | JAVA_ASSERTER   | 'ContractsTest.java'
+			JUNIT         | EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
+			JUNIT5        | MOCKMVC  | JAVA_ASSERTER   | 'ContractsTest.java'
+			JUNIT5        | EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
+			SPOCK         | MOCKMVC  | GROOVY_ASSERTER | 'ContractsSpec.groovy'
+			SPOCK         | EXPLICIT | GROOVY_ASSERTER | 'ContractsSpec.groovy'
 	}
 
 	def 'should build test class for #testFramework with Rest Assured 2x'() {
@@ -248,13 +248,13 @@ class SingleTestGeneratorSpec extends Specification {
 			!clazz.contains('io.restassured')
 
 		where:
-			testFramework | order | mode              | classStrings
-			JUNIT         | 2     | MOCKMVC           | mockMvcJUnitRestAssured2ClassStrings
-			JUNIT         | 2     | TestMode.EXPLICIT | explicitJUnitRestAssured2ClassStrings
-			JUNIT5        | null  | MOCKMVC           | mockMvcJUnit5RestAssured2ClassStrings
-			JUNIT5        | null  | TestMode.EXPLICIT | explicitJUnit5RestAssured2ClassStrings
-			SPOCK         | 2     | MOCKMVC           | spockClassRestAssured2Strings
-			SPOCK         | 2     | TestMode.EXPLICIT | explicitSpockRestAssured2ClassStrings
+			testFramework | order | mode     | classStrings
+			JUNIT         | 2     | MOCKMVC  | mockMvcJUnitRestAssured2ClassStrings
+			JUNIT         | 2     | EXPLICIT | explicitJUnitRestAssured2ClassStrings
+			JUNIT5        | null  | MOCKMVC  | mockMvcJUnit5RestAssured2ClassStrings
+			JUNIT5        | null  | EXPLICIT | explicitJUnit5RestAssured2ClassStrings
+			SPOCK         | 2     | MOCKMVC  | spockClassRestAssured2Strings
+			SPOCK         | 2     | EXPLICIT | explicitSpockRestAssured2ClassStrings
 	}
 
 	def 'should build test class for #testFramework and mode #mode with two files'() {
@@ -323,17 +323,17 @@ class SingleTestGeneratorSpec extends Specification {
 		where:
 			testFramework | mode              | classStrings                           | asserter        | textAssertion
 			JUNIT         | MOCKMVC           | mockMvcJUnitRestAssured3ClassStrings   | JAVA_ASSERTER   | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2}
-			JUNIT         | TestMode.EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER   | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2}
+			JUNIT         | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER   | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2}
 			JUNIT5        | MOCKMVC           | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER   | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2}
-			JUNIT5        | TestMode.EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER   | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2}
+			JUNIT5        | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER   | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2}
 			SPOCK         | MOCKMVC           | spockClassRestAssured3Strings          | GROOVY_ASSERTER | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2}
-			SPOCK         | TestMode.EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2}
+			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | {String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2}
 	}
 
 	def 'should build JaxRs test class for #testFramework'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testMode = TestMode.JAXRSCLIENT
+			properties.testMode = JAXRSCLIENT
 			properties.testFramework =testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, null, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
@@ -486,7 +486,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework =JUNIT
-			properties.testMode = TestMode.EXPLICIT
+			properties.testMode = EXPLICIT
 			properties.baseClassForTests = 'test.ContextPathTestingBaseClass'
 		and:
 			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1,

@@ -35,6 +35,7 @@ import org.springframework.cloud.contract.verifier.util.RegexpBuilders
 
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
+import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
 /**
  * Root class for JUnit method building
@@ -66,9 +67,19 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	@Override
+	protected boolean shouldCommentOutBDDBlocks() {
+		return true
+	}
+
+	@Override
 	protected BlockBuilder addColonIfRequired(BlockBuilder blockBuilder) {
 		blockBuilder.addAtTheEnd(JUNIT.lineSuffix)
 		return blockBuilder
+	}
+
+	@Override
+	protected Optional<String> lineSuffix() {
+		return Optional.of(JUNIT5.lineSuffix)
 	}
 
 	@Override

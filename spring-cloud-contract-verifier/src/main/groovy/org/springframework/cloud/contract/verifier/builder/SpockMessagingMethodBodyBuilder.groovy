@@ -154,8 +154,18 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected boolean shouldCommentOutBDDBlocks() {
+		return false
+	}
+
+	@Override
 	protected BlockBuilder addColonIfRequired(BlockBuilder blockBuilder) {
 		return blockBuilder
+	}
+
+	@Override
+	protected Optional<String> lineSuffix() {
+		return Optional.empty()
 	}
 
 	@Override

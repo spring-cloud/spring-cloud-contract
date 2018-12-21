@@ -79,7 +79,7 @@ class MethodBuilder {
 		} else if (contract.convertedContract.size() > 1) {
 			int index = contract.convertedContract.findIndexOf { it == stubContent}
 			String name = "${camelCasedMethodFromFileName(stubsFile)}_${index}"
-			if (log.isDebugEnabled()) {
+			if (log.isDebugEnabled()) {	
 				log.debug("Scenario found. The method name will be [" + name + "]")
 			}
 			return name
