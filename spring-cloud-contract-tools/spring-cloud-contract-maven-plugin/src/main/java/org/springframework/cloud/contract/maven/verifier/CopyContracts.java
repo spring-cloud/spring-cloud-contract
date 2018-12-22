@@ -49,10 +49,9 @@ class CopyContracts {
 		this.config = config;
 	}
 
-	public void copy(File contractsDirectory, File outputDirectory, String rootPath)
+	public void copy(File contractsDirectory, File outputDirectory)
 			throws MojoExecutionException {
-		File outputFolderWithContracts = outputDirectory;
-		log.info("Copying Spring Cloud Contract Verifier contracts to ["+ outputFolderWithContracts + "]"
+		log.info("Copying Spring Cloud Contract Verifier contracts to ["+ outputDirectory + "]"
 				+ ". Only files matching [" + this.config.getIncludedContracts() + "] pattern will end up in "
 				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
@@ -77,7 +76,7 @@ class CopyContracts {
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
 		execution.setResources(Collections.singletonList(resource));
-		execution.setOutputDirectory(outputFolderWithContracts);
+		execution.setOutputDirectory(outputDirectory);
 		execution.setMavenProject(this.project);
 		execution.setEncoding("UTF-8");
 		execution.setMavenSession(this.mavenSession);

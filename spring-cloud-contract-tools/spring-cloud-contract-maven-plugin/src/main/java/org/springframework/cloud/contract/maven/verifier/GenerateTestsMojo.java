@@ -17,8 +17,6 @@ package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -46,7 +44,7 @@ import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
-import org.springframework.cloud.contract.verifier.converter.GroovyToYamlConverter;
+import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 import org.springframework.util.FileSystemUtils;
 
 /**
@@ -307,7 +305,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 			Path tmp = Files.createTempDirectory("contracts");
 			tmp.toFile().deleteOnExit();
 			FileSystemUtils.copyRecursively(contractsDirectory.toPath(), tmp);
-			GroovyToYamlConverter.replaceGroovyContractWithYaml(tmp.toFile());
+			ToYamlConverter.replaceContractWithYaml(tmp.toFile());
 			contractsDirectory = tmp.toFile();
 			return contractsDirectory;
 		}

@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.maven.verifier;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.apache.maven.execution.MavenSession;
@@ -31,9 +32,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.eclipse.aether.RepositorySystemSession;
+
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
+import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 
 /**
@@ -169,6 +172,13 @@ public class ConvertMojo extends AbstractMojo {
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
+	/**
+	 * If {@code true} then will convert Groovy contracts to a YAML representation
+	 * TODO: Consider converting any version to YAML
+	 */
+	@Parameter(property = "convertToYaml", defaultValue = "false")
+	private boolean convertToYaml;
+
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
@@ -195,12 +205,14 @@ public class ConvertMojo extends AbstractMojo {
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = locationOfContracts(config);
 		contractsDirectory = contractSubfolderIfPresent(contractsDirectory);
-//		copyOriginals(rootPath, config, contractsDirectory);
-		copyContracts(rootPath, config, contractsDirectory);
 		File contractsDslDir = contractsDslDir(contractsDirectory);
-		getLog().info("Directory with contract is present at [" + contractsDslDir + "]");
-//		GroovyToYamlConverter.replaceGroovyContractWithYaml(contractsDslDir);
-//		getLog().info("Replaced Groovy DSL files with their YML representation");
+		File copiedContracts = copyContracts(rootPath, config, contractsDirectory);
+		if (this.convertToYaml) {
+			contractsDslDir = copiedContracts;
+			copyOriginals(rootPath, config, contractsDirectory);
+			ToYamlConverter.replaceContractWithYaml(contractsDslDir);
+			getLog().info("Replaced Groovy DSL files with their YAML representation at [" + contractsDslDir + "]");
+		}
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		logSetup(config, contractsDslDir);
@@ -208,11 +220,12 @@ public class ConvertMojo extends AbstractMojo {
 		converter.processFiles();
 	}
 
-	private void copyOriginals(String rootPath, ContractVerifierConfigProperties config,
+	private File copyOriginals(String rootPath, ContractVerifierConfigProperties config,
 			File contractsDirectory) throws MojoExecutionException {
 		File outputFolderWithOriginals = new File(this.stubsDirectory, rootPath + ORIGINAL_PATH);
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, outputFolderWithOriginals, rootPath);
+				.copy(contractsDirectory, outputFolderWithOriginals);
+		return outputFolderWithOriginals;
 	}
 
 	private File copyContracts(String rootPath, ContractVerifierConfigProperties config,
@@ -220,7 +233,7 @@ public class ConvertMojo extends AbstractMojo {
 		File outputFolderWithContracts = this.stubsDirectory.getPath().endsWith("contracts") ?
 				this.stubsDirectory : new File(this.stubsDirectory, rootPath + CONTRACTS_PATH);
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, outputFolderWithContracts, rootPath);
+				.copy(contractsDirectory, outputFolderWithContracts);
 		return outputFolderWithContracts;
 	}
 
