@@ -406,7 +406,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
 		}
 		if (contentType == ContentType.JSON) {
-			jsonBodyVerificationBuilder.
+			convertedResponseBody = jsonBodyVerificationBuilder.
 					addJsonResponseBodyCheck(bb, convertedResponseBody,
 							bodyMatchers, getResponseAsString())
 			if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {

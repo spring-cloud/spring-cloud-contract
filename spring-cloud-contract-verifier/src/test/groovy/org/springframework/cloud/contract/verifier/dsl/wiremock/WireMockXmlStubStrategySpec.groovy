@@ -80,80 +80,97 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 					.toWireMockClientStub()
 		then:
 			stubMappingIsValidWireMockStub(wireMockStub)
-			wireMockStub.contains(
+			wireMockStub
+					.replaceAll("\n", "")
+					.replaceAll(' ', '')
+					.contains(
 					"""
-"bodyPatterns" : [ {
-      "matchesXPath" : {
-        "expression" : "/test/duck/text()",
-        "equalTo" : "123"
+"bodyPatterns": [
+    {
+      "matchesXPath": {
+        "expression": "/test/duck/text()",
+        "equalTo": "123"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/alpha/text()",
-        "equalTo" : "abc"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/alpha/text()",
+        "equalTo": "abc"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/list/elem/text()",
-        "equalTo" : "abc"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/list/elem/text()",
+        "equalTo": "abc"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/list/elem/text()",
-        "equalTo" : "def"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/list/elem/text()",
+        "equalTo": "def"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/list/elem/text()",
-        "equalTo" : "ghi"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/list/elem/text()",
+        "equalTo": "ghi"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/number/text()",
-        "equalTo" : "123"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/number/text()",
+        "equalTo": "123"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/aBoolean/text()",
-        "equalTo" : "true"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/aBoolean/text()",
+        "equalTo": "true"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/date/text()",
-        "equalTo" : "2017-01-01"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/date/text()",
+        "equalTo": "2017-01-01"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/dateTime/text()",
-        "equalTo" : "2017-01-01T01:23:45"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/dateTime/text()",
+        "equalTo": "2017-01-01T01:23:45"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/time/text()",
-        "equalTo" : "01:02:34"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/time/text()",
+        "equalTo": "01:02:34"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/valueWithoutAMatcher/text()",
-        "equalTo" : "foo"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/valueWithoutAMatcher/text()",
+        "equalTo": "foo"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/valueWithTypeMatch/text()",
-        "equalTo" : "string"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/valueWithTypeMatch/text()",
+        "equalTo": "string"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/key/complex/text()",
-        "equalTo" : "foo"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/key/complex/text()",
+        "equalTo": "foo"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/@type",
-        "equalTo" : "xtype"
+    },
+    {
+      "matchesXPath": {
+        "expression": "/test/duck/@type",
+        "equalTo": "xtype"
       }
-    } ]
-""")
+      }]
+""".replaceAll("\n", "").replaceAll(' ', ''))
 	}
 
 	def should_generate_stubs_with_request_body_matchers() {
@@ -208,9 +225,9 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 					.toWireMockClientStub()
 		then:
 			stubMappingIsValidWireMockStub(wireMockStub)
-			wireMockStub.contains("""
-    "bodyPatterns" : [ {
-      "matchesXPath" : {
+			wireMockStub.replaceAll("\n", '').replaceAll(' ', '')
+					.contains("""
+      matchesXPath" : {
         "expression" : "/test/duck/text()",
         "matches" : "[0-9]{3}"
       }
@@ -262,15 +279,13 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
     }, {
       "matchesXPath" : {
         "expression" : "/test/duck/@type",
-        "equalTo" : "number"
+        "equalTo" : "xtype"
       }
     }, {
       "matchesXPath" : {
         "expression" : "/test/duck",
         "equalToXml" : "<duck type=\\"number\\">123</duck>\\n"
-      }
-    } ]
-  }""")
+      }""".replaceAll("\n", "").replaceAll(' ', ''))
 	}
 
 	def should_generate_stubs_from_both_xml_and_body_matchers() {
@@ -306,25 +321,28 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 					.toWireMockClientStub()
 		then:
 			stubMappingIsValidWireMockStub(wireMockStub)
-			wireMockStub.contains("""
-    "bodyPatterns" : [ {
-      "matchesXPath" : {
-        "expression" : "/test/alpha/text()",
-        "equalTo" : "abc"
+			wireMockStub.replaceAll("\n", "")
+					.replaceAll(' ', '')
+					.contains("""
+   "bodyPatterns" : [ {
+      "matchesXPath": {
+        "expression": "/test/alpha/text()",
+        "equalTo": "abc"
       }
     }, {
-      "matchesXPath" : {
-        "expression" : "/test/duck/text()",
-        "equalTo" : "123"
+      "matchesXPath": {
+        "expression": "/test/duck/text()",
+        "equalTo": "123"
       }
     }, {
-      "matchesXPath" : {
-        "expression" : "/test/number/text()",
+      "matchesXPath": {
+        "expression": "/test/number/text()",
         "matches" : "-?(\\\\d*\\\\.\\\\d+|\\\\d+)"
       }
-    } ]
-"""
-			)
+    } 
+    ]
+}
+""".replaceAll("\n", "").replaceAll(' ', ''))
 	}
 }
 

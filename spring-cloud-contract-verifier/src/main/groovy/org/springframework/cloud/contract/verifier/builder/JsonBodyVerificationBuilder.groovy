@@ -45,12 +45,15 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	private final boolean shouldCommentOutBDDBlocks
 	private final Closure<String> postProcessJsonPathCall
 
+	// Passing way more arguments here than I would like to, but since we are planning a major
+	// refactor of this module for Hoxton release, leaving it this way for now
 	JsonBodyVerificationBuilder(ContractVerifierConfigProperties configProperties,
 								TemplateProcessor templateProcessor,
 								ContractTemplate contractTemplate,
 								Contract contract,
 								Optional<String> lineSuffix,
-								boolean shouldCommentOutBDDBlocks, Closure postProcessJsonPathCall) {
+								boolean shouldCommentOutBDDBlocks,
+								Closure postProcessJsonPathCall) {
 		this.configProperties = configProperties
 		this.templateProcessor = templateProcessor
 		this.contractTemplate = contractTemplate
@@ -60,24 +63,24 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		this.postProcessJsonPathCall = postProcessJsonPathCall
 	}
 
-	void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody,
+	Object addJsonResponseBodyCheck(BlockBuilder bb, Object convertedResponseBody,
 								  BodyMatchers bodyMatchers,
 								  String responseString) {
 		appendJsonPath(bb, responseString)
 		DocumentContext parsedRequestBody
 		if (contract.request?.body) {
-			def testSideRequestBody = MapConverter.
-					getTestSideValues(contract.request.body)
+			def testSideRequestBody = MapConverter
+					.getTestSideValues(contract.request.body)
 			parsedRequestBody = JsonPath.parse(testSideRequestBody)
 			if (convertedResponseBody instanceof String && !
 					textContainsJsonPathTemplate(convertedResponseBody)) {
-				convertedResponseBody = templateProcessor.
-						transform(contract.request, convertedResponseBody.toString())
+				convertedResponseBody = templateProcessor
+						.transform(contract.request, convertedResponseBody.toString())
 			}
 		}
 		Object copiedBody = cloneBody(convertedResponseBody)
-		convertedResponseBody = JsonToJsonPathsConverter.
-				removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
+		convertedResponseBody = JsonToJsonPathsConverter
+				.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
 		// remove quotes from fromRequest objects before picking json paths
 		TestSideRequestTemplateModel templateModel = contract.request?.body ?
 				TestSideRequestTemplateModel.from(contract.request) : null
@@ -88,13 +91,14 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		jsonPaths.each {
 			String method = it.method()
 			method = processIfTemplateIsPresent(method, parsedRequestBody)
-			String postProcessedMethod = templateProcessor.
-					containsJsonPathTemplateEntry(method) ?
+			String postProcessedMethod = templateProcessor
+					.containsJsonPathTemplateEntry(method) ?
 					method : postProcessJsonPathCall(method)
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 			addColonIfRequired(lineSuffix, bb)
 		}
 		doBodyMatchingIfPresent(bodyMatchers, bb, copiedBody)
+		return convertedResponseBody
 	}
 
 	protected void checkType(BlockBuilder bb, BodyMatcher it, Object elementFromBody) {
@@ -105,11 +109,10 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 
 	// we want to make the type more generic (e.g. not ArrayList but List)
 	@CompileDynamic
-
 	protected String sizeCheckMethod(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
 		String prefix = sizeCheckPrefix(bodyMatcher, quotedAndEscaptedPath)
-		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.
-				maxTypeOccurrence() != null) {
+		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher
+				.maxTypeOccurrence() != null) {
 			return "${prefix}Between(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
 		}
 		else if (bodyMatcher.minTypeOccurrence() != null) {
@@ -221,8 +224,8 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 
 	protected void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		Object elementFromBody = value(copiedBody, bodyMatcher)
-		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.
-				maxTypeOccurrence() != null) {
+		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher
+				.maxTypeOccurrence() != null) {
 			checkType(bb, bodyMatcher, elementFromBody)
 			String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
 			String method = "assertThat((java.lang.Iterable) parsedJson.read(${quotedAndEscaptedPath}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher, quotedAndEscaptedPath)}"
@@ -251,6 +254,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		}
 	}
 
+	@CompileDynamic
 	private Closure<Object> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
 		return { entry ->
 			if (!(entry instanceof String) || !templateModel) {
@@ -272,8 +276,8 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 							"escapedBody" + contractTemplate.escapedClosingTemplate()
 				}
 				try {
-					Object result = new PropertyUtilsBean().
-							getProperty(templateModel, justEntry)
+					Object result = new PropertyUtilsBean()
+							.getProperty(templateModel, justEntry)
 					// Path from the Test model is an object and we'd like to return its String representation
 					if (justEntry == FROM_REQUEST_PATH) {
 						return result.toString()

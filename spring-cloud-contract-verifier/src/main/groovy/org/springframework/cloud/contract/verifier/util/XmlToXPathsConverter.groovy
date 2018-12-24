@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.util
 
-
 import java.util.stream.IntStream
 
 import javax.xml.parsers.DocumentBuilder
@@ -31,7 +30,6 @@ import javax.xml.xpath.XPathFactory
 import com.toomuchcoding.xmlassert.XPathBuilder
 import com.toomuchcoding.xmlassert.XmlVerifiable
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import org.w3c.dom.Attr
 import org.w3c.dom.Document
 import org.w3c.dom.NamedNodeMap
@@ -61,7 +59,6 @@ import static org.w3c.dom.Node.TEXT_NODE
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-@CompileStatic
 class XmlToXPathsConverter {
 
 	static Object removeMatchingXmlPaths(def body, BodyMatchers bodyMatchers) {
@@ -221,6 +218,7 @@ class XmlToXPathsConverter {
 		List<Node> nodeList = new ArrayList<>()
 		nodeList << attribute
 		Node ownerNode = attribute.getOwnerElement()
+		nodeList << ownerNode
 		return addParents(ownerNode, nodeList)
 	}
 
