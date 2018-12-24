@@ -1117,7 +1117,7 @@ request:
     named: 
       - paramName: "file"
         fileNameCommand: 'toString()'
-        fileContentAsBytes: 'file content'
+        fileContent: 'file content'
         contentType: 'application/json'
   matchers:
     headers:

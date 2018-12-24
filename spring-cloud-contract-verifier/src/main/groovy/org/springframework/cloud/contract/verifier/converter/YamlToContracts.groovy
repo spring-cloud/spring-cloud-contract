@@ -155,7 +155,8 @@ class YamlToContracts {
 									}
 									Object fileNameValue = namedParam.fileName
 									Object fileContentValue = namedParam.fileContent
-									String fileContentValueAsBytes = namedParam.fileContentAsBytes
+									String fileContentAsBytes = namedParam.fileContentAsBytes
+									String fileContentFromFileAsBytes = namedParam.fileContentFromFileAsBytes
 									String contentTypeCommand = namedParam.contentTypeCommand
 									String fileContentCommand = namedParam.fileContentCommand
 									String fileNameCommand = namedParam.fileNameCommand
@@ -175,8 +176,7 @@ class YamlToContracts {
 									multipartMap.put(namedParam.paramName, new NamedProperty(
 											new DslProperty<>(fileNameValue, fileNameCommand ? new ExecutionProperty(fileNameCommand)
 													: namedParam.fileName),
-											new DslProperty<>(fileContentValue, namedParam.fileContent ?: fileContentValueAsBytes
-													?: new ExecutionProperty(fileContentCommand)),
+											new DslProperty<>(fileContentValue, namedParam.fileContent ? namedParam.fileContent : fileContentFromFileAsBytes ? fileAsBytes(namedParam.fileContentFromFileAsBytes) : fileContentAsBytes ? fileContentAsBytes.bytes : new ExecutionProperty(fileContentCommand)),
 											new DslProperty(contentTypeValue, contentTypeCommand ? new ExecutionProperty(contentTypeCommand)
 													: namedParam.contentType)))
 								}

@@ -19,7 +19,6 @@ import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -121,6 +120,7 @@ class ContractsToYaml {
 								fileName: fileName instanceof String ? value.name?.serverValue as String : null,
 								fileContent: fileContent instanceof String ? fileContent as String : null,
 								fileContentAsBytes: fileContent instanceof String ? fileContent as String : null,
+								fileContentFromFileAsBytes: resolveFileNameAsBytes(fileContent),
 								contentType: contentType instanceof String ? contentType as String : null,
 								fileNameCommand: fileName instanceof ExecutionProperty ? fileName.toString() : null,
 								fileContentCommand: fileContent instanceof ExecutionProperty ? fileContent.toString() : null,
@@ -180,6 +180,14 @@ class ContractsToYaml {
 			setInputBodyMatchers(contract.request?.body, request.matchers.body)
 			setInputHeadersMatchers(contract.request?.headers as Headers, yamlContract.request.matchers.headers)
 		}
+	}
+
+	protected String resolveFileNameAsBytes(Object value) {
+		if (!(value instanceof FromFileProperty)) {
+			return null
+		}
+		FromFileProperty property = (FromFileProperty) value
+		return property.fileName()
 	}
 
 	protected YamlContract.ValueMatcher valueMatcher(Object o) {
