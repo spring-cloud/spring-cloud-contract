@@ -22,8 +22,6 @@ import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.util.regex.Pattern
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
 import wiremock.com.google.common.collect.ArrayListMultimap
@@ -57,7 +55,6 @@ class ContractFileScanner {
 	private final Set<PathMatcher> ignoreMatchers
 	private final Set<PathMatcher> includeMatchers
 	private final String includeMatcher
-	private final YAMLMapper mapper = new YAMLMapper()
 
 	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
 						Set<String> included = [],
@@ -67,7 +64,6 @@ class ContractFileScanner {
 		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
 		this.includeMatchers = processPatterns(included ?: [] as Set<String>)
 		this.includeMatcher = includeMatcher
-		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 	}
 
 	private Set<PathMatcher> processPatterns(Set<String> patterns) {
