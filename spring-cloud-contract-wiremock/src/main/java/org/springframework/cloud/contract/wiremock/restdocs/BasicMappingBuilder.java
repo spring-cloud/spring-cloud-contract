@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.ScenarioMappingBuilder;
 import com.github.tomakehurst.wiremock.common.Metadata;
@@ -44,6 +45,8 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	private boolean isPersistent = false;
 
 	private Map<String, Parameters> postServeActions = new LinkedHashMap<>();
+
+	private Metadata metadata = new Metadata();
 
 	BasicMappingBuilder(RequestMethod method, UrlPattern urlPattern) {
 		this.requestPatternBuilder = new RequestPatternBuilder(method, urlPattern);
@@ -166,17 +169,38 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 
 	@Override
 	public ScenarioMappingBuilder withMetadata(Map<String, ?> map) {
-		throw new UnsupportedOperationException("Metadata not supported");
+		this.metadata = new Metadata(map);
+		return this;
 	}
 
 	@Override
 	public ScenarioMappingBuilder withMetadata(Metadata metadata) {
-		throw new UnsupportedOperationException("Metadata not supported");
+		this.metadata = metadata;
+		return this;
 	}
 
 	@Override
 	public ScenarioMappingBuilder withMetadata(Metadata.Builder builder) {
-		throw new UnsupportedOperationException("Metadata not supported");
+		this.metadata = builder.build();
+		return this;
+	}
+
+	@Override
+	public ScenarioMappingBuilder andMatching(ValueMatcher<Request> requestMatcher) {
+		this.requestPatternBuilder.andMatching(requestMatcher);
+		return this;
+	}
+
+	@Override
+	public MappingBuilder andMatching(String customRequestMatcherName) {
+		this.requestPatternBuilder.andMatching(customRequestMatcherName);
+		return this;
+	}
+
+	@Override
+	public MappingBuilder andMatching(String customRequestMatcherName, Parameters parameters) {
+		this.requestPatternBuilder.andMatching(customRequestMatcherName, parameters);
+		return this;
 	}
 
 	@Override
@@ -199,6 +223,7 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 		mapping.setPersistent(this.isPersistent);
 		mapping.setPostServeActions(
 				this.postServeActions.isEmpty() ? null : this.postServeActions);
+		mapping.setMetadata(this.metadata);
 		return mapping;
 	}
 
