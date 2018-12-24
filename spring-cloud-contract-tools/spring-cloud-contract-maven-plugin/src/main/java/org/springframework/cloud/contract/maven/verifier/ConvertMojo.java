@@ -173,8 +173,7 @@ public class ConvertMojo extends AbstractMojo {
 	private Map<String, String> contractsProperties = new HashMap<>();
 
 	/**
-	 * If {@code true} then will convert Groovy contracts to a YAML representation
-	 * TODO: Consider converting any version to YAML
+	 * If {@code true} then will convert contracts to a YAML representation
 	 */
 	@Parameter(property = "convertToYaml", defaultValue = "false")
 	private boolean convertToYaml;
@@ -211,7 +210,7 @@ public class ConvertMojo extends AbstractMojo {
 			contractsDslDir = copiedContracts;
 			copyOriginals(rootPath, config, contractsDirectory);
 			ToYamlConverter.replaceContractWithYaml(contractsDslDir);
-			getLog().info("Replaced Groovy DSL files with their YAML representation at [" + contractsDslDir + "]");
+			getLog().info("Replaced DSL files with their YAML representation at [" + contractsDslDir + "]");
 		}
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));

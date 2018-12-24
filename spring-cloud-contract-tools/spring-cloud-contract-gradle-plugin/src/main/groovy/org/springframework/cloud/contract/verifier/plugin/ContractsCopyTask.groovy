@@ -24,6 +24,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.WorkResult
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.converter.ToYamlConverter
 
 /**
  * Task that copies the contracts in order for the jar task to
@@ -54,8 +55,13 @@ class ContractsCopyTask extends ConventionTask {
 		ext.contractsDslDir = outputContractsFolder
 		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		copy(file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
-		File originalContracts = outputFolder(root, ORIGINAL_PATH)
-		copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
+		if (getExtension().isConvertToYaml()) {
+			File originalContracts = outputFolder(root, ORIGINAL_PATH)
+			copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
+			ToYamlConverter.replaceContractWithYaml(outputContractsFolder)
+			project.logger.info("Replaced DSL files with their YAML representation at [" + ext.contractsDslDir + "]")
+		}
+
 	}
 
 	protected WorkResult copy(File file, String antPattern, String slashSeparatedAntPattern, props, File outputContractsFolder) {

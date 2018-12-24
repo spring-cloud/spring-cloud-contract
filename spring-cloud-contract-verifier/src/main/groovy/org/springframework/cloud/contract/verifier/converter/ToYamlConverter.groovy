@@ -7,6 +7,7 @@ import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
 /**
  * Converts contracts to YAML for the given folder
@@ -18,26 +19,39 @@ import org.springframework.core.io.support.SpringFactoriesLoader
 @Commons
 class ToYamlConverter {
 
-	private final static ToYamlConverter INSTANCE = new ToYamlConverter()
+	private ToYamlConverter() {
+		throw new IllegalStateException("Can't instantiate a utility class")
+	}
 
-	private YamlContractConverter yamlContractConverter = new YamlContractConverter()
-	private static final List<ContractConverter> CONTRACT_CONVERTERS =
-			SpringFactoriesLoader.loadFactories(ContractConverter, null)
+	private static YamlContractConverter yamlContractConverter = new YamlContractConverter()
+	private static final List<ContractConverter> CONTRACT_CONVERTERS = converters()
 
-	protected File doReplaceGroovyContractWithYaml(ContractConverter converter, File file) {
+	protected static void doReplaceContractWithYaml(ContractConverter converter, File file) {
 		// base dir: target/copied_contracts/contracts/
 		// target/copied_contracts/contracts/foo/baz/bar.groovy
 		Collection<Contract> collection = converter.convertFrom(file)
-		List<YamlContract> yamls = this.yamlContractConverter.convertTo(collection)
+		if (log.isDebugEnabled()) {
+			log.debug("Converted file [" + file + "] to collection of [" + collection.size() + "] contracts")
+		}
+		List<YamlContract> yamls = yamlContractConverter.convertTo(collection)
+		if (log.isDebugEnabled()) {
+			log.debug("Converted collection of [" + collection.size() + "] contracts to [" + yamls.size() + "] YAML contracts")
+		}
 		// rm target/copied_contracts/contracts/foo/baz/bar.groovy
 		file.delete()
 		// [contracts/foo/baz/bar.groovy] -> [contracts/foo/baz/bar.yml]
-		Map<String, byte[]> stored = this.yamlContractConverter.store(yamls)
-		Map.Entry<String, byte[]> first = stored.entrySet().first()
-		File ymlContractVersion = new File(file.parentFile, first.getKey())
-		// store the YMLs instead of groovy files
-		Files.write(ymlContractVersion.toPath(), first.value)
-		return ymlContractVersion
+		Map<String, byte[]> stored = yamlContractConverter.store(yamls)
+		if (log.isDebugEnabled()) {
+			log.debug("Dumped YAMLs to following file names " + stored.keySet())
+		}
+		stored.entrySet().each {
+			File ymlContractVersion = new File(file.parentFile, it.getKey())
+			// store the YMLs instead of groovy files
+			Files.write(ymlContractVersion.toPath(), it.getValue())
+			if (log.isDebugEnabled()) {
+				log.debug("Written file [" + ymlContractVersion + "] with YAML contract definition")
+			}
+		}
 	}
 
 	/**
@@ -55,10 +69,38 @@ class ToYamlConverter {
 			}
 			if (converter) {
 				if (log.isDebugEnabled()) {
-					log.debug("Will replace contract [${file.name}] to a YAML version")
+					log.debug("Will replace contract [${file.name}] with a YAML version")
 				}
-				INSTANCE.doReplaceGroovyContractWithYaml(converter, file)
+				doReplaceContractWithYaml(converter, file)
 			}
 		}
+	}
+
+	private static List<ContractConverter> converters() {
+		List<ContractConverter> converters =
+				SpringFactoriesLoader.loadFactories(ContractConverter, null)
+		converters.add(YamlContractConverter.INSTANCE)
+		converters.add(GroovyContractConverter.INSTANCE)
+		return converters
+	}
+}
+
+class GroovyContractConverter implements ContractConverter<Collection<Contract>> {
+
+	static final GroovyContractConverter INSTANCE = new GroovyContractConverter()
+
+	@Override
+	boolean isAccepted(File file) {
+		return file.name.endsWith(".groovy")
+	}
+
+	@Override
+	Collection<Contract> convertFrom(File file) {
+		return ContractVerifierDslConverter.convertAsCollection(file)
+	}
+
+	@Override
+	Collection<Contract> convertTo(Collection<Contract> contract) {
+		return contract
 	}
 }

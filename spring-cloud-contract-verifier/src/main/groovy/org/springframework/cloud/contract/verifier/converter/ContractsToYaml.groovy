@@ -10,6 +10,7 @@ import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.Cookies
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.Multipart
@@ -100,7 +101,13 @@ class ContractsToYaml {
 					MapConverter.getTestSideValues(prop).toString()
 			}
 			request.cookies = (contract.request?.cookies as Cookies)?.asTestSideMap()
-			request.body = MapConverter.getTestSideValues(contract.request?.body)
+			Object body = contract.request?.body?.serverValue
+			if (body instanceof FromFileProperty) {
+				if (body.isByte()) request.bodyFromFileAsBytes = body.fileName()
+				if (body.isString()) request.bodyFromFile = body.fileName()
+			} else {
+				request.body = MapConverter.getTestSideValues(contract.request?.body)
+			}
 			Multipart multipart = contract.request.multipart
 			if (multipart) {
 				request.multipart = new YamlContract.Multipart()
@@ -221,7 +228,13 @@ class ContractsToYaml {
 					MapConverter.getStubSideValues(prop).toString()
 			}
 			response.cookies = (contract.response?.cookies as Cookies)?.asStubSideMap()
-			response.body = MapConverter.getStubSideValues(contract.response?.body)
+			Object body = contract.response?.body?.clientValue
+			if (body instanceof FromFileProperty) {
+				if (body.isByte()) response.bodyFromFileAsBytes = body.fileName()
+				if (body.isString()) response.bodyFromFile = body.fileName()
+			} else {
+				response.body = MapConverter.getStubSideValues(contract.response?.body)
+			}
 			contract.response?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 				response.matchers.body << new YamlContract.BodyTestMatcher(
 						path: matcher.path(),

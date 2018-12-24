@@ -331,9 +331,9 @@ public class PluginUnitTest {
 		String firstFile = "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/should post a user.json";
 		File test = new File(basedir, firstFile);
 		assertFilesPresent(basedir,
-				"target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/1_WithList.json");
+				"target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/WithList_1.json");
 		then(readFileToString(test, defaultCharset())).contains("/users/1");
-		String secondFile = "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/1_WithList.json";
+		String secondFile = "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/WithList_1.json";
 		File test2 = new File(basedir, secondFile);
 		assertFilesPresent(basedir,
 				"target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/should post a user.json");

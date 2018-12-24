@@ -203,6 +203,11 @@ class ContractVerifierExtension {
 	boolean deleteStubsAfterTest = true
 
 	/**
+	 * If {@code true} then will convert contracts to a YAML representation
+	 */
+	boolean convertToYaml = false
+
+	/**
 	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	Map<String, String> contractsProperties = [:]

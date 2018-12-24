@@ -64,8 +64,8 @@ class JsonToJsonPathsConverter {
 
 	JsonToJsonPathsConverter() {
 		this(new ContractVerifierConfigProperties())
-		if (log.isDebugEnabled()) {
-			log.debug("Creating JsonToJsonPaths converter with default properties")
+		if (log.isTraceEnabled()) {
+			log.trace("Creating JsonToJsonPaths converter with default properties")
 		}
 	}
 

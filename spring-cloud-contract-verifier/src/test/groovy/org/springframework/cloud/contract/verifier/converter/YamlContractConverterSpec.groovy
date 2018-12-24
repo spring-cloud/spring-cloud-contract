@@ -31,6 +31,7 @@ import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Url
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 /**
@@ -65,6 +66,8 @@ class YamlContractConverterSpec extends Specification {
 	File ymlCookies = new File(ymlCookiesUrl.toURI())
 	URL ymlBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_pdf.yml")
 	File ymlBytes = new File(ymlBytesUrl.toURI())
+	URL groovyBytesUrl = YamlContractConverterSpec.getResource("/body_builder/worksWithPdf.groovy")
+	File groovyBytes = new File(groovyBytesUrl.toURI())
 	URL ymlMessagingBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_messaging_pdf.yml")
 	File ymlMessagingBytes = new File(ymlMessagingBytesUrl.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
@@ -1167,5 +1170,17 @@ ignored: false
 							path: '$.nullValue',
 							type: YamlContract.TestMatcherType.by_null),
 			]
+	}
+
+	def "should convert contract with body as bytes"() {
+		given:
+			List<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(groovyBytes)
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.request.body == null
+			yamlContract.request.bodyFromFileAsBytes != null
 	}
 }

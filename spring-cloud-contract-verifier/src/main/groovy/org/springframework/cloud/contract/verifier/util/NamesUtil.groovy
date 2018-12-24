@@ -41,10 +41,17 @@ class NamesUtil {
 	 * Returns the provided string if separator is not found.
 	 */
 	static String afterLast(String string, String separator) {
-		if (string?.indexOf(separator) > -1) {
+		if (hasSeparator(string, separator)) {
 			return string.substring(string.lastIndexOf(separator) + 1)
 		}
 		return string
+	}
+
+	/**
+	 * Returns {@code true} if has a separatot in the string
+	 */
+	static boolean hasSeparator(String string, String separator) {
+		return string?.indexOf(separator) > -1
 	}
 
 	/**
@@ -53,6 +60,13 @@ class NamesUtil {
 	 */
 	static String afterLastDot(String string) {
 		return afterLast(string, '.')
+	}
+
+	/**
+	 * Returns {@code true} if has a dot
+	 */
+	static boolean hasDot(String string) {
+		return hasSeparator(string, '.')
 	}
 
 	/**

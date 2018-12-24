@@ -51,11 +51,17 @@ class YamlToContracts {
 		return {
 			List<YamlContract> yamlContracts = convert(mapper, it)
 			Thread.currentThread().setContextClassLoader(updatedClassLoader(contractFile.getParentFile(), classLoader))
+			int counter = 0
 			return yamlContracts.collect { YamlContract yamlContract ->
 				return Contract.make {
 					if (yamlContract.description) description(yamlContract.description)
 					if (yamlContract.label) label(yamlContract.label)
-					if (yamlContract.name) name(yamlContract.name)
+					if (yamlContract.name) {
+						name(yamlContract.name)
+					} else {
+						String tillExtension = contractFile.name.substring(0, contractFile.name.lastIndexOf("."))
+						name(tillExtension + (counter > 0 ? "_" + counter : ""))
+					}
 					if (yamlContract.priority) priority(yamlContract.priority)
 					if (yamlContract.ignored) ignored()
 					if (yamlContract.request?.method) {

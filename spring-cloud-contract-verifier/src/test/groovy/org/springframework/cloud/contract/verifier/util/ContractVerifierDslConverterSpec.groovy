@@ -32,6 +32,25 @@ class ContractVerifierDslConverterSpec extends Specification {
 	File invalidContract = new File(invalid.toURI())
 
 	Contract expectedSingleContract = Contract.make {
+		name("contract")
+		request {
+			method('PUT')
+			headers {
+				contentType(applicationJson())
+			}
+			body(""" { "status" : "OK" } """)
+			url("/1")
+		}
+		response {
+			status OK()
+			body(""" { "status" : "OK" } """)
+			headers {
+				contentType(textPlain())
+			}
+		}
+	}
+
+	Contract expectedSingleContractForText = Contract.make {
 		request {
 			method('PUT')
 			headers {
@@ -50,6 +69,27 @@ class ContractVerifierDslConverterSpec extends Specification {
 	}
 
 	List<Contract> expectedMultipleContracts = (1..2).collect { int index ->
+		Contract.make {
+			name("multiple_contracts_${index - 1}")
+			request {
+				method('PUT')
+				headers {
+					contentType(applicationJson())
+				}
+				body(""" { "status" : "OK" } """)
+				url("/${index}")
+			}
+			response {
+				status OK()
+				body(""" { "status" : "OK" } """)
+				headers {
+					contentType(textPlain())
+				}
+			}
+		}
+	}
+
+	List<Contract> expectedMultipleContractsForText = (1..2).collect { int index ->
 		Contract.make {
 			request {
 				method('PUT')
@@ -80,7 +120,7 @@ class ContractVerifierDslConverterSpec extends Specification {
 		when:
 			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"),multipleContracts.text)
 		then:
-			contract == expectedMultipleContracts
+			contract == expectedMultipleContractsForText
 	}
 
 	def "should throw an exception when an invalid file is parsed"() {
@@ -117,6 +157,6 @@ class ContractVerifierDslConverterSpec extends Specification {
 		when:
 			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"),singleContract.text)
 		then:
-			contract == [expectedSingleContract]
+			contract == [expectedSingleContractForText]
 	}
 }
