@@ -27,7 +27,7 @@ repositories {
 }
 // end::deps_repos[]
 
-apply plugin: 'groovy'
+apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'spring-cloud-contract'
@@ -63,10 +63,6 @@ test {
 			}
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.2'
 }
 
 clean.doFirst {

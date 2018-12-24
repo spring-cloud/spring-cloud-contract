@@ -28,6 +28,20 @@ request:
     key:
       "complex.key": 'foo'
     nullValue: null
+    valueWithMin:
+      - 1
+      - 2
+      - 3
+    valueWithMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinEmpty: []
+    valueWithMaxEmpty: []
   matchers:
     url:
       regex: /get/[0-9]
@@ -90,6 +104,16 @@ request:
         type: by_equality
       - path: $.nullvalue
         type: by_null
+      - path: $.valueWithMin
+        type: by_type
+        minOccurrence: 1
+      - path: $.valueWithMax
+        type: by_type
+        maxOccurrence: 3
+      - path: $.valueWithMinMax
+        type: by_type
+        minOccurrence: 1
+        maxOccurrence: 3
 response:
   status: 200
   cookies:

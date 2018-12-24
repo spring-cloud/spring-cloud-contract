@@ -198,13 +198,13 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 class ClassPresenceChecker {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass())
+	private static final Log log = LogFactory.getLog(ClassPresenceChecker)
 
 	boolean isClassPresent(String className) {
 		try {
 			Class.forName(className)
 			return true
-		} catch (ClassNotFoundException ignored) {
+		} catch (ClassNotFoundException ex) {
 			if (log.isDebugEnabled()) {
 				log.debug("[${className}] is not present on classpath. Will not add a static import.")
 			}

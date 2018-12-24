@@ -104,6 +104,8 @@ class YamlContract {
 		public StubMatcherType type
 		public String value
 		public PredefinedRegex predefined
+		public Integer minOccurrence
+		public Integer maxOccurrence
 	}
 
 	@CompileStatic
@@ -199,7 +201,7 @@ class YamlContract {
 
 	@CompileStatic
 	static enum StubMatcherType {
-		by_date, by_time, by_timestamp, by_regex, by_equality, by_null
+		by_date, by_time, by_timestamp, by_regex, by_equality, by_type, by_null
 	}
 
 	@CompileStatic

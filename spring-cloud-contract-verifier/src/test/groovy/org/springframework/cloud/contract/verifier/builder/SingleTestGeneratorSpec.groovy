@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Issue
@@ -224,7 +223,7 @@ class SingleTestGeneratorSpec extends Specification {
 			SPOCK         | EXPLICIT | GROOVY_ASSERTER | 'ContractsSpec.groovy'
 	}
 
-	def 'should build test class for #testFramework with Rest Assured 2x'() {
+	def "should build test class for #testFramework with Rest Assured 2x"() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework =testFramework

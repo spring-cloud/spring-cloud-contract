@@ -199,6 +199,12 @@ class YamlToContracts {
 										case YamlContract.StubMatcherType.by_equality:
 											value = byEquality()
 											break
+										case YamlContract.StubMatcherType.by_type:
+											value = byType {
+												if (matcher.minOccurrence != null) minOccurrence(matcher.minOccurrence)
+												if (matcher.maxOccurrence != null) maxOccurrence(matcher.maxOccurrence)
+											}
+											break
 										case YamlContract.StubMatcherType.by_null:
 											// do nothing
 											break

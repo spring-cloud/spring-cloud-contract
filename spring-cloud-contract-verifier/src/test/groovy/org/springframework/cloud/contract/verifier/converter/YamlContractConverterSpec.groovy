@@ -239,6 +239,16 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.bodyMatchers.matchers[8].value() == patterns.isoTime()
 			contract.request.bodyMatchers.matchers[9].path() == "\$.['key'].['complex.key']"
 			contract.request.bodyMatchers.matchers[9].matchingType() == MatchingType.EQUALITY
+			contract.request.bodyMatchers.matchers[10].path() == '$.valueWithMin'
+			contract.request.bodyMatchers.matchers[10].matchingType() == MatchingType.TYPE
+			contract.request.bodyMatchers.matchers[10].minTypeOccurrence() == 1
+			contract.request.bodyMatchers.matchers[11].path() == '$.valueWithMax'
+			contract.request.bodyMatchers.matchers[11].matchingType() == MatchingType.TYPE
+			contract.request.bodyMatchers.matchers[11].maxTypeOccurrence() == 3
+			contract.request.bodyMatchers.matchers[12].path() == '$.valueWithMinMax'
+			contract.request.bodyMatchers.matchers[12].matchingType() == MatchingType.TYPE
+			contract.request.bodyMatchers.matchers[12].minTypeOccurrence() == 1
+			contract.request.bodyMatchers.matchers[12].maxTypeOccurrence() == 3
 			contract.request.cookies.entries.find { it.key == "foo" }.clientValue instanceof Pattern
 			contract.request.cookies.entries.find { it.key == "bar" }.serverValue == new ExecutionProperty('equals($it)')
 		and:

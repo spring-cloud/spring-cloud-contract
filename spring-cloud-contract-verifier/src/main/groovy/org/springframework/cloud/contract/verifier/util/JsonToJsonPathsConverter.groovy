@@ -144,14 +144,16 @@ class JsonToJsonPathsConverter {
 	static String convertJsonPathAndRegexToAJsonPath(BodyMatcher bodyMatcher, def body = null) {
 		String path = bodyMatcher.path()
 		Object value = bodyMatcher.value()
-		if (value == null && bodyMatcher.matchingType() != MatchingType.EQUALITY) {
+		if (value == null && bodyMatcher.matchingType() != MatchingType.EQUALITY &&
+				bodyMatcher.matchingType() != MatchingType.TYPE) {
 			return path
 		}
 		int lastIndexOfDot = lastIndexOfDot(path)
 		String toLastDot = path.substring(0, lastIndexOfDot)
 		String fromLastDot = path.substring(lastIndexOfDot + 1)
-		String comparison = createComparison(bodyMatcher, value, body)
-		return "${toLastDot}[?(@.${fromLastDot} ${comparison})]"
+		String propertyName = "@.${fromLastDot}"
+		String comparison = createComparison(propertyName, bodyMatcher, value, body)
+		return "${toLastDot}[?(${comparison})]"
 	}
 
 	private static int lastIndexOfDot(String path) {
@@ -175,7 +177,7 @@ class JsonToJsonPathsConverter {
 		return value
 	}
 
-	private static String createComparison(BodyMatcher bodyMatcher, Object value, def body) {
+	private static String createComparison(String propertyName, BodyMatcher bodyMatcher, Object value, def body) {
 		if (bodyMatcher.matchingType() == MatchingType.EQUALITY) {
 			Object convertedBody = body
 			if (!body) {
@@ -187,13 +189,25 @@ class JsonToJsonPathsConverter {
 				}
 				Object retrievedValue = JsonPath.parse(convertedBody).read(bodyMatcher.path())
 				String wrappedValue = retrievedValue instanceof Number ? retrievedValue : "'${retrievedValue.toString()}'"
-				return "== ${wrappedValue}"
+				return "${propertyName} == ${wrappedValue}"
 			} catch (PathNotFoundException e) {
 				throw new IllegalStateException("Value [${bodyMatcher.path()}] not found in JSON [${JsonOutput.toJson(convertedBody)}]", e)
 			}
+		} else if (bodyMatcher.matchingType() == MatchingType.TYPE) {
+			Integer min = bodyMatcher.minTypeOccurrence()
+			Integer max = bodyMatcher.maxTypeOccurrence()
+			String result = ""
+			if (min != null) {
+				result = "${propertyName}.size() >= ${min}"
+			}
+			if (max != null) {
+				String maxResult = "${propertyName}.size() <= ${max}"
+				result = result ? "${result} && ${maxResult}" : maxResult
+			}
+			return result
 		} else {
 			String convertedValue = value.toString().replace('/', '\\\\/')
-			return "=~ /(${convertedValue})/"
+			return "${propertyName} =~ /(${convertedValue})/"
 		}
 	}
 

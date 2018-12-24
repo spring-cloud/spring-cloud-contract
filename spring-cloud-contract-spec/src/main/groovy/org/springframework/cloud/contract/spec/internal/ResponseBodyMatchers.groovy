@@ -16,9 +16,7 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
 /**
  * Body matchers for the response side (output message, REST response)
  *
@@ -38,31 +36,7 @@ class ResponseBodyMatchers extends BodyMatchers {
 		return new MatchingTypeValue(MatchingType.COMMAND, new ExecutionProperty(execute))
 	}
 
-	MatchingTypeValue byType(@DelegatesTo(MatchingTypeValueHolder) Closure closure) {
-		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder()
-		closure.delegate = matchingTypeValue
-		closure()
-		return matchingTypeValue.matchingTypeValue
-	}
-
 	MatchingTypeValue byNull() {
 		return new MatchingTypeValue(MatchingType.NULL, null)
-	}
-}
-
-@CompileStatic
-@ToString(includePackage = false)
-@EqualsAndHashCode
-class MatchingTypeValueHolder {
-	MatchingTypeValue matchingTypeValue = new MatchingTypeValue(type: MatchingType.TYPE)
-
-	MatchingTypeValue minOccurrence(int number) {
-		this.matchingTypeValue.minTypeOccurrence = number
-		return this.matchingTypeValue
-	}
-
-	MatchingTypeValue maxOccurrence(int number) {
-		this.matchingTypeValue.maxTypeOccurrence = number
-		return this.matchingTypeValue
 	}
 }

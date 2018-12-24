@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.spec.internal
 import java.util.regex.Pattern
 
 import groovy.transform.Canonical
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 /**
@@ -81,6 +83,13 @@ class BodyMatchers {
 		return new MatchingTypeValue(MatchingType.EQUALITY, null)
 	}
 
+	MatchingTypeValue byType(@DelegatesTo(MatchingTypeValueHolder) Closure closure) {
+		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder()
+		closure.delegate = matchingTypeValue
+		closure()
+		return matchingTypeValue.matchingTypeValue
+	}
+
 	MatchingTypeValue byXmlEquality(String xml
 	) {
 		return new MatchingTypeValue(MatchingType.XML_EQUALITY, xml
@@ -125,4 +134,27 @@ class MatchingTypeValue {
 	 * Max occurrence when matching by type
 	 */
 	Integer maxTypeOccurrence
+}
+
+@CompileStatic
+@ToString(includePackage = false)
+@EqualsAndHashCode
+class MatchingTypeValueHolder {
+	MatchingTypeValue matchingTypeValue = new MatchingTypeValue(type: MatchingType.TYPE)
+
+	MatchingTypeValue minOccurrence(int number) {
+		this.matchingTypeValue.minTypeOccurrence = number
+		return this.matchingTypeValue
+	}
+
+	MatchingTypeValue maxOccurrence(int number) {
+		this.matchingTypeValue.maxTypeOccurrence = number
+		return this.matchingTypeValue
+	}
+
+	MatchingTypeValue occurrence(int number) {
+		this.matchingTypeValue.minTypeOccurrence = number
+		this.matchingTypeValue.maxTypeOccurrence = number
+		return this.matchingTypeValue
+	}
 }

@@ -128,7 +128,9 @@ class ContractsToYaml {
 				request.matchers.body << new YamlContract.BodyStubMatcher(
 						path: matcher.path(),
 						type: stubMatcherType(matcher.matchingType()),
-						value: matcher.value()?.toString()
+						value: matcher.value()?.toString(),
+						minOccurrence: matcher.minTypeOccurrence(),
+						maxOccurrence: matcher.maxTypeOccurrence(),
 				)
 			}
 			Object url = contract.request.url?.clientValue

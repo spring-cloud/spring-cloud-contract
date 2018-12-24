@@ -77,7 +77,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private DefaultListableBeanFactory beanFactory;
 
 	@Autowired
-	private WireMockProperties wireMock;
+	WireMockProperties wireMock;
 
 	@Autowired
 	private ResourceLoader resourceLoader;
@@ -100,6 +100,11 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (this.server == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("Creating a new server at "
+						+ "http port [" + this.wireMock.getServer().getPort() + "] and "
+						+ "https port [" + this.wireMock.getServer().getHttpsPort() + "]");
+			}
 			this.server = new WireMockServer(this.options);
 		}
 		registerStubs();
@@ -133,11 +138,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 	}
 
-	int port() {
-		return this.server.port();
-	}
-
 	void reset() {
+		if (log.isDebugEnabled()) {
+			log.debug("Resetting stubs");
+		}
 		this.server.resetAll();
 	}
 
@@ -165,25 +169,38 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	@Override
 	public void start() {
+		if (isRunning()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Server is already running");
+			}
+			return;
+		}
 		this.server.start();
+		updateCurrentServer();
+	}
+
+	private void updateCurrentServer() {
 		WireMock.configureFor(new WireMock(this.server));
 		this.running = true;
 		if (log.isDebugEnabled()) {
 			log.debug("Started WireMock at port [" + this.server.port() + "]. It has ["
 					+ this.server.getStubMappings().size() + "] mappings registered");
 		}
-		WireMockUtils.getMappingsEndpoint(this.port());
 	}
 
 	@Override
 	public void stop() {
 		if (this.running) {
-			reset();
-			this.server.shutdownServer();
+			this.server.stop();
+			this.server = null;
 			this.running = false;
+			this.options = null;
 			if (log.isDebugEnabled()) {
 				log.debug("Stopped WireMock instance");
 			}
+			this.beanFactory.destroySingleton(WIREMOCK_SERVER_BEAN_NAME);
+		} else if (log.isDebugEnabled()) {
+			log.debug("Server already stopped");
 		}
 	}
 
@@ -207,7 +224,6 @@ public class WireMockConfiguration implements SmartLifecycle {
 		stop();
 		callback.run();
 	}
-
 }
 
 @ConfigurationProperties("wiremock")
