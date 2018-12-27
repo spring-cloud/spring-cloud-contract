@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,12 +51,12 @@ class RecursiveFilesConverterSpec extends Specification {
 	def "should recursively convert all matching files"() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			File originalSourceRootDirectory = new File(this.getClass().
-					getResource("/converter/source").toURI())
+			File originalSourceRootDirectory = new File(this.getClass()
+					.getResource("/converter/source").toURI())
 			properties.contractsDslDir = tmpFolder.newFolder("source")
 			properties.stubsOutputDir = tmpFolder.newFolder("target")
-			FileSystemUtils.
-					copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
+			FileSystemUtils
+					.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
 			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties)
 		when:
@@ -64,7 +64,7 @@ class RecursiveFilesConverterSpec extends Specification {
 		then:
 			Collection<File> createdFiles = [] as List
 			properties.stubsOutputDir.
-					eachFileRecurse(FileType.FILES) { it -> createdFiles << it }
+					eachFileRecurse(FileType.FILES) { createdFiles << it }
 			Set<String> relativizedCreatedFiles =
 					getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			relativizedCreatedFiles == EXPECTED_TARGET_FILES
@@ -75,13 +75,13 @@ class RecursiveFilesConverterSpec extends Specification {
 	def "should recursively convert matching files with exlusions"() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			File originalSourceRootDirectory = new File(this.getClass().
-					getResource("/converter/source").toURI())
+			File originalSourceRootDirectory = new File(this.getClass()
+					.getResource("/converter/source").toURI())
 			properties.contractsDslDir = tmpFolder.newFolder("source")
 			properties.stubsOutputDir = tmpFolder.newFolder("target")
 			properties.excludedFiles = ["dir1/**"]
-			FileSystemUtils.
-					copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
+			FileSystemUtils
+					.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
 			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties)
 		when:
@@ -89,7 +89,7 @@ class RecursiveFilesConverterSpec extends Specification {
 		then:
 			Collection<File> createdFiles = [] as List
 			properties.stubsOutputDir.
-					eachFileRecurse(FileType.FILES) { it -> createdFiles << it }
+					eachFileRecurse(FileType.FILES) { createdFiles << it }
 			Set<String> relativizedCreatedFiles =
 					getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			[Paths.get("dslRoot.json"), Paths.
@@ -107,8 +107,8 @@ class RecursiveFilesConverterSpec extends Specification {
 			stubGenerator.convertContents(_, _) >> {
 				throw new NullPointerException("Test conversion error")
 			}
-			stubGenerator.
-					generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
+			stubGenerator
+					.generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.contractsDslDir = tmpFolder.root
 			properties.stubsOutputDir = tmpFolder.root

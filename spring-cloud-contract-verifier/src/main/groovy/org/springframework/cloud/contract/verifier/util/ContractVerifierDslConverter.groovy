@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.util.StringUtils
 
 /**
  * Converts a file or String into a {@link Contract}
@@ -124,7 +125,7 @@ class ContractVerifierDslConverter {
 	private static Collection<Contract> withName(File file, Collection<Contract> contracts) {
 		int counter = 0
 		return contracts.collect {
-			if (hasName(it) && !relatedToScenarios(file, it)) {
+			if (contractNameEmpty(it) && !relatedToScenarios(file, it)) {
 				String tillExtension = file.name.substring(0, file.name.lastIndexOf("."))
 				it.name(tillExtension + (counter > 0 || contracts.size() > 1 ? "_" + counter : ""))
 			}
@@ -133,8 +134,8 @@ class ContractVerifierDslConverter {
 		}
 	}
 
-	private static boolean hasName(Contract it) {
-		return it != null && !it.name
+	private static boolean contractNameEmpty(Contract it) {
+		return it != null && StringUtils.isEmpty(it.name)
 	}
 
 	private static boolean relatedToScenarios(File file, Contract contract) {

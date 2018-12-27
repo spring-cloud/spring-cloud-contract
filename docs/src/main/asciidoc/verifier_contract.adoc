@@ -1499,7 +1499,7 @@ You can now reference your classes in your DSL, as shown in the following exampl
 include::{samples_url}/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]
 ----
 
-IMPORTANT: You can setup the Spring Cloud Contract plugin by setting `convertToYaml` to `true`. That way you will NOT have to add the dependency to the JAR with the extended features.
+IMPORTANT: You can set the Spring Cloud Contract plugin up by setting `convertToYaml` to `true`. That way you will NOT have to add the dependency with the extended functionality to the consumer side, since the consumer side will be using YAML contracts instead of Groovy ones.
 
 == Using the Pluggable Architecture
 

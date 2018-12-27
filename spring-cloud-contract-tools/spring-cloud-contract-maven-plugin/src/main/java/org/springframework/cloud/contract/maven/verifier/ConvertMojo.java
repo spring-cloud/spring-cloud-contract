@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,15 +208,19 @@ public class ConvertMojo extends AbstractMojo {
 		File copiedContracts = copyContracts(rootPath, config, contractsDirectory);
 		if (this.convertToYaml) {
 			contractsDslDir = copiedContracts;
-			copyOriginals(rootPath, config, contractsDirectory);
-			ToYamlConverter.replaceContractWithYaml(contractsDslDir);
-			getLog().info("Replaced DSL files with their YAML representation at [" + contractsDslDir + "]");
+			convertBackedUpDslsToYaml(rootPath, config, contractsDirectory, contractsDslDir);
 		}
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		logSetup(config, contractsDslDir);
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(config);
 		converter.processFiles();
+	}
+
+	private void convertBackedUpDslsToYaml(String rootPath, ContractVerifierConfigProperties config, File contractsDirectory, File contractsDslDir) throws MojoExecutionException {
+		copyOriginals(rootPath, config, contractsDirectory);
+		ToYamlConverter.replaceContractWithYaml(contractsDslDir);
+		getLog().info("Replaced DSL files with their YAML representation at [" + contractsDslDir + "]");
 	}
 
 	private File copyOriginals(String rootPath, ContractVerifierConfigProperties config,

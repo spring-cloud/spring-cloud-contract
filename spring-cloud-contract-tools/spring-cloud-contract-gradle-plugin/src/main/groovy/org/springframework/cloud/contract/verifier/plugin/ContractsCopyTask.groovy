@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,12 +56,17 @@ class ContractsCopyTask extends ConventionTask {
 		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		copy(file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
 		if (getExtension().isConvertToYaml()) {
-			File originalContracts = outputFolder(root, ORIGINAL_PATH)
-			copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
-			ToYamlConverter.replaceContractWithYaml(outputContractsFolder)
-			project.logger.info("Replaced DSL files with their YAML representation at [" + ext.contractsDslDir + "]")
+			convertBackedUpDslsToYaml(root, file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
 		}
 
+	}
+
+	private void convertBackedUpDslsToYaml(String root, File file, String antPattern, String slashSeparatedAntPattern, ContractVerifierConfigProperties props, File outputContractsFolder) {
+		File originalContracts = outputFolder(root, ORIGINAL_PATH)
+		copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
+		ToYamlConverter.replaceContractWithYaml(outputContractsFolder)
+		project.logger.
+				info("Replaced DSL files with their YAML representation at [" + ext.contractsDslDir + "]")
 	}
 
 	protected WorkResult copy(File file, String antPattern, String slashSeparatedAntPattern, props, File outputContractsFolder) {
