@@ -32,7 +32,7 @@ Contract.make {
 						test : named(
 								name: value(consumer(regex(nonEmpty())), producer('filename1')),
 								content: value(c(regex(nonEmpty())), producer(fileAsBytes("test.json"))),
-								contentType: "application/json")
+								contentType: value("application/json"))
 				]
 		)
 

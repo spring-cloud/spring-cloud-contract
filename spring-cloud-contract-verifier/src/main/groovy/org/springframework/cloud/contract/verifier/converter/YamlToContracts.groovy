@@ -51,11 +51,17 @@ class YamlToContracts {
 		return {
 			List<YamlContract> yamlContracts = convert(mapper, it)
 			Thread.currentThread().setContextClassLoader(updatedClassLoader(contractFile.getParentFile(), classLoader))
+			int counter = 0
 			return yamlContracts.collect { YamlContract yamlContract ->
 				return Contract.make {
 					if (yamlContract.description) description(yamlContract.description)
 					if (yamlContract.label) label(yamlContract.label)
-					if (yamlContract.name) name(yamlContract.name)
+					if (yamlContract.name) {
+						name(yamlContract.name)
+					} else {
+						String tillExtension = contractFile.name.substring(0, contractFile.name.lastIndexOf("."))
+						name(tillExtension + (counter > 0 ? "_" + counter : ""))
+					}
 					if (yamlContract.priority) priority(yamlContract.priority)
 					if (yamlContract.ignored) ignored()
 					if (yamlContract.request?.method) {
@@ -149,7 +155,8 @@ class YamlToContracts {
 									}
 									Object fileNameValue = namedParam.fileName
 									Object fileContentValue = namedParam.fileContent
-									String fileContentValueAsBytes = namedParam.fileContentAsBytes
+									String fileContentAsBytes = namedParam.fileContentAsBytes
+									String fileContentFromFileAsBytes = namedParam.fileContentFromFileAsBytes
 									String contentTypeCommand = namedParam.contentTypeCommand
 									String fileContentCommand = namedParam.fileContentCommand
 									String fileNameCommand = namedParam.fileNameCommand
@@ -169,8 +176,7 @@ class YamlToContracts {
 									multipartMap.put(namedParam.paramName, new NamedProperty(
 											new DslProperty<>(fileNameValue, fileNameCommand ? new ExecutionProperty(fileNameCommand)
 													: namedParam.fileName),
-											new DslProperty<>(fileContentValue, namedParam.fileContent ?: fileContentValueAsBytes
-													?: new ExecutionProperty(fileContentCommand)),
+											new DslProperty<>(fileContentValue, namedParam.fileContent ? namedParam.fileContent : fileContentFromFileAsBytes ? fileAsBytes(namedParam.fileContentFromFileAsBytes) : fileContentAsBytes ? fileContentAsBytes.bytes : new ExecutionProperty(fileContentCommand)),
 											new DslProperty(contentTypeValue, contentTypeCommand ? new ExecutionProperty(contentTypeCommand)
 													: namedParam.contentType)))
 								}

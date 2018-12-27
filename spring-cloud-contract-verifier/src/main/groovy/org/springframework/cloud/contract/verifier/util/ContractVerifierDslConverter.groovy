@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.util.StringUtils
 
 /**
  * Converts a file or String into a {@link Contract}
@@ -31,6 +32,8 @@ import org.springframework.cloud.contract.spec.Contract
 @CompileStatic
 @Commons
 class ContractVerifierDslConverter {
+
+	private static final String SCENARIO_MATCHER = '^[0-9].*$'
 
 	/**
 	 * @deprecated - use {@link ContractVerifierDslConverter#convertAsCollection(java.io.File, java.lang.String)}
@@ -64,20 +67,8 @@ class ContractVerifierDslConverter {
 		}
 	}
 
-	/**
-	 * @deprecated - use {@link ContractVerifierDslConverter#convertAsCollection(java.io.File, java.io.File)}
-	 */
-	@Deprecated
 	static Collection<Contract> convertAsCollection(File dsl) {
-		try {
-			Object object = groovyShell().evaluate(dsl)
-			return listOfContracts(object)
-		} catch (DslParseException e) {
-			throw e
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to evaluate the contract at path [${dsl.path}]", e)
-			throw new DslParseException(e)
-		}
+		return convertAsCollection(dsl.parentFile, dsl)
 	}
 
 	static Collection<Contract> convertAsCollection(File rootFolder, File dsl) {
@@ -85,7 +76,7 @@ class ContractVerifierDslConverter {
 		try {
 			ClassLoader urlCl = updatedClassLoader(rootFolder, classLoader)
 			Object object = groovyShell(urlCl, rootFolder).evaluate(dsl)
-			return listOfContracts(object)
+			return listOfContracts(dsl, object)
 		} catch (DslParseException e) {
 			throw e
 		} catch (Exception e) {
@@ -120,5 +111,35 @@ class ContractVerifierDslConverter {
 			throw new DslParseException("Contract is not returning a Contract or list of Contracts")
 		}
 		return [object] as Collection<Contract>
+	}
+
+	private static Collection<Contract> listOfContracts(File file, Object object) {
+		if (object instanceof Collection) {
+			return withName(file, object as Collection<Contract>)
+		} else if (!object instanceof Contract) {
+			throw new DslParseException("Contract is not returning a Contract or list of Contracts")
+		}
+		return withName(file, [object] as Collection<Contract>)
+	}
+
+	private static Collection<Contract> withName(File file, Collection<Contract> contracts) {
+		int counter = 0
+		return contracts.collect {
+			if (contractNameEmpty(it) && !relatedToScenarios(file, it)) {
+				String tillExtension = file.name.substring(0, file.name.lastIndexOf("."))
+				it.name(tillExtension + (counter > 0 || contracts.size() > 1 ? "_" + counter : ""))
+			}
+			counter++
+			return it
+		}
+	}
+
+	private static boolean contractNameEmpty(Contract it) {
+		return it != null && StringUtils.isEmpty(it.name)
+	}
+
+	private static boolean relatedToScenarios(File file, Contract contract) {
+		return contract.name?.matches(SCENARIO_MATCHER) ||
+				file.name.matches(SCENARIO_MATCHER)
 	}
 }

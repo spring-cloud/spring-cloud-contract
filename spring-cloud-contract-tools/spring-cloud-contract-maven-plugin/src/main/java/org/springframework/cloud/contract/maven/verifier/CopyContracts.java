@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.maven.verifier;
 import java.io.File;
 import java.util.Collections;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -25,15 +27,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 
 class CopyContracts {
-
-	private static final Logger log = LoggerFactory.getLogger(CopyContracts.class);
-
-	private static final String CONTRACTS_PATH = "/contracts";
+	private static final Log log = LogFactory.getLog(CopyContracts.class);
 
 	private final MavenProject project;
 
@@ -52,13 +49,10 @@ class CopyContracts {
 		this.config = config;
 	}
 
-	public void copy(File contractsDirectory, File outputDirectory, String rootPath)
+	public void copy(File contractsDirectory, File outputDirectory)
 			throws MojoExecutionException {
-		File outputFolderWithContracts = outputDirectory.getPath().endsWith("contracts")
-				? outputDirectory : new File(outputDirectory, rootPath + CONTRACTS_PATH);
-		log.info("Copying Spring Cloud Contract Verifier contracts to ["
-				+ outputFolderWithContracts + "]" + ". Only files matching ["
-				+ this.config.getIncludedContracts() + "] pattern will end up in "
+		log.info("Copying Spring Cloud Contract Verifier contracts to ["+ outputDirectory + "]"
+				+ ". Only files matching [" + this.config.getIncludedContracts() + "] pattern will end up in "
 				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
 		String includedRootFolderAntPattern = this.config
@@ -82,7 +76,7 @@ class CopyContracts {
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
 		execution.setResources(Collections.singletonList(resource));
-		execution.setOutputDirectory(outputFolderWithContracts);
+		execution.setOutputDirectory(outputDirectory);
 		execution.setMavenProject(this.project);
 		execution.setEncoding("UTF-8");
 		execution.setMavenSession(this.mavenSession);

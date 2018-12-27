@@ -10,6 +10,7 @@ import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.Cookies
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.Multipart
@@ -18,7 +19,6 @@ import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -100,7 +100,13 @@ class ContractsToYaml {
 					MapConverter.getTestSideValues(prop).toString()
 			}
 			request.cookies = (contract.request?.cookies as Cookies)?.asTestSideMap()
-			request.body = MapConverter.getTestSideValues(contract.request?.body)
+			Object body = contract.request?.body?.serverValue
+			if (body instanceof FromFileProperty) {
+				if (body.isByte()) request.bodyFromFileAsBytes = body.fileName()
+				if (body.isString()) request.bodyFromFile = body.fileName()
+			} else {
+				request.body = MapConverter.getTestSideValues(contract.request?.body)
+			}
 			Multipart multipart = contract.request.multipart
 			if (multipart) {
 				request.multipart = new YamlContract.Multipart()
@@ -114,6 +120,7 @@ class ContractsToYaml {
 								fileName: fileName instanceof String ? value.name?.serverValue as String : null,
 								fileContent: fileContent instanceof String ? fileContent as String : null,
 								fileContentAsBytes: fileContent instanceof String ? fileContent as String : null,
+								fileContentFromFileAsBytes: resolveFileNameAsBytes(fileContent),
 								contentType: contentType instanceof String ? contentType as String : null,
 								fileNameCommand: fileName instanceof ExecutionProperty ? fileName.toString() : null,
 								fileContentCommand: fileContent instanceof ExecutionProperty ? fileContent.toString() : null,
@@ -175,6 +182,14 @@ class ContractsToYaml {
 		}
 	}
 
+	protected String resolveFileNameAsBytes(Object value) {
+		if (!(value instanceof FromFileProperty)) {
+			return null
+		}
+		FromFileProperty property = (FromFileProperty) value
+		return property.fileName()
+	}
+
 	protected YamlContract.ValueMatcher valueMatcher(Object o) {
 		return o instanceof Pattern ? new YamlContract.ValueMatcher(regex: o.pattern()) : null
 	}
@@ -221,7 +236,13 @@ class ContractsToYaml {
 					MapConverter.getStubSideValues(prop).toString()
 			}
 			response.cookies = (contract.response?.cookies as Cookies)?.asStubSideMap()
-			response.body = MapConverter.getStubSideValues(contract.response?.body)
+			Object body = contract.response?.body?.clientValue
+			if (body instanceof FromFileProperty) {
+				if (body.isByte()) response.bodyFromFileAsBytes = body.fileName()
+				if (body.isString()) response.bodyFromFile = body.fileName()
+			} else {
+				response.body = MapConverter.getStubSideValues(contract.response?.body)
+			}
 			contract.response?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 				response.matchers.body << new YamlContract.BodyTestMatcher(
 						path: matcher.path(),

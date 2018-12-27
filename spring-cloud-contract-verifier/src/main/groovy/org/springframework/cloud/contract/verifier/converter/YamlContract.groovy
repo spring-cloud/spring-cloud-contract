@@ -72,6 +72,7 @@ class YamlContract {
 		public String fileName
 		public String fileContent
 		public String fileContentAsBytes
+		public String fileContentFromFileAsBytes
 		public String contentType
 		public String fileNameCommand
 		public String fileContentCommand
