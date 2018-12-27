@@ -126,8 +126,7 @@ class ContractVerifierDslConverter {
 		int counter = 0
 		return contracts.collect {
 			if (contractNameEmpty(it) && !relatedToScenarios(file, it)) {
-				String tillExtension = file.name.substring(0, file.name.lastIndexOf("."))
-				it.name(tillExtension + (counter > 0 || contracts.size() > 1 ? "_" + counter : ""))
+				it.name(NamesUtil.defaultContractName(file, contracts, counter))
 			}
 			counter++
 			return it

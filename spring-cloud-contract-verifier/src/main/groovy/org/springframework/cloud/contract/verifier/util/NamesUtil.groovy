@@ -15,7 +15,6 @@
  */
 
 package org.springframework.cloud.contract.verifier.util
-
 /**
  * A utility class that helps to convert names
  *
@@ -67,6 +66,21 @@ class NamesUtil {
 	 */
 	static boolean hasDot(String string) {
 		return hasSeparator(string, '.')
+	}
+
+	/**
+	 * Returns the default contract name, resolved from file name, taking
+	 * into consideration also the index of contract (for multiple contracts
+	 * stored in a single file).
+	 *
+	 * @param file - file with contracts
+	 * @param contracts - collection of contracts
+	 * @param counter - given contract index
+	 * @return
+	 */
+	static String defaultContractName(File file, Collection contracts, int counter) {
+		String tillExtension = file.name.substring(0, file.name.lastIndexOf("."))
+		return tillExtension + (counter > 0 || contracts.size() > 1 ? "_" + counter : "")
 	}
 
 	/**

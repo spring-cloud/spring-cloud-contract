@@ -579,10 +579,12 @@ class YamlContractConverterSpec extends Specification {
 		when:
 			Collection<Contract> contracts = converter.convertFrom(ymlMultiple)
 		then:
-			contracts.size() == 2
+			contracts.size() == 3
 		and:
 			contracts.first().request.url.clientValue == "/users/1"
-			contracts.last().request.url.clientValue == "/users/2"
+			contracts.last().request.url.clientValue == "/users/3"
+		and:
+			contracts.groupBy { it.name }.keySet().size() == 3
 	}
 
 	def "should dump yml as string"() {

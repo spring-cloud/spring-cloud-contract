@@ -5,10 +5,15 @@ request:
   url: /users/1
 response:
   status: 200
-
 ---
 request:
   method: POST
   url: /users/2
+response:
+  status: 200
+---
+request:
+  method: POST
+  url: /users/3
 response:
   status: 200
