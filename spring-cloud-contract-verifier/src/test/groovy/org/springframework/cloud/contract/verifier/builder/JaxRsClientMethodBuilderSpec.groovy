@@ -1333,7 +1333,8 @@ DATA
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+			!test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+			test.contains('''.cookie("cookie-key", "''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key")).isNotNull();''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key").getValue()).matches("[A-Za-z]+");''')
 		and:
@@ -1376,7 +1377,8 @@ DATA
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
+			!test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
+			test.contains('''.cookie('cookie-key', ''')
 			test.contains('''response.getCookies().get('cookie-key') != null''')
 			test.contains('''response.getCookies().get('cookie-key').getValue() ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
 		and:

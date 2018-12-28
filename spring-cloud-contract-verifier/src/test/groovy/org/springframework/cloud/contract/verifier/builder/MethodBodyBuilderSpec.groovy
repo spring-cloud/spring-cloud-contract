@@ -528,7 +528,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body(
 							[
 									"name"      : $(consumer(~/.+/), producer('string-1')),
-									"updatedTs" : $(consumer(~/\d{13}/), producer(1531916906000L)),
+									"updatedTs" : $(consumer(regex(~/1531916906000/).asLong())),
 									"isDisabled": $(consumer(regex(anyBoolean())), producer(true))
 							]
 					)
@@ -557,6 +557,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			String test = blockBuilder.toString()
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 			test.contains('''assertThatJson(parsedJson).field("['updatedTs']").isEqualTo(1531916906000L)''')
+			!test.contains('''"updatedTs":"1531916906000"''')
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:

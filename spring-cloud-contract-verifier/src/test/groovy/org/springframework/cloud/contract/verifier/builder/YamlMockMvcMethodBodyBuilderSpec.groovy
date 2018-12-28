@@ -540,6 +540,7 @@ response:
       - path: $.property2
         type: by_regex
         value: "[0-9]{3}"
+        regexType: as_integer
 '''
         Contract contractDsl = fromYaml(contract)
         MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -929,10 +930,12 @@ request:
     headers:
       - key: 'Content-Type'
         regex: 'application/json.*'
+        regexType: as_string
     body:
       - path: $.first_name
         type: by_regex
         value: '[\\p{L}]*'
+        regexType: as_string
       - path: $.last_name
         type: by_regex
         value: '[\\p{L}]*'
@@ -1127,8 +1130,10 @@ request:
       params:
         - key: formParameter
           regex: ".+"
+          regexType: as_string
         - key: someBooleanParameter
           predefined: any_boolean
+          regexType: as_boolean
       named:
         - paramName: file
           fileName:
@@ -1191,6 +1196,7 @@ response:
       - path: $.authorities[0]
         type: by_regex
         value: '^[a-zA-Z0-9_\\- ]+$'
+        regexType: as_string
 '''
         Contract contractDsl = fromYaml(contract)
         MethodBodyBuilder builder = new HttpSpockMethodRequestProcessingBodyBuilder(contractDsl, properties, generatedClassDataForMethod)

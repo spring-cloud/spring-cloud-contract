@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.spec.internal
 import java.util.regex.Pattern
 
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
 import groovy.transform.ToString
 
 /**
@@ -41,7 +40,12 @@ class OptionalProperty implements Serializable {
 	 * in an optional function
 	 */
 	String optionalPattern() {
-		return "($value)?"
+		return "(${value()})?"
+	}
+
+	String value() {
+		return this.value instanceof RegexProperty ?
+				((RegexProperty) this.value).pattern.pattern() : this.value
 	}
 
 	protected Pattern optionalPatternValue() {

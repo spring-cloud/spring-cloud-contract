@@ -2794,7 +2794,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
         builder.appendTo(blockBuilder)
         def test = blockBuilder.toString()
         then:
-        test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+        !test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+        test.contains('''.cookie("cookie-key", "''')
         test.contains('''assertThat(response.getCookie("cookie-key")).isNotNull();''')
         test.contains('''assertThat(response.getCookie("cookie-key")).matches("[A-Za-z]+");''')
         and:
@@ -2845,7 +2846,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
         builder.appendTo(blockBuilder)
         def test = blockBuilder.toString()
         then:
-        test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+        !test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+        test.contains('''.cookie("cookie-key", "''')
         test.contains('''response.cookie('cookie-key') != null''')
         test.contains('''response.cookie('cookie-key') ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
         and:

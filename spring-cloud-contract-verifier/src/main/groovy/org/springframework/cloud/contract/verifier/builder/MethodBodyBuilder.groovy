@@ -41,6 +41,7 @@ import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
@@ -196,6 +197,13 @@ abstract class MethodBodyBuilder {
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern)
+
+	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
+	 */
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, RegexProperty regexProperty) {
+		processHeaderElement(blockBuilder, property, regexProperty.pattern)
+	}
 
 	/**
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
@@ -522,7 +530,7 @@ abstract class MethodBodyBuilder {
 	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		String path = quotedAndEscaped(bodyMatcher.path())
 		Object retrievedValue = value(copiedBody, bodyMatcher)
-		retrievedValue = retrievedValue instanceof Pattern ? ((Pattern) retrievedValue).pattern() : retrievedValue
+		retrievedValue = retrievedValue instanceof RegexProperty ? ((RegexProperty) retrievedValue).getPattern().pattern() : retrievedValue
 		String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
 		if (arrayRelated(path) && MatchingType.regexRelated(bodyMatcher.matchingType())) {
 			buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)

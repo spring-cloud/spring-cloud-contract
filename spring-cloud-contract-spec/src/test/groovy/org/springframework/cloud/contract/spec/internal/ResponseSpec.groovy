@@ -1,9 +1,6 @@
 package org.springframework.cloud.contract.spec.internal
 
-import spock.lang.Specification
-
-import java.util.regex.Pattern
-
+import spock.lang.Specification 
 /**
  * @author Marcin Grzejszczak
  */
@@ -26,18 +23,95 @@ class ResponseSpec extends Specification {
 			thrown(IllegalStateException)
 	}
 
-	def 'should generate a value if only regex is passed for server'() {
+
+	def 'should set property when using the $() convenience method'() {
 		given:
-			Response request = new Response()
+			Response contract = new Response()
 			DslProperty property
 		when:
-			request.with {
-				property = value(producer(regex("[0-9]{5}")))
+			contract.with {
+				property = $(producer(regex("[0-9]{5}")))
 			}
-			def value = Integer.valueOf(property.clientValue as String)
+			def generatedValue = property.clientValue
+			generatedValue instanceof String
+			def value = Integer.valueOf(generatedValue as String)
 		then:
 			value >= 0
 			value <= 99_999
-			(property.serverValue as Pattern).pattern() == '[0-9]{5}'
+	}
+
+	def 'should set property when using the $() convenience method for Double'() {
+		given:
+			Response contract = new Response()
+			DslProperty property
+		when:
+			contract.with {
+				property = $(producer(regex("[0-9]{5}").asDouble()))
+			}
+			def value = property.clientValue
+			value instanceof Double
+		then:
+			value >= 0
+			value <= 99_999
+	}
+
+	def 'should set property when using the $() convenience method for Short'() {
+		given:
+			Response contract = new Response()
+			DslProperty property
+		when:
+			contract.with {
+				property = $(producer(regex("[0-9]{1}").asShort()))
+			}
+			def value = property.clientValue
+			value instanceof Short
+		then:
+			value >= 0
+			value <= 9
+	}
+
+	def 'should set property when using the $() convenience method for Long'() {
+		given:
+			Response contract = new Response()
+			DslProperty property
+		when:
+			contract.with {
+				property = $(producer(regex("[0-9]{5}").asLong()))
+			}
+			def value = property.clientValue
+			value instanceof Long
+		then:
+			value >= 0
+			value <= 99_999
+	}
+
+	def 'should set property when using the $() convenience method for Integer'() {
+		given:
+			Response contract = new Response()
+			DslProperty property
+		when:
+			contract.with {
+				property = $(producer(regex("[0-9]{5}").asInteger()))
+			}
+			def value = property.clientValue
+			value instanceof Integer
+		then:
+			value >= 0
+			value <= 99_999
+	}
+
+	def 'should set property when using the $() convenience method for Float'() {
+		given:
+			Response contract = new Response()
+			DslProperty property
+		when:
+			contract.with {
+				property = $(producer(regex("[0-9]{5}").asFloat()))
+			}
+			def value = property.clientValue
+			value instanceof Float
+		then:
+			value >= 0
+			value <= 99_999
 	}
 }

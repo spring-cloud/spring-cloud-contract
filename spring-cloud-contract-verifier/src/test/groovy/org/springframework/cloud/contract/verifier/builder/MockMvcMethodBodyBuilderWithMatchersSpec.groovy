@@ -62,12 +62,12 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							]
 					])
 					bodyMatchers {
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.duck', byRegex("[0-9]{3}").asInteger())
 						jsonPath('$.duck', byEquality())
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()).asString())
 						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						jsonPath('$.number', byRegex(number()).asInteger())
+						jsonPath('$.aBoolean', byRegex(anyBoolean()).asBooleanType())
 						jsonPath('$.date', byDate())
 						jsonPath('$.dateTime', byTimestamp())
 						jsonPath('$.time', byTime())
@@ -111,18 +111,18 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					])
 					bodyMatchers {
 						// asserts the jsonpath value against manual regex
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.duck', byRegex("[0-9]{3}").asInteger())
 						// asserts the jsonpath value against the provided value
 						jsonPath('$.duck', byEquality())
 						// asserts the jsonpath value against some default regex
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()).asString())
 						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.positiveInteger', byRegex(anInteger()))
-						jsonPath('$.negativeInteger', byRegex(anInteger()))
-						jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
-						jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						jsonPath('$.number', byRegex(number()).asInteger())
+						jsonPath('$.positiveInteger', byRegex(anInteger()).asInteger())
+						jsonPath('$.negativeInteger', byRegex(anInteger()).asInteger())
+						jsonPath('$.positiveDecimalNumber', byRegex(aDouble()).asDouble())
+						jsonPath('$.negativeDecimalNumber', byRegex(aDouble()).asDouble())
+						jsonPath('$.aBoolean', byRegex(anyBoolean()).asBooleanType())
 						// asserts vs inbuilt time related regex
 						jsonPath('$.date', byDate())
 						jsonPath('$.dateTime', byTimestamp())

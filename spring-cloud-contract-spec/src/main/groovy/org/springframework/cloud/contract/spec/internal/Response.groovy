@@ -23,7 +23,6 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
 import groovy.util.logging.Commons
-import repackaged.nl.flotsam.xeger.Xeger
 
 import org.springframework.cloud.contract.spec.util.RegexpUtils
 /**
@@ -109,13 +108,12 @@ class Response extends Common {
 	}
 
 	DslProperty value(ServerDslProperty server) {
-		Object value = server.clientValue
-		if (server.clientValue instanceof Pattern && server.isSingleValue()) {
-			value = new Xeger(((Pattern)server.clientValue).pattern()).generate()
-		} else if (server.clientValue instanceof Pattern && !server.isSingleValue()) {
-			value = server.serverValue
+		Object dynamicValue = server.serverValue
+		Object concreteValue = server.clientValue
+		if (dynamicValue instanceof RegexProperty && server.isSingleValue()) {
+			return ((RegexProperty) dynamicValue).concreteClientDynamicProducer()
 		}
-		return new DslProperty(value, server.serverValue)
+		return new DslProperty(concreteValue, dynamicValue)
 	}
 
 	DslProperty $(ServerDslProperty server) {
@@ -123,11 +121,24 @@ class Response extends Common {
 	}
 
 	DslProperty value(Pattern server) {
+		return value(new RegexProperty(server))
+	}
+
+	DslProperty value(RegexProperty server) {
 		return value(new ServerDslProperty(server))
 	}
 
-	DslProperty $(Pattern server) {
+	DslProperty $(RegexProperty server) {
 		return value(server)
+	}
+
+	DslProperty $(Pattern server) {
+		return value(new RegexProperty(server))
+	}
+
+	@Override
+	RegexProperty regexProperty(Object object) {
+		return new RegexProperty(object).concreteClientDynamicProducer()
 	}
 
 	/**
@@ -151,7 +162,7 @@ class Response extends Common {
 
 	@Override
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
-		if (client.clientValue instanceof Pattern) {
+		if (client.clientValue instanceof RegexProperty) {
 			throw new IllegalStateException("You can't have a regular expression for the response on the client side")
 		}
 		return super.value(client, server)
@@ -159,7 +170,7 @@ class Response extends Common {
 
 	@Override
 	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
-		if (client.clientValue instanceof Pattern) {
+		if (client.clientValue instanceof RegexProperty) {
 			throw new IllegalStateException("You can't have a regular expression for the response on the client side")
 		}
 		return super.value(server, client)

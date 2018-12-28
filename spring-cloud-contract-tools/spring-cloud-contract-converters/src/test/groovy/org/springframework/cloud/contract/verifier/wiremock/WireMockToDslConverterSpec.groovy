@@ -16,12 +16,14 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
-import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import java.util.regex.Pattern
+
 import spock.lang.Specification
 
-import java.util.regex.Pattern
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.RegexProperty
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 
 class WireMockToDslConverterSpec extends Specification {
 
@@ -148,7 +150,7 @@ class WireMockToDslConverterSpec extends Specification {
 					$groovyDsl
 				}""")
 			def b = expectedGroovyDsl
-			(a.first().request.url.clientValue as Pattern).pattern() == (b.request.url.clientValue as Pattern).pattern()
+			(a.first().request.url.clientValue as RegexProperty).pattern() == (b.request.url.clientValue as Pattern).pattern()
 	}
 
 	def 'should convert WireMock stub with response body containing integer'() {
@@ -401,7 +403,7 @@ class WireMockToDslConverterSpec extends Specification {
 				$groovyDsl
 			}""").first()
 		and:
-			(evaluatedGroovyDsl.request.body.clientValue as Pattern).pattern() == (expectedGroovyDsl.request.body.clientValue as Pattern).pattern()
+			(evaluatedGroovyDsl.request.body.clientValue as RegexProperty).pattern() == (expectedGroovyDsl.request.body.clientValue as Pattern).pattern()
 	}
 
 	def 'should convert WireMock stub with request body with equalToJson'() {
@@ -522,7 +524,7 @@ class WireMockToDslConverterSpec extends Specification {
 					$groovyDsl
 				}""").first()
 		and:
-			(evaluatedGroovyDsl.request.body.clientValue as Pattern).pattern() == (expectedGroovyDsl.request.body.clientValue as Pattern).pattern()
+			(evaluatedGroovyDsl.request.body.clientValue as RegexProperty).pattern() == (expectedGroovyDsl.request.body.clientValue as Pattern).pattern()
 	}
 
 	def 'should convert WireMock stub with priorities'() {

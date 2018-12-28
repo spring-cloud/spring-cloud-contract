@@ -37,6 +37,7 @@ import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
+import org.springframework.cloud.contract.spec.internal.RegexProperty;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.util.ContentType;
 import org.springframework.cloud.contract.verifier.util.ContentUtils;
@@ -133,8 +134,8 @@ class StubRunnerCamelPredicate implements Predicate {
 			BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
 			matches = matchesForJsonPayload(groovyDsl, inputMessage, matchers, dslBody);
 		}
-		else if (dslBody instanceof Pattern && inputMessage instanceof String) {
-			Pattern pattern = (Pattern) dslBody;
+		else if (dslBody instanceof RegexProperty && inputMessage instanceof String) {
+			Pattern pattern = ((RegexProperty) dslBody).getPattern();
 			matches = pattern.matcher((String) inputMessage).matches();
 			bodyUnmatchedLog(dslBody, matches, pattern);
 		} else {
@@ -206,8 +207,8 @@ class StubRunnerCamelPredicate implements Predicate {
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
 			boolean matches;
-			if (value instanceof Pattern) {
-				Pattern pattern = (Pattern) value;
+			if (value instanceof RegexProperty) {
+				Pattern pattern = ((RegexProperty) value).getPattern();
 				matches = pattern.matcher(valueInHeader.toString()).matches();
 			}
 			else {
@@ -225,8 +226,8 @@ class StubRunnerCamelPredicate implements Predicate {
 	}
 
 	private String unmatchedText(Object expectedValue) {
-		return expectedValue instanceof Pattern
-				? "match pattern [" + ((Pattern) expectedValue).pattern() + "]"
+		return expectedValue instanceof RegexProperty
+				? "match pattern [" + ((RegexProperty) expectedValue).pattern() + "]"
 				: "be equal to [" + expectedValue + "]";
 	}
 

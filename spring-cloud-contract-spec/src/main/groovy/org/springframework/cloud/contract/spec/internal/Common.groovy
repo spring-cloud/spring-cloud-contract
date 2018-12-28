@@ -114,17 +114,25 @@ class Common {
 		return value(server, client)
 	}
 
-	Pattern regex(String regex) {
-		return Pattern.compile(regex)
+	RegexProperty regex(String regex) {
+		return regexProperty(Pattern.compile(regex))
+	}
+
+	RegexProperty regex(RegexProperty regex) {
+		return regex
 	}
 
 	// Backward compatibility with RegexPatterns
-	Pattern regex(Pattern regex) {
-		return regex
+	RegexProperty regex(Pattern regex) {
+		return regexProperty(regex)
 	}
 
 	OptionalProperty optional(Object object) {
 		return new OptionalProperty(object)
+	}
+
+	RegexProperty regexProperty(Object object) {
+		return new RegexProperty(object)
 	}
 
 	ExecutionProperty execute(String commandToExecute) {

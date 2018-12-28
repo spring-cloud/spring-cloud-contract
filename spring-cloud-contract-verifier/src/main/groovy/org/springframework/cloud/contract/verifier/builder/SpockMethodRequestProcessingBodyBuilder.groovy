@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
@@ -187,8 +188,16 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		return patternComparison(headerValue)
 	}
 
+	protected String convertHeaderComparison(RegexProperty headerValue) {
+		return convertHeaderComparison(headerValue.pattern)
+	}
+
 	protected String convertCookieComparison(String cookieValue) {
 		return "== '$cookieValue'"
+	}
+
+	protected String createBodyComparison(RegexProperty bodyValue) {
+		return createBodyComparison(bodyValue.pattern)
 	}
 
 	protected String createBodyComparison(Pattern bodyValue) {
