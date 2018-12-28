@@ -27,6 +27,7 @@ import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
@@ -249,6 +250,10 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	protected String convertHeaderComparison(String headerValue) {
 		return " == '$headerValue'"
+	}
+
+	protected String convertHeaderComparison(RegexProperty headerValue) {
+		return convertHeaderComparison(headerValue.pattern)
 	}
 
 	protected String convertHeaderComparison(Pattern headerValue) {

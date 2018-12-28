@@ -535,35 +535,35 @@ class YamlToContracts {
 		RegexPatterns patterns = new RegexPatterns()
 		switch (predefinedRegex) {
 			case YamlContract.PredefinedRegex.only_alpha_unicode:
-				return patterns.onlyAlphaUnicode()
+				return patterns.onlyAlphaUnicode().pattern
 			case YamlContract.PredefinedRegex.number:
-				return patterns.number()
+				return patterns.number().pattern
 			case YamlContract.PredefinedRegex.any_double:
-				return patterns.aDouble()
+				return patterns.aDouble().pattern
 			case YamlContract.PredefinedRegex.any_boolean:
-				return patterns.anyBoolean()
+				return patterns.anyBoolean().pattern
 			case YamlContract.PredefinedRegex.ip_address:
-				return patterns.ipAddress()
+				return patterns.ipAddress().pattern
 			case YamlContract.PredefinedRegex.hostname:
-				return patterns.hostname()
+				return patterns.hostname().pattern
 			case YamlContract.PredefinedRegex.email:
-				return patterns.email()
+				return patterns.email().pattern
 			case YamlContract.PredefinedRegex.url:
-				return patterns.url()
+				return patterns.url().pattern
 			case YamlContract.PredefinedRegex.uuid:
-				return patterns.uuid()
+				return patterns.uuid().pattern
 			case YamlContract.PredefinedRegex.iso_date:
-				return patterns.isoDate()
+				return patterns.isoDate().pattern
 			case YamlContract.PredefinedRegex.iso_date_time:
-				return patterns.isoDateTime()
+				return patterns.isoDateTime().pattern
 			case YamlContract.PredefinedRegex.iso_time:
-				return patterns.isoTime()
+				return patterns.isoTime().pattern
 			case YamlContract.PredefinedRegex.iso_8601_with_offset:
-				return patterns.iso8601WithOffset()
+				return patterns.iso8601WithOffset().pattern
 			case YamlContract.PredefinedRegex.non_empty:
-				return patterns.nonEmpty()
+				return patterns.nonEmpty().pattern
 			case YamlContract.PredefinedRegex.non_blank:
-				return patterns.nonBlank()
+				return patterns.nonBlank().pattern
 			default:
 				throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex + "] is unsupported. Use on of " + YamlContract.PredefinedRegex.values())
 		}

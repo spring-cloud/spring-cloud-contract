@@ -66,6 +66,9 @@ public interface MethodBufferingJsonVerifiable
 	MethodBufferingJsonVerifiable matches(String value);
 
 	@Override
+	MethodBufferingJsonVerifiable isInstanceOf(Class clazz);
+
+	@Override
 	MethodBufferingJsonVerifiable isEqualTo(Boolean value);
 
 	@Override
