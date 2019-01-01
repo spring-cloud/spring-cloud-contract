@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
+
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.TaskAction
 
 import org.springframework.cloud.contract.stubrunner.ContractProjectUpdater
+import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
 
 /**
@@ -32,18 +32,46 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
-@PackageScope
-@CompileStatic
 class PublishStubsToScmTask extends ConventionTask {
 	File stubsOutputDir
 	ContractVerifierExtension configProperties
 	GradleContractsDownloader downloader
+	private final ExtensionHolderSpec closureHolder = new ClosureHolder()
 
 	@TaskAction
 	void publishStubsToScm() {
+		if (shouldRun()) {
+			return
+		}
 		String projectName = project.group.toString() + ":" + project.name.toString() + ":" + this.project.version.toString()
 		project.logger.info("Pushing Stubs to SCM for project [" + projectName + "]")
-		StubRunnerOptions options = getDownloader().options(getConfigProperties())
+		ContractVerifierExtension clonedExtension = modifyExtension()
+		StubRunnerOptions options = getDownloader().options(clonedExtension)
 		new ContractProjectUpdater(options).updateContractProject(projectName, getStubsOutputDir().toPath())
+	}
+
+	private ContractVerifierExtension modifyExtension() {
+		ContractVerifierExtension clone = (ContractVerifierExtension)
+				getConfigProperties().clone()
+		this.closureHolder.extensionClosure.delegate = clone
+		this.closureHolder.extensionClosure.call(clone)
+		return clone
+	}
+
+	private boolean shouldRun() {
+		String contractRepoUrl = getConfigProperties().contractRepository.repositoryUrl ?: ""
+		if (!contractRepoUrl || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
+			project.logger.info("Skipping pushing stubs to scm since your contracts repository URL doesn't match any of the accepted protocols")
+			return false
+		}
+		return true
+	}
+
+	void customize(@DelegatesTo(ContractVerifierExtension) Closure closure) {
+		this.closureHolder.extensionClosure = closure
+	}
+
+	private static class ClosureHolder implements ExtensionHolderSpec {
+		Closure extensionClosure = Closure.IDENTITY
 	}
 }

@@ -28,7 +28,7 @@ import org.springframework.cloud.contract.verifier.config.TestMode
  * @author Marcin Grzejszczak
  */
 @ToString
-class ContractVerifierExtension {
+class ContractVerifierExtension implements Cloneable {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierExtension)
 
@@ -241,7 +241,7 @@ class ContractVerifierExtension {
 	}
 
 	@ToString(includeNames = true, includePackage = false)
-	static class Dependency {
+	static class Dependency implements Cloneable {
 		String groupId
 		String artifactId
 		String classifier
@@ -269,7 +269,7 @@ class ContractVerifierExtension {
 		}
 	}
 
-	static class BaseClassMapping {
+	static class BaseClassMapping implements Cloneable {
 		private final Map<String, String> delegate
 
 		BaseClassMapping(Map<String, String> delegate) {
@@ -285,7 +285,7 @@ class ContractVerifierExtension {
 		}
 	}
 	
-	static class ContractRepository {
+	static class ContractRepository implements Cloneable {
 		/**
 		 * Repository URL
 		 */
