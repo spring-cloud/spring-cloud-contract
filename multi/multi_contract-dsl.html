@@ -656,80 +656,80 @@ use in your contracts, as shown in the following example:</p><pre class="program
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(values.collect({<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"^$it\$"</span>}).join(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"|"</span>))
 }
 
-Pattern onlyAlphaUnicode() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ONLY_ALPHA_UNICODE
+RegexProperty onlyAlphaUnicode() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(ONLY_ALPHA_UNICODE).asString()
 }
 
-Pattern alphaNumeric() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ALPHA_NUMERIC
+RegexProperty alphaNumeric() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(ALPHA_NUMERIC).asString()
 }
 
-Pattern number() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NUMBER
+RegexProperty number() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(NUMBER).asDouble()
 }
 
-Pattern positiveInt() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> POSITIVE_INT
+RegexProperty positiveInt() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(POSITIVE_INT).asInteger()
 }
 
-Pattern anyBoolean() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> TRUE_OR_FALSE
+RegexProperty anyBoolean() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(TRUE_OR_FALSE).asBooleanType()
 }
 
-Pattern anInteger() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> INTEGER
+RegexProperty anInteger() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(INTEGER).asInteger()
 }
 
-Pattern aDouble() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> DOUBLE
+RegexProperty aDouble() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(DOUBLE).asDouble()
 }
 
-Pattern ipAddress() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> IP_ADDRESS
+RegexProperty ipAddress() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(IP_ADDRESS).asString()
 }
 
-Pattern hostname() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> HOSTNAME_PATTERN
+RegexProperty hostname() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(HOSTNAME_PATTERN).asString()
 }
 
-Pattern email() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> EMAIL
+RegexProperty email() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(EMAIL).asString()
 }
 
-Pattern url() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> URL
+RegexProperty url() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(URL).asString()
 }
 
-Pattern httpsUrl() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> HTTPS_URL
+RegexProperty httpsUrl() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(HTTPS_URL).asString()
 }
 
-Pattern uuid(){
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> UUID
+RegexProperty uuid(){
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(UUID).asString()
 }
 
-Pattern isoDate() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_DATE
+RegexProperty isoDate() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(ANY_DATE).asString()
 }
 
-Pattern isoDateTime() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_DATE_TIME
+RegexProperty isoDateTime() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(ANY_DATE_TIME).asString()
 }
 
-Pattern isoTime() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_TIME
+RegexProperty isoTime() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(ANY_TIME).asString()
 }
 
-Pattern iso8601WithOffset() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ISO8601_WITH_OFFSET
+RegexProperty iso8601WithOffset() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(ISO8601_WITH_OFFSET).asString()
 }
 
-Pattern nonEmpty() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_EMPTY
+RegexProperty nonEmpty() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(NON_EMPTY).asString()
 }
 
-Pattern nonBlank() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_BLANK
+RegexProperty nonBlank() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(NON_BLANK).asString()
 }</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting">Contract dslWithOptionalsInString = Contract.make {
     priority <span class="hl-number">1</span>
     request {
@@ -1109,7 +1109,7 @@ This section is present in the <code class="literal">response</code> or <code cl
 contract.</li></ul></div><p>Currently, Spring Cloud Contract Verifier supports only JSON Path-based matchers with the
 following matching possibilities:</p><div class="itemizedlist"><p class="title"><b>Groovy DSL</b></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For the stubs(in tests on the Consumer&#8217;s side):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must be
 equal to the value provided in the contract.</li><li class="listitem"><code class="literal">byRegex(&#8230;&#8203;)</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
-match the regex.</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
+match the regex. You can also pass the type of the expected matched value (e.g. <code class="literal">asString()</code>, <code class="literal">asLong()</code> etc.)</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
 match the regex for an ISO Date value.</li><li class="listitem"><code class="literal">byTimestamp()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
 match the regex for an ISO DateTime value.</li><li class="listitem"><code class="literal">byTime()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
 match the regex for an ISO Time value.</li></ul></div></li><li class="listitem"><p class="simpara">For the verification(in generated tests on the Producer&#8217;s side):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the producer&#8217;s response via the provided JSON Path must be
@@ -1119,7 +1119,7 @@ the regex for an ISO Date value.</li><li class="listitem"><code class="literal">
 match the regex for an ISO DateTime value.</li><li class="listitem"><code class="literal">byTime()</code>: The value taken from the producer&#8217;s response via the provided JSON Path must match
 the regex for an ISO Time value.</li><li class="listitem"><code class="literal">byType()</code>: The value taken from the producer&#8217;s response via the provided JSON Path needs to be
 of the same type as the type defined in the body of the response in the contract.
-<code class="literal">byType</code> can take a closure, in which you can set <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.
+<code class="literal">byType</code> can take a closure, in which you can set <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>. For the request side, you should use the closure to assert size of the collection.
 That way, you can assert the size of the flattened collection. To check the size of an
 unflattened collection, use a custom method with the <code class="literal">byCommand(&#8230;&#8203;)</code> testMatcher.</li><li class="listitem"><p class="simpara"><code class="literal">byCommand(&#8230;&#8203;)</code>: The value taken from the producer&#8217;s response via the provided JSON Path is
 passed as an input to the custom method that you provide. For example,
@@ -1128,11 +1128,12 @@ JSON Path gets passed. The type of the object read from the JSON can be one of t
 following, depending on the JSON path:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><code class="literal">String</code>: If you point to a <code class="literal">String</code> value.</li><li class="listitem"><code class="literal">JSONArray</code>: If you point to a <code class="literal">List</code>.</li><li class="listitem"><code class="literal">Map</code>: If you point to a <code class="literal">Map</code>.</li><li class="listitem"><code class="literal">Number</code>: If you point to <code class="literal">Integer</code>, <code class="literal">Double</code>, or other kind of number.</li><li class="listitem"><code class="literal">Boolean</code>: If you point to a <code class="literal">Boolean</code>.</li></ul></div></li><li class="listitem"><code class="literal">byNull()</code>: The value taken from the response via the provided JSON Path must be null</li></ul></div></li></ul></div><p><b>YAML.&nbsp;</b><span class="emphasis"><em>Please read the Groovy section for detailed explanation of
 what the types mean</em></span></p><p>For YAML the structure of a matcher looks like this</p><pre class="programlisting">- path: $.foo
   type: by_regex
-  value: bar</pre><p>Or if you want to use one of the predefined regular expressions
+  value: bar
+  regexType: as_string</pre><p>Or if you want to use one of the predefined regular expressions
 <code class="literal">[only_alpha_unicode, number, any_boolean, ip_address, hostname,
 email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_empty, non_blank]</code>:</p><pre class="programlisting">- path: $.foo
   type: by_regex
-  predefined: only_alpha_unicode</pre><p>Below you can find the allowed list of `type`s.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For <code class="literal">stubMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li></ul></div></li><li class="listitem"><p class="simpara">For <code class="literal">testMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li><li class="listitem"><p class="simpara"><code class="literal">by_type</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">there are 2 additional fields accepted: <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.</li></ul></div></li><li class="listitem"><code class="literal">by_command</code></li><li class="listitem"><code class="literal">by_null</code></li></ul></div></li></ul></div><p>Consider the following example:</p><p><b>Groovy DSL.&nbsp;</b>
+  predefined: only_alpha_unicode</pre><p>Below you can find the allowed list of `type`s.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For <code class="literal">stubMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li><li class="listitem"><p class="simpara"><code class="literal">by_type</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">there are 2 additional fields accepted: <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.</li></ul></div></li></ul></div></li><li class="listitem"><p class="simpara">For <code class="literal">testMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li><li class="listitem"><p class="simpara"><code class="literal">by_type</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">there are 2 additional fields accepted: <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.</li></ul></div></li><li class="listitem"><code class="literal">by_command</code></li><li class="listitem"><code class="literal">by_null</code></li></ul></div></li></ul></div><p>You can also define which type the regular expression corresponds to via the <code class="literal">regexType</code> field. Below you can find the allowed list of regular expression types:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">as_integer</li><li class="listitem">as_double</li><li class="listitem">as_float,</li><li class="listitem">as_long</li><li class="listitem">as_short</li><li class="listitem">as_boolean</li><li class="listitem">as_string</li></ul></div><p>Consider the following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">Contract contractDsl = Contract.make {
 	request {
 		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
@@ -1152,12 +1153,12 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 				]
 		])
 		bodyMatchers {
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>).asInteger())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()).asString())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()).asInteger())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()).asBooleanType())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.time'</span>, byTime())
@@ -1201,18 +1202,18 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 		])
 		bodyMatchers {
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against manual regex</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>).asInteger())
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against the provided value</span>
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against some default regex</span>
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()).asString())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveInteger'</span>, byRegex(anInteger()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeInteger'</span>, byRegex(anInteger()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveDecimalNumber'</span>, byRegex(aDouble()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeDecimalNumber'</span>, byRegex(aDouble()))
-			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()).asInteger())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveInteger'</span>, byRegex(anInteger()).asInteger())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeInteger'</span>, byRegex(anInteger()).asInteger())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveDecimalNumber'</span>, byRegex(aDouble()).asDouble())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeDecimalNumber'</span>, byRegex(aDouble()).asDouble())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()).asBooleanType())
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts vs inbuilt time related regex</span>
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.dateTime'</span>, byTimestamp())
@@ -1282,6 +1283,20 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     key:
       "complex.key": 'foo'
     nullValue: null
+    valueWithMin:
+      - 1
+      - 2
+      - 3
+    valueWithMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinEmpty: []
+    valueWithMaxEmpty: []
   matchers:
     url:
       regex: /get/[0-9]
@@ -1344,6 +1359,16 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
         type: by_equality
       - path: $.nullvalue
         type: by_null
+      - path: $.valueWithMin
+        type: by_type
+        minOccurrence: 1
+      - path: $.valueWithMax
+        type: by_type
+        maxOccurrence: 3
+      - path: $.valueWithMinMax
+        type: by_type
+        minOccurrence: 1
+        maxOccurrence: 3
 response:
   status: 200
   cookies:
@@ -1491,51 +1516,60 @@ statically imported to your tests. Notice that the <code class="literal">byComma
 the method name and passed the proper JSON path as a parameter to it.</p></td></tr></table></div><p>The resulting WireMock stub is in the following example:</p><pre class="programlisting">				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"urlPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/get"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"POST"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matches"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json.*"</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bodyPatterns"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">[</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.['valueWithoutAMatcher'] == 'foo')]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.['valueWithTypeMatch'] == 'string')]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.duck =~ /([0-9]{3})/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.duck == 123)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.alpha =~ /([\\\\p{L}]*)/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.alpha == 'abc')]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.aBoolean =~ /((true|false))/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.list.some.nested[?(@.json =~ /(.*)/)]"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"urlPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/get"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"POST"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matches"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json.*"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bodyPatterns"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">[</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.['valueWithoutAMatcher'] == 'foo')]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.['valueWithTypeMatch'] == 'string')]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.duck =~ /([0-9]{3})/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.duck == 123)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.alpha =~ /([\\\\p{L}]*)/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.alpha == 'abc')]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.aBoolean =~ /((true|false))/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.list.some.nested[?(@.json =~ /(.*)/)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.valueWithMin.size() &gt;= 1)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.valueWithMax.size() &lt;= 3)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.valueWithMinMax.size() &gt;= 1 &amp;&amp; @.valueWithMinMax.size() &lt;= 3)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.valueWithOccurrence.size() &gt;= 4 &amp;&amp; @.valueWithOccurrence.size() &lt;= 4)]"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>date\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>dateTime\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>T01:<span class="hl-number">23</span>:<span class="hl-number">45</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>number\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>aBoolean\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":true,\\"</span>duck\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>alpha\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>abc\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMin\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>time\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">01</span>:<span class="hl-number">02</span>:<span class="hl-number">34</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithTypeMatch\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>string\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithMinMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithoutAMatcher\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>date\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>dateTime\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>T01:<span class="hl-number">23</span>:<span class="hl-number">45</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>aBoolean\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":true,\\"</span>valueWithMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithOccurrence\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3,4],\\"</span>number\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>duck\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>alpha\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>abc\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMin\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>time\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">01</span>:<span class="hl-number">02</span>:<span class="hl-number">34</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithTypeMatch\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>string\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMinMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithoutAMatcher\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"transformers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">[</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response-template"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>If you use a <code class="literal">matcher</code>, then the part of the request and response that the
@@ -1876,11 +1910,16 @@ request:
   url: /users/1
 response:
   status: 200
-
 ---
 request:
   method: POST
   url: /users/2
+response:
+  status: 200
+---
+request:
+  method: POST
+  url: /users/3
 response:
   status: 200</pre><p>
 </p><p>In the preceding example, one contract has the <code class="literal">name</code> field and the other does not. This

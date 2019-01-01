@@ -638,6 +638,7 @@ First, add the <code class="literal">Spring Cloud Contract</code> BOM.</p><pre c
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>com.example.fraud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;convertToYaml&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/convertToYaml&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>Since the plugin was added, you get the <code class="literal">Spring Cloud Contract Verifier</code> features which,
 from the provided contracts:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">generate and run tests</li><li class="listitem">produce and install stubs</li></ul></div><p>You do not want to generate tests since you, as the consumer, want only to play with the
@@ -703,6 +704,7 @@ $ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>com.example.fraud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;convertToYaml&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/convertToYaml&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This example uses "convention based" naming by setting the
 <code class="literal">packageWithBaseClasses</code> property. Doing so means that the two last packages combine to

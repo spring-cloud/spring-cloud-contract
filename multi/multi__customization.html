@@ -145,7 +145,7 @@ visible in your Groovy files. The following examples show how to test the depend
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
-</p><pre class="programlisting">testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span>)</pre><p class="secondary">
+</p><pre class="programlisting">testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1.BUILD-SNAPSHOT"</span>)</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_test_a_dependency_in_the_plugins_dependencies" href="#_test_a_dependency_in_the_plugins_dependencies"></a>9.1.4&nbsp;Test a Dependency in the Plugin&#8217;s Dependencies</h3></div></div></div><p>Now, you must add the dependency for the plugin to reuse at runtime, as shown in the
 following example:</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
@@ -172,7 +172,7 @@ following example:</p><p class="primary"><b>Maven.&nbsp;</b>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
-</p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span></pre><p class="secondary">
+</p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1.BUILD-SNAPSHOT"</span></pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>9.1.5&nbsp;Referencing classes in DSLs</h3></div></div></div><p>You can now reference your classes in your DSL, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts.beer.rest
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ConsumerUtils
@@ -214,4 +214,4 @@ then:
 			contentType(applicationJson())
 		}
 	}
-}</pre></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi_contract-dsl.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__using_the_pluggable_architecture.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">8.&nbsp;Contract DSL&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;10.&nbsp;Using the Pluggable Architecture</td></tr></table></div></body></html>
+}</pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>You can set the Spring Cloud Contract plugin up by setting <code class="literal">convertToYaml</code> to <code class="literal">true</code>. That way you will NOT have to add the dependency with the extended functionality to the consumer side, since the consumer side will be using YAML contracts instead of Groovy ones.</p></td></tr></table></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi_contract-dsl.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__using_the_pluggable_architecture.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">8.&nbsp;Contract DSL&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;10.&nbsp;Using the Pluggable Architecture</td></tr></table></div></body></html>

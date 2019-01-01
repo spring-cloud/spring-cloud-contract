@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-12-12</date>
+<date>2018-11-18</date>
 </info>
 <preface>
 <title></title>
@@ -1082,6 +1082,7 @@ First, add the <literal>Spring Cloud Contract</literal> BOM.</simpara>
 	&lt;extensions&gt;true&lt;/extensions&gt;
 	&lt;configuration&gt;
 		&lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
+		&lt;convertToYaml&gt;true&lt;/convertToYaml&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</programlisting>
 <simpara>Since the plugin was added, you get the <literal>Spring Cloud Contract Verifier</literal> features which,
@@ -1190,6 +1191,7 @@ $ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</
 	&lt;extensions&gt;true&lt;/extensions&gt;
 	&lt;configuration&gt;
 		&lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
+		&lt;convertToYaml&gt;true&lt;/convertToYaml&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</programlisting>
 <important>
@@ -2066,6 +2068,129 @@ to find contracts. E.g. for <literal>com.example:foo:1.0.0</literal> the path wo
 <simpara>Finally, a push will be done to that repo&#8217;s <literal>origin</literal></simpara>
 </listitem>
 </itemizedlist>
+</section>
+<section xml:id="_producer_with_contracts_stored_locally">
+<title>Producer with contracts stored locally</title>
+<simpara>Another option to use the SCM as the destination for stubs and contracts is to store the contracts locally, with the producer, and only push the contracts and the stubs to SCM. Below, you can find the setup required to achieve this using Maven and Gradle.</simpara>
+<formalpara>
+<title>Maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+	&lt;extensions&gt;true&lt;/extensions&gt;
+	&lt;!-- In the default configuration, we want to use the contracts stored locally --&gt;
+	&lt;configuration&gt;
+		&lt;baseClassMappings&gt;
+			&lt;baseClassMapping&gt;
+				&lt;contractPackageRegex&gt;.*messaging.*&lt;/contractPackageRegex&gt;
+				&lt;baseClassFQN&gt;com.example.BeerMessagingBase&lt;/baseClassFQN&gt;
+			&lt;/baseClassMapping&gt;
+			&lt;baseClassMapping&gt;
+				&lt;contractPackageRegex&gt;.*rest.*&lt;/contractPackageRegex&gt;
+				&lt;baseClassFQN&gt;com.example.BeerRestBase&lt;/baseClassFQN&gt;
+			&lt;/baseClassMapping&gt;
+		&lt;/baseClassMappings&gt;
+		&lt;basePackageForTests&gt;com.example&lt;/basePackageForTests&gt;
+	&lt;/configuration&gt;
+	&lt;executions&gt;
+		&lt;execution&gt;
+			&lt;phase&gt;package&lt;/phase&gt;
+			&lt;goals&gt;
+				&lt;!-- By default we will not push the stubs back to SCM,
+				you have to explicitly add it as a goal --&gt;
+				&lt;goal&gt;pushStubsToScm&lt;/goal&gt;
+			&lt;/goals&gt;
+			&lt;configuration&gt;
+				&lt;!-- We want to pick contracts from a Git repository --&gt;
+				&lt;contractsRepositoryUrl&gt;git://file://${env.ROOT}/target/contract_empty_git/&lt;/contractsRepositoryUrl&gt;
+				&lt;!-- Example of URL via git protocol --&gt;
+				&lt;!--&lt;contractsRepositoryUrl&gt;git://git@github.com:spring-cloud-samples/spring-cloud-contract-samples.git&lt;/contractsRepositoryUrl&gt;--&gt;
+				&lt;!-- Example of URL via http protocol --&gt;
+				&lt;!--&lt;contractsRepositoryUrl&gt;git://https://github.com/spring-cloud-samples/spring-cloud-contract-samples.git&lt;/contractsRepositoryUrl&gt;--&gt;
+				&lt;!-- We reuse the contract dependency section to set up the path
+				to the folder that contains the contract definitions. In our case the
+				path will be /groupId/artifactId/version/contracts --&gt;
+				&lt;contractDependency&gt;
+					&lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+					&lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+					&lt;version&gt;${project.version}&lt;/version&gt;
+				&lt;/contractDependency&gt;
+				&lt;!-- The mode can't be classpath --&gt;
+				&lt;contractsMode&gt;LOCAL&lt;/contractsMode&gt;
+			&lt;/configuration&gt;
+		&lt;/execution&gt;
+	&lt;/executions&gt;
+&lt;/plugin&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Gradle</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">contracts {
+		// Base package for generated tests
+	basePackageForTests = "com.example"
+	baseClassMappings {
+		baseClassMapping(".*messaging.*", "com.example.BeerMessagingBase")
+		baseClassMapping(".*rest.*", "com.example.BeerRestBase")
+	}
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publishStubsToScm {
+	// We want to modify the default set up of the plugin when publish stubs to scm is called
+	customize {
+		// We want to pick contracts from a Git repository
+		contractDependency {
+			stringNotation = "${project.group}:${project.name}:${project.version}"
+		}
+		/*
+		We reuse the contract dependency section to set up the path
+		to the folder that contains the contract definitions. In our case the
+		path will be /groupId/artifactId/version/contracts
+		 */
+		contractRepository {
+			repositoryUrl = "git://file://${System.getenv("ROOT")}/target/contract_empty_git/"
+		}
+		// The mode can't be classpath
+		contractsMode = "LOCAL"
+	}
+}
+
+publish.dependsOn("publishStubsToScm")
+publishToMavenLocal.dependsOn("publishStubsToScm")</programlisting>
+</para>
+</formalpara>
+<simpara>With such a setup:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Contracts from the default <literal>src/test/resources/contracts</literal> directory will be picked</simpara>
+</listitem>
+<listitem>
+<simpara>Tests will be generated from the contracts</simpara>
+</listitem>
+<listitem>
+<simpara>Stubs will be created from the contracts</simpara>
+</listitem>
+<listitem>
+<simpara>Once the tests pass</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Git project will be cloned to a temporary directory</simpara>
+</listitem>
+<listitem>
+<simpara>The stubs and contracts will be committed in the cloned repository</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Finally, a push will be done to that repo&#8217;s <literal>origin</literal></simpara>
+</listitem>
+</itemizedlist>
 <section xml:id="_keeping_contracts_with_the_producer_and_stubs_in_an_external_repository">
 <title>Keeping contracts with the producer and stubs in an external repository</title>
 <simpara>It is also possible to keep the contracts in the producer repository, but keep the stubs in an external git repo.
@@ -2644,6 +2769,15 @@ JAR is available offline, remotely etc.)</simpara>
 contracts from temporary directories</simpara>
 </listitem>
 </itemizedlist>
+<simpara>Below you can find a list of experimental features you can turn on via the plugin:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong">convertToYaml</emphasis>: converts all DSLs to the declarative, YAML format. This can be extremely useful when you&#8217;re using external libraries in your Groovy DSLs. By turning this feature on (by setting it to <literal>true</literal>) you will not need to add the library dependency on the consumer side.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">assertJsonSize</emphasis>: You can check the size of JSON arrays in the generated tests. This feature is disabled by default.</simpara>
+</listitem>
+</itemizedlist>
 </section>
 <section xml:id="gradle-single-base-class">
 <title>Single Base Class for All Tests</title>
@@ -2827,6 +2961,7 @@ following sections:</simpara>
 	&lt;extensions&gt;true&lt;/extensions&gt;
 	&lt;configuration&gt;
 		&lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
+		&lt;convertToYaml&gt;true&lt;/convertToYaml&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</programlisting>
 <simpara>You can read more in the
@@ -3089,6 +3224,15 @@ use the current Maven ones.</simpara>
 </itemizedlist>
 <simpara>We cache only non-snapshot, explicitly provided versions (for example
 <literal>+</literal> or <literal>1.0.0.BUILD-SNAPSHOT</literal> won&#8217;t get cached). By default, this feature is turned on.</simpara>
+<simpara>Below you can find a list of experimental features you can turn on via the plugin:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong">convertToYaml</emphasis>: converts all DSLs to the declarative, YAML format. This can be extremely useful when you&#8217;re using external libraries in your Groovy DSLs. By turning this feature on (by setting it to <literal>true</literal>) you will not need to add the library dependency on the consumer side.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">assertJsonSize</emphasis>: You can check the size of JSON arrays in the generated tests. This feature is disabled by default.</simpara>
+</listitem>
+</itemizedlist>
 </section>
 <section xml:id="maven-single-base">
 <title>Single Base Class for All Tests</title>
@@ -6894,80 +7038,80 @@ protected static Pattern anyOf(String... values){
 	return Pattern.compile(values.collect({"^$it\$"}).join("|"))
 }
 
-Pattern onlyAlphaUnicode() {
-	return ONLY_ALPHA_UNICODE
+RegexProperty onlyAlphaUnicode() {
+	return new RegexProperty(ONLY_ALPHA_UNICODE).asString()
 }
 
-Pattern alphaNumeric() {
-	return ALPHA_NUMERIC
+RegexProperty alphaNumeric() {
+	return new RegexProperty(ALPHA_NUMERIC).asString()
 }
 
-Pattern number() {
-	return NUMBER
+RegexProperty number() {
+	return new RegexProperty(NUMBER).asDouble()
 }
 
-Pattern positiveInt() {
-	return POSITIVE_INT
+RegexProperty positiveInt() {
+	return new RegexProperty(POSITIVE_INT).asInteger()
 }
 
-Pattern anyBoolean() {
-	return TRUE_OR_FALSE
+RegexProperty anyBoolean() {
+	return new RegexProperty(TRUE_OR_FALSE).asBooleanType()
 }
 
-Pattern anInteger() {
-	return INTEGER
+RegexProperty anInteger() {
+	return new RegexProperty(INTEGER).asInteger()
 }
 
-Pattern aDouble() {
-	return DOUBLE
+RegexProperty aDouble() {
+	return new RegexProperty(DOUBLE).asDouble()
 }
 
-Pattern ipAddress() {
-	return IP_ADDRESS
+RegexProperty ipAddress() {
+	return new RegexProperty(IP_ADDRESS).asString()
 }
 
-Pattern hostname() {
-	return HOSTNAME_PATTERN
+RegexProperty hostname() {
+	return new RegexProperty(HOSTNAME_PATTERN).asString()
 }
 
-Pattern email() {
-	return EMAIL
+RegexProperty email() {
+	return new RegexProperty(EMAIL).asString()
 }
 
-Pattern url() {
-	return URL
+RegexProperty url() {
+	return new RegexProperty(URL).asString()
 }
 
-Pattern httpsUrl() {
-	return HTTPS_URL
+RegexProperty httpsUrl() {
+	return new RegexProperty(HTTPS_URL).asString()
 }
 
-Pattern uuid(){
-	return UUID
+RegexProperty uuid(){
+	return new RegexProperty(UUID).asString()
 }
 
-Pattern isoDate() {
-	return ANY_DATE
+RegexProperty isoDate() {
+	return new RegexProperty(ANY_DATE).asString()
 }
 
-Pattern isoDateTime() {
-	return ANY_DATE_TIME
+RegexProperty isoDateTime() {
+	return new RegexProperty(ANY_DATE_TIME).asString()
 }
 
-Pattern isoTime() {
-	return ANY_TIME
+RegexProperty isoTime() {
+	return new RegexProperty(ANY_TIME).asString()
 }
 
-Pattern iso8601WithOffset() {
-	return ISO8601_WITH_OFFSET
+RegexProperty iso8601WithOffset() {
+	return new RegexProperty(ISO8601_WITH_OFFSET).asString()
 }
 
-Pattern nonEmpty() {
-	return NON_EMPTY
+RegexProperty nonEmpty() {
+	return new RegexProperty(NON_EMPTY).asString()
 }
 
-Pattern nonBlank() {
-	return NON_BLANK
+RegexProperty nonBlank() {
+	return new RegexProperty(NON_BLANK).asString()
 }</programlisting>
 <simpara>In your contract, you can use it as shown in the following example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">Contract dslWithOptionalsInString = Contract.make {
@@ -7539,7 +7683,7 @@ equal to the value provided in the contract.</simpara>
 </listitem>
 <listitem>
 <simpara><literal>byRegex(&#8230;&#8203;)</literal>: The value taken from the consumer&#8217;s request via the provided JSON Path must
-match the regex.</simpara>
+match the regex. You can also pass the type of the expected matched value (e.g. <literal>asString()</literal>, <literal>asLong()</literal> etc.)</simpara>
 </listitem>
 <listitem>
 <simpara><literal>byDate()</literal>: The value taken from the consumer&#8217;s request via the provided JSON Path must
@@ -7581,7 +7725,7 @@ the regex for an ISO Time value.</simpara>
 <listitem>
 <simpara><literal>byType()</literal>: The value taken from the producer&#8217;s response via the provided JSON Path needs to be
 of the same type as the type defined in the body of the response in the contract.
-<literal>byType</literal> can take a closure, in which you can set <literal>minOccurrence</literal> and <literal>maxOccurrence</literal>.
+<literal>byType</literal> can take a closure, in which you can set <literal>minOccurrence</literal> and <literal>maxOccurrence</literal>. For the request side, you should use the closure to assert size of the collection.
 That way, you can assert the size of the flattened collection. To check the size of an
 unflattened collection, use a custom method with the <literal>byCommand(&#8230;&#8203;)</literal> testMatcher.</simpara>
 </listitem>
@@ -7623,7 +7767,8 @@ what the types mean</emphasis></para>
 <simpara>For YAML the structure of a matcher looks like this</simpara>
 <programlisting language="yml" linenumbering="unnumbered">- path: $.foo
   type: by_regex
-  value: bar</programlisting>
+  value: bar
+  regexType: as_string</programlisting>
 <simpara>Or if you want to use one of the predefined regular expressions
 <literal>[only_alpha_unicode, number, any_boolean, ip_address, hostname,
 email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_empty, non_blank]</literal>:</simpara>
@@ -7649,6 +7794,14 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 </listitem>
 <listitem>
 <simpara><literal>by_time</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>by_type</literal></simpara>
+<itemizedlist>
+<listitem>
+<simpara>there are 2 additional fields accepted: <literal>minOccurrence</literal> and <literal>maxOccurrence</literal>.</simpara>
+</listitem>
+</itemizedlist>
 </listitem>
 </itemizedlist>
 </listitem>
@@ -7687,6 +7840,30 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 </itemizedlist>
 </listitem>
 </itemizedlist>
+<simpara>You can also define which type the regular expression corresponds to via the <literal>regexType</literal> field. Below you can find the allowed list of regular expression types:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>as_integer</simpara>
+</listitem>
+<listitem>
+<simpara>as_double</simpara>
+</listitem>
+<listitem>
+<simpara>as_float,</simpara>
+</listitem>
+<listitem>
+<simpara>as_long</simpara>
+</listitem>
+<listitem>
+<simpara>as_short</simpara>
+</listitem>
+<listitem>
+<simpara>as_boolean</simpara>
+</listitem>
+<listitem>
+<simpara>as_string</simpara>
+</listitem>
+</itemizedlist>
 <simpara>Consider the following example:</simpara>
 <formalpara>
 <title>Groovy DSL</title>
@@ -7710,12 +7887,12 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 				]
 		])
 		bodyMatchers {
-			jsonPath('$.duck', byRegex("[0-9]{3}"))
+			jsonPath('$.duck', byRegex("[0-9]{3}").asInteger())
 			jsonPath('$.duck', byEquality())
-			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()).asString())
 			jsonPath('$.alpha', byEquality())
-			jsonPath('$.number', byRegex(number()))
-			jsonPath('$.aBoolean', byRegex(anyBoolean()))
+			jsonPath('$.number', byRegex(number()).asInteger())
+			jsonPath('$.aBoolean', byRegex(anyBoolean()).asBooleanType())
 			jsonPath('$.date', byDate())
 			jsonPath('$.dateTime', byTimestamp())
 			jsonPath('$.time', byTime())
@@ -7759,18 +7936,18 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 		])
 		bodyMatchers {
 			// asserts the jsonpath value against manual regex
-			jsonPath('$.duck', byRegex("[0-9]{3}"))
+			jsonPath('$.duck', byRegex("[0-9]{3}").asInteger())
 			// asserts the jsonpath value against the provided value
 			jsonPath('$.duck', byEquality())
 			// asserts the jsonpath value against some default regex
-			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()).asString())
 			jsonPath('$.alpha', byEquality())
-			jsonPath('$.number', byRegex(number()))
-			jsonPath('$.positiveInteger', byRegex(anInteger()))
-			jsonPath('$.negativeInteger', byRegex(anInteger()))
-			jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
-			jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
-			jsonPath('$.aBoolean', byRegex(anyBoolean()))
+			jsonPath('$.number', byRegex(number()).asInteger())
+			jsonPath('$.positiveInteger', byRegex(anInteger()).asInteger())
+			jsonPath('$.negativeInteger', byRegex(anInteger()).asInteger())
+			jsonPath('$.positiveDecimalNumber', byRegex(aDouble()).asDouble())
+			jsonPath('$.negativeDecimalNumber', byRegex(aDouble()).asDouble())
+			jsonPath('$.aBoolean', byRegex(anyBoolean()).asBooleanType())
 			// asserts vs inbuilt time related regex
 			jsonPath('$.date', byDate())
 			jsonPath('$.dateTime', byTimestamp())
@@ -7844,6 +8021,20 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     key:
       "complex.key": 'foo'
     nullValue: null
+    valueWithMin:
+      - 1
+      - 2
+      - 3
+    valueWithMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinEmpty: []
+    valueWithMaxEmpty: []
   matchers:
     url:
       regex: /get/[0-9]
@@ -7906,6 +8097,16 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
         type: by_equality
       - path: $.nullvalue
         type: by_null
+      - path: $.valueWithMin
+        type: by_type
+        minOccurrence: 1
+      - path: $.valueWithMax
+        type: by_type
+        maxOccurrence: 3
+      - path: $.valueWithMinMax
+        type: by_type
+        minOccurrence: 1
+        maxOccurrence: 3
 response:
   status: 200
   cookies:
@@ -8077,51 +8278,60 @@ the method name and passed the proper JSON path as a parameter to it.</simpara>
 <programlisting language="json" linenumbering="unnumbered">				'''
 {
   "request" : {
-	"urlPath" : "/get",
-	"method" : "POST",
-	"headers" : {
-	  "Content-Type" : {
-		"matches" : "application/json.*"
-	  }
-	},
-	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
-	}, {
-	  "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
-	}, {
-	  "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
-	}, {
-	  "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.duck == 123)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
-	}, {
-	  "matchesJsonPath" : "$.list.some.nested[?(@.json =~ /(.*)/)]"
-	} ]
+    "urlPath" : "/get",
+    "method" : "POST",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "application/json.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
+    }, {
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
+    }, {
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.duck == 123)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+    }, {
+      "matchesJsonPath" : "$.list.some.nested[?(@.json =~ /(.*)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithMin.size() &gt;= 1)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithMax.size() &lt;= 3)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithMinMax.size() &gt;= 1 &amp;&amp; @.valueWithMinMax.size() &lt;= 3)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithOccurrence.size() &gt;= 4 &amp;&amp; @.valueWithOccurrence.size() &lt;= 4)]"
+    } ]
   },
   "response" : {
-	"status" : 200,
-	"body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"number\\":123,\\"aBoolean\\":true,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
-	"headers" : {
-	  "Content-Type" : "application/json"
-	}
+    "status" : 200,
+    "body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"aBoolean\\":true,\\"valueWithMax\\":[1,2,3],\\"valueWithOccurrence\\":[1,2,3,4],\\"number\\":123,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    },
+    "transformers" : [ "response-template" ]
   }
 }
 '''</programlisting>
@@ -8610,11 +8820,16 @@ request:
   url: /users/1
 response:
   status: 200
-
 ---
 request:
   method: POST
   url: /users/2
+response:
+  status: 200
+---
+request:
+  method: POST
+  url: /users/3
 response:
   status: 200</programlisting>
 </para>
@@ -8974,7 +9189,7 @@ visible in your Groovy files. The following examples show how to test the depend
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">testCompile("com.example:beer-common:0.0.1-SNAPSHOT")</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">testCompile("com.example:beer-common:0.0.1.BUILD-SNAPSHOT")</programlisting>
 </para>
 </formalpara>
 </section>
@@ -9013,7 +9228,7 @@ following example:</simpara>
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">classpath "com.example:beer-common:0.0.1-SNAPSHOT"</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">classpath "com.example:beer-common:0.0.1.BUILD-SNAPSHOT"</programlisting>
 </para>
 </formalpara>
 </section>
@@ -9062,6 +9277,9 @@ then:
 		}
 	}
 }</programlisting>
+<important>
+<simpara>You can set the Spring Cloud Contract plugin up by setting <literal>convertToYaml</literal> to <literal>true</literal>. That way you will NOT have to add the dependency with the extended functionality to the consumer side, since the consumer side will be using YAML contracts instead of Groovy ones.</simpara>
+</important>
 </section>
 </section>
 </chapter>
