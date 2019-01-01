@@ -11,7 +11,8 @@
 :standalone_pact_path: {samples_path}/standalone/pact
 :standalone_restdocs_path: {samples_path}/standalone/restdocs
 :tests_path: {core_path}/tests
-:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master
+:samples_branch: 2.1.x
+:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/{samples_branch}
 :introduction_url: ${core_path}/../../
 
 include::verifier_introduction.adoc[]
