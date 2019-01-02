@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.AutoClone
 import groovy.transform.ToString
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -28,7 +29,8 @@ import org.springframework.cloud.contract.verifier.config.TestMode
  * @author Marcin Grzejszczak
  */
 @ToString
-class ContractVerifierExtension implements Cloneable {
+@AutoClone
+class ContractVerifierExtension {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierExtension)
 
@@ -240,8 +242,9 @@ class ContractVerifierExtension implements Cloneable {
 		this.disableStubPublication = disableStubPublication
 	}
 
+	@AutoClone
 	@ToString(includeNames = true, includePackage = false)
-	static class Dependency implements Cloneable {
+	static class Dependency {
 		String groupId
 		String artifactId
 		String classifier
@@ -269,7 +272,9 @@ class ContractVerifierExtension implements Cloneable {
 		}
 	}
 
-	static class BaseClassMapping implements Cloneable {
+	@AutoClone
+	@ToString(includeNames = true, includePackage = false)
+	static class BaseClassMapping {
 		private final Map<String, String> delegate
 
 		BaseClassMapping(Map<String, String> delegate) {
@@ -284,8 +289,10 @@ class ContractVerifierExtension implements Cloneable {
 			this.delegate.putAll(mapping)
 		}
 	}
-	
-	static class ContractRepository implements Cloneable {
+
+	@AutoClone
+	@ToString(includeNames = true, includePackage = false)
+	static class ContractRepository {
 		/**
 		 * Repository URL
 		 */

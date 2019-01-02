@@ -51,8 +51,7 @@ class PublishStubsToScmTask extends ConventionTask {
 	}
 
 	private ContractVerifierExtension modifyExtension() {
-		ContractVerifierExtension clone = (ContractVerifierExtension)
-				getConfigProperties().clone()
+		ContractVerifierExtension clone = getConfigProperties().clone()
 		this.closureHolder.extensionClosure.delegate = clone
 		this.closureHolder.extensionClosure.call(clone)
 		return clone
