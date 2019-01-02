@@ -197,10 +197,10 @@ class GitStubDownloader implements StubDownloader {
 		catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
-		if (log.isDebugEnabled()) {
-			log.debug("No matching contracts were found in the repo for ["
+		if (log.isWarnEnabled()) {
+			log.warn("No matching contracts were found in the repo for ["
 					+ stubConfiguration.toColonSeparatedDependencyNotation()
-					+ "]. Returning null");
+					+ "]");
 		}
 		return null;
 	}
