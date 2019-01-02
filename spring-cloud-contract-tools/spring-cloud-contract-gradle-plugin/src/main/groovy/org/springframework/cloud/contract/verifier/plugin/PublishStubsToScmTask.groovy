@@ -40,7 +40,7 @@ class PublishStubsToScmTask extends ConventionTask {
 
 	@TaskAction
 	void publishStubsToScm() {
-		if (shouldRun()) {
+		if (!shouldRun()) {
 			return
 		}
 		String projectName = project.group.toString() + ":" + project.name.toString() + ":" + this.project.version.toString()
