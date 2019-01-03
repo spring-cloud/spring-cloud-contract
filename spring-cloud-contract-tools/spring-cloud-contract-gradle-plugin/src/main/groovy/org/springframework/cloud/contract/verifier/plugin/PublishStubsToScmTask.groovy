@@ -40,33 +40,34 @@ class PublishStubsToScmTask extends ConventionTask {
 
 	@TaskAction
 	void publishStubsToScm() {
-		if (!shouldRun()) {
+		ContractVerifierExtension clonedExtension = modifyExtension()
+		if (!shouldRun(clonedExtension)) {
 			return
 		}
 		String projectName = project.group.toString() + ":" + project.name.toString() + ":" + this.project.version.toString()
 		project.logger.info("Pushing Stubs to SCM for project [" + projectName + "]")
-		ContractVerifierExtension clonedExtension = modifyExtension()
 		StubRunnerOptions options = getDownloader().options(clonedExtension)
 		new ContractProjectUpdater(options).updateContractProject(projectName, getStubsOutputDir().toPath())
 	}
 
 	private ContractVerifierExtension modifyExtension() {
-		ContractVerifierExtension clone = getConfigProperties().clone()
+		ContractVerifierExtension clone = getConfigProperties().copy()
 		this.closureHolder.extensionClosure.delegate = clone
 		this.closureHolder.extensionClosure.call(clone)
 		return clone
 	}
 
-	private boolean shouldRun() {
-		String contractRepoUrl = getConfigProperties().contractRepository.repositoryUrl ?: ""
+	private boolean shouldRun(ContractVerifierExtension clonedExtension) {
+		String contractRepoUrl = clonedExtension.contractRepository.repositoryUrl ?: ""
 		if (!contractRepoUrl || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
-			project.logger.info("Skipping pushing stubs to scm since your contracts repository URL doesn't match any of the accepted protocols")
+			project.logger.warn("Skipping pushing stubs to scm since your contracts repository URL [${contractRepoUrl}] doesn't match any of the accepted protocols for SCM stub downloader")
 			return false
 		}
 		return true
 	}
 
 	void customize(@DelegatesTo(ContractVerifierExtension) Closure closure) {
+		project.logger.debug("Storing the extension closure")
 		this.closureHolder.extensionClosure = closure
 	}
 

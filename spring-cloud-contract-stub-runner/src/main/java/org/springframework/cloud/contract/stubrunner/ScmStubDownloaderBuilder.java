@@ -143,9 +143,11 @@ class GitContractsRepo {
 		else {
 			if (log.isDebugEnabled()) {
 				log.debug("The project has already been cloned to [" + file
-						+ "]. Will reset any changes.");
+						+ "]. Will reset any changes and pull the latest ones.");
 			}
-			new GitRepo(file, properties).reset(file);
+			GitRepo gitRepo = new GitRepo(file, properties);
+			gitRepo.reset(file);
+			gitRepo.pull(file);
 		}
 		return file;
 	}

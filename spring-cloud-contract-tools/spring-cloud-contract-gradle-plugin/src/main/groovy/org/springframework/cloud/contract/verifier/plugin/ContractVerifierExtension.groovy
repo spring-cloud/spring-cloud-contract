@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-import groovy.transform.AutoClone
 import groovy.transform.ToString
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -24,12 +23,10 @@ import org.apache.commons.logging.LogFactory
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
-
 /**
  * @author Marcin Grzejszczak
  */
 @ToString
-@AutoClone
 class ContractVerifierExtension {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierExtension)
@@ -242,7 +239,51 @@ class ContractVerifierExtension {
 		this.disableStubPublication = disableStubPublication
 	}
 
-	@AutoClone
+	ContractVerifierExtension copy() {
+		return new ContractVerifierExtension(
+				testFramework: this.testFramework,
+				testMode: this.testMode,
+				basePackageForTests: this.basePackageForTests,
+				baseClassForTests: this.baseClassForTests,
+				nameSuffixForTests: this.nameSuffixForTests,
+				ruleClassForTests: this.ruleClassForTests,
+				excludedFiles: new ArrayList<String>(this.excludedFiles),
+				includedFiles:  new ArrayList<String>(this.includedFiles),
+				ignoredFiles:  new ArrayList<String>(this.ignoredFiles),
+				imports: Arrays.asList(this.imports).toArray(),
+				staticImports: Arrays.asList(this.staticImports).toArray(),
+				contractsDslDir: this.contractsDslDir,
+				generatedTestSourcesDir: this.generatedTestSourcesDir,
+				generatedTestResourcesDir: this.generatedTestResourcesDir,
+				stubsOutputDir: this.stubsOutputDir,
+				stubsSuffix: this.stubsSuffix,
+				assertJsonSize: this.assertJsonSize,
+				contractRepository: new ContractRepository(
+						repositoryUrl: this.contractRepository.repositoryUrl,
+						username: this.contractRepository.username,
+						password: this.contractRepository.password,
+						proxyPort: this.contractRepository.proxyPort,
+						proxyHost: this.contractRepository.proxyHost,
+						cacheDownloadedContracts: this.contractRepository.cacheDownloadedContracts
+				),
+				contractDependency: new Dependency(
+						groupId: this.contractDependency.groupId,
+						artifactId: this.contractDependency.artifactId,
+						classifier: this.contractDependency.classifier,
+						version: this.contractDependency.version,
+						stringNotation: this.contractDependency.stringNotation
+				),
+				contractsPath: this.contractsPath,
+				contractsMode: this.contractsMode,
+				packageWithBaseClasses: this.packageWithBaseClasses,
+				baseClassMappings: new HashMap<String, String>(this.baseClassMappings),
+				excludeBuildFolders: this.excludeBuildFolders,
+				deleteStubsAfterTest: this.deleteStubsAfterTest,
+				convertToYaml: this.convertToYaml,
+				contractsProperties: new HashMap<String, String>(this.contractsProperties)
+		)
+	}
+
 	@ToString(includeNames = true, includePackage = false)
 	static class Dependency {
 		String groupId
@@ -272,7 +313,6 @@ class ContractVerifierExtension {
 		}
 	}
 
-	@AutoClone
 	@ToString(includeNames = true, includePackage = false)
 	static class BaseClassMapping {
 		private final Map<String, String> delegate
@@ -290,7 +330,6 @@ class ContractVerifierExtension {
 		}
 	}
 
-	@AutoClone
 	@ToString(includeNames = true, includePackage = false)
 	static class ContractRepository {
 		/**
