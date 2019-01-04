@@ -133,6 +133,9 @@ class MessagingSCContractCreator {
 							}
 						}
 					}
+
+                                        sentTo(guessDestination(message));
+
 				}
 			}
 		})
@@ -145,6 +148,14 @@ class MessagingSCContractCreator {
 				.replace('(', '')
 				.replace(')', '')
 				.uncapitalize() + "()"
+	}
+
+	private String guessDestination(Message message) {
+		String[] outcomeParts = message.description.split(' ')
+		if (outcomeParts.length > 0) { 
+			return outcomeParts[outcomeParts.length - 1]		
+		}
+		return ''
 	}
 
 }
