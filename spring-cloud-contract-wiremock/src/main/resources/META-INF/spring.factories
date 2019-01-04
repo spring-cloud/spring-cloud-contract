@@ -11,3 +11,7 @@ org.springframework.cloud.contract.wiremock.restdocs.WireMockRestAssuredConfigur
 # Test Execution Listeners
 org.springframework.test.context.TestExecutionListener=\
 org.springframework.cloud.contract.wiremock.WireMockTestExecutionListener
+
+# Environment Post Processor
+org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.cloud.contract.wiremock.WireMockEnvironmentPostProcessor

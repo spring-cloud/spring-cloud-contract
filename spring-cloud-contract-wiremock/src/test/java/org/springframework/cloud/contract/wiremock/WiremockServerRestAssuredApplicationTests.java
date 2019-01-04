@@ -3,6 +3,8 @@ package org.springframework.cloud.contract.wiremock;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import wiremock.org.eclipse.jetty.http.HttpStatus;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import wiremock.org.eclipse.jetty.http.HttpStatus;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -27,7 +28,8 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		properties = "spring.main.web-application-type=servlet")
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 public class WiremockServerRestAssuredApplicationTests {
 
