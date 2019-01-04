@@ -133,6 +133,10 @@ class MessagingSCContractCreator {
 							}
 						}
 					}
+					if (!message.description.isEmpty()) {
+                                            sentTo(message.description);
+					}
+
 				}
 			}
 		})
