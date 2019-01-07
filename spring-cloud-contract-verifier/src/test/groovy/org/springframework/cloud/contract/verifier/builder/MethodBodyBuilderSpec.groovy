@@ -967,4 +967,75 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "some_method_response_response.pdf"));')
 			}
 	}
+
+	@Issue("#797")
+	def "should not create an unnecessary empty collection check [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				name("get_new_toy_specs")
+				request {
+					description("""
+            Given: A new toy request is submitted
+            When: I receive the response
+            Then: I would receive the toy specs
+        """)
+					method 'GET'
+					urlPath ('/toys') {
+						queryParameters {
+							parameter 'uuid': 'd4d724c4-e36e-4fd2-9baa-af7f5df17399'
+						}
+					}
+				}
+				response {
+					status 200
+					body([
+							toyUuid: "d4d724c4-e36e-4fd2-9baa-af7f5df17399",
+							toyDescription: [
+									name: "Super Whiz Bang Toy",
+									stockNum: 1234,
+									manufacturer: "Toy Comp",
+							],
+							toyDetails: [
+									[
+											inventory: 42,
+											description: "Toy of the year!!",
+											dimensions: [
+													height: 45.8,
+													weight: 12.3,
+													width: 8.6,
+													length: 9.3
+											]
+									]
+							]
+					])
+					bodyMatchers {
+						//toyDescription checks
+						jsonPath('$.toyDetails[*].dimensions.height', byRegex(nonBlank()))
+						jsonPath('$.toyDetails[*].dimensions.weight', byRegex(nonBlank()))
+						jsonPath('$.toyDetails[*].dimensions.width', byRegex(nonBlank()))
+						jsonPath('$.toyDetails[*].dimensions.length', byRegex(nonBlank()))
+					}
+					headers {
+						contentType(applicationJson())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains('''assertThatJson(parsedJson).array("['toyDetails']").field("['dimensions']").isEmpty()''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 }

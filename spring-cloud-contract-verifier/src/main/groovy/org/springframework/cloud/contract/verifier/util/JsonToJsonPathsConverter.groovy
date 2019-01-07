@@ -123,6 +123,12 @@ class JsonToJsonPathsConverter {
 			def object = context.read(pathWithoutAnyArray)
 			if (object instanceof Iterable && containsOnlyEmptyElements(object)) {
 				context.delete(pathWithoutAnyArray)
+			} else {
+				String lastParent = matcher.path().substring(0, matcher.path().lastIndexOf("."))
+				def lastParentObject = context.read(lastParent)
+				if (lastParentObject instanceof Iterable && containsOnlyEmptyElements(lastParentObject)) {
+					context.delete(lastParent)
+				}
 			}
 		}
 	}
