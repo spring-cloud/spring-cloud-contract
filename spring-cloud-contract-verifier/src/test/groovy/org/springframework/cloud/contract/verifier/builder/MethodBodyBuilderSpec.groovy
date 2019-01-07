@@ -980,7 +980,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
             Then: I would receive the toy specs
         """)
 					method 'GET'
-					urlPath ('/toys') {
+					urlPath('/toys') {
 						queryParameters {
 							parameter 'uuid': 'd4d724c4-e36e-4fd2-9baa-af7f5df17399'
 						}
@@ -989,20 +989,20 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				response {
 					status 200
 					body([
-							toyUuid: "d4d724c4-e36e-4fd2-9baa-af7f5df17399",
+							toyUuid       : "d4d724c4-e36e-4fd2-9baa-af7f5df17399",
 							toyDescription: [
-									name: "Super Whiz Bang Toy",
-									stockNum: 1234,
+									name        : "Super Whiz Bang Toy",
+									stockNum    : 1234,
 									manufacturer: "Toy Comp",
 							],
-							toyDetails: [
+							toyDetails    : [
 									[
-											inventory: 42,
+											inventory  : 42,
 											description: "Toy of the year!!",
-											dimensions: [
+											dimensions : [
 													height: 45.8,
 													weight: 12.3,
-													width: 8.6,
+													width : 8.6,
 													length: 9.3
 											]
 									]
@@ -1031,11 +1031,12 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                                    | methodBuilder
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
 	}
 
 }
