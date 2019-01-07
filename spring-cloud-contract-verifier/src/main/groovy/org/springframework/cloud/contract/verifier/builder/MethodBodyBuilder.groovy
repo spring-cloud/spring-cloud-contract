@@ -422,8 +422,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		}
 	}
 
-	void simpleTextResponseBodyCheck(BlockBuilder bb,
-									 Object convertedResponseBody) {
+	private void simpleTextResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
 		bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
 		processText(bb, "", convertedResponseBody)
 		addColonIfRequired(bb)
