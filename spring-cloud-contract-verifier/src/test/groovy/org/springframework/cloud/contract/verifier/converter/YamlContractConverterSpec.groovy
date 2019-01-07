@@ -31,8 +31,8 @@ import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Url
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
@@ -65,6 +65,8 @@ class YamlContractConverterSpec extends Specification {
 	File ymlCookies = new File(ymlCookiesUrl.toURI())
 	URL ymlBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_pdf.yml")
 	File ymlBytes = new File(ymlBytesUrl.toURI())
+	URL groovyBytesUrl = YamlContractConverterSpec.getResource("/body_builder/worksWithPdf.groovy")
+	File groovyBytes = new File(groovyBytesUrl.toURI())
 	URL ymlMessagingBytesUrl = YamlContractConverterSpec.getResource("/yml/contract_messaging_pdf.yml")
 	File ymlMessagingBytes = new File(ymlMessagingBytesUrl.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
@@ -122,7 +124,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.body.clientValue == [foo: "bar"]
 			contract.request.bodyMatchers.matchers[0].path() == '$.foo'
 			contract.request.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.request.bodyMatchers.matchers[0].value() == 'bar'
+			contract.request.bodyMatchers.matchers[0].value().pattern() == 'bar'
 		and:
 			contract.response.status.clientValue == 200
 			if (yamlFile == ymlWithRest) contract.response.delay.clientValue == 1000 else !contract.response.delay
@@ -135,7 +137,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.body.clientValue == [foo2: "bar", foo3: "baz", nullValue: null]
 			contract.response.bodyMatchers.matchers[0].path() == '$.foo2'
 			contract.response.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.response.bodyMatchers.matchers[0].value() == 'bar'
+			contract.response.bodyMatchers.matchers[0].value().pattern() == 'bar'
 			contract.response.bodyMatchers.matchers[1].path() == '$.foo3'
 			contract.response.bodyMatchers.matchers[1].matchingType() == MatchingType.COMMAND
 			contract.response.bodyMatchers.matchers[1].value() == new ExecutionProperty('executeMe($it)')
@@ -214,29 +216,29 @@ class YamlContractConverterSpec extends Specification {
 					MatchingStrategy.Type.ABSENT, null)
 			contract.request.bodyMatchers.matchers[0].path() == '$.duck'
 			contract.request.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.request.bodyMatchers.matchers[0].value() == '[0-9]{3}'
+			contract.request.bodyMatchers.matchers[0].value().pattern() == '[0-9]{3}'
 			contract.request.bodyMatchers.matchers[1].path() == '$.duck'
 			contract.request.bodyMatchers.matchers[1].matchingType() == MatchingType.EQUALITY
 			contract.request.bodyMatchers.matchers[2].path() == '$.alpha'
 			contract.request.bodyMatchers.matchers[2].matchingType() == MatchingType.REGEX
-			contract.request.bodyMatchers.matchers[2].value() == patterns.onlyAlphaUnicode().pattern()
+			contract.request.bodyMatchers.matchers[2].value().pattern() == patterns.onlyAlphaUnicode().pattern()
 			contract.request.bodyMatchers.matchers[3].path() == '$.alpha'
 			contract.request.bodyMatchers.matchers[3].matchingType() == MatchingType.EQUALITY
 			contract.request.bodyMatchers.matchers[4].path() == '$.number'
 			contract.request.bodyMatchers.matchers[4].matchingType() == MatchingType.REGEX
-			contract.request.bodyMatchers.matchers[4].value() == patterns.number().pattern()
+			contract.request.bodyMatchers.matchers[4].value().pattern() == patterns.number().pattern()
 			contract.request.bodyMatchers.matchers[5].path() == '$.aBoolean'
 			contract.request.bodyMatchers.matchers[5].matchingType() == MatchingType.REGEX
-			contract.request.bodyMatchers.matchers[5].value() == patterns.anyBoolean().pattern()
+			contract.request.bodyMatchers.matchers[5].value().pattern() == patterns.anyBoolean().pattern()
 			contract.request.bodyMatchers.matchers[6].path() == '$.date'
 			contract.request.bodyMatchers.matchers[6].matchingType() == MatchingType.DATE
-			contract.request.bodyMatchers.matchers[6].value() == patterns.isoDate()
+			contract.request.bodyMatchers.matchers[6].value().pattern() == patterns.isoDate().pattern()
 			contract.request.bodyMatchers.matchers[7].path() == '$.dateTime'
 			contract.request.bodyMatchers.matchers[7].matchingType() == MatchingType.TIMESTAMP
-			contract.request.bodyMatchers.matchers[7].value() == patterns.isoDateTime()
+			contract.request.bodyMatchers.matchers[7].value().pattern() == patterns.isoDateTime().pattern()
 			contract.request.bodyMatchers.matchers[8].path() == '$.time'
 			contract.request.bodyMatchers.matchers[8].matchingType() == MatchingType.TIME
-			contract.request.bodyMatchers.matchers[8].value() == patterns.isoTime()
+			contract.request.bodyMatchers.matchers[8].value().pattern() == patterns.isoTime().pattern()
 			contract.request.bodyMatchers.matchers[9].path() == "\$.['key'].['complex.key']"
 			contract.request.bodyMatchers.matchers[9].matchingType() == MatchingType.EQUALITY
 			contract.request.bodyMatchers.matchers[10].path() == '$.valueWithMin'
@@ -255,29 +257,29 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.status.clientValue == 200
 			contract.response.bodyMatchers.matchers[0].path() == '$.duck'
 			contract.response.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.response.bodyMatchers.matchers[0].value() == '[0-9]{3}'
+			contract.response.bodyMatchers.matchers[0].value().pattern() == '[0-9]{3}'
 			contract.response.bodyMatchers.matchers[1].path() == '$.duck'
 			contract.response.bodyMatchers.matchers[1].matchingType() == MatchingType.EQUALITY
 			contract.response.bodyMatchers.matchers[2].path() == '$.alpha'
 			contract.response.bodyMatchers.matchers[2].matchingType() == MatchingType.REGEX
-			contract.response.bodyMatchers.matchers[2].value() == patterns.onlyAlphaUnicode().pattern()
+			contract.response.bodyMatchers.matchers[2].value().pattern() == patterns.onlyAlphaUnicode().pattern()
 			contract.response.bodyMatchers.matchers[3].path() == '$.alpha'
 			contract.response.bodyMatchers.matchers[3].matchingType() == MatchingType.EQUALITY
 			contract.response.bodyMatchers.matchers[4].path() == '$.number'
 			contract.response.bodyMatchers.matchers[4].matchingType() == MatchingType.REGEX
-			contract.response.bodyMatchers.matchers[4].value() == patterns.number().pattern()
+			contract.response.bodyMatchers.matchers[4].value().pattern() == patterns.number().pattern()
 			contract.response.bodyMatchers.matchers[5].path() == '$.aBoolean'
 			contract.response.bodyMatchers.matchers[5].matchingType() == MatchingType.REGEX
-			contract.response.bodyMatchers.matchers[5].value() == patterns.anyBoolean().pattern()
+			contract.response.bodyMatchers.matchers[5].value().pattern() == patterns.anyBoolean().pattern()
 			contract.response.bodyMatchers.matchers[6].path() == '$.date'
 			contract.response.bodyMatchers.matchers[6].matchingType() == MatchingType.DATE
-			contract.response.bodyMatchers.matchers[6].value() == patterns.isoDate()
+			contract.response.bodyMatchers.matchers[6].value().pattern() == patterns.isoDate().pattern()
 			contract.response.bodyMatchers.matchers[7].path() == '$.dateTime'
 			contract.response.bodyMatchers.matchers[7].matchingType() == MatchingType.TIMESTAMP
-			contract.response.bodyMatchers.matchers[7].value() == patterns.isoDateTime()
+			contract.response.bodyMatchers.matchers[7].value().pattern() == patterns.isoDateTime().pattern()
 			contract.response.bodyMatchers.matchers[8].path() == '$.time'
 			contract.response.bodyMatchers.matchers[8].matchingType() == MatchingType.TIME
-			contract.response.bodyMatchers.matchers[8].value() == patterns.isoTime()
+			contract.response.bodyMatchers.matchers[8].value().pattern() == patterns.isoTime().pattern()
 			contract.response.bodyMatchers.matchers[9].path() == '$.valueWithTypeMatch'
 			contract.response.bodyMatchers.matchers[9].matchingType() == MatchingType.TYPE
 			contract.response.bodyMatchers.matchers[10].path() == '$.valueWithMin'
@@ -326,57 +328,57 @@ class YamlContractConverterSpec extends Specification {
 					((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json" }
 			contract.input.bodyMatchers.matchers[0].path() == '$.duck'
 			contract.input.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.input.bodyMatchers.matchers[0].value() == '[0-9]{3}'
+			contract.input.bodyMatchers.matchers[0].value().pattern() == '[0-9]{3}'
 			contract.input.bodyMatchers.matchers[1].path() == '$.duck'
 			contract.input.bodyMatchers.matchers[1].matchingType() == MatchingType.EQUALITY
 			contract.input.bodyMatchers.matchers[2].path() == '$.alpha'
 			contract.input.bodyMatchers.matchers[2].matchingType() == MatchingType.REGEX
-			contract.input.bodyMatchers.matchers[2].value() == patterns.onlyAlphaUnicode().pattern()
+			contract.input.bodyMatchers.matchers[2].value().pattern() == patterns.onlyAlphaUnicode().pattern()
 			contract.input.bodyMatchers.matchers[3].path() == '$.alpha'
 			contract.input.bodyMatchers.matchers[3].matchingType() == MatchingType.EQUALITY
 			contract.input.bodyMatchers.matchers[4].path() == '$.number'
 			contract.input.bodyMatchers.matchers[4].matchingType() == MatchingType.REGEX
-			contract.input.bodyMatchers.matchers[4].value() == patterns.number().pattern()
+			contract.input.bodyMatchers.matchers[4].value().pattern() == patterns.number().pattern()
 			contract.input.bodyMatchers.matchers[5].path() == '$.aBoolean'
 			contract.input.bodyMatchers.matchers[5].matchingType() == MatchingType.REGEX
-			contract.input.bodyMatchers.matchers[5].value() == patterns.anyBoolean().pattern()
+			contract.input.bodyMatchers.matchers[5].value().pattern() == patterns.anyBoolean().pattern()
 			contract.input.bodyMatchers.matchers[6].path() == '$.date'
 			contract.input.bodyMatchers.matchers[6].matchingType() == MatchingType.DATE
-			contract.input.bodyMatchers.matchers[6].value() == patterns.isoDate()
+			contract.input.bodyMatchers.matchers[6].value().pattern() == patterns.isoDate().pattern()
 			contract.input.bodyMatchers.matchers[7].path() == '$.dateTime'
 			contract.input.bodyMatchers.matchers[7].matchingType() == MatchingType.TIMESTAMP
-			contract.input.bodyMatchers.matchers[7].value() == patterns.isoDateTime()
+			contract.input.bodyMatchers.matchers[7].value().pattern() == patterns.isoDateTime().pattern()
 			contract.input.bodyMatchers.matchers[8].path() == '$.time'
 			contract.input.bodyMatchers.matchers[8].matchingType() == MatchingType.TIME
-			contract.input.bodyMatchers.matchers[8].value() == patterns.isoTime()
+			contract.input.bodyMatchers.matchers[8].value().pattern() == patterns.isoTime().pattern()
 			contract.input.bodyMatchers.matchers[9].path() == "\$.['key'].['complex.key']"
 			contract.input.bodyMatchers.matchers[9].matchingType() == MatchingType.EQUALITY
 		and:
 			contract.outputMessage.bodyMatchers.matchers[0].path() == '$.duck'
 			contract.outputMessage.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.outputMessage.bodyMatchers.matchers[0].value() == '[0-9]{3}'
+			contract.outputMessage.bodyMatchers.matchers[0].value().pattern() == '[0-9]{3}'
 			contract.outputMessage.bodyMatchers.matchers[1].path() == '$.duck'
 			contract.outputMessage.bodyMatchers.matchers[1].matchingType() == MatchingType.EQUALITY
 			contract.outputMessage.bodyMatchers.matchers[2].path() == '$.alpha'
 			contract.outputMessage.bodyMatchers.matchers[2].matchingType() == MatchingType.REGEX
-			contract.outputMessage.bodyMatchers.matchers[2].value() == patterns.onlyAlphaUnicode().pattern()
+			contract.outputMessage.bodyMatchers.matchers[2].value().pattern() == patterns.onlyAlphaUnicode().pattern()
 			contract.outputMessage.bodyMatchers.matchers[3].path() == '$.alpha'
 			contract.outputMessage.bodyMatchers.matchers[3].matchingType() == MatchingType.EQUALITY
 			contract.outputMessage.bodyMatchers.matchers[4].path() == '$.number'
 			contract.outputMessage.bodyMatchers.matchers[4].matchingType() == MatchingType.REGEX
-			contract.outputMessage.bodyMatchers.matchers[4].value() == patterns.number().pattern()
+			contract.outputMessage.bodyMatchers.matchers[4].value().pattern() == patterns.number().pattern()
 			contract.outputMessage.bodyMatchers.matchers[5].path() == '$.aBoolean'
 			contract.outputMessage.bodyMatchers.matchers[5].matchingType() == MatchingType.REGEX
-			contract.outputMessage.bodyMatchers.matchers[5].value() == patterns.anyBoolean().pattern()
+			contract.outputMessage.bodyMatchers.matchers[5].value().pattern() == patterns.anyBoolean().pattern()
 			contract.outputMessage.bodyMatchers.matchers[6].path() == '$.date'
 			contract.outputMessage.bodyMatchers.matchers[6].matchingType() == MatchingType.DATE
-			contract.outputMessage.bodyMatchers.matchers[6].value() == patterns.isoDate()
+			contract.outputMessage.bodyMatchers.matchers[6].value().pattern() == patterns.isoDate().pattern()
 			contract.outputMessage.bodyMatchers.matchers[7].path() == '$.dateTime'
 			contract.outputMessage.bodyMatchers.matchers[7].matchingType() == MatchingType.TIMESTAMP
-			contract.outputMessage.bodyMatchers.matchers[7].value() == patterns.isoDateTime()
+			contract.outputMessage.bodyMatchers.matchers[7].value().pattern() == patterns.isoDateTime().pattern()
 			contract.outputMessage.bodyMatchers.matchers[8].path() == '$.time'
 			contract.outputMessage.bodyMatchers.matchers[8].matchingType() == MatchingType.TIME
-			contract.outputMessage.bodyMatchers.matchers[8].value() == patterns.isoTime()
+			contract.outputMessage.bodyMatchers.matchers[8].value().pattern() == patterns.isoTime().pattern()
 			contract.outputMessage.bodyMatchers.matchers[9].path() == '$.valueWithTypeMatch'
 			contract.outputMessage.bodyMatchers.matchers[9].matchingType() == MatchingType.TYPE
 			contract.outputMessage.bodyMatchers.matchers[10].path() == '$.valueWithMin'
@@ -459,7 +461,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.input.messageBody.clientValue == [foo: "bar"]
 			contract.input.bodyMatchers.matchers[0].path() == '$.bar'
 			contract.input.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.input.bodyMatchers.matchers[0].value() == 'bar'
+			contract.input.bodyMatchers.matchers[0].value().pattern() == 'bar'
 		and:
 			contract.outputMessage.assertThat.toString() == "baz()"
 			contract.outputMessage.headers.entries.find { it.name == "foo2" &&
@@ -471,7 +473,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.outputMessage.body.clientValue == [foo2: "bar", foo3: "baz"]
 			contract.outputMessage.bodyMatchers.matchers[0].path() == '$.foo2'
 			contract.outputMessage.bodyMatchers.matchers[0].matchingType() == MatchingType.REGEX
-			contract.outputMessage.bodyMatchers.matchers[0].value() == 'bar'
+			contract.outputMessage.bodyMatchers.matchers[0].value().pattern() == 'bar'
 			contract.outputMessage.bodyMatchers.matchers[1].path() == '$.foo3'
 			contract.outputMessage.bodyMatchers.matchers[1].matchingType() == MatchingType.COMMAND
 			contract.outputMessage.bodyMatchers.matchers[1].value() == new ExecutionProperty('executeMe($it)')
@@ -576,10 +578,12 @@ class YamlContractConverterSpec extends Specification {
 		when:
 			Collection<Contract> contracts = converter.convertFrom(ymlMultiple)
 		then:
-			contracts.size() == 2
+			contracts.size() == 3
 		and:
 			contracts.first().request.url.clientValue == "/users/1"
-			contracts.last().request.url.clientValue == "/users/2"
+			contracts.last().request.url.clientValue == "/users/3"
+		and:
+			contracts.groupBy { it.name }.keySet().size() == 3
 	}
 
 	def "should dump yml as string"() {
@@ -1167,5 +1171,17 @@ ignored: false
 							path: '$.nullValue',
 							type: YamlContract.TestMatcherType.by_null),
 			]
+	}
+
+	def "should convert contract with body as bytes"() {
+		given:
+			List<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(groovyBytes)
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.request.body == null
+			yamlContract.request.bodyFromFileAsBytes != null
 	}
 }

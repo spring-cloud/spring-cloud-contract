@@ -15,6 +15,8 @@
  */
 package org.springframework.cloud.contract.verifier.spec.pact
 
+import java.util.regex.Pattern
+
 import au.com.dius.pact.model.generators.Category
 import au.com.dius.pact.model.generators.DateGenerator
 import au.com.dius.pact.model.generators.DateTimeGenerator
@@ -30,12 +32,12 @@ import au.com.dius.pact.model.generators.TimeGenerator
 import au.com.dius.pact.model.generators.UuidGenerator
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
 import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.OutputMessage
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.util.ContentUtils
-
-import java.util.regex.Pattern
 
 /**
  * @author Tim Ysewyn
@@ -129,8 +131,9 @@ class ValueGeneratorConverter {
 			}
 		} else if (v instanceof DslProperty) {
 			traverse(v, dslPropertyValueProvider, path, generators, category)
-		} else if (v instanceof Pattern) {
-			switch (v.pattern()) {
+		} else if (v instanceof RegexProperty || v instanceof Pattern) {
+			RegexProperty regexProperty = new RegexProperty(v)
+			switch (regexProperty.pattern()) {
 				case INTEGER_PATTERN:
 					generators.addGenerator(category, path, new RandomIntGenerator(0, Integer.MAX_VALUE))
 					break
@@ -159,7 +162,7 @@ class ValueGeneratorConverter {
 					generators.addGenerator(category, path, RandomBooleanGenerator.INSTANCE)
 					break
 				default:
-					generators.addGenerator(category, path, new RegexGenerator(v.pattern()))
+					generators.addGenerator(category, path, new RegexGenerator(regexProperty.pattern()))
 					break
 			}
 		}

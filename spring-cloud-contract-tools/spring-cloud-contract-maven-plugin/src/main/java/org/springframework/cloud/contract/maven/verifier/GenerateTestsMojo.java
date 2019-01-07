@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -258,15 +258,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 				"Generating server tests source code for Spring Cloud Contract Verifier contract verification");
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		// download contracts, unzip them and pass as output directory
-		File contractsDirectory = new MavenContractsDownloader(this.project,
-				this.contractDependency, this.contractsPath, this.contractsRepositoryUrl,
-				this.contractsMode, getLog(), this.contractsRepositoryUsername,
-				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
-				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
-				this.contractsDirectory);
-		getLog().info(
-				"Directory with contract is present at [" + contractsDirectory + "]");
+		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
+				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
+				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
+				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
+				this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project
 				.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());

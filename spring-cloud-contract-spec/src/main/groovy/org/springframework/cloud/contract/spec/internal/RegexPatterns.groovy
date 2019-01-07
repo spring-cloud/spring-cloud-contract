@@ -60,80 +60,80 @@ class RegexPatterns {
 		return Pattern.compile(values.collect({"^$it\$"}).join("|"))
 	}
 
-	Pattern onlyAlphaUnicode() {
-		return ONLY_ALPHA_UNICODE
+	RegexProperty onlyAlphaUnicode() {
+		return new RegexProperty(ONLY_ALPHA_UNICODE).asString()
 	}
 
-	Pattern alphaNumeric() {
-		return ALPHA_NUMERIC
+	RegexProperty alphaNumeric() {
+		return new RegexProperty(ALPHA_NUMERIC).asString()
 	}
 
-	Pattern number() {
-		return NUMBER
+	RegexProperty number() {
+		return new RegexProperty(NUMBER).asDouble()
 	}
 
-	Pattern positiveInt() {
-		return POSITIVE_INT
+	RegexProperty positiveInt() {
+		return new RegexProperty(POSITIVE_INT).asInteger()
 	}
 
-	Pattern anyBoolean() {
-		return TRUE_OR_FALSE
+	RegexProperty anyBoolean() {
+		return new RegexProperty(TRUE_OR_FALSE).asBooleanType()
 	}
 
-	Pattern anInteger() {
-		return INTEGER
+	RegexProperty anInteger() {
+		return new RegexProperty(INTEGER).asInteger()
 	}
 
-	Pattern aDouble() {
-		return DOUBLE
+	RegexProperty aDouble() {
+		return new RegexProperty(DOUBLE).asDouble()
 	}
 
-	Pattern ipAddress() {
-		return IP_ADDRESS
+	RegexProperty ipAddress() {
+		return new RegexProperty(IP_ADDRESS).asString()
 	}
 
-	Pattern hostname() {
-		return HOSTNAME_PATTERN
+	RegexProperty hostname() {
+		return new RegexProperty(HOSTNAME_PATTERN).asString()
 	}
 
-	Pattern email() {
-		return EMAIL
+	RegexProperty email() {
+		return new RegexProperty(EMAIL).asString()
 	}
 
-	Pattern url() {
-		return URL
+	RegexProperty url() {
+		return new RegexProperty(URL).asString()
 	}
 
-	Pattern httpsUrl() {
-		return HTTPS_URL
+	RegexProperty httpsUrl() {
+		return new RegexProperty(HTTPS_URL).asString()
 	}
 
-	Pattern uuid(){
-		return UUID
+	RegexProperty uuid(){
+		return new RegexProperty(UUID).asString()
 	}
 
-	Pattern isoDate() {
-		return ANY_DATE
+	RegexProperty isoDate() {
+		return new RegexProperty(ANY_DATE).asString()
 	}
 
-	Pattern isoDateTime() {
-		return ANY_DATE_TIME
+	RegexProperty isoDateTime() {
+		return new RegexProperty(ANY_DATE_TIME).asString()
 	}
 
-	Pattern isoTime() {
-		return ANY_TIME
+	RegexProperty isoTime() {
+		return new RegexProperty(ANY_TIME).asString()
 	}
 
-	Pattern iso8601WithOffset() {
-		return ISO8601_WITH_OFFSET
+	RegexProperty iso8601WithOffset() {
+		return new RegexProperty(ISO8601_WITH_OFFSET).asString()
 	}
 
-	Pattern nonEmpty() {
-		return NON_EMPTY
+	RegexProperty nonEmpty() {
+		return new RegexProperty(NON_EMPTY).asString()
 	}
 
-	Pattern nonBlank() {
-		return NON_BLANK
+	RegexProperty nonBlank() {
+		return new RegexProperty(NON_BLANK).asString()
 	}
 
 	// end::regexps[]
@@ -150,7 +150,7 @@ class RegexPatterns {
 		if (contentType == null) {
 			return '.*'
 		}
-		if (contentType instanceof Pattern) {
+		if (contentType instanceof RegexProperty) {
 			return contentType.pattern()
 		}
 		return contentType.toString()
@@ -163,7 +163,7 @@ class RegexPatterns {
 class UrlHelper {
 	/**
 	 * Example: "http". Also called 'protocol'.
-	 * Scheme component is optional, even though the RFC doesn't make it optional. Since this regex is validating a
+	 * Scheme component is optional, even though the RFC doesn't make it optional. Since ((RegexProperty) this regex is validating a
 	 * submitted callback url, which determines where the browser will navigate to after a successful authentication,
 	 * the browser will use http or https for the scheme by default.
 	 * Not borrowed from dperini in order to allow any scheme type.

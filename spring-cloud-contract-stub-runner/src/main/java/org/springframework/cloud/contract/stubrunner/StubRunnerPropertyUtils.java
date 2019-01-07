@@ -29,7 +29,11 @@ import org.springframework.util.StringUtils;
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
-class StubRunnerPropertyUtils {
+public final class StubRunnerPropertyUtils {
+
+	private StubRunnerPropertyUtils() {
+		throw new IllegalStateException("Can't instantiate a utility class");
+	}
 
 	private static final Log log = LogFactory.getLog(StubRunnerPropertyUtils.class);
 
@@ -41,7 +45,7 @@ class StubRunnerPropertyUtils {
 	 * For Env vars takes the prop name, converts dots to underscores and applies upper
 	 * case
 	 */
-	static boolean isPropertySet(String propName) {
+	public static boolean isPropertySet(String propName) {
 		String value = getProperty(new HashMap<>(), propName);
 		return StringUtils.hasText(value) && Boolean.parseBoolean(value);
 	}
@@ -49,7 +53,7 @@ class StubRunnerPropertyUtils {
 	/**
 	 * For options, system props and env vars returns {@code true} when property is set
 	 */
-	static boolean hasProperty(Map<String, String> options, String propName) {
+	public static boolean hasProperty(Map<String, String> options, String propName) {
 		String value = getProperty(options, propName);
 		return StringUtils.hasText(value);
 	}
@@ -58,7 +62,7 @@ class StubRunnerPropertyUtils {
 	 * Tries to pick a value from options, for Env vars takes the prop name, converts dots
 	 * to underscores and applies upper case
 	 */
-	static String getProperty(Map<String, String> options, String propName) {
+	public static String getProperty(Map<String, String> options, String propName) {
 		if (options != null && options.containsKey(propName)) {
 			String value = options.get(propName);
 			if (log.isTraceEnabled()) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -1334,7 +1334,8 @@ DATA
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+			!test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+			test.contains('''.cookie("cookie-key", "''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key")).isNotNull();''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key").getValue()).matches("[A-Za-z]+");''')
 		and:
@@ -1377,7 +1378,8 @@ DATA
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
+			!test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
+			test.contains('''.cookie('cookie-key', ''')
 			test.contains('''response.getCookies().get('cookie-key') != null''')
 			test.contains('''response.getCookies().get('cookie-key').getValue() ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
 		and:

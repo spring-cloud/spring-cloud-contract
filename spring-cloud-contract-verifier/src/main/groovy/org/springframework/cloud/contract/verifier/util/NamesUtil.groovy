@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 package org.springframework.cloud.contract.verifier.util
-
 /**
  * A utility class that helps to convert names
  *
@@ -41,10 +40,17 @@ class NamesUtil {
 	 * Returns the provided string if separator is not found.
 	 */
 	static String afterLast(String string, String separator) {
-		if (string?.indexOf(separator) > -1) {
+		if (hasSeparator(string, separator)) {
 			return string.substring(string.lastIndexOf(separator) + 1)
 		}
 		return string
+	}
+
+	/**
+	 * Returns {@code true} if has a separatot in the string
+	 */
+	static boolean hasSeparator(String string, String separator) {
+		return string?.indexOf(separator) > -1
 	}
 
 	/**
@@ -53,6 +59,28 @@ class NamesUtil {
 	 */
 	static String afterLastDot(String string) {
 		return afterLast(string, '.')
+	}
+
+	/**
+	 * Returns {@code true} if has a dot
+	 */
+	static boolean hasDot(String string) {
+		return hasSeparator(string, '.')
+	}
+
+	/**
+	 * Returns the default contract name, resolved from file name, taking
+	 * into consideration also the index of contract (for multiple contracts
+	 * stored in a single file).
+	 *
+	 * @param file - file with contracts
+	 * @param contracts - collection of contracts
+	 * @param counter - given contract index
+	 * @return
+	 */
+	static String defaultContractName(File file, Collection contracts, int counter) {
+		String tillExtension = file.name.substring(0, file.name.lastIndexOf("."))
+		return tillExtension + (counter > 0 || contracts.size() > 1 ? "_" + counter : "")
 	}
 
 	/**

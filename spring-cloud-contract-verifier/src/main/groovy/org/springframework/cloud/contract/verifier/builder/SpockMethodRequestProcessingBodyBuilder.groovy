@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentUtils
@@ -198,8 +199,16 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		return patternComparison(headerValue)
 	}
 
+	protected String convertHeaderComparison(RegexProperty headerValue) {
+		return convertHeaderComparison(headerValue.pattern)
+	}
+
 	protected String convertCookieComparison(String cookieValue) {
 		return "== '$cookieValue'"
+	}
+
+	protected String createBodyComparison(RegexProperty bodyValue) {
+		return createBodyComparison(bodyValue.pattern)
 	}
 
 	protected String createBodyComparison(Pattern bodyValue) {

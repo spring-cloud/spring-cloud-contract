@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -928,7 +928,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(json)
 	}
 
-	def "should not allow regexp in url for server value"() {
+	def "should not allow not matching query param for server value"() {
 		when:
 			org.springframework.cloud.contract.spec.Contract.make {
 				request {
@@ -946,7 +946,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			}
 		then:
 			def e = thrown(IllegalStateException)
-			e.message.contains "Url can't be a pattern for the server side"
+			e.message.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
 	}
 
 	def "should not allow regexp in query parameter for server value"() {

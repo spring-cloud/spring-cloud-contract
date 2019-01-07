@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -114,17 +114,25 @@ class Common {
 		return value(server, client)
 	}
 
-	Pattern regex(String regex) {
-		return Pattern.compile(regex)
+	RegexProperty regex(String regex) {
+		return regexProperty(Pattern.compile(regex))
+	}
+
+	RegexProperty regex(RegexProperty regex) {
+		return regex
 	}
 
 	// Backward compatibility with RegexPatterns
-	Pattern regex(Pattern regex) {
-		return regex
+	RegexProperty regex(Pattern regex) {
+		return regexProperty(regex)
 	}
 
 	OptionalProperty optional(Object object) {
 		return new OptionalProperty(object)
+	}
+
+	RegexProperty regexProperty(Object object) {
+		return new RegexProperty(object)
 	}
 
 	ExecutionProperty execute(String commandToExecute) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
-
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -113,7 +112,8 @@ class ContractFileScanner {
 				included = includeMatchers ? matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
-				} else if (!contractFile && included) {
+				}
+				if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
 				} else {
 					appendRecursively(file, result)

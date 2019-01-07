@@ -16,16 +16,13 @@
 
 package org.springframework.cloud.contract.spec.internal
 
-import groovy.util.logging.Commons
-import groovy.util.logging.Slf4j
-
 import java.util.regex.Pattern
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
-import repackaged.nl.flotsam.xeger.Xeger
+import groovy.util.logging.Commons
 /**
  * Represents an input for messaging. The input can be a message or some
  * action inside the application.
@@ -89,15 +86,29 @@ class Input extends Common {
 	}
 
 	DslProperty value(ClientDslProperty client) {
-		Object clientValue = client.clientValue
-		if (client.clientValue instanceof Pattern) {
-			clientValue = new Xeger(((Pattern)client.clientValue).pattern()).generate()
+		Object dynamicValue = client.clientValue
+		Object concreteValue = client.serverValue
+		if (dynamicValue instanceof RegexProperty) {
+			return dynamicValue.dynamicClientConcreteProducer()
 		}
-		return new DslProperty(client.clientValue, clientValue)
+		return new DslProperty(dynamicValue, concreteValue)
+	}
+
+	DslProperty value(RegexProperty prop) {
+		return value(client(prop))
+	}
+
+	DslProperty $(RegexProperty prop) {
+		return value(client(prop))
 	}
 
 	DslProperty $(ClientDslProperty client) {
 		return value(client)
+	}
+
+	@Override
+	RegexProperty regexProperty(Object object) {
+		return new RegexProperty(object).dynamicClientConcreteProducer()
 	}
 
 	@EqualsAndHashCode(includeFields = true, callSuper = true)

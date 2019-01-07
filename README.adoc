@@ -5,7 +5,7 @@ image::https://badges.gitter.im/Join%20Chat.svg[Gitter, link="https://gitter.im/
 image::https://codecov.io/gh/spring-cloud/spring-cloud-contract/branch/{branch}/graph/badge.svg["codecov", link="https://codecov.io/gh/spring-cloud/spring-cloud-contract"]
 image::https://circleci.com/gh/spring-cloud/spring-cloud-contract.svg?style=svg["CircleCI", link="https://circleci.com/gh/spring-cloud/spring-cloud-contract"]
 :introduction_url: ../../../..
-:verifier_core_path: ../../../../spring-cloud-contract-verifier
+:verifier_core_path: {introduction_url}/spring-cloud-contract-verifier
 
 == Spring Cloud Contract
 
@@ -1137,6 +1137,7 @@ Next, add the `Spring Cloud Contract Verifier` Maven plugin
     <extensions>true</extensions>
     <configuration>
         <packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
+        <convertToYaml>true</convertToYaml>
     </configuration>
 </plugin>
 ----
@@ -1304,6 +1305,7 @@ In the configuration of the Maven plugin, pass the `packageWithBaseClasses` prop
     <extensions>true</extensions>
     <configuration>
         <packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
+        <convertToYaml>true</convertToYaml>
     </configuration>
 </plugin>
 ----

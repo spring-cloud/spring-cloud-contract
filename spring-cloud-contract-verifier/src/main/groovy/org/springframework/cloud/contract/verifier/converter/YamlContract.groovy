@@ -72,6 +72,7 @@ class YamlContract {
 		public String fileName
 		public String fileContent
 		public String fileContentAsBytes
+		public String fileContentFromFileAsBytes
 		public String contentType
 		public String fileNameCommand
 		public String fileContentCommand
@@ -106,6 +107,12 @@ class YamlContract {
 		public PredefinedRegex predefined
 		public Integer minOccurrence
 		public Integer maxOccurrence
+		public RegexType regexType
+	}
+
+	@CompileStatic
+	enum RegexType {
+		as_integer, as_double, as_float, as_long, as_short, as_boolean, as_string
 	}
 
 	@CompileStatic
@@ -144,6 +151,7 @@ class YamlContract {
 		public Integer minOccurrence
 		public Integer maxOccurrence
 		public PredefinedRegex predefined
+		public RegexType regexType
 	}
 
 	@CompileStatic
@@ -154,6 +162,7 @@ class YamlContract {
 		public String regex
 		public PredefinedRegex predefined
 		public String command
+		public RegexType regexType
 	}
 
 	@CompileStatic
@@ -180,6 +189,7 @@ class YamlContract {
 		public String regex
 		public String command
 		public PredefinedRegex predefined
+		public RegexType regexType
 	}
 
 	@CompileStatic
@@ -190,6 +200,7 @@ class YamlContract {
 		public String regex
 		public String command
 		public PredefinedRegex predefined
+		public RegexType regexType
 	}
 
 	@CompileStatic

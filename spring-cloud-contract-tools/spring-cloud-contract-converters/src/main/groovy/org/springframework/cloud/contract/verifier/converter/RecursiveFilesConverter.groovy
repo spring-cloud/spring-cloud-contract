@@ -136,8 +136,9 @@ class RecursiveFilesConverter {
 	private String generateName(Contract dsl, int contractsSize, StubGenerator converter,
 								File sourceFile, int index) {
 		String generatedName = converter.generateOutputFileNameForInput(sourceFile.name)
-		String extension = NamesUtil.afterLastDot(generatedName)
-		if (dsl.name) {
+		boolean hasDot = NamesUtil.hasDot(generatedName)
+		String extension = hasDot ? NamesUtil.afterLastDot(generatedName) : ""
+		if (dsl.name && extension) {
 			return "${dsl.name}.${extension}"
 		} else if (contractsSize == 1) {
 			return generatedName

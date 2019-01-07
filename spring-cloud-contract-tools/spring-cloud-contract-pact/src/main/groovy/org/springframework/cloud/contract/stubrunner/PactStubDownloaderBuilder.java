@@ -146,7 +146,9 @@ class PactStubDownloader implements StubDownloader {
 			String providerName = providerName(stubConfiguration);
 			List<Pact> pacts = loader.load(providerName);
 			if (pacts.isEmpty()) {
-				log.warn("No pact definitions found for provider [" + providerName + "]");
+				if (log.isWarnEnabled()) {
+					log.warn("No pact definitions found for provider [" + providerName + "]");
+				}
 				return null;
 			}
 			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);

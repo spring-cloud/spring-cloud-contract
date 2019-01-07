@@ -16,17 +16,13 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.regex.Pattern
+
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
 import groovy.util.logging.Commons
-import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.StringEscapeUtils
-import repackaged.nl.flotsam.xeger.Xeger
-
-import java.util.regex.Pattern
-
 /**
  * Represents an output for messaging. Used for verifying
  * the body and headers that are sent.
@@ -83,26 +79,57 @@ class OutputMessage extends Common {
 		this.assertThat = new ExecutionProperty(assertThat)
 	}
 
+	/**
+	 * @deprecated - use the server dsl property
+	 */
+	@Deprecated
 	DslProperty value(ClientDslProperty clientDslProperty) {
-		Object clientValue = clientDslProperty.clientValue
-		// for the output messages ran via stub runner,
-		// entries have to have fixed values
-		if (clientDslProperty.clientValue instanceof Pattern) {
-			clientValue = StringEscapeUtils.escapeJava(new Xeger(((Pattern)clientDslProperty.clientValue).pattern()).generate())
-		}
-		return new DslProperty(clientValue, clientDslProperty.clientValue)
+		return value(new ServerDslProperty(clientDslProperty.serverValue, clientDslProperty.clientValue))
 	}
 
+	DslProperty value(ServerDslProperty serverDslProperty) {
+		Object concreteValue = serverDslProperty.clientValue
+		Object dynamicValue = serverDslProperty.serverValue
+		// for the output messages ran via stub runner,
+		// entries have to have fixed values
+		if (dynamicValue instanceof RegexProperty) {
+			return dynamicValue
+					.concreteClientEscapedDynamicProducer()
+		}
+		return new DslProperty(concreteValue, dynamicValue)
+	}
+
+	/**
+	 * @deprecated - use the server dsl property
+	 */
+	@Deprecated
 	DslProperty $(ClientDslProperty client) {
 		return value(client)
 	}
 
+	DslProperty $(ServerDslProperty property) {
+		return value(property)
+	}
+
 	DslProperty $(Pattern pattern) {
-		return value(client(pattern))
+		return value(new RegexProperty(pattern))
+	}
+
+	DslProperty $(RegexProperty pattern) {
+		return value(pattern)
+	}
+
+	DslProperty value(RegexProperty pattern) {
+		return value(producer(pattern))
 	}
 
 	DslProperty $(OptionalProperty property) {
-		return value(client(property.optionalPatternValue()))
+		return value(producer(property.optionalPatternValue()))
+	}
+
+	@Override
+	RegexProperty regexProperty(Object object) {
+		return new RegexProperty(object).concreteClientDynamicProducer()
 	}
 
 	/**

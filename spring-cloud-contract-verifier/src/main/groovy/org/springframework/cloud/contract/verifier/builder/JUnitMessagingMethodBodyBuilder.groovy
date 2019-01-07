@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
@@ -272,6 +273,10 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	protected String convertHeaderComparison(Pattern headerValue) {
 		return ""
+	}
+
+	protected String convertHeaderComparison(RegexProperty headerValue) {
+		return convertHeaderComparison(headerValue.pattern)
 	}
 
 	protected String createHeaderComparison(Object headerValue) {

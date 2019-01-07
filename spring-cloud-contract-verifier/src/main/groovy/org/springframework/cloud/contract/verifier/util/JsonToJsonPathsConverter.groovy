@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,17 +26,15 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
-import org.apache.commons.text.StringEscapeUtils
-import repackaged.nl.flotsam.xeger.Xeger
 
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.SerializationUtils
-
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of
@@ -66,8 +64,8 @@ class JsonToJsonPathsConverter {
 
 	JsonToJsonPathsConverter() {
 		this(new ContractVerifierConfigProperties())
-		if (log.isDebugEnabled()) {
-			log.debug("Creating JsonToJsonPaths converter with default properties")
+		if (log.isTraceEnabled()) {
+			log.trace("Creating JsonToJsonPaths converter with default properties")
 		}
 	}
 
@@ -96,6 +94,18 @@ class JsonToJsonPathsConverter {
 			}
 		}
 		return jsonCopy
+	}
+
+	/**
+	 * Retrieves the value from JSON via json path
+	 *
+	 * @param json - parsed JSON
+	 * @param jsonPath - json path
+	 * @return matching part of the json
+	 */
+	static def readElement(def json, String jsonPath) {
+		DocumentContext context = JsonPath.parse(json)
+		return context.read(jsonPath)
 	}
 
 	/**
@@ -171,8 +181,8 @@ class JsonToJsonPathsConverter {
 
 	@CompileStatic
 	static Object generatedValueIfNeeded(Object value) {
-		if (value instanceof Pattern) {
-			return StringEscapeUtils.escapeJava(new Xeger(((Pattern) value).pattern()).generate())
+		if (value instanceof RegexProperty) {
+			return ((RegexProperty) value).generateAndEscapeJavaStringIfNeeded()
 		}
 		return value
 	}

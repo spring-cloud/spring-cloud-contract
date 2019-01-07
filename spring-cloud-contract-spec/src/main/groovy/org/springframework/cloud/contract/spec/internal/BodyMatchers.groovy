@@ -21,7 +21,6 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
 /**
  * Matching strategy of dynamic parts of the body.
  *
@@ -68,15 +67,18 @@ class BodyMatchers {
 		return new MatchingTypeValue(MatchingType.TIMESTAMP, this.regexPatterns.isoDateTime())
 	}
 
-	MatchingTypeValue byRegex(String regex) {
-		assert regex
-		return new MatchingTypeValue(MatchingType.REGEX, regex)
+	RegexMatchingTypeValue byRegex(String regex) {
+		return byRegex(Pattern.compile(regex))
 	}
 
-	// Backward compatibility with RegexPatterns
-	MatchingTypeValue byRegex(Pattern regex) {
+	RegexMatchingTypeValue byRegex(RegexProperty regex) {
 		assert regex
-		return new MatchingTypeValue(MatchingType.REGEX, regex)
+		return new RegexMatchingTypeValue(MatchingType.REGEX, regex)
+	}
+
+	RegexMatchingTypeValue byRegex(Pattern regex) {
+		assert regex
+		return new RegexMatchingTypeValue(MatchingType.REGEX, new RegexProperty(regex))
 	}
 
 	MatchingTypeValue byEquality() {
@@ -109,6 +111,61 @@ class BodyMatchers {
 
 	int hashCode() {
 		return (this.matchers != null ? this.matchers.hashCode() : 0)
+	}
+}
+
+/**
+ * Matching type with corresponding values
+ */
+
+@ToString(includePackage = false)
+@EqualsAndHashCode
+class RegexMatchingTypeValue extends MatchingTypeValue {
+
+	RegexMatchingTypeValue(MatchingType type, Object value, Integer minTypeOccurrence, Integer maxTypeOccurrence) {
+		super(type, value, minTypeOccurrence, maxTypeOccurrence)
+	}
+
+	RegexMatchingTypeValue(MatchingType type, Object value) {
+		super(type, value)
+	}
+
+	RegexMatchingTypeValue asInteger() {
+		return typed(Integer)
+	}
+
+	private RegexMatchingTypeValue typed(Class clazz) {
+		assert this.value instanceof RegexProperty
+		RegexProperty regexProperty = (RegexProperty) this.value
+		return new RegexMatchingTypeValue(
+				this.type, new RegexProperty(regexProperty.clientValue,
+				regexProperty.serverValue, clazz),
+				this.minTypeOccurrence, this.maxTypeOccurrence
+		)
+	}
+
+	RegexMatchingTypeValue asDouble() {
+		return typed(Double)
+	}
+
+	RegexMatchingTypeValue asFloat() {
+		return typed(Float)
+	}
+
+	RegexMatchingTypeValue asLong() {
+		return typed(Long)
+	}
+
+	RegexMatchingTypeValue asShort() {
+		return typed(Short)
+	}
+
+	RegexMatchingTypeValue asString() {
+		return typed(String)
+	}
+
+	RegexMatchingTypeValue asBooleanType() {
+		return typed(Boolean)
 	}
 }
 

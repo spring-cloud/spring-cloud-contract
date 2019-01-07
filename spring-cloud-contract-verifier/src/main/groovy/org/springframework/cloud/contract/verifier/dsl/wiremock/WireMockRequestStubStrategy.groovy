@@ -44,6 +44,7 @@ import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.PathBodyMatcher
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
@@ -219,8 +220,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private UrlPattern urlPattern() {
 		Object urlPath = urlPathOrUrlIfQueryPresent()
 		if (urlPath) {
-			if(urlPath instanceof Pattern) {
-				return WireMock.urlPathMatching(getStubSideValue(urlPath.toString()) as String)
+			if(urlPath instanceof Pattern || urlPath instanceof RegexProperty) {
+				return WireMock.urlPathMatching(getStubSideValue(new RegexProperty(urlPath).pattern()) as String)
 			} else {
 				return WireMock.urlPathEqualTo(getStubSideValue(urlPath.toString()) as String)
 			}
@@ -229,8 +230,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			throw new IllegalStateException("URL is required!")
 		}
 		Object url = getUrlIfGstring(request?.url?.clientValue)
-		if (url instanceof Pattern) {
-			return WireMock.urlMatching((url as Pattern).pattern())
+		if (url instanceof Pattern || url instanceof RegexProperty) {
+			return WireMock.urlMatching(new RegexProperty(url).pattern())
 		}
 		return WireMock.urlEqualTo(url.toString())
 	}
@@ -249,8 +250,12 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private Object getUrlIfGstring(Object clientSide) {
 		if (clientSide instanceof GString) {
-			if (clientSide.values.any { getStubSideValue(it) instanceof Pattern }) {
-				return Pattern.compile(getStubSideValue(clientSide).toString())
+			if (clientSide.values.any {
+				def value = getStubSideValue(it)
+				return value instanceof Pattern || value instanceof RegexProperty
+			}) {
+				String string = getStubSideValue(clientSide).toString()
+				return new RegexProperty(Pattern.compile(string))
 			} else {
 				return getStubSideValue(clientSide).toString()
 			}
@@ -270,8 +275,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private ContentPattern convertToValuePattern(Object object) {
 		switch (object) {
 			case Pattern:
-				Pattern value = object as Pattern
-				return WireMock.matching(value.pattern())
+			case RegexProperty:
+				return WireMock.matching(new RegexProperty(object).pattern())
 			case OptionalProperty:
 				OptionalProperty value = object as OptionalProperty
 				return WireMock.matching(value.optionalPattern())
@@ -387,9 +392,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return containsPattern(map.entrySet())
 	}
 
-	@CompileDynamic
 	private boolean containsPattern(Collection collection) {
-		return collection.collect(this.&containsPattern).inject('') { a, b -> a || b }
+		return collection.collect(this.&containsPattern).inject(false) { a, b -> a || b }
 	}
 
 	private boolean containsPattern(Object[] objects) {
@@ -405,6 +409,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private boolean containsPattern(Pattern pattern) {
+		return true
+	}
+
+	private boolean containsPattern(RegexProperty pattern) {
 		return true
 	}
 

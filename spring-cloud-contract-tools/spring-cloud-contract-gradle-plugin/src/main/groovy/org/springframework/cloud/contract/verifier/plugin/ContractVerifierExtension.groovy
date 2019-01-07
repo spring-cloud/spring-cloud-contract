@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -203,6 +202,11 @@ class ContractVerifierExtension {
 	boolean deleteStubsAfterTest = true
 
 	/**
+	 * If {@code true} then will convert contracts to a YAML representation
+	 */
+	boolean convertToYaml = false
+
+	/**
 	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	Map<String, String> contractsProperties = [:]
@@ -235,6 +239,51 @@ class ContractVerifierExtension {
 		this.disableStubPublication = disableStubPublication
 	}
 
+	ContractVerifierExtension copy() {
+		return new ContractVerifierExtension(
+				testFramework: this.testFramework,
+				testMode: this.testMode,
+				basePackageForTests: this.basePackageForTests,
+				baseClassForTests: this.baseClassForTests,
+				nameSuffixForTests: this.nameSuffixForTests,
+				ruleClassForTests: this.ruleClassForTests,
+				excludedFiles: new ArrayList<String>(this.excludedFiles),
+				includedFiles:  new ArrayList<String>(this.includedFiles),
+				ignoredFiles:  new ArrayList<String>(this.ignoredFiles),
+				imports: Arrays.asList(this.imports).toArray(),
+				staticImports: Arrays.asList(this.staticImports).toArray(),
+				contractsDslDir: this.contractsDslDir,
+				generatedTestSourcesDir: this.generatedTestSourcesDir,
+				generatedTestResourcesDir: this.generatedTestResourcesDir,
+				stubsOutputDir: this.stubsOutputDir,
+				stubsSuffix: this.stubsSuffix,
+				assertJsonSize: this.assertJsonSize,
+				contractRepository: new ContractRepository(
+						repositoryUrl: this.contractRepository.repositoryUrl,
+						username: this.contractRepository.username,
+						password: this.contractRepository.password,
+						proxyPort: this.contractRepository.proxyPort,
+						proxyHost: this.contractRepository.proxyHost,
+						cacheDownloadedContracts: this.contractRepository.cacheDownloadedContracts
+				),
+				contractDependency: new Dependency(
+						groupId: this.contractDependency.groupId,
+						artifactId: this.contractDependency.artifactId,
+						classifier: this.contractDependency.classifier,
+						version: this.contractDependency.version,
+						stringNotation: this.contractDependency.stringNotation
+				),
+				contractsPath: this.contractsPath,
+				contractsMode: this.contractsMode,
+				packageWithBaseClasses: this.packageWithBaseClasses,
+				baseClassMappings: new HashMap<String, String>(this.baseClassMappings),
+				excludeBuildFolders: this.excludeBuildFolders,
+				deleteStubsAfterTest: this.deleteStubsAfterTest,
+				convertToYaml: this.convertToYaml,
+				contractsProperties: new HashMap<String, String>(this.contractsProperties)
+		)
+	}
+
 	@ToString(includeNames = true, includePackage = false)
 	static class Dependency {
 		String groupId
@@ -264,6 +313,7 @@ class ContractVerifierExtension {
 		}
 	}
 
+	@ToString(includeNames = true, includePackage = false)
 	static class BaseClassMapping {
 		private final Map<String, String> delegate
 
@@ -279,7 +329,8 @@ class ContractVerifierExtension {
 			this.delegate.putAll(mapping)
 		}
 	}
-	
+
+	@ToString(includeNames = true, includePackage = false)
 	static class ContractRepository {
 		/**
 		 * Repository URL

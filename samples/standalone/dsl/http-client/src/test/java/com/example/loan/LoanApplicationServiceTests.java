@@ -74,7 +74,7 @@ public class LoanApplicationServiceTests {
 		// when:
 		int count = service.countAllFrauds();
 		// then:
-		assertThat(count).isEqualTo(200);
+		assertThat(count).isGreaterThanOrEqualTo(200);
 	}
 
 	@Test

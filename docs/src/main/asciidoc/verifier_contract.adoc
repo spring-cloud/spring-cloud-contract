@@ -801,7 +801,7 @@ following matching possibilities:
 ** `byEquality()`: The value taken from the consumer's request via the provided JSON Path must be
 equal to the value provided in the contract.
 ** `byRegex(...)`: The value taken from the consumer's request via the provided JSON Path must
-match the regex.
+match the regex. You can also pass the type of the expected matched value (e.g. `asString()`, `asLong()` etc.)
 ** `byDate()`: The value taken from the consumer's request via the provided JSON Path must
 match the regex for an ISO Date value.
 ** `byTimestamp()`: The value taken from the consumer's request via the provided JSON Path must
@@ -848,6 +848,7 @@ For YAML the structure of a matcher looks like this
 - path: $.foo
   type: by_regex
   value: bar
+  regexType: as_string
 ----
 
 Or if you want to use one of the predefined regular expressions
@@ -881,6 +882,16 @@ Below you can find the allowed list of `type`s.
 *** there are 2 additional fields accepted: `minOccurrence` and `maxOccurrence`.
 ** `by_command`
 ** `by_null`
+
+You can also define which type the regular expression corresponds to via the `regexType` field. Below you can find the allowed list of regular expression types:
+
+* as_integer
+* as_double
+* as_float,
+* as_long
+* as_short
+* as_boolean
+* as_string
 
 Consider the following example:
 
@@ -1498,6 +1509,8 @@ You can now reference your classes in your DSL, as shown in the following exampl
 ----
 include::{samples_url}/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]
 ----
+
+IMPORTANT: You can set the Spring Cloud Contract plugin up by setting `convertToYaml` to `true`. That way you will NOT have to add the dependency with the extended functionality to the consumer side, since the consumer side will be using YAML contracts instead of Groovy ones.
 
 == Using the Pluggable Architecture
 

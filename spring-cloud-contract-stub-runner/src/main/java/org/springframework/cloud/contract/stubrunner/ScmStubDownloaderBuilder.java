@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,9 +143,11 @@ class GitContractsRepo {
 		else {
 			if (log.isDebugEnabled()) {
 				log.debug("The project has already been cloned to [" + file
-						+ "]. Will reset any changes.");
+						+ "]. Will reset any changes and pull the latest ones.");
 			}
-			new GitRepo(file, properties).reset(file);
+			GitRepo gitRepo = new GitRepo(file, properties);
+			gitRepo.reset(file);
+			gitRepo.pull(file);
 		}
 		return file;
 	}
@@ -197,10 +199,10 @@ class GitStubDownloader implements StubDownloader {
 		catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
-		if (log.isDebugEnabled()) {
-			log.debug("No matching contracts were found in the repo for ["
+		if (log.isWarnEnabled()) {
+			log.warn("No matching contracts were found in the repo for ["
 					+ stubConfiguration.toColonSeparatedDependencyNotation()
-					+ "]. Returning null");
+					+ "]");
 		}
 		return null;
 	}

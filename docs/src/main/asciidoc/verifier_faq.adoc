@@ -621,6 +621,32 @@ to find contracts. E.g. for `com.example:foo:1.0.0` the path would be
 * Once the tests pass, the stubs will be committed in the cloned repository
 * Finally, a push will be done to that repo's `origin`
 
+==== Producer with contracts stored locally
+
+Another option to use the SCM as the destination for stubs and contracts is to store the contracts locally, with the producer, and only push the contracts and the stubs to SCM. Below, you can find the setup required to achieve this using Maven and Gradle.
+
+.Maven
+[source,xml,indent=0]
+----
+include::{samples_url}/producer_with_empty_git/pom.xml[tags=plugin,indent=0]
+----
+
+.Gradle
+[source,xml,indent=0]
+----
+include::{samples_url}/producer_with_empty_git/build.gradle[tags=plugin,indent=0]
+----
+
+With such a setup:
+
+* Contracts from the default `src/test/resources/contracts` directory will be picked
+* Tests will be generated from the contracts
+* Stubs will be created from the contracts
+* Once the tests pass
+** Git project will be cloned to a temporary directory
+** The stubs and contracts will be committed in the cloned repository
+* Finally, a push will be done to that repo's `origin`
+
 ===== Keeping contracts with the producer and stubs in an external repository
 
 It is also possible to keep the contracts in the producer repository, but keep the stubs in an external git repo.

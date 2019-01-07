@@ -12,7 +12,7 @@ import org.springframework.cloud.contract.spec.Contract
 			response {
 				status OK()
 				body([
-						count: 200
+						count: $(regex("[2-9][0-9][0-9]").asInteger())
 				])
 				headers {
 					contentType("application/json")
