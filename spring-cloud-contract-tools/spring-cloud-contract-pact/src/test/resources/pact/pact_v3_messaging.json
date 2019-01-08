@@ -9,6 +9,7 @@
     {
       "description":"message sent to activemq:output",
       "metaData":{
+        "sentTo": "activemq:output",
         "BOOK-NAME":"foo",
         "contentType":"application/json"
       },

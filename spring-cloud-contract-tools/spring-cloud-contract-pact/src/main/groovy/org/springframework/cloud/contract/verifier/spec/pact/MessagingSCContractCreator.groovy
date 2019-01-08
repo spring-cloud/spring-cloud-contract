@@ -33,10 +33,10 @@ import au.com.dius.pact.model.v3.messaging.Message
 import au.com.dius.pact.model.v3.messaging.MessagePact
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-
 /**
  * Creator of {@link Contract} instances
  *
@@ -48,6 +48,8 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 class MessagingSCContractCreator {
 
 	private static final String FULL_BODY = '$'
+	private static final String DESTINATION_KEY = "sentTo"
+	private static final List<String> NON_HEADER_META_DATA = [DESTINATION_KEY]
 
 	Collection<Contract> convertFrom(MessagePact pact) {
 		return pact.messages.collect({ Message message ->
@@ -68,7 +70,6 @@ class MessagingSCContractCreator {
 									if (ruleGroup.ruleLogic != RuleLogic.AND) {
 										throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
 									}
-
 									if (FULL_BODY == key) {
 										JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(message.contents.value)
 										jsonPaths.each {
@@ -127,15 +128,16 @@ class MessagingSCContractCreator {
 							message.metaData.each { String k, String v ->
 								if (k.equalsIgnoreCase("contentType")) {
 									messagingContentType(v)
-								} else {
+								} else if (!NON_HEADER_META_DATA.contains(k)) {
 									header(k, v)
 								}
 							}
 						}
 					}
-
-                                        sentTo(guessDestination(message));
-
+					String dest = findDestination(message)
+					if (dest) {
+						sentTo(dest)
+					}
 				}
 			}
 		})
@@ -150,12 +152,8 @@ class MessagingSCContractCreator {
 				.uncapitalize() + "()"
 	}
 
-	private String guessDestination(Message message) {
-		String[] outcomeParts = message.description.split(' ')
-		if (outcomeParts.length > 0) { 
-			return outcomeParts[outcomeParts.length - 1]		
-		}
-		return ''
+	private String findDestination(Message message) {
+		return message.metaData.get(DESTINATION_KEY) ?: ""
 	}
 
 }
