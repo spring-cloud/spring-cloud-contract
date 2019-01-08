@@ -28,13 +28,17 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
@@ -177,11 +181,6 @@ class GitStubDownloader implements StubDownloader {
 	@Override
 	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
-		if (StringUtils.isEmpty(stubConfiguration.version)
-				|| "+".equals(stubConfiguration.version)) {
-			throw new IllegalStateException("Concrete version wasn't passed for ["
-					+ stubConfiguration.toColonSeparatedDependencyNotation() + "]");
-		}
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Trying to find a contract for ["
@@ -284,7 +283,10 @@ class FileWalker extends SimpleFileVisitor<Path> {
 
 	Path foundFile;
 
+	private final boolean latestVersion;
+
 	FileWalker(StubConfiguration stubConfiguration) {
+		this.latestVersion = "+".equals(stubConfiguration.version);
 		this.matcherWithDot = FileSystems.getDefault()
 				.getPathMatcher("glob:" + matcherGlob(stubConfiguration, "."));
 		this.matcherWithoutDot = FileSystems.getDefault()
@@ -294,7 +296,8 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private String matcherGlob(StubConfiguration stubConfiguration,
 			String groupArtifactSeparator) {
 		return "**" + stubConfiguration.groupId + groupArtifactSeparator
-				+ stubConfiguration.artifactId + "/" + stubConfiguration.version;
+				+ stubConfiguration.artifactId + "/" + (this.latestVersion ?
+				"" : stubConfiguration.version);
 	}
 
 	@Override
@@ -302,7 +305,16 @@ class FileWalker extends SimpleFileVisitor<Path> {
 			throws IOException {
 		if (this.matcherWithDot.matches(dir.toAbsolutePath())
 				|| this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
-			this.foundFile = dir;
+			if (this.latestVersion) {
+				List<String> dirNames = Arrays.stream(
+						Objects.requireNonNull(dir.toFile()
+								.listFiles(File::isDirectory)))
+						.map(File::getName)
+						.collect(Collectors.toList());
+				
+			} else {
+				this.foundFile = dir;
+			}
 			return FileVisitResult.TERMINATE;
 		}
 		return FileVisitResult.CONTINUE;
