@@ -54,6 +54,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-artifact</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-settings-builder</artifactId>
 			<optional>true</optional>
 		</dependency>

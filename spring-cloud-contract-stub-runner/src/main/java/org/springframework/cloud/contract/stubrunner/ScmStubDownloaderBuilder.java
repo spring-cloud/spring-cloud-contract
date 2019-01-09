@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import shaded.org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.io.AbstractResource;
@@ -277,6 +278,8 @@ class GitStubDownloaderProperties {
 
 class FileWalker extends SimpleFileVisitor<Path> {
 
+	private static final Log log = LogFactory.getLog(FileWalker.class);
+
 	private final PathMatcher matcherWithDot;
 
 	private final PathMatcher matcherWithoutDot;
@@ -306,12 +309,20 @@ class FileWalker extends SimpleFileVisitor<Path> {
 		if (this.matcherWithDot.matches(dir.toAbsolutePath())
 				|| this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
 			if (this.latestVersion) {
-				List<String> dirNames = Arrays.stream(
+				List<DefaultArtifactVersionWrapper> versions = Arrays.stream(
 						Objects.requireNonNull(dir.toFile()
 								.listFiles(File::isDirectory)))
-						.map(File::getName)
+						.map(DefaultArtifactVersionWrapper::new)
+						.sorted()
 						.collect(Collectors.toList());
-				
+				if (versions.isEmpty()) {
+					if (log.isDebugEnabled()) {
+						log.debug("Not a single version matching semver for path [" + dir.toAbsolutePath().toString() + "] was found");
+					}
+					return FileVisitResult.CONTINUE;
+				}
+				this.foundFile = versions.get(0).file.toPath();
+				return FileVisitResult.TERMINATE;
 			} else {
 				this.foundFile = dir;
 			}
@@ -320,4 +331,19 @@ class FileWalker extends SimpleFileVisitor<Path> {
 		return FileVisitResult.CONTINUE;
 	}
 
+}
+
+class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersionWrapper> {
+	final DefaultArtifactVersion version;
+	final File file;
+
+	DefaultArtifactVersionWrapper(File file) {
+		this.version = new DefaultArtifactVersion(file.getName());
+		this.file = file;
+	}
+
+	@Override
+	public int compareTo(DefaultArtifactVersionWrapper o) {
+		return this.version.compareTo(o.version);
+	}
 }
