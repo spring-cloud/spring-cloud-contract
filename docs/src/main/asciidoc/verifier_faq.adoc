@@ -503,7 +503,14 @@ Under `META-INF` folder:
 
 * we group applications via `groupId` (e.g. `com.example`)
 * then each application is represented via the `artifactId` (e.g. `beer-api-producer-git`)
-* next, the version of the application. The version is mandatory! (e.g. `0.0.1-SNAPSHOT`)
+* next, the version of the application (e.g. `0.0.1-SNAPSHOT`). Starting from Spring Cloud Contract version `2.1.0`, you can specify the versions as follows (assuming that your versions follow the semantic versioning)
+** `+` or `latest` - to find the latest version of your stubs (assuming that the snapshots are always the latest artifact for a given revision number). That means:
+*** if you have a version `1.0.0.RELEASE`, `2.0.0.BUILD-SNAPSHOT` and `2.0.0.RELEASE` we will assume that the latest is `2.0.0.BUILD-SNAPSHOT`
+*** if you have a version `1.0.0.RELEASE` and `2.0.0.RELEASE` we will assume that the latest is `2.0.0.RELEASE`
+*** if you have a version called `latest` or `+` we will pick that folder
+** `release` - to find the latest release version of your stubs. That means:
+*** if you have a version `1.0.0.RELEASE`, `2.0.0.BUILD-SNAPSHOT` and `2.0.0.RELEASE` we will assume that the latest is `2.0.0.RELEASE`
+*** if you have a version called `release` we will pick that folder
 * finally, there are two folders:
 ** `contracts` - the good practice is to store the contracts required by each
 consumer in the folder with the consumer name (e.g. `beer-api-consumer`). That way you

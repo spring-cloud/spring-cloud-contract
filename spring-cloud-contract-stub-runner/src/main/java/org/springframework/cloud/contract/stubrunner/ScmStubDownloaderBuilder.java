@@ -280,16 +280,23 @@ class FileWalker extends SimpleFileVisitor<Path> {
 
 	private static final Log log = LogFactory.getLog(FileWalker.class);
 
+	private static final List<String> LATEST = Arrays.asList("latest", "+");
+	private static final String RELEASE = "release";
+
 	private final PathMatcher matcherWithDot;
 
 	private final PathMatcher matcherWithoutDot;
 
 	Path foundFile;
 
-	private final boolean latestVersion;
+	private final boolean latestSnapshotVersion;
+
+	private final boolean latestReleaseVersion;
 
 	FileWalker(StubConfiguration stubConfiguration) {
-		this.latestVersion = "+".equals(stubConfiguration.version);
+		this.latestSnapshotVersion = LATEST.stream().anyMatch(
+				s -> s.equals(stubConfiguration.version.toLowerCase()));
+		this.latestReleaseVersion = RELEASE.equals(stubConfiguration.version.toLowerCase());
 		this.matcherWithDot = FileSystems.getDefault()
 				.getPathMatcher("glob:" + matcherGlob(stubConfiguration, "."));
 		this.matcherWithoutDot = FileSystems.getDefault()
@@ -299,8 +306,8 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private String matcherGlob(StubConfiguration stubConfiguration,
 			String groupArtifactSeparator) {
 		return "**" + stubConfiguration.groupId + groupArtifactSeparator
-				+ stubConfiguration.artifactId + "/" + (this.latestVersion ?
-				"" : stubConfiguration.version);
+				+ stubConfiguration.artifactId + "/" + (this.latestSnapshotVersion ||
+				this.latestReleaseVersion ? "**" : stubConfiguration.version);
 	}
 
 	@Override
@@ -308,27 +315,79 @@ class FileWalker extends SimpleFileVisitor<Path> {
 			throws IOException {
 		if (this.matcherWithDot.matches(dir.toAbsolutePath())
 				|| this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
-			if (this.latestVersion) {
-				List<DefaultArtifactVersionWrapper> versions = Arrays.stream(
-						Objects.requireNonNull(dir.toFile()
-								.listFiles(File::isDirectory)))
-						.map(DefaultArtifactVersionWrapper::new)
-						.sorted()
-						.collect(Collectors.toList());
-				if (versions.isEmpty()) {
+			if (this.latestSnapshotVersion || this.latestReleaseVersion) {
+				// folders with name latest, release
+				File[] files = Objects.requireNonNull(dir.getParent().toFile()
+						.listFiles(File::isDirectory));
+				File file = folderWithPredefinedName(files);
+				if (file != null) {
 					if (log.isDebugEnabled()) {
-						log.debug("Not a single version matching semver for path [" + dir.toAbsolutePath().toString() + "] was found");
+						log.debug("Found folder with name corresponding to a latest version [" + file + "] ");
+						this.foundFile = file.toPath();
+						return FileVisitResult.TERMINATE;
 					}
-					return FileVisitResult.CONTINUE;
 				}
-				this.foundFile = versions.get(0).file.toPath();
-				return FileVisitResult.TERMINATE;
+				return latestVersionFromFolders(dir, files);
 			} else {
 				this.foundFile = dir;
 			}
 			return FileVisitResult.TERMINATE;
 		}
 		return FileVisitResult.CONTINUE;
+	}
+
+	private FileVisitResult latestVersionFromFolders(Path dir, File[] files) {
+		List<DefaultArtifactVersionWrapper> versions = pickLatestVersion(files);
+		if (versions.isEmpty()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Not a single version matching semver for path [" + dir.toAbsolutePath().toString() + "] was found");
+			}
+			return FileVisitResult.CONTINUE;
+		}
+		// 2.0.0.RELEASE, 2.0.0.BUILD-SNAPSHOT
+		// 2.0.0.RELEASE
+		DefaultArtifactVersionWrapper latestFoundVersion = versions.get(versions.size() - 1);
+		latestFoundVersion = replaceWithSnapshotIfSameVersions(versions, latestFoundVersion);
+		this.foundFile = latestFoundVersion.file.toPath();
+		return FileVisitResult.TERMINATE;
+	}
+
+	private DefaultArtifactVersionWrapper replaceWithSnapshotIfSameVersions(List<DefaultArtifactVersionWrapper> versions, DefaultArtifactVersionWrapper latestFoundVersion) {
+		if (versions.size() > 1 && this.latestSnapshotVersion) {
+			// 2.0.0.BUILD-SNAPSHOT
+			DefaultArtifactVersionWrapper versionWrapper = versions.get(versions.size() - 2);
+			// 2.0.0 vs 2.0.0
+			boolean sameVersionsWithoutClassifier = Objects.equals(withoutClassifier(versionWrapper), withoutClassifier(latestFoundVersion));
+			// replace the RELEASE one with SNAPSHOT
+			latestFoundVersion = sameVersionsWithoutClassifier && versionWrapper.isSnapshot() ? versionWrapper : latestFoundVersion;
+		}
+		return latestFoundVersion;
+	}
+
+	private String withoutClassifier(DefaultArtifactVersionWrapper versionWrapper) {
+		String version = versionWrapper.version.toString();
+		return version.substring(0, version.lastIndexOf("."));
+	}
+
+	private File folderWithPredefinedName(File[] files) {
+		if (this.latestSnapshotVersion) {
+			return Arrays.stream(files)
+					.filter(file -> LATEST.stream()
+							.anyMatch(s -> s.equals(file.getName().toLowerCase())))
+					.findFirst().orElse(null);
+		}
+		return Arrays.stream(files)
+				.filter(file -> RELEASE.equals(file.getName().toLowerCase()))
+				.findFirst().orElse(null);
+	}
+
+	private List<DefaultArtifactVersionWrapper> pickLatestVersion(File[] files) {
+		return Arrays.stream(files)
+				.map(DefaultArtifactVersionWrapper::new)
+				.filter(wrapper -> this.latestSnapshotVersion || wrapper
+						.isNotSnapshot())
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 }
@@ -340,6 +399,14 @@ class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersion
 	DefaultArtifactVersionWrapper(File file) {
 		this.version = new DefaultArtifactVersion(file.getName());
 		this.file = file;
+	}
+
+	boolean isSnapshot() {
+		return this.version.toString().toLowerCase().contains("snapshot");
+	}
+
+	boolean isNotSnapshot() {
+		return !isSnapshot();
 	}
 
 	@Override
