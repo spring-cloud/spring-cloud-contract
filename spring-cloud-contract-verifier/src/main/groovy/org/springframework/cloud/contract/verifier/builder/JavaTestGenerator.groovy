@@ -74,7 +74,9 @@ class JavaTestGenerator implements SingleTestGenerator {
 			clazz.addImports(configProperties.testFramework.getOrderAnnotationImports())
 			clazz.addClassLevelAnnotation(configProperties.testFramework.getOrderAnnotation())
 		}
+		// FIXME: change during Hoxton refactoring: we should only add either Json or Xml imports and not both
 		addJsonPathRelatedImports(clazz)
+		addXmlPathRelatedImports(clazz)
 		processContractFiles(listOfFiles, configProperties, clazz, generatedClassData)
 		return clazz.build()
 	}
@@ -185,6 +187,14 @@ class JavaTestGenerator implements SingleTestGenerator {
 		if (this.checker.isClassPresent(JSON_ASSERT_CLASS)) {
 			clazz.addStaticImport(JSON_ASSERT_STATIC_IMPORT)
 		}
+	}
+
+	private void addXmlPathRelatedImports(ClassBuilder clazz) {
+		clazz.addImports(['javax.xml.parsers.DocumentBuilder',
+		'javax.xml.parsers.DocumentBuilderFactory',
+		'org.w3c.dom.Document',
+		'org.xml.sax.InputSource',
+		'java.io.StringReader'])
 	}
 
 	private void addMessagingRelatedEntries(ClassBuilder clazz) {

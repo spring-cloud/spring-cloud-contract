@@ -45,7 +45,7 @@ import org.springframework.cloud.contract.spec.internal.PathBodyMatcher
 
 import static java.util.stream.Collectors.toList
 import static javax.xml.xpath.XPathConstants.NODE
-import static org.apache.logging.log4j.util.Strings.isBlank
+import static org.apache.commons.lang3.StringUtils.isBlank
 import static org.w3c.dom.Node.ATTRIBUTE_NODE
 import static org.w3c.dom.Node.CDATA_SECTION_NODE
 import static org.w3c.dom.Node.COMMENT_NODE
@@ -61,7 +61,7 @@ import static org.w3c.dom.Node.TEXT_NODE
  */
 class XmlToXPathsConverter {
 
-	static Object removeMatchingXmlPaths(def body, BodyMatchers bodyMatchers) {
+	static Object removeMatchingXmlPaths(Object body, BodyMatchers bodyMatchers) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
 		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder()
@@ -75,21 +75,18 @@ class XmlToXPathsConverter {
 		return xmlToString(parsedXml)
 	}
 
+	// TODO: remove method?
 	static String retrieveValueFromBody(String path, Object body) {
-		Node node = getNode(path, body)
-		if (!(isValueNode(node) || isAttributeNode(node))) {
-			throw new IllegalArgumentException("Only data nodes can be used to match.")
-		}
-		return node.getNodeValue()
+		return getNodeValue(path, body)
 	}
 
-	private static Node getNode(String path, Object body) {
+	private static String getNodeValue(String path, Object body) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
 		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder()
 		Document parsedXml = documentBuilder.
 				parse(new InputSource(new StringReader(body as String)))
-		return xPath.evaluate(path, parsedXml.documentElement, NODE) as Node
+		return xPath.evaluate(path, parsedXml.documentElement)
 	}
 
 	private static void removeNode(Node node) {
@@ -126,29 +123,52 @@ class XmlToXPathsConverter {
 		DocumentBuilder documentBuilder = DocumentBuilderFactory
 				.newInstance()
 				.newDocumentBuilder()
-		Document parsedXml = documentBuilder.
-				parse(new InputSource(new StringReader(xml as String)))
+		Document parsedXml = documentBuilder
+				.parse(new InputSource(new StringReader(xml as String)))
 		List<List<Node>> valueNodes = getValueNodesWithParents(parsedXml)
 		List<BodyMatcher> matchers = []
-		valueNodes.each {
-			matchers << new PathBodyMatcher(buildXPath(it),
+		List<NodePath> valueNodePaths = transformListEntries(valueNodes)
+		valueNodePaths.each {
+			matchers << new PathBodyMatcher(
+					buildXPath(it.fromChildToParents(), it.index),
 					new MatchingTypeValue(MatchingType.EQUALITY,
-							it.get(0).nodeValue))
+							it.path.get(0).nodeValue))
 		}
 		return matchers
 	}
 
-	static String buildXPath(List<Node> nodes) {
+
+	static List<NodePath> transformListEntries(List<List<Node>> nodeLists) {
+		List<PathOccurrenceCounter> pathOccurrenceCounters = []
+		List<NodePath> nodePaths = []
+		nodeLists.each { nodeList ->
+			List<Node> parentNodesList = nodeList.subList(1, nodeList.size())
+			int elementIndex = pathOccurrenceCounters.
+					stream()
+					.filter({
+				it.path == parentNodesList
+			}).findFirst()
+					.map({ ++it.counter })
+					.orElseGet({
+				PathOccurrenceCounter pathCounter = new PathOccurrenceCounter(parentNodesList)
+				pathOccurrenceCounters << pathCounter
+				return pathCounter.counter
+			})
+			nodePaths << new NodePath(nodeList, elementIndex)
+		}
+		return nodePaths
+	}
+
+	static String buildXPath(List<Node> nodes, int index = 1) {
 		XmlVerifiable xmlVerifiable = XPathBuilder.builder()
 		if (!nodes) {
 			return xmlVerifiable.xPath()
 		}
-		List<Node> reverted = nodes.reverse()
-		reverted.subList(0, reverted.size() - 1).each {
+		nodes.subList(0, nodes.size() - 1).each {
 			xmlVerifiable = processNode(xmlVerifiable, it)
 		}
-		Node closingNode = reverted.get(reverted.size() - 1)
-		xmlVerifiable = processClosingNode(xmlVerifiable, closingNode)
+		Node closingNode = nodes.get(nodes.size() - 1)
+		xmlVerifiable = processClosingNode(xmlVerifiable, closingNode, index)
 		return xmlVerifiable.xPath()
 	}
 
@@ -160,11 +180,14 @@ class XmlToXPathsConverter {
 		return xmlVerifiable.withAttribute(attribute.nodeName)
 	}
 
-	private static XmlVerifiable processClosingNode(XmlVerifiable xmlVerifiable, Node node) {
-		return xmlVerifiable.text()
+	private static XmlVerifiable processClosingNode(XmlVerifiable xmlVerifiable, Node node, int index) {
+		return index != 1 ? xmlVerifiable.index(index).text() : xmlVerifiable.text()
 	}
 
-	private static XmlVerifiable processClosingNode(XmlVerifiable xmlVerifiable, Attr attribute) {
+	private static XmlVerifiable processClosingNode(XmlVerifiable xmlVerifiable, Attr attribute, int index) {
+		if (index != 1) {
+			xmlVerifiable.index(index)
+		}
 		return processNode(xmlVerifiable, attribute)
 	}
 
@@ -229,5 +252,29 @@ class XmlToXPathsConverter {
 			return addParents(parentNode, nodeList)
 		}
 		return nodeList
+	}
+
+	private static class NodePath {
+		final List<Node> path
+		final int index
+
+		NodePath(List<Node> path, int index) {
+			this.path = path
+			this.index = index
+		}
+
+		List<Node> fromChildToParents() {
+			return path.reverse()
+		}
+	}
+
+	private static class PathOccurrenceCounter {
+		final List<Node> path
+		int counter
+
+		PathOccurrenceCounter(List<Node> path) {
+			this.path = path
+			counter = 1
+		}
 	}
 }

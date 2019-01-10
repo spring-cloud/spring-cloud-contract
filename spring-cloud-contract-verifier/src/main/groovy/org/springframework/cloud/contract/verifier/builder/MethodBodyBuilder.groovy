@@ -34,6 +34,7 @@ import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
@@ -77,10 +78,11 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		this.classDataForMethod = classDataForMethod
 		this.jsonBodyVerificationBuilder = new JsonBodyVerificationBuilder(this.configProperties,
 				templateProcessor, contractTemplate, this.contract,
-				lineSuffix(), shouldCommentOutBDDBlocks(), { String jsonPath ->
+				lineSuffix(), { String jsonPath ->
 			postProcessJsonPathCall(jsonPath)
 		})
-		this.xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder()
+		this.xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(contract,
+				lineSuffix())
 	}
 
 	private String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
@@ -203,6 +205,13 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern)
+
+	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
+	 */
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, RegexProperty regexProperty) {
+		processHeaderElement(blockBuilder, property, regexProperty.pattern)
+	}
 
 	/**
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
@@ -406,20 +415,27 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
 		}
 		if (contentType == ContentType.JSON) {
-			convertedResponseBody = jsonBodyVerificationBuilder.
-					addJsonResponseBodyCheck(bb, convertedResponseBody,
-							bodyMatchers, getResponseAsString())
-			if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
-				simpleTextResponseBodyCheck(bb, convertedResponseBody)
-			}
-			processBodyElement(bb, "", "", convertedResponseBody)
+			addJsonBodyVerification(bb, convertedResponseBody, bodyMatchers)
 		} else if (contentType == ContentType.XML) {
-			bb.addLine(getParsedXmlResponseBodyString(getResponseAsString()))
+			xmlBodyVerificationBuilder.addXmlResponseBodyCheck(bb, convertedResponseBody,
+					bodyMatchers, getResponseAsString(), shouldCommentOutBDDBlocks())
+//			bb.addLine(getParsedXmlResponseBodyString(getResponseAsString())) // FIXME
 			addColonIfRequired(bb)
 			// TODO xml validation
 		} else {
 			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
+	}
+
+
+	private void addJsonBodyVerification(BlockBuilder bb, Object responseBody, BodyMatchers bodyMatchers) {
+		Object convertedResponseBody = jsonBodyVerificationBuilder
+				.addJsonResponseBodyCheck(bb, responseBody,
+				bodyMatchers, getResponseAsString(), shouldCommentOutBDDBlocks())
+		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
+			simpleTextResponseBodyCheck(bb, convertedResponseBody)
+		}
+		processBodyElement(bb, "", "", convertedResponseBody)
 	}
 
 	private void simpleTextResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {

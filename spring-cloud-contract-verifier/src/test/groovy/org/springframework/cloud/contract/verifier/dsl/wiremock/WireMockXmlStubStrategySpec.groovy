@@ -11,35 +11,7 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
  */
 class WireMockXmlStubStrategySpec extends Specification implements WireMockStubVerifier {
 
-	def 'should convert dsl to stub matching request by equality'() {
-		given:
-			Contract groovyDsl = Contract.make {
-				request {
-					method('POST')
-					url $('/test')
-					body """
-<note>
-<to>Tove</to>
-<from>Jani</from>
-<heading>Reminder</heading>
-<body>See you soon!</body>
-</note>
-"""
-				}
-				response {
-					status OK()
-				}
-			}
-		when:
-			String wireMockStub = new WireMockStubStrategy("Test",
-					new ContractMetadata(null, false, 0, null,
-							groovyDsl), groovyDsl).toWireMockClientStub()
-
-		then:
-			stubMappingIsValidWireMockStub(wireMockStub)
-	}
-
-	def should_generate_stubs_from_plain_xml() {
+	def 'should generate stubs with plain xml request body'() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -173,7 +145,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 """.replaceAll("\n", "").replaceAll(' ', ''))
 	}
 
-	def should_generate_stubs_with_request_body_matchers() {
+	def 'should generate stubs with request body matchers'() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -285,10 +257,11 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
       "matchesXPath" : {
         "expression" : "/test/duck",
         "equalToXml" : "<duck type=\\"number\\">123</duck>\\n"
-      }""".replaceAll("\n", "").replaceAll(' ', ''))
+      }""".replaceAll("\n",
+					"").replaceAll(' ', ''))
 	}
 
-	def should_generate_stubs_from_both_xml_and_body_matchers() {
+	def 'should generate stubs with both xml and body matchers in request'() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -343,6 +316,73 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
     ]
 }
 """.replaceAll("\n", "").replaceAll(' ', ''))
+	}
+
+
+	def 'should generate stubs with response body matchers'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+					headers {
+						contentType(applicationXml())
+					}
+				}
+				response {
+					status(OK())
+					headers {
+						contentType(applicationXml())
+					}
+					body """
+<test>
+<duck type='xtype'>123</duck>
+<alpha>abc</alpha>
+<list>
+<elem>abc</elem>
+<elem>def</elem>
+<elem>ghi</elem>
+</list>
+<number>123</number>
+<aBoolean>true</aBoolean>
+<date>2017-01-01</date>
+<dateTime>2017-01-01T01:23:45</dateTime>
+<time>01:02:34</time>
+<valueWithoutAMatcher>foo</valueWithoutAMatcher>
+<valueWithTypeMatch>string</valueWithTypeMatch>
+<key><complex>foo</complex></key>
+</test>"""
+					// TODO: verify and handle escapes!
+					bodyMatchers {
+						xPath('/test/duck/text()', byRegex("[0-9]{3}"))
+						xPath('/test/duck/text()', byEquality())
+						xPath('/test/alpha/text()', byRegex(onlyAlphaUnicode()))
+						xPath('/test/alpha/text()', byEquality())
+						xPath('/test/number/text()', byRegex(number()))
+						xPath('/test/aBoolean/text()', byRegex(anyBoolean()))
+						xPath('/test/date/text()', byDate())
+						xPath('/test/dateTime/text()', byTimestamp())
+						xPath('/test/time/text()', byTime())
+						xPath('/test/*/complex/text()', byEquality())
+						xPath('/test/duck/@type', byEquality())
+						xPath('/test/duck',
+								byXmlEquality('<duck type=\'number\'>123</duck>'))
+					}
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+		then:
+			wireMockStub.contains("\\n<test>\\n<duck type='xtype'>123</duck>" +
+					"\\n<alpha>abc</alpha>\\n<list>\\n<elem>abc</elem>\\n<elem>def</elem>" +
+					"\\n<elem>ghi</elem>\\n</list>\\n<number>123</number>" +
+					"\\n<aBoolean>true</aBoolean>\\n<date>2017-01-01</date>" +
+					"\\n<dateTime>2017-01-01T01:23:45</dateTime>\\n<time>01:02:34</time>" +
+					"\\n<valueWithoutAMatcher>foo</valueWithoutAMatcher>" +
+					"\\n<valueWithTypeMatch>string</valueWithTypeMatch>" +
+					"\\n<key><complex>foo</complex></key>\\n</test>")
 	}
 }
 

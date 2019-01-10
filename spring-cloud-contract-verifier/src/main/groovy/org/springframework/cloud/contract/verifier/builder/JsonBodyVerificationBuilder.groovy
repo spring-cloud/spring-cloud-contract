@@ -1,6 +1,5 @@
 package org.springframework.cloud.contract.verifier.builder
 
-import java.util.regex.Pattern
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
@@ -10,7 +9,6 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.commons.beanutils.PropertyUtilsBean
-import org.apache.commons.text.StringEscapeUtils
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
@@ -18,6 +16,7 @@ import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.JsonPaths
@@ -42,7 +41,6 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	private final ContractTemplate contractTemplate
 	private final Contract contract
 	private final Optional<String> lineSuffix
-	private final boolean shouldCommentOutBDDBlocks
 	private final Closure<String> postProcessJsonPathCall
 
 	// Passing way more arguments here than I would like to, but since we are planning a major
@@ -52,20 +50,19 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 								ContractTemplate contractTemplate,
 								Contract contract,
 								Optional<String> lineSuffix,
-								boolean shouldCommentOutBDDBlocks,
 								Closure postProcessJsonPathCall) {
 		this.configProperties = configProperties
 		this.templateProcessor = templateProcessor
 		this.contractTemplate = contractTemplate
 		this.contract = contract
 		this.lineSuffix = lineSuffix
-		this.shouldCommentOutBDDBlocks = shouldCommentOutBDDBlocks
 		this.postProcessJsonPathCall = postProcessJsonPathCall
 	}
 
 	Object addJsonResponseBodyCheck(BlockBuilder bb, Object convertedResponseBody,
-								  BodyMatchers bodyMatchers,
-								  String responseString) {
+									BodyMatchers bodyMatchers,
+									String responseString,
+									boolean shouldCommentOutBDDBlocks) {
 		appendJsonPath(bb, responseString)
 		DocumentContext parsedRequestBody
 		if (contract.request?.body) {
@@ -97,7 +94,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 			addColonIfRequired(lineSuffix, bb)
 		}
-		doBodyMatchingIfPresent(bodyMatchers, bb, copiedBody)
+		doBodyMatchingIfPresent(bodyMatchers, bb, copiedBody, shouldCommentOutBDDBlocks)
 		return convertedResponseBody
 	}
 
@@ -130,11 +127,12 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		bb.addLine(postProcessJsonPathCall(method))
 	}
 
-	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
+	@Override
+	void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		String path = quotedAndEscaped(bodyMatcher.path())
 		Object retrievedValue = value(copiedBody, bodyMatcher)
-		retrievedValue = retrievedValue instanceof Pattern ? ((Pattern) retrievedValue).
-				pattern() : retrievedValue
+		retrievedValue = retrievedValue instanceof RegexProperty ?
+				((RegexProperty) retrievedValue).getPattern().pattern() : retrievedValue
 		String valueAsParam = retrievedValue instanceof String ?
 				quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
 		if (arrayRelated(path) && MatchingType.regexRelated(bodyMatcher.matchingType())) {
@@ -148,34 +146,6 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 			bb.addLine(postProcessJsonPathCall(method))
 		}
 		addColonIfRequired(lineSuffix, bb)
-	}
-
-	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb, copiedBody) {
-		if (bodyMatchers?.hasMatchers()) {
-			bb.endBlock()
-			bb.addLine(getAssertionJoiner())
-			bb.startBlock()
-			// for the rest we'll do JsonPath matching in brute force
-			bodyMatchers.matchers().each {
-				if (it.matchingType() == MatchingType.NULL) {
-					methodForNullCheck(it, bb)
-				}
-				else if (MatchingType.regexRelated(it.matchingType()) || it.
-						matchingType() == MatchingType.EQUALITY) {
-					methodForEqualityCheck(it, bb, copiedBody)
-				}
-				else if (it.matchingType() == MatchingType.COMMAND) {
-					methodForCommandExecution(it, bb, copiedBody)
-				}
-				else {
-					methodForTypeCheck(it, bb, copiedBody)
-				}
-			}
-		}
-	}
-
-	String getAssertionJoiner() {
-		return shouldCommentOutBDDBlocks ? '// and:' : 'and:'
 	}
 
 	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
@@ -200,8 +170,8 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		return method
 	}
 
-
-	protected void methodForCommandExecution(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
+	@Override
+	void methodForCommandExecution(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		String path = quotedAndEscaped(bodyMatcher.path())
 		// assert that path exists
 		retrieveObjectByPath(copiedBody, bodyMatcher.path())
@@ -211,9 +181,10 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		addColonIfRequired(lineSuffix, bb)
 	}
 
-	protected void methodForNullCheck(BodyMatcher bodyMatcher, BlockBuilder bb) {
-		String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
-		String method = "assertThat((Object) parsedJson.read(${quotedAndEscaptedPath})).isNull()"
+	@Override
+	void methodForNullCheck(BodyMatcher bodyMatcher, BlockBuilder bb) {
+		String quotedAndEscapedPath = quotedAndEscaped(bodyMatcher.path())
+		String method = "assertThat((Object) parsedJson.read(${quotedAndEscapedPath})).isNull()"
 		bb.addLine(postProcessJsonPathCall(method))
 		addColonIfRequired(lineSuffix, bb)
 	}
@@ -222,7 +193,8 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		return path.contains("[*]") || path.contains("..")
 	}
 
-	protected void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
+	@Override
+	void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		Object elementFromBody = value(copiedBody, bodyMatcher)
 		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher
 				.maxTypeOccurrence() != null) {
@@ -314,7 +286,12 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		return prefix + "Size"
 	}
 
-	protected String quotedAndEscaped(String string) {
-		return '"' + StringEscapeUtils.escapeJava(string) + '"'
+	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb,
+										 Object responseBody,
+										 boolean shouldCommentOutBDDBlocks) {
+		if (bodyMatchers?.hasMatchers()) {
+			addBodyMatchingBlock(bodyMatchers.
+					matchers(), bb, responseBody, shouldCommentOutBDDBlocks)
+		}
 	}
 }

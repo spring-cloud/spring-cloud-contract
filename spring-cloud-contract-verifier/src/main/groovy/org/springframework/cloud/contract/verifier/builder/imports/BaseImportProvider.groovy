@@ -20,7 +20,8 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.S
 class BaseImportProvider {
 
 	private static final ImportDefinitions GENERAL_IMPORTS = new ImportDefinitions([], [
-			'org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat'
+			'org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat',
+			'org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*'
 	])
 
 	private static

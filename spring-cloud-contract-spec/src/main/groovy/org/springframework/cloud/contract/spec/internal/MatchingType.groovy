@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
  *
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.3
  */
 @CompileStatic
@@ -63,11 +64,15 @@ enum MatchingType {
 	 * Verification if the value for the given path is null
 	 */
 	NULL,
-
+	/**
+	 * Verification if the provided XML equals the reference XML
+	 */
+	// TODO: do we need this???
 	XML_EQUALITY
 
 	static boolean regexRelated(MatchingType type) {
-		if (type == EQUALITY || type == TYPE || type == COMMAND || type == NULL ) {
+		List<MatchingType> otherMatchingTypes = [EQUALITY, TYPE, COMMAND, NULL, XML_EQUALITY]
+		if (otherMatchingTypes.contains(type)) {
 			return false
 		}
 		return true
