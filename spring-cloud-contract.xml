@@ -1934,7 +1934,34 @@ only supported SCM is Git.</simpara>
 <simpara>then each application is represented via the <literal>artifactId</literal> (e.g. <literal>beer-api-producer-git</literal>)</simpara>
 </listitem>
 <listitem>
-<simpara>next, the version of the application. The version is mandatory! (e.g. <literal>0.0.1-SNAPSHOT</literal>)</simpara>
+<simpara>next, the version of the application (e.g. <literal>0.0.1-SNAPSHOT</literal>). Starting from Spring Cloud Contract version <literal>2.1.0</literal>, you can specify the versions as follows (assuming that your versions follow the semantic versioning)</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>+</literal> or <literal>latest</literal> - to find the latest version of your stubs (assuming that the snapshots are always the latest artifact for a given revision number). That means:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>if you have a version <literal>1.0.0.RELEASE</literal>, <literal>2.0.0.BUILD-SNAPSHOT</literal> and <literal>2.0.0.RELEASE</literal> we will assume that the latest is <literal>2.0.0.BUILD-SNAPSHOT</literal></simpara>
+</listitem>
+<listitem>
+<simpara>if you have a version <literal>1.0.0.RELEASE</literal> and <literal>2.0.0.RELEASE</literal> we will assume that the latest is <literal>2.0.0.RELEASE</literal></simpara>
+</listitem>
+<listitem>
+<simpara>if you have a version called <literal>latest</literal> or <literal>+</literal> we will pick that folder</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara><literal>release</literal> - to find the latest release version of your stubs. That means:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>if you have a version <literal>1.0.0.RELEASE</literal>, <literal>2.0.0.BUILD-SNAPSHOT</literal> and <literal>2.0.0.RELEASE</literal> we will assume that the latest is <literal>2.0.0.RELEASE</literal></simpara>
+</listitem>
+<listitem>
+<simpara>if you have a version called <literal>release</literal> we will pick that folder</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
 </listitem>
 <listitem>
 <simpara>finally, there are two folders:</simpara>
