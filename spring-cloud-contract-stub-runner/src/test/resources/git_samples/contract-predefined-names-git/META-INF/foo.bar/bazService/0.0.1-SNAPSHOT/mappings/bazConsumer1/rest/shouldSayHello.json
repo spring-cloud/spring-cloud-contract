@@ -1,0 +1,12 @@
+{
+  "id" : "f4080f7d-4cb2-4301-81d6-492570316aae",
+  "request" : {
+    "url" : "/hello",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "f4080f7d-4cb2-4301-81d6-492570316aae"
+}

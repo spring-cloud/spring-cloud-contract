@@ -28,13 +28,18 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import shaded.org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
@@ -177,11 +182,6 @@ class GitStubDownloader implements StubDownloader {
 	@Override
 	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
-		if (StringUtils.isEmpty(stubConfiguration.version)
-				|| "+".equals(stubConfiguration.version)) {
-			throw new IllegalStateException("Concrete version wasn't passed for ["
-					+ stubConfiguration.toColonSeparatedDependencyNotation() + "]");
-		}
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Trying to find a contract for ["
@@ -278,13 +278,25 @@ class GitStubDownloaderProperties {
 
 class FileWalker extends SimpleFileVisitor<Path> {
 
+	private static final Log log = LogFactory.getLog(FileWalker.class);
+
+	private static final List<String> LATEST = Arrays.asList("latest", "+");
+	private static final String RELEASE = "release";
+
 	private final PathMatcher matcherWithDot;
 
 	private final PathMatcher matcherWithoutDot;
 
 	Path foundFile;
 
+	private final boolean latestSnapshotVersion;
+
+	private final boolean latestReleaseVersion;
+
 	FileWalker(StubConfiguration stubConfiguration) {
+		this.latestSnapshotVersion = LATEST.stream().anyMatch(
+				s -> s.equals(stubConfiguration.version.toLowerCase()));
+		this.latestReleaseVersion = RELEASE.equals(stubConfiguration.version.toLowerCase());
 		this.matcherWithDot = FileSystems.getDefault()
 				.getPathMatcher("glob:" + matcherGlob(stubConfiguration, "."));
 		this.matcherWithoutDot = FileSystems.getDefault()
@@ -294,7 +306,8 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private String matcherGlob(StubConfiguration stubConfiguration,
 			String groupArtifactSeparator) {
 		return "**" + stubConfiguration.groupId + groupArtifactSeparator
-				+ stubConfiguration.artifactId + "/" + stubConfiguration.version;
+				+ stubConfiguration.artifactId + "/" + (this.latestSnapshotVersion ||
+				this.latestReleaseVersion ? "**" : stubConfiguration.version);
 	}
 
 	@Override
@@ -302,10 +315,104 @@ class FileWalker extends SimpleFileVisitor<Path> {
 			throws IOException {
 		if (this.matcherWithDot.matches(dir.toAbsolutePath())
 				|| this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
-			this.foundFile = dir;
+			if (this.latestSnapshotVersion || this.latestReleaseVersion) {
+				// folders with name latest, release
+				File[] files = Objects.requireNonNull(dir.getParent().toFile()
+						.listFiles(File::isDirectory));
+				File file = folderWithPredefinedName(files);
+				if (file != null) {
+					if (log.isDebugEnabled()) {
+						log.debug("Found folder with name corresponding to a latest version [" + file + "] ");
+						this.foundFile = file.toPath();
+						return FileVisitResult.TERMINATE;
+					}
+				}
+				return latestVersionFromFolders(dir, files);
+			} else {
+				this.foundFile = dir;
+			}
 			return FileVisitResult.TERMINATE;
 		}
 		return FileVisitResult.CONTINUE;
 	}
 
+	private FileVisitResult latestVersionFromFolders(Path dir, File[] files) {
+		List<DefaultArtifactVersionWrapper> versions = pickLatestVersion(files);
+		if (versions.isEmpty()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Not a single version matching semver for path [" + dir.toAbsolutePath().toString() + "] was found");
+			}
+			return FileVisitResult.CONTINUE;
+		}
+		// 2.0.0.RELEASE, 2.0.0.BUILD-SNAPSHOT
+		// 2.0.0.RELEASE
+		DefaultArtifactVersionWrapper latestFoundVersion = versions.get(versions.size() - 1);
+		latestFoundVersion = replaceWithSnapshotIfSameVersions(versions, latestFoundVersion);
+		this.foundFile = latestFoundVersion.file.toPath();
+		return FileVisitResult.TERMINATE;
+	}
+
+	private DefaultArtifactVersionWrapper replaceWithSnapshotIfSameVersions(List<DefaultArtifactVersionWrapper> versions, DefaultArtifactVersionWrapper latestFoundVersion) {
+		if (versions.size() > 1 && this.latestSnapshotVersion) {
+			// 2.0.0.BUILD-SNAPSHOT
+			DefaultArtifactVersionWrapper versionWrapper = versions.get(versions.size() - 2);
+			// 2.0.0 vs 2.0.0
+			boolean sameVersionsWithoutClassifier = Objects.equals(withoutClassifier(versionWrapper), withoutClassifier(latestFoundVersion));
+			// replace the RELEASE one with SNAPSHOT
+			latestFoundVersion = sameVersionsWithoutClassifier && versionWrapper.isSnapshot() ? versionWrapper : latestFoundVersion;
+		}
+		return latestFoundVersion;
+	}
+
+	private String withoutClassifier(DefaultArtifactVersionWrapper versionWrapper) {
+		String version = versionWrapper.version.toString();
+		return version.substring(0, version.lastIndexOf("."));
+	}
+
+	private File folderWithPredefinedName(File[] files) {
+		if (this.latestSnapshotVersion) {
+			return Arrays.stream(files)
+					.filter(file -> LATEST.stream()
+							.anyMatch(s -> s.equals(file.getName().toLowerCase())))
+					.findFirst().orElse(null);
+		}
+		return Arrays.stream(files)
+				.filter(file -> RELEASE.equals(file.getName().toLowerCase()))
+				.findFirst().orElse(null);
+	}
+
+	private List<DefaultArtifactVersionWrapper> pickLatestVersion(File[] files) {
+		return Arrays.stream(files)
+				.map(DefaultArtifactVersionWrapper::new)
+				.filter(wrapper -> this.latestSnapshotVersion || wrapper
+						.isNotSnapshot())
+				.sorted()
+				.collect(Collectors.toList());
+	}
+
+}
+
+class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersionWrapper> {
+	private static final String SNAPSHOT_SUBSTRING = "snapshot";
+	
+	final DefaultArtifactVersion version;
+	final File file;
+
+	DefaultArtifactVersionWrapper(File file) {
+		this.version = new DefaultArtifactVersion(file.getName());
+		this.file = file;
+	}
+
+	boolean isSnapshot() {
+		return this.version.toString().toLowerCase().contains(SNAPSHOT_SUBSTRING);
+	}
+
+	boolean isNotSnapshot() {
+		return !isSnapshot();
+	}
+
+	@Override
+	public int compareTo(DefaultArtifactVersionWrapper o) {
+		return this.version.compareTo(o.version);
+	}
 }

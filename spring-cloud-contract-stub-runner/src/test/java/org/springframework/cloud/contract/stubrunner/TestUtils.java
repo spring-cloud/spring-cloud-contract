@@ -25,6 +25,7 @@ class TestUtils {
 
 	public static void prepareLocalRepo() throws IOException {
 		prepareLocalRepo("target/test-classes/git_samples/", "contract-git");
+		prepareLocalRepo("target/test-classes/git_samples/", "contract-predefined-names-git");
 	}
 
 	private static void prepareLocalRepo(String buildDir, String repoPath)
