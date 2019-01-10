@@ -1621,7 +1621,12 @@ public class WiremockForDocsClassRuleTests {
 	public static WireMockClassRule wiremock = new WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
 
-	// A service that calls out over HTTP to localhost:${wiremock.port}
+	@Before
+	public void setup() {
+		this.service.setBase("http://localhost:" + wiremock.port());
+	}
+
+	// A service that calls out over HTTP to wiremock's port
 	@Autowired
 	private Service service;
 
