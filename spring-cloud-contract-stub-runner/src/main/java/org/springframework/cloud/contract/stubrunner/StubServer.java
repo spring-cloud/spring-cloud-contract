@@ -46,13 +46,8 @@ class StubServer {
 		this.contracts = contracts;
 	}
 
-	public StubServer start() {
-		this.httpServerStub.start();
-		return stubServer();
-	}
-
-	public StubServer start(int port) {
-		this.httpServerStub.start(port);
+	public StubServer start(HttpServerStubConfiguration configuration) {
+		this.httpServerStub.start(configuration);
 		return stubServer();
 	}
 
@@ -77,7 +72,12 @@ class StubServer {
 
 	public int getPort() {
 		if (this.httpServerStub.isRunning()) {
-			return this.httpServerStub.port();
+			int httpsPort = this.httpServerStub.httpsPort();
+			int httpPort = this.httpServerStub.port();
+			if (log.isDebugEnabled()) {
+				log.debug("Ports for this server are https [" + httpsPort + "] and http [" + httpPort + "]");
+			}
+			return httpsPort != -1 ? httpsPort : httpPort;
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("The HTTP Server stub is not running... That means that the "
@@ -86,9 +86,14 @@ class StubServer {
 		return -1;
 	}
 
+	private boolean hasHttps() {
+		int httpsPort = this.httpServerStub.httpsPort();
+		return httpsPort != -1;
+	}
+
 	public URL getStubUrl() {
 		try {
-			return new URL("http://localhost:" + getPort());
+			return new URL((hasHttps() ? "https:" : "http:") + "//localhost:" + getPort());
 		}
 		catch (MalformedURLException e) {
 			throw new IllegalStateException("Cannot parse URL", e);
@@ -105,6 +110,10 @@ class StubServer {
 
 	String registeredMappings() {
 		return this.httpServerStub.registeredMappings();
+	}
+
+	HttpServerStub httpServerStub() {
+		return this.httpServerStub;
 	}
 
 	@Override

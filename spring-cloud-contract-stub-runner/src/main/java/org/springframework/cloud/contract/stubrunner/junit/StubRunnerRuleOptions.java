@@ -16,12 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner.junit;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
-
-import java.util.List;
-import java.util.Map;
 
 interface StubRunnerRuleOptions {
 
@@ -126,5 +127,10 @@ interface StubRunnerRuleOptions {
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	StubRunnerRule withProperties(Map<String, String> properties);
+
+	/**
+	 * Configuration for an HTTP server stub
+	 */
+	StubRunnerRule withHttpServerStubConfigurer(Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer);
 
 }

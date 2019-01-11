@@ -16,12 +16,20 @@
 
 package org.springframework.cloud.contract.stubrunner.junit;
 
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
@@ -29,12 +37,6 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
-
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.
@@ -187,6 +189,12 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	@Override
 	public StubRunnerRule withProperties(Map<String, String> properties) {
 		builder().withProperties(properties);
+		return this.delegate;
+	}
+
+	@Override
+	public StubRunnerRule withHttpServerStubConfigurer(Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer) {
+		builder().withHttpServerStubConfigurer(httpServerStubConfigurer);
 		return this.delegate;
 	}
 
