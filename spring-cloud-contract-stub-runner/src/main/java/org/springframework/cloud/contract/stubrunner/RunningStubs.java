@@ -46,11 +46,7 @@ public class RunningStubs {
 	}
 
 	public Map.Entry<StubConfiguration, Integer> getEntry(String artifactId) {
-		return entry(artifactId, this.namesAndPorts);
-	}
-
-	private Entry<StubConfiguration, Integer> entry(String artifactId, Map<StubConfiguration, Integer> namesAndHttpsPorts) {
-		for (Entry<StubConfiguration, Integer> it : namesAndHttpsPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			if (it.getKey().matchesIvyNotation(artifactId)) {
 				return it;
 			}
@@ -59,11 +55,7 @@ public class RunningStubs {
 	}
 
 	public Integer getPort(String groupId, String artifactId) {
-		return port(groupId, artifactId, this.namesAndPorts);
-	}
-
-	private Integer port(String groupId, String artifactId, Map<StubConfiguration, Integer> namesAndHttpsPorts) {
-		for (Entry<StubConfiguration, Integer> it : namesAndHttpsPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			if (it.getKey().matchesIvyNotation(groupId + ":" + artifactId)) {
 				return it.getValue();
 			}
@@ -92,12 +84,8 @@ public class RunningStubs {
 	}
 
 	public Map<String, Integer> toIvyToPortMapping() {
-		return toMap(this.namesAndPorts);
-	}
-
-	private Map<String, Integer> toMap(Map<StubConfiguration, Integer> namesAndHttpsPorts) {
 		Map<String, Integer> result = new LinkedHashMap<>();
-		for (Entry<StubConfiguration, Integer> it : namesAndHttpsPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			result.put(it.getKey().toColonSeparatedDependencyNotation(), it.getValue());
 		}
 		return result;

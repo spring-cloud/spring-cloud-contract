@@ -43,7 +43,8 @@ public interface HttpServerStub {
 	HttpServerStub start(int port);
 
 	/**
-	 * Starts the server on a random port. Should return itself to allow chaining.
+	 * Starts the server. Should return itself to allow chaining.
+	 * @param configuration - setup for the given stub
 	 */
 	default HttpServerStub start(HttpServerStubConfiguration configuration) {
 		if (configuration.isRandomPort()) {
