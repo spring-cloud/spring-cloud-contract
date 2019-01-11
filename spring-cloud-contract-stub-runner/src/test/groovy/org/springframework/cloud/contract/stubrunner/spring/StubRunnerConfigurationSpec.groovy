@@ -16,22 +16,29 @@
 
 package org.springframework.cloud.contract.stubrunner.spring
 
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import spock.lang.Issue
+import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.StubNotFoundException
+import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
+import org.springframework.util.SocketUtils
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -42,7 +49,8 @@ import spock.lang.Specification
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false", 
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
 		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
-@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
+@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
+			httpServerStubConfigurer = HttpsForFraudDetection)
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 
@@ -129,5 +137,21 @@ class StubRunnerConfigurationSpec extends Specification {
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {}
+
+	static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
+
+		private static final Log log = LogFactory.getLog(HttpsForFraudDetection)
+
+		@Override
+		WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
+			if (httpServerStubConfiguration.stubConfiguration.artifactId == "fraudDetectionServer") {
+				int httpsPort = SocketUtils.findAvailableTcpPort()
+				log.info("Will set HTTPs port [" + httpsPort + "] for fraud detection server")
+				return httpStubConfiguration
+						.httpsPort(httpsPort)
+			}
+			return httpStubConfiguration
+		}
+	}
 }
 // end::test[]

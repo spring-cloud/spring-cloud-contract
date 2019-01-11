@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -114,13 +115,20 @@ public class StubRunnerOptions {
 	 */
 	private Map<String, String> properties = new HashMap<>();
 
+	/**
+	 * Configuration for an HTTP server stub
+	 * @return class that allows to perform additional HTTP server stub configuration
+	 */
+	private final Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer;
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode,
 			String stubsClassifier, Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping, String username,
 			String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
 			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder,
-			boolean deleteStubsAfterTest, Map<String, String> properties) {
+			boolean deleteStubsAfterTest, Map<String, String> properties,
+			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -137,6 +145,7 @@ public class StubRunnerOptions {
 		this.mappingsOutputFolder = mappingsOutputFolder;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		this.properties = properties;
+		this.httpServerStubConfigurer = httpServerStubConfigurer;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -253,6 +262,7 @@ public class StubRunnerOptions {
 		return this.stubsPerConsumer;
 	}
 
+	@Deprecated
 	public void setStubsPerConsumer(boolean stubsPerConsumer) {
 		this.stubsPerConsumer = stubsPerConsumer;
 	}
@@ -261,6 +271,7 @@ public class StubRunnerOptions {
 		return this.consumerName;
 	}
 
+	@Deprecated
 	public void setConsumerName(String consumerName) {
 		this.consumerName = consumerName;
 	}
@@ -273,6 +284,7 @@ public class StubRunnerOptions {
 		return this.mappingsOutputFolder;
 	}
 
+	@Deprecated
 	public void setMappingsOutputFolder(String mappingsOutputFolder) {
 		this.mappingsOutputFolder = mappingsOutputFolder;
 	}
@@ -281,6 +293,7 @@ public class StubRunnerOptions {
 		return this.deleteStubsAfterTest;
 	}
 
+	@Deprecated
 	public void setDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 	}
@@ -289,8 +302,13 @@ public class StubRunnerOptions {
 		return this.properties;
 	}
 
+	@Deprecated
 	public void setProperties(Map<String, String> properties) {
 		this.properties = properties;
+	}
+
+	public Class<? extends HttpServerStubConfigurer> getHttpServerStubConfigurer() {
+		return this.httpServerStubConfigurer;
 	}
 
 	public static class StubRunnerProxyOptions {
@@ -317,7 +335,6 @@ public class StubRunnerOptions {
 			return "StubRunnerProxyOptions{" + "proxyHost='" + this.proxyHost + '\''
 					+ ", proxyPort=" + this.proxyPort + '}';
 		}
-
 	}
 
 	@Override
@@ -331,7 +348,7 @@ public class StubRunnerOptions {
 				+ '\'' + ", password='" + obfuscate(this.password) + '\''
 				+ ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions
 				+ "', stubsPerConsumer='" + this.stubsPerConsumer + '\''
-				+ ", stubsPerConsumer='" + this.stubsPerConsumer + '\'' + '}';
+				+ ", httpServerStubConfigurer='" + this.httpServerStubConfigurer+ '\'' + '}';
 	}
 
 	private String obfuscate(String string) {

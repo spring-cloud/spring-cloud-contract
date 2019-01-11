@@ -17,19 +17,38 @@ public interface HttpServerStub {
 	int port();
 
 	/**
+	 * Https port on which the server is running
+	 */
+	default int httpsPort() {
+		return -1;
+	}
+
+	/**
 	 * Returns {@code true} if the server is running
 	 */
 	boolean isRunning();
 
 	/**
 	 * Starts the server on a random port. Should return itself to allow chaining.
+	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
 	 */
 	HttpServerStub start();
 
 	/**
 	 * Starts the server on a given port. Should return itself to allow chaining.
+	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
 	 */
 	HttpServerStub start(int port);
+
+	/**
+	 * Starts the server on a random port. Should return itself to allow chaining.
+	 */
+	default HttpServerStub start(HttpServerStubConfiguration configuration) {
+		if (configuration.isRandomPort()) {
+			return start();
+		}
+		return start(configuration.port);
+	};
 
 	/**
 	 * Stops the server. Should return itself to allow chaining.

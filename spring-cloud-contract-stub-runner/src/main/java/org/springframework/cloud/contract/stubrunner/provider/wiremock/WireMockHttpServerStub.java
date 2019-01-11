@@ -40,6 +40,8 @@ import org.apache.commons.logging.LogFactory;
 import wiremock.com.github.jknack.handlebars.Helper;
 
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
 import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer;
@@ -122,15 +124,38 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			return this;
 		}
 		int port = SocketUtils.findAvailableTcpPort();
-		HttpServerStub serverStub = start(port);
+		HttpServerStub serverStub = start(defaultConfiguration(port));
 		cacheStubServer(true, port);
 		return serverStub;
 	}
 
+	private HttpServerStubConfiguration defaultConfiguration(int port) {
+		return new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null, null, port);
+	}
+
 	@Override
 	public HttpServerStub start(int port) {
-		this.wireMockServer = new WireMockServer(
-				config().port(port).notifier(new Slf4jNotifier(true)));
+		return start(defaultConfiguration(port));
+	}
+
+	@Override
+	public HttpServerStub start(
+			HttpServerStubConfiguration configuration) {
+		if (isRunning()) {
+			if (log.isTraceEnabled()) {
+				log.trace("The server is already running at port [" + port() + "]");
+			}
+			return this;
+		}
+		int port = configuration.port;
+		WireMockConfiguration wireMockConfiguration = config().port(port)
+				.notifier(new Slf4jNotifier(true));
+		if (configuration.configurer.isAccepted(wireMockConfiguration)) {
+			@SuppressWarnings("unchecked")
+			HttpServerStubConfigurer<WireMockConfiguration> configurer = configuration.configurer;
+			wireMockConfiguration = configurer.configure(wireMockConfiguration, configuration);
+		}
+		this.wireMockServer = new WireMockServer(wireMockConfiguration);
 		this.wireMockServer.start();
 		if (log.isDebugEnabled()) {
 			log.debug("Started WireMock at port [" + port + "]");

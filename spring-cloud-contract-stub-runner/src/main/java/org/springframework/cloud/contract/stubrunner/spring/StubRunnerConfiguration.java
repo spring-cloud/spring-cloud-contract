@@ -97,7 +97,8 @@ public class StubRunnerConfiguration {
 				.withConsumerName(consumerName())
 				.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
 				.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest())
-				.withProperties(this.props.getProperties());
+				.withProperties(this.props.getProperties())
+				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer());
 	}
 
 	private String consumerName() {

@@ -46,13 +46,8 @@ class StubServer {
 		this.contracts = contracts;
 	}
 
-	public StubServer start() {
-		this.httpServerStub.start();
-		return stubServer();
-	}
-
-	public StubServer start(int port) {
-		this.httpServerStub.start(port);
+	public StubServer start(HttpServerStubConfiguration configuration) {
+		this.httpServerStub.start(configuration);
 		return stubServer();
 	}
 
@@ -86,6 +81,17 @@ class StubServer {
 		return -1;
 	}
 
+	public int getHttpsPort() {
+		if (this.httpServerStub.isRunning()) {
+			return this.httpServerStub.httpsPort();
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("The HTTP Server stub is not running... That means that the "
+					+ "artifact is running a messaging module. Returning back -1 value of the port.");
+		}
+		return -1;
+	}
+
 	public URL getStubUrl() {
 		try {
 			return new URL("http://localhost:" + getPort());
@@ -105,6 +111,10 @@ class StubServer {
 
 	String registeredMappings() {
 		return this.httpServerStub.registeredMappings();
+	}
+
+	HttpServerStub httpServerStub() {
+		return this.httpServerStub;
 	}
 
 	@Override

@@ -66,6 +66,10 @@ public class StubRunnerOptionsBuilder {
 
 	private Map<String, String> properties = new HashMap<>();
 
+	private Class httpServerStubConfigurer =
+			HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
+
+
 	public StubRunnerOptionsBuilder() {
 	}
 
@@ -174,13 +178,18 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withHttpServerStubConfigurer(Class httpServerStubConfigurer) {
+		this.httpServerStubConfigurer = httpServerStubConfigurer;
+		return this;
+	}
+
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue,
 				this.stubRepositoryRoot, this.stubsMode, this.stubsClassifier,
 				buildDependencies(), this.stubIdsToPortMapping, this.username,
 				this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer,
 				this.consumerName, this.mappingsOutputFolder, this.deleteStubsAfterTest,
-				this.properties);
+				this.properties, this.httpServerStubConfigurer);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
