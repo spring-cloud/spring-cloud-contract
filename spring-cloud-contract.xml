@@ -4551,6 +4551,46 @@ structure in your stubs jar.</simpara>
 <simpara>By maintaining this structure classpath gets scanned and you can profit from the messaging /
 HTTP stubs without the need to download artifacts.</simpara>
 </section>
+<section xml:id="_configuring_http_server_stubs">
+<title>Configuring HTTP Server Stubs</title>
+<simpara>Stub Runner has a notion of a <literal>HttpServerStub</literal> that abstracts the underlaying
+concrete implementation of the HTTP server (e.g. WireMock is one of the implementations).
+Sometimes, you need to perform some additional tuning of the stub servers,
+that is concrete for the given implementation. To do that, Stub Runner gives you
+the <literal>httpServerStubConfigurer</literal> property that is available in the annotation,
+JUnit rule, and is accessible via system properties, where you can provide
+your implementation of the <literal>org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer</literal> interface. The implementations can alter
+the configuration files for the given HTTP server stub.</simpara>
+<simpara>Spring Cloud Contract Stub Runner comes with an implementation that you
+can extend, for WireMock - <literal>org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer</literal>. In the <literal>configure</literal> method
+you can provide your own, custom configuration for the given stub. The use
+case might be starting WireMock for the given artifact id, on an HTTPs port. Example:</simpara>
+<formalpara>
+<title>WireMockHttpServerStubConfigurer implementation</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">@CompileStatic
+static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
+
+	private static final Log log = LogFactory.getLog(HttpsForFraudDetection)
+
+	@Override
+	WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
+		if (httpServerStubConfiguration.stubConfiguration.artifactId == "fraudDetectionServer") {
+			int httpsPort = SocketUtils.findAvailableTcpPort()
+			log.info("Will set HTTPs port [" + httpsPort + "] for fraud detection server")
+			return httpStubConfiguration
+					.httpsPort(httpsPort)
+		}
+		return httpStubConfiguration
+	}
+}</programlisting>
+</para>
+</formalpara>
+<simpara>You can then reuse it via the annotation</simpara>
+<programlisting language="groovy" linenumbering="unnumbered">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
+			httpServerStubConfigurer = HttpsForFraudDetection)</programlisting>
+<simpara>Whenever an https port is found, it will take precedence over the http one.</simpara>
+</section>
 </section>
 <section xml:id="_running_stubs">
 <title>Running stubs</title>
@@ -4824,7 +4864,8 @@ its methods as presented below:</simpara>
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
 		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
-@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
+@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
+			httpServerStubConfigurer = HttpsForFraudDetection)
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 
@@ -4856,6 +4897,8 @@ class StubRunnerConfigurationSpec extends Specification {
 		and: 'Stubs were registered'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+		and: 'Fraud Detection is an HTTPS endpoint'
+			stubFinder.findStubUrl('fraudDetectionServer').toString().startsWith("https")
 	}
 
 	def 'should throw an exception when stub is not found'() {
@@ -4911,6 +4954,23 @@ class StubRunnerConfigurationSpec extends Specification {
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {}
+
+	@CompileStatic
+	static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
+
+		private static final Log log = LogFactory.getLog(HttpsForFraudDetection)
+
+		@Override
+		WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
+			if (httpServerStubConfiguration.stubConfiguration.artifactId == "fraudDetectionServer") {
+				int httpsPort = SocketUtils.findAvailableTcpPort()
+				log.info("Will set HTTPs port [" + httpsPort + "] for fraud detection server")
+				return httpStubConfiguration
+						.httpsPort(httpsPort)
+			}
+			return httpStubConfiguration
+		}
+	}
 }
 // end::test[]</programlisting>
 <simpara>for the following configuration file:</simpara>

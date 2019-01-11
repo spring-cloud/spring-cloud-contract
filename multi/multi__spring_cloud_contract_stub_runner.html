@@ -218,7 +218,35 @@ structure in your stubs jar.</p><pre class="programlisting">&#9492;&#9472;&#9472
              &nbsp;&nbsp; &#9474;       &#9492;&#9472;&#9472; contract2.groovy
              &nbsp;&nbsp; &#9492;&#9472;&#9472; mappings
              &nbsp;&nbsp;     &#9492;&#9472;&#9472; mapping.json</pre><p>By maintaining this structure classpath gets scanned and you can profit from the messaging /
-HTTP stubs without the need to download artifacts.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_running_stubs" href="#_running_stubs"></a>6.3.2&nbsp;Running stubs</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_running_using_main_app" href="#_running_using_main_app"></a>Running using main app</h4></div></div></div><p>You can set the following options to the main class:</p><pre class="programlisting">-c, --classifier                Suffix <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> the jar containing stubs (e.
+HTTP stubs without the need to download artifacts.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_configuring_http_server_stubs" href="#_configuring_http_server_stubs"></a>Configuring HTTP Server Stubs</h4></div></div></div><p>Stub Runner has a notion of a <code class="literal">HttpServerStub</code> that abstracts the underlaying
+concrete implementation of the HTTP server (e.g. WireMock is one of the implementations).
+Sometimes, you need to perform some additional tuning of the stub servers,
+that is concrete for the given implementation. To do that, Stub Runner gives you
+the <code class="literal">httpServerStubConfigurer</code> property that is available in the annotation,
+JUnit rule, and is accessible via system properties, where you can provide
+your implementation of the <code class="literal">org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer</code> interface. The implementations can alter
+the configuration files for the given HTTP server stub.</p><p>Spring Cloud Contract Stub Runner comes with an implementation that you
+can extend, for WireMock - <code class="literal">org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer</code>. In the <code class="literal">configure</code> method
+you can provide your own, custom configuration for the given stub. The use
+case might be starting WireMock for the given artifact id, on an HTTPs port. Example:</p><p><b>WireMockHttpServerStubConfigurer implementation.&nbsp;</b>
+</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@CompileStatic</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> HttpsForFraudDetection <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> WireMockHttpServerStubConfigurer {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Log log = LogFactory.getLog(HttpsForFraudDetection)
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (httpServerStubConfiguration.stubConfiguration.artifactId == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>) {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> httpsPort = SocketUtils.findAvailableTcpPort()
+			log.info(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Will set HTTPs port ["</span> + httpsPort + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"] for fraud detection server"</span>)
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> httpStubConfiguration
+					.httpsPort(httpsPort)
+		}
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> httpStubConfiguration
+	}
+}</pre><p>
+</p><p>You can then reuse it via the annotation</p><pre class="programlisting">@AutoConfigureStubRunner(mappingsOutputFolder = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappings/"</span>,
+			httpServerStubConfigurer = HttpsForFraudDetection)</pre><p>Whenever an https port is found, it will take precedence over the http one.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_running_stubs" href="#_running_stubs"></a>6.3.2&nbsp;Running stubs</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_running_using_main_app" href="#_running_using_main_app"></a>Running using main app</h4></div></div></div><p>You can set the following options to the main class:</p><pre class="programlisting">-c, --classifier                Suffix <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> the jar containing stubs (e.
                                   g. <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> the stub jar would
                                   have a <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> classifier <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> stubs:
                                   foobar-stubs ). Defaults to <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span>
@@ -401,7 +429,8 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
 		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
+			httpServerStubConfigurer = HttpsForFraudDetection)</span></em>
 <em><span class="hl-annotation" style="color: gray">@ActiveProfiles("test")</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerConfigurationSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 
@@ -433,6 +462,8 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 		and: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Stubs were registered'</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${stubFinder.findStubUrl('loanIssuance').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>
+		and: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Fraud Detection is an HTTPS endpoint'</span>
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>).toString().startsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https"</span>)
 	}
 
 	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should throw an exception when stub is not found'</span>() {
@@ -488,6 +519,23 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 	<em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
 	<em><span class="hl-annotation" style="color: gray">@EnableAutoConfiguration</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> Config {}
+
+	<em><span class="hl-annotation" style="color: gray">@CompileStatic</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> HttpsForFraudDetection <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> WireMockHttpServerStubConfigurer {
+
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Log log = LogFactory.getLog(HttpsForFraudDetection)
+
+		<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+		WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (httpServerStubConfiguration.stubConfiguration.artifactId == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>) {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> httpsPort = SocketUtils.findAvailableTcpPort()
+				log.info(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Will set HTTPs port ["</span> + httpsPort + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"] for fraud detection server"</span>)
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> httpStubConfiguration
+						.httpsPort(httpsPort)
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> httpStubConfiguration
+		}
+	}
 }
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::test[]</span></pre><p>for the following configuration file:</p><pre class="programlisting">stubrunner:
   repositoryRoot: classpath:m2repo/repository/
