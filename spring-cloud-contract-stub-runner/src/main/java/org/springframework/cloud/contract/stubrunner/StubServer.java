@@ -72,7 +72,12 @@ class StubServer {
 
 	public int getPort() {
 		if (this.httpServerStub.isRunning()) {
-			return this.httpServerStub.port();
+			int httpsPort = this.httpServerStub.httpsPort();
+			int httpPort = this.httpServerStub.port();
+			if (log.isDebugEnabled()) {
+				log.debug("Ports for this server are https [" + httpsPort + "] and http [" + httpPort + "]");
+			}
+			return httpsPort != -1 ? httpsPort : httpPort;
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("The HTTP Server stub is not running... That means that the "
@@ -81,20 +86,14 @@ class StubServer {
 		return -1;
 	}
 
-	public int getHttpsPort() {
-		if (this.httpServerStub.isRunning()) {
-			return this.httpServerStub.httpsPort();
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("The HTTP Server stub is not running... That means that the "
-					+ "artifact is running a messaging module. Returning back -1 value of the port.");
-		}
-		return -1;
+	private boolean hasHttps() {
+		int httpsPort = this.httpServerStub.httpsPort();
+		return httpsPort != -1;
 	}
 
 	public URL getStubUrl() {
 		try {
-			return new URL("http://localhost:" + getPort());
+			return new URL((hasHttps() ? "https:" : "http:") + "//localhost:" + getPort());
 		}
 		catch (MalformedURLException e) {
 			throw new IllegalStateException("Cannot parse URL", e);

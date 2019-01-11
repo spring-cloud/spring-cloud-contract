@@ -74,30 +74,6 @@ public class BatchStubRunner implements StubRunning {
 	}
 
 	@Override
-	public URL findStubHttpsUrl(String groupId, String artifactId) throws StubNotFoundException {
-		for (StubRunner stubRunner : this.stubRunners) {
-			try {
-				return stubRunner.findStubHttpsUrl(groupId, artifactId);
-			}
-			catch (StubNotFoundException e) {
-			}
-		}
-		throw new StubNotFoundException(groupId, artifactId);
-	}
-
-	@Override
-	public URL findStubHttpsUrl(String ivyNotation) throws StubNotFoundException {
-		for (StubRunner stubRunner : this.stubRunners) {
-			try {
-				return stubRunner.findStubHttpsUrl(ivyNotation);
-			}
-			catch (StubNotFoundException e) {
-			}
-		}
-		throw new StubNotFoundException(ivyNotation);
-	}
-
-	@Override
 	public RunningStubs findAllRunningStubs() {
 		Collection<RunningStubs> running = new LinkedHashSet<>();
 		for (StubRunner stubRunner : this.stubRunners) {

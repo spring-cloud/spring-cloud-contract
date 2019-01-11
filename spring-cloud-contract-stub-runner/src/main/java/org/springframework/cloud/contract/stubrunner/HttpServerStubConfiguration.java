@@ -37,4 +37,9 @@ public final class HttpServerStubConfiguration {
 	public boolean isRandomPort() {
 		return this.port == null || this.port == 0;
 	}
+
+	public String toColonSeparatedDependencyNotation() {
+		return this.stubConfiguration != null ?
+				this.stubConfiguration.toColonSeparatedDependencyNotation() : "";
+	}
 }

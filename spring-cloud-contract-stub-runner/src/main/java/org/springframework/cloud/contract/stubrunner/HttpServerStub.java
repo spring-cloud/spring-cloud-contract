@@ -12,12 +12,12 @@ import java.util.Collection;
 public interface HttpServerStub {
 
 	/**
-	 * Port on which the server is running
+	 * Port on which the server is running. Return {@code -1} if not applicable.
 	 */
 	int port();
 
 	/**
-	 * Https port on which the server is running
+	 * Https port on which the server is running. Return {@code -1} if not applicable.
 	 */
 	default int httpsPort() {
 		return -1;
@@ -32,12 +32,14 @@ public interface HttpServerStub {
 	 * Starts the server on a random port. Should return itself to allow chaining.
 	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
 	 */
+	@Deprecated
 	HttpServerStub start();
 
 	/**
 	 * Starts the server on a given port. Should return itself to allow chaining.
 	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
 	 */
+	@Deprecated
 	HttpServerStub start(int port);
 
 	/**

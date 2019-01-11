@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.stubrunner.spring
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.junit.AfterClass
@@ -49,8 +50,10 @@ import org.springframework.util.SocketUtils
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false", 
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
 		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
+// tag::annotation[]
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
 			httpServerStubConfigurer = HttpsForFraudDetection)
+// end::annotation[]
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 
@@ -82,6 +85,8 @@ class StubRunnerConfigurationSpec extends Specification {
 		and: 'Stubs were registered'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+		and: 'Fraud Detection is an HTTPS endpoint'
+			stubFinder.findStubUrl('fraudDetectionServer').toString().startsWith("https")
 	}
 
 	def 'should throw an exception when stub is not found'() {
@@ -138,6 +143,8 @@ class StubRunnerConfigurationSpec extends Specification {
 	@EnableAutoConfiguration
 	static class Config {}
 
+	// tag::wireMockHttpServerStubConfigurer[]
+	@CompileStatic
 	static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
 
 		private static final Log log = LogFactory.getLog(HttpsForFraudDetection)
@@ -153,5 +160,6 @@ class StubRunnerConfigurationSpec extends Specification {
 			return httpStubConfiguration
 		}
 	}
+	// end::wireMockHttpServerStubConfigurer[]
 }
 // end::test[]

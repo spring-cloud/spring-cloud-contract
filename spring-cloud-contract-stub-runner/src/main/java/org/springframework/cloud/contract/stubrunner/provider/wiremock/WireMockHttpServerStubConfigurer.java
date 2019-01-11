@@ -16,14 +16,12 @@
 
 package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 
-import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 
 /**
- * Typed implementation of {@link HttpServerStubConfigurer} for
- * WireMock's {@link Options}
+ * Typed implementation of {@link HttpServerStubConfigurer} for WireMock's {@link WireMockConfiguration}
  *
  * @author Marcin Grzejszczak
  * @since 2.1.0

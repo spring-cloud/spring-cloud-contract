@@ -30,7 +30,6 @@ import java.util.Set;
 public class RunningStubs {
 
 	final private Map<StubConfiguration, Integer> namesAndPorts = new LinkedHashMap<>();
-	final private Map<StubConfiguration, Integer> namesAndHttpsPorts = new LinkedHashMap<>();
 
 	public RunningStubs(Map<StubConfiguration, Integer> map) {
 		this.namesAndPorts.putAll(map);
@@ -46,16 +45,8 @@ public class RunningStubs {
 		return getEntry(artifactId) == null ? null : getEntry(artifactId).getValue();
 	}
 
-	public Integer getHttpsPort(String artifactId) {
-		return getEntry(artifactId) == null ? null : getEntry(artifactId).getValue();
-	}
-
 	public Map.Entry<StubConfiguration, Integer> getEntry(String artifactId) {
 		return entry(artifactId, this.namesAndPorts);
-	}
-
-	public Map.Entry<StubConfiguration, Integer> getHttpEntry(String artifactId) {
-		return entry(artifactId, this.namesAndHttpsPorts);
 	}
 
 	private Entry<StubConfiguration, Integer> entry(String artifactId, Map<StubConfiguration, Integer> namesAndHttpsPorts) {
@@ -71,10 +62,6 @@ public class RunningStubs {
 		return port(groupId, artifactId, this.namesAndPorts);
 	}
 
-	public Integer getHttpsPort(String groupId, String artifactId) {
-		return port(groupId, artifactId, this.namesAndHttpsPorts);
-	}
-
 	private Integer port(String groupId, String artifactId, Map<StubConfiguration, Integer> namesAndHttpsPorts) {
 		for (Entry<StubConfiguration, Integer> it : namesAndHttpsPorts.entrySet()) {
 			if (it.getKey().matchesIvyNotation(groupId + ":" + artifactId)) {
@@ -85,11 +72,11 @@ public class RunningStubs {
 	}
 
 	public boolean isPresent(String artifactId) {
-		return getEntry(artifactId) != null || getHttpEntry(artifactId) != null;
+		return getEntry(artifactId) != null;
 	}
 
 	public boolean isPresent(String groupId, String artifactId) {
-		return getPort(groupId, artifactId) != null || getHttpsPort(groupId, artifactId) != null;
+		return getPort(groupId, artifactId) != null;
 	}
 
 	public Set<StubConfiguration> getAllServices() {
@@ -106,10 +93,6 @@ public class RunningStubs {
 
 	public Map<String, Integer> toIvyToPortMapping() {
 		return toMap(this.namesAndPorts);
-	}
-
-	public Map<String, Integer> toIvyToHttpsPortMapping() {
-		return toMap(this.namesAndHttpsPorts);
 	}
 
 	private Map<String, Integer> toMap(Map<StubConfiguration, Integer> namesAndHttpsPorts) {
@@ -132,7 +115,7 @@ public class RunningStubs {
 
 	@Override
 	public String toString() {
-		return "RunningStubs [namesAndPorts=" + this.namesAndPorts + "] [namesAndHttpsPorts=" + this.namesAndHttpsPorts + "]";
+		return "RunningStubs [namesAndPorts=" + this.namesAndPorts + "]";
 	}
 
 	@Override
@@ -141,8 +124,6 @@ public class RunningStubs {
 		int result = 1;
 		result = prime * result
 				+ ((this.namesAndPorts == null) ? 0 : this.namesAndPorts.hashCode());
-		result = prime * result
-				+ ((this.namesAndHttpsPorts == null) ? 0 : this.namesAndHttpsPorts.hashCode());
 		return result;
 	}
 
@@ -160,12 +141,6 @@ public class RunningStubs {
 				return false;
 		}
 		else if (!this.namesAndPorts.equals(other.namesAndPorts))
-			return false;
-		if (this.namesAndHttpsPorts == null) {
-			if (other.namesAndHttpsPorts!= null)
-				return false;
-		}
-		else if (!this.namesAndHttpsPorts.equals(other.namesAndHttpsPorts))
 			return false;
 		return true;
 	}
