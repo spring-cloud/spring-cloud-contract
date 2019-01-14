@@ -212,7 +212,7 @@ class SingleTestGeneratorSpec extends Specification {
 			int size = new TestGenerator(properties).generate()
 		then:
 			size > 0
-			asserter(new File(newFolder.parent, '/org/springframework/cloud/contract/verifier/tests/com_uscm/dale_api44_spec/0_1_0_dev_1_uncommitted_d1174dd/' + testName).text)
+			asserter(new File(newFolder.parent, '/org/springframework/cloud/contract/verifier/tests/com_uscm/dale_api44_spec/_0_1_0_dev_1_uncommitted_d1174dd/' + testName).text)
 		where:
 			testFramework | mode              | asserter        | testName
 			JUNIT         | MOCKMVC           | JAVA_ASSERTER   | 'ContractsTest.java'
