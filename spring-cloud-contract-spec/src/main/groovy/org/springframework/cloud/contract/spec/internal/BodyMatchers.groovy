@@ -92,12 +92,6 @@ class BodyMatchers {
 		return matchingTypeValue.matchingTypeValue
 	}
 
-	MatchingTypeValue byXmlEquality(String xml
-	) {
-		return new MatchingTypeValue(MatchingType.XML_EQUALITY, xml
-		)
-	}
-
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (this.getClass() != o.class) return false

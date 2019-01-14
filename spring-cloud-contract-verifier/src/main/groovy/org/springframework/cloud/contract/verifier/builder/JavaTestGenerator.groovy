@@ -76,7 +76,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 		}
 		// FIXME: change during Hoxton refactoring: we should only add either Json or Xml imports and not both
 		addJsonPathRelatedImports(clazz)
-		addXmlPathRelatedImports(clazz)
+		addXPathRelatedImports(clazz)
 		processContractFiles(listOfFiles, configProperties, clazz, generatedClassData)
 		return clazz.build()
 	}
@@ -189,7 +189,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 		}
 	}
 
-	private void addXmlPathRelatedImports(ClassBuilder clazz) {
+	private void addXPathRelatedImports(ClassBuilder clazz) {
 		clazz.addImports(['javax.xml.parsers.DocumentBuilder',
 		'javax.xml.parsers.DocumentBuilderFactory',
 		'org.w3c.dom.Document',

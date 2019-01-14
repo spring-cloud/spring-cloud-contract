@@ -27,7 +27,6 @@ import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.matching.UrlPattern
 import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
-import groovy.transform.CompileDynamic
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
@@ -51,14 +50,14 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.cloud.contract.verifier.util.XmlToXPathsConverter
+import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter
 
 import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO
 import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
-import static org.springframework.cloud.contract.verifier.util.XmlToXPathsConverter.retrieveValueFromBody
+import static org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter.retrieveValue
 
 /**
  * Converts a {@link Request} into {@link RequestPattern}
@@ -162,7 +161,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		String retrievedValue = Optional.ofNullable(matcher.value()).orElseGet({
 			if (EQUALITY == matcher.matchingType()) {
-				return retrieveValueFromBody(matcher.path(), body)
+				return retrieveValue(matcher, body)
 			}
 			else {
 				return ''

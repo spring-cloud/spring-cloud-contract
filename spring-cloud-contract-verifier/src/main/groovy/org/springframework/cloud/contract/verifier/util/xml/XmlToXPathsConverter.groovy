@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 the original author or authors.
+ *  Copyright 2018-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.util
+package org.springframework.cloud.contract.verifier.util.xml
+
 
 import java.util.stream.IntStream
 
@@ -27,8 +28,6 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathFactory
 
-import com.toomuchcoding.xmlassert.XPathBuilder
-import com.toomuchcoding.xmlassert.XmlVerifiable
 import groovy.transform.CompileDynamic
 import org.w3c.dom.Attr
 import org.w3c.dom.Document
@@ -75,7 +74,13 @@ class XmlToXPathsConverter {
 		return xmlToString(parsedXml)
 	}
 
-	// TODO: remove method?
+	static String retrieveValue(BodyMatcher matcher, Object body) {
+		if (matcher.matchingType() == MatchingType.EQUALITY || !matcher.value()) {
+			return retrieveValueFromBody(matcher.path(), body)
+		}
+		return matcher.value()
+	}
+
 	static String retrieveValueFromBody(String path, Object body) {
 		return getNodeValue(path, body)
 	}
@@ -137,16 +142,15 @@ class XmlToXPathsConverter {
 		return matchers
 	}
 
-
 	static List<NodePath> transformListEntries(List<List<Node>> nodeLists) {
 		List<PathOccurrenceCounter> pathOccurrenceCounters = []
 		List<NodePath> nodePaths = []
 		nodeLists.each { nodeList ->
 			List<Node> parentNodesList = nodeList.subList(1, nodeList.size())
-			int elementIndex = pathOccurrenceCounters.
-					stream()
+			int elementIndex = pathOccurrenceCounters.stream()
+					.map({ it })
 					.filter({
-				it.path == parentNodesList
+				nodeNames(it.path) == nodeNames(parentNodesList)
 			}).findFirst()
 					.map({ ++it.counter })
 					.orElseGet({
@@ -157,6 +161,12 @@ class XmlToXPathsConverter {
 			nodePaths << new NodePath(nodeList, elementIndex)
 		}
 		return nodePaths
+	}
+
+	private static List<String> nodeNames(List<Node> nodes) {
+		return nodes.stream()
+				.map({ it.getNodeName() })
+				.collect(toList())
 	}
 
 	static String buildXPath(List<Node> nodes, int index = 1) {

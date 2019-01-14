@@ -78,13 +78,13 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
     },
     {
       "matchesXPath": {
-        "expression": "/test/list/elem/text()",
+        "expression": "/test/list/elem[2]/text()",
         "equalTo": "def"
       }
     },
     {
       "matchesXPath": {
-        "expression": "/test/list/elem/text()",
+        "expression": "/test/list/elem[3]/text()",
         "equalTo": "ghi"
       }
     },
@@ -177,8 +177,6 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 						xPath('/test/time/text()', byTime())
 						xPath('/test/*/complex/text()', byEquality())
 						xPath('/test/duck/@type', byEquality())
-						xPath('/test/duck',
-								byXmlEquality('<duck type=\'number\'>123</duck>'))
 					}
 					headers {
 						contentType(applicationXml())
@@ -253,11 +251,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
         "expression" : "/test/duck/@type",
         "equalTo" : "xtype"
       }
-    }, {
-      "matchesXPath" : {
-        "expression" : "/test/duck",
-        "equalToXml" : "<duck type=\\"number\\">123</duck>\\n"
-      }""".replaceAll("\n",
+    }""".replaceAll("\n",
 					"").replaceAll(' ', ''))
 	}
 
@@ -365,8 +359,6 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 						xPath('/test/time/text()', byTime())
 						xPath('/test/*/complex/text()', byEquality())
 						xPath('/test/duck/@type', byEquality())
-						xPath('/test/duck',
-								byXmlEquality('<duck type=\'number\'>123</duck>'))
 					}
 				}
 			}

@@ -8,7 +8,7 @@ import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingType
-import org.springframework.cloud.contract.verifier.util.XmlToXPathsConverter
+import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter
 
 /**
  * @author Olga Maciaszek-Sharma
@@ -59,12 +59,12 @@ class XmlBodyVerificationBuilder implements BodyMethodGeneration {
 
 	@Override
 	void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object body) {
-		String path = bodyMatcher.path()
 		Object retrievedValue =
-				quotedAndEscaped(XmlToXPathsConverter.retrieveValueFromBody(path, body))
+				quotedAndEscaped(XmlToXPathsConverter.
+						retrieveValue(bodyMatcher, body))
 		String comparisonMethod = bodyMatcher
 				.matchingType() == MatchingType.EQUALITY ? 'isEqualTo' : 'matches'
-		String method = "assertThat(valueFromXPath(parsedXml, ${quotedAndEscaped(path)})).$comparisonMethod(${retrievedValue})"
+		String method = "assertThat(valueFromXPath(parsedXml, ${quotedAndEscaped(bodyMatcher.path())})).$comparisonMethod(${retrievedValue})"
 		bb.addLine(method.replace('$', '\\$'))
 		addColonIfRequired(lineSuffix, bb)
 	}
@@ -72,8 +72,8 @@ class XmlBodyVerificationBuilder implements BodyMethodGeneration {
 	@Override
 	void methodForCommandExecution(BodyMatcher bodyMatcher, BlockBuilder bb, Object body) {
 		Object retrievedValue =
-				quotedAndEscaped(XmlToXPathsConverter.
-						retrieveValueFromBody(bodyMatcher.path(), body))
+				quotedAndEscaped(XmlToXPathsConverter
+						.retrieveValueFromBody(bodyMatcher.path(), body))
 		ExecutionProperty property = bodyMatcher.value() as ExecutionProperty
 		bb.addLine(property.insertValue(retrievedValue.replace('$', '\\$')))
 		addColonIfRequired(lineSuffix, bb)

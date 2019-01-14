@@ -21,7 +21,6 @@ class XPathBodyMatcherToWireMockValuePatternConverter {
 	static StringValuePattern mapToPattern(MatchingType type, String value) {
 		switch (type) {
 			case EQUALITY: return WireMock.equalTo(value)
-			case XML_EQUALITY: return WireMock.equalToXml(value)
 			default: return WireMock.matching(value)
 		}
 	}

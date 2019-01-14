@@ -73,8 +73,8 @@
 			<artifactId>jsonassert</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.toomuchcoding.xmlassert</groupId>
-			<artifactId>xmlassert</artifactId>
+			<groupId>com.rackspace.eclipse.webtools.sourceediting</groupId>
+			<artifactId>org.eclipse.wst.xml.xpath2.processor</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -196,6 +196,11 @@
 			<artifactId>javax.ws.rs-api</artifactId>
 			<groupId>javax.ws.rs</groupId>
 			<version>2.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

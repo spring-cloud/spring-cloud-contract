@@ -210,14 +210,14 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 
-	protected Object value(def body, BodyMatcher bodyMatcher) {
+	private static Object value(Object body, BodyMatcher bodyMatcher) {
 		if (bodyMatcher.matchingType() == MatchingType.EQUALITY || !bodyMatcher.value()) {
 			return retrieveObjectByPath(body, bodyMatcher.path())
 		}
 		return bodyMatcher.value()
 	}
 
-	protected Object retrieveObjectByPath(def body, String path) {
+	private static Object retrieveObjectByPath(Object body, String path) {
 		try {
 			return JsonPath.parse(body).read(path)
 		}

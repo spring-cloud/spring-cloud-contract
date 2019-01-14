@@ -63,15 +63,10 @@ enum MatchingType {
 	/**
 	 * Verification if the value for the given path is null
 	 */
-	NULL,
-	/**
-	 * Verification if the provided XML equals the reference XML
-	 */
-	// TODO: do we need this???
-	XML_EQUALITY
+	NULL
 
 	static boolean regexRelated(MatchingType type) {
-		List<MatchingType> otherMatchingTypes = [EQUALITY, TYPE, COMMAND, NULL, XML_EQUALITY]
+		List<MatchingType> otherMatchingTypes = [EQUALITY, TYPE, COMMAND, NULL]
 		if (otherMatchingTypes.contains(type)) {
 			return false
 		}
