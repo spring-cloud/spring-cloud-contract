@@ -1,11 +1,16 @@
 package org.springframework.cloud.contract.verifier.util
 
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import org.springframework.util.FileSystemUtils
 /**
  * @author Marcin Grzejszczak
  */
 class NamesUtilSpec extends Specification {
+
+	@Rule TemporaryFolder folder = new TemporaryFolder()
 
 	def "should return the whole string before the last one"() {
 		given:
@@ -98,6 +103,13 @@ class NamesUtilSpec extends Specification {
 			NamesUtil.directoryToPackage(string) == "a.b.c._1_0_0.e"
 	}
 
+	def "should convert a directory notation to package when folder is only a digit"() {
+		given:
+			String string = "1.0.0"
+		expect:
+			NamesUtil.directoryToPackage(string) == "_1_0_0"
+	}
+
 	def "should convert all illegal package chars to legal ones"() {
 		given:
 			String string = "a-b c.1.0.x+d1174dd"
@@ -110,5 +122,31 @@ class NamesUtilSpec extends Specification {
 			String string = '10a-b c.1.0.x+d1174$dd'
 		expect:
 			NamesUtil.convertIllegalMethodNameChars(string) == '10a_b_c_1_0_x_d1174$dd'
+	}
+
+	def "should recursively convert the names of folders to package names"() {
+		given:
+			File tmp = folder.newFolder()
+			URL resource = getClass().getResource("/prependFolderName")
+			File folder = new File(resource.toURI())
+			FileSystemUtils.copyRecursively(folder, tmp)
+		when:
+			NamesUtil.recrusiveDirectoryToPackage(tmp)
+		then:
+			new File(tmp, "META-INF/1_0_0_SNAPSHOT").exists() == false
+			new File(tmp, "META-INF/2_0_0_SNAPSHOT").exists() == false
+			new File(tmp, "META-INF/1_0_0_SNAPSHOT/3_0_0_SNAPSHOT").exists() == false
+			new File(tmp, "META-INF/_1_0_0_SNAPSHOT").exists() == true
+			new File(tmp, "META-INF/_2_0_0_SNAPSHOT").exists() == true
+			new File(tmp, "META-INF/_1_0_0_SNAPSHOT/_3_0_0_SNAPSHOT").exists() == true
+			new File(tmp, "META-INF/_1_0_0_SNAPSHOT/normal").exists() == true
+			new File(tmp, "META-INF/_1_0_0_SNAPSHOT/_3_0_0_SNAPSHOT/normal").exists() == true
+	}
+
+	def "should not throw exception if folder does not exist"() {
+		when:
+			NamesUtil.recrusiveDirectoryToPackage(new File("I/do/not/exist"))
+		then:
+			noExceptionThrown()
 	}
 }

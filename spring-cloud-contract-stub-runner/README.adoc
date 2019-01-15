@@ -146,6 +146,37 @@ structure in your stubs jar.
 By maintaining this structure classpath gets scanned and you can profit from the messaging /
 HTTP stubs without the need to download artifacts.
 
+===== Configuring HTTP Server Stubs
+
+Stub Runner has a notion of a `HttpServerStub` that abstracts the underlaying
+concrete implementation of the HTTP server (e.g. WireMock is one of the implementations).
+Sometimes, you need to perform some additional tuning of the stub servers,
+that is concrete for the given implementation. To do that, Stub Runner gives you
+the `httpServerStubConfigurer` property that is available in the annotation,
+JUnit rule, and is accessible via system properties, where you can provide
+your implementation of the `org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer` interface. The implementations can alter
+the configuration files for the given HTTP server stub.
+
+Spring Cloud Contract Stub Runner comes with an implementation that you
+can extend, for WireMock - `org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer`. In the `configure` method
+you can provide your own, custom configuration for the given stub. The use
+case might be starting WireMock for the given artifact id, on an HTTPs port. Example:
+
+.WireMockHttpServerStubConfigurer implementation
+[source,groovy,indent=0]
+----
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=wireMockHttpServerStubConfigurer]
+----
+
+You can then reuse it via the annotation
+
+[source,groovy,indent=0]
+----
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=annotation]
+----
+
+Whenever an https port is found, it will take precedence over the http one.
+
 ==== Running stubs
 
 ===== Running using main app
@@ -678,4 +709,3 @@ Then only the stubs registered under a path that contains the `foo-consumer` in 
 
 You can check out https://github.com/spring-cloud/spring-cloud-contract/issues/224[issue 224] for more
 information about the reasons behind this change.
-

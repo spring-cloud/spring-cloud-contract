@@ -1559,6 +1559,11 @@ Next to that the request and path matchers are skipped during the conversion.
 When using a date, time or datetime value generator with a given format,
 the given format will be skipped and the ISO format will be used.
 
+In order to properly support the Spring Cloud Contract way of doing messaging
+with Pact you'll have to provide some additional meta data entries. Below you can find a list of such entries:
+
+- to define the destination to which a message gets sent, you have to
+set a `metaData` entry in the Pact file, with key `sentTo` equal to the destination to which a message is to be sent. E.g. `"metaData": { "sentTo": "activemq:output" }`
 
 ==== Pact Contract
 

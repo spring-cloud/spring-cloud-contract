@@ -52,7 +52,7 @@ class FileSaver {
 	}
 
 	protected Path pathToClass(Path testBaseDir, String fileName) {
-		Paths.get(testBaseDir.toString(), capitalize(fileName) + generator.fileExtension(this.properties)).toAbsolutePath()
+		return Paths.get(testBaseDir.toString(), capitalize(fileName) + generator.fileExtension(this.properties)).toAbsolutePath()
 	}
 
 	protected Path generateTestBaseDir(String basePackageClass, String includedDirectoryRelativePath) {

@@ -138,13 +138,6 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 	}
 
-	void reset() {
-		if (log.isDebugEnabled()) {
-			log.debug("Resetting stubs");
-		}
-		this.server.resetAll();
-	}
-
 	private void registerFiles(
 			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory)
 			throws IOException {

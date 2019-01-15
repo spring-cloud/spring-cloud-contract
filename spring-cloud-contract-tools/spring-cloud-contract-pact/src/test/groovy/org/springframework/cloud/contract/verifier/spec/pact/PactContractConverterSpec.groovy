@@ -650,15 +650,16 @@ class PactContractConverterSpec extends Specification {
 	}
 
 	def "should convert from pact v3 messaging to one SC message contract"() {
-
 		given:
 			Collection<Contract> expectedContracts = [
 					Contract.make {
+						description()
 						label 'message sent to activemq:output'
 						input {
 							triggeredBy('bookReturnedTriggered()')
 						}
 						outputMessage {
+							sentTo 'activemq:output'
 							body([
 								bookName: "foo"
 							])

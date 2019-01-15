@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.stubrunner.ResourceResolver;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -112,6 +113,12 @@ public class StubRunnerProperties {
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	private Map<String, String> properties = new HashMap<>();
+
+	/**
+	 * Configuration for an HTTP server stub
+	 */
+	private Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer =
+			HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
 
 	/**
 	 * An enumeration stub modes.
@@ -249,6 +256,14 @@ public class StubRunnerProperties {
 
 	public Map<String, String> getProperties() {
 		return this.properties;
+	}
+
+	public Class getHttpServerStubConfigurer() {
+		return this.httpServerStubConfigurer;
+	}
+
+	public void setHttpServerStubConfigurer(Class httpServerStubConfigurer) {
+		this.httpServerStubConfigurer = httpServerStubConfigurer;
 	}
 
 	public void setProperties(String[] properties) {

@@ -34,12 +34,16 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Extension;
+import com.github.tomakehurst.wiremock.security.ClientAuthenticator;
+import com.github.tomakehurst.wiremock.security.NoClientAuthenticator;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import wiremock.com.github.jknack.handlebars.Helper;
 
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
 import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer;
@@ -66,6 +70,10 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	static final Map<WireMockHttpServerStub, PortAndMappings> SERVERS = new ConcurrentHashMap<>();
 
 	private WireMockServer wireMockServer;
+
+	private boolean https = false;
+
+	private WireMockConfiguration wireMockConfiguration;
 
 	private WireMockConfiguration config() {
 		if (ClassUtils.isPresent(
@@ -105,7 +113,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	@Override
 	public int port() {
-		return isRunning() ? this.wireMockServer.port() : INVALID_PORT;
+		return isRunning() ? (this.https ?
+				this.wireMockServer.httpsPort() : this.wireMockServer.port())
+				: INVALID_PORT;
 	}
 
 	@Override
@@ -122,21 +132,53 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			return this;
 		}
 		int port = SocketUtils.findAvailableTcpPort();
-		HttpServerStub serverStub = start(port);
+		HttpServerStub serverStub = start(defaultConfiguration(port));
 		cacheStubServer(true, port);
 		return serverStub;
 	}
 
+	private HttpServerStubConfiguration defaultConfiguration(int port) {
+		return new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null, null, port);
+	}
+
 	@Override
 	public HttpServerStub start(int port) {
-		this.wireMockServer = new WireMockServer(
-				config().port(port).notifier(new Slf4jNotifier(true)));
+		return start(defaultConfiguration(port));
+	}
+
+	@Override
+	public HttpServerStub start(
+			HttpServerStubConfiguration configuration) {
+		if (isRunning()) {
+			if (log.isTraceEnabled()) {
+				log.trace("The server is already running at port [" + port() + "]");
+			}
+			return this;
+		}
+		int port = configuration.port;
+		WireMockConfiguration wireMockConfiguration = config().port(port)
+				.notifier(new Slf4jNotifier(true));
+		if (configuration.configurer.isAccepted(wireMockConfiguration)) {
+			@SuppressWarnings("unchecked")
+			HttpServerStubConfigurer<WireMockConfiguration> configurer = configuration.configurer;
+			wireMockConfiguration = configurer.configure(wireMockConfiguration, configuration);
+		}
+		this.wireMockConfiguration = wireMockConfiguration;
+		this.https = wireMockConfiguration.httpsSettings().enabled();
+		port = this.https ? wireMockConfiguration.httpsSettings().port() :
+				wireMockConfiguration.portNumber();
+		this.wireMockServer = new WireMockServer(wireMockConfiguration);
 		this.wireMockServer.start();
 		if (log.isDebugEnabled()) {
-			log.debug("Started WireMock at port [" + port + "]");
+			log.debug("For " + configuration.toColonSeparatedDependencyNotation() + " Started WireMock at [" + (this.https ? "https" : "http") + "] port [" + port + "]");
 		}
 		cacheStubServer(false, port);
 		return this;
+	}
+
+	@Override
+	public int httpsPort() {
+		return this.https ? port() : INVALID_PORT;
 	}
 
 	@Override
@@ -205,7 +247,16 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private WireMock wireMock() {
-		return new WireMock("localhost", port(), "");
+		String scheme = this.https ? "https" : "http";
+		String host = "localhost";
+		int port = port();
+		String urlPathPrefix = null;
+		String hostHeader = null;
+		String proxyHost = this.wireMockConfiguration.proxyHostHeader();
+		int proxyPort = this.wireMockConfiguration.proxyVia().port();
+		ClientAuthenticator authenticator = NoClientAuthenticator.noClientAuthenticator();
+		return new WireMock(scheme, host, port, urlPathPrefix,
+				hostHeader, proxyHost, proxyPort, authenticator);
 	}
 
 	private void registerDefaultHealthChecks(WireMock wireMock) {
@@ -238,16 +289,6 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		StubMapping mapping = getMapping(mappingDescriptor);
 		wireMock.register(mapping);
 		return mapping;
-	}
-
-	void registerDescriptors(List<StubMapping> stubMappings) {
-		if (log.isDebugEnabled()) {
-			log.debug("Registering stub mappings size [" + stubMappings.size()
-					+ "] at port [" + port() + "]");
-		}
-		for (StubMapping mapping : stubMappings) {
-			wireMock().register(mapping);
-		}
 	}
 
 	private void registerHealthCheck(WireMock wireMock, String url) {

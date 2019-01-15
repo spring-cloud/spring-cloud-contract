@@ -16,10 +16,16 @@
 
 package org.springframework.cloud.contract.verifier
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.Path
+import java.util.concurrent.atomic.AtomicInteger
+
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import wiremock.com.google.common.collect.ListMultimap
+
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
@@ -27,13 +33,9 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.NamesUtil
 import org.springframework.core.io.support.SpringFactoriesLoader
 import org.springframework.util.StringUtils
-import wiremock.com.google.common.collect.ListMultimap
-
-import java.nio.charset.StandardCharsets
-import java.nio.file.Path
-import java.util.concurrent.atomic.AtomicInteger
 
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.afterLast
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeLast
@@ -87,6 +89,8 @@ class TestGenerator {
 
 	int generate() {
 		generateTestClasses(basePackageName())
+		NamesUtil.recrusiveDirectoryToPackage(configProperties.generatedTestSourcesDir)
+		NamesUtil.recrusiveDirectoryToPackage(configProperties.generatedTestResourcesDir)
 		return counter.get()
 	}
 

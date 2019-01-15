@@ -30,6 +30,8 @@ import java.util.Set;
 import groovy.json.JsonOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import wiremock.org.eclipse.jetty.util.ConcurrentHashSet;
+
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
@@ -39,7 +41,6 @@ import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockH
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
-import wiremock.org.eclipse.jetty.util.ConcurrentHashSet;
 
 /**
  * Runs stubs for a particular {@link StubServer}
@@ -72,7 +73,7 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	StubRunnerExecutor(AvailablePortScanner portScanner) {
-		this(portScanner, new NoOpStubMessages(), new ArrayList<HttpServerStub>());
+		this(portScanner, new NoOpStubMessages(), new ArrayList<>());
 	}
 
 	public RunningStubs runStubs(StubRunnerOptions stubRunnerOptions,
@@ -84,7 +85,14 @@ class StubRunnerExecutor implements StubFinder {
 			}
 			return runningStubs();
 		}
-		startStubServers(stubRunnerOptions, stubConfiguration, repository);
+		try {
+			HttpServerStubConfigurer configurer = stubRunnerOptions
+					.getHttpServerStubConfigurer().newInstance();
+			startStubServers(configurer, stubRunnerOptions, stubConfiguration, repository);
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
+			log.error("Failed to instantiate the HTTP stub configurer", ex);
+		}
 		RunningStubs runningCollaborators = runningStubs();
 		log.info("All stubs are now running " + runningCollaborators.toString());
 		return runningCollaborators;
@@ -257,22 +265,26 @@ class StubRunnerExecutor implements StubFinder {
 		return condition ? this.stubServer.getStubUrl() : null;
 	}
 
-	private void startStubServers(final StubRunnerOptions stubRunnerOptions,
+	private StubServer startStubServers(HttpServerStubConfigurer configurer,
+			final StubRunnerOptions stubRunnerOptions,
 			final StubConfiguration stubConfiguration, StubRepository repository) {
 		final List<File> mappings = repository.getStubs();
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
+		HttpServerStubConfiguration configuration = new HttpServerStubConfiguration(
+				configurer, stubRunnerOptions, stubConfiguration, port
+		);
 		if (!hasRequest(contracts) && mappings.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
 			}
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
-					new NoOpHttpServerStub()).start();
-			return;
+					new NoOpHttpServerStub()).start(configuration);
+			return this.stubServer;
 		}
 		if (port != null && port >= 0) {
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
-					httpServerStub()).start(port);
+					httpServerStub()).start(configuration);
 		}
 		else {
 			this.stubServer = this.portScanner
@@ -280,11 +292,15 @@ class StubRunnerExecutor implements StubFinder {
 						@Override
 						public StubServer call(int availablePort) {
 							return new StubServer(stubConfiguration, mappings, contracts,
-									httpServerStub()).start(availablePort);
+									httpServerStub()).start(
+									new HttpServerStubConfiguration(
+											configurer, stubRunnerOptions, stubConfiguration, availablePort
+									));
 						}
 					});
 		}
 		STUB_SERVERS.add(this.stubServer);
+		return this.stubServer;
 	}
 
 	private boolean hasRequest(Collection<Contract> contracts) {

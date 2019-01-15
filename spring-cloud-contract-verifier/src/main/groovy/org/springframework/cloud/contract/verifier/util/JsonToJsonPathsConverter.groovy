@@ -122,9 +122,21 @@ class JsonToJsonPathsConverter {
 			String pathWithoutAnyArray = matcher.path().substring(0, matcher.path().lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH))
 			def object = context.read(pathWithoutAnyArray)
 			if (object instanceof Iterable && containsOnlyEmptyElements(object)) {
-				context.delete(pathWithoutAnyArray)
+				String pathToDelete = pathToDelete(pathWithoutAnyArray)
+				context.delete(pathToDelete)
+			} else {
+				String lastParent = matcher.path().substring(0, matcher.path().lastIndexOf("."))
+				def lastParentObject = context.read(lastParent)
+				if (lastParentObject instanceof Iterable && containsOnlyEmptyElements(lastParentObject)) {
+					context.delete(lastParent)
+				}
 			}
 		}
+	}
+
+	private static String pathToDelete(String pathWithoutAnyArray) {
+		// we can't remove root
+		return pathWithoutAnyArray == '$' ? '$[*]' : pathWithoutAnyArray
 	}
 
 	private static boolean containsOnlyEmptyElements(Object object) {

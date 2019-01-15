@@ -1,14 +1,11 @@
 package com.example;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -16,7 +13,10 @@ import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("classrule")
 // tag::wiremock_test1[]
@@ -31,13 +31,13 @@ public class WiremockForDocsClassRuleTests {
 			WireMockSpring.options().dynamicPort());
 
 	// end::wiremock_test1[]
+	// tag::wiremock_test2[]
 	@Before
 	public void setup() {
 		this.service.setBase("http://localhost:" + wiremock.port());
 	}
 
-	// tag::wiremock_test2[]
-	// A service that calls out over HTTP to localhost:${wiremock.port}
+	// A service that calls out over HTTP to wiremock's port
 	@Autowired
 	private Service service;
 

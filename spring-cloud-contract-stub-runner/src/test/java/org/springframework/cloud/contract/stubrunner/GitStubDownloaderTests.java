@@ -102,24 +102,131 @@ public class GitStubDownloaderTests {
 	}
 
 	@Test
-	public void should_fail_to_fetch_stubs_when_latest_version_was_specified()
+	public void should_pick_latest_build_snapshot_stubs_when_latest_version_set()
 			throws URISyntaxException {
 		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
 		StubDownloader stubDownloader = stubDownloaderBuilder
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git").getAbsolutePath())
+								+ file("/git_samples/contract-git/").getAbsolutePath() + "/")
 						.withProperties(props()).build());
 
-		try {
-			stubDownloader.downloadAndUnpackStubJar(
-					new StubConfiguration("foo.bar:bazService:+"));
-		}
-		catch (IllegalStateException e) {
-			then(e).hasMessageContaining(
-					"Concrete version wasn't passed for [foo.bar:bazService:+:stubs]");
-		}
+		Map.Entry<StubConfiguration, File> entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:+"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "1.0.0.BUILD-SNAPSHOT");
+
+		entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:latest"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "1.0.0.BUILD-SNAPSHOT");
+
+		entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:LATEST"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "1.0.0.BUILD-SNAPSHOT");
+	}
+
+	@Test
+	public void should_pick_latest_release_stubs_when_release_version_set()
+			throws URISyntaxException {
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		StubDownloader stubDownloader = stubDownloaderBuilder
+				.build(new StubRunnerOptionsBuilder()
+						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+						.withStubRepositoryRoot("git://"
+								+ file("/git_samples/contract-git/").getAbsolutePath() + "/")
+						.withProperties(props()).build());
+
+		Map.Entry<StubConfiguration, File> entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:release"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "1.0.0.RELEASE");
+
+		entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:RELEASE"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "1.0.0.RELEASE");
+	}
+
+	@Test
+	public void should_pick_latest_build_snapshot_stubs_when_latest_version_set_and_latest_folder_exists()
+			throws URISyntaxException {
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		StubDownloader stubDownloader = stubDownloaderBuilder
+				.build(new StubRunnerOptionsBuilder()
+						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+						.withStubRepositoryRoot("git://"
+								+ file("/git_samples/contract-predefined-names-git/").getAbsolutePath() + "/")
+						.withProperties(props()).build());
+
+		Map.Entry<StubConfiguration, File> entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:+"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "latest");
+
+		entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:latest"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "latest");
+
+		entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:LATEST"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "latest");
+	}
+
+	@Test
+	public void should_pick_release_folder_when_release_version_set()
+			throws URISyntaxException {
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		StubDownloader stubDownloader = stubDownloaderBuilder
+				.build(new StubRunnerOptionsBuilder()
+						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+						.withStubRepositoryRoot("git://"
+								+ file("/git_samples/contract-predefined-names-git/").getAbsolutePath() + "/")
+						.withProperties(props()).build());
+
+		Map.Entry<StubConfiguration, File> entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:release"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "release");
+
+		entry = stubDownloader
+				.downloadAndUnpackStubJar(
+						new StubConfiguration("com.example:beer-api-producer-external:RELEASE"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
+				+ "beer-api-producer-external" + File.separator + "release");
 	}
 
 	@Test
@@ -130,7 +237,8 @@ public class GitStubDownloaderTests {
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git").getAbsolutePath())
+								+ file("/git_samples/contract-git").getAbsolutePath()
+						+ "/")
 						.withProperties(props()).build());
 
 		try {

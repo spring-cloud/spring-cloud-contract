@@ -15,6 +15,13 @@
  */
 
 package org.springframework.cloud.contract.verifier.util
+
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
+
 /**
  * A utility class that helps to convert names
  *
@@ -131,6 +138,58 @@ class NamesUtil {
 				.replace('.', '_')
 				.replace(File.separator, '.')
 				.replaceAll('\\.([0-9])', '._$1')
+				.replaceAll('^([0-9].*)', '_$1')
+	}
+
+	/**
+	 * Traverses the directories and converts renames illegal folder names
+	 * to package names
+	 *
+	 * @param rootDir - folder from which to start traversing
+	 */
+	static void recrusiveDirectoryToPackage(File rootDir) {
+		try {
+			if (!rootDir.exists()) {
+				return
+			}
+			InvalidFolderRenamer renamer = new InvalidFolderRenamer()
+			Files.walkFileTree(rootDir.toPath(), renamer)
+			renamer.rename()
+		}
+		catch (IOException ex) {
+			throw new IllegalStateException(ex)
+		}
+	}
+
+	private static class InvalidFolderRenamer extends SimpleFileVisitor<Path> {
+
+		private Deque<FileAndNewName> filesToRename = new ArrayDeque<>()
+
+		@Override
+		FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+			String name = dir.toFile().getName()
+			String convertedName = directoryToPackage(name)
+			if (name != convertedName) {
+				this.filesToRename.addFirst(new FileAndNewName(dir.toFile(), convertedName))
+			}
+			return FileVisitResult.CONTINUE
+		}
+
+		void rename() {
+			this.filesToRename.each {
+				it.file.renameTo(new File(it.file.parentFile, it.newName))
+			}
+		}
+	}
+
+	private static class FileAndNewName {
+		private final File file
+		private final String newName
+
+		private FileAndNewName(File file, String newName) {
+			this.file = file
+			this.newName = newName
+		}
 	}
 
 	/**

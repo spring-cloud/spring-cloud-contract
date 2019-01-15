@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.boot.test.autoconfigure.properties.SkipPropertyMapping;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 
 /**
@@ -132,4 +133,11 @@ public @interface AutoConfigureStubRunner {
 	 * folder after running tests
 	 */
 	boolean deleteStubsAfterTest() default true;
+
+	/**
+	 * Configuration for an HTTP server stub
+	 * @return class that allows to perform additional HTTP server stub configuration
+	 */
+	Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer()
+			default HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
 }
