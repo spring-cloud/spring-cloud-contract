@@ -43,6 +43,10 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.StringUtils
 
+import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
+import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
+import static org.springframework.cloud.contract.verifier.util.ContentType.TEXT
+import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
 /**
  * Main class for building method body.
@@ -409,19 +413,17 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		if (convertedResponseBody instanceof GString) {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
-		if (contentType != ContentType.TEXT && contentType != ContentType.FORM) {
+		if (TEXT != contentType && FORM != contentType) {
 			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
 		} else {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
 		}
-		if (contentType == ContentType.JSON) {
+		if (JSON == contentType) {
 			addJsonBodyVerification(bb, convertedResponseBody, bodyMatchers)
-		} else if (contentType == ContentType.XML) {
+		}
+		else if (XML == contentType) {
 			xmlBodyVerificationBuilder.addXmlResponseBodyCheck(bb, convertedResponseBody,
 					bodyMatchers, getResponseAsString(), shouldCommentOutBDDBlocks())
-//			bb.addLine(getParsedXmlResponseBodyString(getResponseAsString())) // FIXME
-			addColonIfRequired(bb)
-			// TODO xml validation
 		} else {
 			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}

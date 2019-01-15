@@ -54,6 +54,7 @@ import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter
 
 import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO
 import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY
+import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
@@ -300,7 +301,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	protected static Object clientBody(Object bodyValue, ContentType contentType) {
-		if (contentType == ContentType.FORM) {
+		if (FORM == contentType) {
 			if (bodyValue instanceof Map) {
 				// [a:3, b:4] == "a=3&b=4"
 				return ((Map) bodyValue).collect {

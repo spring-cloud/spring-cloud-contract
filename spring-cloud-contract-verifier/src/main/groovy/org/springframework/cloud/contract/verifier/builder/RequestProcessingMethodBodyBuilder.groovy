@@ -37,6 +37,7 @@ import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
+import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNOWN
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
 /**
@@ -230,7 +231,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected ContentType getResponseContentType() {
 		ContentType contentType = recognizeContentTypeFromHeader(response.headers)
-		if (contentType == ContentType.UNKNOWN) {
+		if (UNKNOWN == contentType) {
 			contentType = recognizeContentTypeFromContent(response.body.serverValue)
 		}
 		return contentType
@@ -270,7 +271,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	 */
 	protected ContentType getRequestContentType() {
 		ContentType contentType = recognizeContentTypeFromHeader(request.headers)
-		if (contentType == ContentType.UNKNOWN) {
+		if (UNKNOWN == contentType) {
 			contentType = recognizeContentTypeFromContent(request.body.serverValue)
 		}
 		return contentType
