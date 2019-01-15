@@ -929,4 +929,55 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#844")
+	def "should not leave unnecessary isEmpty when using matchers [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url('/test')
+					headers {
+						accept(applicationJson())
+						header("X-Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJObyI6IjEyMzQ1In0.VdYumw6QkfxaBgFUZNyza1VfNKiZ2WW4JaxIKe-G8HA")
+					}
+				}
+				response {
+					status OK()
+					body([
+							[test: 'testJson'],
+							[test: 'testJson']
+					])
+					headers {
+						contentType(applicationJson())
+					}
+					bodyMatchers {
+						jsonPath('$', byType {
+							minOccurrence(2)
+							maxOccurrence(2)
+						})
+						jsonPath('$[*].test', byType {
+							minOccurrence(2)
+							maxOccurrence(2)
+						})
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains('''assertThatJson(parsedJson).array().isEmpty()''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 }
