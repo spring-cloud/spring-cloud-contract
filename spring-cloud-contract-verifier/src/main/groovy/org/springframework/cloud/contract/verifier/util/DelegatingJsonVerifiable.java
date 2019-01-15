@@ -22,8 +22,7 @@ import java.util.regex.Pattern;
 import com.toomuchcoding.jsonassert.JsonVerifiable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.commons.text.StringEscapeUtils.escapeJava;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Implementation of the {@link MethodBufferingJsonVerifiable} that contains a list
@@ -163,12 +162,12 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.jsonPath(),
 				this.delegate.isEqualTo(value), this.methodsBuffer, value);
 		if (this.delegate.isAssertingAValueInArray() && readyToCheck.methodsBuffer.peekLast().equals(".arrayField()")) {
-			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapeJava(value));
+			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapedHackedJavaText(value));
 			readyToCheck.methodsBuffer.offer(".value()");
 		} else if (this.delegate.isAssertingAValueInArray() && !readyToCheck.methodsBuffer.peekLast().contains("array")) {
 			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
-			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapeJava(value));
+			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapedHackedJavaText(value));
 		}
 		return readyToCheck;
 	}
@@ -253,7 +252,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	 * an double escaped text. Related to https://github.com/spring-cloud/spring-cloud-contract/issues/169
 	 */
 	private String escapedHackedJavaText(String value) {
-		return escapeJava(value)
+		return StringEscapeUtils.escapeJava(value)
 				.replace("\\\"", "\"");
 	}
 
