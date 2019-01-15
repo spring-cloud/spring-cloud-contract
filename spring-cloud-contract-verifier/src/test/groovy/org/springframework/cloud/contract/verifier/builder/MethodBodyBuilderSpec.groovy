@@ -1039,4 +1039,44 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
 	}
 
+	@Issue("#852")
+	def "should work with escaped quotes [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url('/test')
+					headers {
+						accept(applicationJson())
+						header("X-Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJObyI6IjEyMzQ1In0.VdYumw6QkfxaBgFUZNyza1VfNKiZ2WW4JaxIKe-G8HA")
+					}
+				}
+				response {
+					status OK()
+					body([
+							"test": "\"escaped\""
+					])
+					headers {
+						contentType(applicationJson())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains('''.isEqualTo("\\\\"escaped\\\\"")''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 }
