@@ -32,10 +32,13 @@ import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
 
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
+
 /**
  * Converts a {@link Request} into {@link ResponseDefinition}
+ *
+ * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  *
  * @since 1.0.0
  */
@@ -86,10 +89,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 	private void appendBody(ResponseDefinitionBuilder builder) {
 		if (response.body) {
 			Object body = MapConverter.getStubSideValues(response.body)
-			ContentType contentType = recognizeContentTypeFromHeader(response.headers)
-			if (contentType == ContentType.UNKNOWN) {
-				contentType = recognizeContentTypeFromContent(body)
-			}
+			ContentType contentType = evaluateContentType(response.headers, body)
 			if (body instanceof byte[]) {
 				builder.withBody(body)
 			} else if (body instanceof FromFileProperty && body.isByte()) {

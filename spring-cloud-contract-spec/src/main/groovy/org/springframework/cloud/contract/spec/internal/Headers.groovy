@@ -55,6 +55,10 @@ class Headers {
 		}
 	}
 
+	void headers(Set<Header> headers) {
+		entries.addAll(headers)
+	}
+
 	void accept(String contentType) {
 		header(accept(), matching(contentType))
 	}

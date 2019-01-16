@@ -46,6 +46,9 @@ import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNO
 /**
  * A utility class that can operate on a message body basing on the provided Content Type.
  *
+ * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
+ *
  * @since 1.0.0
  */
 @CompileStatic
@@ -161,7 +164,8 @@ class ContentUtils {
 				log.debug("No content type passed, will try to guess the type of payload")
 			}
 			return getClientContentType(JsonOutput.toJson(bodyAsValue))
-		} catch (Exception ex) {
+		}
+		catch (Exception ignored) {
 			if (log.isTraceEnabled()) {
 				log.trace("Failed to assume that body [" + bodyAsValue + "] is json")
 			}
@@ -535,4 +539,11 @@ class ContentUtils {
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}
 
+	static ContentType evaluateContentType(Headers contractHeaders, Object body) {
+		ContentType contentType = recognizeContentTypeFromHeader(contractHeaders)
+		if (UNKNOWN == contentType) {
+			contentType = recognizeContentTypeFromContent(body)
+		}
+		return contentType
+	}
 }

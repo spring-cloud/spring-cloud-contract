@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.Cookie
@@ -37,9 +38,8 @@ import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
-import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNOWN
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
+
 /**
  * An abstraction for creating a test method that includes processing of an HTTP request
  *
@@ -230,11 +230,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected ContentType getResponseContentType() {
-		ContentType contentType = recognizeContentTypeFromHeader(response.headers)
-		if (UNKNOWN == contentType) {
-			contentType = recognizeContentTypeFromContent(response.body.serverValue)
-		}
-		return contentType
+		return evaluateContentType(response?.headers, response?.body?.serverValue)
 	}
 
 	@Override
@@ -270,11 +266,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	 * Maps the {@link Request} into a {@link ContentType}
 	 */
 	protected ContentType getRequestContentType() {
-		ContentType contentType = recognizeContentTypeFromHeader(request.headers)
-		if (UNKNOWN == contentType) {
-			contentType = recognizeContentTypeFromContent(request.body.serverValue)
-		}
-		return contentType
+		return evaluateContentType(request?.headers, request?.body?.serverValue)
 	}
 
 	/**
