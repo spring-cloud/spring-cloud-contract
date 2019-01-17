@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.PathBodyMatcher
@@ -53,7 +54,10 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter
 
 import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO
+import static org.springframework.cloud.contract.spec.internal.MatchingType.COMMAND
 import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY
+import static org.springframework.cloud.contract.spec.internal.MatchingType.NULL
+import static org.springframework.cloud.contract.spec.internal.MatchingType.TYPE
 import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
@@ -157,10 +161,14 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private static void addWireMockStubMatchingSection(BodyMatcher matcher,
 													   RequestPatternBuilder requestPattern,
 													   Object body) {
+		Set<MatchingType> matchingTypesUnsupportedForRequest = [NULL, COMMAND, TYPE] as Set
 		if (!matcher instanceof PathBodyMatcher) {
 			throw new IllegalArgumentException("Only jsonPath and XPath matchers can be processed.")
 		}
 		String retrievedValue = Optional.ofNullable(matcher.value()).orElseGet({
+			if (matchingTypesUnsupportedForRequest.contains(matcher.matchingType())) {
+				throw new IllegalArgumentException("Null, Command and Type matchers are not supported in requests.")
+			}
 			if (EQUALITY == matcher.matchingType()) {
 				return retrieveValue(matcher, body)
 			}
