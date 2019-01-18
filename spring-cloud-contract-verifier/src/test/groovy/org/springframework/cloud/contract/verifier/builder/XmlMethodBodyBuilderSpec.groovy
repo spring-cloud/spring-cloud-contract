@@ -51,7 +51,9 @@ class XmlMethodBodyBuilderSpec extends Specification {
 	@Unroll
 	def 'should generate correct verification from xml with body matchers  [#methodBuilderName]'() {
 		given:
-			Contract contractDsl = Contract.make {
+			Contract contractDsl =
+					// tag::xmlgroovy[]
+					Contract.make {
 				request {
 					method GET()
 					urlPath '/get'
@@ -97,6 +99,7 @@ class XmlMethodBodyBuilderSpec extends Specification {
 					}
 				}
 			}
+			// end::xmlgroovy[]
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(' ')
 		when:
