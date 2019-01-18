@@ -20,6 +20,7 @@ package org.springframework.cloud.contract.wiremock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
@@ -36,7 +37,8 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 
 	@Override
 	public void afterTestClass(TestContext testContext) {
-		if (wireMockConfigurationMissing(testContext) || annotationMissing(testContext)) {
+		if (applicationContextBroken(testContext) ||
+				wireMockConfigurationMissing(testContext) || annotationMissing(testContext)) {
 			return;
 		}
 		if (portIsFixed(testContext)) {
@@ -46,7 +48,8 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 						+ "as possible. Your tests will be faster and more reliable and this"
 						+ "warning will go away");
 			}
-			testContext.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
+			testContext
+					.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
 		}
 	}
 
@@ -63,7 +66,7 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	}
 
 	private boolean wireMockConfigurationMissing(TestContext testContext) {
-		boolean missing = !testContext.getApplicationContext()
+		boolean missing = !testContext(testContext)
 				.containsBean(WireMockConfiguration.class.getName());
 		if (log.isDebugEnabled()) {
 			log.debug("WireMockConfiguration is missing [" + missing + "]");
@@ -71,8 +74,25 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 		return missing;
 	}
 
+	private ApplicationContext testContext(TestContext testContext) {
+		return testContext.getApplicationContext();
+	}
+
+	private boolean applicationContextBroken(TestContext testContext) {
+		try {
+			testContext.getApplicationContext();
+			return false;
+		}
+		catch (Exception ex) {
+			if (log.isDebugEnabled()) {
+				log.debug("Application context is broken due to", ex);
+			}
+			return true;
+		}
+	}
+
 	private WireMockConfiguration wireMockConfig(TestContext testContext) {
-		return testContext.getApplicationContext().getBean(WireMockConfiguration.class);
+		return testContext(testContext).getBean(WireMockConfiguration.class);
 	}
 
 	private boolean portIsFixed(TestContext testContext) {
