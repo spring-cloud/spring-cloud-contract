@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -54,7 +55,8 @@ public class StubGeneratorTests {
 				.consumeWith(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount > 1000)]")
 						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsFraud"));
+						.stub("markClientAsFraud"))
+				.consumeWith(WebTestClientRestDocumentation.document("markClientAsFraud"));
 	}
 
 	@Test
@@ -70,7 +72,8 @@ public class StubGeneratorTests {
 				.consumeWith(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount <= 1000)]")
 						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsNotFraud"));
+						.stub("markClientAsNotFraud"))
+				.consumeWith(WebTestClientRestDocumentation.document("markClientAsNotFraud"));
 	}
 
 }

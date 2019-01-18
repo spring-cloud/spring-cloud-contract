@@ -35,10 +35,13 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import wiremock.com.google.common.base.Optional;
+import wiremock.org.apache.commons.codec.binary.Base64;
+import wiremock.org.eclipse.jetty.server.handler.ContextHandler;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation;
 import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentationConfigurer;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -46,9 +49,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
-import wiremock.com.google.common.base.Optional;
-import wiremock.org.apache.commons.codec.binary.Base64;
-import wiremock.org.eclipse.jetty.server.handler.ContextHandler;
 
 /**
  * @author Dave Syer
@@ -61,7 +61,6 @@ public class ContractExchangeHandler
 	@Override
 	public void accept(EntityExchangeResult<byte[]> result) {
 		configure(result);
-		WebTestClientRestDocumentation.document(getName()).accept(result);
 	}
 
 	@Override

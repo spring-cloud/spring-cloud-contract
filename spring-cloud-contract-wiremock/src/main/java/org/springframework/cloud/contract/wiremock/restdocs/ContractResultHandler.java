@@ -55,7 +55,6 @@ import wiremock.org.eclipse.jetty.util.MultiPartInputStreamParser;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 
@@ -79,7 +78,6 @@ public class ContractResultHandler extends
 	@Override
 	public void handle(MvcResult result) throws Exception {
 		configure(result);
-		MockMvcRestDocumentation.document(getName()).handle(result);
 	}
 
 	@Override
