@@ -47,6 +47,14 @@ class BodyMatchers {
 		matchers << new PathBodyMatcher(xPath, matchingTypeValue)
 	}
 
+	/**
+	 * @deprecated use {@link #matchers()}
+	 */
+	@Deprecated
+	List<BodyMatcher> jsonPathMatchers() {
+		return matchers()
+	}
+
 	boolean hasMatchers() {
 		return !this.matchers.empty
 	}

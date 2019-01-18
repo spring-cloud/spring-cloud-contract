@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+
 import org.apache.commons.text.StringEscapeUtils
 
 import org.springframework.cloud.contract.spec.internal.BodyMatcher

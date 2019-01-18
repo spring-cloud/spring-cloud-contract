@@ -51,6 +51,7 @@ public class ContractVerifierUtil {
 	 * @param testClass - test class relative to which the file is stored
 	 * @param relativePath - relative path to the file
 	 * @return bytes of the file
+	 * @since 2.1.0
 	 */
 	public static byte[] fileToBytes(Object testClass, String relativePath) {
 		try {
@@ -71,6 +72,7 @@ public class ContractVerifierUtil {
 	 * @param parsedXml - a {@link Document} object with parsed XML content
 	 * @param path - the xPath expression to retrieve the value with
 	 * @return {@link String} value of the XML node
+	 * @since 2.1.0
 	 */
 	public static String valueFromXPath(Document parsedXml, String path) {
 		XPath xPath = XPathFactory.newInstance().newXPath();
@@ -89,6 +91,7 @@ public class ContractVerifierUtil {
 	 * @param parsedXml - a {@link Document} object with parsed XML content
 	 * @param path - the xPath expression to retrieve the value with
 	 * @return XML {@link Node} object
+	 * @since 2.1.0
 	 */
 	public static Node nodeFromXPath(Document parsedXml, String path) {
 		XPath xPath = XPathFactory.newInstance().newXPath();

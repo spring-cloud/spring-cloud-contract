@@ -17,6 +17,9 @@
 package org.springframework.cloud.contract.verifier.builder
 
 /**
+ * Used to return the {@link Class} against which the type of the element should be verified
+ * using <code>instanceof</code> in generated response assertions.
+ *
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
