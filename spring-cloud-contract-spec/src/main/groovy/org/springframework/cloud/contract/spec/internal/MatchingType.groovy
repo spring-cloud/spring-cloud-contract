@@ -66,8 +66,7 @@ enum MatchingType {
 	NULL
 
 	static boolean regexRelated(MatchingType type) {
-		List<MatchingType> otherMatchingTypes = [EQUALITY, TYPE, COMMAND, NULL]
-		if (otherMatchingTypes.contains(type)) {
+		if (type == EQUALITY || type == TYPE || type == COMMAND || type == NULL ) {
 			return false
 		}
 		return true

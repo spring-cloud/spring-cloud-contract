@@ -44,6 +44,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.eval
 
 /**
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  */
 @PackageScope
 @CompileStatic

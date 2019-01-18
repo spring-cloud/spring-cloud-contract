@@ -26,7 +26,6 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
@@ -46,7 +45,7 @@ import static org.springframework.cloud.contract.spec.internal.MatchingType.TYPE
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
-6 * @author Olga Maciaszek-Sharma
+ * @author Olga Maciaszek-Sharma
  */
 class YamlContractConverterSpec extends Specification {
 

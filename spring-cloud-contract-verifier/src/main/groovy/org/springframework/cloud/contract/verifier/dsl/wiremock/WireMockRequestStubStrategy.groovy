@@ -136,7 +136,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		else if (contentType == ContentType.XML) {
 			Object originalBody = matchingStrategy?.clientValue
 			Object body = XmlToXPathsConverter
-					.removeMatchingXmlPaths(originalBody, request.bodyMatchers)
+					.removeMatchingXPaths(originalBody, request.bodyMatchers)
 			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
 					.mapToMatchers(body)
 			byEqualityMatchersFromXml.each {
@@ -178,9 +178,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		})
 		PathBodyMatcher pathMatcher = matcher as PathBodyMatcher
 		requestPattern.withRequestBody(WireMock.matchingXPath(pathMatcher.path(),
-				XPathBodyMatcherToWireMockValuePatternConverter.
-						mapToPattern(pathMatcher.matchingType(), String.
-								valueOf(retrievedValue))))
+				XPathBodyMatcherToWireMockValuePatternConverter
+						.mapToPattern(pathMatcher.matchingType(),
+						String.valueOf(retrievedValue))))
 	}
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {

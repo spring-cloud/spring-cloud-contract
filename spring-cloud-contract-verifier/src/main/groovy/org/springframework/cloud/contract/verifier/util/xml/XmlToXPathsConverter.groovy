@@ -60,7 +60,7 @@ import static org.w3c.dom.Node.TEXT_NODE
  */
 class XmlToXPathsConverter {
 
-	static Object removeMatchingXmlPaths(Object body, BodyMatchers bodyMatchers) {
+	static Object removeMatchingXPaths(Object body, BodyMatchers bodyMatchers) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
 		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder()

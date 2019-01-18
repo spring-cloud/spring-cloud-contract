@@ -273,7 +273,6 @@ class ContentUtils {
 		return escapeXml11(unescapeXml(obj.toString()))
 	}
 
-	// TODO: remove?
 	private static String transformXMLStringValue(DslProperty dslProperty, Closure valueProvider) {
 		return transformXMLStringValue(valueProvider(dslProperty), valueProvider)
 	}
