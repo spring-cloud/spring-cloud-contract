@@ -23,10 +23,10 @@ import org.assertj.core.api.BDDAssertions;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
@@ -154,11 +154,17 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 	@Test
 	public void should_not_push_changes_to_current_branch_when_no_changes_were_made()
 			throws Exception {
+		String initialCommit;
+		try (Git git = openGitProject(this.origin)) {
+			RevCommit revCommit = git.log().call().iterator().next();
+			initialCommit = revCommit.getShortMessage();
+		}
+
 		this.updater.updateContractProject("hello-world", this.origin.toPath());
 
 		try (Git git = openGitProject(this.project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
-			then(revCommit.getShortMessage()).isEqualTo("Initial commit");
+			then(revCommit.getShortMessage()).isEqualTo(initialCommit);
 		}
 		BDDAssertions.then(new File(this.project,
 				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))

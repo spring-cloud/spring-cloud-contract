@@ -17,6 +17,7 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,7 +30,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.util.FileSystemUtils;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
@@ -160,7 +161,8 @@ public class ContractProjectUpdater {
 
 class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 
-	private static final List<String> FOLDERS_TO_DELETE = Arrays.asList("contracts", "mappings");
+	private static final List<String> FOLDERS_TO_DELETE = Arrays
+			.asList("contracts", "mappings");
 
 	private static final Log log = LogFactory.getLog(DirectoryCopyingVisitor.class);
 
@@ -199,7 +201,7 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 				if (log.isDebugEnabled()) {
 					log.debug("Will remove the folder [" + targetPath.toString() + "]");
 				}
-				FileSystemUtils.deleteRecursively(targetPath);
+				deleteRecursively(targetPath);
 				Files.createDirectory(targetPath);
 				if (log.isDebugEnabled()) {
 					log.debug("Recreated folder [" + targetPath.toString() + "]");
@@ -207,6 +209,75 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 			}
 		}
 		return FileVisitResult.CONTINUE;
+	}
+
+	private boolean deleteRecursively(@Nullable Path root) throws IOException {
+		if (root == null) {
+			return false;
+		}
+		if (!Files.exists(root)) {
+			return false;
+		}
+		Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				// a hack for Windows not to fail when directory is removed
+				// related to https://github.com/spring-cloud/spring-cloud-sleuth/issues/834
+				if (exc == null) {
+					int maxTries = 5;
+					int count = 0;
+					boolean deleted;
+					do {
+						if ((deleted = this.isDeleted(dir))) {
+							if (log.isDebugEnabled()) {
+								log.debug("Deleted [" + dir + "]");
+							}
+							break;
+						}
+						if (log.isDebugEnabled()) {
+							log.debug("Failed to delete [" + dir + "]");
+						}
+						// wait a bit and try again
+						count++;
+						try {
+							Thread.sleep(2);
+						}
+						catch (InterruptedException e1) {
+							Thread.currentThread().interrupt();
+							break;
+						}
+
+					}
+					while (count < maxTries);
+					if (!deleted) {
+						if (log.isDebugEnabled()) {
+							log.debug("Failed to delete [" + dir + "] after [" + maxTries + "] attempts to do it");
+						}
+						throw new DirectoryNotEmptyException(dir.toString());
+					}
+					return FileVisitResult.CONTINUE;
+				}
+				throw exc;
+			}
+
+			private boolean isDeleted(Path dir) throws IOException {
+				try {
+					Files.delete(dir);
+					return true;
+				}
+				catch (DirectoryNotEmptyException e) {
+					// happens sometimes if Windows is too slow to remove children of a directory
+					return false;
+				}
+			}
+		});
+		return true;
 	}
 
 	@Override
