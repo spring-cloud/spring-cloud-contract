@@ -1751,8 +1751,82 @@ to work with Web Flux.</p><p class="primary"><b>Maven.&nbsp;</b>
 	}
 }
 
-}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_messaging_top_level_elements" href="#_messaging_top_level_elements"></a>8.10&nbsp;Messaging Top-Level Elements</h2></div></div></div><p>The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
-following sections explain the differences:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-output-triggered-method" title="8.10.1&nbsp;Output Triggered by a Method">Section&nbsp;8.10.1, &#8220;Output Triggered by a Method&#8221;</a></li><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-output-triggered-message" title="8.10.2&nbsp;Output Triggered by a Message">Section&nbsp;8.10.2, &#8220;Output Triggered by a Message&#8221;</a></li><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-consumer-producer" title="8.10.3&nbsp;Consumer/Producer">Section&nbsp;8.10.3, &#8220;Consumer/Producer&#8221;</a></li><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-common" title="8.10.4&nbsp;Common">Section&nbsp;8.10.4, &#8220;Common&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-output-triggered-method" href="#contract-dsl-output-triggered-method"></a>8.10.1&nbsp;Output Triggered by a Method</h3></div></div></div><p>The output message can be triggered by calling a method (such as a <code class="literal">Scheduler</code> when a was
+}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_xml_support_for_rest" href="#_xml_support_for_rest"></a>8.10&nbsp;XML Support for REST</h2></div></div></div><p>For REST contracts, we also support XML request and response body.
+The XML body has to be passed within the <code class="literal">body</code> element
+as a <code class="literal">String</code> or <code class="literal">GString</code>. Also body matchers can be provided for
+both request and response. In place of the <code class="literal">jsonPath(&#8230;&#8203;)</code> method, the <code class="literal">org.springframework.cloud.contract.spec.internal.BodyMatchers.xPath</code>
+method should be used, with the desired <code class="literal">xPath</code> provided as the first argument
+and the appropriate <code class="literal">MatchingType</code> as second. All the body matchers apart from <code class="literal">byType()</code> are supported.</p><p>Here is an example of a Groovy DSL contract with XML response body:</p><pre class="programlisting">					Contract.make {
+				request {
+					method GET()
+					urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
+					headers {
+						contentType(applicationXml())
+					}
+				}
+				response {
+					status(OK())
+					headers {
+						contentType(applicationXml())
+					}
+					body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>&lt;test&gt;
+&lt;duck type=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'xtype'</span>&gt;<span class="hl-number">123</span>&lt;/duck&gt;
+&lt;alpha&gt;abc&lt;/alpha&gt;
+&lt;list&gt;
+&lt;elem&gt;abc&lt;/elem&gt;
+&lt;elem&gt;def&lt;/elem&gt;
+&lt;elem&gt;ghi&lt;/elem&gt;
+&lt;/list&gt;
+&lt;number&gt;<span class="hl-number">123</span>&lt;/number&gt;
+&lt;aBoolean&gt;true&lt;/aBoolean&gt;
+&lt;date&gt;<span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>&lt;/date&gt;
+&lt;dateTime&gt;<span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>T01:<span class="hl-number">23</span>:<span class="hl-number">45</span>&lt;/dateTime&gt;
+&lt;time&gt;<span class="hl-number">01</span>:<span class="hl-number">02</span>:<span class="hl-number">34</span>&lt;/time&gt;
+&lt;valueWithoutAMatcher&gt;foo&lt;/valueWithoutAMatcher&gt;
+&lt;key&gt;&lt;complex&gt;foo&lt;/complex&gt;&lt;/key&gt;
+&lt;/test&gt;<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>					bodyMatchers {
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'test($it)'</span>))
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/xxx'</span>, byNull())
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byEquality())
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/alpha/text()'</span>, byRegex(onlyAlphaUnicode()))
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/alpha/text()'</span>, byEquality())
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/number/text()'</span>, byRegex(number()))
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/date/text()'</span>, byDate())
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/dateTime/text()'</span>, byTimestamp())
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/time/text()'</span>, byTime())
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/*/complex/text()'</span>, byEquality())
+						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/@type'</span>, byEquality())
+					}
+				}
+			}</pre><p>And below is an example of a YAML contract with XML request and response bodies:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">include</span>::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml</pre><p>Here is an example of an automatically generated test for XML response body:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_xmlMatches() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
+	MockMvcRequestSpecification request = given()
+				.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/xml"</span>);
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// when:</span>
+	ResponseOptions response = given().spec(request).get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/get"</span>);
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
+	assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
+	DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+	Document parsedXml = documentBuilder.parse(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> InputSource(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StringReader(response.getBody().asString())));
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
+	assertThat(valueFromXPath(parsedXml, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/test/list/elem/text()"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"abc"</span>);
+	assertThat(valueFromXPath(parsedXml,<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/test/list/elem[2]/text()"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"def"</span>);
+	assertThat(valueFromXPath(parsedXml, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/test/duck/text()"</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>);
+	assertThat(nodeFromXPath(parsedXml, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/test/duck/xxx"</span>)).isNull();
+	assertThat(valueFromXPath(parsedXml, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/test/alpha/text()"</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[\\p{L}]*"</span>);
+	assertThat(valueFromXPath(parsedXml, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/test/*/complex/text()"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
+	assertThat(valueFromXPath(parsedXml, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/test/duck/@type"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"xtype"</span>);
+	}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_messaging_top_level_elements" href="#_messaging_top_level_elements"></a>8.11&nbsp;Messaging Top-Level Elements</h2></div></div></div><p>The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
+following sections explain the differences:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-output-triggered-method" title="8.11.1&nbsp;Output Triggered by a Method">Section&nbsp;8.11.1, &#8220;Output Triggered by a Method&#8221;</a></li><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-output-triggered-message" title="8.11.2&nbsp;Output Triggered by a Message">Section&nbsp;8.11.2, &#8220;Output Triggered by a Message&#8221;</a></li><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-consumer-producer" title="8.11.3&nbsp;Consumer/Producer">Section&nbsp;8.11.3, &#8220;Consumer/Producer&#8221;</a></li><li class="listitem"><a class="xref" href="multi_contract-dsl.html#contract-dsl-common" title="8.11.4&nbsp;Common">Section&nbsp;8.11.4, &#8220;Common&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-output-triggered-method" href="#contract-dsl-output-triggered-method"></a>8.11.1&nbsp;Output Triggered by a Method</h3></div></div></div><p>The output message can be triggered by calling a method (such as a <code class="literal">Scheduler</code> when a was
 started and a message was sent), as shown in the following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">def dsl = Contract.make {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Human readable description</span>
@@ -1797,7 +1871,7 @@ outputMessage:
 </p><p>In the previous example case, the output message is sent to <code class="literal">output</code> if a method called
 <code class="literal">bookReturnedTriggered</code> is executed. On the message <span class="strong"><strong>publisher&#8217;s</strong></span> side, we generate a
 test that calls that method to trigger the message. On the <span class="strong"><strong>consumer</strong></span> side, you can use
-the <code class="literal">some_label</code> to trigger the message.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-output-triggered-message" href="#contract-dsl-output-triggered-message"></a>8.10.2&nbsp;Output Triggered by a Message</h3></div></div></div><p>The output message can be triggered by receiving a message, as shown in the following
+the <code class="literal">some_label</code> to trigger the message.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-output-triggered-message" href="#contract-dsl-output-triggered-message"></a>8.11.2&nbsp;Output Triggered by a Message</h3></div></div></div><p>The output message can be triggered by receiving a message, as shown in the following
 example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">def dsl = Contract.make {
 	description <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Some Description'</span>
@@ -1853,7 +1927,7 @@ outputMessage:
 received on the <code class="literal">input</code> destination. On the message <span class="strong"><strong>publisher&#8217;s</strong></span> side, the engine
 generates a test that sends the input message to the defined destination. On the
 <span class="strong"><strong>consumer</strong></span> side, you can either send a message to the input destination or use a label
-(<code class="literal">some_label</code> in the example) to trigger the message.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-consumer-producer" href="#contract-dsl-consumer-producer"></a>8.10.3&nbsp;Consumer/Producer</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL.</p></td></tr></table></div><p>In HTTP, you have a notion of <code class="literal">client</code>/<code class="literal">stub and `server</code>/<code class="literal">test</code> notation. You can also
+(<code class="literal">some_label</code> in the example) to trigger the message.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-consumer-producer" href="#contract-dsl-consumer-producer"></a>8.11.3&nbsp;Consumer/Producer</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL.</p></td></tr></table></div><p>In HTTP, you have a notion of <code class="literal">client</code>/<code class="literal">stub and `server</code>/<code class="literal">test</code> notation. You can also
 use those paradigms in messaging. In addition, Spring Cloud Contract Verifier also
 provides the <code class="literal">consumer</code> and <code class="literal">producer</code> methods, as presented in the following example
 (note that you can use either <code class="literal">$</code> or <code class="literal">value</code> methods to provide <code class="literal">consumer</code> and <code class="literal">producer</code>
@@ -1874,10 +1948,10 @@ parts):</p><pre class="programlisting">Contract.make {
 				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
 		])
 	}
-}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-common" href="#contract-dsl-common"></a>8.10.4&nbsp;Common</h3></div></div></div><p>In the <code class="literal">input</code> or <code class="literal">outputMessage</code> section you can call <code class="literal">assertThat</code> with the name
+}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-common" href="#contract-dsl-common"></a>8.11.4&nbsp;Common</h3></div></div></div><p>In the <code class="literal">input</code> or <code class="literal">outputMessage</code> section you can call <code class="literal">assertThat</code> with the name
 of a <code class="literal">method</code> (e.g. <code class="literal">assertThatMessageIsOnTheQueue()</code>) that you have defined in the
 base class or in a static import. Spring Cloud Contract will execute that method
-in the generated test.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_multiple_contracts_in_one_file" href="#_multiple_contracts_in_one_file"></a>8.11&nbsp;Multiple Contracts in One File</h2></div></div></div><p>You can define multiple contracts in one file. Such a contract might resemble the
+in the generated test.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_multiple_contracts_in_one_file" href="#_multiple_contracts_in_one_file"></a>8.12&nbsp;Multiple Contracts in One File</h2></div></div></div><p>You can define multiple contracts in one file. Such a contract might resemble the
 following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
 
@@ -1971,7 +2045,7 @@ index of the contract in the list.</p><p>The generated stubs is shown in the fol
 1_WithList.json</pre><p>As you can see, the first file got the <code class="literal">name</code> parameter from the contract. The second
 got the name of the contract file (<code class="literal">WithList.groovy</code>) prefixed with the index (in this
 case, the contract had an index of <code class="literal">1</code> in the list of contracts in the file).</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>As you can see, it is much better if you name your contracts because doing so makes
-your tests far more meaningful.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_spring_rest_docs_snippets_from_the_contracts" href="#_generating_spring_rest_docs_snippets_from_the_contracts"></a>8.12&nbsp;Generating Spring REST Docs snippets from the contracts</h2></div></div></div><p>When you want to include the requests and responses of your API using Spring REST Docs,
+your tests far more meaningful.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_spring_rest_docs_snippets_from_the_contracts" href="#_generating_spring_rest_docs_snippets_from_the_contracts"></a>8.13&nbsp;Generating Spring REST Docs snippets from the contracts</h2></div></div></div><p>When you want to include the requests and responses of your API using Spring REST Docs,
 you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
 Simply include the following dependencies if you haven&#8217;t already.</p><p><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>

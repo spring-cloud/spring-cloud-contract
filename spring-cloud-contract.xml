@@ -8683,6 +8683,90 @@ static class Config {
 
 }</programlisting>
 </section>
+<section xml:id="_xml_support_for_rest">
+<title>XML Support for REST</title>
+<simpara>For REST contracts, we also support XML request and response body.
+The XML body has to be passed within the <literal>body</literal> element
+as a <literal>String</literal> or <literal>GString</literal>. Also body matchers can be provided for
+both request and response. In place of the <literal>jsonPath(&#8230;&#8203;)</literal> method, the <literal>org.springframework.cloud.contract.spec.internal.BodyMatchers.xPath</literal>
+method should be used, with the desired <literal>xPath</literal> provided as the first argument
+and the appropriate <literal>MatchingType</literal> as second. All the body matchers apart from <literal>byType()</literal> are supported.</simpara>
+<simpara>Here is an example of a Groovy DSL contract with XML response body:</simpara>
+<programlisting language="groovy" linenumbering="unnumbered">					Contract.make {
+				request {
+					method GET()
+					urlPath '/get'
+					headers {
+						contentType(applicationXml())
+					}
+				}
+				response {
+					status(OK())
+					headers {
+						contentType(applicationXml())
+					}
+					body """
+&lt;test&gt;
+&lt;duck type='xtype'&gt;123&lt;/duck&gt;
+&lt;alpha&gt;abc&lt;/alpha&gt;
+&lt;list&gt;
+&lt;elem&gt;abc&lt;/elem&gt;
+&lt;elem&gt;def&lt;/elem&gt;
+&lt;elem&gt;ghi&lt;/elem&gt;
+&lt;/list&gt;
+&lt;number&gt;123&lt;/number&gt;
+&lt;aBoolean&gt;true&lt;/aBoolean&gt;
+&lt;date&gt;2017-01-01&lt;/date&gt;
+&lt;dateTime&gt;2017-01-01T01:23:45&lt;/dateTime&gt;
+&lt;time&gt;01:02:34&lt;/time&gt;
+&lt;valueWithoutAMatcher&gt;foo&lt;/valueWithoutAMatcher&gt;
+&lt;key&gt;&lt;complex&gt;foo&lt;/complex&gt;&lt;/key&gt;
+&lt;/test&gt;"""
+					bodyMatchers {
+						xPath('/test/duck/text()', byRegex("[0-9]{3}"))
+						xPath('/test/duck/text()', byCommand('test($it)'))
+						xPath('/test/duck/xxx', byNull())
+						xPath('/test/duck/text()', byEquality())
+						xPath('/test/alpha/text()', byRegex(onlyAlphaUnicode()))
+						xPath('/test/alpha/text()', byEquality())
+						xPath('/test/number/text()', byRegex(number()))
+						xPath('/test/date/text()', byDate())
+						xPath('/test/dateTime/text()', byTimestamp())
+						xPath('/test/time/text()', byTime())
+						xPath('/test/*/complex/text()', byEquality())
+						xPath('/test/duck/@type', byEquality())
+					}
+				}
+			}</programlisting>
+<simpara>And below is an example of a YAML contract with XML request and response bodies:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">include::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml</programlisting>
+<simpara>Here is an example of an automatically generated test for XML response body:</simpara>
+<programlisting language="java" linenumbering="unnumbered">@Test
+public void validate_xmlMatches() throws Exception {
+	// given:
+	MockMvcRequestSpecification request = given()
+				.header("Content-Type", "application/xml");
+
+	// when:
+	ResponseOptions response = given().spec(request).get("/get");
+
+	// then:
+	assertThat(response.statusCode()).isEqualTo(200);
+	// and:
+	DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+	Document parsedXml = documentBuilder.parse(new InputSource(
+				new StringReader(response.getBody().asString())));
+	// and:
+	assertThat(valueFromXPath(parsedXml, "/test/list/elem/text()")).isEqualTo("abc");
+	assertThat(valueFromXPath(parsedXml,"/test/list/elem[2]/text()")).isEqualTo("def");
+	assertThat(valueFromXPath(parsedXml, "/test/duck/text()")).matches("[0-9]{3}");
+	assertThat(nodeFromXPath(parsedXml, "/test/duck/xxx")).isNull();
+	assertThat(valueFromXPath(parsedXml, "/test/alpha/text()")).matches("[\\p{L}]*");
+	assertThat(valueFromXPath(parsedXml, "/test/*/complex/text()")).isEqualTo("foo");
+	assertThat(valueFromXPath(parsedXml, "/test/duck/@type")).isEqualTo("xtype");
+	}</programlisting>
+</section>
 <section xml:id="_messaging_top_level_elements">
 <title>Messaging Top-Level Elements</title>
 <simpara>The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
