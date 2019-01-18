@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,16 +18,17 @@ package org.springframework.cloud.contract.verifier.builder
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Rule
-import org.springframework.boot.test.rule.OutputCapture
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
-import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
-import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
+
+import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
+import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 
 /**
  * @author Jakub Kubrynski, codearte.io

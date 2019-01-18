@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,11 +34,14 @@ import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
+import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.PathBodyMatcher
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.RegexProperty
@@ -48,14 +51,25 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
+import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter
 
+import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO
+import static org.springframework.cloud.contract.spec.internal.MatchingType.COMMAND
+import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY
+import static org.springframework.cloud.contract.spec.internal.MatchingType.NULL
+import static org.springframework.cloud.contract.spec.internal.MatchingType.TYPE
+import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
+import static org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter.retrieveValue
+
 /**
  * Converts a {@link Request} into {@link RequestPattern}
  *
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.0
  */
 @TypeChecked
@@ -64,10 +78,13 @@ import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.bu
 class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private final Request request
+	private final ContentType contentType
 
 	WireMockRequestStubStrategy(Contract groovyDsl) {
 		super(groovyDsl)
 		this.request = groovyDsl.request
+		this.contentType =
+				tryToGetContentType(request?.body?.clientValue, request?.headers)
 	}
 
 	@PackageScope
@@ -76,11 +93,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			return null
 		}
 		RequestPatternBuilder requestPatternBuilder = appendMethodAndUrl()
-		ContentType contentType = tryToGetContentType(request?.body?.clientValue, request?.headers)
-		appendCookies(requestPatternBuilder, contentType)
-		appendHeaders(requestPatternBuilder, contentType)
-		appendQueryParameters(requestPatternBuilder, contentType)
-		appendBody(requestPatternBuilder, contentType)
+		appendCookies(requestPatternBuilder)
+		appendHeaders(requestPatternBuilder)
+		appendQueryParameters(requestPatternBuilder)
+		appendBody(requestPatternBuilder)
 		appendMultipart(requestPatternBuilder)
 		return requestPatternBuilder.build()
 	}
@@ -94,7 +110,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return RequestPatternBuilder.newRequestPattern(requestMethod, urlPattern)
 	}
 
-	private void appendBody(RequestPatternBuilder requestPattern, ContentType contentType) {
+	private void appendBody(RequestPatternBuilder requestPattern) {
 		if (!request.body) {
 			return
 		}
@@ -104,30 +120,67 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.bodyMatchers)
 			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
 			if ((values.empty && !request.bodyMatchers?.hasMatchers()) || onlySizeAssertionsArePresent(values)) {
-				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
+				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
+						getMatchingStrategy(request.body.clientValue).clientValue),
+						false, false))
 			} else {
 				values.findAll{ !it.assertsSize() }.each {
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
 				}
 			}
-			if (request.bodyMatchers?.hasMatchers()) {
-				request.bodyMatchers.jsonPathMatchers().each {
+			request.bodyMatchers?.matchers()?.each {
 					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it, originalBody)
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
-				}
 			}
-		} else if (contentType == ContentType.XML) {
-			requestPattern.withRequestBody(WireMock.equalToXml(getMatchingStrategy(request.body.clientValue).clientValue.toString()))
+		}
+		else if (contentType == ContentType.XML) {
+			Object originalBody = matchingStrategy?.clientValue
+			Object body = XmlToXPathsConverter
+					.removeMatchingXPaths(originalBody, request.bodyMatchers)
+			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
+					.mapToMatchers(body)
+			byEqualityMatchersFromXml.each {
+				addWireMockStubMatchingSection(it, requestPattern, originalBody)
+			}
+			request.bodyMatchers?.matchers()?.each {
+				addWireMockStubMatchingSection(it, requestPattern, originalBody)
+			}
 		} else if (containsPattern(request?.body)) {
-				requestPattern.withRequestBody(convertToValuePattern(appendBodyRegexpMatchPattern(request.body), contentType))
+			requestPattern.withRequestBody(
+					convertToValuePattern(appendBodyRegexpMatchPattern(request.body)))
 		} else {
-			requestBodyGuessedFromMatchingStrategy(requestPattern, contentType)
+			requestBodyGuessedFromMatchingStrategy(requestPattern)
 		}
 	}
 
-	private RequestPatternBuilder requestBodyGuessedFromMatchingStrategy(RequestPatternBuilder requestPattern, ContentType contentType) {
+	private RequestPatternBuilder requestBodyGuessedFromMatchingStrategy(RequestPatternBuilder requestPattern) {
 		return requestPattern.withRequestBody(convertToValuePattern(
-				getMatchingStrategy(request.body.clientValue), contentType))
+				getMatchingStrategy(request.body.clientValue)))
+	}
+
+	private static void addWireMockStubMatchingSection(BodyMatcher matcher,
+													   RequestPatternBuilder requestPattern,
+													   Object body) {
+		Set<MatchingType> matchingTypesUnsupportedForRequest = [NULL, COMMAND, TYPE] as Set
+		if (!matcher instanceof PathBodyMatcher) {
+			throw new IllegalArgumentException("Only jsonPath and XPath matchers can be processed.")
+		}
+		String retrievedValue = Optional.ofNullable(matcher.value()).orElseGet({
+			if (matchingTypesUnsupportedForRequest.contains(matcher.matchingType())) {
+				throw new IllegalArgumentException("Null, Command and Type matchers are not supported in requests.")
+			}
+			if (EQUALITY == matcher.matchingType()) {
+				return retrieveValue(matcher, body)
+			}
+			else {
+				return ''
+			}
+		})
+		PathBodyMatcher pathMatcher = matcher as PathBodyMatcher
+		requestPattern.withRequestBody(WireMock.matchingXPath(pathMatcher.path(),
+				XPathBodyMatcherToWireMockValuePatternConverter
+						.mapToPattern(pathMatcher.matchingType(),
+						String.valueOf(retrievedValue))))
 	}
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {
@@ -152,21 +205,23 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	private void appendHeaders(RequestPatternBuilder requestPattern, ContentType contentType) {
+	private void appendHeaders(RequestPatternBuilder requestPattern) {
 		if(!request.headers) {
 			return
 		}
 		request.headers.entries.each {
-			requestPattern.withHeader(it.name, (StringValuePattern) convertToValuePattern(it.clientValue, contentType))
+			requestPattern.withHeader(it.name, (StringValuePattern)
+					convertToValuePattern(it.clientValue))
 		}
 	}
 
-	private void appendCookies(RequestPatternBuilder requestPattern, ContentType contentType) {
+	private void appendCookies(RequestPatternBuilder requestPattern) {
 		if(!request.cookies) {
 			return
 		}
 		request.cookies.entries.each {
-			requestPattern.withCookie(it.key, (StringValuePattern) convertToValuePattern(it.clientValue, contentType))
+			requestPattern.withCookie(it.key, (StringValuePattern)
+					convertToValuePattern(it.clientValue))
 		}
 	}
 
@@ -216,15 +271,16 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return clientSide
 	}
 
-	private void appendQueryParameters(RequestPatternBuilder requestPattern, ContentType contentType) {
+	private void appendQueryParameters(RequestPatternBuilder requestPattern) {
 		QueryParameters queryParameters = request?.urlPath?.queryParameters ?: request?.url?.queryParameters
 		queryParameters?.parameters?.each {
-			requestPattern.withQueryParam(it.name, (StringValuePattern) convertToValuePattern(it.clientValue, contentType))
+			requestPattern.withQueryParam(it.name, (StringValuePattern)
+					convertToValuePattern(it.clientValue))
 		}
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)
-	private static ContentPattern convertToValuePattern(Object object, ContentType contentType) {
+	private ContentPattern convertToValuePattern(Object object) {
 		switch (object) {
 			case Pattern:
 			case RegexProperty:
@@ -253,7 +309,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	protected static Object clientBody(Object bodyValue, ContentType contentType) {
-		if (contentType == ContentType.FORM) {
+		if (FORM == contentType) {
 			if (bodyValue instanceof Map) {
 				// [a:3, b:4] == "a=3&b=4"
 				return ((Map) bodyValue).collect {
@@ -265,7 +321,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 					StringEscapeUtils.unescapeJavaScript(it.toString())
 				}.join("&")
 			}
-		} else if (bodyValue instanceof FromFileProperty) {
+		}
+		else if (bodyValue instanceof FromFileProperty) {
 			return bodyValue.isByte() ? bodyValue.asBytes() : bodyValue.asString()
 		}
 		return bodyValue
@@ -301,11 +358,12 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private MatchingStrategy getMatchingStrategy(FromFileProperty bodyValue) {
-		return new MatchingStrategy(bodyValue, MatchingStrategy.Type.BINARY_EQUAL_TO)
+		return new MatchingStrategy(bodyValue, BINARY_EQUAL_TO)
 	}
 
 	private MatchingStrategy tryToFindMachingStrategy(Object bodyValue) {
-		return new MatchingStrategy(MapConverter.transformToClientValues(bodyValue), getEqualsTypeFromContentTypeHeader())
+		return new MatchingStrategy(MapConverter.transformToClientValues(bodyValue),
+				getEqualsTypeFromContentType(contentType))
 	}
 
 	private MatchingStrategy getMatchingStrategyIncludingContentType(MatchingStrategy matchingStrategy) {
@@ -314,7 +372,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		ContentType contentType = ContentUtils.recognizeContentTypeFromMatchingStrategy(type)
 		if (contentType == ContentType.UNKNOWN && type == MatchingStrategy.Type.EQUAL_TO) {
 			contentType = ContentUtils.recognizeContentTypeFromContent(value)
-			type = ContentUtils.getEqualsTypeFromContentType(contentType)
+			type = getEqualsTypeFromContentType(contentType)
 		}
 		return new MatchingStrategy(parseBody(value, contentType), type)
 	}
@@ -369,9 +427,4 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private boolean containsPattern(Object o) {
 		return false
 	}
-
-	private MatchingStrategy.Type getEqualsTypeFromContentTypeHeader() {
-		return ContentUtils.getEqualsTypeFromContentType(ContentUtils.recognizeContentTypeFromHeader(request.headers))
-	}
-
 }

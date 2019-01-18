@@ -369,7 +369,7 @@ The WireMock stub is as follows:
 
 [source,json,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]
 ----
 
 === Response
@@ -1213,6 +1213,59 @@ include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.j
 include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
 
 }
+----
+
+=== XML Support for REST
+For REST contracts, we also support XML request and response body.
+The XML body has to be passed within the `body` element
+as a `String` or `GString`. Also body matchers can be provided for
+both request and response. In place of the `jsonPath(...)` method, the `org.springframework.cloud.contract.spec.internal.BodyMatchers.xPath`
+method should be used, with the desired `xPath` provided as the first argument
+and the appropriate `MatchingType` as second. All the body matchers apart from `byType()` are supported.
+
+Here is an example of a Groovy DSL contract with XML response body:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/XmlMethodBodyBuilderSpec.groovy[tags=xmlgroovy]
+----
+
+And below is an example of a YAML contract with XML request and response bodies:
+
+[source,yaml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml
+----
+
+Here is an example of an automatically generated test for XML response body:
+
+[source,java,indent=0]
+----
+@Test
+public void validate_xmlMatches() throws Exception {
+	// given:
+	MockMvcRequestSpecification request = given()
+				.header("Content-Type", "application/xml");
+
+	// when:
+	ResponseOptions response = given().spec(request).get("/get");
+
+	// then:
+	assertThat(response.statusCode()).isEqualTo(200);
+	// and:
+	DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+	Document parsedXml = documentBuilder.parse(new InputSource(
+				new StringReader(response.getBody().asString())));
+	// and:
+	assertThat(valueFromXPath(parsedXml, "/test/list/elem/text()")).isEqualTo("abc");
+	assertThat(valueFromXPath(parsedXml,"/test/list/elem[2]/text()")).isEqualTo("def");
+	assertThat(valueFromXPath(parsedXml, "/test/duck/text()")).matches("[0-9]{3}");
+	assertThat(nodeFromXPath(parsedXml, "/test/duck/xxx")).isNull();
+	assertThat(valueFromXPath(parsedXml, "/test/alpha/text()")).matches("[\\p{L}]*");
+	assertThat(valueFromXPath(parsedXml, "/test/*/complex/text()")).isEqualTo("foo");
+	assertThat(valueFromXPath(parsedXml, "/test/duck/@type")).isEqualTo("xtype");
+	}
 ----
 
 === Messaging Top-Level Elements

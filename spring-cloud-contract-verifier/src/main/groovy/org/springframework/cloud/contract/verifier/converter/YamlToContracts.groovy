@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2013-2019 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.converter
 
 import java.nio.file.Files
@@ -12,15 +28,23 @@ import org.yaml.snakeyaml.Yaml
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingTypeValue
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.NamesUtil
 import org.springframework.util.StringUtils
 
+import static java.util.stream.Collectors.toSet
+import static org.springframework.cloud.contract.verifier.util.ContentType.XML
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
+
 /**
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  */
 @CompileStatic
 @PackageScope
@@ -185,6 +209,10 @@ class YamlToContracts {
 						}
 						bodyMatchers {
 							yamlContract.request.matchers?.body?.each { YamlContract.BodyStubMatcher matcher ->
+								ContentType contentType =
+										evaluateContentType(
+												yamlHeadersToContractHeaders(yamlContract.request?.headers),
+												yamlContract.request?.body)
 								MatchingTypeValue value = null
 								switch (matcher.type) {
 									case YamlContract.StubMatcherType.by_date:
@@ -219,7 +247,12 @@ class YamlToContracts {
 										throw new UnsupportedOperationException("The type [" + matcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 								}
 								if (value) {
-									jsonPath(matcher.path, value)
+									if (XML == contentType) {
+										xPath(matcher.path, value)
+									}
+									else {
+										jsonPath(matcher.path, value)
+									}
 								}
 							}
 						}
@@ -268,6 +301,10 @@ class YamlToContracts {
 						if (yamlContract.response.fixedDelayMilliseconds) fixedDelayMilliseconds(yamlContract.response.fixedDelayMilliseconds)
 						bodyMatchers {
 							yamlContract.response?.matchers?.body?.each { YamlContract.BodyTestMatcher testMatcher ->
+								ContentType contentType =
+										evaluateContentType(
+												yamlHeadersToContractHeaders(yamlContract.response?.headers),
+												yamlContract.response?.body)
 								MatchingTypeValue value = null
 								switch (testMatcher.type) {
 									case YamlContract.TestMatcherType.by_date:
@@ -305,7 +342,12 @@ class YamlToContracts {
 										throw new UnsupportedOperationException("The type [" + testMatcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 								}
 								if (testMatcher.path) {
-									jsonPath(testMatcher.path, value)
+									if (XML == contentType) {
+										xPath(testMatcher.path, value)
+									}
+									else {
+										jsonPath(testMatcher.path, value)
+									}
 								}
 							}
 						}
@@ -327,6 +369,10 @@ class YamlToContracts {
 						if (yamlContract.input.messageBodyFromFileAsBytes) messageBody(fileAsBytes(yamlContract.input.messageBodyFromFileAsBytes))
 						bodyMatchers {
 							yamlContract.input.matchers.body?.each { YamlContract.BodyStubMatcher matcher ->
+								ContentType contentType =
+										evaluateContentType(
+												yamlHeadersToContractHeaders(yamlContract.input?.messageHeaders),
+												yamlContract.input?.messageBody)
 								MatchingTypeValue value = null
 								switch (matcher.type) {
 									case YamlContract.StubMatcherType.by_date:
@@ -351,7 +397,12 @@ class YamlToContracts {
 									default:
 										throw new UnsupportedOperationException("The type [" + matcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 								}
-								jsonPath(matcher.path, value)
+								if (XML == contentType) {
+									xPath(matcher.path, value)
+								}
+								else {
+									jsonPath(matcher.path, value)
+								}
 							}
 						}
 					}
@@ -374,6 +425,10 @@ class YamlToContracts {
 						if (outputMsg.matchers) {
 							bodyMatchers {
 								yamlContract.outputMessage?.matchers?.body?.each { YamlContract.BodyTestMatcher testMatcher ->
+									ContentType contentType =
+											evaluateContentType(
+													yamlHeadersToContractHeaders(yamlContract.outputMessage?.headers),
+													yamlContract.outputMessage?.body)
 									MatchingTypeValue value = null
 									switch (testMatcher.type) {
 										case YamlContract.TestMatcherType.by_date:
@@ -410,7 +465,12 @@ class YamlToContracts {
 										default:
 											throw new UnsupportedOperationException("The type [" + testMatcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 									}
-									jsonPath(testMatcher.path, value)
+									if (XML == contentType) {
+										xPath(testMatcher.path, value)
+									}
+									else {
+										jsonPath(testMatcher.path, value)
+									}
 								}
 							}
 						}
@@ -420,6 +480,15 @@ class YamlToContracts {
 			contracts.add(contract)
 		}
 		return contracts
+	}
+
+	private Headers yamlHeadersToContractHeaders(Map<String, Object> headers) {
+		Set<Header> convertedHeaders = headers.keySet().stream()
+				.map({ new Header(it, headers.get(it)) })
+				.collect(toSet())
+		Headers contractHeaders = new Headers()
+		contractHeaders.headers(convertedHeaders)
+		return contractHeaders
 	}
 
 	protected DslProperty urlValue(String url, YamlContract.KeyValueMatcher urlMatcher) {

@@ -34,7 +34,9 @@ import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
+import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNOWN
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.getClientContentType
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues
 
 /**
@@ -195,11 +197,11 @@ abstract class BaseWireMockStubStrategy {
 	 */
 	protected ContentType tryToGetContentType(Object body, Headers headers) {
 		ContentType contentType = ContentUtils.recognizeContentTypeFromHeader(headers)
-		if (contentType == ContentType.UNKNOWN) {
+		if (UNKNOWN == contentType) {
 			if (!body) {
-				return ContentType.UNKNOWN
+				return UNKNOWN
 			}
-			return ContentUtils.getClientContentType(body)
+			return getClientContentType(body)
 		}
 		return contentType
 	}

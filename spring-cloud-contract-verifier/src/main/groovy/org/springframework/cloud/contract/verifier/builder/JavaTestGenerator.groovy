@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -74,7 +74,9 @@ class JavaTestGenerator implements SingleTestGenerator {
 			clazz.addImports(configProperties.testFramework.getOrderAnnotationImports())
 			clazz.addClassLevelAnnotation(configProperties.testFramework.getOrderAnnotation())
 		}
+		// FIXME: change during Hoxton refactoring: we should only add either Json or Xml imports and not both
 		addJsonPathRelatedImports(clazz)
+		addXPathRelatedImports(clazz)
 		processContractFiles(listOfFiles, configProperties, clazz, generatedClassData)
 		return clazz.build()
 	}
@@ -185,6 +187,14 @@ class JavaTestGenerator implements SingleTestGenerator {
 		if (this.checker.isClassPresent(JSON_ASSERT_CLASS)) {
 			clazz.addStaticImport(JSON_ASSERT_STATIC_IMPORT)
 		}
+	}
+
+	private void addXPathRelatedImports(ClassBuilder clazz) {
+		clazz.addImports(['javax.xml.parsers.DocumentBuilder',
+		'javax.xml.parsers.DocumentBuilderFactory',
+		'org.w3c.dom.Document',
+		'org.xml.sax.InputSource',
+		'java.io.StringReader'])
 	}
 
 	private void addMessagingRelatedEntries(ClassBuilder clazz) {

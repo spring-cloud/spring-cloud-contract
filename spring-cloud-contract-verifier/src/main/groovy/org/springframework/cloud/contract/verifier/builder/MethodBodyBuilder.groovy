@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,18 +18,12 @@ package org.springframework.cloud.contract.verifier.builder
 
 import java.util.regex.Pattern
 
-import com.jayway.jsonpath.DocumentContext
-import com.jayway.jsonpath.JsonPath
-import com.jayway.jsonpath.PathNotFoundException
-import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.apache.commons.beanutils.PropertyUtilsBean
 import org.apache.commons.text.StringEscapeUtils
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
-import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.DslProperty
@@ -37,7 +31,6 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameter
@@ -47,12 +40,13 @@ import org.springframework.cloud.contract.verifier.template.HandlebarsTemplatePr
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
-import org.springframework.cloud.contract.verifier.util.JsonPaths
-import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.util.SerializationUtils
 import org.springframework.util.StringUtils
 
+import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
+import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
+import static org.springframework.cloud.contract.verifier.util.ContentType.TEXT
+import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
 /**
  * Main class for building method body.
@@ -66,25 +60,33 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
  */
 @TypeChecked
 @PackageScope
-abstract class MethodBodyBuilder {
+abstract class MethodBodyBuilder implements ClassVerifier {
 
 	private static final Closure GET_SERVER_VALUE = { it instanceof DslProperty ? it.serverValue : it }
-	private static final String FROM_REQUEST_PREFIX = "request."
-	private static final String FROM_REQUEST_BODY = "escapejsonbody"
-	private static final String FROM_REQUEST_PATH = "path"
 
 	protected final ContractVerifierConfigProperties configProperties
 	protected final TemplateProcessor templateProcessor
 	protected final ContractTemplate contractTemplate
 	protected final Contract contract
 	protected final GeneratedClassDataForMethod classDataForMethod
+	private final JsonBodyVerificationBuilder jsonBodyVerificationBuilder
+	private final XmlBodyVerificationBuilder xmlBodyVerificationBuilder
 
-	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties, Contract contract, GeneratedClassDataForMethod classDataForMethod) {
+	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties,
+								Contract contract,
+								GeneratedClassDataForMethod classDataForMethod) {
 		this.configProperties = configProperties
 		this.templateProcessor = processor()
 		this.contractTemplate = template()
 		this.contract = contract
 		this.classDataForMethod = classDataForMethod
+		this.jsonBodyVerificationBuilder = new JsonBodyVerificationBuilder(this.configProperties,
+				templateProcessor, contractTemplate, this.contract,
+				lineSuffix(), { String jsonPath ->
+			postProcessJsonPathCall(jsonPath)
+		})
+		this.xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(contract,
+				lineSuffix())
 	}
 
 	private String byteBodyToAFileForTestMethod(FromFileProperty property, CommunicationType side) {
@@ -149,9 +151,19 @@ abstract class MethodBodyBuilder {
 	protected abstract String addCommentSignIfRequired(String baseString)
 
 	/**
+	 * Returns true if the BDD-syntax blocks should be commented out for a given framework
+	 */
+	protected abstract boolean shouldCommentOutBDDBlocks()
+
+	/**
 	 * Adds a colon sign at the end of each line if necessary
 	 */
 	protected abstract BlockBuilder addColonIfRequired(BlockBuilder blockBuilder)
+
+	/**
+	 * Returns line suffix appropriate for test builder if required
+	 */
+	protected abstract Optional<String> lineSuffix()
 
 	/**
 	 * Builds the code that for the given {@code property} will compare it to
@@ -322,6 +334,13 @@ abstract class MethodBodyBuilder {
 	protected abstract boolean hasGivenSection()
 
 	/**
+	 * Post processing of each JSON path entry
+	 */
+	protected String postProcessJsonPathCall(String jsonPath) {
+		return jsonPath
+	}
+
+	/**
 	 * Builds the test contents and appends them to {@link BlockBuilder}
 	 */
 	void appendTo(BlockBuilder blockBuilder) {
@@ -394,264 +413,37 @@ abstract class MethodBodyBuilder {
 		if (convertedResponseBody instanceof GString) {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
-		if (contentType != ContentType.TEXT && contentType != ContentType.FORM) {
+		if (TEXT != contentType && FORM != contentType) {
 			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
 		} else {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
 		}
-		if (contentType == ContentType.JSON) {
-			addJsonResponseBodyCheck(bb, convertedResponseBody, bodyMatchers)
-		} else if (contentType == ContentType.XML) {
-			bb.addLine(getParsedXmlResponseBodyString(getResponseAsString()))
-			addColonIfRequired(bb)
-			// TODO xml validation
+		if (JSON == contentType) {
+			addJsonBodyVerification(bb, convertedResponseBody, bodyMatchers)
+		}
+		else if (XML == contentType) {
+			xmlBodyVerificationBuilder.addXmlResponseBodyCheck(bb, convertedResponseBody,
+					bodyMatchers, getResponseAsString(), shouldCommentOutBDDBlocks())
 		} else {
 			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
 	}
 
-	private void byteResponseBodyCheck(BlockBuilder bb, FromFileProperty convertedResponseBody) {
-		processText(bb, "", convertedResponseBody)
-		addColonIfRequired(bb)
-	}
 
-	private void simpleTextResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
-		bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
-		processText(bb, "", convertedResponseBody)
-		addColonIfRequired(bb)
-	}
-	
-	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
-		appendJsonPath(bb, getResponseAsString())
-		DocumentContext parsedRequestBody
-		if (contract.request?.body) {
-			def testSideRequestBody = MapConverter.getTestSideValues(contract.request.body)
-			parsedRequestBody = JsonPath.parse(testSideRequestBody)
-			if (convertedResponseBody instanceof String && !textContainsJsonPathTemplate(convertedResponseBody)) {
-				convertedResponseBody = templateProcessor.transform(contract.request, convertedResponseBody.toString())
-			}
-		}
-		Object copiedBody = cloneBody(convertedResponseBody)
-		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
-		// remove quotes from fromRequest objects before picking json paths
-		TestSideRequestTemplateModel templateModel = contract.request?.body ?
-				TestSideRequestTemplateModel.from(contract.request) : null
-		convertedResponseBody = MapConverter.transformValues(convertedResponseBody, returnReferencedEntries(templateModel))
-		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
-		jsonPaths.each {
-			String method = it.method()
-			method = processIfTemplateIsPresent(method, parsedRequestBody)
-			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?
-					method : postProcessJsonPathCall(method)
-			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
-			addColonIfRequired(bb)
-		}
-		doBodyMatchingIfPresent(bodyMatchers, bb, copiedBody)
+	private void addJsonBodyVerification(BlockBuilder bb, Object responseBody, BodyMatchers bodyMatchers) {
+		Object convertedResponseBody = jsonBodyVerificationBuilder
+				.addJsonResponseBodyCheck(bb, responseBody,
+				bodyMatchers, getResponseAsString(), shouldCommentOutBDDBlocks())
 		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
 			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
 		processBodyElement(bb, "", "", convertedResponseBody)
 	}
 
-	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb, copiedBody) {
-		if (bodyMatchers?.hasMatchers()) {
-			bb.endBlock()
-			bb.addLine(addCommentSignIfRequired('and:'))
-			bb.startBlock()
-			// for the rest we'll do JsonPath matching in brute force
-			bodyMatchers.jsonPathMatchers().each {
-				if (it.matchingType() == MatchingType.NULL) {
-					methodForNullCheck(it, bb)
-				} else if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {
-					methodForEqualityCheck(it, bb, copiedBody)
-				} else if (it.matchingType() == MatchingType.COMMAND) {
-					methodForCommandExecution(it, bb, copiedBody)
-				} else {
-					methodForTypeCheck(it, bb, copiedBody)
-				}
-			}
-		}
-	}
-
-	private Closure<Object> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
-		return { entry ->
-			if (!(entry instanceof String) || !templateModel) {
-				return entry
-			}
-			String entryAsString = (String) entry
-			if (templateProcessor.containsTemplateEntry(entryAsString) &&
-					!templateProcessor.containsJsonPathTemplateEntry(entryAsString)) {
-				// TODO: HANDLEBARS LEAKING VIA request.
-				String justEntry = entryAsString - contractTemplate.escapedOpeningTemplate() -
-						contractTemplate.openingTemplate() -
-						contractTemplate.escapedClosingTemplate() -
-						contractTemplate.closingTemplate() - FROM_REQUEST_PREFIX
-				if (justEntry == FROM_REQUEST_BODY) {
-					// the body should be transformed by standard mechanism
-					return contractTemplate.escapedOpeningTemplate() + FROM_REQUEST_PREFIX +
-							"escapedBody" + contractTemplate.escapedClosingTemplate()
-				}
-				try {
-					Object result = new PropertyUtilsBean().getProperty(templateModel, justEntry)
-					// Path from the Test model is an object and we'd like to return its String representation
-					if (justEntry == FROM_REQUEST_PATH) {
-						return result.toString()
-					}
-					return result
-				} catch (Exception e) {
-					return entry
-				}
-			}
-			return entry
-		}
-	}
-
-	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
-		if (textContainsJsonPathTemplate(method) && contract.request?.body) {
-			// Unquoting the values of non strings
-			String jsonPathEntry = templateProcessor.jsonPathFromTemplateEntry(method)
-			Object object = parsedRequestBody.read(jsonPathEntry)
-			if (!(object instanceof String)) {
-				return method
-						.replace('"' + contractTemplate.escapedOpeningTemplate(), contractTemplate.escapedOpeningTemplate())
-						.replace(contractTemplate.escapedClosingTemplate() + '"', contractTemplate.escapedClosingTemplate())
-						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
-						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
-			}
-		}
-		return method
-	}
-
-	protected boolean textContainsJsonPathTemplate(String method) {
-		return templateProcessor.containsTemplateEntry(method) &&
-				templateProcessor.containsJsonPathTemplateEntry(method)
-	}
-
-	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
-		String path = quotedAndEscaped(bodyMatcher.path())
-		Object retrievedValue = value(copiedBody, bodyMatcher)
-		retrievedValue = retrievedValue instanceof RegexProperty ? ((RegexProperty) retrievedValue).getPattern().pattern() : retrievedValue
-		String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
-		if (arrayRelated(path) && MatchingType.regexRelated(bodyMatcher.matchingType())) {
-			buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)
-		} else {
-			String comparisonMethod = bodyMatcher.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
-			String classToCastTo = "${retrievedValue.class.simpleName}.class"
-			String method = "assertThat(parsedJson.read(${path}, ${classToCastTo})).${comparisonMethod}(${valueAsParam})"
-			bb.addLine(postProcessJsonPathCall(method))
-		}
+	private void simpleTextResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
+		bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
+		processText(bb, "", convertedResponseBody)
 		addColonIfRequired(bb)
-	}
-
-	protected void methodForCommandExecution(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
-		String path = quotedAndEscaped(bodyMatcher.path())
-		// assert that path exists
-		retrieveObjectByPath(copiedBody, bodyMatcher.path())
-		ExecutionProperty property = bodyMatcher.value() as ExecutionProperty
-		bb.addLine(postProcessJsonPathCall(property.insertValue("parsedJson.read(${path})")))
-		addColonIfRequired(bb)
-	}
-
-	protected void methodForNullCheck(BodyMatcher bodyMatcher, BlockBuilder bb) {
-		String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
-		String method = "assertThat((Object) parsedJson.read(${quotedAndEscaptedPath})).isNull()"
-		bb.addLine(postProcessJsonPathCall(method))
-		addColonIfRequired(bb)
-	}
-
-	protected void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
-		Object elementFromBody = value(copiedBody, bodyMatcher)
-		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.maxTypeOccurrence() != null) {
-			checkType(bb, bodyMatcher, elementFromBody)
-			String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
-			String method = "assertThat((java.lang.Iterable) parsedJson.read(${quotedAndEscaptedPath}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher, quotedAndEscaptedPath)}"
-			bb.addLine(postProcessJsonPathCall(method))
-			addColonIfRequired(bb)
-		} else {
-			checkType(bb, bodyMatcher, elementFromBody)
-		}
-	}
-
-	protected boolean arrayRelated(String path) {
-		return path.contains("[*]") || path.contains("..")
-	}
-
-	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
-		String method = "assertThat((java.lang.Iterable) parsedJson.read(${path}, java.util.Collection.class)).as(${path}).allElementsMatch(${valueAsParam})"
-		bb.addLine(postProcessJsonPathCall(method))
-	}
-
-	// Doing a clone doesn't work for nested lists...
-	private Object cloneBody(Object object) {
-		if (object instanceof List || object instanceof Map) {
-			byte[] serializedObject = SerializationUtils.serialize(object)
-			return SerializationUtils.deserialize(serializedObject)
-		}
-		try {
-			return object.clone()
-		} catch (CloneNotSupportedException e) {
-			return object
-		}
-	}
-
-	protected Object value(def body, BodyMatcher bodyMatcher) {
-		if (bodyMatcher.matchingType() == MatchingType.EQUALITY || !bodyMatcher.value()) {
-			return retrieveObjectByPath(body, bodyMatcher.path())
-		}
-		return bodyMatcher.value()
-	}
-
-	protected Object retrieveObjectByPath(def body, String path) {
-		try {
-			return JsonPath.parse(body).read(path)
-		} catch (PathNotFoundException e) {
-			throw new IllegalStateException("Entry for the provided JSON path <${path}> doesn't exist in the body <${JsonOutput.toJson(body)}>", e)
-		}
-	}
-
-	protected void checkType(BlockBuilder bb, BodyMatcher it, Object elementFromBody) {
-		String method = "assertThat((Object) parsedJson.read(${quotedAndEscaped(it.path())})).isInstanceOf(${classToCheck(elementFromBody).name}.class)"
-		bb.addLine(postProcessJsonPathCall(method))
-		addColonIfRequired(bb)
-	}
-
-	// we want to make the type more generic (e.g. not ArrayList but List)
-	protected Class classToCheck(Object elementFromBody) {
-		switch (elementFromBody.getClass()) {
-			case List:
-				return List
-			case Set:
-				return Set
-			case Map:
-				return Map
-			default:
-				return elementFromBody.class
-		}
-	}
-
-	protected String sizeCheckMethod(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
-		String prefix = sizeCheckPrefix(bodyMatcher, quotedAndEscaptedPath)
-		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
-			return "${prefix}Between(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
-		} else if (bodyMatcher.minTypeOccurrence() != null ) {
-			return "${prefix}GreaterThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
-		} else if (bodyMatcher.maxTypeOccurrence() != null) {
-			return "${prefix}LessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
-		}
-		return prefix
-	}
-
-	private String sizeCheckPrefix(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
-		String description = "as(" + quotedAndEscaptedPath + ")."
-		String prefix = description + "has"
-		if (arrayRelated(bodyMatcher.path())) {
-			prefix = prefix + "Flattened"
-		}
-		return prefix + "Size"
-	}
-
-	protected String quotedAndEscaped(String string) {
-		return '"' + StringEscapeUtils.escapeJava(string) + '"'
 	}
 
 	protected String trailingKey(String key) {
@@ -667,38 +459,6 @@ abstract class MethodBodyBuilder {
 			return "['${remindingKey}']"
 		}
 		return remindingKey
-	}
-
-	/**
-	 * Post processing of each JSON path entry
-	 */
-	protected String postProcessJsonPathCall(String jsonPath) {
-		return jsonPath
-	}
-
-	/**
-	 * Appends to {@link BlockBuilder} parsing of the JSON Path document
-	 */
-	protected void appendJsonPath(BlockBuilder blockBuilder, String json) {
-		blockBuilder.addLine(("DocumentContext parsedJson = JsonPath.parse($json)"))
-		addColonIfRequired(blockBuilder)
-	}
-
-	/**
-	 * Appends to {@link BlockBuilder} processing of the given String value.
-	 */
-	protected void processText(BlockBuilder blockBuilder, String property, Object value) {
-		if (value instanceof String && (value as String).startsWith('$')) {
-			String newValue = stripFirstChar((value as String)).replaceAll('\\$value', "responseBody$property")
-			blockBuilder.addLine(newValue)
-			addColonIfRequired(blockBuilder)
-		} else {
-			blockBuilder.addLine(getResponseBodyPropertyComparisonString(property, value))
-		}
-	}
-
-	private String stripFirstChar(String s) {
-		return s.substring(1)
 	}
 
 	/**
@@ -821,4 +581,30 @@ abstract class MethodBodyBuilder {
 			processBodyElement(blockBuilder, property, prop, listElement)
 		}
 	}
+
+	/**
+	 * Appends to {@link BlockBuilder} processing of the given String value.
+	 */
+	protected void processText(BlockBuilder blockBuilder, String property, Object value) {
+		if (value instanceof String && (value as String).startsWith('$')) {
+			String newValue = stripFirstChar((value as String)).
+					replaceAll('\\$value', "responseBody$property")
+			blockBuilder.addLine(newValue)
+			addColonIfRequired(blockBuilder)
+		}
+		else {
+			blockBuilder.addLine(getResponseBodyPropertyComparisonString(property, value))
+		}
+	}
+
+	private void byteResponseBodyCheck(BlockBuilder bb,
+									   FromFileProperty convertedResponseBody) {
+		processText(bb, "", convertedResponseBody)
+		addColonIfRequired(bb)
+	}
+
+	private String stripFirstChar(String s) {
+		return s.substring(1)
+	}
+
 }

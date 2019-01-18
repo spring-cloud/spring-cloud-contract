@@ -82,7 +82,7 @@ class JsonToJsonPathsConverter {
 		def jsonCopy = cloneBody(json)
 		DocumentContext context = JsonPath.parse(jsonCopy)
 		if (bodyMatchers?.hasMatchers()) {
-			bodyMatchers.jsonPathMatchers().each { BodyMatcher matcher ->
+			bodyMatchers.matchers().each { BodyMatcher matcher ->
 				try {
 					context.delete(matcher.path())
 					removeTrailingContainers(matcher, context)
@@ -254,7 +254,8 @@ class JsonToJsonPathsConverter {
 		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide)
 		Object jsonWithPatterns = ContentUtils.convertDslPropsToTemporaryRegexPatterns(convertedJson)
 		MethodBufferingJsonVerifiable methodBufferingJsonPathVerifiable =
-				new DelegatingJsonVerifiable(JsonAssertion.assertThat(JsonOutput.toJson(jsonWithPatterns)).withoutThrowingException())
+				new DelegatingJsonVerifiable(JsonAssertion.assertThat(JsonOutput.toJson(jsonWithPatterns))
+						.withoutThrowingException())
 		traverseRecursivelyForKey(jsonWithPatterns, methodBufferingJsonPathVerifiable)
 				 { MethodBufferingJsonVerifiable key, Object value ->
 			if (value instanceof ExecutionProperty || !(key instanceof FinishedDelegatingJsonVerifiable)) {

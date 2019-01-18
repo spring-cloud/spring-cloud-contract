@@ -180,9 +180,19 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected boolean shouldCommentOutBDDBlocks() {
+		return true
+	}
+
+	@Override
 	protected BlockBuilder addColonIfRequired(BlockBuilder blockBuilder) {
 		blockBuilder.addAtTheEnd(JUNIT.lineSuffix)
 		return blockBuilder
+	}
+
+	@Override
+	protected Optional<String> lineSuffix() {
+		return Optional.of(JUNIT.lineSuffix)
 	}
 
 	@Override

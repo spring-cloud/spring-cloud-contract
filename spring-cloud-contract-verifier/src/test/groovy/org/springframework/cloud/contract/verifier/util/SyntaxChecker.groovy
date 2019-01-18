@@ -1,5 +1,14 @@
 package org.springframework.cloud.contract.verifier.util
 
+import java.lang.reflect.Method
+
+import javax.inject.Inject
+import javax.ws.rs.client.Entity
+import javax.ws.rs.client.WebTarget
+import javax.ws.rs.core.Response
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
@@ -16,6 +25,9 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.junit.Rule
 import org.junit.Test
 import org.mdkt.compiler.InMemoryJavaCompiler
+import org.w3c.dom.Document
+import org.xml.sax.InputSource
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
@@ -24,19 +36,12 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil
 import org.springframework.util.ReflectionUtils
 
-import javax.inject.Inject
-import javax.ws.rs.client.Entity
-import javax.ws.rs.client.WebTarget
-import javax.ws.rs.core.Response
-import java.lang.reflect.Method
-
 /**
  * checking the syntax of produced scripts
  */
 @CompileStatic
 class SyntaxChecker {
 
-	WebTarget webTarget
 	Entity entity
 
 	private static final String[] DEFAULT_IMPORTS = [
@@ -55,7 +60,12 @@ class SyntaxChecker {
 			WebTarget.name,
 			Response.name,
 			WebTestClientRequestSpecification.name,
-			WebTestClientResponse.name
+			WebTestClientResponse.name,
+			DocumentBuilder.name,
+			DocumentBuilderFactory.name,
+			Document.name,
+			InputSource.name,
+			StringReader.name
 	]
 
 	private static final String DEFAULT_IMPORTS_AS_STRING = DEFAULT_IMPORTS.collect {
@@ -67,20 +77,25 @@ class SyntaxChecker {
 			"${RestAssuredMockMvc.name}.when",
 			"${RestAssured.name}.*",
 			"${Entity.name}.*",
-			"${ContractVerifierUtil.name}.fileToBytes",
+			"${ContractVerifierUtil.name}.*",
 			"${ContractVerifierMessagingUtil.name}.headers",
 			"${JsonAssertion.name}.assertThatJson",
-			"${SpringCloudContractAssertions.name}.assertThat"
+			"${SpringCloudContractAssertions.name}.assertThat",
 	].collect { "import static ${it};"}.join("\n")
 
 	private static final String WEB_TEST_CLIENT_STATIC_IMPORTS = [
 			"${RestAssuredWebTestClient.name}.*",
 			"${Entity.name}.*",
-			"${ContractVerifierUtil.name}.fileToBytes",
+			"${ContractVerifierUtil.name}.*",
 			"${ContractVerifierMessagingUtil.name}.headers",
 			"${JsonAssertion.name}.assertThatJson",
 			"${SpringCloudContractAssertions.name}.assertThat"
 	].collect { "import static ${it};" }.join("\n")
+
+	private static final String dummyMethod = '''
+private void test(String test) {
+\t\tassertThat(test).isEqualTo("123");
+\t}'''
 
 	static void tryToCompile(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
@@ -125,6 +140,7 @@ class SyntaxChecker {
 		sourceCode.append("WebTarget webTarget")
 		sourceCode.append("\n")
 		sourceCode.append(test)
+		sourceCode.append(dummyMethod)
 		return new GroovyShell(SyntaxChecker.classLoader, configuration).parse(sourceCode.toString())
 	}
 
@@ -150,9 +166,10 @@ class SyntaxChecker {
 		sourceCode.append("\n")
 		sourceCode.append("   WebTarget webTarget;")
 		sourceCode.append("\n")
-		sourceCode.append("   public void method() {\n")
+		sourceCode.append("   public void method() throws Exception {\n")
 		sourceCode.append("   ${test}\n")
 		sourceCode.append("   }\n")
+		sourceCode.append(dummyMethod)
 		sourceCode.append("}")
 		return InMemoryJavaCompiler.compile(fqnClassName, sourceCode.toString())
 	}

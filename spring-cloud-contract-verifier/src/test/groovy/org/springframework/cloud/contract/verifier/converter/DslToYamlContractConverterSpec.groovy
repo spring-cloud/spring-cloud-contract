@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,8 +23,29 @@ import org.springframework.cloud.contract.spec.Contract
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
+ * @author Olga Maciaszek-Sharma
  */
 class DslToYamlContractConverterSpec extends Specification {
+
+	String xmlContractBody = '''
+<test>
+<duck type='xtype'>123</duck>
+<alpha>abc</alpha>
+<list>
+<elem>abc</elem>
+<elem>def</elem>
+<elem>ghi</elem>
+</list>
+<number>123</number>
+<aBoolean>true</aBoolean>
+<date>2017-01-01</date>
+<dateTime>2017-01-01T01:23:45</dateTime>
+<time>01:02:34</time>
+<valueWithoutAMatcher>foo</valueWithoutAMatcher>
+<valueWithTypeMatch>string</valueWithTypeMatch>
+<key><complex>foo</complex></key>
+</test>
+'''
 
 	YamlContractConverter converter = new YamlContractConverter()
 
@@ -465,5 +486,91 @@ class DslToYamlContractConverterSpec extends Specification {
 					)
 			]
 			yamlContract.response.status == 200
+	}
+
+	def "should convert REST XML DSL to YAML"() {
+		given:
+			List<Contract> contracts = [Contract.make {
+				request {
+					method 'GET'
+					url '/get'
+					headers {
+						contentType(applicationXml())
+					}
+					body """
+<test>
+<duck type='xtype'>123</duck>
+<alpha>abc</alpha>
+<list>
+<elem>abc</elem>
+<elem>def</elem>
+<elem>ghi</elem>
+</list>
+<number>123</number>
+<aBoolean>true</aBoolean>
+<date>2017-01-01</date>
+<dateTime>2017-01-01T01:23:45</dateTime>
+<time>01:02:34</time>
+<valueWithoutAMatcher>foo</valueWithoutAMatcher>
+<valueWithTypeMatch>string</valueWithTypeMatch>
+<key><complex>foo</complex></key>
+</test>"""
+					bodyMatchers {
+						xPath('/test/duck/text()', byRegex("[0-9]{3}"))
+					}
+				}
+				response {
+					status(OK())
+					body """
+<test>
+<duck type='xtype'>123</duck>
+<alpha>abc</alpha>
+<list>
+<elem>abc</elem>
+<elem>def</elem>
+<elem>ghi</elem>
+</list>
+<number>123</number>
+<aBoolean>true</aBoolean>
+<date>2017-01-01</date>
+<dateTime>2017-01-01T01:23:45</dateTime>
+<time>01:02:34</time>
+<valueWithoutAMatcher>foo</valueWithoutAMatcher>
+<valueWithTypeMatch>string</valueWithTypeMatch>
+<key><complex>foo</complex></key>
+</test>"""
+					bodyMatchers {
+						xPath('/test/duck/xxx', byNull())
+					}
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.request.method == 'GET'
+			yamlContract.request.url == '/get'
+			yamlContract.request.body.replaceAll("\n", "")
+					.replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
+					.replaceAll(' ', '')
+			yamlContract.request.headers == [
+					"Content-Type": "application/xml"
+			]
+			yamlContract.request.matchers.body == [
+					new YamlContract.BodyStubMatcher(
+							path: '/test/duck/text()',
+							type: YamlContract.StubMatcherType.by_regex,
+							value: '[0-9]{3}'),
+			]
+			yamlContract.response.status == 200
+			yamlContract.response.body.replaceAll("\n", "")
+					.replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
+					.replaceAll(' ', '')
+			yamlContract.response.matchers.body == [
+					new YamlContract.BodyTestMatcher(
+							path: '/test/duck/xxx',
+							type: YamlContract.TestMatcherType.by_null)
+			]
 	}
 }

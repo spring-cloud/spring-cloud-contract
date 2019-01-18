@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
  *
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.3
  */
 @CompileStatic
