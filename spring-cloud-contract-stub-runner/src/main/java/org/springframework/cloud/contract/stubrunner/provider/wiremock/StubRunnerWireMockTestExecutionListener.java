@@ -27,8 +27,12 @@ public final class StubRunnerWireMockTestExecutionListener extends AbstractTestE
 	private static Map<ApplicationContext, Map<WireMockHttpServerStub, PortAndMappings>> STUBS = new ConcurrentHashMap<>();
 
 	@Override public void beforeTestClass(TestContext testContext) {
+		ApplicationContext context = context(testContext);
+		if (context == null) {
+			return;
+		}
 		Map<WireMockHttpServerStub, PortAndMappings> stubs = STUBS
-				.get(testContext.getApplicationContext());
+				.get(context);
 		if (stubs != null) {
 			if (log.isDebugEnabled()) {
 				log.debug("Found a matching application context from [" + testContext.getTestClass().getName() + "]");
@@ -60,12 +64,27 @@ public final class StubRunnerWireMockTestExecutionListener extends AbstractTestE
 	}
 
 	@Override public void afterTestClass(TestContext testContext) {
-		STUBS.put(testContext.getApplicationContext(), WireMockHttpServerStub.SERVERS);
+		ApplicationContext context = context(testContext);
+		if (context == null) {
+			return;
+		}
+		STUBS.put(context, WireMockHttpServerStub.SERVERS);
 		if (log.isDebugEnabled()) {
 			log.debug("Stopping servers " + WireMockHttpServerStub.SERVERS);
 		}
 		for (HttpServerStub serverStub : WireMockHttpServerStub.SERVERS.keySet()) {
 			serverStub.stop();
+		}
+	}
+
+	private ApplicationContext context(TestContext testContext) {
+		try {
+			return testContext.getApplicationContext();
+		} catch (Exception ex) {
+			if (log.isDebugEnabled() ) {
+				log.debug("Exception occurred while trying to retrieve the application context", ex);
+			}
+			return null;
 		}
 	}
 }
