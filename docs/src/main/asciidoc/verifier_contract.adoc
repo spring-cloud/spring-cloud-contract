@@ -369,7 +369,7 @@ The WireMock stub is as follows:
 
 [source,json,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]
 ----
 
 === Response
