@@ -20,18 +20,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.wst.xml.xpath2.api.ResultSequence;
 import org.eclipse.wst.xml.xpath2.api.XPath2Expression;
 import org.eclipse.wst.xml.xpath2.processor.Engine;
 import org.eclipse.wst.xml.xpath2.processor.internal.types.ElementType;
 import org.eclipse.wst.xml.xpath2.processor.util.DynamicContextBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class XmlAsserter implements XmlVerifiable {
 
-    private static final Logger log = LoggerFactory
-			.getLogger(XmlAsserter.class);
+    private static final Log log = LogFactory.getLog(XmlAsserter.class);
 
     private final static Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
 
