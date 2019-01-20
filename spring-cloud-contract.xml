@@ -10172,6 +10172,9 @@ public class WiremockImportApplicationTests {
 well as</emphasis> the custom locations in the stubs attribute. To change this behavior, you can
 also specify a files root as described in the next section of this document.</simpara>
 </note>
+<simpara>If you&#8217;re using Spring Cloud Contract&#8217;s default stub jars, then your
+stubs are stored under <literal>/META-INF/group-id/artifact-id/versions/mappings/</literal> folder. If you want to register all stubs from that location, from all embedded JARs, then it&#8217;s enough to use the following syntax.</simpara>
+<programlisting language="java" linenumbering="unnumbered">@AutoConfigureWireMock(port = 0, stubs = "classpath*:/META-INF/**/mappings/**/*.json")</programlisting>
 </section>
 <section xml:id="_using_files_to_specify_the_stub_bodies">
 <title>Using Files to Specify the Stub Bodies</title>
