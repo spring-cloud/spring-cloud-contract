@@ -58,6 +58,14 @@ NOTE: Actually, WireMock always loads mappings from `src/test/resources/mappings
 well as* the custom locations in the stubs attribute. To change this behavior, you can
 also specify a files root as described in the next section of this document.
 
+If you're using Spring Cloud Contract's default stub jars, then your
+stubs are stored under `/META-INF/group-id/artifact-id/versions/mappings/` folder. If you want to register all stubs from that location, from all embedded JARs, then it's enough to use the following syntax.
+
+[source,java,indent=0]
+----
+include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockFilesApplicationWithUrlResourceTests.java[tags=load_all_stubs]
+----
+
 === Using Files to Specify the Stub Bodies
 
 WireMock can read response bodies from files on the classpath or the file system. In that

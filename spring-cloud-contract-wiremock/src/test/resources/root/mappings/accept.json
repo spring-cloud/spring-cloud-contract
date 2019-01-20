@@ -1,0 +1,11 @@
+{
+  "request" : {
+    "urlPath" : "/poster",
+    "method" : "POST",
+    "headers" : { "Accept" : { "equalTo" : "text/plain" }}
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Accepted World"
+  }
+}
