@@ -164,7 +164,8 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 					readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
 					readStringFromFileString(fileProperty, CommunicationType.REQUEST)
 		} else {
-			value = "'''$body'''"
+			String escaped = escapeRequestSpecialChars(body.toString())
+			value = "'''$escaped'''"
 		}
 		return ".body($value)"
 	}

@@ -125,6 +125,10 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		return new HandlebarsTemplateProcessor()
 	}
 
+	protected ContentType getRequestContentType() {
+		return ContentType.UNKNOWN
+	}
+
 	/**
 	 * Builds the response body validation code block
 	 */

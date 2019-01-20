@@ -65,6 +65,14 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		this.response = stubDefinition.response
 	}
 
+	protected String escapeRequestSpecialChars(String string) {
+		if (getRequestContentType() == ContentType.JSON) {
+			return string
+					.replaceAll('\\\\n', '\\\\\\\\n')
+		}
+		return string
+	}
+
 	/**
 	 * Returns code used to retrieve a response for the given {@link Request}
 	 */
