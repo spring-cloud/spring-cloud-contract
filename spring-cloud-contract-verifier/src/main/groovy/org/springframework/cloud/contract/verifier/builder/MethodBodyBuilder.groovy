@@ -1,17 +1,18 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -30,6 +31,7 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
@@ -418,7 +420,9 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
 		if (TEXT != contentType && FORM != contentType) {
-			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
+			boolean dontParseStrings = contentType == JSON && convertedResponseBody instanceof Map
+			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
+			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody, parsingClosure)
 		} else {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
 		}
@@ -510,15 +514,18 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	 * Converts the passed body into ints server side representation. All {@link DslProperty}
 	 * will return their server side values
 	 */
-	protected Object extractServerValueFromBody(bodyValue) {
+	protected Object extractServerValueFromBody(ContentType contentType, Object bodyValue) {
 		if (bodyValue instanceof GString) {
-			return extractValue(bodyValue, contentType(), GET_SERVER_VALUE)
+			return extractValue(bodyValue, contentType, GET_SERVER_VALUE)
 		}
-		return MapConverter.transformValues(bodyValue, GET_SERVER_VALUE)
+		boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map
+		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
+		return MapConverter.transformValues(bodyValue, GET_SERVER_VALUE, parsingClosure)
 	}
 
 	protected ContentType contentType() {
-		return ContentUtils.recognizeContentTypeFromTestHeader(this.contract.request?.headers)
+		Headers headers = this.contract.request?.headers ?: this.contract.input?.messageHeaders
+		return ContentUtils.recognizeContentTypeFromTestHeader(headers)
 	}
 
 	/**

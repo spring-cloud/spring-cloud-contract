@@ -1,21 +1,21 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
 
 package org.springframework.cloud.contract.verifier.builder
-
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
@@ -38,7 +38,6 @@ import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
@@ -83,9 +82,11 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 									boolean shouldCommentOutBDDBlocks) {
 		appendJsonPath(bb, responseString)
 		DocumentContext parsedRequestBody
+		boolean dontParseStrings = convertedResponseBody instanceof Map
+		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
 		if (contract.request?.body) {
 			def testSideRequestBody = MapConverter
-					.getTestSideValues(contract.request.body)
+					.getTestSideValues(contract.request.body, parsingClosure)
 			parsedRequestBody = JsonPath.parse(testSideRequestBody)
 			if (convertedResponseBody instanceof String && !
 					textContainsJsonPathTemplate(convertedResponseBody)) {
@@ -100,9 +101,9 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		TestSideRequestTemplateModel templateModel = contract.request?.body ?
 				TestSideRequestTemplateModel.from(contract.request) : null
 		convertedResponseBody = MapConverter.transformValues(convertedResponseBody,
-				returnReferencedEntries(templateModel))
+				returnReferencedEntries(templateModel), parsingClosure)
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).
-				transformToJsonPathWithTestsSideValues(convertedResponseBody)
+				transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingClosure)
 		jsonPaths.each {
 			String method = it.method()
 			method = processIfTemplateIsPresent(method, parsedRequestBody)

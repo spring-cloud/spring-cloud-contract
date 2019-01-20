@@ -1,26 +1,29 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
 
 package org.springframework.cloud.contract.verifier.util
 
 import groovy.json.JsonSlurper
+
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
+
 /**
  * Converts an object into either client or server side representation.
  * Iterates over the structure of an object (depending on whether it's an
@@ -35,6 +38,9 @@ class MapConverter {
 
 	public static final boolean STUB_SIDE = true
 	public static final boolean TEST_SIDE = false
+	public static final Closure JSON_PARSING_CLOSURE = { String value ->
+		new JsonSlurper().parseText(value)
+	}
 
 	private final TemplateProcessor templateProcessor
 
@@ -61,35 +67,36 @@ class MapConverter {
 	 *
 	 * Returns the transformed structure
 	 */
-	static def transformValues(def value, Closure closure) {
+	static def transformValues(def value, Closure closure,
+			Closure parsingClosure = JSON_PARSING_CLOSURE) {
 		if (value instanceof String && value) {
 			try {
-				def json = new JsonSlurper().parseText(value)
+				def json = parsingClosure(value)
 				if (json instanceof Map) {
-					return convert(json, closure)
+					return convert(json, closure, parsingClosure)
 				} else if (json instanceof List) {
-					return transformValues(json, closure)
+					return transformValues(json, closure, parsingClosure)
 				}
 			} catch (Exception ignore) {
 			}
 			return extractValue(value, closure)
 		} else if (value instanceof Map) {
-			return convert(value as Map, closure)
+			return convert(value as Map, closure, parsingClosure)
 		} else if (value instanceof List) {
-			return value.collect({ transformValues(it, closure) })
+			return value.collect({ transformValues(it, closure, parsingClosure) })
 		}
-		return transformValue(closure, value)
+		return transformValue(closure, value, parsingClosure)
 	}
 
 	/**
 	 * Transforms a value with the given closure. Needs to be protected, otherwise
 	 * method access exception will occur at runtime.
 	 */
-	protected static Object transformValue(Closure closure, Object value) {
+	protected static Object transformValue(Closure closure, Object value, Closure parsingClosure) {
 		return extractValue(value, { Object val->
 			Object newValue = closure(val)
 			if (newValue instanceof Map || newValue instanceof List || newValue instanceof String && value) {
-				return transformValues(newValue, closure)
+				return transformValues(newValue, closure, parsingClosure)
 			}
 			return newValue
 		})
@@ -103,10 +110,10 @@ class MapConverter {
 		}
 	}
 
-	private static Map convert(Map map, Closure closure) {
+	private static Map convert(Map map, Closure closure, Closure parsingClosure) {
 		return map.collectEntries {
 			key, value ->
-				[key, transformValues(value, closure)]
+				[key, transformValues(value, closure, parsingClosure)]
 		}
 	}
 
@@ -114,12 +121,14 @@ class MapConverter {
 	 * If {@code clientSide} is {@code true} returns the client side value for the
 	 * provided object
 	 */
-	static Object getClientOrServerSideValues(json, boolean clientSide) {
-		return transformValues(json) {
+	static Object getClientOrServerSideValues(json, boolean clientSide,
+			Closure parsingClosure = JSON_PARSING_CLOSURE) {
+		return transformValues(json, {
 			if (it instanceof DslProperty) {
 				DslProperty dslProperty = ((DslProperty) it)
 				return clientSide ?
-						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
+						getClientOrServerSideValues(dslProperty.clientValue, clientSide, parsingClosure) :
+						getClientOrServerSideValues(dslProperty.serverValue, clientSide, parsingClosure)
 			} else if (it instanceof GString) {
 				ContentType type = new MapConverter().templateProcessor.containsJsonPathTemplateEntry(
 							ContentUtils.extractValueForGString(it, ContentUtils.GET_TEST_SIDE).toString()
@@ -127,7 +136,8 @@ class MapConverter {
 				return ContentUtils.extractValue(it , type, {
 					if (it instanceof DslProperty) {
 						return clientSide ?
-								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide) : getClientOrServerSideValues((it as DslProperty).serverValue, clientSide)
+								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide, parsingClosure) :
+								getClientOrServerSideValues((it as DslProperty).serverValue, clientSide, parsingClosure)
 					}
 					return it
 				})
@@ -135,14 +145,14 @@ class MapConverter {
 				return it.isByte() ? it.asBytes() : it.asString()
 			}
 			return it
-		}
+		}, parsingClosure)
 	}
 
-	static Object getStubSideValues(json) {
-		return getClientOrServerSideValues(json, STUB_SIDE)
+	static Object getStubSideValues(json, Closure parsingClosure = JSON_PARSING_CLOSURE) {
+		return getClientOrServerSideValues(json, STUB_SIDE, parsingClosure)
 	}
 
-	static Object getTestSideValues(json) {
-		return getClientOrServerSideValues(json, TEST_SIDE)
+	static Object getTestSideValues(json, Closure parsingClosure = JSON_PARSING_CLOSURE) {
+		return getClientOrServerSideValues(json, TEST_SIDE, parsingClosure)
 	}
 }
