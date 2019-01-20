@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import org.springframework.cloud.contract.spec.internal.Cookie
-
 import java.util.regex.Pattern
 
 import com.jayway.jsonpath.DocumentContext
@@ -33,6 +31,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
@@ -90,6 +89,10 @@ abstract class MethodBodyBuilder {
 
 	private ContractTemplate template() {
 		return new HandlebarsTemplateProcessor()
+	}
+
+	protected ContentType getRequestContentType() {
+		return ContentType.UNKNOWN
 	}
 
 	/**

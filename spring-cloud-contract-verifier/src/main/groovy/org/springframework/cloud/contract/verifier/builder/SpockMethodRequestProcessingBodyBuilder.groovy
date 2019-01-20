@@ -134,7 +134,8 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
 		} else {
-			value = "'''$body'''"
+			String escaped = escapeRequestSpecialChars(body.toString())
+			value = "'''$escaped'''"
 		}
 		return ".body($value)"
 	}

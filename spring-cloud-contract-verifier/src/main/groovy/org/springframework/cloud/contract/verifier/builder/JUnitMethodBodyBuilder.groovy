@@ -159,7 +159,8 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
 		} else {
-			value = "\"$body\""
+			String escaped = escapeRequestSpecialChars(body.toString())
+			value = "\"$escaped\""
 		}
 		return ".body($value)"
 	}
