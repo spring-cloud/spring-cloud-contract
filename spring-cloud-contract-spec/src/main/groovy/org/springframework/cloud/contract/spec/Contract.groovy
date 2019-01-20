@@ -107,28 +107,58 @@ class Contract {
 		// Can't assert messaging part cause Pact doesn't require destinations it seems
 	}
 
+	/**
+	 * You can set the level of priority of this contract. If there are two contracts
+	 * mapped for example to the same endpoint, then the one with greater priority should
+	 * take precedence. A priority of 1 is highest and takes precedence over a priority of 2.
+	 */
 	void priority(int priority) {
 		this.priority = priority
 	}
 
+	/**
+	 * Name of the generated test / stub. If not provided then the file name will be used.
+	 * If you have multiple contracts in a single file and you don't provide this value
+	 * then a prefix will be added to the file with the index number while iterating
+	 * over the collection of contracts.
+	 *
+	 * Remember to have a unique name for every single contract. Otherwise you might
+	 * generate tests that have two identical methods or you will override the stubs.
+	 */
 	void name(String name) {
 		this.name = name
 	}
 
+	/**
+	 * Label used by the messaging contracts to trigger a message on the consumer side
+	 *
+	 * @param label - name of the label of a messaging contract to trigger
+	 */
 	void label(String label) {
 		this.label = label
 	}
 
+	/**
+	 * Description text. Might be used to describe the usage scenario.
+	 *
+	 * @param description - value of the description
+	 */
 	void description(String description) {
 		this.description = description
 	}
 
+	/**
+	 * The HTTP request part of the contract
+	 */
 	void request(@DelegatesTo(Request) Closure closure) {
 		this.request = new Request()
 		closure.delegate = request
 		closure()
 	}
 
+	/**
+	 * The HTTP response part of the contract
+	 */
 	void response(@DelegatesTo(Response) Closure closure) {
 		this.response = new Response()
 		closure.delegate = response
@@ -141,12 +171,18 @@ class Contract {
 		closure()
 	}
 
+	/**
+	 * The output side of a messaging contract.
+	 */
 	void outputMessage(@DelegatesTo(OutputMessage) Closure closure) {
 		this.outputMessage = new OutputMessage()
 		closure.delegate = outputMessage
 		closure()
 	}
 
+	/**
+	 * Whether the contract should be ignored or not.
+	 */
 	void ignored() {
 		this.ignored = true
 	}

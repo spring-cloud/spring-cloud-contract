@@ -59,34 +59,55 @@ class Response extends Common {
 		this.body = response.body
 	}
 
+	/**
+	 * Allows to set the HTTP status
+	 */
 	void status(int status) {
 		this.status = toDslProperty(status)
 	}
 
+	/**
+	 * Allows to set the HTTP status
+	 */
 	void status(DslProperty status) {
 		this.status = toDslProperty(status)
 	}
 
+	/**
+	 * Allows to configure HTTP headers
+	 */
 	void headers(@DelegatesTo(ResponseHeaders) Closure closure) {
 		this.headers = new ResponseHeaders()
 		closure.delegate = headers
 		closure()
 	}
 
+	/**
+	 * Allows to configure HTTP cookies
+	 */
 	void cookies(@DelegatesTo(ResponseCookies) Closure closure) {
 		this.cookies = new ResponseCookies()
 		closure.delegate = cookies
 		closure()
 	}
 
+	/**
+	 * Allows set an HTTP body
+	 */
 	void body(Map<String, Object> body) {
 		this.body = new Body(convertObjectsToDslProperties(body))
 	}
 
+	/**
+	 * Allows set an HTTP body
+	 */
 	void body(List body) {
 		this.body = new Body(convertObjectsToDslProperties(body))
 	}
 
+	/**
+	 * Allows set an HTTP body
+	 */
 	void body(Object bodyAsValue) {
 		if (bodyAsValue instanceof List) {
 			body(bodyAsValue as List)
@@ -95,10 +116,17 @@ class Response extends Common {
 		}
 	}
 
+	/**
+	 * Allows to set a fixed delay of the response in milliseconds
+	 */
 	void fixedDelayMilliseconds(int timeInMilliseconds) {
 		this.delay = toDslProperty(timeInMilliseconds)
 	}
 
+	/**
+	 * Turns on the asynchronous mode for this contract. Used with MockMvc and the
+	 * Servlet 3.0 features
+	 */
 	void async() {
 		this.async = true
 	}
@@ -107,6 +135,9 @@ class Response extends Common {
 		throw new IllegalStateException("Optional can be used only in the test side of the response!")
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	DslProperty value(ServerDslProperty server) {
 		Object dynamicValue = server.serverValue
 		Object concreteValue = server.clientValue
@@ -116,22 +147,37 @@ class Response extends Common {
 		return new DslProperty(concreteValue, dynamicValue)
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	DslProperty $(ServerDslProperty server) {
 		return value(server)
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	DslProperty value(Pattern server) {
 		return value(new RegexProperty(server))
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	DslProperty value(RegexProperty server) {
 		return value(new ServerDslProperty(server))
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	DslProperty $(RegexProperty server) {
 		return value(server)
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	DslProperty $(Pattern server) {
 		return value(new RegexProperty(server))
 	}
@@ -150,16 +196,25 @@ class Response extends Common {
 		bodyMatchers(closure)
 	}
 
+	/**
+	 * Allows to set matchers for the body
+	 */
 	void bodyMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
 		this.bodyMatchers = new ResponseBodyMatchers()
 		closure.delegate = this.bodyMatchers
 		closure()
 	}
 
+	/**
+	 * Allows to reference entries from the request
+	 */
 	FromRequest fromRequest() {
 		return new FromRequest()
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	@Override
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		if (client.clientValue instanceof RegexProperty) {
@@ -168,6 +223,9 @@ class Response extends Common {
 		return super.value(client, server)
 	}
 
+	/**
+	 * Allows to set a dynamic value for the given element
+	 */
 	@Override
 	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
 		if (client.clientValue instanceof RegexProperty) {
