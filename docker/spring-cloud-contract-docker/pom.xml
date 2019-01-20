@@ -17,6 +17,10 @@
 	<name>Spring Cloud Contract Docker</name>
 	<description>Spring Cloud Contract Docker</description>
 
+	<properties>
+		<dockerfile.build.noCache>true</dockerfile.build.noCache>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -118,6 +122,13 @@
 						<noCache>true</noCache>
 					</build>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.plexus</groupId>
+						<artifactId>plexus-archiver</artifactId>
+						<version>3.4</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
