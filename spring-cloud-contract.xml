@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2019-01-18</date>
+<date>2019-01-21</date>
 </info>
 <preface>
 <title></title>
@@ -8630,10 +8630,53 @@ that information (for example, in the stubs, you have to call <literal>/my-conte
 </listitem>
 </itemizedlist>
 </section>
-<section xml:id="_working_with_web_flux">
-<title>Working with Web Flux</title>
-<simpara>Spring Cloud Contract requires the usage of <literal>EXPLICIT</literal> mode in your generated tests
-to work with Web Flux.</simpara>
+<section xml:id="_working_with_webflux">
+<title>Working with WebFlux</title>
+<simpara>Spring Cloud Contract offers two ways of working with WebFlux.</simpara>
+<section xml:id="_webflux_with_webtestclient">
+<title>WebFlux with WebTestClient</title>
+<simpara>One of them is via the <literal>WebTestClient</literal> mode.</simpara>
+<formalpara role="primary">
+<title>Maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;testMode&gt;WEBTESTCLIENT&lt;/testMode&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara role="secondary">
+<title>Gradle</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">contracts {
+		testMode = 'WEBTESTCLIENT'
+}</programlisting>
+</para>
+</formalpara>
+<simpara>The following example shows how to set up a <literal>WebTestClient</literal> base class and <literal>RestAssured</literal>
+for WebFlux:</simpara>
+<programlisting language="groovy" linenumbering="unnumbered">import io.restassured.module.webtestclient.RestAssuredWebTestClient;
+import org.junit.Before;
+
+public abstract class BeerRestBase {
+
+	@Before
+	public void setup() {
+		RestAssuredWebTestClient.standaloneSetup(
+		new ProducerController(personToCheck -&gt; personToCheck.age &gt;= 20));
+	}
+}
+}</programlisting>
+</section>
+<section xml:id="_webflux_with_explicit_mode">
+<title>WebFlux with Explicit mode</title>
+<simpara>Another way is with the <literal>EXPLICIT</literal> mode in your generated tests
+to work with WebFlux.</simpara>
 <formalpara role="primary">
 <title>Maven</title>
 <para>
@@ -8682,6 +8725,7 @@ static class Config {
 }
 
 }</programlisting>
+</section>
 </section>
 <section xml:id="_xml_support_for_rest">
 <title>XML Support for REST</title>
