@@ -141,11 +141,6 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	@Override
-	protected String getParsedXmlResponseBodyString(String responseString) {
-		return "Object responseBody = new XmlSlurper().parseText($responseString);"
-	}
-
-	@Override
 	protected String getSimpleResponseBodyString(String responseString) {
 		return "String responseBody = $responseString;"
 	}
