@@ -115,11 +115,6 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	@Override
-	protected String getParsedXmlResponseBodyString(String responseString) {
-		return "def responseBody = new XmlSlurper().parseText($responseString)"
-	}
-
-	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, FromFileProperty value) {
 		if (value.isByte()) {
 			return "response.body.asByteArray() == " +

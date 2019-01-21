@@ -194,11 +194,6 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
-	protected String getParsedXmlResponseBodyString(String responseString) {
-		return "def responseBody = new XmlSlurper().parseText($responseString)"
-	}
-
-	@Override
 	protected String getSimpleResponseBodyString(String responseString) {
 		return "def responseBody = ($responseString)"
 	}

@@ -1174,10 +1174,59 @@ context path included (for example, `/my-context-path/url`).
 * Your contracts reflect that you have a context path. Your generated stubs also have
 that information (for example, in the stubs, you have to call `/my-context-path/url`).
 
-=== Working with Web Flux
+=== Working with WebFlux
 
-Spring Cloud Contract requires the usage of `EXPLICIT` mode in your generated tests
-to work with Web Flux.
+Spring Cloud Contract offers two ways of working with WebFlux.
+
+==== WebFlux with WebTestClient
+
+One of them is via the `WebTestClient` mode.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <testMode>WEBTESTCLIENT</testMode>
+    </configuration>
+</plugin>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+contracts {
+		testMode = 'WEBTESTCLIENT'
+}
+----
+
+The following example shows how to set up a `WebTestClient` base class and `RestAssured`
+for WebFlux:
+
+[source,groovy,indent=0]
+----
+import io.restassured.module.webtestclient.RestAssuredWebTestClient;
+import org.junit.Before;
+
+public abstract class BeerRestBase {
+
+	@Before
+	public void setup() {
+		RestAssuredWebTestClient.standaloneSetup(
+		new ProducerController(personToCheck -> personToCheck.age >= 20));
+	}
+}
+}
+----
+
+==== WebFlux with Explicit mode
+
+Another way is with the `EXPLICIT` mode in your generated tests
+to work with WebFlux.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -265,11 +265,6 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	protected abstract String getPropertyInListString(String property, Integer index)
 
 	protected abstract String convertUnicodeEscapesIfRequired(String json)
-
-	/**
-	 * NOTE: XML support is experimental
-	 */
-	protected abstract String getParsedXmlResponseBodyString(String responseString)
 
 	/**
 	 * Builds the code that returns String from a body that is plain text
