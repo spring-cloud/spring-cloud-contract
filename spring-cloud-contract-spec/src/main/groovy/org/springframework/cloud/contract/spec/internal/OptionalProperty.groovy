@@ -20,6 +20,7 @@ import java.util.regex.Pattern
 
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import repackaged.nl.flotsam.xeger.Xeger
 
 /**
  * Represents a property that may or may not be there
@@ -28,7 +29,7 @@ import groovy.transform.ToString
  */
 @CompileStatic
 @ToString(includePackage = false, includeNames = true)
-class OptionalProperty implements Serializable {
+class OptionalProperty implements Serializable, CanBeDynamic {
 	final Object value
 
 	OptionalProperty(Object value) {
@@ -55,5 +56,10 @@ class OptionalProperty implements Serializable {
 	@Override
 	String toString() {
 		return optionalPattern()
+	}
+
+	@Override
+	Object generateConcreteValue() {
+		return new Xeger(optionalPattern()).generate()
 	}
 }

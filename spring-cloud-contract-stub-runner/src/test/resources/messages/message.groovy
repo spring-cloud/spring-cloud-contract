@@ -21,7 +21,8 @@ org.springframework.cloud.contract.spec.Contract.make {
 				"firstName" : $(regex(nonEmpty())),
 				"middleName": $(optional(regex(nonEmpty()))),
 				"lastName"  : $(regex(nonEmpty())),
-				"version"   : $(producer(regex(number())), consumer(0l))
+				"version"   : $(producer(regex(number())), consumer(0l)),
+				"uid"       : $(producer(regex(uuid())))
 		])
 	}
 }

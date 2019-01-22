@@ -33,7 +33,7 @@ import repackaged.nl.flotsam.xeger.Xeger
 @TypeChecked
 @EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
-class RegexProperty extends DslProperty {
+class RegexProperty extends DslProperty implements CanBeDynamic {
 	final Pattern pattern
 	private final Class clazz
 
@@ -168,5 +168,10 @@ class RegexProperty extends DslProperty {
 	@Override
 	String toString() {
 		return this.pattern()
+	}
+
+	@Override
+	Object generateConcreteValue() {
+		return generate()
 	}
 }

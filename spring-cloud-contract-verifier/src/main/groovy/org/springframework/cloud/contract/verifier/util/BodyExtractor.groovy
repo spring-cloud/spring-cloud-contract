@@ -16,10 +16,15 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.regex.Pattern
+
 import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.CompileStatic
+
+import org.springframework.cloud.contract.spec.internal.CanBeDynamic
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 
 import static ContentUtils.extractValue
 /**
@@ -78,7 +83,13 @@ class BodyExtractor {
 		} else if (bodyValue instanceof DslProperty) {
 			return extractClientValueFromBody(bodyValue.clientValue)
 		} else {
-			return MapConverter.transformValues(bodyValue, { it instanceof DslProperty ? it.clientValue : it })
+			return MapConverter.transformValues(bodyValue, {
+				Object prop = it instanceof DslProperty ? it.clientValue : it
+				if (prop instanceof CanBeDynamic || prop instanceof Pattern) {
+					return new RegexProperty(prop).generateConcreteValue()
+				}
+				return prop
+			})
 		}
 	}
 }

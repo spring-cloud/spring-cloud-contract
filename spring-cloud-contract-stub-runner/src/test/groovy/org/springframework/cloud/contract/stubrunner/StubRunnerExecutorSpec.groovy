@@ -160,8 +160,10 @@ class StubRunnerExecutorSpec extends Specification {
 		then:
 			triggered
 			1 * messageVerifier.send({ it ->
+				println "Body <${it}>"
 				!it.toString().contains("cursor")
 			}, { Map map ->
+				println "Headers <${map}>"
 				!map.values().any { it.toString().contains("cursor")}
 			}, _)
 		cleanup:
