@@ -94,11 +94,13 @@
 			<artifactId>spring-cloud-contract-verifier</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<!-- TODO: We had to remove any dependencies that contain snaps versions.
+		We have to figure out how to solve this (maybe release a RELEASE version for tests) -->
+		<!--<dependency>
 			<groupId>sagan</groupId>
 			<artifactId>sagan-site</artifactId>
 			<classifier>stubs</classifier>
-			<version>1.0.0.BUILD-SNAPSHOT</version>
+			<version>1.0.0.BUILD-SNAP...</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -111,7 +113,7 @@
 			<groupId>com.example.github</groupId>
 			<artifactId>github-webhook</artifactId>
 			<classifier>stubs</classifier>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1-SNAP...</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -119,6 +121,6 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 </project>

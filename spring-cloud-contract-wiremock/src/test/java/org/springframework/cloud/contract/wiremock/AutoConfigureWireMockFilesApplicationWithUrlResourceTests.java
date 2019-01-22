@@ -21,28 +21,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class,
-		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
-		webEnvironment = WebEnvironment.NONE)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class,
+//		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
+//		webEnvironment = WebEnvironment.NONE)
 // tag::load_all_stubs[]
 @AutoConfigureWireMock(port = 0, stubs = "classpath*:/META-INF/**/mappings/**/*.json")
 // end::load_all_stubs[]
+// Ignore for a GA Release
+@Ignore
 public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 
 	@Autowired
