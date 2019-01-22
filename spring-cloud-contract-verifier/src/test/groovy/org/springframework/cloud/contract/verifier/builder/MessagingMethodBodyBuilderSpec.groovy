@@ -956,4 +956,94 @@ Contract.make {
   assertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "method_response_response.pdf"));
 '''
 	}
+
+	@Issue('#650')
+	def "should generate output for message [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+				description 'issue #650'
+				label 'trigger'
+				input {
+					triggeredBy('createNewPerson()')
+				}
+				outputMessage {
+					sentTo 'personEventsTopic'
+					headers {
+						[
+								header('contentType': 'application/json'),
+								header('type': 'person'),
+								header('eventType': 'PersonChangedEvent'),
+								header('customerId': $(producer(regex(uuid()))))
+						]
+					}
+					body([
+							"type"      : 'CREATED',
+							"personId"  : $(producer(regex(uuid())), consumer('0fd552ba-8043-42da-ab97-4fc77e1057c9')),
+							"userId"    : $(producer(optional(regex(uuid()))), consumer('f043ccf1-0b72-423b-ad32-4ef123718897')),
+							"firstName" : $(regex(nonEmpty())),
+							"middleName": $(optional(regex(nonEmpty()))),
+							"lastName"  : $(regex(nonEmpty())),
+							"version"   : $(producer(regex(number())), consumer(0l)),
+							"uid"       : $(producer(regex(uuid())))
+					])
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('cursor')
+			!test.contains('REGEXP>>')
+			test == expectedTest
+		where:
+			methodBuilderName                 | methodBuilder                                                            | expectedTest
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' when:
+  createNewPerson()
+
+ then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive('personEventsTopic')
+  assert response != null
+  response.getHeader('contentType')?.toString()  == 'application/json'
+  response.getHeader('type')?.toString()  == 'person'
+  response.getHeader('eventType')?.toString()  == 'PersonChangedEvent'
+  response.getHeader('customerId')?.toString() ==~ java.util.regex.Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
+ and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+  assertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+")
+  assertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?")
+  assertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?")
+  assertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")
+  assertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
+  assertThatJson(parsedJson).field("['type']").isEqualTo("CREATED")
+  assertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
+  assertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+")
+'''
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // when:
+  createNewPerson();
+
+ // then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic");
+  assertThat(response).isNotNull();
+  assertThat(response.getHeader("contentType")).isNotNull();
+  assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
+  assertThat(response.getHeader("type")).isNotNull();
+  assertThat(response.getHeader("type").toString()).isEqualTo("person");
+  assertThat(response.getHeader("eventType")).isNotNull();
+  assertThat(response.getHeader("eventType").toString()).isEqualTo("PersonChangedEvent");
+  assertThat(response.getHeader("customerId")).isNotNull();
+  assertThat(response.getHeader("customerId").toString()).matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+  assertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+");
+  assertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?");
+  assertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?");
+  assertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)");
+  assertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+  assertThatJson(parsedJson).field("['type']").isEqualTo("CREATED");
+  assertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+  assertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+");
+'''
+	}
 }
