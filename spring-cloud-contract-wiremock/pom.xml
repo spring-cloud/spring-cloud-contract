@@ -12,15 +12,20 @@
 	<packaging>jar</packaging>
 	<name>spring-cloud-contract-wiremock</name>
 	<description>Spring Cloud Contract Wiremock</description>
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/libs-milestone-local</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-standalone</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.rest-assured</groupId>
@@ -94,13 +99,11 @@
 			<artifactId>spring-cloud-contract-verifier</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- TODO: We had to remove any dependencies that contain snaps versions.
-		We have to figure out how to solve this (maybe release a RELEASE version for tests) -->
-		<!--<dependency>
-			<groupId>sagan</groupId>
-			<artifactId>sagan-site</artifactId>
+		<dependency>
+			<groupId>com.example.github</groupId>
+			<artifactId>github-webhook</artifactId>
 			<classifier>stubs</classifier>
-			<version>1.0.0.BUILD-SNAP...</version>
+			<version>1.0.0.M1-190120_193303-VERSION</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -111,9 +114,9 @@
 		</dependency>
 		<dependency>
 			<groupId>com.example.github</groupId>
-			<artifactId>github-webhook</artifactId>
+			<artifactId>github-analytics</artifactId>
 			<classifier>stubs</classifier>
-			<version>0.0.1-SNAP...</version>
+			<version>1.0.0.M1-190120_105104-VERSION</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -121,6 +124,6 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>-->
+		</dependency>
 	</dependencies>
 </project>
