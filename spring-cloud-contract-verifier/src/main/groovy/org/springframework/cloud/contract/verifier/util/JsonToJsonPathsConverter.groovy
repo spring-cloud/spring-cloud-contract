@@ -55,6 +55,7 @@ class JsonToJsonPathsConverter {
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
 	private static final String ANY_ARRAY_NOTATION_IN_JSONPATH = "[*]"
+	private static final String DESCENDANT_OPERATOR = ".."
 
 	private final ContractVerifierConfigProperties configProperties
 
@@ -87,7 +88,7 @@ class JsonToJsonPathsConverter {
 					def entry = entry(context, matcher.path())
 					if (entry != null) {
 						context.delete(matcher.path())
-						removeTrailingContainers(matcher, context)
+						removeTrailingContainers(matcher.path(), context)
 					}
 				} catch (RuntimeException e) {
 					if (log.isDebugEnabled()) {
@@ -131,21 +132,26 @@ class JsonToJsonPathsConverter {
 	 * remove that trailing collection. All in all it's better to use the Groovy based notation for
 	 * defining body...
 	 */
-	private static void removeTrailingContainers(BodyMatcher matcher, DocumentContext context) {
-		String pathWithoutAnyArray = matcher.path().contains(ANY_ARRAY_NOTATION_IN_JSONPATH) ? matcher.path().substring(0, matcher.path().lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH)) : matcher.path()
+	private static boolean removeTrailingContainers(String matcherPath, DocumentContext context) {
+		boolean containsArray = matcherPath.contains(ANY_ARRAY_NOTATION_IN_JSONPATH)
+		String pathWithoutAnyArray =  containsArray ? matcherPath.substring(0, matcherPath.lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH)) : matcherPath
 		def object = entry(context, pathWithoutAnyArray)
 		// object got removed and it was the only element
 		// let's get its parent and see if it contains an empty element
-		if (isIterable(object) && containsOnlyEmptyElements(object)) {
+		if (isIterable(object) && containsOnlyEmptyElements(object) && isNotRootArray(matcherPath)) {
 			String pathToDelete = pathToDelete(pathWithoutAnyArray)
 			context.delete(pathToDelete)
+			return pathToDelete.contains(DESCENDANT_OPERATOR) ? false :
+					removeTrailingContainers(pathToDelete, context)
 		} else {
-			String lastParent = matcher.path().substring(0, matcher.path().lastIndexOf("."))
+			String lastParent = matcherPath.substring(0, matcherPath.lastIndexOf("."))
 			def lastParentObject = context.read(lastParent)
-			if (isIterable(lastParentObject) && containsOnlyEmptyElements(lastParentObject)) {
+			if (isIterable(lastParentObject) && containsOnlyEmptyElements(lastParentObject) && isNotRoot(lastParent)) {
 				context.delete(lastParent)
+				return removeTrailingContainers(lastParent, context)
 			}
 		}
+		return false
 	}
 
 	private static boolean isIterable(Object object) {
@@ -155,6 +161,16 @@ class JsonToJsonPathsConverter {
 	private static String pathToDelete(String pathWithoutAnyArray) {
 		// we can't remove root
 		return pathWithoutAnyArray == '$' ? '$[*]' : pathWithoutAnyArray
+	}
+
+	private static boolean isNotRoot(String path) {
+		// we can't remove root
+		return path != '$'
+	}
+
+	private static boolean isNotRootArray(String path) {
+		// we can't remove root
+		return path != '$[*]'
 	}
 
 	private static boolean containsOnlyEmptyElements(Object object) {
