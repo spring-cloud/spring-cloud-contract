@@ -17,6 +17,8 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import org.xml.sax.helpers.DefaultHandler
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -119,7 +121,7 @@ class ContentUtils {
 			return JSON
 		} catch(JsonException e) {
 			try {
-				new XmlSlurper().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+				getXmlSlurperWithDefaultErrorHandler().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
 				return ContentType.XML
 			} catch (Exception ignored) {
 				extractValueForGString(bodyAsValue, GET_STUB_SIDE)
@@ -134,7 +136,7 @@ class ContentUtils {
 			return JSON
 		} catch(JsonException e) {
 			try {
-				new XmlSlurper().parseText(bodyAsValue)
+				getXmlSlurperWithDefaultErrorHandler().parseText(bodyAsValue)
 				return ContentType.XML
 			} catch (Exception ignored) {
 				return UNKNOWN
@@ -234,7 +236,7 @@ class ContentUtils {
 				bodyAsValue.strings.clone() as String[]
 		)
 		// try to convert it to XML
-		new XmlSlurper().parseText(impl.toString())
+		getXmlSlurperWithDefaultErrorHandler().parseText(impl.toString())
 		return impl
 	}
 
@@ -464,7 +466,7 @@ class ContentUtils {
 				gString.strings.clone() as String[]
 		)
 		try {
-			new XmlSlurper().parseText(stringWithoutValues.toString())
+			getXmlSlurperWithDefaultErrorHandler().parseText(stringWithoutValues.toString())
 			return true
 		} catch (Exception ignored) {
 			// Not XML
@@ -546,5 +548,11 @@ class ContentUtils {
 			contentType = recognizeContentTypeFromContent(body)
 		}
 		return contentType
+	}
+
+	private static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
+		def xmlSlurper = new XmlSlurper()
+		xmlSlurper.setErrorHandler(new DefaultHandler())
+		return xmlSlurper
 	}
 }

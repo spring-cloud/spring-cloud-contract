@@ -23,6 +23,7 @@ import groovy.json.JsonSlurper
 import groovy.transform.CompileDynamic
 import groovy.xml.XmlUtil
 import org.springframework.cloud.contract.spec.Contract
+import org.xml.sax.helpers.DefaultHandler
 import repackaged.nl.flotsam.xeger.Xeger
 
 import java.nio.charset.StandardCharsets
@@ -123,7 +124,7 @@ class WireMockToDslConverter {
 			return wrapWithMultilineGString(JsonOutput.prettyPrint(responseBody))
 		} catch (Exception jsonException) {
 			try {
-				def xml = new XmlSlurper().parseText(responseBody)
+				def xml = getXmlSlurperWithDefaultErrorHandler().parseText(responseBody)
 				return wrapWithMultilineGString(XmlUtil.serialize(responseBody))
 			} catch (Exception xmlException) {
 				return wrapWithMultilineGString(responseBody)
@@ -205,5 +206,11 @@ ${Contract.name}.make {
 	$dslFromWireMockStub
 }
 """
+	}
+
+	private static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
+		def xmlSlurper = new XmlSlurper()
+		xmlSlurper.setErrorHandler(new DefaultHandler())
+		return xmlSlurper
 	}
 }
