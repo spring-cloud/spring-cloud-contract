@@ -550,7 +550,7 @@ class ContentUtils {
 		return contentType
 	}
 
-	private static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
+	static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
 		def xmlSlurper = new XmlSlurper()
 		xmlSlurper.setErrorHandler(new DefaultHandler())
 		return xmlSlurper

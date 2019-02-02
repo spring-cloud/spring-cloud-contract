@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.verifier.util
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.verifier.util.ContentUtils
+import org.xml.sax.helpers.DefaultHandler
 import spock.lang.Specification
 
 /**
@@ -21,5 +22,12 @@ class ContentUtilsSpec extends Specification {
 			DslProperty<String> dslProperty = new DslProperty<>("stub", "test")
 		expect:
 			"test" == ContentUtils.GET_TEST_SIDE(dslProperty)
+	}
+
+	def "should return XmlSlurper with default error handler"() {
+		given:
+		XmlSlurper xmlSlurper = ContentUtils.getXmlSlurperWithDefaultErrorHandler()
+		expect:
+		xmlSlurper.getErrorHandler() in DefaultHandler
 	}
 }
