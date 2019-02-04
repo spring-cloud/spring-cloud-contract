@@ -111,7 +111,7 @@ class ContentUtils {
 			return ContentType.JSON
 		} catch(JsonException e) {
 			try {
-                getXmlSlurperWithDefaultErrorHandler().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+            	getXmlSlurperWithDefaultErrorHandler().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
 				return ContentType.XML
 			} catch (Exception exception) {
 				extractValueForGString(bodyAsValue, GET_STUB_SIDE)
@@ -126,7 +126,7 @@ class ContentUtils {
 			return ContentType.JSON
 		} catch(JsonException e) {
 			try {
-                getXmlSlurperWithDefaultErrorHandler().parseText(bodyAsValue)
+            	getXmlSlurperWithDefaultErrorHandler().parseText(bodyAsValue)
 				return ContentType.XML
 			} catch (Exception exception) {
 				return ContentType.UNKNOWN
@@ -190,7 +190,7 @@ class ContentUtils {
 				bodyAsValue.strings.clone() as String[]
 		)
 		// try to convert it to XML
-        getXmlSlurperWithDefaultErrorHandler().parseText(impl.toString())
+    	getXmlSlurperWithDefaultErrorHandler().parseText(impl.toString())
 		return impl
 	}
 
@@ -386,7 +386,7 @@ class ContentUtils {
 				gstring.strings.clone() as String[]
 		)
 		try {
-            getXmlSlurperWithDefaultErrorHandler().parseText(stringWithoutValues.toString())
+        	getXmlSlurperWithDefaultErrorHandler().parseText(stringWithoutValues.toString())
 			return true
 		} catch (Exception e) {
 			// Not XML
@@ -449,9 +449,9 @@ class ContentUtils {
 	}
 
     static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
-        def xmlSlurper = new XmlSlurper()
-        xmlSlurper.setErrorHandler(new DefaultHandler())
-        return xmlSlurper
+    	def xmlSlurper = new XmlSlurper()
+    	xmlSlurper.setErrorHandler(new DefaultHandler())
+    	return xmlSlurper
     }
 
 }
