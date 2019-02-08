@@ -21,6 +21,8 @@ import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapp
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import spock.lang.Specification
 
+import org.xml.sax.helpers.DefaultHandler
+
 import java.util.regex.Pattern
 
 class WireMockToDslConverterSpec extends Specification {
@@ -561,6 +563,13 @@ class WireMockToDslConverterSpec extends Specification {
 				}""").first()
 		and:
 			evaluatedGroovyDsl == expectedGroovyDsl
+	}
+
+	def "should return XmlSlurper with default error handler"() {
+		given:
+		XmlSlurper xmlSlurper = WireMockToDslConverter.getXmlSlurperWithDefaultErrorHandler()
+		expect:
+		xmlSlurper.getErrorHandler() in DefaultHandler
 	}
 
 	void stubMappingIsValidWireMockStub(String mappingDefinition) {
