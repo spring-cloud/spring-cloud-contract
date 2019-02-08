@@ -12,31 +12,31 @@ ignored: true
 #end::ignored[]
 #tag::request[]
 request:
-#end::request[]
-#tag::request_obligatory[]
+  #end::request[]
+  #tag::request_obligatory[]
   method: PUT
   url: /foo
-#end::request_obligatory[]
-#tag::query_params[]
+  #end::request_obligatory[]
+  #tag::query_params[]
   queryParameters:
     a: b
     b: c
-#tag::query_params[]
-#tag::headers[]
+  #tag::query_params[]
+  #tag::headers[]
   headers:
     foo: bar
     fooReq: baz
-#end::headers[]
-#tag::cookies[]
+  #end::headers[]
+  #tag::cookies[]
   cookies:
     foo: bar
     fooReq: baz
-#end::cookies[]
-#tag::body[]
+  #end::cookies[]
+  #tag::body[]
   body:
     foo: bar
-#end::body[]
-#tag::request_matcher[]
+  #end::body[]
+  #tag::request_matcher[]
   matchers:
     body:
       - path: $.foo
@@ -48,10 +48,10 @@ request:
 #end::request_matcher[]
 #tag::response[]
 response:
-#end::response[]
-#tag::response_obligatory[]
+  #end::response[]
+  #tag::response_obligatory[]
   status: 200
-#end::response_obligatory[]
+  #end::response_obligatory[]
   fixedDelayMilliseconds: 1000
   headers:
     foo2: bar

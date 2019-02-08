@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.stubrunner.provider.wiremock;
@@ -56,18 +55,18 @@ import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * Abstraction over WireMock as a HTTP Server Stub
+ * Abstraction over WireMock as a HTTP Server Stub.
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
 public class WireMockHttpServerStub implements HttpServerStub {
 
+	static final Map<WireMockHttpServerStub, PortAndMappings> SERVERS = new ConcurrentHashMap<>();
+
 	private static final Log log = LogFactory.getLog(WireMockHttpServerStub.class);
 
 	private static final int INVALID_PORT = -1;
-
-	static final Map<WireMockHttpServerStub, PortAndMappings> SERVERS = new ConcurrentHashMap<>();
 
 	private WireMockServer wireMockServer;
 
@@ -99,9 +98,10 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	/**
-	 * Override this if you want to register your own helpers
+	 * Override this if you want to register your own helpers.
 	 * @deprecated - please use the {@link WireMockExtensions} mechanism and pass the
 	 * helpers in your implementation
+	 * @return a mapping of helper names to its implementations
 	 */
 	@Deprecated
 	protected Map<String, Helper> helpers() {
@@ -113,9 +113,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	@Override
 	public int port() {
-		return isRunning() ? (this.https ?
-				this.wireMockServer.httpsPort() : this.wireMockServer.port())
-				: INVALID_PORT;
+		return isRunning() ? (this.https ? this.wireMockServer.httpsPort()
+				: this.wireMockServer.port()) : INVALID_PORT;
 	}
 
 	@Override
@@ -138,7 +137,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private HttpServerStubConfiguration defaultConfiguration(int port) {
-		return new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null, null, port);
+		return new HttpServerStubConfiguration(
+				HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
+				null, port);
 	}
 
 	@Override
@@ -147,8 +148,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	@Override
-	public HttpServerStub start(
-			HttpServerStubConfiguration configuration) {
+	public HttpServerStub start(HttpServerStubConfiguration configuration) {
 		if (isRunning()) {
 			if (log.isTraceEnabled()) {
 				log.trace("The server is already running at port [" + port() + "]");
@@ -161,16 +161,19 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		if (configuration.configurer.isAccepted(wireMockConfiguration)) {
 			@SuppressWarnings("unchecked")
 			HttpServerStubConfigurer<WireMockConfiguration> configurer = configuration.configurer;
-			wireMockConfiguration = configurer.configure(wireMockConfiguration, configuration);
+			wireMockConfiguration = configurer.configure(wireMockConfiguration,
+					configuration);
 		}
 		this.wireMockConfiguration = wireMockConfiguration;
 		this.https = wireMockConfiguration.httpsSettings().enabled();
-		port = this.https ? wireMockConfiguration.httpsSettings().port() :
-				wireMockConfiguration.portNumber();
+		port = this.https ? wireMockConfiguration.httpsSettings().port()
+				: wireMockConfiguration.portNumber();
 		this.wireMockServer = new WireMockServer(wireMockConfiguration);
 		this.wireMockServer.start();
 		if (log.isDebugEnabled()) {
-			log.debug("For " + configuration.toColonSeparatedDependencyNotation() + " Started WireMock at [" + (this.https ? "https" : "http") + "] port [" + port + "]");
+			log.debug("For " + configuration.toColonSeparatedDependencyNotation()
+					+ " Started WireMock at [" + (this.https ? "https" : "http")
+					+ "] port [" + port + "]");
 		}
 		cacheStubServer(false, port);
 		return this;
@@ -255,8 +258,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		String proxyHost = this.wireMockConfiguration.proxyHostHeader();
 		int proxyPort = this.wireMockConfiguration.proxyVia().port();
 		ClientAuthenticator authenticator = NoClientAuthenticator.noClientAuthenticator();
-		return new WireMock(scheme, host, port, urlPathPrefix,
-				hostHeader, proxyHost, proxyPort, authenticator);
+		return new WireMock(scheme, host, port, urlPathPrefix, hostHeader, proxyHost,
+				proxyPort, authenticator);
 	}
 
 	private void registerDefaultHealthChecks(WireMock wireMock) {
@@ -282,7 +285,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 		}
 		PortAndMappings portAndMappings = SERVERS.get(this);
-		SERVERS.put(this, new PortAndMappings(portAndMappings.random, portAndMappings.port, stubMappings));
+		SERVERS.put(this, new PortAndMappings(portAndMappings.random,
+				portAndMappings.port, stubMappings));
 	}
 
 	private StubMapping registerDescriptor(WireMock wireMock, File mappingDescriptor) {
@@ -305,7 +309,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 class PortAndMappings {
 
 	final boolean random;
+
 	final Integer port;
+
 	final List<StubMapping> mappings;
 
 	PortAndMappings(boolean random, Integer port, List<StubMapping> mappings) {
@@ -316,10 +322,8 @@ class PortAndMappings {
 
 	@Override
 	public String toString() {
-		return "PortAndMappings{" +
-				"random=" + this.random +
-				", port=" + this.port +
-				", mappings=" + this.mappings +
-				'}';
+		return "PortAndMappings{" + "random=" + this.random + ", port=" + this.port
+				+ ", mappings=" + this.mappings + '}';
 	}
+
 }

@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer.NoOpHttpServerStubConfigurer;
 import org.springframework.cloud.contract.stubrunner.ResourceResolver;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -35,17 +36,17 @@ import org.springframework.util.StringUtils;
 public class StubRunnerProperties {
 
 	/**
-	 * Min value of a port for the automatically started WireMock server
+	 * Min value of a port for the automatically started WireMock server.
 	 */
 	private int minPort = 10000;
 
 	/**
-	 * Max value of a port for the automatically started WireMock server
+	 * Max value of a port for the automatically started WireMock server.
 	 */
 	private int maxPort = 15000;
 
 	/**
-	 * The repository root to use (where the stubs should be downloaded from)
+	 * The repository root to use (where the stubs should be downloaded from).
 	 */
 	private Resource repositoryRoot;
 
@@ -62,22 +63,22 @@ public class StubRunnerProperties {
 	private String classifier = "stubs";
 
 	/**
-	 * Repository username
+	 * Repository username.
 	 */
 	private String username;
 
 	/**
-	 * Repository password
+	 * Repository password.
 	 */
 	private String password;
 
 	/**
-	 * Repository proxy port
+	 * Repository proxy port.
 	 */
 	private Integer proxyPort;
 
 	/**
-	 * Repository proxy host
+	 * Repository proxy host.
 	 */
 	private String proxyHost;
 
@@ -93,54 +94,31 @@ public class StubRunnerProperties {
 	private String consumerName;
 
 	/**
-	 * Dumps the mappings of each HTTP server to the selected folder
+	 * Dumps the mappings of each HTTP server to the selected folder.
 	 */
 	private String mappingsOutputFolder;
 
 	/**
-	 * Pick where the stubs should come from
+	 * Pick where the stubs should come from.
 	 */
 	private StubsMode stubsMode;
 
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
-	 * tests
+	 * tests.
 	 */
 	private boolean deleteStubsAfterTest = true;
 
 	/**
 	 * Map of properties that can be passed to custom
-	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
 	private Map<String, String> properties = new HashMap<>();
 
 	/**
-	 * Configuration for an HTTP server stub
+	 * Configuration for an HTTP server stub.
 	 */
-	private Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer =
-			HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
-
-	/**
-	 * An enumeration stub modes.
-	 */
-	public enum StubsMode {
-
-		/**
-		 * Pick the stubs from classpath
-		 */
-		CLASSPATH,
-
-		/**
-		 * Fetch the stubs from local .m2
-		 */
-		LOCAL,
-
-		/**
-		 * Fetch the stubs from a remote location
-		 */
-		REMOTE,
-
-	}
+	private Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer = NoOpHttpServerStubConfigurer.class;
 
 	public int getMinPort() {
 		return this.minPort;
@@ -258,14 +236,6 @@ public class StubRunnerProperties {
 		return this.properties;
 	}
 
-	public Class getHttpServerStubConfigurer() {
-		return this.httpServerStubConfigurer;
-	}
-
-	public void setHttpServerStubConfigurer(Class httpServerStubConfigurer) {
-		this.httpServerStubConfigurer = httpServerStubConfigurer;
-	}
-
 	public void setProperties(String[] properties) {
 		Properties elements = StringUtils.splitArrayElementsIntoProperties(properties,
 				"=");
@@ -277,6 +247,14 @@ public class StubRunnerProperties {
 		}
 	}
 
+	public Class getHttpServerStubConfigurer() {
+		return this.httpServerStubConfigurer;
+	}
+
+	public void setHttpServerStubConfigurer(Class httpServerStubConfigurer) {
+		this.httpServerStubConfigurer = httpServerStubConfigurer;
+	}
+
 	@Override
 	public String toString() {
 		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort="
@@ -285,6 +263,28 @@ public class StubRunnerProperties {
 				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='"
 				+ this.consumerName + '\'' + ", stubsMode='" + this.stubsMode + '\''
 				+ ", size of properties=" + this.properties.size() + '}';
+	}
+
+	/**
+	 * An enumeration stub modes.
+	 */
+	public enum StubsMode {
+
+		/**
+		 * Pick the stubs from classpath.
+		 */
+		CLASSPATH,
+
+		/**
+		 * Fetch the stubs from local .m2.
+		 */
+		LOCAL,
+
+		/**
+		 * Fetch the stubs from a remote location.
+		 */
+		REMOTE,
+
 	}
 
 }

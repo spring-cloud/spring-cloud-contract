@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.spec.internal
@@ -48,9 +48,9 @@ class RegexPatternsSpec extends Specification {
 		expect:
 			shouldMatch == regexPatterns.email().matcher(textToMatch).matches()
 		where:
-			textToMatch   || shouldMatch
-			'asd@asd.com' || true
-			'a.b.'        || false
+			textToMatch        || shouldMatch
+			'asd@asd.com'      || true
+			'a.b.'             || false
 			'asdf@asdf.online' || true
 	}
 
@@ -307,20 +307,20 @@ class RegexPatternsSpec extends Specification {
 			"23:59:60"  || false
 	}
 
-	def "should generate a regex with iso8601DateTimeWithTimezone [#textToMatch] in YYYY-MM-DDTHH:mm:ss.SSSZZ format that should match [#shouldMatch]"(){
+	def "should generate a regex with iso8601DateTimeWithTimezone [#textToMatch] in YYYY-MM-DDTHH:mm:ss.SSSZZ format that should match [#shouldMatch]"() {
 		expect:
 			shouldMatch == regexPatterns.iso8601WithOffset().matcher(textToMatch).matches()
 		where:
-			textToMatch 							|| shouldMatch
-			'2014-03-01T12:23:45Z' 					|| true
-			'2014-03-01T12:23:45+01:00' 			|| true
-			'2014-03-01T12:23:45.123Z' 				|| true
-			'2014-03-01T12:23:45.123+01:00' 		|| true
-			'2014-03-01T12:23:45' 					|| false
-			'2014-03-01T12:23:45.123' 				|| false
+			textToMatch                     || shouldMatch
+			'2014-03-01T12:23:45Z'          || true
+			'2014-03-01T12:23:45+01:00'     || true
+			'2014-03-01T12:23:45.123Z'      || true
+			'2014-03-01T12:23:45.123+01:00' || true
+			'2014-03-01T12:23:45'           || false
+			'2014-03-01T12:23:45.123'       || false
 	}
 
-	def "should generate a regex for a non blank string [#textToMatch] that should match [#shouldMatch]"(){
+	def "should generate a regex for a non blank string [#textToMatch] that should match [#shouldMatch]"() {
 		expect:
 			shouldMatch == regexPatterns.nonBlank().matcher(textToMatch).matches()
 		where:
@@ -348,13 +348,13 @@ class RegexPatternsSpec extends Specification {
 
 	}
 
-	def "should generate a regex for an enumerated value [#textToMatch] that should match [#shouldMatch]"(){
+	def "should generate a regex for an enumerated value [#textToMatch] that should match [#shouldMatch]"() {
 		expect:
 			shouldMatch == RegexPatterns.anyOf('foo', 'bar').matcher(textToMatch).matches()
 		where:
-			textToMatch		|| shouldMatch
-			'foo' 			|| true
-			'bar' 			|| true
-			'baz'			|| false
+			textToMatch || shouldMatch
+			'foo'       || true
+			'bar'       || true
+			'baz'       || false
 	}
 }

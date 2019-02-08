@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.messaging.integration;
@@ -59,9 +59,11 @@ public class StubRunnerIntegrationConfiguration {
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
 				.getContracts();
-		IntegrationFlowBuilder dummyBuilder = IntegrationFlows.from(DummyMessageHandler.CHANNEL_NAME)
+		IntegrationFlowBuilder dummyBuilder = IntegrationFlows
+				.from(DummyMessageHandler.CHANNEL_NAME)
 				.handle(new DummyMessageHandler(), "handle");
-		beanFactory.initializeBean(dummyBuilder.get(), DummyMessageHandler.CHANNEL_NAME + ".flow");
+		beanFactory.initializeBean(dummyBuilder.get(),
+				DummyMessageHandler.CHANNEL_NAME + ".flow");
 		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
 				.entrySet()) {
 			StubConfiguration key = entry.getKey();
@@ -74,7 +76,7 @@ public class StubRunnerIntegrationConfiguration {
 				}
 				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
 						&& StringUtils.hasText(
-						dsl.getInput().getMessageFrom().getClientValue())) {
+								dsl.getInput().getMessageFrom().getClientValue())) {
 					String from = dsl.getInput().getMessageFrom().getClientValue();
 					map.add(from, dsl);
 				}
@@ -82,15 +84,18 @@ public class StubRunnerIntegrationConfiguration {
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
 				final String flowName = name + "_" + entries.getKey() + "_"
 						+ entries.getValue().hashCode();
-				IntegrationFlowBuilder builder = IntegrationFlows.from(entries.getKey())
-						.filter(new StubRunnerIntegrationMessageSelector(entries.getValue()),
+				IntegrationFlowBuilder builder = IntegrationFlows
+						.from(entries.getKey()).filter(
+								new StubRunnerIntegrationMessageSelector(
+										entries.getValue()),
 								new Consumer<FilterEndpointSpec>() {
 									@Override
 									public void accept(FilterEndpointSpec e) {
 										e.id(flowName + ".filter");
 									}
 								})
-						.transform(new StubRunnerIntegrationTransformer(entries.getValue()),
+						.transform(
+								new StubRunnerIntegrationTransformer(entries.getValue()),
 								new Consumer<GenericEndpointSpec<MessageTransformingHandler>>() {
 									@Override
 									public void accept(
@@ -98,11 +103,11 @@ public class StubRunnerIntegrationConfiguration {
 										e.id(flowName + ".transformer");
 									}
 								})
-						.route(new StubRunnerIntegrationRouter(entries.getValue(), beanFactory));
+						.route(new StubRunnerIntegrationRouter(entries.getValue(),
+								beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
-				beanFactory.getBean(flowName + ".transformer", Lifecycle.class)
-						.start();
+				beanFactory.getBean(flowName + ".transformer", Lifecycle.class).start();
 			}
 
 		}

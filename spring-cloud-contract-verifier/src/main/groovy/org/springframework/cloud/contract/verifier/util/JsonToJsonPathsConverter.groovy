@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.verifier.util
@@ -35,6 +34,7 @@ import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.SerializationUtils
+
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of
@@ -90,7 +90,8 @@ class JsonToJsonPathsConverter {
 						context.delete(matcher.path())
 						removeTrailingContainers(matcher.path(), context)
 					}
-				} catch (RuntimeException e) {
+				}
+				catch (RuntimeException e) {
 					if (log.isDebugEnabled()) {
 						log.debug("Exception occurred while trying to delete path [${matcher.path()}]", e)
 					}
@@ -103,7 +104,8 @@ class JsonToJsonPathsConverter {
 	private static def entry(DocumentContext context, String path) {
 		try {
 			return context.read(path)
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			if (log.isDebugEnabled()) {
 				log.debug("Exception occurred while trying to retrieve element via path [${path}]", ex)
 			}
@@ -134,19 +136,27 @@ class JsonToJsonPathsConverter {
 	 */
 	private static boolean removeTrailingContainers(String matcherPath, DocumentContext context) {
 		boolean containsArray = matcherPath.contains(ANY_ARRAY_NOTATION_IN_JSONPATH)
-		String pathWithoutAnyArray =  containsArray ? matcherPath.substring(0, matcherPath.lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH)) : matcherPath
+		String pathWithoutAnyArray = containsArray ? matcherPath.substring(0, matcherPath.
+				lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH)) : matcherPath
 		def object = entry(context, pathWithoutAnyArray)
 		// object got removed and it was the only element
 		// let's get its parent and see if it contains an empty element
-		if (isIterable(object) && containsOnlyEmptyElements(object) && isNotRootArray(matcherPath)) {
+		if (isIterable(object)
+				&&
+				containsOnlyEmptyElements(object)
+				&& isNotRootArray(matcherPath)) {
 			String pathToDelete = pathToDelete(pathWithoutAnyArray)
 			context.delete(pathToDelete)
 			return pathToDelete.contains(DESCENDANT_OPERATOR) ? false :
 					removeTrailingContainers(pathToDelete, context)
-		} else {
+		}
+		else {
 			String lastParent = matcherPath.substring(0, matcherPath.lastIndexOf("."))
 			def lastParentObject = context.read(lastParent)
-			if (isIterable(lastParentObject) && containsOnlyEmptyElements(lastParentObject) && isNotRoot(lastParent)) {
+			if (isIterable(lastParentObject)
+					&&
+					containsOnlyEmptyElements(lastParentObject)
+					&& isNotRoot(lastParent)) {
 				context.delete(lastParent)
 				return removeTrailingContainers(lastParent, context)
 			}
@@ -177,7 +187,8 @@ class JsonToJsonPathsConverter {
 		return object.every {
 			if (it instanceof Map) {
 				return it.isEmpty()
-			} else if (it instanceof List) {
+			}
+			else if (it instanceof List) {
 				return it.isEmpty()
 			}
 			return false
@@ -200,7 +211,8 @@ class JsonToJsonPathsConverter {
 	static String convertJsonPathAndRegexToAJsonPath(BodyMatcher bodyMatcher, def body = null) {
 		String path = bodyMatcher.path()
 		Object value = bodyMatcher.value()
-		if (value == null && bodyMatcher.matchingType() != MatchingType.EQUALITY &&
+		if (value == null && bodyMatcher.matchingType() != MatchingType.EQUALITY
+				&&
 				bodyMatcher.matchingType() != MatchingType.TYPE) {
 			return path
 		}
@@ -243,13 +255,16 @@ class JsonToJsonPathsConverter {
 				convertedBody = MapConverter.transformValues(body) {
 					return generatedValueIfNeeded(it)
 				}
-				Object retrievedValue = JsonPath.parse(convertedBody).read(bodyMatcher.path())
+				Object retrievedValue = JsonPath.parse(convertedBody).
+						read(bodyMatcher.path())
 				String wrappedValue = retrievedValue instanceof Number ? retrievedValue : "'${retrievedValue.toString()}'"
 				return "${propertyName} == ${wrappedValue}"
-			} catch (PathNotFoundException e) {
+			}
+			catch (PathNotFoundException e) {
 				throw new IllegalStateException("Value [${bodyMatcher.path()}] not found in JSON [${JsonOutput.toJson(convertedBody)}]", e)
 			}
-		} else if (bodyMatcher.matchingType() == MatchingType.TYPE) {
+		}
+		else if (bodyMatcher.matchingType() == MatchingType.TYPE) {
 			Integer min = bodyMatcher.minTypeOccurrence()
 			Integer max = bodyMatcher.maxTypeOccurrence()
 			String result = ""
@@ -261,7 +276,8 @@ class JsonToJsonPathsConverter {
 				result = result ? "${result} && ${maxResult}" : maxResult
 			}
 			return result
-		} else {
+		}
+		else {
 			String convertedValue = value.toString().replace('/', '\\\\/')
 			return "${propertyName} =~ /(${convertedValue})/"
 		}
@@ -285,23 +301,25 @@ class JsonToJsonPathsConverter {
 
 	private JsonPaths transformToJsonPathWithValues(def json, boolean clientSide,
 			Closure parsingClosure = MapConverter.JSON_PARSING_CLOSURE) {
-		if(!json) {
+		if (!json) {
 			return new JsonPaths()
 		}
 		JsonPaths pathsAndValues = [] as Set
-		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide, parsingClosure)
+		Object convertedJson = MapConverter.
+				getClientOrServerSideValues(json, clientSide, parsingClosure)
 		Object jsonWithPatterns = ContentUtils.
 				convertDslPropsToTemporaryRegexPatterns(convertedJson, parsingClosure)
 		MethodBufferingJsonVerifiable methodBufferingJsonPathVerifiable =
-				new DelegatingJsonVerifiable(JsonAssertion.assertThat(JsonOutput.toJson(jsonWithPatterns))
-						.withoutThrowingException())
+				new DelegatingJsonVerifiable(JsonAssertion.
+						assertThat(JsonOutput.toJson(jsonWithPatterns))
+														  .withoutThrowingException())
 		traverseRecursivelyForKey(jsonWithPatterns, methodBufferingJsonPathVerifiable,
-				 { MethodBufferingJsonVerifiable key, Object value ->
-			if (value instanceof ExecutionProperty || !(key instanceof FinishedDelegatingJsonVerifiable)) {
-				return
-			}
-			pathsAndValues.add(key)
-		}, parsingClosure)
+				{ MethodBufferingJsonVerifiable key, Object value ->
+					if (value instanceof ExecutionProperty || !(key instanceof FinishedDelegatingJsonVerifiable)) {
+						return
+					}
+					pathsAndValues.add(key)
+				}, parsingClosure)
 		return pathsAndValues
 	}
 
@@ -314,48 +332,68 @@ class JsonToJsonPathsConverter {
 				if (json instanceof Map) {
 					return convertWithKey(parentType, key, json, closure, parsingClosure)
 				}
-			} catch (Exception ignore) {
+			}
+			catch (Exception ignore) {
 				return runClosure(closure, key, value)
 			}
-		} else if (isAnEntryWithNonCollectionLikeValue(value)) {
+		}
+		else if (isAnEntryWithNonCollectionLikeValue(value)) {
 			return convertWithKey(List, key, value as Map, closure, parsingClosure)
-		} else if (isAnEntryWithoutNestedStructures(value)) {
+		}
+		else if (isAnEntryWithoutNestedStructures(value)) {
 			return convertWithKey(List, key, value as Map, closure, parsingClosure)
-		} else if (value instanceof Map && !value.isEmpty()) {
+		}
+		else if (value instanceof Map && !value.isEmpty()) {
 			return convertWithKey(Map, key, value as Map, closure, parsingClosure)
-		} else if (value instanceof Map && value.isEmpty()) {
+		}
+		else if (value instanceof Map && value.isEmpty()) {
 			return runClosure(closure, key.isEmpty(), value)
 			// JSON with a list of primitives ["a", "b", "c"] in root issue #266
-		} else if (key.isIteratingOverNamelessArray() && value instanceof List && listContainsOnlyPrimitives(value)) {
+		}
+		else if (key.isIteratingOverNamelessArray() && value instanceof List
+				&&
+				listContainsOnlyPrimitives(value)) {
 			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each {
-				traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(it)),
+				traverseRecursively(Object, key.arrayField().
+						contains(ContentUtils.returnParsedObject(it)),
 						ContentUtils.returnParsedObject(it), closure, parsingClosure)
 			}
-		// JSON containing list of primitives { "partners":[ { "role":"AGENT", "payment_methods":[ "BANK", "CASH" ]	} ]
-		} else if (value instanceof List && listContainsOnlyPrimitives(value)) {
+			// JSON containing list of primitives { "partners":[ { "role":"AGENT", "payment_methods":[ "BANK", "CASH" ]	} ]
+		}
+		else if (value instanceof List && listContainsOnlyPrimitives(value)) {
 			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each {
-				traverseRecursively(Object, valueToAsserter(key.arrayField(), ContentUtils.returnParsedObject(it)),
+				traverseRecursively(Object,
+						valueToAsserter(key.arrayField(), ContentUtils.
+								returnParsedObject(it)),
 						ContentUtils.returnParsedObject(it), closure, parsingClosure)
 			}
-		} else if (value instanceof List && !value.empty) {
-			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
+		}
+		else if (value instanceof List && !value.empty) {
+			MethodBufferingJsonVerifiable jsonPathVerifiable =
+					createAsserterFromList(key, value)
 			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each { def element ->
-				traverseRecursively(List, createAsserterFromListElement(jsonPathVerifiable, ContentUtils.returnParsedObject(element)),
+				traverseRecursively(List,
+						createAsserterFromListElement(jsonPathVerifiable, ContentUtils.
+								returnParsedObject(element)),
 						ContentUtils.returnParsedObject(element), closure, parsingClosure)
 			}
 			return value
-		}  else if (value instanceof List && value.empty) {
+		}
+		else if (value instanceof List && value.empty) {
 			return runClosure(closure, key, value)
-		}  else if (key.isIteratingOverArray()) {
-			traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(value)),
+		}
+		else if (key.isIteratingOverArray()) {
+			traverseRecursively(Object, key.arrayField().
+					contains(ContentUtils.returnParsedObject(value)),
 					ContentUtils.returnParsedObject(value), closure, parsingClosure)
 		}
 		try {
 			return runClosure(closure, key, value)
-		} catch (Exception ignore) {
+		}
+		catch (Exception ignore) {
 			return value
 		}
 	}
@@ -364,12 +402,15 @@ class JsonToJsonPathsConverter {
 	private void addSizeVerificationForListWithPrimitives(MethodBufferingJsonVerifiable key, Closure closure, List value) {
 		String systemPropValue = System.getProperty(SIZE_ASSERTION_SYSTEM_PROP)
 		Boolean configPropValue = configProperties.assertJsonSize
-		if ((systemPropValue != null && Boolean.parseBoolean(systemPropValue)) ||
+		if ((systemPropValue != null && Boolean.parseBoolean(systemPropValue))
+				||
 				configPropValue && listContainsOnlyPrimitives(value)) {
 			addArraySizeCheck(key, value, closure)
-		} else {
+		}
+		else {
 			if (log.isDebugEnabled()) {
-				log.debug("Turning off the incubating feature of JSON array check. " +
+				log.debug("Turning off the incubating feature of JSON array check. "
+						+
 						"System property [$systemPropValue]. Config property [$configPropValue]")
 			}
 			return
@@ -395,13 +436,16 @@ class JsonToJsonPathsConverter {
 	private MethodBufferingJsonVerifiable createAsserterFromList(MethodBufferingJsonVerifiable key, List value) {
 		if (key.isIteratingOverNamelessArray()) {
 			return key.array()
-		} else if (key.isIteratingOverArray() && isAnEntryWithLists(value)) {
-			if (!value.every { listContainsOnlyPrimitives(it as List)} ) {
+		}
+		else if (key.isIteratingOverArray() && isAnEntryWithLists(value)) {
+			if (!value.every { listContainsOnlyPrimitives(it as List) }) {
 				return key.array()
-			} else {
+			}
+			else {
 				return key.iterationPassingArray()
 			}
-		} else if (key.isIteratingOverArray()) {
+		}
+		else if (key.isIteratingOverArray()) {
 			return key.iterationPassingArray()
 		}
 		return key
@@ -414,7 +458,8 @@ class JsonToJsonPathsConverter {
 				return jsonPathVerifiable.matches((object as Pattern).pattern())
 			}
 			return jsonPathVerifiable.contains(object)
-		} else if (element instanceof List) {
+		}
+		else if (element instanceof List) {
 			if (listContainsOnlyPrimitives(element)) {
 				return jsonPathVerifiable.array()
 			}
@@ -423,7 +468,9 @@ class JsonToJsonPathsConverter {
 	}
 
 	private def runClosure(Closure closure, MethodBufferingJsonVerifiable key, def value) {
-		if (key.isAssertingAValueInArray() && !(value instanceof List || value instanceof Map)) {
+		if (key.
+				isAssertingAValueInArray()
+				&& !(value instanceof List || value instanceof Map)) {
 			return closure(valueToAsserter(key, value), value)
 		}
 		return closure(key, value)
@@ -481,10 +528,12 @@ class JsonToJsonPathsConverter {
 			Object entrykey, value ->
 				def convertedValue = ContentUtils.returnParsedObject(value)
 				[entrykey, traverseRecursively(parentType,
-							convertedValue instanceof List ? list(convertedValue, entrykey, parentKey) :
-							convertedValue instanceof Map ? parentKey.field(new ShouldTraverse(entrykey)) :
-									valueToAsserter(parentKey.field(entrykey), convertedValue)
-							, convertedValue, closureToExecute, parsingClosure)]
+						convertedValue instanceof List ?
+								list(convertedValue, entrykey, parentKey) :
+								convertedValue instanceof Map ? parentKey.
+										field(new ShouldTraverse(entrykey)) :
+										valueToAsserter(parentKey.field(entrykey), convertedValue)
+						, convertedValue, closureToExecute, parsingClosure)]
 		}
 	}
 
@@ -509,11 +558,15 @@ class JsonToJsonPathsConverter {
 		}
 		if (convertedValue instanceof Pattern) {
 			return key.matches((convertedValue as Pattern).pattern())
-		} else if (convertedValue instanceof OptionalProperty) {
+		}
+		else if (convertedValue instanceof OptionalProperty) {
 			return key.matches((convertedValue as OptionalProperty).optionalPattern())
-		} else if (convertedValue instanceof GString) {
-			return key.matches(RegexpBuilders.buildGStringRegexpForTestSide(convertedValue))
-		} else if (convertedValue instanceof  ExecutionProperty) {
+		}
+		else if (convertedValue instanceof GString) {
+			return key.
+					matches(RegexpBuilders.buildGStringRegexpForTestSide(convertedValue))
+		}
+		else if (convertedValue instanceof ExecutionProperty) {
 			return key
 		}
 		return key.isEqualTo(convertedValue)

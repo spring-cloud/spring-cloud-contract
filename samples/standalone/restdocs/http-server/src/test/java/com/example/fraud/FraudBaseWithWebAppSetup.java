@@ -2,7 +2,6 @@
 package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -27,21 +26,24 @@ public abstract class FraudBaseWithWebAppSetup {
 	@Rule
 	public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
 
-	@Rule public TestName testName = new TestName();
+	@Rule
+	public TestName testName = new TestName();
 
 	@Autowired
 	private WebApplicationContext context;
 
 	@Before
 	public void setup() {
-	RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(this.context)
-			.apply(documentationConfiguration(this.restDocumentation))
-			.alwaysDo(document(getClass().getSimpleName() + "_" + testName.getMethodName()))
-			.build());
+		RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(this.context)
+				.apply(documentationConfiguration(this.restDocumentation))
+				.alwaysDo(document(
+						getClass().getSimpleName() + "_" + testName.getMethodName()))
+				.build());
 	}
 
 	protected void assertThatRejectionReasonIsNull(Object rejectionReason) {
 		assert rejectionReason == null;
 	}
+
 }
 // end::base_class[]

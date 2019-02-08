@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.util.Collection;
 
 /**
- * Describes an HTTP Server Stub
+ * Describes an HTTP Server Stub.
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
@@ -27,25 +28,27 @@ import java.util.Collection;
 public interface HttpServerStub {
 
 	/**
-	 * Port on which the server is running. Return {@code -1} if not applicable.
+	 * @return port on which the server is running. Return {@code -1} if not applicable.
 	 */
 	int port();
 
 	/**
-	 * Https port on which the server is running. Return {@code -1} if not applicable.
+	 * @return https port on which the server is running. Return {@code -1} if not
+	 * applicable.
 	 */
 	default int httpsPort() {
 		return -1;
 	}
 
 	/**
-	 * Returns {@code true} if the server is running
+	 * @return {@code true} if the server is running
 	 */
 	boolean isRunning();
 
 	/**
 	 * Starts the server on a random port. Should return itself to allow chaining.
 	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
+	 * @return this
 	 */
 	@Deprecated
 	HttpServerStub start();
@@ -53,6 +56,8 @@ public interface HttpServerStub {
 	/**
 	 * Starts the server on a given port. Should return itself to allow chaining.
 	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
+	 * @param port port on which the server should be ran
+	 * @return this
 	 */
 	@Deprecated
 	HttpServerStub start(int port);
@@ -60,6 +65,7 @@ public interface HttpServerStub {
 	/**
 	 * Starts the server. Should return itself to allow chaining.
 	 * @param configuration - setup for the given stub
+	 * @return this
 	 */
 	default HttpServerStub start(HttpServerStubConfiguration configuration) {
 		if (configuration.isRandomPort()) {
@@ -70,11 +76,13 @@ public interface HttpServerStub {
 
 	/**
 	 * Stops the server. Should return itself to allow chaining.
+	 * @return this
 	 */
 	HttpServerStub stop();
 
 	/**
 	 * Resets the server. Should return itself to allow chaining.
+	 * @return this
 	 */
 	default HttpServerStub reset() {
 		return this;
@@ -83,16 +91,20 @@ public interface HttpServerStub {
 	/**
 	 * Registers the stub files in the HTTP server stub. Should return itself to allow
 	 * chaining.
+	 * @param stubFiles collection of files containing stubs
+	 * @return this
 	 */
 	HttpServerStub registerMappings(Collection<File> stubFiles);
 
 	/**
-	 * Returns a collection of registered mappings
+	 * @return a collection of registered mappings.
 	 */
 	String registeredMappings();
 
 	/**
-	 * Returns {@code true} if the file is a valid stub mapping
+	 * @param file file to check if can be accepted.
+	 * @return {@code true} if the file is a valid stub mapping
 	 */
 	boolean isAccepted(File file);
+
 }

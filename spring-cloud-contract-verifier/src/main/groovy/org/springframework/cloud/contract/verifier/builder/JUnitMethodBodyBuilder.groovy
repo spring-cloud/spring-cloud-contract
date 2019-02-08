@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -37,6 +37,7 @@ import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
+
 /**
  * Root class for JUnit method building
  *
@@ -52,7 +53,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJ
 abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
 	JUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties,
-						GeneratedClassDataForMethod classDataForMethod) {
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
@@ -120,7 +121,8 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
-		processBodyElement(blockBuilder, property, getMapKeyReferenceString(property, entry), entry.value)
+		processBodyElement(blockBuilder, property,
+				getMapKeyReferenceString(property, entry), entry.value)
 	}
 
 	private String getMapKeyReferenceString(String property, Map.Entry entry) {
@@ -178,12 +180,14 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		String value
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
-		} else if (body instanceof FromFileProperty) {
+		}
+		else if (body instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) body
 			value = fileProperty.isByte() ?
 					readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
 					readStringFromFileString(fileProperty, CommunicationType.REQUEST)
-		} else {
+		}
+		else {
 			String escaped = escapeRequestSpecialChars(body.toString())
 			value = "\"$escaped\""
 		}
@@ -192,12 +196,16 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty fileProp -> readBytesFromFileString(fileProp, CommunicationType.REQUEST) })
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty fileProp ->
+			readBytesFromFileString(fileProp, CommunicationType.REQUEST)
+		})
 	}
 
 	@Override
 	protected String getParameterString(Map.Entry<String, Object> parameter) {
-		return """.param("${escapeJava(parameter.key)}", "${escapeJava(parameter.value as String)}")"""
+		return """.param("${escapeJava(parameter.key)}", "${
+			escapeJava(parameter.value as String)
+		}")"""
 	}
 
 	protected String createHeaderComparison(Object headerValue) {
@@ -211,11 +219,12 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	protected String createBodyComparison(Pattern bodyValue) {
 		String patternAsString = bodyValue.pattern()
-		return createMatchesMethod(RegexpBuilders.buildGStringRegexpForTestSide(patternAsString)) + ";"
+		return createMatchesMethod(RegexpBuilders.
+				buildGStringRegexpForTestSide(patternAsString)) + ";"
 	}
 
 	protected String createCookieComparison(Object cookieValue) {
-        String escapedCookie = convertUnicodeEscapesIfRequired("$cookieValue")
+		String escapedCookie = convertUnicodeEscapesIfRequired("$cookieValue")
 		return "isEqualTo(\"$escapedCookie\");"
 	}
 

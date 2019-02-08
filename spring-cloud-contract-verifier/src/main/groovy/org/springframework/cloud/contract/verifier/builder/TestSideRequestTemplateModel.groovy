@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.builder
 
 import groovy.json.JsonOutput
@@ -9,6 +25,7 @@ import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
+
 /**
  * Representation of the request side to be used for response templating in
  * the generated tests.
@@ -61,7 +78,7 @@ class TestSideRequestTemplateModel {
 		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
 		Path paths = new Path(buildPathsFromUrl(url))
 		Map<String, List<String>> query = (Map<String, List<String>>) (request.url ?: request.urlPath)
-				.queryParameters?.parameters?.groupBy { it.name }?.collectEntries {
+			.queryParameters?.parameters?.groupBy { it.name }?.collectEntries {
 			[(it.key): it.value.collect { MapConverter.getTestSideValues(it) }]
 		}
 		String fullUrl = (query == null || query.isEmpty()) ? url :
@@ -99,7 +116,8 @@ class TestSideRequestTemplateModel {
 		Object bodyValue = extractServerValueFromBody(body)
 		if (bodyValue instanceof GString || bodyValue instanceof String) {
 			return bodyValue.toString()
-		} else if (bodyValue instanceof FromFileProperty) {
+		}
+		else if (bodyValue instanceof FromFileProperty) {
 			return null
 		}
 		return bodyValue != null ? new JsonOutput().toJson(bodyValue) : bodyValue
@@ -107,8 +125,10 @@ class TestSideRequestTemplateModel {
 
 	protected static Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = ContentUtils.extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue } as Closure)
-		} else {
+			bodyValue = ContentUtils.
+				extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue } as Closure)
+		}
+		else {
 			bodyValue = MapConverter.transformValues(bodyValue, {
 				it instanceof DslProperty ? it.serverValue : it
 			})

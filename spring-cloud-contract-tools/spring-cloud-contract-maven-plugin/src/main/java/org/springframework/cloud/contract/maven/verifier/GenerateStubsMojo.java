@@ -1,18 +1,19 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
@@ -34,7 +35,9 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 /**
  * Picks the converted .json files and creates a jar. Requires convert to be executed
- * first
+ * first.
+ *
+ * @author Mariusz Smykula
  */
 @Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true)
 public class GenerateStubsMojo extends AbstractMojo {
@@ -46,13 +49,13 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private File outputDirectory;
 
 	/**
-	 * Set this to "true" to bypass the whole Verifier execution
+	 * Set this to "true" to bypass the whole Verifier execution.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
 	private boolean skip;
 
 	/**
-	 * Set this to "true" to bypass only JAR creation
+	 * Set this to "true" to bypass only JAR creation.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.jar.skip", defaultValue = "false")
 	private boolean jarSkip;
@@ -61,7 +64,7 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private MavenProjectHelper projectHelper;
 
 	/**
-	 * Patterns that should not be taken into account for processing
+	 * Patterns that should not be taken into account for processing.
 	 */
 	@Parameter
 	private String[] excludedFiles;

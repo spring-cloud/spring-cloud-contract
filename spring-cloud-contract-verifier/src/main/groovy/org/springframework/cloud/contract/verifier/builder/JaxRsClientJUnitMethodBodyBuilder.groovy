@@ -1,36 +1,37 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.QueryParameter
-import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
-import java.util.regex.Pattern
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 
@@ -49,8 +50,8 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	JaxRsClientJUnitMethodBodyBuilder(Contract stubDefinition,
-									  ContractVerifierConfigProperties configProperties,
-									  GeneratedClassDataForMethod classDataForMethod) {
+			ContractVerifierConfigProperties configProperties,
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
@@ -85,7 +86,8 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		if (request.url) {
 			bb.addLine(".path(${concreteUrl(request.url)})")
 			appendQueryParams(request.url.queryParameters, bb)
-		} else if (request.urlPath) {
+		}
+		else if (request.urlPath) {
 			bb.addLine(".path(${concreteUrl(request.urlPath)})")
 			appendQueryParams(request.urlPath.queryParameters, bb)
 		}
@@ -103,9 +105,10 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		if (!queryParameters?.parameters) {
 			return
 		}
-		queryParameters.parameters.findAll(this.&allowedQueryParameter).each { QueryParameter param ->
-			bb.addLine(".queryParam(\"$param.name\", \"${resolveParamValue(param).toString()}\")")
-		}
+		queryParameters.parameters.findAll(this.&allowedQueryParameter).
+				each { QueryParameter param ->
+					bb.addLine(".queryParam(\"$param.name\", \"${resolveParamValue(param).toString()}\")")
+				}
 	}
 
 	@Override
@@ -120,21 +123,25 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	protected void appendMethodAndBody(BlockBuilder bb) {
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {
-			String contentType = getHeader('Content-Type') ?: getRequestContentType().mimeType
+			String contentType =
+					getHeader('Content-Type') ?: getRequestContentType().mimeType
 			Object body = request.body.serverValue
 			String value
 			if (body instanceof ExecutionProperty) {
 				value = body.toString()
-			} else if (body instanceof FromFileProperty) {
+			}
+			else if (body instanceof FromFileProperty) {
 				FromFileProperty fileProperty = (FromFileProperty) body
 				value = fileProperty.isByte() ?
 						readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
 						readStringFromFileString(fileProperty, CommunicationType.REQUEST)
-			} else {
+			}
+			else {
 				value = "\"${getBodyAsString()}\""
 			}
 			bb.addLine(".method(\"${method.toUpperCase()}\", entity(${value}, \"$contentType\"))")
-		} else {
+		}
+		else {
 			bb.addLine(".method(\"${method.toUpperCase()}\")")
 		}
 	}
@@ -144,7 +151,9 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 			if (headerOfAbsentType(header)) {
 				return
 			}
-			if (header.name == 'Content-Type' || header.name == 'Accept') return
+			if (header.name == 'Content-Type' || header.name == 'Accept') {
+				return
+			}
 			bb.addLine(".header(\"${header.name}\", \"${header.serverValue}\")")
 		}
 	}
@@ -163,7 +172,8 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		String acceptHeader = getHeader("Accept")
 		if (acceptHeader) {
 			bb.addLine(".request(\"$acceptHeader\")")
-		} else {
+		}
+		else {
 			bb.addLine(".request()")
 		}
 	}
@@ -203,8 +213,10 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(((NotToEscapePattern) value).serverValue)}")
-		} else {
+			blockBuilder.
+					addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(((NotToEscapePattern) value).serverValue)}")
+		}
+		else {
 			// fallback
 			processHeaderElement(blockBuilder, property, value.toString())
 		}
@@ -212,34 +224,42 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
-		blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(value)}")
+		blockBuilder.
+				addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(value)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number value) {
-		blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).isEqualTo(${value});")
+		blockBuilder.
+				addLine("assertThat(response.getHeaderString(\"$property\")).isEqualTo(${value});")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
-		blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(pattern)}")
+		blockBuilder.
+				addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(pattern)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.getHeaderString(\"$property\")")};")
+		blockBuilder.
+				addLine("${exec.insertValue("response.getHeaderString(\"$property\")")};")
 	}
 
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
-		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\")).isNotNull();")
-		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\").getValue()).${createCookieComparison(pattern)}")
+		blockBuilder.
+				addLine("assertThat(response.getCookies().get(\"$key\")).isNotNull();")
+		blockBuilder.
+				addLine("assertThat(response.getCookies().get(\"$key\").getValue()).${createCookieComparison(pattern)}")
 	}
 
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, String value) {
-		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\")).isNotNull();")
-		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\").getValue()).${createCookieComparison(value)}")
+		blockBuilder.
+				addLine("assertThat(response.getCookies().get(\"$key\")).isNotNull();")
+		blockBuilder.
+				addLine("assertThat(response.getCookies().get(\"$key\").getValue()).${createCookieComparison(value)}")
 	}
 
 }

@@ -1,18 +1,19 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
@@ -44,10 +45,14 @@ import org.springframework.cloud.contract.verifier.config.TestMode;
 
 /**
  * From the provided directory with contracts generates the acceptance tests on the
- * producer side
+ * producer side.
+ *
+ * @author Mariusz Smykula
  */
 @Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
+
+	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -80,25 +85,25 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private String nameSuffixForTests;
 
 	/**
-	 * Imports that should be added to generated tests
+	 * Imports that should be added to generated tests.
 	 */
 	@Parameter
 	private String[] imports;
 
 	/**
-	 * Static imports that should be added to generated tests
+	 * Static imports that should be added to generated tests.
 	 */
 	@Parameter
 	private String[] staticImports;
 
 	/**
-	 * Patterns that should not be taken into account for processing
+	 * Patterns that should not be taken into account for processing.
 	 */
 	@Parameter
 	private List<String> excludedFiles;
 
 	/**
-	 * Patterns that should be taken into account for processing
+	 * Patterns that should be taken into account for processing.
 	 */
 	@Parameter(property = "includedFiles")
 	private List<String> includedFiles;
@@ -111,7 +116,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private boolean assertJsonSize;
 
 	/**
-	 * Patterns for which Spring Cloud Contract Verifier should generate @Ignored tests
+	 * Patterns for which Spring Cloud Contract Verifier should generate @Ignored tests.
 	 */
 	@Parameter
 	private List<String> ignoredFiles;
@@ -131,7 +136,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	/**
 	 * The URL from which a contracts should get downloaded. If not provided but
 	 * artifactid / coordinates notation was provided then the current Maven's build
-	 * repositories will be taken into consideration
+	 * repositories will be taken into consideration.
 	 */
 	@Parameter(property = "contractsRepositoryUrl")
 	private String contractsRepositoryUrl;
@@ -142,16 +147,14 @@ public class GenerateTestsMojo extends AbstractMojo {
 	/**
 	 * The path in the JAR with all the contracts where contracts for this particular
 	 * service lay. If not provided will be resolved to {@code groupid/artifactid}.
-	 * Example:
-	 * </p>
-	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service}
-	 * then the resolved path will be {@code /com/example/artifactid}
+	 * Example: If {@code groupid} is {@code com.example} and {@code artifactid} is
+	 * {@code service} then the resolved path will be {@code /com/example/artifactid}
 	 */
 	@Parameter(property = "contractsPath")
 	private String contractsPath;
 
 	/**
-	 * Picks the mode in which stubs will be found and registered
+	 * Picks the mode in which stubs will be found and registered.
 	 */
 	@Parameter(property = "contractsMode", defaultValue = "CLASSPATH")
 	private StubRunnerProperties.StubsMode contractsMode;
@@ -171,15 +174,10 @@ public class GenerateTestsMojo extends AbstractMojo {
 	/**
 	 * A way to override any base class mappings. The keys are regular expressions on the
 	 * package name of the contract and the values FQN to a base class for that given
-	 * expression.
-	 * </p>
-	 * Example of a mapping
-	 * </p>
-	 * {@code .*.com.example.v1..*} -> {@code com.example.SomeBaseClass}
-	 * </p>
-	 * When a contract's package matches the provided regular expression then extending
-	 * class will be the one provided in the map - in this case
-	 * {@code com.example.SomeBaseClass}
+	 * expression. Example of a mapping {@code .*.com.example.v1..*} ->
+	 * {@code com.example.SomeBaseClass} When a contract's package matches the provided
+	 * regular expression then extending class will be the one provided in the map - in
+	 * this case {@code com.example.SomeBaseClass}.
 	 */
 	@Parameter(property = "baseClassMappings")
 	private List<BaseClassMapping> baseClassMappings;
@@ -210,7 +208,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	/**
 	 * If {@code true} then will not assert whether a stub / contract JAR was downloaded
-	 * from local or remote location
+	 * from local or remote location.
 	 * @deprecated - with 2.1.0 this option is redundant
 	 */
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
@@ -219,19 +217,17 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
-	 * tests
+	 * tests.
 	 */
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
 	/**
 	 * Map of properties that can be passed to custom
-	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
-
-	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
 	public GenerateTestsMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
@@ -240,37 +236,42 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.mavenTestSkip || this.skipTests) {
-			if (this.skip)
+			if (this.skip) {
 				getLog().info(
 						"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
 								+ this.skip);
-			if (this.mavenTestSkip)
+			}
+			if (this.mavenTestSkip) {
 				getLog().info(
 						"Skipping Spring Cloud Contract Verifier execution: maven.test.skip="
 								+ this.mavenTestSkip);
-			if (this.skipTests)
+			}
+			if (this.skipTests) {
 				getLog().info(
 						"Skipping Spring Cloud Contract Verifier execution: skipTests"
 								+ this.skipTests);
+			}
 			return;
 		}
 		getLog().info(
 				"Generating server tests source code for Spring Cloud Contract Verifier contract verification");
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		// download contracts, unzip them and pass as output directory
-		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
-				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
-				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
-				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
-		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
+		File contractsDirectory = new MavenContractsDownloader(this.project,
+				this.contractDependency, this.contractsPath, this.contractsRepositoryUrl,
+				this.contractsMode, getLog(), this.contractsRepositoryUsername,
+				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
+				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
+				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
+						this.contractsDirectory);
+		getLog().info(
+				"Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project
 				.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
 		Resource resource = new Resource();
 		resource.setDirectory(this.generatedTestResourcesDir.getAbsolutePath());
-		this.project
-				.addTestResource(resource);
+		this.project.addTestResource(resource);
 		if (getLog().isInfoEnabled()) {
 			getLog().info("Test Source directory: "
 					+ this.generatedTestSourcesDir.getAbsolutePath() + " added.");

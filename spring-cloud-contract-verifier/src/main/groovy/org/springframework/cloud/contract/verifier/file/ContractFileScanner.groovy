@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.file
@@ -32,6 +32,7 @@ import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
+
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -46,10 +47,12 @@ class ContractFileScanner {
 
 	private static final String OS_NAME = System.getProperty("os.name")
 	private static final String OS_NAME_WINDOWS_PREFIX = "Windows"
-	protected static final boolean IS_OS_WINDOWS = getOSMatchesName(OS_NAME_WINDOWS_PREFIX)
+	protected static final boolean IS_OS_WINDOWS =
+			getOSMatchesName(OS_NAME_WINDOWS_PREFIX)
 
 	private static final String MATCH_PREFIX = "glob:"
-	private static final Pattern SCENARIO_STEP_FILENAME_PATTERN = Pattern.compile("[0-9]+_.*")
+	private static final Pattern SCENARIO_STEP_FILENAME_PATTERN = Pattern.
+			compile("[0-9]+_.*")
 	private final File baseDir
 	private final Set<PathMatcher> excludeMatchers
 	private final Set<PathMatcher> ignoreMatchers
@@ -57,8 +60,8 @@ class ContractFileScanner {
 	private final String includeMatcher
 
 	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
-						Set<String> included = [],
-						String includeMatcher = "") {
+			Set<String> included = [],
+			String includeMatcher = "") {
 		this.baseDir = baseDir
 		this.excludeMatchers = processPatterns(excluded ?: [] as Set<String>)
 		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
@@ -81,7 +84,7 @@ class ContractFileScanner {
 	}
 
 	/**
-	 * Returns for a map of paths for which a list of matching contracts has been found
+	 * @return for a map of paths for which a list of matching contracts has been found
 	 */
 	ListMultimap<Path, ContractMetadata> findContracts() {
 		ListMultimap<Path, ContractMetadata> result = ArrayListMultimap.create()
@@ -108,20 +111,25 @@ class ContractFileScanner {
 			boolean excluded = matchesPattern(file, excludeMatchers)
 			if (!excluded) {
 				boolean contractFile = isContractFile(file)
-				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
-				included = includeMatchers ? matchesPattern(file, includeMatchers) : included
+				boolean included = includeMatcher ? file.absolutePath.
+						matches(includeMatcher) : true
+				included = includeMatchers ?
+						matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
-					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
+					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.
+							convertAsCollection(baseDir, file))
 				}
 				if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
-				} else {
+				}
+				else {
 					appendRecursively(file, result)
 					if (log.isDebugEnabled()) {
 						log.debug("File [$file] is ignored. Is a contract file? [$contractFile]. Should be included by pattern? [$included]")
 					}
 				}
-			} else {
+			}
+			else {
 				if (log.isDebugEnabled()) {
 					log.debug("File [$file] is ignored. Should be excluded? [$excluded]")
 				}
@@ -140,7 +148,7 @@ class ContractFileScanner {
 	}
 
 	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
-											 File[] files, File file, int index) {
+			File[] files, File file, int index) {
 		boolean converted = false
 		if (!file.isDirectory()) {
 			for (ContractConverter converter : converters) {
@@ -167,20 +175,22 @@ class ContractFileScanner {
 		}
 		try {
 			return converter.convertFrom(file)
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new IllegalStateException("Failed to convert file [" + file + "]", e)
 		}
 	}
 
 	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
-											 int index, Collection<Contract> convertedContract) {
+			int index, Collection<Contract> convertedContract) {
 		Path path = file.toPath()
 		Integer order = null
 		if (hasScenarioFilenamePattern(path)) {
 			order = index
 		}
 		Path parent = file.parentFile.toPath()
-		ContractMetadata metadata = new ContractMetadata(path, matchesPattern(file, ignoreMatchers),
+		ContractMetadata metadata = new ContractMetadata(path,
+				matchesPattern(file, ignoreMatchers),
 				files.size(), order, convertedContract)
 		if (log.isDebugEnabled()) {
 			log.debug("Creating a contract entry for path [" + path + "] and metadata [" + metadata + "]")

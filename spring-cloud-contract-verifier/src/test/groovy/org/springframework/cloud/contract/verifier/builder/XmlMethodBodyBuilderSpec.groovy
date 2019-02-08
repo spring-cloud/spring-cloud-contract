@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -54,19 +54,19 @@ class XmlMethodBodyBuilderSpec extends Specification {
 			Contract contractDsl =
 					// tag::xmlgroovy[]
 					Contract.make {
-				request {
-					method GET()
-					urlPath '/get'
-					headers {
-						contentType(applicationXml())
-					}
-				}
-				response {
-					status(OK())
-					headers {
-						contentType(applicationXml())
-					}
-					body """
+						request {
+							method GET()
+							urlPath '/get'
+							headers {
+								contentType(applicationXml())
+							}
+						}
+						response {
+							status(OK())
+							headers {
+								contentType(applicationXml())
+							}
+							body """
 <test>
 <duck type='xtype'>123</duck>
 <alpha>abc</alpha>
@@ -83,22 +83,22 @@ class XmlMethodBodyBuilderSpec extends Specification {
 <valueWithoutAMatcher>foo</valueWithoutAMatcher>
 <key><complex>foo</complex></key>
 </test>"""
-					bodyMatchers {
-						xPath('/test/duck/text()', byRegex("[0-9]{3}"))
-						xPath('/test/duck/text()', byCommand('test($it)'))
-						xPath('/test/duck/xxx', byNull())
-						xPath('/test/duck/text()', byEquality())
-						xPath('/test/alpha/text()', byRegex(onlyAlphaUnicode()))
-						xPath('/test/alpha/text()', byEquality())
-						xPath('/test/number/text()', byRegex(number()))
-						xPath('/test/date/text()', byDate())
-						xPath('/test/dateTime/text()', byTimestamp())
-						xPath('/test/time/text()', byTime())
-						xPath('/test/*/complex/text()', byEquality())
-						xPath('/test/duck/@type', byEquality())
+							bodyMatchers {
+								xPath('/test/duck/text()', byRegex("[0-9]{3}"))
+								xPath('/test/duck/text()', byCommand('test($it)'))
+								xPath('/test/duck/xxx', byNull())
+								xPath('/test/duck/text()', byEquality())
+								xPath('/test/alpha/text()', byRegex(onlyAlphaUnicode()))
+								xPath('/test/alpha/text()', byEquality())
+								xPath('/test/number/text()', byRegex(number()))
+								xPath('/test/date/text()', byDate())
+								xPath('/test/dateTime/text()', byTimestamp())
+								xPath('/test/time/text()', byTime())
+								xPath('/test/*/complex/text()', byEquality())
+								xPath('/test/duck/@type', byEquality())
+							}
+						}
 					}
-				}
-			}
 			// end::xmlgroovy[]
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(' ')

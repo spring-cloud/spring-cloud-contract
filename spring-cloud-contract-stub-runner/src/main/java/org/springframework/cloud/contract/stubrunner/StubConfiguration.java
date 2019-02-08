@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner;
@@ -21,13 +21,19 @@ import org.springframework.util.StringUtils;
 /**
  * Represents a configuration of a single stub. The stub can be described by
  * groupId:artifactId:version:classifier notation
+ *
+ * @author Marcin Grzejszczak
  */
 public class StubConfiguration {
 
-	private static final String STUB_COLON_DELIMITER = ":";
+	/**
+	 * Default classifier for the stubs.
+	 */
+	public static final String DEFAULT_CLASSIFIER = "stubs";
+
 	static final String DEFAULT_VERSION = "+";
 
-	public static final String DEFAULT_CLASSIFIER = "stubs";
+	private static final String STUB_COLON_DELIMITER = ":";
 
 	final String groupId;
 
@@ -92,7 +98,7 @@ public class StubConfiguration {
 	}
 
 	/**
-	 * Returns a colon separated representation of the stub configuration (e.g.
+	 * @return a colon separated representation of the stub configuration (e.g.
 	 * groupid:artifactid:version:classifier)
 	 */
 	public String toColonSeparatedDependencyNotation() {
@@ -110,7 +116,7 @@ public class StubConfiguration {
 	}
 
 	/**
-	 * Checks if ivy notation matches group and artifact ids
+	 * Checks if ivy notation matches group and artifact ids.
 	 * @param ivyNotationAsString - e.g. group:artifact:version:classifier
 	 * @return {@code true} if artifact id matches and there's no group id. Or if both
 	 * group id and artifact id are present and matching
@@ -126,7 +132,7 @@ public class StubConfiguration {
 	}
 
 	/**
-	 * Returns {@code true} for a snapshot or a LATEST (+) version
+	 * @return {@code true} for a snapshot or a LATEST (+) version.
 	 */
 	public boolean isVersionChanging() {
 		return DEFAULT_VERSION.equals(this.version)
@@ -161,25 +167,32 @@ public class StubConfiguration {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		StubConfiguration other = (StubConfiguration) obj;
 		if (this.artifactId == null) {
-			if (other.artifactId != null)
+			if (other.artifactId != null) {
 				return false;
+			}
 		}
-		else if (!this.artifactId.equals(other.artifactId))
+		else if (!this.artifactId.equals(other.artifactId)) {
 			return false;
+		}
 		if (this.groupId == null) {
-			if (other.groupId != null)
+			if (other.groupId != null) {
 				return false;
+			}
 		}
-		else if (!this.groupId.equals(other.groupId))
+		else if (!this.groupId.equals(other.groupId)) {
 			return false;
+		}
 		return true;
 	}
 

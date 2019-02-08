@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
@@ -36,14 +37,16 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
-import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
+import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 
 /**
  * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
  * <p>
  * This goal allows you to generate `stubs-jar` or execute `spring-cloud-contract:run`
  * with generated WireMock mappings.
+ *
+ * @author Mariusz Smykula
  */
 @Mojo(name = "convert", requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
@@ -53,12 +56,14 @@ public class ConvertMojo extends AbstractMojo {
 	static final String CONTRACTS_PATH = "/contracts";
 	static final String ORIGINAL_PATH = "/original";
 
+	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
+
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
 
 	/**
 	 * Directory containing Spring Cloud Contract Verifier contracts written using the
-	 * GroovyDSL
+	 * GroovyDSL.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
@@ -104,16 +109,14 @@ public class ConvertMojo extends AbstractMojo {
 	/**
 	 * The path in the JAR with all the contracts where contracts for this particular
 	 * service lay. If not provided will be resolved to {@code groupid/artifactid}.
-	 * Example:
-	 * </p>
-	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service}
-	 * then the resolved path will be {@code /com/example/artifactid}
+	 * Example: If {@code groupid} is {@code com.example} and {@code artifactid} is
+	 * {@code service} then the resolved path will be {@code /com/example/artifactid}
 	 */
 	@Parameter(property = "contractsPath")
 	private String contractsPath;
 
 	/**
-	 * Picks the mode in which stubs will be found and registered
+	 * Picks the mode in which stubs will be found and registered.
 	 */
 	@Parameter(property = "contractsMode", defaultValue = "CLASSPATH")
 	private StubRunnerProperties.StubsMode contractsMode;
@@ -151,7 +154,7 @@ public class ConvertMojo extends AbstractMojo {
 
 	/**
 	 * If {@code true} then will not assert whether a stub / contract JAR was downloaded
-	 * from local or remote location
+	 * from local or remote location.
 	 * @deprecated - with 2.1.0 this option is redundant
 	 */
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
@@ -160,28 +163,26 @@ public class ConvertMojo extends AbstractMojo {
 
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
-	 * tests
+	 * tests.
 	 */
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
 	/**
 	 * Map of properties that can be passed to custom
-	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
 	/**
-	 * If {@code true} then will convert contracts to a YAML representation
+	 * If {@code true} then will convert contracts to a YAML representation.
 	 */
 	@Parameter(property = "convertToYaml", defaultValue = "false")
 	private boolean convertToYaml;
 
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
-
-	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
 	public ConvertMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
@@ -208,7 +209,8 @@ public class ConvertMojo extends AbstractMojo {
 		File copiedContracts = copyContracts(rootPath, config, contractsDirectory);
 		if (this.convertToYaml) {
 			contractsDslDir = copiedContracts;
-			convertBackedUpDslsToYaml(rootPath, config, contractsDirectory, contractsDslDir);
+			convertBackedUpDslsToYaml(rootPath, config, contractsDirectory,
+					contractsDslDir);
 		}
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
@@ -217,26 +219,31 @@ public class ConvertMojo extends AbstractMojo {
 		converter.processFiles();
 	}
 
-	private void convertBackedUpDslsToYaml(String rootPath, ContractVerifierConfigProperties config, File contractsDirectory, File contractsDslDir) throws MojoExecutionException {
+	private void convertBackedUpDslsToYaml(String rootPath,
+			ContractVerifierConfigProperties config, File contractsDirectory,
+			File contractsDslDir) throws MojoExecutionException {
 		copyOriginals(rootPath, config, contractsDirectory);
 		ToYamlConverter.replaceContractWithYaml(contractsDslDir);
-		getLog().info("Replaced DSL files with their YAML representation at [" + contractsDslDir + "]");
+		getLog().info("Replaced DSL files with their YAML representation at ["
+				+ contractsDslDir + "]");
 	}
 
 	private File copyOriginals(String rootPath, ContractVerifierConfigProperties config,
 			File contractsDirectory) throws MojoExecutionException {
-		File outputFolderWithOriginals = new File(this.stubsDirectory, rootPath + ORIGINAL_PATH);
-		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, outputFolderWithOriginals);
+		File outputFolderWithOriginals = new File(this.stubsDirectory,
+				rootPath + ORIGINAL_PATH);
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering,
+				config).copy(contractsDirectory, outputFolderWithOriginals);
 		return outputFolderWithOriginals;
 	}
 
 	private File copyContracts(String rootPath, ContractVerifierConfigProperties config,
 			File contractsDirectory) throws MojoExecutionException {
-		File outputFolderWithContracts = this.stubsDirectory.getPath().endsWith("contracts") ?
-				this.stubsDirectory : new File(this.stubsDirectory, rootPath + CONTRACTS_PATH);
-		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, outputFolderWithContracts);
+		File outputFolderWithContracts = this.stubsDirectory.getPath()
+				.endsWith("contracts") ? this.stubsDirectory
+						: new File(this.stubsDirectory, rootPath + CONTRACTS_PATH);
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering,
+				config).copy(contractsDirectory, outputFolderWithContracts);
 		return outputFolderWithContracts;
 	}
 
@@ -276,8 +283,8 @@ public class ConvertMojo extends AbstractMojo {
 	}
 
 	private File stubsOutputDir(String rootPath) {
-		return isInsideProject() ?
-				new File(this.stubsDirectory, rootPath + MAPPINGS_PATH) : this.destination;
+		return isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH)
+				: this.destination;
 	}
 
 	private File contractsDslDir(File contractsDirectory) {

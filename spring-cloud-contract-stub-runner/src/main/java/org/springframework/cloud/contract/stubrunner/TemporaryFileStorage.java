@@ -1,11 +1,11 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,12 +32,12 @@ import org.apache.commons.logging.LogFactory;
 import static java.nio.file.Files.createTempDirectory;
 
 /**
- * Stores all generated temporary folders with stubs
+ * Stores all generated temporary folders with stubs.
  *
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
-class TemporaryFileStorage {
+final class TemporaryFileStorage {
 
 	private static final Log log = LogFactory.getLog(TemporaryFileStorage.class);
 
@@ -47,6 +47,10 @@ class TemporaryFileStorage {
 	 * a shutdown hook to remove all these files.
 	 */
 	private static final Queue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(1000);
+
+	private TemporaryFileStorage() {
+		throw new IllegalStateException("Can't instantiate a utility class");
+	}
 
 	static void add(File file) {
 		TEMP_FILES_LOG.add(file);

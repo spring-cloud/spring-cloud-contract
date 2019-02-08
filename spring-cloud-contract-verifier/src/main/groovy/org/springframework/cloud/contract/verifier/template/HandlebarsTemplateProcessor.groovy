@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.template
 
 import java.util.regex.Matcher
@@ -23,12 +39,16 @@ import org.springframework.cloud.contract.verifier.builder.handlebars.Handlebars
 @CompileStatic
 class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate {
 
-	private static final Pattern ESCAPED_LEGACY_JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{\\{jsonpath this '(.*)'}}}.*\$")
-	private static final Pattern ESCAPED_JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{\\{jsonPath request.body '(.*)'}}}.*\$")
-	private static final Pattern LEGACY_JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{jsonpath this '(.*)'}}.*\$")
-	private static final Pattern JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{jsonPath request.body '(.*)'}}.*\$")
+	private static final Pattern ESCAPED_LEGACY_JSON_PATH_PATTERN = Pattern.
+		compile("^.*\\{\\{\\{jsonpath this '(.*)'}}}.*\$")
+	private static final Pattern ESCAPED_JSON_PATH_PATTERN = Pattern.
+		compile("^.*\\{\\{\\{jsonPath request.body '(.*)'}}}.*\$")
+	private static final Pattern LEGACY_JSON_PATH_PATTERN = Pattern.
+		compile("^.*\\{\\{jsonpath this '(.*)'}}.*\$")
+	private static final Pattern JSON_PATH_PATTERN = Pattern.
+		compile("^.*\\{\\{jsonPath request.body '(.*)'}}.*\$")
 	private static final List<Pattern> PATTERNS = [ESCAPED_LEGACY_JSON_PATH_PATTERN,
-							  ESCAPED_JSON_PATH_PATTERN, LEGACY_JSON_PATH_PATTERN, JSON_PATH_PATTERN]
+												   ESCAPED_JSON_PATH_PATTERN, LEGACY_JSON_PATH_PATTERN, JSON_PATH_PATTERN]
 	private static final String LEGACY_JSON_PATH_TEMPLATE_NAME = HandlebarsJsonPathHelper.NAME
 	private static final String JSON_PATH_TEMPLATE_NAME = WireMockHelpers.jsonPath.name()
 
@@ -36,7 +56,8 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 
 	@Override
 	String transform(Request request, String testContents) {
-		TestSideRequestTemplateModel templateModel = TestSideRequestTemplateModel.from(request)
+		TestSideRequestTemplateModel templateModel = TestSideRequestTemplateModel.
+			from(request)
 		Map<String, TestSideRequestTemplateModel> model = [(HandlebarsJsonPathHelper.REQUEST_MODEL_NAME): templateModel]
 		Template bodyTemplate = uncheckedCompileTemplate(testContents)
 		return templatedResponseBody(model, bodyTemplate)
@@ -44,16 +65,18 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 
 	@Override
 	boolean containsTemplateEntry(String line) {
-		return (line.contains(contractTemplate.openingTemplate()) && line.contains(contractTemplate.closingTemplate())) ||
-				(line.contains(contractTemplate.escapedOpeningTemplate()) && line.contains(contractTemplate.escapedClosingTemplate()))
+		return (line.contains(contractTemplate.openingTemplate())
+			&& line.contains(contractTemplate.closingTemplate())) ||
+			(line.contains(contractTemplate.escapedOpeningTemplate()) &&
+				line.contains(contractTemplate.escapedClosingTemplate()))
 	}
 
 	@Override
 	boolean containsJsonPathTemplateEntry(String line) {
 		return line.contains(openingTemplate() + LEGACY_JSON_PATH_TEMPLATE_NAME) ||
-				line.contains(openingTemplate() + JSON_PATH_TEMPLATE_NAME) ||
-				line.contains(escapedOpeningTemplate() + LEGACY_JSON_PATH_TEMPLATE_NAME) ||
-				line.contains(escapedOpeningTemplate() + JSON_PATH_TEMPLATE_NAME)
+			line.contains(openingTemplate() + JSON_PATH_TEMPLATE_NAME) ||
+			line.contains(escapedOpeningTemplate() + LEGACY_JSON_PATH_TEMPLATE_NAME) ||
+			line.contains(escapedOpeningTemplate() + JSON_PATH_TEMPLATE_NAME)
 	}
 
 	@Override
@@ -70,14 +93,15 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 		return ""
 	}
 
-	private String templatedResponseBody(Map< String, TestSideRequestTemplateModel> model, Template bodyTemplate) {
+	private String templatedResponseBody(Map<String, TestSideRequestTemplateModel> model, Template bodyTemplate) {
 		return uncheckedApplyTemplate(bodyTemplate, model)
 	}
 
 	private String uncheckedApplyTemplate(Template template, Object context) {
 		try {
 			return template.apply(context)
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new RuntimeException(e)
 		}
 	}
@@ -85,15 +109,18 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 	private Template uncheckedCompileTemplate(String content) {
 		try {
 			Handlebars handlebars = new Handlebars()
-			handlebars.registerHelper(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper())
-			handlebars.registerHelper(WireMockHelpers.jsonPath.name(), new HandlebarsJsonPathHelper())
+			handlebars.
+				registerHelper(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper())
+			handlebars.registerHelper(WireMockHelpers.jsonPath.
+				name(), new HandlebarsJsonPathHelper())
 			WireMockHelpers.values()
-					.findAll { it != WireMockHelpers.jsonPath}
-					.each { WireMockHelpers helper ->
+				.findAll { it != WireMockHelpers.jsonPath }
+				.each { WireMockHelpers helper ->
 				handlebars.registerHelper(helper.name(), helper)
 			}
 			return handlebars.compileInline(content)
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new RuntimeException(e)
 		}
 	}

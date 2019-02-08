@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner;
@@ -22,6 +22,11 @@ import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
 
+/**
+ * Contract for finding registered stubs.
+ *
+ * @author Marcin Grzejszczak
+ */
 public interface StubFinder extends StubTrigger {
 
 	/**
@@ -29,7 +34,9 @@ public interface StubFinder extends StubTrigger {
 	 * stub.
 	 * @param groupId - might be null. In that case a search only via artifactId takes
 	 * place
+	 * @param artifactId - artifact id of the stub
 	 * @return URL of a running stub or throws exception if not found
+	 * @throws StubNotFoundException in case of not finding a stub
 	 */
 	URL findStubUrl(String groupId, String artifactId) throws StubNotFoundException;
 
@@ -39,16 +46,17 @@ public interface StubFinder extends StubTrigger {
 	 * {@code artifactId}.
 	 * @param ivyNotation - Ivy representation of the Maven artifact
 	 * @return URL of a running stub or throws exception if not found
+	 * @throws StubNotFoundException in case of not finding a stub
 	 */
 	URL findStubUrl(String ivyNotation) throws StubNotFoundException;
 
 	/**
-	 * Returns all running stubs
+	 * @return all running stubs
 	 */
 	RunningStubs findAllRunningStubs();
 
 	/**
-	 * Returns the list of Contracts
+	 * @return the list of Contracts
 	 */
 	Map<StubConfiguration, Collection<Contract>> getContracts();
 

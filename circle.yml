@@ -11,18 +11,18 @@ machine:
     TERM: dumb
 dependencies:
   pre:
-    -  |
-        sudo service zookeeper stop || echo "Service not running"
-        sudo service cassandra stop || echo "Service not running"
-        sudo service elasticsearch stop || echo "Service not running"
-        sudo service rabbitmq-server stop || echo "Service not running"
-        sudo service redis stop || echo "Service not running"
-        sudo service riak stop || echo "Service not running"
-        sudo service beanstalkd stop || echo "Service not running"
-        sudo service couchbase-server stop || echo "Service not running"
-        sudo service neo4j stop || echo "Service not running"
-        sudo service sphinxsearch stop || echo "Service not running"
-        sudo service postgresql stop || echo "Service not running"
+    - |
+      sudo service zookeeper stop || echo "Service not running"
+      sudo service cassandra stop || echo "Service not running"
+      sudo service elasticsearch stop || echo "Service not running"
+      sudo service rabbitmq-server stop || echo "Service not running"
+      sudo service redis stop || echo "Service not running"
+      sudo service riak stop || echo "Service not running"
+      sudo service beanstalkd stop || echo "Service not running"
+      sudo service couchbase-server stop || echo "Service not running"
+      sudo service neo4j stop || echo "Service not running"
+      sudo service sphinxsearch stop || echo "Service not running"
+      sudo service postgresql stop || echo "Service not running"
     - touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
   override:
     - ./scripts/downloadDependencies.sh

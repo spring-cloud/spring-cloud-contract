@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.consul
@@ -21,7 +21,6 @@ import com.ecwid.consul.v1.agent.model.NewService
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.mockito.ArgumentMatcher
-import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +28,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.context.annotation.Bean
@@ -38,6 +38,7 @@ import org.springframework.test.context.ContextConfiguration
 import static org.mockito.BDDMockito.then
 import static org.mockito.Matchers.argThat
 import static org.mockito.Mockito.mock
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -51,15 +52,16 @@ import static org.mockito.Mockito.mock
 				"stubrunner.cloud.consul.enabled=true",
 				"stubrunner.cloud.zookeeper.enabled=false",
 				"debug=true"])
-@AutoConfigureStubRunner( ids =
+@AutoConfigureStubRunner(ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+				"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")
 class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 
-	@Autowired ConsulClient client
+	@Autowired
+	ConsulClient client
 
 	@BeforeClass
 	@AfterClass

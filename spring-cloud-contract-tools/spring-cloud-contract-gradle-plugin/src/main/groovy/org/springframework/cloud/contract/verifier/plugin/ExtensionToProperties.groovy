@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**

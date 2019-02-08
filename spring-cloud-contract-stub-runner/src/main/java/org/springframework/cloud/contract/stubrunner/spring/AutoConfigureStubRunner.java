@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.boot.test.autoconfigure.properties.SkipPropertyMapping;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer.NoOpHttpServerStubConfigurer;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 
 /**
@@ -41,29 +42,29 @@ import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureM
 public @interface AutoConfigureStubRunner {
 
 	/**
-	 * Min value of a port for the automatically started WireMock server
+	 * @return Min value of a port for the automatically started WireMock server.
 	 */
 	int minPort() default 10000;
 
 	/**
-	 * Max value of a port for the automatically started WireMock server
+	 * @return Max value of a port for the automatically started WireMock server.
 	 */
 	int maxPort() default 15000;
 
 	/**
-	 * The repository root to use (where the stubs should be downloaded from)
+	 * @return The repository root to use (where the stubs should be downloaded from).
 	 */
 	String repositoryRoot() default "";
 
 	/**
-	 * The ids of the stubs to run in "ivy" notation
+	 * @return The ids of the stubs to run in "ivy" notation
 	 * ([groupId]:artifactId[:version][:classifier][:port]). {@code groupId},
 	 * {@code version}, {@code classifier} and {@code port} can be optional.
 	 */
 	String[] ids() default {};
 
 	/**
-	 * The classifier to use by default in ivy co-ordinates for a stub.
+	 * @return The classifier to use by default in ivy co-ordinates for a stub.
 	 */
 	String classifier() default "stubs";
 
@@ -92,7 +93,7 @@ public @interface AutoConfigureStubRunner {
 	 *
 	 * @see <a href=
 	 * "https://github.com/spring-cloud/spring-cloud-contract/issues/224">issue 224</a>
-	 *
+	 * @return {@code true} to turn on the feature
 	 */
 	boolean stubsPerConsumer() default false;
 
@@ -102,6 +103,7 @@ public @interface AutoConfigureStubRunner {
 	 *
 	 * @see <a href=
 	 * "https://github.com/spring-cloud/spring-cloud-contract/issues/224">issue 224</a>
+	 * @return name of this application
 	 */
 	String consumerName() default "";
 
@@ -112,6 +114,7 @@ public @interface AutoConfigureStubRunner {
 	 *
 	 * @see <a href=
 	 * "https://github.com/spring-cloud/spring-cloud-contract/issues/355">issue 355</a>
+	 * @return where the mappings output should be stored
 	 */
 	String mappingsOutputFolder() default "";
 
@@ -123,21 +126,21 @@ public @interface AutoConfigureStubRunner {
 	StubRunnerProperties.StubsMode stubsMode() default StubRunnerProperties.StubsMode.CLASSPATH;
 
 	/**
-	 * Properties in form {@literal key=value}
+	 * Properties in form {@literal key=value}.
 	 * @return the properties to add
 	 */
 	String[] properties() default {};
 
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary
-	 * folder after running tests
+	 * @return If set to {@code false} will NOT delete stubs from a temporary folder after
+	 * running tests
 	 */
 	boolean deleteStubsAfterTest() default true;
 
 	/**
-	 * Configuration for an HTTP server stub
+	 * Configuration for an HTTP server stub.
 	 * @return class that allows to perform additional HTTP server stub configuration
 	 */
-	Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer()
-			default HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
+	Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer() default NoOpHttpServerStubConfigurer.class;
+
 }

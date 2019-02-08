@@ -1,30 +1,29 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner
 
-import groovy.json.JsonOutput
-import org.springframework.util.SocketUtils
-
 import java.util.concurrent.TimeUnit
+
+import groovy.json.JsonOutput
+import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
-
-import spock.lang.Specification
+import org.springframework.util.SocketUtils
 
 class StubRunnerExecutorSpec extends Specification {
 
@@ -44,47 +43,47 @@ class StubRunnerExecutorSpec extends Specification {
 
 	def 'should provide URL for given relative path of stub'() {
 		given:
-		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 		when:
-		executor.runStubs(stubRunnerOptions, repository, stub)
+			executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
-		URL url = executor.findStubUrl("group", "artifact")
-		url.port >= MIN_PORT
-		url.port <= MAX_PORT
+			URL url = executor.findStubUrl("group", "artifact")
+			url.port >= MIN_PORT
+			url.port <= MAX_PORT
 		and:
-		executor.findAllRunningStubs().isPresent('artifact')
-		executor.findAllRunningStubs().isPresent('group', 'artifact')
-		executor.findAllRunningStubs().isPresent('group:artifact')
+			executor.findAllRunningStubs().isPresent('artifact')
+			executor.findAllRunningStubs().isPresent('group', 'artifact')
+			executor.findAllRunningStubs().isPresent('group:artifact')
 		cleanup:
-		executor.shutdown()
+			executor.shutdown()
 	}
 
 	def 'should provide no URL for unknown dependency path'() {
 		given:
-		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 		when:
-		executor.runStubs(stubRunnerOptions, repository, stub)
+			executor.runStubs(stubRunnerOptions, repository, stub)
 		and:
-		executor.findStubUrl("unkowngroup", "unknownartifact")
+			executor.findStubUrl("unkowngroup", "unknownartifact")
 		then:
-		thrown(StubNotFoundException)
+			thrown(StubNotFoundException)
 		cleanup:
-		executor.shutdown()
+			executor.shutdown()
 	}
 
 	def 'should start a stub on a given port'() {
 		given:
-		int port = SocketUtils.findAvailableTcpPort()
-		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
-		stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping:
-				stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${SocketUtils.findAvailableTcpPort()}"))
-				.build()
+			int port = SocketUtils.findAvailableTcpPort()
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+			stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping:
+					stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${SocketUtils.findAvailableTcpPort()}"))
+					.build()
 		when:
-		executor.runStubs(stubRunnerOptions, repository, stub)
+			executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
-		executor.findStubUrl("group", "artifact") == "http://localhost:${port}".toURL()
+			executor.findStubUrl("group", "artifact") == "http://localhost:${port}".toURL()
 		cleanup:
-		executor.shutdown()
+			executor.shutdown()
 	}
 
 	def 'should ensure that triggered contracts have properly parsed message body when a message is sent'() {
@@ -96,7 +95,7 @@ class StubRunnerExecutorSpec extends Specification {
 		then:
 			noExceptionThrown()
 		cleanup:
-		executor.shutdown()
+			executor.shutdown()
 	}
 
 	def 'should match stub with empty classifier'() {
@@ -164,7 +163,7 @@ class StubRunnerExecutorSpec extends Specification {
 				!it.toString().contains("cursor")
 			}, { Map map ->
 				println "Headers <${map}>"
-				!map.values().any { it.toString().contains("cursor")}
+				!map.values().any { it.toString().contains("cursor") }
 			}, _)
 		cleanup:
 			executor.shutdown()
@@ -177,7 +176,7 @@ class StubRunnerExecutorSpec extends Specification {
 	}
 
 	private class AssertingStubMessages implements MessageVerifier<Object> {
-		
+
 		@Override
 		void send(Object message, String destination) {
 			throw new UnsupportedOperationException()

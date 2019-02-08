@@ -1,14 +1,17 @@
 {
-    "request": {
-        "method": "GET",
-        "url": "/ping"
+  "request": {
+    "method": "GET",
+    "url": "/ping"
+  },
+  "response": {
+    "status": 200,
+    "body": "pong",
+    "headers": {
+      "Content-Type": "text/plain"
     },
-    "response": {
-        "status": 200,
-        "body": "pong",
-        "headers": {
-            "Content-Type": "text/plain"
-        },
-        "transformers" : [ "response-template", "foo-transformer" ]
-    }
+    "transformers": [
+      "response-template",
+      "foo-transformer"
+    ]
+  }
 }

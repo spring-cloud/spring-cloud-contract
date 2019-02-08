@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.messaging.camel
@@ -42,6 +42,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -52,8 +53,10 @@ import org.springframework.test.context.ContextConfiguration
 @IgnoreIf({ os.windows })
 class CamelStubRunnerSpec extends Specification {
 
-	@Autowired StubFinder stubFinder
-	@Autowired CamelContext camelContext
+	@Autowired
+	StubFinder stubFinder
+	@Autowired
+	CamelContext camelContext
 	ConsumerTemplate consumerTemplate
 	ProducerTemplate producerTemplate
 
@@ -75,43 +78,45 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should download the stub and register a route for it'() {
 		when:
-		// tag::client_send[]
-			producerTemplate.sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])
-		// end::client_send[]
+			// tag::client_send[]
+			producerTemplate.
+					sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])
+			// end::client_send[]
 		then:
-		// tag::client_receive[]
+			// tag::client_receive[]
 			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
-		// end::client_receive[]
+			// end::client_receive[]
 		and:
-		// tag::client_receive_message[]
+			// tag::client_receive_message[]
 			receivedMessage != null
 			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
-		// end::client_receive_message[]
+			// end::client_receive_message[]
 	}
 
 	def 'should trigger a message by label'() {
 		when:
-		// tag::client_trigger[]
+			// tag::client_trigger[]
 			stubFinder.trigger('return_book_1')
-		// end::client_trigger[]
+			// end::client_trigger[]
 		then:
-		// tag::client_trigger_receive[]
+			// tag::client_trigger_receive[]
 			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
-		// end::client_trigger_receive[]
+			// end::client_trigger_receive[]
 		and:
-		// tag::client_trigger_message[]
+			// tag::client_trigger_message[]
 			receivedMessage != null
 			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
-		// end::client_trigger_message[]
+			// end::client_trigger_message[]
 	}
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
 		when:
-		// tag::trigger_group_artifact[]
-			stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')
-		// end::trigger_group_artifact[]
+			// tag::trigger_group_artifact[]
+			stubFinder.
+					trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')
+			// end::trigger_group_artifact[]
 		then:
 			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		and:
@@ -122,9 +127,9 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should trigger a label for the existing artifactId'() {
 		when:
-		// tag::trigger_artifact[]
+			// tag::trigger_artifact[]
 			stubFinder.trigger('camelService', 'return_book_1')
-		// end::trigger_artifact[]
+			// end::trigger_artifact[]
 		then:
 			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		and:
@@ -149,9 +154,9 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should trigger messages by running all triggers'() {
 		when:
-		// tag::trigger_all[]
+			// tag::trigger_all[]
 			stubFinder.trigger()
-		// end::trigger_all[]
+			// end::trigger_all[]
 		then:
 			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
 		and:
@@ -162,16 +167,18 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should trigger a label with no output message'() {
 		when:
-		// tag::trigger_no_output[]
-			producerTemplate.sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])
-		// end::trigger_no_output[]
+			// tag::trigger_no_output[]
+			producerTemplate.
+					sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])
+			// end::trigger_no_output[]
 		then:
 			noExceptionThrown()
 	}
 
 	def 'should not trigger a message that does not match input'() {
 		when:
-			producerTemplate.sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
+			producerTemplate.
+					sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
 		then:
 			Exchange receivedMessage = consumerTemplate.receive('jms:output', 100)
 		and:
@@ -195,7 +202,8 @@ class CamelStubRunnerSpec extends Specification {
 			ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerURL: url)
 			try {
 				factory.trustAllPackages = true
-			} catch (Throwable e) {
+			}
+			catch (Throwable e) {
 			}
 			return factory
 		}
@@ -213,61 +221,61 @@ class CamelStubRunnerSpec extends Specification {
 
 
 	Contract dsl =
-	// tag::sample_dsl[]
-	Contract.make {
-		label 'return_book_1'
-		input {
-			triggeredBy('bookReturnedTriggered()')
-		}
-		outputMessage {
-			sentTo('jms:output')
-			body('''{ "bookName" : "foo" }''')
-			headers {
-				header('BOOK-NAME', 'foo')
+			// tag::sample_dsl[]
+			Contract.make {
+				label 'return_book_1'
+				input {
+					triggeredBy('bookReturnedTriggered()')
+				}
+				outputMessage {
+					sentTo('jms:output')
+					body('''{ "bookName" : "foo" }''')
+					headers {
+						header('BOOK-NAME', 'foo')
+					}
+				}
 			}
-		}
-	}
 	// end::sample_dsl[]
 
 	Contract dsl2 =
-	// tag::sample_dsl_2[]
-	Contract.make {
-		label 'return_book_2'
-		input {
-			messageFrom('jms:input')
-			messageBody([
-					bookName: 'foo'
-			])
-			messageHeaders {
-				header('sample', 'header')
+			// tag::sample_dsl_2[]
+			Contract.make {
+				label 'return_book_2'
+				input {
+					messageFrom('jms:input')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+				}
+				outputMessage {
+					sentTo('jms:output')
+					body([
+							bookName: 'foo'
+					])
+					headers {
+						header('BOOK-NAME', 'foo')
+					}
+				}
 			}
-		}
-		outputMessage {
-			sentTo('jms:output')
-			body([
-					bookName: 'foo'
-			])
-			headers {
-				header('BOOK-NAME', 'foo')
-			}
-		}
-	}
 	// end::sample_dsl_2[]
 
 	Contract dsl3 =
-	// tag::sample_dsl_3[]
-	Contract.make {
-		label 'delete_book'
-		input {
-			messageFrom('jms:delete')
-			messageBody([
-					bookName: 'foo'
-			])
-			messageHeaders {
-				header('sample', 'header')
+			// tag::sample_dsl_3[]
+			Contract.make {
+				label 'delete_book'
+				input {
+					messageFrom('jms:delete')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+					assertThat('bookWasDeleted()')
+				}
 			}
-			assertThat('bookWasDeleted()')
-		}
-	}
 	// end::sample_dsl_3[]
 }

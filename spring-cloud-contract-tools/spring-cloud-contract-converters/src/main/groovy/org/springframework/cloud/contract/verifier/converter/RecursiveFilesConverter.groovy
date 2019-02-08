@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.converter
@@ -32,6 +32,7 @@ import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuild
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.NamesUtil
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter
+
 /**
  * Recursively converts contracts into their stub representations
  *
@@ -58,11 +59,12 @@ class RecursiveFilesConverter {
 	}
 
 	void processFiles() {
-		ContractFileScanner scanner = new ContractFileScannerBuilder().baseDir(props.contractsDslDir)
-				.excluded(props.excludedFiles as Set)
-				.ignored([] as Set).included([] as Set)
-				.includeMatcher(props.includedContracts)
-				.build()
+		ContractFileScanner scanner = new ContractFileScannerBuilder().
+				baseDir(props.contractsDslDir)
+																	  .excluded(props.excludedFiles as Set)
+																	  .ignored([] as Set).included([] as Set)
+																	  .includeMatcher(props.includedContracts)
+																	  .build()
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		if (log.isDebugEnabled()) {
 			log.debug("Found the following contracts $contracts")
@@ -73,11 +75,14 @@ class RecursiveFilesConverter {
 					log.debug("Will create a stub for contract [${contract}]")
 				}
 				File sourceFile = contract.path.toFile()
-				Collection<StubGenerator> stubGenerators = contract.convertedContract ? holder.allOrDefault(new DslToWireMockClientConverter()) :
+				Collection<StubGenerator> stubGenerators = contract.convertedContract ? holder.
+						allOrDefault(new DslToWireMockClientConverter()) :
 						holder.converterForName(sourceFile.name)
 				try {
 					String path = sourceFile.path
-					if (props.isExcludeBuildFolders() && (matchesPath(path, "target") || matchesPath(path, "build"))) {
+					if (props.isExcludeBuildFolders()
+							&& (
+							matchesPath(path, "target") || matchesPath(path, "build"))) {
 						if (log.isDebugEnabled()) {
 							log.debug("Exclude build folder is set. Path [${path}] contains [target] or [build] in its path")
 						}
@@ -92,22 +97,28 @@ class RecursiveFilesConverter {
 						log.debug("Stub Generators [${stubGenerators}] will convert contents of [${entryKey}]")
 					}
 					stubGenerators.each { StubGenerator stubGenerator ->
-						Map<Contract, String> convertedContent = stubGenerator.convertContents(entryKey.last().toString(), contract)
+						Map<Contract, String> convertedContent = stubGenerator.
+								convertContents(entryKey.last().toString(), contract)
 						if (!convertedContent) {
 							return
 						}
-						convertedContent.entrySet().eachWithIndex { Map.Entry<Contract, String> content, int index ->
-							Contract dsl = content.key
-							String converted = content.value
-							if (converted) {
-								Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
-								File newJsonFile = createTargetFileWithProperName(stubGenerator, absoluteTargetPath,
-										sourceFile, contractsSize, index, dsl)
-								newJsonFile.setText(converted, StandardCharsets.UTF_8.toString())
-							}
-						}
+						convertedContent.entrySet().
+								eachWithIndex { Map.Entry<Contract, String> content, int index ->
+									Contract dsl = content.key
+									String converted = content.value
+									if (converted) {
+										Path absoluteTargetPath =
+												createAndReturnTargetDirectory(sourceFile)
+										File newJsonFile =
+												createTargetFileWithProperName(stubGenerator, absoluteTargetPath,
+														sourceFile, contractsSize, index, dsl)
+										newJsonFile.setText(converted, StandardCharsets.UTF_8.
+												toString())
+									}
+								}
 					}
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					throw new ConversionContractVerifierException("Unable to make conversion of ${sourceFile.name}", e)
 				}
 			}
@@ -119,14 +130,15 @@ class RecursiveFilesConverter {
 	}
 
 	private Path createAndReturnTargetDirectory(File sourceFile) {
-		Path relativePath = Paths.get(props.contractsDslDir.toURI()).relativize(sourceFile.parentFile.toPath())
+		Path relativePath = Paths.get(props.contractsDslDir.toURI()).
+				relativize(sourceFile.parentFile.toPath())
 		Path absoluteTargetPath = outMappingsDir.toPath().resolve(relativePath)
 		Files.createDirectories(absoluteTargetPath)
 		return absoluteTargetPath
 	}
 
 	private File createTargetFileWithProperName(StubGenerator stubGenerator, Path absoluteTargetPath,
-												File sourceFile, int contractsSize, int index, Contract dsl) {
+			File sourceFile, int contractsSize, int index, Contract dsl) {
 		String name = generateName(dsl, contractsSize, stubGenerator, sourceFile, index)
 		File newJsonFile = new File(absoluteTargetPath.toFile(), name)
 		log.info("Creating new stub [$newJsonFile.path]")
@@ -134,13 +146,14 @@ class RecursiveFilesConverter {
 	}
 
 	private String generateName(Contract dsl, int contractsSize, StubGenerator converter,
-								File sourceFile, int index) {
+			File sourceFile, int index) {
 		String generatedName = converter.generateOutputFileNameForInput(sourceFile.name)
 		boolean hasDot = NamesUtil.hasDot(generatedName)
 		String extension = hasDot ? NamesUtil.afterLastDot(generatedName) : ""
 		if (dsl.name && extension) {
 			return "${dsl.name}.${extension}"
-		} else if (contractsSize == 1) {
+		}
+		else if (contractsSize == 1) {
 			return generatedName
 		}
 		return "${index}_${generatedName}"

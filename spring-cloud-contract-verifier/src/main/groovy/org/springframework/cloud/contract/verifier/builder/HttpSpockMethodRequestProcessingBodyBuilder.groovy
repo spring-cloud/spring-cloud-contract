@@ -1,23 +1,26 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -26,7 +29,6 @@ import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
-import java.util.regex.Pattern
 /**
  * A {@link SpockMethodRequestProcessingBodyBuilder} implementation that uses MockMvc to send requests.
  *
@@ -37,8 +39,8 @@ import java.util.regex.Pattern
 class HttpSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
 	HttpSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition,
-												ContractVerifierConfigProperties configProperties,
-												GeneratedClassDataForMethod classDataForMethod) {
+			ContractVerifierConfigProperties configProperties,
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
@@ -73,9 +75,11 @@ class HttpSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProc
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			blockBuilder.addLine("response.header('$property') " +
+			blockBuilder.addLine("response.header('$property') "
+					+
 					"${patternComparison(((NotToEscapePattern) value).serverValue.pattern().replace("\\", "\\\\"))}")
-		} else {
+		}
+		else {
 			// fallback
 			processHeaderElement(blockBuilder, property, value.toString())
 		}
@@ -84,9 +88,11 @@ class HttpSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProc
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			blockBuilder.addLine("response.cookie('$key') " +
+			blockBuilder.addLine("response.cookie('$key') "
+					+
 					"${patternComparison(((NotToEscapePattern) value).serverValue.pattern().replace("\\", "\\\\"))}")
-		} else {
+		}
+		else {
 			processCookieElement(blockBuilder, key, value.toString())
 		}
 	}
@@ -103,18 +109,21 @@ class HttpSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProc
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
-		blockBuilder.addLine("response.header('$property') ${convertHeaderComparison(value)}")
+		blockBuilder.
+				addLine("response.header('$property') ${convertHeaderComparison(value)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern value) {
-		blockBuilder.addLine("response.header('$property') ${convertHeaderComparison(value)}")
+		blockBuilder.
+				addLine("response.header('$property') ${convertHeaderComparison(value)}")
 	}
 
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
 		blockBuilder.addLine("response.cookie('$key') != null")
-		blockBuilder.addLine("response.cookie('$key') ${convertCookieComparison(pattern)}")
+		blockBuilder.
+				addLine("response.cookie('$key') ${convertCookieComparison(pattern)}")
 	}
 
 	@Override

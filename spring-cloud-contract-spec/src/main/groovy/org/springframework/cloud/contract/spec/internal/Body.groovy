@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.spec.internal
@@ -31,7 +31,8 @@ import groovy.transform.ToString
 class Body extends DslProperty {
 
 	Body(Map<String, DslProperty> body) {
-		super(extractValue(body, { p -> p instanceof DslProperty ? ((DslProperty) p).clientValue : p }),
+		super(
+				extractValue(body, { p -> p instanceof DslProperty ? ((DslProperty) p).clientValue : p }),
 				extractValue(body, { p -> p instanceof DslProperty ? ((DslProperty) p).serverValue : p }))
 	}
 
@@ -42,7 +43,8 @@ class Body extends DslProperty {
 	}
 
 	Body(List<DslProperty> bodyAsList) {
-		super(bodyAsList.collect { DslProperty p -> p.clientValue }, bodyAsList.collect { DslProperty p -> p.serverValue })
+		super(bodyAsList.collect { DslProperty p -> p.clientValue }, bodyAsList.
+				collect { DslProperty p -> p.serverValue })
 	}
 
 	Body(Object bodyAsValue) {
@@ -76,6 +78,5 @@ class Body extends DslProperty {
 	Body(MatchingStrategy matchingStrategy) {
 		super(matchingStrategy, matchingStrategy)
 	}
-
 
 }

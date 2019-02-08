@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.junit;
@@ -28,109 +28,135 @@ interface StubRunnerRuleOptions {
 
 	/**
 	 * Pass the {@link MessageVerifier} that this rule should use. If you don't pass
-	 * anything a {@link ExceptionThrowingMessageVerifier} will be used.
-	 * That means that an exception will be thrown whenever you try to do sth messaging
-	 * related.
+	 * anything a {@link ExceptionThrowingMessageVerifier} will be used. That means that
+	 * an exception will be thrown whenever you try to do sth messaging related.
+	 * @param messageVerifier message verifier implementation
+	 * @return the rule
 	 */
 	StubRunnerRule messageVerifier(MessageVerifier messageVerifier);
 
 	/**
-	 * Override all options
-	 *
+	 * Override all options.
+	 * @param stubRunnerOptions options of Stub Runner
+	 * @return the rule
 	 * @see StubRunnerOptions
 	 */
 	StubRunnerRule options(StubRunnerOptions stubRunnerOptions);
 
 	/**
-	 * Min value of port for WireMock server
+	 * @param minPort min value of port for WireMock server
+	 * @return the rule
 	 */
 	StubRunnerRule minPort(int minPort);
 
 	/**
-	 * Max value of port for WireMock server
+	 * @param maxPort max value of port for WireMock server
+	 * @return the rule
 	 */
 	StubRunnerRule maxPort(int maxPort);
 
 	/**
-	 * String URI of repository containing stubs
+	 * @param repoRoot String URI of repository containing stubs
+	 * @return the rule
 	 */
 	StubRunnerRule repoRoot(String repoRoot);
 
 	/**
-	 * Stubs mode that should be used
+	 * @param stubsMode Stubs mode that should be used
+	 * @return the rule
 	 */
 	StubRunnerRule stubsMode(StubRunnerProperties.StubsMode stubsMode);
 
 	/**
-	 * Group Id, artifact Id, version and classifier of a single stub to download
+	 * @param groupId group id of the stub
+	 * @param artifactId artifact id of the stub
+	 * @param version version of the stub
+	 * @param classifier classifier of the stub
+	 * @return the rule with port
 	 */
 	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId,
-										   String version, String classifier);
+			String version, String classifier);
 
 	/**
-	 * Group Id, artifact Id and classifier of a single stub to download in the latest
-	 * version
+	 * @param groupId group id of the stub
+	 * @param artifactId artifact id of the stub
+	 * @param classifier classifier of the stub
+	 * @return the rule with port
 	 */
 	PortStubRunnerRuleOptions downloadLatestStub(String groupId, String artifactId,
-												 String classifier);
+			String classifier);
 
 	/**
-	 * Group Id, artifact Id and version of a single stub to download
+	 * @param groupId group id of the stub
+	 * @param artifactId artifact id of the stub
+	 * @param version version of the stub
+	 * @return the rule with port
 	 */
 	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId,
-										   String version);
+			String version);
 
 	/**
-	 * Group Id, artifact Id of a single stub to download. Default classifier will be
-	 * picked.
+	 * @param groupId group id of the stub
+	 * @param artifactId artifact id of the stub
+	 * @return the rule with port
 	 */
 	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId);
 
 	/**
-	 * Ivy notation of a single stub to download.
+	 * @param ivyNotation Ivy notation of a single stub to download.
+	 * @return the rule with port
 	 */
 	PortStubRunnerRuleOptions downloadStub(String ivyNotation);
 
 	/**
-	 * Stubs to download in Ivy notations
+	 * @param ivyNotations Stubs to download in Ivy notations.
+	 * @return the rule
 	 */
 	StubRunnerRule downloadStubs(String... ivyNotations);
 
 	/**
-	 * Stubs to download in Ivy notations
+	 * @param ivyNotations Stubs to download in Ivy notations.
+	 * @return the rule
 	 */
 	StubRunnerRule downloadStubs(List<String> ivyNotations);
 
 	/**
-	 * Allows stub per consumer
+	 * @param stubPerConsumer Allows stub per consumer.
+	 * @return the rule
 	 */
 	StubRunnerRule withStubPerConsumer(boolean stubPerConsumer);
 
 	/**
-	 * Allows setting consumer name
+	 * @param consumerName given consumer name
+	 * @return the rule
 	 */
 	StubRunnerRule withConsumerName(String consumerName);
 
 	/**
-	 * Allows setting the output folder for mappings
+	 * @param mappingsOutputFolder Allows setting the output folder for mappings
+	 * @return the rule
 	 */
 	StubRunnerRule withMappingsOutputFolder(String mappingsOutputFolder);
 
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
-	 * tests
+	 * @param deleteStubsAfterTest If set to {@code false} will NOT delete stubs from a
+	 * temporary folder after running tests
+	 * @return the rule
 	 */
 	StubRunnerRule withDeleteStubsAfterTest(boolean deleteStubsAfterTest);
 
 	/**
-	 * Map of properties that can be passed to custom
+	 * @param properties Map of properties that can be passed to custom
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * @return the rule
 	 */
 	StubRunnerRule withProperties(Map<String, String> properties);
 
 	/**
-	 * Configuration for an HTTP server stub
+	 * @param httpServerStubConfigurer Configuration for an HTTP server stub
+	 * @return the rule
 	 */
-	StubRunnerRule withHttpServerStubConfigurer(Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer);
+	StubRunnerRule withHttpServerStubConfigurer(
+			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer);
 
 }

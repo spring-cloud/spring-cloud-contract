@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
@@ -118,27 +119,33 @@
 							<shadedArtifactAttached>false</shadedArtifactAttached>
 							<createSourcesJar>true</createSourcesJar>
 							<shadeSourcesContent>true</shadeSourcesContent>
-							<keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+							<keepDependenciesWithProvidedScope>true
+							</keepDependenciesWithProvidedScope>
 							<relocations>
 								<relocation>
 									<pattern>org.eclipse.aether.connector</pattern>
-									<shadedPattern>shaded.org.eclipse.aether.connector</shadedPattern>
+									<shadedPattern>shaded.org.eclipse.aether.connector
+									</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.eclipse.aether.transport</pattern>
-									<shadedPattern>shaded.org.eclipse.aether.transport</shadedPattern>
+									<shadedPattern>shaded.org.eclipse.aether.transport
+									</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.eclipse.aether.impl</pattern>
-									<shadedPattern>shaded.org.eclipse.aether.impl</shadedPattern>
+									<shadedPattern>shaded.org.eclipse.aether.impl
+									</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.eclipse.aether.internal</pattern>
-									<shadedPattern>shaded.org.eclipse.aether.internal</shadedPattern>
+									<shadedPattern>shaded.org.eclipse.aether.internal
+									</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.eclipse.aether.spi</pattern>
-									<shadedPattern>shaded.org.eclipse.aether.spi</shadedPattern>
+									<shadedPattern>shaded.org.eclipse.aether.spi
+									</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.apache.maven</pattern>
@@ -176,7 +183,8 @@
 									<classifier>sources</classifier>
 									<type>jar</type>
 									<overWrite>false</overWrite>
-									<outputDirectory>${project.build.directory}/sources</outputDirectory>
+									<outputDirectory>${project.build.directory}/sources
+									</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

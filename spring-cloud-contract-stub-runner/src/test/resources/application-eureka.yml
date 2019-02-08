@@ -4,6 +4,6 @@ eureka:
     fetchRegistry: false
     initialInstanceInfoReplicationIntervalSeconds: 1
   instance:
-      registryFetchIntervalSeconds: 5
-      leaseRenewalIntervalInSeconds: 5
-      leaseExpirationDurationInSeconds: 5
+    registryFetchIntervalSeconds: 5
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5

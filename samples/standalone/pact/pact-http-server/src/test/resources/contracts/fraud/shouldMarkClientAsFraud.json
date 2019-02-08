@@ -38,7 +38,7 @@
               "combine": "AND"
             }
           },
-          "body" : {
+          "body": {
             "$.clientId": {
               "matchers": [
                 {

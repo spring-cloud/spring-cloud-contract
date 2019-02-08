@@ -26,8 +26,12 @@
           "body": {
             "$[*].optionalField": {
               "matchers": [
-                { "match": "integer" },
-                { "match": "null" }
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
               ],
               "combine": "OR"
             }

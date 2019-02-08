@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.jvm.tasks.Jar
+
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -40,7 +41,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private static final String GENERATE_SERVER_TESTS_TASK_NAME = 'generateContractTests'
 	private static final String DSL_TO_CLIENT_TASK_NAME = 'generateClientStubs'
-	@PackageScope static final String COPY_CONTRACTS_TASK_NAME = 'copyContracts'
+	@PackageScope
+	static final String COPY_CONTRACTS_TASK_NAME = 'copyContracts'
 	private static final String VERIFIER_STUBS_JAR_TASK_NAME = 'verifierStubsJar'
 	private static final String PUBLISH_STUBS_TO_SCM_TASK_NAME = 'publishStubsToScm'
 
@@ -98,7 +100,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private void createGenerateTestsTask(ContractVerifierExtension extension, Task copyContracts,
-										 GradleContractsDownloader gradleContractsDownloader) {
+			GradleContractsDownloader gradleContractsDownloader) {
 		Task task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
 		task.description = "Generate server tests from the contracts"
 		task.group = GROUP_NAME
@@ -113,7 +115,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private void createAndConfigurePublishStubsToScmTask(ContractVerifierExtension extension,
-														 GradleContractsDownloader gradleContractsDownloader) {
+			GradleContractsDownloader gradleContractsDownloader) {
 		Task task = project.tasks.create(PUBLISH_STUBS_TO_SCM_TASK_NAME, PublishStubsToScmTask)
 		task.description = "The generated stubs get committed to the SCM repo and pushed to origin"
 		task.group = GROUP_NAME
@@ -126,7 +128,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private Task createAndConfigureGenerateClientStubs(ContractVerifierExtension extension,
-													   Task copyContracts) {
+			Task copyContracts) {
 		Task task = project.tasks.create(DSL_TO_CLIENT_TASK_NAME, GenerateClientStubsFromDslTask)
 		task.description = "Generate client stubs from the contracts"
 		task.group = GROUP_NAME
@@ -144,7 +146,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		if (task) {
 			project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!")
 			return task
-		} else {
+		}
+		else {
 			task = project.tasks.create(type: Jar, name: VERIFIER_STUBS_JAR_TASK_NAME,
 					dependsOn: DSL_TO_CLIENT_TASK_NAME) {
 				baseName = project.name
@@ -163,14 +166,15 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	private Task stubsTask() {
 		try {
 			return project.tasks.getByName(VERIFIER_STUBS_JAR_TASK_NAME)
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return null
 		}
 	}
 
 	private Task createAndConfigureCopyContractsTask(Task stubs,
-													GradleContractsDownloader gradleContractsDownloader,
-													ContractVerifierExtension contractVerifierExtension) {
+			GradleContractsDownloader gradleContractsDownloader,
+			ContractVerifierExtension contractVerifierExtension) {
 		Task task = project.tasks.create(COPY_CONTRACTS_TASK_NAME, ContractsCopyTask)
 		task.description = "Copies contracts to the output folder"
 		task.group = GROUP_NAME
@@ -203,7 +207,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 							artifact stubsTask
 						}
 					}
-				} else {
+				}
+				else {
 					project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs publication was present - won't create a new one. Remember about passing stubs as artifact")
 				}
 			}
@@ -213,7 +218,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	private boolean hasPublication(def publishingExtension) {
 		try {
 			return publishingExtension.publications.getByName('stubs')
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false
 		}
 	}
@@ -222,7 +228,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		try {
 			Class.forName(className)
 			return true
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			project.logger.debug("Maven Publish Plugin is not available")
 		}
 		return false

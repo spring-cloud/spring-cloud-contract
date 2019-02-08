@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.spec.internal
@@ -34,9 +34,12 @@ import groovy.transform.stc.SimpleType
 @TypeChecked
 class Headers {
 
-	@Delegate MediaTypes mediaTypes = new MediaTypes()
-	@Delegate HttpHeaders httpHeaders = new HttpHeaders()
-	@Delegate MessagingHeaders messagingHeaders = new MessagingHeaders()
+	@Delegate
+	MediaTypes mediaTypes = new MediaTypes()
+	@Delegate
+	HttpHeaders httpHeaders = new HttpHeaders()
+	@Delegate
+	MessagingHeaders messagingHeaders = new MessagingHeaders()
 
 	Set<Header> entries = []
 
@@ -88,23 +91,24 @@ class Headers {
 	/**
 	 * Converts the headers via the provided closure
 	 */
-	Map<String , Object> asMap(@ClosureParams(value = SimpleType.class,
+	Map<String, Object> asMap(@ClosureParams(value = SimpleType.class,
 			options = [
 					"java.lang.String",
 					"org.springframework.cloud.contract.spec.internal.DslProperty"
 			]) Closure closure) {
 		def acc = [:].withDefault { [] as Collection<Object> }
-		return entries.inject(acc as Map<String, Object>) { Map<String, Object> map, Header header ->
-			map[header.name] = closure(header.name, header)
-			return map
-		} as Map<String , Object>
+		return entries.
+				inject(acc as Map<String, Object>) { Map<String, Object> map, Header header ->
+					map[header.name] = closure(header.name, header)
+					return map
+				} as Map<String, Object>
 	}
 
 	/**
 	 * Converts the headers into their stub side representations and returns as
 	 * a map of String key => Object value.
 	 */
-	Map<String , Object> asStubSideMap() {
+	Map<String, Object> asStubSideMap() {
 		return asMap({ String headerName, DslProperty prop -> prop.clientValue })
 	}
 
@@ -112,15 +116,21 @@ class Headers {
 	 * Converts the headers into their stub side representations and returns as
 	 * a map of String key => Object value.
 	 */
-	Map<String , Object> asTestSideMap() {
+	Map<String, Object> asTestSideMap() {
 		return asMap({ String headerName, DslProperty prop -> prop.serverValue })
 	}
 
 	boolean equals(o) {
-		if (this.is(o)) return true
-		if (getClass() != o.class) return false
+		if (this.is(o)) {
+			return true
+		}
+		if (getClass() != o.class) {
+			return false
+		}
 		Headers headers = (Headers) o
-		if (entries != headers.entries) return false
+		if (entries != headers.entries) {
+			return false
+		}
 		return true
 	}
 

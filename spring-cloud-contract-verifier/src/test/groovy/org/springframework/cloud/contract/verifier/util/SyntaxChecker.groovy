@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.util
 
 import java.lang.reflect.Method
@@ -81,7 +97,7 @@ class SyntaxChecker {
 			"${ContractVerifierMessagingUtil.name}.headers",
 			"${JsonAssertion.name}.assertThatJson",
 			"${SpringCloudContractAssertions.name}.assertThat",
-	].collect { "import static ${it};"}.join("\n")
+	].collect { "import static ${it};" }.join("\n")
 
 	private static final String WEB_TEST_CLIENT_STATIC_IMPORTS = [
 			"${RestAssuredWebTestClient.name}.*",
@@ -100,7 +116,8 @@ private void test(String test) {
 	static void tryToCompile(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
 			tryToCompileGroovy(builderName, test)
-		} else {
+		}
+		else {
 			tryToCompileJava(builderName, test)
 		}
 	}
@@ -109,7 +126,8 @@ private void test(String test) {
 		if (builderName.toLowerCase().contains("spock")) {
 			Script script = tryToCompileGroovy(builderName, test)
 			script.run()
-		} else {
+		}
+		else {
 			Class clazz = tryToCompileJava(builderName, test)
 			Method method = ReflectionUtils.findMethod(clazz, "method")
 			method.invoke(clazz.newInstance())
@@ -120,7 +138,8 @@ private void test(String test) {
 	static void tryToCompileWithoutCompileStatic(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
 			tryToCompileGroovy(builderName, test, false)
-		} else {
+		}
+		else {
 			tryToCompileJava(builderName, test)
 		}
 	}

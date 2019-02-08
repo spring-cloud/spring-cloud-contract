@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.example;
 
 import java.util.LinkedList;
@@ -6,6 +22,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
@@ -44,14 +61,14 @@ public class RabbitManager {
 		this.rabbitTemplate = rabbitTemplate;
 	}
 
-	@RabbitListener(bindings = @QueueBinding(value = @Queue(), exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"), key = "event"))
+	@RabbitListener(bindings = @QueueBinding(value = @Queue, exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"), key = "event"))
 	public void newBook(Book book, @Headers Map<String, String> headers) {
 		LOG.info("Received new book with bookname = " + book.getName());
 		LOG.info("Headers = " + headers);
 		this.service.sendBook(book, headers.get("amqp_replyTo"));
 	}
 
-	@RabbitListener(bindings = @QueueBinding(value = @Queue(), exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"), key = "event2"))
+	@RabbitListener(bindings = @QueueBinding(value = @Queue, exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"), key = "event2"))
 	public void newBook2(Book book, @Headers Map<String, String> headers) {
 		LOG.info("newBook2 Received new book with bookname = " + book.getName());
 		LOG.info("newBook2 Headers = " + headers);
@@ -70,7 +87,7 @@ class BookServiceImpl implements BookService {
 	private RabbitTemplate rabbitTemplate;
 
 	@Autowired
-	public BookServiceImpl(RabbitTemplate rabbitTemplate) {
+	BookServiceImpl(RabbitTemplate rabbitTemplate) {
 		this.books = new LinkedList<>();
 		this.rabbitTemplate = rabbitTemplate;
 	}

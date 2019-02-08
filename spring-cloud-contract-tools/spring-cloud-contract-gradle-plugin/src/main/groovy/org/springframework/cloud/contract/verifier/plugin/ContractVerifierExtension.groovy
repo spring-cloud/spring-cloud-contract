@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -137,7 +138,7 @@ class ContractVerifierExtension {
 	Boolean assertJsonSize = false
 
 	ContractRepository contractRepository = new ContractRepository()
-	
+
 	/**
 	 * Dependency that contains packaged contracts
 	 */
@@ -248,8 +249,8 @@ class ContractVerifierExtension {
 				nameSuffixForTests: this.nameSuffixForTests,
 				ruleClassForTests: this.ruleClassForTests,
 				excludedFiles: new ArrayList<String>(this.excludedFiles),
-				includedFiles:  new ArrayList<String>(this.includedFiles),
-				ignoredFiles:  new ArrayList<String>(this.ignoredFiles),
+				includedFiles: new ArrayList<String>(this.includedFiles),
+				ignoredFiles: new ArrayList<String>(this.ignoredFiles),
 				imports: Arrays.asList(this.imports).toArray(),
 				staticImports: Arrays.asList(this.staticImports).toArray(),
 				contractsDslDir: this.contractsDslDir,

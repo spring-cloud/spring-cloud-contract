@@ -5,14 +5,13 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -50,6 +49,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 import static org.springframework.cloud.contract.verifier.util.ContentType.TEXT
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
+
 /**
  * Main class for building method body.
  *
@@ -64,7 +64,9 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
 @PackageScope
 abstract class MethodBodyBuilder implements ClassVerifier {
 
-	private static final Closure GET_SERVER_VALUE = { it instanceof DslProperty ? it.serverValue : it }
+	private static final Closure GET_SERVER_VALUE = {
+		it instanceof DslProperty ? it.serverValue : it
+	}
 
 	protected final ContractVerifierConfigProperties configProperties
 	protected final TemplateProcessor templateProcessor
@@ -75,8 +77,8 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	private final XmlBodyVerificationBuilder xmlBodyVerificationBuilder
 
 	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties,
-								Contract contract,
-								GeneratedClassDataForMethod classDataForMethod) {
+			Contract contract,
+			GeneratedClassDataForMethod classDataForMethod) {
 		this.configProperties = configProperties
 		this.templateProcessor = processor()
 		this.contractTemplate = template()
@@ -86,7 +88,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 				templateProcessor, contractTemplate, this.contract,
 				lineSuffix(), { String jsonPath ->
 			postProcessJsonPathCall(jsonPath)
-		})
+				})
 		this.xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(contract,
 				lineSuffix())
 	}
@@ -152,12 +154,12 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	protected abstract String getResponseAsString()
 
 	/**
-	 * Returns the given string with comment sign if required by the given implementation
+	 * @return the given string with comment sign if required by the given implementation
 	 */
 	protected abstract String addCommentSignIfRequired(String baseString)
 
 	/**
-	 * Returns true if the BDD-syntax blocks should be commented out for a given framework
+	 * @return true if the BDD-syntax blocks should be commented out for a given framework
 	 */
 	protected abstract boolean shouldCommentOutBDDBlocks()
 
@@ -167,7 +169,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	protected abstract BlockBuilder addColonIfRequired(BlockBuilder blockBuilder)
 
 	/**
-	 * Returns line suffix appropriate for test builder if required
+	 * @return line suffix appropriate for test builder if required
 	 */
 	protected abstract Optional<String> lineSuffix()
 
@@ -232,7 +234,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, String value)
-	
+
 	/**
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
@@ -320,7 +322,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	protected abstract void then(BlockBuilder bb)
 
 	/**
-	 * Returns a {@link org.springframework.cloud.contract.verifier.util.ContentType} for the given request
+	 * @return a{@link org.springframework.cloud.contract.verifier.util.ContentType} for the given request
 	 */
 	protected abstract ContentType getResponseContentType()
 
@@ -330,7 +332,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	protected abstract String getBodyAsString()
 
 	/**
-	 * Returns {@code true} if given section should be created
+	 * @return {@code true} if given section should be created
 	 */
 	protected abstract boolean hasGivenSection()
 
@@ -412,14 +414,18 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 			convertedResponseBody = convertedResponseBody.asString()
 		}
 		if (convertedResponseBody instanceof GString) {
-			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
+			convertedResponseBody =
+					extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
 		if (TEXT != contentType && FORM != contentType) {
 			boolean dontParseStrings = contentType == JSON && convertedResponseBody instanceof Map
 			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
-			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody, parsingClosure)
-		} else {
-			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
+			convertedResponseBody = MapConverter.
+					getTestSideValues(convertedResponseBody, parsingClosure)
+		}
+		else {
+			convertedResponseBody = StringEscapeUtils.
+					escapeJava(convertedResponseBody.toString())
 		}
 		if (JSON == contentType) {
 			addJsonBodyVerification(bb, convertedResponseBody, bodyMatchers)
@@ -427,7 +433,8 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		else if (XML == contentType) {
 			xmlBodyVerificationBuilder.addXmlResponseBodyCheck(bb, convertedResponseBody,
 					bodyMatchers, getResponseAsString(), shouldCommentOutBDDBlocks())
-		} else {
+		}
+		else {
 			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
 	}
@@ -499,7 +506,8 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		if (toTrim.startsWith('"')) {
 			return toTrim.replaceAll('"', '')
 			//#261
-		} else if (toTrim.startsWith('\\"') && toTrim.endsWith('\\"')) {
+		}
+		else if (toTrim.startsWith('\\"') && toTrim.endsWith('\\"')) {
 			return toTrim.substring(2, toTrim.length() - 2)
 		}
 		return toTrim
@@ -562,7 +570,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 
 	/**
 	 * Extracts the executable test side values and
-	 * returns the code of the executable
+	 * @return the code of the executable
 	 */
 	protected String getTestSideValue(ExecutionProperty executionProperty) {
 		return executionProperty.toString()
@@ -604,7 +612,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	}
 
 	private void byteResponseBodyCheck(BlockBuilder bb,
-									   FromFileProperty convertedResponseBody) {
+			FromFileProperty convertedResponseBody) {
 		processText(bb, "", convertedResponseBody)
 		addColonIfRequired(bb)
 	}

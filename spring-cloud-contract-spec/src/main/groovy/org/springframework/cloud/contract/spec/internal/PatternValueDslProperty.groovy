@@ -1,25 +1,27 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.spec.internal
+
+import java.util.regex.Pattern
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.commons.lang3.RandomStringUtils
 
-import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
@@ -76,12 +78,15 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 
 	@Override
 	T anyPositiveInt() {
-		return createAndValidateProperty(RegexPatterns.POSITIVE_INT, Math.abs(this.random.nextInt() + 1))
+		return createAndValidateProperty(RegexPatterns.POSITIVE_INT, Math.
+				abs(this.random.nextInt() + 1))
 	}
 
 	@Override
 	T anyDouble() {
-		return createAndValidateProperty(RegexPatterns.DOUBLE, this.random.nextInt(100) + this.random.nextDouble())
+		return createAndValidateProperty(RegexPatterns.DOUBLE, this.random.
+				nextInt(100)
+				+ this.random.nextDouble())
 	}
 
 	@Override
@@ -97,27 +102,41 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 
 	@Override
 	T anyIpAddress() {
-		return createAndValidateProperty(RegexPatterns.IP_ADDRESS, "192.168.0." + this.random.nextInt(10))
+		return createAndValidateProperty(RegexPatterns.IP_ADDRESS, "192.168.0."
+				+ this.random.
+				nextInt(10))
 	}
 
 	@Override
 	T anyHostname() {
-		return createAndValidateProperty(RegexPatterns.HOSTNAME_PATTERN, "http://foo" + this.random.nextInt() + ".com")
+		return createAndValidateProperty(RegexPatterns.HOSTNAME_PATTERN, "http://foo"
+				+ this.random.
+				nextInt()
+				+ ".com")
 	}
 
 	@Override
 	T anyEmail() {
-		return createAndValidateProperty(RegexPatterns.EMAIL, "foo@bar" + this.random.nextInt() + ".com")
+		return createAndValidateProperty(RegexPatterns.EMAIL, "foo@bar"
+				+ this.random.
+				nextInt()
+				+ ".com")
 	}
 
 	@Override
 	T anyUrl() {
-		return createAndValidateProperty(RegexPatterns.URL, "http://foo" + this.random.nextInt() + ".com")
+		return createAndValidateProperty(RegexPatterns.URL, "http://foo"
+				+ this.random.
+				nextInt()
+				+ ".com")
 	}
 
 	@Override
 	T anyHttpsUrl() {
-		return createAndValidateProperty(RegexPatterns.HTTPS_URL, "https://baz" + this.random.nextInt() + ".com")
+		return createAndValidateProperty(RegexPatterns.HTTPS_URL, "https://baz"
+				+ this.random.
+				nextInt()
+				+ ".com")
 	}
 
 	@Override
@@ -162,7 +181,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 	}
 
 	@Override
-	T anyOf(String... values){
+	T anyOf(String... values) {
 		return createAndValidateProperty(RegexPatterns.anyOf(values), values[0])
 	}
 }

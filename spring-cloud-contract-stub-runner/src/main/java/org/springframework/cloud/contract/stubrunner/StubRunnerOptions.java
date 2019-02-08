@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,8 +34,9 @@ import org.springframework.util.StringUtils;
 /**
  * Technical options related to running StubRunner
  *
- * Use {@see StubRunnerOptionsBuilder} to build this object.
+ * Use {@link StubRunnerOptionsBuilder} to build this object.
  *
+ * @author Marcin Grzejszczak
  * @see StubRunnerOptionsBuilder
  */
 public class StubRunnerOptions {
@@ -43,54 +44,62 @@ public class StubRunnerOptions {
 	private static final Log log = LogFactory.getLog(StubRunnerOptions.class);
 
 	/**
-	 * min port value of the WireMock instance for the given collaborator
+	 * min port value of the WireMock instance for the given collaborator.
 	 */
 	final Integer minPortValue;
 
 	/**
-	 * max port value of the WireMock instance for the given collaborator
+	 * max port value of the WireMock instance for the given collaborator.
 	 */
 	final Integer maxPortValue;
 
 	/**
-	 * root URL from where the JAR with stub mappings will be downloaded
+	 * root URL from where the JAR with stub mappings will be downloaded.
 	 */
 	final Resource stubRepositoryRoot;
 
 	/**
-	 * stub definition classifier
+	 * stub definition classifier.
 	 */
 	final String stubsClassifier;
 
 	final Collection<StubConfiguration> dependencies;
 
 	/**
-	 * colon separated list of ids to the desired port
+	 * colon separated list of ids to the desired port.
 	 */
 	final Map<StubConfiguration, Integer> stubIdsToPortMapping;
 
 	/**
-	 * Optional username for authorization header
+	 * Optional username for authorization header.
 	 */
 	final String username;
 
 	/**
-	 * Optional password for authorization header
+	 * Optional password for authorization header.
 	 */
 	final String password;
 
+	final StubRunnerProperties.StubsMode stubsMode;
+
 	/**
-	 * Optional proxy settings
+	 * Optional proxy settings.
 	 */
 	private final StubRunnerProxyOptions stubRunnerProxyOptions;
 
 	/**
-	 * Should only stubs applicable for the given consumer get registered
+	 * Configuration for an HTTP server stub class that allows to perform additional HTTP
+	 * server stub configuration.
+	 */
+	private final Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer;
+
+	/**
+	 * Should only stubs applicable for the given consumer get registered.
 	 */
 	private boolean stubsPerConsumer = false;
 
 	/**
-	 * Name of the consumer. If not set should default to {@code spring.application.name}
+	 * Name of the consumer. If not set should default to {@code spring.application.name}.
 	 */
 	private String consumerName;
 
@@ -101,25 +110,17 @@ public class StubRunnerOptions {
 	 */
 	private String mappingsOutputFolder;
 
-	final StubRunnerProperties.StubsMode stubsMode;
-
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
-	 * tests
+	 * tests.
 	 */
 	private boolean deleteStubsAfterTest;
 
 	/**
 	 * Map of properties that can be passed to custom
-	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
-	private Map<String, String> properties = new HashMap<>();
-
-	/**
-	 * Configuration for an HTTP server stub
-	 * @return class that allows to perform additional HTTP server stub configuration
-	 */
-	private final Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer;
+	private Map<String, String> properties;
 
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode,
@@ -146,15 +147,6 @@ public class StubRunnerOptions {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		this.properties = properties;
 		this.httpServerStubConfigurer = httpServerStubConfigurer;
-	}
-
-	public Integer port(StubConfiguration stubConfiguration) {
-		if (this.stubIdsToPortMapping != null) {
-			return this.stubIdsToPortMapping.get(stubConfiguration);
-		}
-		else {
-			return null;
-		}
 	}
 
 	public static StubRunnerOptions fromSystemProps() {
@@ -197,6 +189,15 @@ public class StubRunnerOptions {
 				.forEach(s -> map.put(s.substring("stubrunner.properties".length() + 1),
 						System.getProperty(s)));
 		return map;
+	}
+
+	public Integer port(StubConfiguration stubConfiguration) {
+		if (this.stubIdsToPortMapping != null) {
+			return this.stubIdsToPortMapping.get(stubConfiguration);
+		}
+		else {
+			return null;
+		}
 	}
 
 	public Integer getMinPortValue() {
@@ -311,6 +312,28 @@ public class StubRunnerOptions {
 		return this.httpServerStubConfigurer;
 	}
 
+	@Override
+	public String toString() {
+		return "StubRunnerOptions{" + "minPortValue=" + this.minPortValue
+				+ ", maxPortValue=" + this.maxPortValue + ", stubRepositoryRoot='"
+				+ this.stubRepositoryRoot + '\'' + ", stubsMode='" + this.stubsMode
+				+ "', stubsClassifier='" + this.stubsClassifier + '\'' + ", dependencies="
+				+ this.dependencies + ", stubIdsToPortMapping="
+				+ this.stubIdsToPortMapping + ", username='" + obfuscate(this.username)
+				+ '\'' + ", password='" + obfuscate(this.password) + '\''
+				+ ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions
+				+ "', stubsPerConsumer='" + this.stubsPerConsumer + '\''
+				+ ", httpServerStubConfigurer='" + this.httpServerStubConfigurer + '\''
+				+ '}';
+	}
+
+	private String obfuscate(String string) {
+		return StringUtils.hasText(string) ? "****" : "";
+	}
+
+	/**
+	 * Options for a proxy.
+	 */
 	public static class StubRunnerProxyOptions {
 
 		private final String proxyHost;
@@ -335,24 +358,7 @@ public class StubRunnerOptions {
 			return "StubRunnerProxyOptions{" + "proxyHost='" + this.proxyHost + '\''
 					+ ", proxyPort=" + this.proxyPort + '}';
 		}
-	}
 
-	@Override
-	public String toString() {
-		return "StubRunnerOptions{" + "minPortValue=" + this.minPortValue
-				+ ", maxPortValue=" + this.maxPortValue + ", stubRepositoryRoot='"
-				+ this.stubRepositoryRoot + '\'' + ", stubsMode='" + this.stubsMode
-				+ "', stubsClassifier='" + this.stubsClassifier + '\'' + ", dependencies="
-				+ this.dependencies + ", stubIdsToPortMapping="
-				+ this.stubIdsToPortMapping + ", username='" + obfuscate(this.username)
-				+ '\'' + ", password='" + obfuscate(this.password) + '\''
-				+ ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions
-				+ "', stubsPerConsumer='" + this.stubsPerConsumer + '\''
-				+ ", httpServerStubConfigurer='" + this.httpServerStubConfigurer+ '\'' + '}';
-	}
-
-	private String obfuscate(String string) {
-		return StringUtils.hasText(string) ? "****" : "";
 	}
 
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.example.loan;
 
 import java.io.File;
@@ -33,10 +49,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 // tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@AutoConfigureStubRunner(ids = {
+		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
-// end::autoconfigure_stubrunner[]
+
+	// end::autoconfigure_stubrunner[]
 
 	@Autowired
 	private LoanApplicationService service;
@@ -100,13 +117,12 @@ public class LoanApplicationServiceTests {
 				.baseUri("http://localhost:6565/")
 				.header("Content-Type", "multipart/form-data")
 				.multiPart("file1", "filename1", "content1".getBytes())
-				.multiPart("file2", "filename1", "content2".getBytes())
-				.multiPart("test", "filename1", "{\n  \"status\": \"test\"\n}"
-						.getBytes(), "application/json");
+				.multiPart("file2", "filename1", "content2".getBytes()).multiPart("test",
+						"filename1", "{\n  \"status\": \"test\"\n}".getBytes(),
+						"application/json");
 
 		// when:
-		ResponseOptions response = RestAssured.given().spec(request)
-				.post("/tests");
+		ResponseOptions response = RestAssured.given().spec(request).post("/tests");
 
 		// then:
 		assertThat(response.statusCode()).isEqualTo(200);
@@ -125,10 +141,12 @@ public class LoanApplicationServiceTests {
 				.getResource("/binary/response.pdf").getFile());
 
 		// when:
-		ResponseEntity<byte[]> exchange = new RestTemplate().exchange(
-				RequestEntity.put(URI.create("http://localhost:6565/1"))
-						.header("Content-Type", "application/octet-stream")
-						.body(Files.readAllBytes(request.toPath())), byte[].class);
+		ResponseEntity<byte[]> exchange = new RestTemplate()
+				.exchange(
+						RequestEntity.put(URI.create("http://localhost:6565/1"))
+								.header("Content-Type", "application/octet-stream")
+								.body(Files.readAllBytes(request.toPath())),
+						byte[].class);
 
 		// then:
 		assertThat(exchange.getStatusCodeValue()).isEqualTo(200);

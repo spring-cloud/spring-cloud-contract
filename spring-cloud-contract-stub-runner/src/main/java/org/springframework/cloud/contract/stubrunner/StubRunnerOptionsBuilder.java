@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +30,11 @@ import org.springframework.cloud.contract.stubrunner.util.StubsParser;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
+/**
+ * A builder object for {@link StubRunnerOptions}.
+ *
+ * @author Marcin Grzejszczak
+ */
 public class StubRunnerOptionsBuilder {
 
 	private static final String DELIMITER = ":";
@@ -66,15 +71,47 @@ public class StubRunnerOptionsBuilder {
 
 	private Map<String, String> properties = new HashMap<>();
 
-	private Class httpServerStubConfigurer =
-			HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
-
+	private Class httpServerStubConfigurer = HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
 
 	public StubRunnerOptionsBuilder() {
 	}
 
 	public StubRunnerOptionsBuilder(StubRunnerOptions options) {
 		withOptions(options);
+	}
+
+	private static List<String> stubsToList(String[] stubIdsToPortMapping) {
+		List<String> list = new ArrayList<>();
+		if (stubIdsToPortMapping.length == 1 && !containsRange(stubIdsToPortMapping[0])) {
+			list.addAll(StringUtils.commaDelimitedListToSet(stubIdsToPortMapping[0]));
+			return list;
+		}
+		else if (stubIdsToPortMapping.length == 1
+				&& containsRange(stubIdsToPortMapping[0])) {
+			LinkedList<String> linkedList = new LinkedList<>();
+			String[] split = stubIdsToPortMapping[0].split(",");
+			for (String string : split) {
+				if (containsClosingRange(string)) {
+					String last = linkedList.pop();
+					linkedList.push(last + "," + string);
+				}
+				else {
+					linkedList.push(string);
+				}
+			}
+			list.addAll(linkedList);
+			return list;
+		}
+		Collections.addAll(list, stubIdsToPortMapping);
+		return list;
+	}
+
+	private static boolean containsRange(String s) {
+		return s.contains("[") || s.contains("(");
+	}
+
+	private static boolean containsClosingRange(String s) {
+		return s.contains("]") || s.contains(")");
 	}
 
 	public StubRunnerOptionsBuilder withStubs(String... stubs) {
@@ -178,7 +215,8 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withHttpServerStubConfigurer(Class httpServerStubConfigurer) {
+	public StubRunnerOptionsBuilder withHttpServerStubConfigurer(
+			Class httpServerStubConfigurer) {
 		this.httpServerStubConfigurer = httpServerStubConfigurer;
 		return this;
 	}
@@ -197,40 +235,6 @@ public class StubRunnerOptionsBuilder {
 				this.stubsClassifier);
 		this.stubConfigurations.addAll(stubConfigurations);
 		return this.stubConfigurations;
-	}
-
-	private static List<String> stubsToList(String[] stubIdsToPortMapping) {
-		List<String> list = new ArrayList<>();
-		if (stubIdsToPortMapping.length == 1 && !containsRange(stubIdsToPortMapping[0])) {
-			list.addAll(StringUtils.commaDelimitedListToSet(stubIdsToPortMapping[0]));
-			return list;
-		}
-		else if (stubIdsToPortMapping.length == 1
-				&& containsRange(stubIdsToPortMapping[0])) {
-			LinkedList<String> linkedList = new LinkedList<>();
-			String[] split = stubIdsToPortMapping[0].split(",");
-			for (String string : split) {
-				if (containsClosingRange(string)) {
-					String last = linkedList.pop();
-					linkedList.push(last + "," + string);
-				}
-				else {
-					linkedList.push(string);
-				}
-			}
-			list.addAll(linkedList);
-			return list;
-		}
-		Collections.addAll(list, stubIdsToPortMapping);
-		return list;
-	}
-
-	private static boolean containsRange(String s) {
-		return s.contains("[") || s.contains("(");
-	}
-
-	private static boolean containsClosingRange(String s) {
-		return s.contains("]") || s.contains(")");
 	}
 
 	private void addStub(List<String> notations) {

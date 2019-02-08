@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream;
@@ -67,6 +67,28 @@ public class StubRunnerStreamConfiguration {
 
 	private static final Log log = LogFactory.getLog(StubRunnerStreamConfiguration.class);
 
+	static String resolvedDestination(BeanFactory context, String destination) {
+		Map<String, BindingProperties> bindings = bindingProperties(context);
+		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
+			if (destination.equals(entry.getValue().getDestination())) {
+				if (log.isDebugEnabled()) {
+					log.debug("Found a channel named [" + entry.getKey()
+							+ "] with destination [" + destination + "]");
+				}
+				return entry.getKey();
+			}
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("No destination named [" + destination
+					+ "] was found. Assuming that the destination equals the channel name");
+		}
+		return destination;
+	}
+
+	private static Map<String, BindingProperties> bindingProperties(BeanFactory context) {
+		return context.getBean(BindingServiceProperties.class).getBindings();
+	}
+
 	@Bean
 	@ConditionalOnMissingBean(name = "stubFlowRegistrar")
 	@ConditionalOnBean(BindingServiceProperties.class)
@@ -74,9 +96,11 @@ public class StubRunnerStreamConfiguration {
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
 				.getContracts();
-		IntegrationFlowBuilder dummyBuilder = IntegrationFlows.from(DummyMessageHandler.CHANNEL_NAME)
+		IntegrationFlowBuilder dummyBuilder = IntegrationFlows
+				.from(DummyMessageHandler.CHANNEL_NAME)
 				.handle(new DummyMessageHandler(), "handle");
-		beanFactory.initializeBean(dummyBuilder.get(), DummyMessageHandler.CHANNEL_NAME + ".flow");
+		beanFactory.initializeBean(dummyBuilder.get(),
+				DummyMessageHandler.CHANNEL_NAME + ".flow");
 		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
 				.entrySet()) {
 			StubConfiguration key = entry.getKey();
@@ -123,38 +147,15 @@ public class StubRunnerStreamConfiguration {
 										e.id(flowName + ".transformer");
 									}
 								})
-						.route(new StubRunnerMessageRouter(entries.getValue(), beanFactory));
+						.route(new StubRunnerMessageRouter(entries.getValue(),
+								beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
-				beanFactory.getBean(flowName + ".transformer", Lifecycle.class)
-						.start();
+				beanFactory.getBean(flowName + ".transformer", Lifecycle.class).start();
 			}
 
 		}
 		return new FlowRegistrar();
-	}
-
-	static String resolvedDestination(BeanFactory context,
-			String destination) {
-		Map<String, BindingProperties> bindings = bindingProperties(context);
-		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
-			if (destination.equals(entry.getValue().getDestination())) {
-				if (log.isDebugEnabled()) {
-					log.debug("Found a channel named [" + entry.getKey()
-							+ "] with destination [" + destination + "]");
-				}
-				return entry.getKey();
-			}
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("No destination named [" + destination
-					+ "] was found. Assuming that the destination equals the channel name");
-		}
-		return destination;
-	}
-
-	private static Map<String, BindingProperties> bindingProperties(BeanFactory context) {
-		return context.getBean(BindingServiceProperties.class).getBindings();
 	}
 
 	static class DummyMessageHandler {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
@@ -57,6 +58,7 @@ import org.eclipse.jgit.util.FS;
 import org.eclipse.jgit.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.util.ResourceUtils;
 
 /**
@@ -95,7 +97,7 @@ class GitRepo {
 	}
 
 	/**
-	 * Clones the project
+	 * Clones the project.
 	 * @param projectUri - URI of the project
 	 * @return file where the project was cloned
 	 */
@@ -116,7 +118,7 @@ class GitRepo {
 	}
 
 	/**
-	 * Checks out a branch for a project
+	 * Checks out a branch for a project.
 	 * @param project - a Git project
 	 * @param branch - branch to check out
 	 */
@@ -137,7 +139,7 @@ class GitRepo {
 	}
 
 	/**
-	 * Pulls changes for the project
+	 * Pulls changes for the project.
 	 * @param project - a Git project
 	 */
 	void pull(File project) {
@@ -153,9 +155,10 @@ class GitRepo {
 	}
 
 	/**
-	 * Performs a commit
+	 * Performs a commit.
 	 * @param project - a Git project
 	 * @param message - commit message
+	 * @return result of the commit
 	 */
 	CommitResult commit(File project, String message) {
 		try (Git git = this.gitFactory.open(file(project))) {
@@ -182,14 +185,8 @@ class GitRepo {
 		}
 	}
 
-	enum CommitResult {
-
-		SUCCESSFUL, EMPTY
-
-	}
-
 	/**
-	 * Pushes the commits od current branch
+	 * Pushes the commits od current branch.
 	 * @param project - Git project
 	 */
 	void pushCurrentBranch(File project) {
@@ -304,6 +301,12 @@ class GitRepo {
 		}
 	}
 
+	enum CommitResult {
+
+		SUCCESSFUL, EMPTY
+
+	}
+
 	/**
 	 * Wraps the static method calls to {@link Git} and {@link CloneCommand} allowing for
 	 * easier unit testing.
@@ -312,6 +315,8 @@ class GitRepo {
 
 		private static final Logger log = LoggerFactory
 				.getLogger(MethodHandles.lookup().lookupClass());
+
+		final CredentialsProvider provider;
 
 		private final JschConfigSessionFactory factory = new JschConfigSessionFactory() {
 
@@ -347,7 +352,12 @@ class GitRepo {
 			}
 		};
 
-		final CredentialsProvider provider;
+		private final TransportConfigCallback callback = transport -> {
+			if (transport instanceof SshTransport) {
+				SshTransport sshTransport = (SshTransport) transport;
+				sshTransport.setSshSessionFactory(this.factory);
+			}
+		};
 
 		JGitFactory(GitStubDownloaderProperties properties) {
 			if (org.springframework.util.StringUtils.hasText(properties.username)) {
@@ -363,22 +373,15 @@ class GitRepo {
 			}
 		}
 
-		CredentialsProvider credentialsProvider(GitStubDownloaderProperties properties) {
-			return new UsernamePasswordCredentialsProvider(properties.username,
-					properties.password);
-		}
-
 		// for tests
 		JGitFactory() {
 			this.provider = null;
 		}
 
-		private final TransportConfigCallback callback = transport -> {
-			if (transport instanceof SshTransport) {
-				SshTransport sshTransport = (SshTransport) transport;
-				sshTransport.setSshSessionFactory(this.factory);
-			}
-		};
+		CredentialsProvider credentialsProvider(GitStubDownloaderProperties properties) {
+			return new UsernamePasswordCredentialsProvider(properties.username,
+					properties.password);
+		}
 
 		CloneCommand getCloneCommandByCloneRepository() {
 			return Git.cloneRepository().setCredentialsProvider(this.provider)

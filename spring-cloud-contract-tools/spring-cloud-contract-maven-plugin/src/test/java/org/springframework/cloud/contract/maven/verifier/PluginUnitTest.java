@@ -1,19 +1,19 @@
-/**
+/*
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Copyright 2013-2019 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
@@ -37,13 +37,13 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class PluginUnitTest {
 
 	@Rule
-	public OutputCapture capture = new OutputCapture();
-
-	@Rule
 	public final TestResources resources = new TestResources();
 
 	@Rule
 	public final TestMavenRuntime maven = new TestMavenRuntime();
+
+	@Rule
+	public OutputCapture capture = new OutputCapture();
 
 	@Test
 	public void shouldGenerateWireMockStubsInDefaultLocation() throws Exception {
@@ -141,8 +141,7 @@ public class PluginUnitTest {
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 		File test = new File(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
-		then(readFileToString(test, defaultCharset()
-		)).contains("hasSize(4)");
+		then(readFileToString(test, defaultCharset())).contains("hasSize(4)");
 	}
 
 	@Test

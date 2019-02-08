@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.wiremock;
 
 import java.net.URI;
@@ -57,7 +73,8 @@ public class WiremockMockServerApplicationTests {
 				.baseUrl("http://example.org") //
 				.stubs("classpath:/mappings/resource-with-body-file.json").build();
 		assertThat(this.restTemplate.getForObject("http://example.org/resource",
-				String.class)).isEqualTo("{\"message\":\"Hello World\"}");
+				String.class))
+						.isEqualToIgnoringWhitespace("{\"message\":\"Hello World\"}");
 		server.verify();
 	}
 
@@ -68,7 +85,8 @@ public class WiremockMockServerApplicationTests {
 				.stubs("classpath:/mappings/resource-with-body-file.json")
 				.files("classpath:/custom/").build();
 		assertThat(this.restTemplate.getForObject("http://example.org/resource",
-				String.class)).isEqualTo("{\"message\":\"Hello Custom\"}");
+				String.class))
+						.isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom\"}");
 		server.verify();
 	}
 
@@ -79,7 +97,8 @@ public class WiremockMockServerApplicationTests {
 				.stubs("classpath:/mappings/resource-with-body-file.json")
 				.files("file:src/test/resources/custom").build();
 		assertThat(this.restTemplate.getForObject("http://example.org/resource",
-				String.class)).isEqualTo("{\"message\":\"Hello Custom\"}");
+				String.class))
+						.isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom\"}");
 		server.verify();
 	}
 
@@ -406,8 +425,9 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
 				.stubs("classpath:/mappings/url-path-pattern.json").build();
-		assertThat(this.restTemplate.getForObject("http://example.org/123/url-path-pattern/",
-				String.class)).isEqualTo("Hello Url Path Matcher");
+		assertThat(this.restTemplate
+				.getForObject("http://example.org/123/url-path-pattern/", String.class))
+						.isEqualTo("Hello Url Path Matcher");
 		server.verify();
 	}
 
@@ -416,8 +436,9 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
 				.stubs("classpath:/mappings/url-matches.json").build();
-		assertThat(this.restTemplate.getForObject("http://example.org/123/hello-url-matcher/",
-				String.class)).isEqualTo("Hello Url Matcher");
+		assertThat(this.restTemplate
+				.getForObject("http://example.org/123/hello-url-matcher/", String.class))
+						.isEqualTo("Hello Url Matcher");
 		server.verify();
 	}
 

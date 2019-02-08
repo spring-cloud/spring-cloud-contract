@@ -17,17 +17,36 @@
 package org.springframework.cloud.contract.stubrunner;
 
 /**
- * Configuration class for an {@link HttpServerStub}
- * @since 2.1.0
+ * Configuration class for an {@link HttpServerStub}.
+ *
  * @author Marcin Grzejszczak
+ * @since 2.1.0
  */
 public final class HttpServerStubConfiguration {
+
+	/**
+	 * Allows to perform additional configuration of the HTTP Server stub.
+	 */
 	public final HttpServerStubConfigurer configurer;
+
+	/**
+	 * Options of Stub Runner itself.
+	 */
 	public final StubRunnerOptions stubRunnerOptions;
+
+	/**
+	 * Configuration of a particular stub.
+	 */
 	public final StubConfiguration stubConfiguration;
+
+	/**
+	 * Port at which the stub will be started.
+	 */
 	public final Integer port;
 
-	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer, StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration, Integer port) {
+	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer,
+			StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
+			Integer port) {
 		this.configurer = configurer;
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubConfiguration = stubConfiguration;
@@ -39,7 +58,8 @@ public final class HttpServerStubConfiguration {
 	}
 
 	public String toColonSeparatedDependencyNotation() {
-		return this.stubConfiguration != null ?
-				this.stubConfiguration.toColonSeparatedDependencyNotation() : "";
+		return this.stubConfiguration != null
+				? this.stubConfiguration.toColonSeparatedDependencyNotation() : "";
 	}
+
 }

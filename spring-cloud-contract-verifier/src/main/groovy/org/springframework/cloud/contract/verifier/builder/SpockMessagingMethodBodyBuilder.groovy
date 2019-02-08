@@ -1,24 +1,27 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -31,8 +34,6 @@ import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
-import java.util.regex.Pattern
-
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 
 /**
@@ -44,8 +45,8 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	SpockMessagingMethodBodyBuilder(Contract stubDefinition,
-									ContractVerifierConfigProperties configProperties,
-									GeneratedClassDataForMethod classDataForMethod) {
+			ContractVerifierConfigProperties configProperties,
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
@@ -84,12 +85,14 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.getHeader(\'$property\')?.toString()")}")
+		blockBuilder.
+				addLine("${exec.insertValue("response.getHeader(\'$property\')?.toString()")}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
-		blockBuilder.addLine("response.getHeader('$property')?.toString() ${convertHeaderComparison(value)}")
+		blockBuilder.
+				addLine("response.getHeader('$property')?.toString() ${convertHeaderComparison(value)}")
 	}
 
 	@Override
@@ -99,7 +102,8 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern value) {
-		blockBuilder.addLine("response.getHeader('$property')?.toString() ${convertHeaderComparison(value)}")
+		blockBuilder.
+				addLine("response.getHeader('$property')?.toString() ${convertHeaderComparison(value)}")
 	}
 
 	@Override
@@ -117,9 +121,12 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void validateResponseCodeBlock(BlockBuilder bb) {
 		if (outputMessage) {
-			bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive(${sentToValue(outputMessage.sentTo.serverValue)})""")
+			bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive(${
+				sentToValue(outputMessage.sentTo.serverValue)
+			})""")
 			bb.addLine("""assert response != null""")
-		} else {
+		}
+		else {
 			bb.addLine('noExceptionThrown()')
 		}
 	}
@@ -262,7 +269,8 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	protected String convertHeaderComparison(Pattern headerValue) {
-		String converted = escapeJava(convertUnicodeEscapesIfRequired(headerValue.pattern()))
+		String converted =
+				escapeJava(convertUnicodeEscapesIfRequired(headerValue.pattern()))
 		return "==~ java.util.regex.Pattern.compile('${converted}')"
 	}
 

@@ -18,23 +18,23 @@
 import org.springframework.cloud.contract.spec.Contract
 
 [
-        Contract.make {
-            name("should post a user")
-            request {
-                method 'POST'
-                url('/users/1')
-            }
-            response {
-                status OK()
-            }
-        },
-        Contract.make {
-            request {
-                method 'POST'
-                url('/users/2')
-            }
-            response {
-                status OK()
-            }
-        }
+	Contract.make {
+		name("should post a user")
+		request {
+			method 'POST'
+			url('/users/1')
+		}
+		response {
+			status OK()
+		}
+	},
+	Contract.make {
+		request {
+			method 'POST'
+			url('/users/2')
+		}
+		response {
+			status OK()
+		}
+	}
 ]

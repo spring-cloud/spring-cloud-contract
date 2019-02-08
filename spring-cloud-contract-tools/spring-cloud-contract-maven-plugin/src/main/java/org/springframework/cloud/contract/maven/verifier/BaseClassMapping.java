@@ -1,8 +1,24 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 /**
  * Represents a single mapping of regex on package where contracts reside to the FQN of
- * the base test class
+ * the base test class.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -31,15 +47,18 @@ public class BaseClassMapping {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 		BaseClassMapping that = (BaseClassMapping) o;
 		if (this.contractPackageRegex != null
 				? !this.contractPackageRegex.equals(that.contractPackageRegex)
-				: that.contractPackageRegex != null)
+				: that.contractPackageRegex != null) {
 			return false;
+		}
 		return this.baseClassFQN != null ? this.baseClassFQN.equals(that.baseClassFQN)
 				: that.baseClassFQN == null;
 

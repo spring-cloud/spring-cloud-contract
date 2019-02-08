@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.stubrunner
 
 import java.nio.file.Files
@@ -23,34 +39,40 @@ class PactStubDownloaderBuilderSpec extends Specification {
 
 	def "should retrieve pacts from broker"() throws IOException {
 		given:
-			Collection<Pact> pacts = new PactContractConverter().convertTo([Contract.make {
-				request {
-					url "/foo"
-					method GET()
-				}
-				response {
-					status OK()
-				}
-			},Contract.make {
-				request {
-					url "/bar"
-					method GET()
-				}
-				response {
-					status OK()
-				}
-			}])
+			Collection<Pact> pacts = new PactContractConverter().
+					convertTo([Contract.make {
+						request {
+							url "/foo"
+							method GET()
+						}
+						response {
+							status OK()
+						}
+					}, Contract.make {
+						request {
+							url "/bar"
+							method GET()
+						}
+						response {
+							status OK()
+						}
+					}])
 			StubRunnerOptions options = new StubRunnerOptionsBuilder()
 					.withProperties(props())
 					.build()
 			PactStubDownloader downloader = new PactStubDownloader(options) {
-				@NotNull @Override PactLoader pactBrokerLoader(ValueResolver resolver,
-															   List<String> tags) {
+				@NotNull
+				@Override
+				PactLoader pactBrokerLoader(ValueResolver resolver,
+						List<String> tags) {
 					return new PactLoader() {
-						@Override List<Pact> load(String providerName) {
+						@Override
+						List<Pact> load(String providerName) {
 							return pacts
 						}
-						@Override PactSource getPactSource() {
+
+						@Override
+						PactSource getPactSource() {
 							return null
 						}
 					}
@@ -58,7 +80,8 @@ class PactStubDownloaderBuilderSpec extends Specification {
 			}
 		when:
 			Map.Entry<StubConfiguration, File> entry = downloader
-					.downloadAndUnpackStubJar(new StubConfiguration("com.example:bobby:+:classifier"))
+					.
+					downloadAndUnpackStubJar(new StubConfiguration("com.example:bobby:+:classifier"))
 		then:
 			entry != null
 			entry.getValue().exists()
@@ -69,8 +92,10 @@ class PactStubDownloaderBuilderSpec extends Specification {
 			mappings.exists()
 			mappings.list() != null
 			mappings.list().size() == 2
-			StubMapping.buildFrom(new String(Files.readAllBytes(mappings.listFiles()[0].toPath())))
-			StubMapping.buildFrom(new String(Files.readAllBytes(mappings.listFiles()[1].toPath())))
+			StubMapping.buildFrom(new String(Files.
+					readAllBytes(mappings.listFiles()[0].toPath())))
+			StubMapping.buildFrom(new String(Files.
+					readAllBytes(mappings.listFiles()[1].toPath())))
 	}
 
 	Map<String, String> props() {
@@ -125,7 +150,8 @@ class PactStubDownloaderBuilderSpec extends Specification {
 			PactStubDownloader downloader = new PactStubDownloader(options)
 		when:
 			Map.Entry<StubConfiguration, File> entry = downloader
-					.downloadAndUnpackStubJar(new StubConfiguration("com.example:bobby:+:classifier"))
+					.
+					downloadAndUnpackStubJar(new StubConfiguration("com.example:bobby:+:classifier"))
 		then:
 			entry != null
 			entry.getValue().exists()

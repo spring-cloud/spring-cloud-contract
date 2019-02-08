@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,7 +47,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 
 /**
- * Builds a {@link StubDownloader} to work with contracts and stubs from a SCM
+ * Builds a {@link StubDownloader} to work with contracts and stubs from a SCM.
  *
  * @author Marcin Grzejszczak
  * @since 2.0.0
@@ -58,8 +58,9 @@ public final class ScmStubDownloaderBuilder implements StubDownloaderBuilder {
 			.singletonList("git");
 
 	/**
-	 * Does any of the accepted protocols matches the URL of the repository
+	 * Does any of the accepted protocols matches the URL of the repository.
 	 * @param url - of the repository
+	 * @return {@code true} if the protocol is accepted
 	 */
 	public static boolean isProtocolAccepted(String url) {
 		return ACCEPTABLE_PROTOCOLS.stream().anyMatch(url::startsWith);
@@ -89,7 +90,7 @@ public final class ScmStubDownloaderBuilder implements StubDownloaderBuilder {
 }
 
 /**
- * Primitive version of a Git {@link Resource}
+ * Primitive version of a Git {@link Resource}.
  */
 class GitResource extends AbstractResource {
 
@@ -118,10 +119,11 @@ class GitResource extends AbstractResource {
 
 class GitContractsRepo {
 
+	static final Map<Resource, File> CACHED_LOCATIONS = new ConcurrentHashMap<>();
+
 	private static final Log log = LogFactory.getLog(GitContractsRepo.class);
 
 	private static final String TEMP_DIR_PREFIX = "git-contracts";
-	static final Map<Resource, File> CACHED_LOCATIONS = new ConcurrentHashMap<>();
 
 	private final StubRunnerOptions options;
 
@@ -201,8 +203,7 @@ class GitStubDownloader implements StubDownloader {
 		}
 		if (log.isWarnEnabled()) {
 			log.warn("No matching contracts were found in the repo for ["
-					+ stubConfiguration.toColonSeparatedDependencyNotation()
-					+ "]");
+					+ stubConfiguration.toColonSeparatedDependencyNotation() + "]");
 		}
 		return null;
 	}
@@ -281,22 +282,24 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private static final Log log = LogFactory.getLog(FileWalker.class);
 
 	private static final List<String> LATEST = Arrays.asList("latest", "+");
+
 	private static final String RELEASE = "release";
 
 	private final PathMatcher matcherWithDot;
 
 	private final PathMatcher matcherWithoutDot;
 
-	Path foundFile;
-
 	private final boolean latestSnapshotVersion;
 
 	private final boolean latestReleaseVersion;
 
+	Path foundFile;
+
 	FileWalker(StubConfiguration stubConfiguration) {
-		this.latestSnapshotVersion = LATEST.stream().anyMatch(
-				s -> s.equals(stubConfiguration.version.toLowerCase()));
-		this.latestReleaseVersion = RELEASE.equals(stubConfiguration.version.toLowerCase());
+		this.latestSnapshotVersion = LATEST.stream()
+				.anyMatch(s -> s.equals(stubConfiguration.version.toLowerCase()));
+		this.latestReleaseVersion = RELEASE
+				.equals(stubConfiguration.version.toLowerCase());
 		this.matcherWithDot = FileSystems.getDefault()
 				.getPathMatcher("glob:" + matcherGlob(stubConfiguration, "."));
 		this.matcherWithoutDot = FileSystems.getDefault()
@@ -306,8 +309,9 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private String matcherGlob(StubConfiguration stubConfiguration,
 			String groupArtifactSeparator) {
 		return "**" + stubConfiguration.groupId + groupArtifactSeparator
-				+ stubConfiguration.artifactId + "/" + (this.latestSnapshotVersion ||
-				this.latestReleaseVersion ? "**" : stubConfiguration.version);
+				+ stubConfiguration.artifactId + "/"
+				+ (this.latestSnapshotVersion || this.latestReleaseVersion ? "**"
+						: stubConfiguration.version);
 	}
 
 	@Override
@@ -317,18 +321,21 @@ class FileWalker extends SimpleFileVisitor<Path> {
 				|| this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
 			if (this.latestSnapshotVersion || this.latestReleaseVersion) {
 				// folders with name latest, release
-				File[] files = Objects.requireNonNull(dir.getParent().toFile()
-						.listFiles(File::isDirectory));
+				File[] files = Objects.requireNonNull(
+						dir.getParent().toFile().listFiles(File::isDirectory));
 				File file = folderWithPredefinedName(files);
 				if (file != null) {
 					if (log.isDebugEnabled()) {
-						log.debug("Found folder with name corresponding to a latest version [" + file + "] ");
+						log.debug(
+								"Found folder with name corresponding to a latest version ["
+										+ file + "] ");
 						this.foundFile = file.toPath();
 						return FileVisitResult.TERMINATE;
 					}
 				}
 				return latestVersionFromFolders(dir, files);
-			} else {
+			}
+			else {
 				this.foundFile = dir;
 			}
 			return FileVisitResult.TERMINATE;
@@ -340,26 +347,35 @@ class FileWalker extends SimpleFileVisitor<Path> {
 		List<DefaultArtifactVersionWrapper> versions = pickLatestVersion(files);
 		if (versions.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Not a single version matching semver for path [" + dir.toAbsolutePath().toString() + "] was found");
+				log.debug("Not a single version matching semver for path ["
+						+ dir.toAbsolutePath().toString() + "] was found");
 			}
 			return FileVisitResult.CONTINUE;
 		}
 		// 2.0.0.RELEASE, 2.0.0.BUILD-SNAPSHOT
 		// 2.0.0.RELEASE
-		DefaultArtifactVersionWrapper latestFoundVersion = versions.get(versions.size() - 1);
-		latestFoundVersion = replaceWithSnapshotIfSameVersions(versions, latestFoundVersion);
+		DefaultArtifactVersionWrapper latestFoundVersion = versions
+				.get(versions.size() - 1);
+		latestFoundVersion = replaceWithSnapshotIfSameVersions(versions,
+				latestFoundVersion);
 		this.foundFile = latestFoundVersion.file.toPath();
 		return FileVisitResult.TERMINATE;
 	}
 
-	private DefaultArtifactVersionWrapper replaceWithSnapshotIfSameVersions(List<DefaultArtifactVersionWrapper> versions, DefaultArtifactVersionWrapper latestFoundVersion) {
+	private DefaultArtifactVersionWrapper replaceWithSnapshotIfSameVersions(
+			List<DefaultArtifactVersionWrapper> versions,
+			DefaultArtifactVersionWrapper latestFoundVersion) {
 		if (versions.size() > 1 && this.latestSnapshotVersion) {
 			// 2.0.0.BUILD-SNAPSHOT
-			DefaultArtifactVersionWrapper versionWrapper = versions.get(versions.size() - 2);
+			DefaultArtifactVersionWrapper versionWrapper = versions
+					.get(versions.size() - 2);
 			// 2.0.0 vs 2.0.0
-			boolean sameVersionsWithoutClassifier = Objects.equals(withoutClassifier(versionWrapper), withoutClassifier(latestFoundVersion));
+			boolean sameVersionsWithoutClassifier = Objects.equals(
+					withoutClassifier(versionWrapper),
+					withoutClassifier(latestFoundVersion));
 			// replace the RELEASE one with SNAPSHOT
-			latestFoundVersion = sameVersionsWithoutClassifier && versionWrapper.isSnapshot() ? versionWrapper : latestFoundVersion;
+			latestFoundVersion = sameVersionsWithoutClassifier
+					&& versionWrapper.isSnapshot() ? versionWrapper : latestFoundVersion;
 		}
 		return latestFoundVersion;
 	}
@@ -377,25 +393,24 @@ class FileWalker extends SimpleFileVisitor<Path> {
 					.findFirst().orElse(null);
 		}
 		return Arrays.stream(files)
-				.filter(file -> RELEASE.equals(file.getName().toLowerCase()))
-				.findFirst().orElse(null);
+				.filter(file -> RELEASE.equals(file.getName().toLowerCase())).findFirst()
+				.orElse(null);
 	}
 
 	private List<DefaultArtifactVersionWrapper> pickLatestVersion(File[] files) {
-		return Arrays.stream(files)
-				.map(DefaultArtifactVersionWrapper::new)
-				.filter(wrapper -> this.latestSnapshotVersion || wrapper
-						.isNotSnapshot())
-				.sorted()
-				.collect(Collectors.toList());
+		return Arrays.stream(files).map(DefaultArtifactVersionWrapper::new)
+				.filter(wrapper -> this.latestSnapshotVersion || wrapper.isNotSnapshot())
+				.sorted().collect(Collectors.toList());
 	}
 
 }
 
 class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersionWrapper> {
+
 	private static final String SNAPSHOT_SUBSTRING = "snapshot";
-	
+
 	final DefaultArtifactVersion version;
+
 	final File file;
 
 	DefaultArtifactVersionWrapper(File file) {
@@ -415,4 +430,5 @@ class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersion
 	public int compareTo(DefaultArtifactVersionWrapper o) {
 		return this.version.compareTo(o.version);
 	}
+
 }
