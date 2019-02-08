@@ -120,19 +120,19 @@ org.springframework.cloud.contract.spec.Contract.make {
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    "rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  headers</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    Content-Type</span>: application/json;charset=UTF-<span class="hl-number">8</span></pre><p>In the case of messaging, you can define:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">The input and the output messages can be defined (taking into account from and where it
-was sent, the message body, and the header).</li><li class="listitem">The methods that should be called after the message is received.</li><li class="listitem">The methods that, when called, should trigger a message.</li></ul></div><p>The following example shows a Camel messaging contract expressed in Groovy DSL:</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
-		messageBody([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		messageHeaders {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
-		}
-		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
-	}
-}</pre><p>The following example shows the same contract expressed in YAML:</p><pre class="programlisting">label: some_label
+was sent, the message body, and the header).</li><li class="listitem">The methods that should be called after the message is received.</li><li class="listitem">The methods that, when called, should trigger a message.</li></ul></div><p>The following example shows a Camel messaging contract expressed in Groovy DSL:</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
+					messageBody([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					messageHeaders {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+					}
+					assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
+				}
+			}</pre><p>The following example shows the same contract expressed in YAML:</p><pre class="programlisting">label: some_label
 input:
   messageFrom: jms:delete
   messageBody:
@@ -262,7 +262,23 @@ to the following in the build logs:</p><pre class="programlisting"><span class="
 formulate our expectations. That is why we write contracts.</p><p>Assume that you want to send a request containing the ID of a client company and the
 amount it wants to borrow from us. You also want to send it to the /fraudcheck url via
 the PUT method.</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (1)</span>
@@ -270,7 +286,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/fraudcheck'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (3)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (4)</span>
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"client.id"</span>: $(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{10}'</span>)),
-			   loanAmount: <span class="hl-number">99999</span>
+			   loanAmount : <span class="hl-number">99999</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (5)</span>
 			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
@@ -279,7 +295,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	response { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (6)</span>
 		status OK() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (8)</span>
-			   fraudCheckStatus: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
+			   fraudCheckStatus  : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (9)</span>
@@ -374,13 +390,12 @@ response: # (7)
 #(10) - with header `Content-Type` equal to `application/json;charset=UTF-8`</pre><p>
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_client_side" href="#_client_side"></a>2.4.4&nbsp;Client Side</h3></div></div></div><p>Spring Cloud Contract generates stubs, which you can use during client-side testing.
 You get a running WireMock instance/Messaging route that simulates the service.
-You would like to feed that instance with a proper stub definition.</p><p>At some point in time, you need to send a request to the Fraud Detection service.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response =
-		restTemplate.exchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders),
-				FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>Annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+You would like to feed that instance with a proper stub definition.</p><p>At some point in time, you need to send a request to the Fraud Detection service.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>Annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.NONE)</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {
+		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceTests {</pre><p>After that, during the tests, Spring Cloud Contract automatically finds the stubs
 (simulating the real service) in the Maven repository and exposes them on a configured
 (or random) port.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_server_side" href="#_server_side"></a>2.4.5&nbsp;Server Side</h3></div></div></div><p>Since you are developing your stub, you need to be sure that it actually resembles your
@@ -489,16 +504,31 @@ following section to your build:</p><p class="primary"><b>Maven.&nbsp;</b>
 }</pre><p>Assume that you have written a test of your new feature. If a loan application for a big
 amount is received, the system should reject that loan application with some description.</p><p><span class="strong"><strong>Write the missing implementation.</strong></span></p><p>At some point in time, you need to send a request to the Fraud Detection service. Assume
 that you need to send the request containing the ID of the client and the amount the
-client wants to borrow. You want to send it to the <code class="literal">/fraudcheck</code> url via the <code class="literal">PUT</code> method.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response =
-		restTemplate.exchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders),
-				FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>For simplicity, the port of the Fraud Detection service is set to <code class="literal">8080</code>, and the
+client wants to borrow. You want to send it to the <code class="literal">/fraudcheck</code> url via the <code class="literal">PUT</code> method.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>For simplicity, the port of the Fraud Detection service is set to <code class="literal">8080</code>, and the
 application runs on <code class="literal">8090</code>.</p><p>If you start the test at this point, it breaks, because no service currently runs on port
 <code class="literal">8080</code>.</p><p><span class="strong"><strong>Clone the Fraud Detection service repository locally.</strong></span></p><p>You can start by playing around with the server side contract. To do so, you must first
 clone it.</p><pre class="programlisting">$ git clone https://your-git-server.com/server-side.git local-http-server-repo</pre><p><span class="strong"><strong>Define the contract locally in the repo of Fraud Detection service.</strong></span></p><p>As a consumer, you need to define what exactly you want to achieve. You need to formulate
 your expectations. To do so, write the following contract:</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Place the contract under <code class="literal">src/test/resources/contracts/fraud</code> folder. The <code class="literal">fraud</code> folder
 is important because the producer&#8217;s test base class name references that folder.</p></td></tr></table></div><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (1)</span>
@@ -506,7 +536,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/fraudcheck'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (3)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (4)</span>
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"client.id"</span>: $(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{10}'</span>)),
-			   loanAmount: <span class="hl-number">99999</span>
+			   loanAmount : <span class="hl-number">99999</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (5)</span>
 			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
@@ -515,7 +545,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	response { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (6)</span>
 		status OK() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (8)</span>
-			   fraudCheckStatus: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
+			   fraudCheckStatus  : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (9)</span>
@@ -676,8 +706,8 @@ Application service</code>):</p><p>Add the <code class="literal">Spring Cloud Co
 collaborators. (Optional step) Because you&#8217;re playing with the collaborators offline, you
 can also provide the offline work switch (<code class="literal">StubRunnerProperties.StubsMode.LOCAL</code>).</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.NONE)</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {
+		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceTests {</pre><p>Now, when you run your tests, you see something like this:</p><pre class="programlisting"><span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.403</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
 <span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.438</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is <span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT
 <span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.439</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT using remote repositories []
@@ -713,12 +743,29 @@ make the name of the base test class. In our case, the contracts were placed und
 the <code class="literal">contracts</code> folder, pick only one, which should be <code class="literal">fraud</code>. Add the <code class="literal">Base</code> suffix and
 capitalize <code class="literal">fraud</code>. That gives you the <code class="literal">FraudBase</code> test class name.</p></td></tr></table></div><p>All the generated tests extend that class. Over there, you can set up your Spring Context
 or whatever is necessary. In this case, use <a class="link" href="http://rest-assured.io/" target="_top">Rest Assured MVC</a> to
-start the server side <code class="literal">FraudDetectionController</code>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
+start the server side <code class="literal">FraudDetectionController</code>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> FraudBase {
+
 	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> FraudDetectionController(),
@@ -740,6 +787,7 @@ start the server side <code class="literal">FraudDetectionController</code>.</p>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> assertThatRejectionReasonIsNull(Object rejectionReason) {
 		assert rejectionReason == null;
 	}
+
 }</pre><p>Now, if you run the <code class="literal">./mvnw clean install</code>, you get something like this:</p><pre class="programlisting">Results :
 
 Tests in error:

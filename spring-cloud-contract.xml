@@ -349,19 +349,19 @@ was sent, the message body, and the header).</simpara>
 </listitem>
 </itemizedlist>
 <simpara>The following example shows a Camel messaging contract expressed in Groovy DSL:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">def contractDsl = Contract.make {
-	label 'some_label'
-	input {
-		messageFrom('jms:delete')
-		messageBody([
-				bookName: 'foo'
-		])
-		messageHeaders {
-			header('sample', 'header')
-		}
-		assertThat('bookWasDeleted()')
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">			def contractDsl = Contract.make {
+				label 'some_label'
+				input {
+					messageFrom('jms:delete')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+					assertThat('bookWasDeleted()')
+				}
+			}</programlisting>
 <simpara>The following example shows the same contract expressed in YAML:</simpara>
 <programlisting language="yml" linenumbering="unnumbered">label: some_label
 input:
@@ -555,7 +555,23 @@ the PUT method.</simpara>
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">package contracts
+<programlisting language="groovy" linenumbering="unnumbered">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { // (1)
@@ -563,7 +579,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url '/fraudcheck' // (3)
 		body([ // (4)
 			   "client.id": $(regex('[0-9]{10}')),
-			   loanAmount: 99999
+			   loanAmount : 99999
 		])
 		headers { // (5)
 			contentType('application/json')
@@ -572,7 +588,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	response { // (6)
 		status OK() // (7)
 		body([ // (8)
-			   fraudCheckStatus: "FRAUD",
+			   fraudCheckStatus  : "FRAUD",
 			   "rejection.reason": "Amount too high"
 		])
 		headers { // (9)
@@ -678,15 +694,14 @@ response: # (7)
 You get a running WireMock instance/Messaging route that simulates the service.
 You would like to feed that instance with a proper stub definition.</simpara>
 <simpara>At some point in time, you need to send a request to the Fraud Detection service.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">ResponseEntity&lt;FraudServiceResponse&gt; response =
-		restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
-				new HttpEntity&lt;&gt;(request, httpHeaders),
-				FraudServiceResponse.class);</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
+		"http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+		new HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.class);</programlisting>
 <simpara>Annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@AutoConfigureStubRunner(ids = {
+		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>After that, during the tests, Spring Cloud Contract automatically finds the stubs
 (simulating the real service) in the Maven repository and exposes them on a configured
@@ -874,10 +889,9 @@ amount is received, the system should reject that loan application with some des
 <simpara>At some point in time, you need to send a request to the Fraud Detection service. Assume
 that you need to send the request containing the ID of the client and the amount the
 client wants to borrow. You want to send it to the <literal>/fraudcheck</literal> url via the <literal>PUT</literal> method.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">ResponseEntity&lt;FraudServiceResponse&gt; response =
-		restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
-				new HttpEntity&lt;&gt;(request, httpHeaders),
-				FraudServiceResponse.class);</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
+		"http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+		new HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.class);</programlisting>
 <simpara>For simplicity, the port of the Fraud Detection service is set to <literal>8080</literal>, and the
 application runs on <literal>8090</literal>.</simpara>
 <simpara>If you start the test at this point, it breaks, because no service currently runs on port
@@ -896,7 +910,23 @@ is important because the producer&#8217;s test base class name references that f
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">package contracts
+<programlisting language="groovy" linenumbering="unnumbered">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { // (1)
@@ -904,7 +934,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url '/fraudcheck' // (3)
 		body([ // (4)
 			   "client.id": $(regex('[0-9]{10}')),
-			   loanAmount: 99999
+			   loanAmount : 99999
 		])
 		headers { // (5)
 			contentType('application/json')
@@ -913,7 +943,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	response { // (6)
 		status OK() // (7)
 		body([ // (8)
-			   fraudCheckStatus: "FRAUD",
+			   fraudCheckStatus  : "FRAUD",
 			   "rejection.reason": "Amount too high"
 		])
 		headers { // (9)
@@ -1144,8 +1174,8 @@ collaborators. (Optional step) Because you&#8217;re playing with the collaborato
 can also provide the offline work switch (<literal>StubRunnerProperties.StubsMode.LOCAL</literal>).</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@AutoConfigureStubRunner(ids = {
+		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>Now, when you run your tests, you see something like this:</simpara>
 <programlisting language="bash" linenumbering="unnumbered">2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
@@ -1205,12 +1235,29 @@ capitalize <literal>fraud</literal>. That gives you the <literal>FraudBase</lite
 <simpara>All the generated tests extend that class. Over there, you can set up your Spring Context
 or whatever is necessary. In this case, use <link xl:href="http://rest-assured.io/">Rest Assured MVC</link> to
 start the server side <literal>FraudDetectionController</literal>.</simpara>
-<programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
+<programlisting language="java" linenumbering="unnumbered">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.Before;
 
 public class FraudBase {
+
 	@Before
 	public void setup() {
 		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
@@ -1232,6 +1279,7 @@ public class FraudBase {
 	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
 		assert rejectionReason == null;
 	}
+
 }</programlisting>
 <simpara>Now, if you run the <literal>./mvnw clean install</literal>, you get something like this:</simpara>
 <programlisting language="bash" linenumbering="unnumbered">Results :
@@ -1563,8 +1611,9 @@ contract files as described throughout this documentation. This repository has t
 one to one to the contents of the repo.</simpara>
 <simpara>Example of a <literal>pom.xml</literal> inside the <literal>server</literal> folder.</simpara>
 <programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+&lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
 	&lt;groupId&gt;com.example&lt;/groupId&gt;
@@ -1578,14 +1627,16 @@ one to one to the contents of the repo.</simpara>
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
 		&lt;version&gt;2.1.2.RELEASE&lt;/version&gt;
-		&lt;relativePath /&gt;
+		&lt;relativePath/&gt;
 	&lt;/parent&gt;
 
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;2.1.1.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-release.version&gt;Greenwich.BUILD-SNAPSHOT&lt;/spring-cloud-release.version&gt;
+		&lt;spring-cloud-contract.version&gt;2.1.1.BUILD-SNAPSHOT
+		&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-release.version&gt;Greenwich.BUILD-SNAPSHOT
+		&lt;/spring-cloud-release.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
@@ -1675,7 +1726,8 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
  stubs of the producer project.</simpara>
 <simpara>The <literal>pom.xml</literal> in the root folder can look like this:</simpara>
 <programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+&lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
@@ -1684,7 +1736,9 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
 	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
 
 	&lt;name&gt;Contracts&lt;/name&gt;
-	&lt;description&gt;Contains all the Spring Cloud Contracts, well, contracts. JAR used by the producers to generate tests and stubs&lt;/description&gt;
+	&lt;description&gt;Contains all the Spring Cloud Contracts, well, contracts. JAR used by the
+		producers to generate tests and stubs
+	&lt;/description&gt;
 
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
@@ -1716,8 +1770,8 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
 
 &lt;/project&gt;</programlisting>
 <simpara>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<programlisting language="xml" linenumbering="unnumbered">&lt;assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;project&lt;/id&gt;
 	&lt;formats&gt;
@@ -1764,7 +1818,9 @@ of the JAR containing the contracts:</simpara>
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;configuration&gt;
 		&lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
-		&lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
+		&lt;contractsRepositoryUrl&gt;
+			http://link/to/your/nexus/or/artifactory/or/sth
+		&lt;/contractsRepositoryUrl&gt;
 		&lt;contractDependency&gt;
 			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
 			&lt;artifactId&gt;contracts&lt;/artifactId&gt;
@@ -2860,7 +2916,7 @@ name of the base class for the matched contract. You have to provide a list call
 <programlisting language="groovy" linenumbering="unnumbered">baseClassForTests = "com.example.FooBase"
 baseClassMappings {
 	baseClassMapping('.*/com/.*', 'com.example.ComBase')
-	baseClassMapping('.*/bar/.*':'com.example.BarBase')
+	baseClassMapping('.*/bar/.*': 'com.example.BarBase')
 }</programlisting>
 <simpara>Let&#8217;s assume that you have contracts under
  - <literal>src/test/resources/contract/com/</literal>
@@ -3940,20 +3996,20 @@ it is resolved as a channel name. For <emphasis role="strong">Camel</emphasis>, 
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">def contractDsl = Contract.make {
-	label 'some_label'
-	input {
-		triggeredBy('bookReturnedTriggered()')
-	}
-	outputMessage {
-		sentTo('activemq:output')
-		body('''{ "bookName" : "foo" }''')
-		headers {
-			header('BOOK-NAME', 'foo')
-			messagingContentType(applicationJson())
-		}
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">			def contractDsl = Contract.make {
+				label 'some_label'
+				input {
+					triggeredBy('bookReturnedTriggered()')
+				}
+				outputMessage {
+					sentTo('activemq:output')
+					body('''{ "bookName" : "foo" }''')
+					headers {
+						header('BOOK-NAME', 'foo')
+						messagingContentType(applicationJson())
+					}
+				}
+			}</programlisting>
 </para>
 </formalpara>
 <formalpara>
@@ -3972,7 +4028,7 @@ outputMessage:
 </para>
 </formalpara>
 <simpara>The following JUnit test is created:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">'''
+<programlisting language="groovy" linenumbering="unnumbered">					'''
  // when:
   bookReturnedTriggered();
 
@@ -3988,7 +4044,7 @@ outputMessage:
   assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
 '''</programlisting>
 <simpara>And the following Spock test would be created:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">'''
+<programlisting language="groovy" linenumbering="unnumbered">					'''
  when:
   bookReturnedTriggered()
 
@@ -4009,27 +4065,27 @@ outputMessage:
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">def contractDsl = Contract.make {
-	label 'some_label'
-	input {
-		messageFrom('jms:input')
-		messageBody([
-				bookName: 'foo'
-		])
-		messageHeaders {
-			header('sample', 'header')
-		}
-	}
-	outputMessage {
-		sentTo('jms:output')
-		body([
-				bookName: 'foo'
-		])
-		headers {
-			header('BOOK-NAME', 'foo')
-		}
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">			def contractDsl = Contract.make {
+				label 'some_label'
+				input {
+					messageFrom('jms:input')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+				}
+				outputMessage {
+					sentTo('jms:output')
+					body([
+							bookName: 'foo'
+					])
+					headers {
+						header('BOOK-NAME', 'foo')
+					}
+				}
+			}</programlisting>
 </para>
 </formalpara>
 <formalpara>
@@ -4051,7 +4107,7 @@ outputMessage:
 </para>
 </formalpara>
 <simpara>The following JUnit test is created:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">'''
+<programlisting language="groovy" linenumbering="unnumbered">					'''
 // given:
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
   "{\\"bookName\\":\\"foo\\"}"
@@ -4071,7 +4127,7 @@ outputMessage:
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
 '''</programlisting>
 <simpara>And the following Spock test would be created:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">"""\
+<programlisting language="groovy" linenumbering="unnumbered">					"""\
 given:
    ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
     '''{"bookName":"foo"}''',
@@ -4096,19 +4152,19 @@ and:
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">def contractDsl = Contract.make {
-	label 'some_label'
-	input {
-		messageFrom('jms:delete')
-		messageBody([
-				bookName: 'foo'
-		])
-		messageHeaders {
-			header('sample', 'header')
-		}
-		assertThat('bookWasDeleted()')
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">			def contractDsl = Contract.make {
+				label 'some_label'
+				input {
+					messageFrom('jms:delete')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+					assertThat('bookWasDeleted()')
+				}
+			}</programlisting>
 </para>
 </formalpara>
 <formalpara>
@@ -4125,7 +4181,7 @@ input:
 </para>
 </formalpara>
 <simpara>The following JUnit test is created:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">'''
+<programlisting language="groovy" linenumbering="unnumbered">					'''
 // given:
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 	"{\\"bookName\\":\\"foo\\"}"
@@ -4139,7 +4195,7 @@ input:
  bookWasDeleted();
 '''</programlisting>
 <simpara>And the following Spock test would be created:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">'''
+<programlisting language="groovy" linenumbering="unnumbered">					'''
 given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 		\'\'\'{"bookName":"foo"}\'\'\',
@@ -4588,7 +4644,7 @@ static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
 </formalpara>
 <simpara>You can then reuse it via the annotation</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
-			httpServerStubConfigurer = HttpsForFraudDetection)</programlisting>
+		httpServerStubConfigurer = HttpsForFraudDetection)</programlisting>
 <simpara>Whenever an https port is found, it will take precedence over the http one.</simpara>
 </section>
 </section>
@@ -4689,11 +4745,20 @@ mappings available for the given server:</simpara>
 <section xml:id="_stub_runner_junit_rule_and_stub_runner_junit5_extension">
 <title>Stub Runner JUnit Rule and Stub Runner JUnit5 Extension</title>
 <simpara>Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
-		.repoRoot(repoRoot())
+<programlisting language="java" linenumbering="unnumbered">@ClassRule
+public static StubRunnerRule rule = new StubRunnerRule().repoRoot(repoRoot())
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
-		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");</programlisting>
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs",
+				"loanIssuance")
+		.downloadStub(
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");
+
+@BeforeClass
+@AfterClass
+public static void setupProps() {
+	System.clearProperty("stubrunner.repository.root");
+	System.clearProperty("stubrunner.classifier");
+}</programlisting>
 <simpara>There&#8217;s also a <literal>StubRunnerExtension</literal> available for JUnit 5. <literal>StubRunnerRule</literal> and <literal>StubRunnerExtension</literal> work in a very
 similar fashion. After the rule/ extension is executed, Stub Runner connects to your Maven repository and for the given list of dependencies tries to:</simpara>
 <itemizedlist>
@@ -4727,6 +4792,11 @@ import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
 
+/**
+ * Contract for finding registered stubs.
+ *
+ * @author Marcin Grzejszczak
+ */
 public interface StubFinder extends StubTrigger {
 
 	/**
@@ -4734,7 +4804,9 @@ public interface StubFinder extends StubTrigger {
 	 * stub.
 	 * @param groupId - might be null. In that case a search only via artifactId takes
 	 * place
+	 * @param artifactId - artifact id of the stub
 	 * @return URL of a running stub or throws exception if not found
+	 * @throws StubNotFoundException in case of not finding a stub
 	 */
 	URL findStubUrl(String groupId, String artifactId) throws StubNotFoundException;
 
@@ -4744,22 +4816,25 @@ public interface StubFinder extends StubTrigger {
 	 * {@code artifactId}.
 	 * @param ivyNotation - Ivy representation of the Maven artifact
 	 * @return URL of a running stub or throws exception if not found
+	 * @throws StubNotFoundException in case of not finding a stub
 	 */
 	URL findStubUrl(String ivyNotation) throws StubNotFoundException;
 
 	/**
-	 * Returns all running stubs
+	 * @return all running stubs
 	 */
 	RunningStubs findAllRunningStubs();
 
 	/**
-	 * Returns the list of Contracts
+	 * @return the list of Contracts
 	 */
 	Map&lt;StubConfiguration, Collection&lt;Contract&gt;&gt; getContracts();
 
 }</programlisting>
 <simpara>Example of usage in Spock tests:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
+<programlisting language="groovy" linenumbering="unnumbered">@ClassRule
+@Shared
+StubRunnerRule rule = new StubRunnerRule()
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.repoRoot(StubRunnerRuleSpec.getResource("/m2repo/repository").toURI().toString())
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
@@ -4789,40 +4864,65 @@ def 'should output mappings to output folder'() {
 		new File("target/outputmappingsforrule", "fraudDetectionServer_${url.port}").exists()
 }</programlisting>
 <simpara>Example of usage in JUnit tests:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@Test
-public void should_start_wiremock_servers() throws Exception {
-	// expect: 'WireMocks are running'
-		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")).isNotNull();
+<programlisting language="java" linenumbering="unnumbered">	@Test
+	public void should_start_wiremock_servers() throws Exception {
+		// expect: 'WireMocks are running'
+		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs",
+				"loanIssuance")).isNotNull();
 		then(rule.findStubUrl("loanIssuance")).isNotNull();
-		then(rule.findStubUrl("loanIssuance")).isEqualTo(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
-		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
-	// and:
+		then(rule.findStubUrl("loanIssuance")).isEqualTo(rule.findStubUrl(
+				"org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
+		then(rule.findStubUrl(
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
+						.isNotNull();
+		// and:
 		then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
-		then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs", "fraudDetectionServer")).isTrue();
-		then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
-	// and: 'Stubs were registered'
-		then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
-		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
+		then(rule.findAllRunningStubs().isPresent(
+				"org.springframework.cloud.contract.verifier.stubs",
+				"fraudDetectionServer")).isTrue();
+		then(rule.findAllRunningStubs().isPresent(
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
+						.isTrue();
+		// and: 'Stubs were registered'
+		then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name"))
+				.isEqualTo("loanIssuance");
+		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name"))
+				.isEqualTo("fraudDetectionServer");
+	}
+
+	private String httpGet(String url) throws Exception {
+		try (InputStream stream = URI.create(url).toURL().openStream()) {
+			return StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
+		}
+	}
+
 }</programlisting>
 <simpara>JUnit 5 Extension example:</simpara>
 <programlisting language="java" linenumbering="unnumbered">// Visible for Junit
 @RegisterExtension
 static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
-        .repoRoot(repoRoot())
-        .stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-        .downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
-        .downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
-        .withMappingsOutputFolder("target/outputmappingsforrule");
+		.repoRoot(repoRoot()).stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs",
+				"loanIssuance")
+		.downloadStub(
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
+		.withMappingsOutputFolder("target/outputmappingsforrule");
 
-@Test
-void should_start_WireMock_servers() {
-    assertThat(stubRunnerExtension.findStubUrl("org.springframework.cloud.contract.verifier.stubs",
-            "loanIssuance")).isNotNull();
-    assertThat(stubRunnerExtension.findStubUrl("loanIssuance")).isNotNull();
-    assertThat(stubRunnerExtension.findStubUrl("loanIssuance")).isEqualTo(stubRunnerExtension
-            .findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
-    assertThat(stubRunnerExtension
-            .findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
+@BeforeAll
+@AfterAll
+static void setupProps() {
+	System.clearProperty("stubrunner.repository.root");
+	System.clearProperty("stubrunner.classifier");
+}
+
+private static String repoRoot() {
+	try {
+		return StubRunnerRuleJUnitTest.class.getResource("/m2repo/repository/")
+				.toURI().toString();
+	}
+	catch (Exception e) {
+		return "";
+	}
 }</programlisting>
 <simpara>Check the <emphasis role="strong">Common properties for JUnit and Spring</emphasis> for more information on how to apply global configuration of Stub Runner.</simpara>
 <important>
@@ -4843,15 +4943,25 @@ JUnit rule.</simpara>
 <section xml:id="_fluent_api">
 <title>Fluent API</title>
 <simpara>When using the <literal>StubRunnerRule</literal> or <literal>StubRunnerExtension</literal> you can add a stub to download and then pass the port for the last downloaded stub.</simpara>
-<programlisting language="java" linenumbering="unnumbered">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
-		.repoRoot(repoRoot())
+<programlisting language="java" linenumbering="unnumbered">@ClassRule
+public static StubRunnerRule rule = new StubRunnerRule().repoRoot(repoRoot())
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
-		.withPort(12345)
-		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");</programlisting>
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs",
+				"loanIssuance")
+		.withPort(12345).downloadStub(
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");
+
+@BeforeClass
+@AfterClass
+public static void setupProps() {
+	System.clearProperty("stubrunner.repository.root");
+	System.clearProperty("stubrunner.classifier");
+}</programlisting>
 <simpara>You can see that for this example the following test is valid:</simpara>
-<programlisting language="java" linenumbering="unnumbered">then(rule.findStubUrl("loanIssuance")).isEqualTo(URI.create("http://localhost:12345").toURL());
-then(rule.findStubUrl("fraudDetectionServer")).isEqualTo(URI.create("http://localhost:12346").toURL());</programlisting>
+<programlisting language="java" linenumbering="unnumbered">then(rule.findStubUrl("loanIssuance"))
+		.isEqualTo(URI.create("http://localhost:12345").toURL());
+then(rule.findStubUrl("fraudDetectionServer"))
+		.isEqualTo(URI.create("http://localhost:12346").toURL());</programlisting>
 </section>
 <section xml:id="_stub_runner_with_spring">
 <title>Stub Runner with Spring</title>
@@ -4865,15 +4975,20 @@ its methods as presented below:</simpara>
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
 		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
-			httpServerStubConfigurer = HttpsForFraudDetection)
+		httpServerStubConfigurer = HttpsForFraudDetection)
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 
-	@Autowired StubFinder stubFinder
-	@Autowired Environment environment
-	@StubRunnerPort("fraudDetectionServer") int fraudDetectionServerPort
-	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer") int fraudDetectionServerPortWithGroupId
-	@Value('${foo}') Integer foo
+	@Autowired
+	StubFinder stubFinder
+	@Autowired
+	Environment environment
+	@StubRunnerPort("fraudDetectionServer")
+	int fraudDetectionServerPort
+	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
+	int fraudDetectionServerPortWithGroupId
+	@Value('${foo}')
+	Integer foo
 
 	@BeforeClass
 	@AfterClass
@@ -4971,8 +5086,7 @@ class StubRunnerConfigurationSpec extends Specification {
 			return httpStubConfiguration
 		}
 	}
-}
-// end::test[]</programlisting>
+}</programlisting>
 <simpara>for the following configuration file:</simpara>
 <programlisting language="yml" linenumbering="unnumbered">stubrunner:
   repositoryRoot: classpath:m2repo/repository/
@@ -4985,8 +5099,8 @@ class StubRunnerConfigurationSpec extends Specification {
 Below you can find an example of achieving the same result by setting values on the annotation.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@AutoConfigureStubRunner(
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+				"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")</programlisting>
 <simpara>Stub Runner Spring registers environment variables in the following manner
@@ -5055,8 +5169,7 @@ or <literal>DiscoveryClient</literal> directly, to call those stubbed servers in
 <programlisting language="yml" linenumbering="unnumbered">stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
-    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
-# end::ids[]</programlisting>
+    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</programlisting>
 <section xml:id="_test_profiles_and_service_discovery">
 <title>Test profiles and service discovery</title>
 <simpara>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
@@ -5175,7 +5288,8 @@ the Stub Runner server. It will be available at port <literal>8750</literal>.</s
 @ActiveProfiles("test")
 class StubRunnerBootSpec extends Specification {
 
-	@Autowired StubRunning stubRunning
+	@Autowired
+	StubRunning stubRunning
 
 	def setup() {
 		RestAssuredMockMvc.standaloneSetup(new HttpStubsController(stubRunning),
@@ -5216,7 +5330,7 @@ class StubRunnerBootSpec extends Specification {
 			String response = RestAssuredMockMvc.get('/triggers').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book", "return_book_1", "return_book_2"])
 	}
 
 	def 'should trigger a messaging label'() {
@@ -5287,15 +5401,17 @@ and we want to have the stub runner feature turned on <literal>@AutoConfigureStu
 <simpara>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <literal>java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</literal> where
  <literal>${SYSTEM_PROPS}</literal> would contain the following list of properties</simpara>
-<programlisting language="bash" linenumbering="unnumbered">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
--Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
--Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
--Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
-
-(1) - we tell Stub Runner where all the stubs reside
-(2) - we don't want the default behaviour where the discovery service is stubbed. That's why the stub registration will be picked
-(3) - we provide a list of stubs to download
-(4) - we provide a list of artifactId to serviceId mapping</programlisting>
+<programlisting language="bash" linenumbering="unnumbered">* -Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+* -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
+* -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.
+* springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.
+* cloud.contract.verifier.stubs:bootService (3)
+* -Dstubrunner.idsToServiceIds.fraudDetectionServer=
+* someNameThatShouldMapFraudDetectionServer (4)
+*
+* (1) - we tell Stub Runner where all the stubs reside (2) - we don't want the default
+* behaviour where the discovery service is stubbed. That's why the stub registration will
+* be picked (3) - we provide a list of stubs to download (4) - we provide a list of</programlisting>
 <simpara>That way your deployed application can send requests to started WireMock servers via the service
 discovery. Most likely points 1-3 could be set by default in <literal>application.yml</literal> cause they are not
 likely to change. That way you can provide only the list of stubs to download whenever you start
@@ -5592,6 +5708,11 @@ That way the only remaining framework is Spring AMQP.</simpara>
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * Contract for triggering stub messages.
+ *
+ * @author Marcin Grzejszczak
+ */
 public interface StubTrigger {
 
 	/**
@@ -5599,6 +5720,8 @@ public interface StubTrigger {
 	 * You can use only {@code artifactId} too.
 	 *
 	 * Feature related to messaging.
+	 * @param ivyNotation ivy notation of a stub
+	 * @param labelName name of the label to trigger
 	 * @return true - if managed to run a trigger
 	 */
 	boolean trigger(String ivyNotation, String labelName);
@@ -5607,6 +5730,7 @@ public interface StubTrigger {
 	 * Triggers an event by a given label.
 	 *
 	 * Feature related to messaging.
+	 * @param labelName name of the label to trigger
 	 * @return true - if managed to run a trigger
 	 */
 	boolean trigger(String labelName);
@@ -5620,9 +5744,8 @@ public interface StubTrigger {
 	boolean trigger();
 
 	/**
-	 * Returns a mapping of ivy notation of a dependency to all the labels it has.
-	 *
 	 * Feature related to messaging.
+	 * @return a mapping of ivy notation of a dependency to all the labels it has.
 	 */
 	Map&lt;String, Collection&lt;String&gt;&gt; labels();
 
@@ -5753,7 +5876,8 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
 <section xml:id="_scenario_2_output_triggered_by_input_2">
 <title>Scenario 2 (output triggered by input)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>jms:output</literal> destination.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">producerTemplate.sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">producerTemplate.
+		sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</programlisting>
 <simpara>Next we&#8217;ll want to listen to the output of the message sent to <literal>jms:output</literal></simpara>
 <programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)</programlisting>
 <simpara>And the received message would pass the following assertions</simpara>
@@ -5764,7 +5888,8 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
 <section xml:id="_scenario_3_input_with_no_output">
 <title>Scenario 3 (input with no output)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>jms:output</literal> destination.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">producerTemplate.sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">producerTemplate.
+		sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</programlisting>
 </section>
 </section>
 </section>
@@ -5843,9 +5968,9 @@ classpath. Remember to annotate your test class with <literal>@AutoConfigureStub
 }</programlisting>
 <simpara>and the following Spring Integration Route:</simpara>
 <programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;beans:beans xmlns="http://www.springframework.org/schema/integration"
-			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+&lt;beans:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xmlns="http://www.springframework.org/schema/integration"
 			 xsi:schemaLocation="http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
@@ -6105,29 +6230,29 @@ to disable them explicitly by setting the  <literal>stubrunner.stream.enabled=fa
     └── shouldProduceValidPersonData.groovy</programlisting>
 <simpara>Consider the following contract:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">Contract.make {
-    // Human readable description
-    description 'Should produce valid person data'
-    // Label by means of which the output message can be triggered
-    label 'contract-test.person.created.event'
-    // input to the contract
-    input {
-        // the contract will be triggered by a method
-        triggeredBy('createPerson()')
-    }
-    // output message of the contract
-    outputMessage {
-        // destination to which the output message will be sent
-        sentTo 'contract-test.exchange'
-        headers {
-            header('contentType': 'application/json')
-            header('__TypeId__': 'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person')
-        }
-        // the body of the output message
-        body ([
-                id: $(consumer(9), producer(regex("[0-9]+"))),
-                name: "me"
-        ])
-    }
+	// Human readable description
+	description 'Should produce valid person data'
+	// Label by means of which the output message can be triggered
+	label 'contract-test.person.created.event'
+	// input to the contract
+	input {
+		// the contract will be triggered by a method
+		triggeredBy('createPerson()')
+	}
+	// output message of the contract
+	outputMessage {
+		// destination to which the output message will be sent
+		sentTo 'contract-test.exchange'
+		headers {
+			header('contentType': 'application/json')
+			header('__TypeId__': 'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person')
+		}
+		// the body of the output message
+		body([
+				id  : $(consumer(9), producer(regex("[0-9]+"))),
+				name: "me"
+		])
+	}
 }</programlisting>
 <simpara>Now consider the following Spring configuration:</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
@@ -6164,7 +6289,7 @@ public SimpleMessageListenerContainer simpleMessageListenerContainer(
 	return container;
 }</programlisting>
 <simpara>Also, the following annotated listener matches and is invoked:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))
+<programlisting language="java" linenumbering="unnumbered">@RabbitListener(bindings = @QueueBinding(value = @Queue("test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))
 public void handlePerson(Person person) {
 	this.person = person;
 }</programlisting>
@@ -6305,8 +6430,8 @@ following code shows an example:</simpara>
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">		org.springframework.cloud.contract.spec.Contract.make {
-			description('''
+<programlisting language="groovy" linenumbering="unnumbered">			org.springframework.cloud.contract.spec.Contract.make {
+				description('''
 given:
 	An input
 when:
@@ -6314,7 +6439,7 @@ when:
 then:
 	Output
 ''')
-		}</programlisting>
+			}</programlisting>
 </para>
 </formalpara>
 <formalpara>
@@ -6433,7 +6558,23 @@ following resources in our project.</simpara>
 <formalpara>
 <title>Groovy DSL</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">import org.springframework.cloud.contract.spec.Contract
+<programlisting language="groovy" linenumbering="unnumbered">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
 	request {
@@ -6508,16 +6649,16 @@ Contract.make {
 <title>YAML</title>
 <para>
 <programlisting language="yml" linenumbering="unnumbered">request:
-    url: /1
-    method: PUT
-    headers:
-        Content-Type: application/octet-stream
-    bodyFromFileAsBytes: request.pdf
+  url: /1
+  method: PUT
+  headers:
+    Content-Type: application/octet-stream
+  bodyFromFileAsBytes: request.pdf
 response:
-    status: 200
-    bodyFromFileAsBytes: response.pdf
-    headers:
-        Content-Type: application/octet-stream</programlisting>
+  status: 200
+  bodyFromFileAsBytes: response.pdf
+  headers:
+    Content-Type: application/octet-stream</programlisting>
 </para>
 </formalpara>
 <important>
@@ -6861,7 +7002,7 @@ body:
     Content-Type: multipart/form-data;boundary=AaB03x
   multipart:
     params:
-    # key (parameter name), value (parameter value) pair
+      # key (parameter name), value (parameter value) pair
       formParameter: '"formParameterValue"'
       someBooleanParameter: true
     named:
@@ -7076,25 +7217,25 @@ need to use patterns and not exact values both for your test and your server sid
 do so, then the contract engine automatically provides the generated string that matches
 the provided regular expression. The following code shows an example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.spec.Contract.make {
-    request {
-        method 'PUT'
-        url value(consumer(regex('/foo/[0-9]{5}')))
-        body([
-                requestElement: $(consumer(regex('[0-9]{5}')))
-        ])
-        headers {
-            header('header', $(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
-        }
-    }
-    response {
-        status OK()
-        body([
-                responseElement: $(producer(regex('[0-9]{7}')))
-        ])
-        headers {
-            contentType("application/vnd.fraud.v1+json")
-        }
-    }
+	request {
+		method 'PUT'
+		url value(consumer(regex('/foo/[0-9]{5}')))
+		body([
+				requestElement: $(consumer(regex('[0-9]{5}')))
+		])
+		headers {
+			header('header', $(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
+		}
+	}
+	response {
+		status OK()
+		body([
+				responseElement: $(producer(regex('[0-9]{7}')))
+		])
+		headers {
+			contentType("application/vnd.fraud.v1+json")
+		}
+	}
 }</programlisting>
 <simpara>In the preceding example, the opposite side of the communication has the respective data
 generated for request and response.</simpara>
@@ -7108,21 +7249,29 @@ protected static final Pattern INTEGER = Pattern.compile('-?(\\d+)')
 protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d*)')
 protected static final Pattern DOUBLE = Pattern.compile('-?(\\d*\\.\\d+)')
 protected static final Pattern HEX = Pattern.compile('[a-fA-F0-9]+')
-protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
-protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
-protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
+protected static final Pattern IP_ADDRESS = Pattern.
+		compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
+protected static final Pattern HOSTNAME_PATTERN = Pattern.
+		compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
+protected static final Pattern EMAIL = Pattern.
+		compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
 protected static final Pattern URL = UrlHelper.URL
 protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL
-protected static final Pattern UUID = Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
-protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
-protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
-protected static final Pattern ANY_TIME = Pattern.compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+protected static final Pattern UUID = Pattern.
+		compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
+protected static final Pattern ANY_DATE = Pattern.
+		compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
+protected static final Pattern ANY_DATE_TIME = Pattern.
+		compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+protected static final Pattern ANY_TIME = Pattern.
+		compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 protected static final Pattern NON_EMPTY = Pattern.compile(/[\S\s]+/)
 protected static final Pattern NON_BLANK = Pattern.compile(/^\s*\S[\S\s]*/)
-protected static final Pattern ISO8601_WITH_OFFSET = Pattern.compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
+protected static final Pattern ISO8601_WITH_OFFSET = Pattern.
+		compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
 
-protected static Pattern anyOf(String... values){
-	return Pattern.compile(values.collect({"^$it\$"}).join("|"))
+protected static Pattern anyOf(String... values) {
+	return Pattern.compile(values.collect({ "^$it\$" }).join("|"))
 }
 
 RegexProperty onlyAlphaUnicode() {
@@ -7173,7 +7322,7 @@ RegexProperty httpsUrl() {
 	return new RegexProperty(HTTPS_URL).asString()
 }
 
-RegexProperty uuid(){
+RegexProperty uuid() {
 	return new RegexProperty(UUID).asString()
 }
 
@@ -7202,28 +7351,28 @@ RegexProperty nonBlank() {
 }</programlisting>
 <simpara>In your contract, you can use it as shown in the following example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">Contract dslWithOptionalsInString = Contract.make {
-    priority 1
-    request {
-        method POST()
-        url '/users/password'
-        headers {
-            contentType(applicationJson())
-        }
-        body(
-                email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-                callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
-        )
-    }
-    response {
-        status 404
-        headers {
-            contentType(applicationJson())
-        }
-        body(
-                code: value(consumer("123123"), producer(optional("123123"))),
-                message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
-        )
-    }
+	priority 1
+	request {
+		method POST()
+		url '/users/password'
+		headers {
+			contentType(applicationJson())
+		}
+		body(
+				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+				callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+		)
+	}
+	response {
+		status 404
+		headers {
+			contentType(applicationJson())
+		}
+		body(
+				code: value(consumer("123123"), producer(optional("123123"))),
+				message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
+		)
+	}
 }</programlisting>
 <simpara>To make matters even simpler you can use a set of predefined objects that will automatically assume that you want a regular expression to be passed.
 All of those methods start with <literal>any</literal> prefix:</simpara>
@@ -7277,25 +7426,25 @@ T anyOf(String... values)</programlisting>
 	outputMessage {
 		sentTo 'topic.rateablequote'
 		body([
-				alpha: $(anyAlphaUnicode()),
-				number: $(anyNumber()),
-				anInteger: $(anyInteger()),
-				positiveInt: $(anyPositiveInt()),
-				aDouble: $(anyDouble()),
-				aBoolean: $(aBoolean()),
-				ip: $(anyIpAddress()),
-				hostname: $(anyHostname()),
-				email: $(anyEmail()),
-				url: $(anyUrl()),
-				httpsUrl: $(anyHttpsUrl()),
-				uuid: $(anyUuid()),
-				date: $(anyDate()),
-				dateTime: $(anyDateTime()),
-				time: $(anyTime()),
+				alpha            : $(anyAlphaUnicode()),
+				number           : $(anyNumber()),
+				anInteger        : $(anyInteger()),
+				positiveInt      : $(anyPositiveInt()),
+				aDouble          : $(anyDouble()),
+				aBoolean         : $(aBoolean()),
+				ip               : $(anyIpAddress()),
+				hostname         : $(anyHostname()),
+				email            : $(anyEmail()),
+				url              : $(anyUrl()),
+				httpsUrl         : $(anyHttpsUrl()),
+				uuid             : $(anyUuid()),
+				date             : $(anyDate()),
+				dateTime         : $(anyDateTime()),
+				time             : $(anyTime()),
 				iso8601WithOffset: $(anyIso8601WithOffset()),
-				nonBlankString: $(anyNonBlankString()),
-				nonEmptyString: $(anyNonEmptyString()),
-				anyOf: $(anyOf('foo', 'bar'))
+				nonBlankString   : $(anyNonBlankString()),
+				nonEmptyString   : $(anyNonEmptyString()),
+				anyOf            : $(anyOf('foo', 'bar'))
 		])
 	}
 }</programlisting>
@@ -7343,7 +7492,7 @@ optional parameters only for the following:</simpara>
 <simpara>By wrapping a part of the body with the <literal>optional()</literal> method, you create a regular
 expression that must be present 0 or more times.</simpara>
 <simpara>If you use Spock for, the following test would be generated from the previous example:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">"""
+<programlisting language="groovy" linenumbering="unnumbered">					"""
  given:
   def request = given()
     .header("Content-Type", "application/json")
@@ -7361,7 +7510,7 @@ expression that must be present 0 or more times.</simpara>
   assertThatJson(parsedJson).field("['code']").matches("(123123)?")
 """</programlisting>
 <simpara>The following stub would also be generated:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">'''
+<programlisting language="groovy" linenumbering="unnumbered">					'''
 {
   "request" : {
 	"url" : "/users/password",
@@ -7405,13 +7554,13 @@ following code shows an example of the contract portion of the test case:</simpa
 			header 'Content-Type': 'application/json'
 		}
 		body '''\
-				[{
-					"text": "Gonna see you at Warsaw"
-				}]
-			'''
+			[{
+				"text": "Gonna see you at Warsaw"
+			}]
+		'''
 	}
 	response {
-		body (
+		body(
 				path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
 				correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
 		)
@@ -7709,7 +7858,23 @@ org.springframework.cloud.contract.stubrunner.TestCustomYamlContractConverter</p
 <formalpara>
 <title>TestWireMockExtensions.groovy</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">package org.springframework.cloud.contract.verifier.dsl.wiremock
+<programlisting language="groovy" linenumbering="unnumbered">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import com.github.tomakehurst.wiremock.extension.Extension
 
@@ -8224,7 +8389,7 @@ response:
     valueWithMinEmpty: []
     valueWithMaxEmpty: []
     key:
-      'complex.key' : 'foo'
+      'complex.key': 'foo'
     nulValue: null
   matchers:
     headers:
@@ -8362,7 +8527,7 @@ statically imported to your tests. Notice that the <literal>byCommand</literal> 
 the method name and passed the proper JSON path as a parameter to it.</simpara>
 </important>
 <simpara>The resulting WireMock stub is in the following example:</simpara>
-<programlisting language="json" linenumbering="unnumbered">				'''
+<programlisting language="json" linenumbering="unnumbered">					'''
 {
   "request" : {
     "urlPath" : "/get",
@@ -8480,7 +8645,7 @@ content type set. Otherwise, the default of <literal>application/octet-stream</l
 <simpara>In order to use JAX-RS mode, use the following settings:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">testMode == 'JAXRSCLIENT'</programlisting>
 <simpara>The following example shows a generated test API:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">'''
+<programlisting language="groovy" linenumbering="unnumbered">					'''
  // when:
   Response response = webTarget
     .path("/users")
@@ -8737,19 +8902,19 @@ method should be used, with the desired <literal>xPath</literal> provided as the
 and the appropriate <literal>MatchingType</literal> as second. All the body matchers apart from <literal>byType()</literal> are supported.</simpara>
 <simpara>Here is an example of a Groovy DSL contract with XML response body:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">					Contract.make {
-				request {
-					method GET()
-					urlPath '/get'
-					headers {
-						contentType(applicationXml())
-					}
-				}
-				response {
-					status(OK())
-					headers {
-						contentType(applicationXml())
-					}
-					body """
+						request {
+							method GET()
+							urlPath '/get'
+							headers {
+								contentType(applicationXml())
+							}
+						}
+						response {
+							status(OK())
+							headers {
+								contentType(applicationXml())
+							}
+							body """
 &lt;test&gt;
 &lt;duck type='xtype'&gt;123&lt;/duck&gt;
 &lt;alpha&gt;abc&lt;/alpha&gt;
@@ -8766,22 +8931,22 @@ and the appropriate <literal>MatchingType</literal> as second. All the body matc
 &lt;valueWithoutAMatcher&gt;foo&lt;/valueWithoutAMatcher&gt;
 &lt;key&gt;&lt;complex&gt;foo&lt;/complex&gt;&lt;/key&gt;
 &lt;/test&gt;"""
-					bodyMatchers {
-						xPath('/test/duck/text()', byRegex("[0-9]{3}"))
-						xPath('/test/duck/text()', byCommand('test($it)'))
-						xPath('/test/duck/xxx', byNull())
-						xPath('/test/duck/text()', byEquality())
-						xPath('/test/alpha/text()', byRegex(onlyAlphaUnicode()))
-						xPath('/test/alpha/text()', byEquality())
-						xPath('/test/number/text()', byRegex(number()))
-						xPath('/test/date/text()', byDate())
-						xPath('/test/dateTime/text()', byTimestamp())
-						xPath('/test/time/text()', byTime())
-						xPath('/test/*/complex/text()', byEquality())
-						xPath('/test/duck/@type', byEquality())
-					}
-				}
-			}</programlisting>
+							bodyMatchers {
+								xPath('/test/duck/text()', byRegex("[0-9]{3}"))
+								xPath('/test/duck/text()', byCommand('test($it)'))
+								xPath('/test/duck/xxx', byNull())
+								xPath('/test/duck/text()', byEquality())
+								xPath('/test/alpha/text()', byRegex(onlyAlphaUnicode()))
+								xPath('/test/alpha/text()', byEquality())
+								xPath('/test/number/text()', byRegex(number()))
+								xPath('/test/date/text()', byDate())
+								xPath('/test/dateTime/text()', byTimestamp())
+								xPath('/test/time/text()', byTime())
+								xPath('/test/*/complex/text()', byEquality())
+								xPath('/test/duck/@type', byEquality())
+							}
+						}
+					}</programlisting>
 <simpara>And below is an example of a YAML contract with XML request and response bodies:</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">include::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml</programlisting>
 <simpara>Here is an example of an automatically generated test for XML response body:</simpara>
@@ -8903,7 +9068,7 @@ example:</simpara>
 		messageFrom('input')
 		// has the following body
 		messageBody([
-		        bookName: 'foo'
+				bookName: 'foo'
 		])
 		// and the following headers
 		messageHeaders {
@@ -8913,7 +9078,7 @@ example:</simpara>
 	outputMessage {
 		sentTo('output')
 		body([
-		        bookName: 'foo'
+				bookName: 'foo'
 		])
 		headers {
 			header('BOOK-NAME', 'foo')
@@ -8966,24 +9131,24 @@ use those paradigms in messaging. In addition, Spring Cloud Contract Verifier al
 provides the <literal>consumer</literal> and <literal>producer</literal> methods, as presented in the following example
 (note that you can use either <literal>$</literal> or <literal>value</literal> methods to provide <literal>consumer</literal> and <literal>producer</literal>
 parts):</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Contract.make {
-	label 'some_label'
-	input {
-		messageFrom value(consumer('jms:output'), producer('jms:input'))
-		messageBody([
-				bookName: 'foo'
-		])
-		messageHeaders {
-			header('sample', 'header')
-		}
-	}
-	outputMessage {
-		sentTo $(consumer('jms:input'), producer('jms:output'))
-		body([
-				bookName: 'foo'
-		])
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">					Contract.make {
+						label 'some_label'
+						input {
+							messageFrom value(consumer('jms:output'), producer('jms:input'))
+							messageBody([
+									bookName: 'foo'
+							])
+							messageHeaders {
+								header('sample', 'header')
+							}
+						}
+						outputMessage {
+							sentTo $(consumer('jms:input'), producer('jms:output'))
+							body([
+									bookName: 'foo'
+							])
+						}
+					}</programlisting>
 </section>
 <section xml:id="contract-dsl-common">
 <title>Common</title>
@@ -9003,25 +9168,25 @@ following example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">import org.springframework.cloud.contract.spec.Contract
 
 [
-        Contract.make {
-            name("should post a user")
-            request {
-                method 'POST'
-                url('/users/1')
-            }
-            response {
-                status OK()
-            }
-        },
-        Contract.make {
-            request {
-                method 'POST'
-                url('/users/2')
-            }
-            response {
-                status OK()
-            }
-        }
+	Contract.make {
+		name("should post a user")
+		request {
+			method 'POST'
+			url('/users/1')
+		}
+		response {
+			status OK()
+		}
+	},
+	Contract.make {
+		request {
+			method 'POST'
+			url('/users/2')
+		}
+		response {
+			status OK()
+		}
+	}
 ]</programlisting>
 </para>
 </formalpara>
@@ -9139,7 +9304,6 @@ testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'</programlisti
 <programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -9164,24 +9328,26 @@ public abstract class FraudBaseWithWebAppSetup {
 	@Rule
 	public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
 
-	@Rule public TestName testName = new TestName();
+	@Rule
+	public TestName testName = new TestName();
 
 	@Autowired
 	private WebApplicationContext context;
 
 	@Before
 	public void setup() {
-	RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(this.context)
-			.apply(documentationConfiguration(this.restDocumentation))
-			.alwaysDo(document(getClass().getSimpleName() + "_" + testName.getMethodName()))
-			.build());
+		RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(this.context)
+				.apply(documentationConfiguration(this.restDocumentation))
+				.alwaysDo(document(
+						getClass().getSimpleName() + "_" + testName.getMethodName()))
+				.build());
 	}
 
 	protected void assertThatRejectionReasonIsNull(Object rejectionReason) {
 		assert rejectionReason == null;
 	}
-}
-// end::base_class[]</programlisting>
+
+}</programlisting>
 <simpara>In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:</simpara>
 <programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
 
@@ -9189,6 +9355,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -9202,17 +9369,19 @@ public abstract class FraudBaseWithStandaloneSetup {
 	@Rule
 	public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
 
-	@Rule public TestName testName = new TestName();
+	@Rule
+	public TestName testName = new TestName();
 
 	@Before
 	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders.standaloneSetup(new FraudDetectionController())
+		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders
+				.standaloneSetup(new FraudDetectionController())
 				.apply(documentationConfiguration(this.restDocumentation))
-				.alwaysDo(document(getClass().getSimpleName() + "_" + testName.getMethodName())));
+				.alwaysDo(document(
+						getClass().getSimpleName() + "_" + testName.getMethodName())));
 	}
 
-}
-// end::base_class[]</programlisting>
+}</programlisting>
 <tip>
 <simpara>You don&#8217;t need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.</simpara>
 </tip>
@@ -9516,7 +9685,7 @@ structure converter. The following code listing shows the <literal>ContractConve
  * Converter to be used to convert FROM {@link File} TO {@link Contract}
  * and from {@link Contract} to {@code T}
  *
- * @param &lt;T&gt; - type to which we want to convert the contract
+ * @param &lt;T &gt;     - type to which we want to convert the contract
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
@@ -9622,7 +9791,7 @@ set a <literal>metaData</literal> entry in the Pact file, with key <literal>sent
               "combine": "AND"
             }
           },
-          "body" : {
+          "body": {
             "$.clientId": {
               "matchers": [
                 {
@@ -9793,14 +9962,30 @@ current Pact version that you use.</simpara>
 way the verifier builds Java tests, you can register your own implementation.</simpara>
 <simpara>The <literal>SingleTestGenerator</literal> interface lets you register your own implementation.  The
 following code listing shows the <literal>SingleTestGenerator</literal> interface:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">	 *
-	 * @param properties                    - properties passed to the plugin
-	 * @param listOfFiles                   - list of parsed contracts with additional metadata
-	 * @param className                     - the name of the generated test class
-	 * @param classPackage                  - the name of the package in which the test class should be stored
+<programlisting language="groovy" linenumbering="unnumbered">package org.springframework.cloud.contract.verifier.builder
+
+
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
+
+/**
+ * Builds a single test.
+ *
+ * @since 1.1.0
+ */
+trait SingleTestGenerator {
+
+	/**
+	 * Creates contents of a single test class in which all test scenarios from
+	 * the contract metadata should be placed.
+	 *
+	 * @param properties - properties passed to the plugin
+	 * @param listOfFiles - list of parsed contracts with additional metadata
+	 * @param className - the name of the generated test class
+	 * @param classPackage - the name of the package in which the test class should be stored
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
-	 * @deprecated use {@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
+	 * @deprecated use{@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
 	 */
 	@Deprecated
 	abstract String buildClass(ContractVerifierConfigProperties properties,
@@ -9810,15 +9995,18 @@ following code listing shows the <literal>SingleTestGenerator</literal> interfac
 	 * Creates contents of a single test class in which all test scenarios from
 	 * the contract metadata should be placed.
 	 *
-	 * @param properties                    - properties passed to the plugin
-	 * @param listOfFiles                   - list of parsed contracts with additional metadata
-	 * @param generatedClassData            - information about the generated class
+	 * @param properties - properties passed to the plugin
+	 * @param listOfFiles - list of parsed contracts with additional metadata
+	 * @param generatedClassData - information about the generated class
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 */
 	String buildClass(ContractVerifierConfigProperties properties,
 			Collection&lt;ContractMetadata&gt; listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		return buildClass(properties, listOfFiles, generatedClassData.className, generatedClassData.classPackage, includedDirectoryRelativePath)
+		String className = generatedClassData.className
+		String classPackage = generatedClassData.classPackage
+		String path = includedDirectoryRelativePath
+		return buildClass(properties, listOfFiles, className, classPackage, path)
 	}
 
 	/**
@@ -9854,6 +10042,7 @@ own implementation of the <literal>StubGenerator</literal> interface. The follow
 <programlisting language="groovy" linenumbering="unnumbered">package org.springframework.cloud.contract.verifier.converter
 
 import groovy.transform.CompileStatic
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
@@ -9866,18 +10055,18 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 interface StubGenerator {
 
 	/**
-	 * Returns {@code true} if the converter can handle the file to convert it into a stub.
+	 * @return {@code true} if the converter can handle the file to convert it into a stub.
 	 */
 	boolean canHandleFileName(String fileName)
 
 	/**
-	 * Returns the collection of converted contracts into stubs. One contract can
+	 * @return the collection of converted contracts into stubs. One contract can
 	 * result in multiple stubs.
 	 */
 	Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content)
 
 	/**
-	 * Returns the name of the converted stub file. If you have multiple contracts
+	 * @return the name of the converted stub file. If you have multiple contracts
 	 * in a single file then a prefix will be added to the generated file. If you
 	 * provide the {@link Contract#name} field then that field will override the
 	 * generated file name.
@@ -9960,17 +10149,19 @@ class MocoHttpServerStub implements HttpServerStub {
 	@Override
 	HttpServerStub registerMappings(Collection&lt;File&gt; stubFiles) {
 		List&lt;RunnerSetting&gt; settings = stubFiles.findAll { it.name.endsWith("json") }
-				.collect {
+			.collect {
 			log.info("Trying to parse [${it.name}]")
 			try {
-				return RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).build()
-			} catch (Exception e) {
+				return RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).
+					build()
+			}
+			catch (Exception e) {
 				log.warn("Exception occurred while trying to parse file [${it.name}]", e)
 				return null
 			}
 		}.findAll { it }
 		this.runner = JsonRunner.newJsonRunnerWithSetting(settings,
-				HttpArgs.httpArgs().withPort(this.port).build())
+			HttpArgs.httpArgs().withPort(this.port).build())
 		this.runner.run()
 		this.started = true
 		return this
@@ -10172,6 +10363,12 @@ public class WiremockForDocsTests {
 	@Autowired
 	private Service service;
 
+	@Before
+	public void setup() {
+		this.service.setBase("http://localhost:"
+				+ this.environment.getProperty("wiremock.server.port"));
+	}
+
 	// Using the WireMock APIs in the normal way:
 	@Test
 	public void contextLoads() throws Exception {
@@ -10182,8 +10379,7 @@ public class WiremockForDocsTests {
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
-}
-// end::wiremock_test2[]</programlisting>
+}</programlisting>
 <simpara>To start the stub server on a different port use (for example),
 <literal>@AutoConfigureWireMock(port=9999)</literal>. For a random port, use a value of <literal>0</literal>. The stub
 server port can be bound in the test application context with the "wiremock.server.port"
@@ -10253,14 +10449,14 @@ public class WiremockForDocsClassRuleTests {
 	public static WireMockClassRule wiremock = new WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
 
+	// A service that calls out over HTTP to wiremock's port
+	@Autowired
+	private Service service;
+
 	@Before
 	public void setup() {
 		this.service.setBase("http://localhost:" + wiremock.port());
 	}
-
-	// A service that calls out over HTTP to wiremock's port
-	@Autowired
-	private Service service;
 
 	// Using the WireMock APIs in the normal way:
 	@Test
@@ -10272,8 +10468,7 @@ public class WiremockForDocsClassRuleTests {
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
-}
-// end::wiremock_test2[]</programlisting>
+}</programlisting>
 <simpara>The <literal>@ClassRule</literal> means that the server shuts down after all the methods in this class
 have been run.</simpara>
 </section>

@@ -268,7 +268,7 @@
 <p><b>Description</b>:</p>
       
 <div>From the provided directory with contracts generates the acceptance
-tests on the producer side</div>
+tests on the producer side.</div>
       
 <p><b>Attributes</b>:</p>
       
@@ -330,16 +330,12 @@ turned on explicitly will be disabled.<br /><b>Default value is</b>: <tt>false</
             
 <td>A way to override any base class mappings. The keys are regular
 expressions on the package name of the contract and the values FQN
-to a base class for that given expression. <br />
-<br />
- Example of a mapping <br />
-<br />
- <tt>.*.com.example.v1..*</tt> -&gt;
-<tt>com.example.SomeBaseClass</tt> <br />
-<br />
- When a contract's package matches the provided regular expression
-then extending class will be the one provided in the map - in this
-case <tt>com.example.SomeBaseClass</tt><br /><b>User property is</b>: <tt>baseClassMappings</tt>.<br /></td>
+to a base class for that given expression. Example of a mapping
+<tt>.*.com.example.v1..*</tt> -&gt;
+<tt>com.example.SomeBaseClass</tt> When a contract's package
+matches the provided regular expression then extending class will
+be the one provided in the map - in this case
+<tt>com.example.SomeBaseClass</tt>.<br /><b>User property is</b>: <tt>baseClassMappings</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -383,7 +379,7 @@ case <tt>com.example.SomeBaseClass</tt><br /><b>User property is</b>: <tt>baseCl
             
 <td><tt>-</tt></td>
             
-<td>Picks the mode in which stubs will be found and registered<br /><b>Default value is</b>: <tt>CLASSPATH</tt>.<br /><b>User property is</b>: <tt>contractsMode</tt>.<br /></td>
+<td>Picks the mode in which stubs will be found and registered.<br /><b>Default value is</b>: <tt>CLASSPATH</tt>.<br /><b>User property is</b>: <tt>contractsMode</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -396,11 +392,10 @@ case <tt>com.example.SomeBaseClass</tt><br /><b>User property is</b>: <tt>baseCl
             
 <td>The path in the JAR with all the contracts where contracts for this
 particular service lay. If not provided will be resolved to
-<tt>groupid/artifactid</tt>. Example: <br />
-<br />
- If <tt>groupid</tt> is <tt>com.example</tt> and
-<tt>artifactid</tt> is <tt>service</tt> then the resolved
-path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>contractsPath</tt>.<br /></td>
+<tt>groupid/artifactid</tt>. Example: If <tt>groupid</tt>
+is <tt>com.example</tt> and <tt>artifactid</tt> is
+<tt>service</tt> then the resolved path will be
+<tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>contractsPath</tt>.<br /></td>
           </tr>
           
 <tr class="b">
@@ -412,7 +407,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td><tt>-</tt></td>
             
 <td>Map of properties that can be passed to custom
-<tt>StubDownloaderBuilder</tt><br /><b>User property is</b>: <tt>contractsProperties</tt>.<br /></td>
+<tt>StubDownloaderBuilder</tt>.<br /><b>User property is</b>: <tt>contractsProperties</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -459,7 +454,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td>The URL from which a contracts should get downloaded. If not
 provided but artifactid / coordinates notation was provided then
 the current Maven's build repositories will be taken into
-consideration<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.<br /></td>
+consideration.<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -493,7 +488,7 @@ consideration<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.<br 
 <td><tt>-</tt></td>
             
 <td>If set to <tt>false</tt> will NOT delete stubs from a temporary
-folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>deleteStubsAfterTest</tt>.<br /></td>
+folder after running tests.<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>deleteStubsAfterTest</tt>.<br /></td>
           </tr>
           
 <tr class="b">
@@ -504,7 +499,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
             
 <td><tt>-</tt></td>
             
-<td>Patterns that should not be taken into account for processing<br /></td>
+<td>Patterns that should not be taken into account for processing.<br /></td>
           </tr>
           
 <tr class="a">
@@ -538,7 +533,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td><tt>-</tt></td>
             
 <td>Patterns for which Spring Cloud Contract Verifier should generate
-@Ignored tests<br /></td>
+@Ignored tests.<br /></td>
           </tr>
           
 <tr class="b">
@@ -549,7 +544,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
             
 <td><tt>-</tt></td>
             
-<td>Imports that should be added to generated tests<br /></td>
+<td>Imports that should be added to generated tests.<br /></td>
           </tr>
           
 <tr class="a">
@@ -560,7 +555,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
             
 <td><tt>-</tt></td>
             
-<td>Patterns that should be taken into account for processing<br /><b>User property is</b>: <tt>includedFiles</tt>.<br /></td>
+<td>Patterns that should be taken into account for processing.<br /><b>User property is</b>: <tt>includedFiles</tt>.<br /></td>
           </tr>
           
 <tr class="b">
@@ -645,7 +640,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
             
 <td><tt>-</tt></td>
             
-<td>Static imports that should be added to generated tests<br /></td>
+<td>Static imports that should be added to generated tests.<br /></td>
           </tr>
           
 <tr class="a">
@@ -704,16 +699,12 @@ turned on explicitly will be disabled.</div>
         
 <div>A way to override any base class mappings. The keys are regular
 expressions on the package name of the contract and the values FQN
-to a base class for that given expression. <br />
-<br />
- Example of a mapping <br />
-<br />
- <tt>.*.com.example.v1..*</tt> -&gt;
-<tt>com.example.SomeBaseClass</tt> <br />
-<br />
- When a contract's package matches the provided regular expression
-then extending class will be the one provided in the map - in this
-case <tt>com.example.SomeBaseClass</tt></div>
+to a base class for that given expression. Example of a mapping
+<tt>.*.com.example.v1..*</tt> -&gt;
+<tt>com.example.SomeBaseClass</tt> When a contract's package
+matches the provided regular expression then extending class will
+be the one provided in the map - in this case
+<tt>com.example.SomeBaseClass</tt>.</div>
         
 <ul>
           
@@ -761,7 +752,7 @@ case <tt>com.example.SomeBaseClass</tt></div>
         </ul><hr />
 <p><b><a name="contractsMode">contractsMode</a>:</b></p>
         
-<div>Picks the mode in which stubs will be found and registered</div>
+<div>Picks the mode in which stubs will be found and registered.</div>
         
 <ul>
           
@@ -777,11 +768,10 @@ case <tt>com.example.SomeBaseClass</tt></div>
         
 <div>The path in the JAR with all the contracts where contracts for this
 particular service lay. If not provided will be resolved to
-<tt>groupid/artifactid</tt>. Example: <br />
-<br />
- If <tt>groupid</tt> is <tt>com.example</tt> and
-<tt>artifactid</tt> is <tt>service</tt> then the resolved
-path will be <tt>/com/example/artifactid</tt></div>
+<tt>groupid/artifactid</tt>. Example: If <tt>groupid</tt>
+is <tt>com.example</tt> and <tt>artifactid</tt> is
+<tt>service</tt> then the resolved path will be
+<tt>/com/example/artifactid</tt></div>
         
 <ul>
           
@@ -794,7 +784,7 @@ path will be <tt>/com/example/artifactid</tt></div>
 <p><b><a name="contractsProperties">contractsProperties</a>:</b></p>
         
 <div>Map of properties that can be passed to custom
-<tt>StubDownloaderBuilder</tt></div>
+<tt>StubDownloaderBuilder</tt>.</div>
         
 <ul>
           
@@ -845,7 +835,7 @@ path will be <tt>/com/example/artifactid</tt></div>
 <div>The URL from which a contracts should get downloaded. If not
 provided but artifactid / coordinates notation was provided then
 the current Maven's build repositories will be taken into
-consideration</div>
+consideration.</div>
         
 <ul>
           
@@ -872,7 +862,7 @@ consideration</div>
 <div><b>Deprecated.</b> - with 2.1.0 this option is redundant</div>
         
 <div>If <tt>true</tt> then will not assert whether a stub / contract
-JAR was downloaded from local or remote location</div>
+JAR was downloaded from local or remote location.</div>
         
 <ul>
           
@@ -887,7 +877,7 @@ JAR was downloaded from local or remote location</div>
 <p><b><a name="deleteStubsAfterTest">deleteStubsAfterTest</a>:</b></p>
         
 <div>If set to <tt>false</tt> will NOT delete stubs from a temporary
-folder after running tests</div>
+folder after running tests.</div>
         
 <ul>
           
@@ -901,7 +891,7 @@ folder after running tests</div>
         </ul><hr />
 <p><b><a name="excludedFiles">excludedFiles</a>:</b></p>
         
-<div>Patterns that should not be taken into account for processing</div>
+<div>Patterns that should not be taken into account for processing.</div>
         
 <ul>
           
@@ -936,7 +926,7 @@ folder after running tests</div>
 <p><b><a name="ignoredFiles">ignoredFiles</a>:</b></p>
         
 <div>Patterns for which Spring Cloud Contract Verifier should generate
-@Ignored tests</div>
+@Ignored tests.</div>
         
 <ul>
           
@@ -946,7 +936,7 @@ folder after running tests</div>
         </ul><hr />
 <p><b><a name="imports">imports</a>:</b></p>
         
-<div>Imports that should be added to generated tests</div>
+<div>Imports that should be added to generated tests.</div>
         
 <ul>
           
@@ -956,7 +946,7 @@ folder after running tests</div>
         </ul><hr />
 <p><b><a name="includedFiles">includedFiles</a>:</b></p>
         
-<div>Patterns that should be taken into account for processing</div>
+<div>Patterns that should be taken into account for processing.</div>
         
 <ul>
           
@@ -1050,7 +1040,7 @@ last folders to and attach <tt>Base</tt> to its name.</div>
         </ul><hr />
 <p><b><a name="staticImports">staticImports</a>:</b></p>
         
-<div>Static imports that should be added to generated tests</div>
+<div>Static imports that should be added to generated tests.</div>
         
 <ul>
           

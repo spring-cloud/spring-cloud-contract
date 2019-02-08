@@ -264,44 +264,53 @@
 <h3 id="project_configuration_for_spring_cloud_contract_verifier_with_junit_tests_and_stub_publishing">Project configuration for Spring Cloud Contract Verifier with JUnit tests and stub publishing</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">            <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${spring-cloud-verifier-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;executions&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;execution&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;goals&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>convert<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>generateStubs<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>generateTests<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;/goals&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;contractsDirectory&gt;</span>src/test/contracts<span style="color:#070;font-weight:bold">&lt;/contractsDirectory&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;basePackageForTests&gt;</span>com.blogspot.toomuchcoding.frauddetection<span style="color:#070;font-weight:bold">&lt;/basePackageForTests&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;testMode&gt;</span>MOCKMVC<span style="color:#070;font-weight:bold">&lt;/testMode&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;testFramework&gt;</span>JUNIT<span style="color:#070;font-weight:bold">&lt;/testFramework&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;classifier&gt;</span>stubs<span style="color:#070;font-weight:bold">&lt;/classifier&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;nameSuffixForTests&gt;</span>Test<span style="color:#070;font-weight:bold">&lt;/nameSuffixForTests&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;ruleClassForTests&gt;</span>org.junit.rules.ErrorCollector<span style="color:#070;font-weight:bold">&lt;/ruleClassForTests&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;staticImports&gt;</span>
-                                <span style="color:#070;font-weight:bold">&lt;staticImport&gt;</span>com.blogspot.toomuchcoding.frauddetection.matchers.CustomMatchers.*<span style="color:#070;font-weight:bold">&lt;/staticImport&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;/staticImports&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;imports&gt;</span>
-                                <span style="color:#070;font-weight:bold">&lt;import&gt;</span>com.blogspot.toomuchcoding.frauddetection.matchers.CustomMatchers<span style="color:#070;font-weight:bold">&lt;/import&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;/imports&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;ignoredFiles&gt;</span>
-                                <span style="color:#070;font-weight:bold">&lt;ignoredFile&gt;</span>broken**<span style="color:#070;font-weight:bold">&lt;/ignoredFile&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;/ignoredFiles&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;excludedFiles&gt;</span>
-                                <span style="color:#070;font-weight:bold">&lt;param&gt;</span>shouldMarkClientAsFraud.groovy<span style="color:#070;font-weight:bold">&lt;/param&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;/excludedFiles&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;/execution&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/executions&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>com.blogspot.toomuchcoding.frauddetection.BaseAccurest<span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${spring-cloud-verifier-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;executions&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;execution&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;goals&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>convert<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>generateStubs<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>generateTests<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;/goals&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;contractsDirectory&gt;</span>src/test/contracts<span style="color:#070;font-weight:bold">&lt;/contractsDirectory&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;basePackageForTests&gt;</span>
+                                                                com.blogspot.toomuchcoding.frauddetection
+                                                        <span style="color:#070;font-weight:bold">&lt;/basePackageForTests&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;testMode&gt;</span>MOCKMVC<span style="color:#070;font-weight:bold">&lt;/testMode&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;testFramework&gt;</span>JUNIT<span style="color:#070;font-weight:bold">&lt;/testFramework&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;classifier&gt;</span>stubs<span style="color:#070;font-weight:bold">&lt;/classifier&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;nameSuffixForTests&gt;</span>Test<span style="color:#070;font-weight:bold">&lt;/nameSuffixForTests&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;ruleClassForTests&gt;</span>org.junit.rules.ErrorCollector
+                                                        <span style="color:#070;font-weight:bold">&lt;/ruleClassForTests&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;staticImports&gt;</span>
+                                                                <span style="color:#070;font-weight:bold">&lt;staticImport&gt;</span>
+                                                                        com.blogspot.toomuchcoding.frauddetection.matchers.CustomMatchers.*
+                                                                <span style="color:#070;font-weight:bold">&lt;/staticImport&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;/staticImports&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;imports&gt;</span>
+                                                                <span style="color:#070;font-weight:bold">&lt;import&gt;</span>
+                                                                        com.blogspot.toomuchcoding.frauddetection.matchers.CustomMatchers
+                                                                <span style="color:#070;font-weight:bold">&lt;/import&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;/imports&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;ignoredFiles&gt;</span>
+                                                                <span style="color:#070;font-weight:bold">&lt;ignoredFile&gt;</span>broken**<span style="color:#070;font-weight:bold">&lt;/ignoredFile&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;/ignoredFiles&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;excludedFiles&gt;</span>
+                                                                <span style="color:#070;font-weight:bold">&lt;param&gt;</span>shouldMarkClientAsFraud.groovy<span style="color:#070;font-weight:bold">&lt;/param&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;/excludedFiles&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/execution&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/executions&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>
+                                                com.blogspot.toomuchcoding.frauddetection.BaseAccurest
+                                        <span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
 </div>
 </div>
 </div>
@@ -309,26 +318,23 @@
 <h3 id="base_test_class">Base Test class</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/**
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/*
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Copyright 2013-2019 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */</span>
-<span style="color:#080;font-weight:bold">package</span> <span style="color:#707;font-weight:bold">com.blogspot.toomuchcoding.frauddetection</span>;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span><span style="color:#080;font-weight:bold">package</span> <span style="color:#707;font-weight:bold">com.blogspot.toomuchcoding.frauddetection</span>;
 
 <span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">io.restassured.module.mockmvc.RestAssuredMockMvc</span>;
-
 <span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">org.junit.Before</span>;
 
 <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">BaseAccurest</span> {
@@ -346,23 +352,21 @@
 <h3 id="sample_additional_matcher">Sample additional matcher</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/**
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/*
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Copyright 2013-2019 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */</span>
-<span style="color:#080;font-weight:bold">package</span> <span style="color:#707;font-weight:bold">com.blogspot.toomuchcoding.frauddetection.matchers</span>;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span><span style="color:#080;font-weight:bold">package</span> <span style="color:#707;font-weight:bold">com.blogspot.toomuchcoding.frauddetection.matchers</span>;
 
 <span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">org.junit.Assert</span>;
 
@@ -380,48 +384,49 @@
 <h3 id="sample_contract_using_matcher">Sample contract using matcher</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/**
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/*
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Copyright 2013-2019 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */</span>
-org.springframework.cloud.contract.spec.Contract.make {
-                                request {
-                                        method <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">PUT</span><span style="color:#710">'</span></span>
-                                        url <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">/fraudcheck</span><span style="color:#710">'</span></span>
-                                        body(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#710">&quot;</span></span><span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span> org.springframework.cloud.contract.spec.Contract.make {
+        request {
+                method <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">PUT</span><span style="color:#710">'</span></span>
+                url <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">/fraudcheck</span><span style="color:#710">'</span></span>
+                body(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#710">&quot;</span></span><span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">
                                                 {
-                                                </span><span style="color:#710">&quot;</span></span>clientPesel<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">:</span><span style="color:#710">&quot;</span></span><span style="color:#F00;background-color:#FAA">$</span>{value(consumer(regex(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">[0-9]{10}</span><span style="color:#710">'</span></span>)), producer(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">1234567890</span><span style="color:#710">'</span></span>))}<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">,
+                                                </span><span style="color:#710">&quot;</span></span>clientPesel<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">:</span><span style="color:#710">&quot;</span></span><span style="color:#F00;background-color:#FAA">$</span>{
+                        value(consumer(regex(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">[0-9]{10}</span><span style="color:#710">'</span></span>)), producer(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">1234567890</span><span style="color:#710">'</span></span>))
+                }<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">,
                                                 </span><span style="color:#710">&quot;</span></span>loanAmount<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">:123.123
                                                 }
                                         </span><span style="color:#710">&quot;</span></span><span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#710">&quot;</span></span>
-                                        )
-                                        headers {
-                                                header(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">Content-Type</span><span style="color:#710">'</span></span>, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">application/vnd.fraud.v1+json</span><span style="color:#710">'</span></span>)
-                                        }
+                )
+                headers {
+                        header(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">Content-Type</span><span style="color:#710">'</span></span>, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">application/vnd.fraud.v1+json</span><span style="color:#710">'</span></span>)
+                }
 
-                                }
-                        response {
-                                status OK()
-                                body(
-                                                fraudCheckStatus: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">OK</span><span style="color:#710">&quot;</span></span>,
-                                                rejectionReason: <span style="color:#F00;background-color:#FAA">$</span>(consumer(<span style="color:#069">null</span>), producer(execute(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">assertThatRejectionReasonIsNull($it)</span><span style="color:#710">'</span></span>)))
-                                )
-                                headers {
-                                         header(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">Content-Type</span><span style="color:#710">'</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">application/vnd.fraud.v1+json</span><span style="color:#710">'</span></span>)
-                                }
-                        }
+        }
+        response {
+                status OK()
+                body(
+                                fraudCheckStatus: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">OK</span><span style="color:#710">&quot;</span></span>,
+                                rejectionReason: <span style="color:#F00;background-color:#FAA">$</span>(consumer(<span style="color:#069">null</span>),
+                                                producer(execute(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">assertThatRejectionReasonIsNull($it)</span><span style="color:#710">'</span></span>)))
+                )
+                headers {
+                        header(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">Content-Type</span><span style="color:#710">'</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">application/vnd.fraud.v1+json</span><span style="color:#710">'</span></span>)
+                }
+        }
 
 }</code></pre>
 </div>

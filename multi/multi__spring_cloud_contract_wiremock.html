@@ -17,6 +17,12 @@ your test. The following code shows an example:</p><pre class="programlisting"><
 	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
 
+	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.setBase(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span>
+				+ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"wiremock.server.port"</span>));
+	}
+
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
@@ -27,8 +33,7 @@ your test. The following code shows an example:</p><pre class="programlisting"><
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
-}
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>To start the stub server on a different port use (for example),
+}</pre><p>To start the stub server on a different port use (for example),
 <code class="literal">@AutoConfigureWireMock(port=9999)</code>. For a random port, use a value of <code class="literal">0</code>. The stub
 server port can be bound in the test application context with the "wiremock.server.port"
 property. Using <code class="literal">@AutoConfigureWireMock</code> adds a bean of type <code class="literal">WiremockConfiguration</code> to
@@ -76,14 +81,14 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> WireMockClassRule wiremock = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
 
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP to wiremock's port</span>
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
+
 	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.setBase(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + wiremock.port());
 	}
-
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP to wiremock's port</span>
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
@@ -95,8 +100,7 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
-}
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
+}</pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
 have been run.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_relaxed_ssl_validation_for_rest_template" href="#_relaxed_ssl_validation_for_rest_template"></a>11.4&nbsp;Relaxed SSL Validation for Rest Template</h2></div></div></div><p>WireMock lets you stub a "secure" server with an "https" URL protocol. If your
 application wants to contact that stub server in an integration test, it will find that
 the SSL certificates are not valid (the usual problem with self-installed certificates).

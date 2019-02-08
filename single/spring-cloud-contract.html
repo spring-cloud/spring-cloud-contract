@@ -125,19 +125,19 @@ org.springframework.cloud.contract.spec.Contract.make {
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    "rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  headers</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    Content-Type</span>: application/json;charset=UTF-<span class="hl-number">8</span></pre><p>In the case of messaging, you can define:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">The input and the output messages can be defined (taking into account from and where it
-was sent, the message body, and the header).</li><li class="listitem">The methods that should be called after the message is received.</li><li class="listitem">The methods that, when called, should trigger a message.</li></ul></div><p>The following example shows a Camel messaging contract expressed in Groovy DSL:</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
-		messageBody([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		messageHeaders {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
-		}
-		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
-	}
-}</pre><p>The following example shows the same contract expressed in YAML:</p><pre class="programlisting">label: some_label
+was sent, the message body, and the header).</li><li class="listitem">The methods that should be called after the message is received.</li><li class="listitem">The methods that, when called, should trigger a message.</li></ul></div><p>The following example shows a Camel messaging contract expressed in Groovy DSL:</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
+					messageBody([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					messageHeaders {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+					}
+					assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
+				}
+			}</pre><p>The following example shows the same contract expressed in YAML:</p><pre class="programlisting">label: some_label
 input:
   messageFrom: jms:delete
   messageBody:
@@ -267,7 +267,23 @@ to the following in the build logs:</p><pre class="programlisting"><span class="
 formulate our expectations. That is why we write contracts.</p><p>Assume that you want to send a request containing the ID of a client company and the
 amount it wants to borrow from us. You also want to send it to the /fraudcheck url via
 the PUT method.</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (1)</span>
@@ -275,7 +291,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/fraudcheck'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (3)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (4)</span>
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"client.id"</span>: $(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{10}'</span>)),
-			   loanAmount: <span class="hl-number">99999</span>
+			   loanAmount : <span class="hl-number">99999</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (5)</span>
 			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
@@ -284,7 +300,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	response { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (6)</span>
 		status OK() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (8)</span>
-			   fraudCheckStatus: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
+			   fraudCheckStatus  : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (9)</span>
@@ -379,13 +395,12 @@ response: # (7)
 #(10) - with header `Content-Type` equal to `application/json;charset=UTF-8`</pre><p>
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_client_side" href="#_client_side"></a>2.4.4&nbsp;Client Side</h3></div></div></div><p>Spring Cloud Contract generates stubs, which you can use during client-side testing.
 You get a running WireMock instance/Messaging route that simulates the service.
-You would like to feed that instance with a proper stub definition.</p><p>At some point in time, you need to send a request to the Fraud Detection service.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response =
-		restTemplate.exchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders),
-				FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>Annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+You would like to feed that instance with a proper stub definition.</p><p>At some point in time, you need to send a request to the Fraud Detection service.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>Annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.NONE)</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {
+		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceTests {</pre><p>After that, during the tests, Spring Cloud Contract automatically finds the stubs
 (simulating the real service) in the Maven repository and exposes them on a configured
 (or random) port.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_server_side" href="#_server_side"></a>2.4.5&nbsp;Server Side</h3></div></div></div><p>Since you are developing your stub, you need to be sure that it actually resembles your
@@ -494,16 +509,31 @@ following section to your build:</p><p class="primary"><b>Maven.&nbsp;</b>
 }</pre><p>Assume that you have written a test of your new feature. If a loan application for a big
 amount is received, the system should reject that loan application with some description.</p><p><span class="strong"><strong>Write the missing implementation.</strong></span></p><p>At some point in time, you need to send a request to the Fraud Detection service. Assume
 that you need to send the request containing the ID of the client and the amount the
-client wants to borrow. You want to send it to the <code class="literal">/fraudcheck</code> url via the <code class="literal">PUT</code> method.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response =
-		restTemplate.exchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders),
-				FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>For simplicity, the port of the Fraud Detection service is set to <code class="literal">8080</code>, and the
+client wants to borrow. You want to send it to the <code class="literal">/fraudcheck</code> url via the <code class="literal">PUT</code> method.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>For simplicity, the port of the Fraud Detection service is set to <code class="literal">8080</code>, and the
 application runs on <code class="literal">8090</code>.</p><p>If you start the test at this point, it breaks, because no service currently runs on port
 <code class="literal">8080</code>.</p><p><span class="strong"><strong>Clone the Fraud Detection service repository locally.</strong></span></p><p>You can start by playing around with the server side contract. To do so, you must first
 clone it.</p><pre class="programlisting">$ git clone https://your-git-server.com/server-side.git local-http-server-repo</pre><p><span class="strong"><strong>Define the contract locally in the repo of Fraud Detection service.</strong></span></p><p>As a consumer, you need to define what exactly you want to achieve. You need to formulate
 your expectations. To do so, write the following contract:</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Place the contract under <code class="literal">src/test/resources/contracts/fraud</code> folder. The <code class="literal">fraud</code> folder
 is important because the producer&#8217;s test base class name references that folder.</p></td></tr></table></div><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (1)</span>
@@ -511,7 +541,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/fraudcheck'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (3)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (4)</span>
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"client.id"</span>: $(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{10}'</span>)),
-			   loanAmount: <span class="hl-number">99999</span>
+			   loanAmount : <span class="hl-number">99999</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (5)</span>
 			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
@@ -520,7 +550,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	response { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (6)</span>
 		status OK() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (8)</span>
-			   fraudCheckStatus: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
+			   fraudCheckStatus  : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
 		])
 		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (9)</span>
@@ -681,8 +711,8 @@ Application service</code>):</p><p>Add the <code class="literal">Spring Cloud Co
 collaborators. (Optional step) Because you&#8217;re playing with the collaborators offline, you
 can also provide the offline work switch (<code class="literal">StubRunnerProperties.StubsMode.LOCAL</code>).</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.NONE)</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {
+		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceTests {</pre><p>Now, when you run your tests, you see something like this:</p><pre class="programlisting"><span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.403</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
 <span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.438</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is <span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT
 <span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.439</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT using remote repositories []
@@ -718,12 +748,29 @@ make the name of the base test class. In our case, the contracts were placed und
 the <code class="literal">contracts</code> folder, pick only one, which should be <code class="literal">fraud</code>. Add the <code class="literal">Base</code> suffix and
 capitalize <code class="literal">fraud</code>. That gives you the <code class="literal">FraudBase</code> test class name.</p></td></tr></table></div><p>All the generated tests extend that class. Over there, you can set up your Spring Context
 or whatever is necessary. In this case, use <a class="link" href="http://rest-assured.io/" target="_top">Rest Assured MVC</a> to
-start the server side <code class="literal">FraudDetectionController</code>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
+start the server side <code class="literal">FraudDetectionController</code>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> FraudBase {
+
 	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> FraudDetectionController(),
@@ -745,6 +792,7 @@ start the server side <code class="literal">FraudDetectionController</code>.</p>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> assertThatRejectionReasonIsNull(Object rejectionReason) {
 		assert rejectionReason == null;
 	}
+
 }</pre><p>Now, if you run the <code class="literal">./mvnw clean install</code>, you get something like this:</p><pre class="programlisting">Results :
 
 Tests in error:
@@ -898,8 +946,9 @@ consumer you will break with your local changes.</p><div class="section"><div cl
 expectations of the 3 consumers (<code class="literal">client1</code>, <code class="literal">client2</code> and <code class="literal">client3</code>). Expectations are the standard Groovy DSL
 contract files as described throughout this documentation. This repository has to produce a JAR file that maps
 one to one to the contents of the repo.</p><p>Example of a <code class="literal">pom.xml</code> inside the <code class="literal">server</code> folder.</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+		 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span>
+		 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;modelVersion&gt;</span>4.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/modelVersion&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
@@ -913,14 +962,16 @@ one to one to the contents of the repo.</p><p>Example of a <code class="literal"
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.boot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-boot-starter-parent<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.1.2.RELEASE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;relativePath /&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;relativePath/&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/parent&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;properties&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project.build.sourceEncoding&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;java.version&gt;</span>1.8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/java.version&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-contract.version&gt;</span>2.1.1.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-contract.version&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-release.version&gt;</span>Greenwich.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-release.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-contract.version&gt;</span>2.1.1.BUILD-SNAPSHOT
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-contract.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-release.version&gt;</span>Greenwich.BUILD-SNAPSHOT
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-release.version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;excludeBuildFolders&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/excludeBuildFolders&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/properties&gt;</span>
 
@@ -1007,7 +1058,8 @@ one to one to the contents of the repo.</p><p>Example of a <code class="literal"
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project&gt;</span></pre><p>As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run <code class="literal">mvn clean install -DskipTests</code> to locally install
  stubs of the producer project.</p><p>The <code class="literal">pom.xml</code> in the root folder can look like this:</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+		 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span>
 		 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;modelVersion&gt;</span>4.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/modelVersion&gt;</span>
 
@@ -1016,7 +1068,9 @@ Those poms are necessary for the consumer side to run <code class="literal">mvn 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>0.0.1-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;description&gt;</span>Contains all the Spring Cloud Contracts, well, contracts. JAR used by the producers to generate tests and stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/description&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;description&gt;</span>Contains all the Spring Cloud Contracts, well, contracts. JAR used by the
+		producers to generate tests and stubs
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/description&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;properties&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project.build.sourceEncoding&gt;</span>
@@ -1046,8 +1100,8 @@ Those poms are necessary for the consumer side to run <code class="literal">mvn 
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugins&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/build&gt;</span>
 
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project&gt;</span></pre><p>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;assembly</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"</span>
-		  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project&gt;</span></pre><p>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;assembly</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+		  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"</span>
 		  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>project<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;formats&gt;</span>
@@ -1078,7 +1132,9 @@ of the JAR containing the contracts:</p><pre class="programlisting"><span xmlns:
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsMode&gt;</span>REMOTE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsMode&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsRepositoryUrl&gt;</span>http://link/to/your/nexus/or/artifactory/or/sth<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsRepositoryUrl&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsRepositoryUrl&gt;</span>
+			http://link/to/your/nexus/or/artifactory/or/sth
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsRepositoryUrl&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractDependency&gt;</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example.standalone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
@@ -1664,7 +1720,7 @@ name of the base class for the matched contract. You have to provide a list call
 <code class="literal">contractPackageRegex</code> to <code class="literal">baseClassFQN</code> mapping. Consider the following example:</p><pre class="programlisting">baseClassForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example.FooBase"</span>
 baseClassMappings {
 	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/com/.*'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.ComBase'</span>)
-	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/bar/.*'</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.BarBase'</span>)
+	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/bar/.*'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.BarBase'</span>)
 }</pre><p>Let&#8217;s assume that you have contracts under
  - <code class="literal">src/test/resources/contract/com/</code>
  - <code class="literal">src/test/resources/contract/foo/</code></p><p>By providing the <code class="literal">baseClassForTests</code>, we have a fallback in case mapping did not succeed.
@@ -2215,20 +2271,20 @@ meanings for different messaging implementations. For <span class="strong"><stro
 first resolved as a <code class="literal">destination</code> of a channel. Then, if there is no such <code class="literal">destination</code>
 it is resolved as a channel name. For <span class="strong"><strong>Camel</strong></span>, that&#8217;s a certain component (for example,
 <code class="literal">jms</code>).</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_1_no_input_message" href="#_scenario_1_no_input_message"></a>5.3.1&nbsp;Scenario 1: No Input Message</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookReturnedTriggered()'</span>)
-	}
-	outputMessage {
-		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'activemq:output'</span>)
-		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{ "bookName" : "foo" }'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
-		headers {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
-			messagingContentType(applicationJson())
-		}
-	}
-}</pre><p>
+</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookReturnedTriggered()'</span>)
+				}
+				outputMessage {
+					sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'activemq:output'</span>)
+					body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{ "bookName" : "foo" }'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+					headers {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+						messagingContentType(applicationJson())
+					}
+				}
+			}</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">label: some_label
 input:
@@ -2240,7 +2296,7 @@ outputMessage:
   headers:
     BOOK-NAME: foo
     contentType: application/json</pre><p>
-</p><p>The following JUnit test is created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</p><p>The following JUnit test is created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// when:</span>
   bookReturnedTriggered();
 
@@ -2254,7 +2310,7 @@ outputMessage:
  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span> when:
   bookReturnedTriggered()
 
@@ -2268,27 +2324,27 @@ outputMessage:
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>)
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_2_output_triggered_by_input" href="#_scenario_2_output_triggered_by_input"></a>5.3.2&nbsp;Scenario 2: Output Triggered by Input</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>)
-		messageBody([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		messageHeaders {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
-		}
-	}
-	outputMessage {
-		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>)
-		body([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		headers {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
-		}
-	}
-}</pre><p>
+</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>)
+					messageBody([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					messageHeaders {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+					}
+				}
+				outputMessage {
+					sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>)
+					body([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					headers {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+					}
+				}
+			}</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">label: some_label
 input:
@@ -2303,7 +2359,7 @@ outputMessage:
     bookName: foo
   headers:
     BOOK-NAME: foo</pre><p>
-</p><p>The following JUnit test is created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</p><p>The following JUnit test is created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>bookName\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span>
@@ -2321,7 +2377,7 @@ outputMessage:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\
 </span>given:
    ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{"bookName":"foo"}'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>,
@@ -2339,19 +2395,19 @@ and:
    DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
    assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_3_no_output_message" href="#_scenario_3_no_output_message"></a>5.3.3&nbsp;Scenario 3: No Output Message</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
-		messageBody([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		messageHeaders {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
-		}
-		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
-	}
-}</pre><p>
+</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
+					messageBody([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					messageHeaders {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+					}
+					assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
+				}
+			}</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">label: some_label
 input:
@@ -2361,7 +2417,7 @@ input:
   messageHeaders:
     sample: header
   assertThat: bookWasDeleted()</pre><p>
-</p><p>The following JUnit test is created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</p><p>The following JUnit test is created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>bookName\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span>
@@ -2373,7 +2429,7 @@ input:
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
  bookWasDeleted();
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span>given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 		\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'\'\'{"bookName":"foo"}\'\'\',
@@ -2682,7 +2738,7 @@ case might be starting WireMock for the given artifact id, on an HTTPs port. Exa
 	}
 }</pre><p>
 </p><p>You can then reuse it via the annotation</p><pre class="programlisting">@AutoConfigureStubRunner(mappingsOutputFolder = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappings/"</span>,
-			httpServerStubConfigurer = HttpsForFraudDetection)</pre><p>Whenever an https port is found, it will take precedence over the http one.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_running_stubs" href="#_running_stubs"></a>6.3.2&nbsp;Running stubs</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_running_using_main_app" href="#_running_using_main_app"></a>Running using main app</h4></div></div></div><p>You can set the following options to the main class:</p><pre class="programlisting">-c, --classifier                Suffix <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> the jar containing stubs (e.
+		httpServerStubConfigurer = HttpsForFraudDetection)</pre><p>Whenever an https port is found, it will take precedence over the http one.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_running_stubs" href="#_running_stubs"></a>6.3.2&nbsp;Running stubs</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_running_using_main_app" href="#_running_using_main_app"></a>Running using main app</h4></div></div></div><p>You can set the following options to the main class:</p><pre class="programlisting">-c, --classifier                Suffix <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> the jar containing stubs (e.
                                   g. <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> the stub jar would
                                   have a <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> classifier <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> stubs:
                                   foobar-stubs ). Defaults to <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span>
@@ -2745,11 +2801,20 @@ mappings available for the given server:</p><pre class="programlisting">[<span x
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"uuid"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"f9152eb9-bf77-4c38-8289-90be7d10d0d7"</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
 ...
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_messaging_stubs" href="#_messaging_stubs"></a>Messaging Stubs</h4></div></div></div><p>Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_junit_rule_and_stub_runner_junit5_extension" href="#_stub_runner_junit_rule_and_stub_runner_junit5_extension"></a>6.4&nbsp;Stub Runner JUnit Rule and Stub Runner JUnit5 Extension</h2></div></div></div><p>Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
-		.repoRoot(repoRoot())
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_messaging_stubs" href="#_messaging_stubs"></a>Messaging Stubs</h4></div></div></div><p>Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_junit_rule_and_stub_runner_junit5_extension" href="#_stub_runner_junit_rule_and_stub_runner_junit5_extension"></a>6.4&nbsp;Stub Runner JUnit Rule and Stub Runner JUnit5 Extension</h2></div></div></div><p>Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule().repoRoot(repoRoot())
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
-		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>);</pre><p>There&#8217;s also a <code class="literal">StubRunnerExtension</code> available for JUnit 5. <code class="literal">StubRunnerRule</code> and <code class="literal">StubRunnerExtension</code> work in a very
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>,
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
+		.downloadStub(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>);
+
+<em><span class="hl-annotation" style="color: gray">@BeforeClass</span></em>
+<em><span class="hl-annotation" style="color: gray">@AfterClass</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setupProps() {
+	System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.repository.root"</span>);
+	System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.classifier"</span>);
+}</pre><p>There&#8217;s also a <code class="literal">StubRunnerExtension</code> available for JUnit 5. <code class="literal">StubRunnerRule</code> and <code class="literal">StubRunnerExtension</code> work in a very
 similar fashion. After the rule/ extension is executed, Stub Runner connects to your Maven repository and for the given list of dependencies tries to:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">download them</li><li class="listitem">cache them locally</li><li class="listitem">unzip them to a temporary folder</li><li class="listitem">start a WireMock server for each Maven dependency on a random port from the provided range of ports / provided port</li><li class="listitem">feed the WireMock server with all JSON files that are valid WireMock definitions</li><li class="listitem">can also send messages (remember to pass an implementation of <code class="literal">MessageVerifier</code> interface)</li></ul></div><p>Stub Runner uses <a class="link" href="https://wiki.eclipse.org/Aether" target="_top">Eclipse Aether</a> mechanism to download the Maven dependencies.
 Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top">docs</a> for more information.</p><p>Since the <code class="literal">StubRunnerRule</code> and <code class="literal">StubRunnerExtension</code> implement the <code class="literal">StubFinder</code> they allow you to find the started stubs:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.stubrunner;
 
@@ -2759,6 +2824,11 @@ Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top"
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract;
 
+<strong class="hl-tag" style="color: blue">/**
+ * Contract for finding registered stubs.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubFinder <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> StubTrigger {
 
 	<strong class="hl-tag" style="color: blue">/**
@@ -2766,7 +2836,9 @@ Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top"
 	 * stub.
 	 * @param groupId - might be null. In that case a search only via artifactId takes
 	 * place
+	 * @param artifactId - artifact id of the stub
 	 * @return URL of a running stub or throws exception if not found
+	 * @throws StubNotFoundException in case of not finding a stub
 	 */</strong>
 	URL findStubUrl(String groupId, String artifactId) <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> StubNotFoundException;
 
@@ -2776,20 +2848,23 @@ Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top"
 	 * {@code artifactId}.
 	 * @param ivyNotation - Ivy representation of the Maven artifact
 	 * @return URL of a running stub or throws exception if not found
+	 * @throws StubNotFoundException in case of not finding a stub
 	 */</strong>
 	URL findStubUrl(String ivyNotation) <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> StubNotFoundException;
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns all running stubs
+	 * @return all running stubs
 	 */</strong>
 	RunningStubs findAllRunningStubs();
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns the list of Contracts
+	 * @return the list of Contracts
 	 */</strong>
 	Map&lt;StubConfiguration, Collection&lt;Contract&gt;&gt; getContracts();
 
-}</pre><p>Example of usage in Spock tests:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <em><span class="hl-annotation" style="color: gray">@Shared</span></em> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
+}</pre><p>Example of usage in Spock tests:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
+<em><span class="hl-annotation" style="color: gray">@Shared</span></em>
+StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.repoRoot(StubRunnerRuleSpec.getResource(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/m2repo/repository"</span>).toURI().toString())
 		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
@@ -2817,64 +2892,104 @@ def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should outp
 		def url = rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>)
 	then:
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> File(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappingsforrule"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer_${url.port}"</span>).exists()
-}</pre><p>Example of usage in JUnit tests:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> should_start_wiremock_servers() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// expect: 'WireMocks are running'</span>
-		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isNotNull();
+}</pre><p>Example of usage in JUnit tests:</p><pre class="programlisting">	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> should_start_wiremock_servers() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// expect: 'WireMocks are running'</span>
+		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>,
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isNotNull();
 		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isNotNull();
-		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isEqualTo(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>));
-		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)).isNotNull();
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
+		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isEqualTo(rule.findStubUrl(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>));
+		then(rule.findStubUrl(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>))
+						.isNotNull();
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
 		then(rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isTrue();
-		then(rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)).isTrue();
-		then(rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)).isTrue();
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and: 'Stubs were registered'</span>
-		then(httpGet(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>).toString() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/name"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>);
-		then(httpGet(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>).toString() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/name"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>);
+		then(rule.findAllRunningStubs().isPresent(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>,
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)).isTrue();
+		then(rule.findAllRunningStubs().isPresent(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>))
+						.isTrue();
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and: 'Stubs were registered'</span>
+		then(httpGet(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>).toString() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/name"</span>))
+				.isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>);
+		then(httpGet(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>).toString() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/name"</span>))
+				.isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>);
+	}
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> String httpGet(String url) <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> (InputStream stream = URI.create(url).toURL().openStream()) {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> StreamUtils.copyToString(stream, Charset.forName(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"UTF-8"</span>));
+		}
+	}
+
 }</pre><p>JUnit 5 Extension example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Visible for Junit</span>
 <em><span class="hl-annotation" style="color: gray">@RegisterExtension</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> StubRunnerExtension stubRunnerExtension = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerExtension()
-        .repoRoot(repoRoot())
-        .stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-        .downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
-        .downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)
-        .withMappingsOutputFolder(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappingsforrule"</span>);
+		.repoRoot(repoRoot()).stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>,
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
+		.downloadStub(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)
+		.withMappingsOutputFolder(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappingsforrule"</span>);
 
-<em><span class="hl-annotation" style="color: gray">@Test</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> should_start_WireMock_servers() {
-    assertThat(stubRunnerExtension.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>,
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isNotNull();
-    assertThat(stubRunnerExtension.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isNotNull();
-    assertThat(stubRunnerExtension.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isEqualTo(stubRunnerExtension
-            .findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>));
-    assertThat(stubRunnerExtension
-            .findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)).isNotNull();
+<em><span class="hl-annotation" style="color: gray">@BeforeAll</span></em>
+<em><span class="hl-annotation" style="color: gray">@AfterAll</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setupProps() {
+	System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.repository.root"</span>);
+	System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.classifier"</span>);
+}
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> String repoRoot() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> StubRunnerRuleJUnitTest.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>.getResource(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/m2repo/repository/"</span>)
+				.toURI().toString();
+	}
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (Exception e) {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span>;
+	}
 }</pre><p>Check the <span class="strong"><strong>Common properties for JUnit and Spring</strong></span> for more information on how to apply global configuration of Stub Runner.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>To use the JUnit rule or JUnit 5 extension together with messaging, you have to provide an implementation of the
 <code class="literal">MessageVerifier</code> interface to the rule builder (e.g. <code class="literal">rule.messageVerifier(new MyMessageVerifier())</code>).
 If you don&#8217;t do this, then whenever you try to send a message an exception will be thrown.</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_maven_settings" href="#_maven_settings"></a>6.4.1&nbsp;Maven settings</h3></div></div></div><p>The stub downloader honors Maven settings for a different local repository folder.
 Authentication details for repositories and profiles are currently not taken into account, so you need to specify it using the properties mentioned above.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_providing_fixed_ports" href="#_providing_fixed_ports"></a>6.4.2&nbsp;Providing fixed ports</h3></div></div></div><p>You can also run your stubs on fixed ports. You can do it in two different ways. One is to pass it in the properties, and the other via fluent API of
-JUnit rule.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_fluent_api" href="#_fluent_api"></a>6.4.3&nbsp;Fluent API</h3></div></div></div><p>When using the <code class="literal">StubRunnerRule</code> or <code class="literal">StubRunnerExtension</code> you can add a stub to download and then pass the port for the last downloaded stub.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
-		.repoRoot(repoRoot())
+JUnit rule.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_fluent_api" href="#_fluent_api"></a>6.4.3&nbsp;Fluent API</h3></div></div></div><p>When using the <code class="literal">StubRunnerRule</code> or <code class="literal">StubRunnerExtension</code> you can add a stub to download and then pass the port for the last downloaded stub.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule().repoRoot(repoRoot())
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
-		.withPort(<span class="hl-number">12345</span>)
-		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346"</span>);</pre><p>You can see that for this example the following test is valid:</p><pre class="programlisting">then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isEqualTo(URI.create(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:12345"</span>).toURL());
-then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)).isEqualTo(URI.create(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:12346"</span>).toURL());</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_stub_runner_with_spring" href="#_stub_runner_with_spring"></a>6.4.4&nbsp;Stub Runner with Spring</h3></div></div></div><p>Sets up Spring configuration of the Stub Runner project.</p><p>By providing a list of stubs inside your configuration file the Stub Runner automatically downloads
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>,
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
+		.withPort(<span class="hl-number">12345</span>).downloadStub(
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346"</span>);
+
+<em><span class="hl-annotation" style="color: gray">@BeforeClass</span></em>
+<em><span class="hl-annotation" style="color: gray">@AfterClass</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setupProps() {
+	System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.repository.root"</span>);
+	System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.classifier"</span>);
+}</pre><p>You can see that for this example the following test is valid:</p><pre class="programlisting">then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>))
+		.isEqualTo(URI.create(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:12345"</span>).toURL());
+then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>))
+		.isEqualTo(URI.create(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:12346"</span>).toURL());</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_stub_runner_with_spring" href="#_stub_runner_with_spring"></a>6.4.4&nbsp;Stub Runner with Spring</h3></div></div></div><p>Sets up Spring configuration of the Stub Runner project.</p><p>By providing a list of stubs inside your configuration file the Stub Runner automatically downloads
 and registers in WireMock the selected stubs.</p><p>If you want to find the URL of your stubbed dependency you can autowire the <code class="literal">StubFinder</code> interface and use
 its methods as presented below:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
 		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
-			httpServerStubConfigurer = HttpsForFraudDetection)</span></em>
+		httpServerStubConfigurer = HttpsForFraudDetection)</span></em>
 <em><span class="hl-annotation" style="color: gray">@ActiveProfiles("test")</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerConfigurationSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> StubFinder stubFinder
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> Environment environment
-	<em><span class="hl-annotation" style="color: gray">@StubRunnerPort("fraudDetectionServer")</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudDetectionServerPort
-	<em><span class="hl-annotation" style="color: gray">@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudDetectionServerPortWithGroupId
-	<em><span class="hl-annotation" style="color: gray">@Value('${foo}')</span></em> Integer foo
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	StubFinder stubFinder
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	Environment environment
+	<em><span class="hl-annotation" style="color: gray">@StubRunnerPort("fraudDetectionServer")</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudDetectionServerPort
+	<em><span class="hl-annotation" style="color: gray">@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudDetectionServerPortWithGroupId
+	<em><span class="hl-annotation" style="color: gray">@Value('${foo}')</span></em>
+	Integer foo
 
 	<em><span class="hl-annotation" style="color: gray">@BeforeClass</span></em>
 	<em><span class="hl-annotation" style="color: gray">@AfterClass</span></em>
@@ -2972,8 +3087,7 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> httpStubConfiguration
 		}
 	}
-}
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::test[]</span></pre><p>for the following configuration file:</p><pre class="programlisting">stubrunner:
+}</pre><p>for the following configuration file:</p><pre class="programlisting">stubrunner:
   repositoryRoot: classpath:m2repo/repository/
   ids:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
@@ -2982,8 +3096,8 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
   stubs-mode: remote</pre><p>Instead of using the properties you can also use the properties inside the <code class="literal">@AutoConfigureStubRunner</code>.
 Below you can find an example of achieving the same result by setting values on the annotation.</p><pre class="programlisting">@AutoConfigureStubRunner(
 		ids = [<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:loanIssuance"</span>,
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>,
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:bootService"</span>],
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>,
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:bootService"</span>],
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"classpath:m2repo/repository/"</span>)</pre><p>Stub Runner Spring registers environment variables in the following manner
 for every registered WireMock server. Example for Stub Runner ids
@@ -3004,8 +3118,7 @@ or <code class="literal">DiscoveryClient</code> directly, to call those stubbed 
 }</pre><p>for the following configuration file</p><pre class="programlisting">stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
-    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
-# end::ids[]</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_test_profiles_and_service_discovery" href="#_test_profiles_and_service_discovery"></a>Test profiles and service discovery</h4></div></div></div><p>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
+    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_test_profiles_and_service_discovery" href="#_test_profiles_and_service_discovery"></a>Test profiles and service discovery</h4></div></div></div><p>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
 or Config Server. That&#8217;s why you create an additional test configuration in which you want to disable
 these features.</p><p>Due to certain limitations of <a class="link" href="https://github.com/spring-cloud/spring-cloud-commons/issues/156" target="_top"><code class="literal">spring-cloud-commons</code></a> to achieve this you have disable these properties
 via a static block like presented below (example for Eureka)</p><pre class="programlisting">    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156</span>
@@ -3036,7 +3149,8 @@ the Stub Runner server. It will be available at port <code class="literal">8750<
 <em><span class="hl-annotation" style="color: gray">@ActiveProfiles("test")</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerBootSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> StubRunning stubRunning
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	StubRunning stubRunning
 
 	def setup() {
 		RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpStubsController(stubRunning),
@@ -3077,7 +3191,7 @@ the Stub Runner server. It will be available at port <code class="literal">8750<
 			String response = RestAssuredMockMvc.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/triggers'</span>).body.asString()
 		then:
 			def root = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JsonSlurper().parseText(response)
-			root.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'</span>?.containsAll([<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"delete_book"</span>,<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"return_book_1"</span>,<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"return_book_2"</span>])
+			root.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'</span>?.containsAll([<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"delete_book"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"return_book_1"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"return_book_2"</span>])
 	}
 
 	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should trigger a messaging label'</span>() {
@@ -3139,15 +3253,17 @@ the Stub Runner server. It will be available at port <code class="literal">8750<
 }</pre><p>As you can see we want to start a Stub Runner Boot server <code class="literal">@EnableStubRunnerServer</code>, enable Eureka client <code class="literal">@EnableEurekaClient</code>
 and we want to have the stub runner feature turned on <code class="literal">@AutoConfigureStubRunner</code>.</p><p>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <code class="literal">java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</code> where
- <code class="literal">${SYSTEM_PROPS}</code> would contain the following list of properties</p><pre class="programlisting">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (<span class="hl-number">1</span>)
--Dstubrunner.cloud.stubbed.discovery.enabled=false (<span class="hl-number">2</span>)
--Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (<span class="hl-number">3</span>)
--Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (<span class="hl-number">4</span>)
-
-(<span class="hl-number">1</span>) - we tell Stub Runner where all the stubs reside
-(<span class="hl-number">2</span>) - we don<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'t want the default behaviour where the discovery service is stubbed. That'</span>s why the stub registration will be picked
-(<span class="hl-number">3</span>) - we provide a list of stubs to download
-(<span class="hl-number">4</span>) - we provide a list of artifactId to serviceId mapping</pre><p>That way your deployed application can send requests to started WireMock servers via the service
+ <code class="literal">${SYSTEM_PROPS}</code> would contain the following list of properties</p><pre class="programlisting">* -Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (<span class="hl-number">1</span>)
+* -Dstubrunner.cloud.stubbed.discovery.enabled=false (<span class="hl-number">2</span>)
+* -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.
+* springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.
+* cloud.contract.verifier.stubs:bootService (<span class="hl-number">3</span>)
+* -Dstubrunner.idsToServiceIds.fraudDetectionServer=
+* someNameThatShouldMapFraudDetectionServer (<span class="hl-number">4</span>)
+*
+* (<span class="hl-number">1</span>) - we tell Stub Runner where all the stubs reside (<span class="hl-number">2</span>) - we don<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'t want the default
+* behaviour where the discovery service is stubbed. That'</span>s why the stub registration will
+* be picked (<span class="hl-number">3</span>) - we provide a list of stubs to download (<span class="hl-number">4</span>) - we provide a list of</pre><p>That way your deployed application can send requests to started WireMock servers via the service
 discovery. Most likely points 1-3 could be set by default in <code class="literal">application.yml</code> cause they are not
 likely to change. That way you can provide only the list of stubs to download whenever you start
 the Stub Runner Boot.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stubs_per_consumer" href="#_stubs_per_consumer"></a>6.7&nbsp;Stubs Per Consumer</h2></div></div></div><p>There are cases in which 2 consumers of the same endpoint want to have 2 different responses.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>This approach also allows you to immediately know which consumer is using which part of your API.
@@ -3250,6 +3366,11 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.Collection;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.Map;
 
+<strong class="hl-tag" style="color: blue">/**
+ * Contract for triggering stub messages.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubTrigger {
 
 	<strong class="hl-tag" style="color: blue">/**
@@ -3257,6 +3378,8 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * You can use only {@code artifactId} too.
 	 *
 	 * Feature related to messaging.
+	 * @param ivyNotation ivy notation of a stub
+	 * @param labelName name of the label to trigger
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String ivyNotation, String labelName);
@@ -3265,6 +3388,7 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * Triggers an event by a given label.
 	 *
 	 * Feature related to messaging.
+	 * @param labelName name of the label to trigger
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String labelName);
@@ -3278,9 +3402,8 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger();
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns a mapping of ivy notation of a dependency to all the labels it has.
-	 *
 	 * Feature related to messaging.
+	 * @return a mapping of ivy notation of a dependency to all the labels it has.
 	 */</strong>
 	Map&lt;String, Collection&lt;String&gt;&gt; labels();
 
@@ -3341,9 +3464,11 @@ Remember to annotate your test class with <code class="literal">@AutoConfigureSt
 	}
 }</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_1_no_input_message_2" href="#_scenario_1_no_input_message_2"></a>Scenario 1 (no input message)</h4></div></div></div><p>So as to trigger a message via the <code class="literal">return_book_1</code> label we&#8217;ll use the <code class="literal">StubTigger</code> interface as follows</p><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">jms:output</code></p><pre class="programlisting">Exchange receivedMessage = consumerTemplate.receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>, <span class="hl-number">5000</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
 assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-receivedMessage.in.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_2_output_triggered_by_input_2" href="#_scenario_2_output_triggered_by_input_2"></a>Scenario 2 (output triggered by input)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">jms:output</code> destination.</p><pre class="programlisting">producerTemplate.sendBodyAndHeaders(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>])</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">jms:output</code></p><pre class="programlisting">Exchange receivedMessage = consumerTemplate.receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>, <span class="hl-number">5000</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
+receivedMessage.in.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_2_output_triggered_by_input_2" href="#_scenario_2_output_triggered_by_input_2"></a>Scenario 2 (output triggered by input)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">jms:output</code> destination.</p><pre class="programlisting">producerTemplate.
+		sendBodyAndHeaders(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>])</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">jms:output</code></p><pre class="programlisting">Exchange receivedMessage = consumerTemplate.receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>, <span class="hl-number">5000</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
 assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-receivedMessage.in.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_3_input_with_no_output" href="#_scenario_3_input_with_no_output"></a>Scenario 3 (input with no output)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">jms:output</code> destination.</p><pre class="programlisting">producerTemplate.sendBodyAndHeaders(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>])</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_integration" href="#_stub_runner_integration"></a>7.3&nbsp;Stub Runner Integration</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to
+receivedMessage.in.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_3_input_with_no_output" href="#_scenario_3_input_with_no_output"></a>Scenario 3 (input with no output)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">jms:output</code> destination.</p><pre class="programlisting">producerTemplate.
+		sendBodyAndHeaders(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>])</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_integration" href="#_stub_runner_integration"></a>7.3&nbsp;Stub Runner Integration</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to
 integrate with Spring Integration. For the provided artifacts, it automatically downloads
 the stubs and registers the required routes.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_the_runner_to_the_project" href="#_adding_the_runner_to_the_project"></a>7.3.1&nbsp;Adding the Runner to the Project</h3></div></div></div><p>You can have both Spring Integration and Spring Cloud Contract Stub Runner on the
 classpath. Remember to annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_disabling_the_functionality_2" href="#_disabling_the_functionality_2"></a>7.3.2&nbsp;Disabling the functionality</h3></div></div></div><p>If you need to disable this functionality, set the
@@ -3399,9 +3524,9 @@ classpath. Remember to annotate your test class with <code class="literal">@Auto
 		}
 	}
 }</pre><p>and the following Spring Integration Route:</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;beans:beans</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.springframework.org/schema/integration"</span>
-			 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;beans:beans</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
 			 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:beans</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.springframework.org/schema/beans"</span>
+			 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.springframework.org/schema/integration"</span>
 			 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
@@ -3534,29 +3659,29 @@ to disable them explicitly by setting the  <code class="literal">stubrunner.stre
 &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; MANIFEST.MF
 &#9492;&#9472;&#9472; contracts
     &#9492;&#9472;&#9472; shouldProduceValidPersonData.groovy</pre><p>Consider the following contract:</p><pre class="programlisting">Contract.make {
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Human readable description</span>
-    description <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Should produce valid person data'</span>
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Label by means of which the output message can be triggered</span>
-    label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contract-test.person.created.event'</span>
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// input to the contract</span>
-    input {
-        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the contract will be triggered by a method</span>
-        triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'createPerson()'</span>)
-    }
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// output message of the contract</span>
-    outputMessage {
-        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// destination to which the output message will be sent</span>
-        sentTo <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contract-test.exchange'</span>
-        headers {
-            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contentType'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
-            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'__TypeId__'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person'</span>)
-        }
-        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the body of the output message</span>
-        body ([
-                id: $(consumer(<span class="hl-number">9</span>), producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]+"</span>))),
-                name: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"me"</span>
-        ])
-    }
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Human readable description</span>
+	description <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Should produce valid person data'</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Label by means of which the output message can be triggered</span>
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contract-test.person.created.event'</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// input to the contract</span>
+	input {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the contract will be triggered by a method</span>
+		triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'createPerson()'</span>)
+	}
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// output message of the contract</span>
+	outputMessage {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// destination to which the output message will be sent</span>
+		sentTo <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contract-test.exchange'</span>
+		headers {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contentType'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'__TypeId__'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person'</span>)
+		}
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the body of the output message</span>
+		body([
+				id  : $(consumer(<span class="hl-number">9</span>), producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]+"</span>))),
+				name: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"me"</span>
+		])
+	}
 }</pre><p>Now consider the following Spring configuration:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: classpath:m2repo/repository/
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:<span class="hl-number">0.4</span>.<span class="hl-number">0</span>-SNAPSHOT:stubs
@@ -3581,7 +3706,7 @@ definition is matched and invoked with the contract message.</p><pre class="prog
 	container.setMessageListener(listenerAdapter);
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> container;
-}</pre><p>Also, the following annotated listener matches and is invoked:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))</span></em>
+}</pre><p>Also, the following annotated listener matches and is invoked:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RabbitListener(bindings = @QueueBinding(value = @Queue("test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> handlePerson(Person person) {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.person = person;
 }</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The message is directly handed over to the <code class="literal">onMessage</code> method of the
@@ -3654,8 +3779,8 @@ You can also provide the <code class="literal">assertJsonSize</code> property in
 properly when using the Groovy DSL and the <code class="literal">value(consumer(&#8230;&#8203;), producer(&#8230;&#8203;))</code> notation in <code class="literal">GString</code>. That
 is why you should use the Groovy Map notation.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_common_top_level_elements" href="#_common_top_level_elements"></a>8.2&nbsp;Common Top-Level elements</h2></div></div></div><p>The following sections describe the most common top-level elements:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="#contract-dsl-description" title="8.2.1&nbsp;Description">Section&nbsp;8.2.1, &#8220;Description&#8221;</a></li><li class="listitem"><a class="xref" href="#contract-dsl-name" title="8.2.2&nbsp;Name">Section&nbsp;8.2.2, &#8220;Name&#8221;</a></li><li class="listitem"><a class="xref" href="#contract-dsl-ignoring-contracts" title="8.2.3&nbsp;Ignoring Contracts">Section&nbsp;8.2.3, &#8220;Ignoring Contracts&#8221;</a></li><li class="listitem"><a class="xref" href="#contract-dsl-passing-values-from-files" title="8.2.4&nbsp;Passing Values from Files">Section&nbsp;8.2.4, &#8220;Passing Values from Files&#8221;</a></li><li class="listitem"><a class="xref" href="#contract-dsl-http-top-level-elements" title="8.2.5&nbsp;HTTP Top-Level Elements">Section&nbsp;8.2.5, &#8220;HTTP Top-Level Elements&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-description" href="#contract-dsl-description"></a>8.2.1&nbsp;Description</h3></div></div></div><p>You can add a <code class="literal">description</code> to your contract. The description is arbitrary text. The
 following code shows an example:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">		org.springframework.cloud.contract.spec.Contract.make {
-			description(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</p><pre class="programlisting">			org.springframework.cloud.contract.spec.Contract.make {
+				description(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span>given:
 	An input
 when:
@@ -3663,7 +3788,7 @@ when:
 then:
 	Output
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">')
-</span>		}</pre><p>
+</span>			}</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">description: Some description
 name: some name
@@ -3741,7 +3866,23 @@ following resources in our project.</p><pre class="programlisting">&#9492;&#9472
 &nbsp;&nbsp;&nbsp;             &#9500;&#9472;&#9472; readFromFile.groovy
 &nbsp;&nbsp;&nbsp;             &#9500;&#9472;&#9472; request.json
 &nbsp;&nbsp;&nbsp;             &#9492;&#9472;&#9472; response.json</pre><p>Further assume that your contract is as follows:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
 	request {
@@ -3797,16 +3938,16 @@ Contract.make {
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">request:
-    url: /1
-    method: PUT
-    headers:
-        Content-Type: application/octet-stream
-    bodyFromFileAsBytes: request.pdf
+  url: /1
+  method: PUT
+  headers:
+    Content-Type: application/octet-stream
+  bodyFromFileAsBytes: request.pdf
 response:
-    status: 200
-    bodyFromFileAsBytes: response.pdf
-    headers:
-        Content-Type: application/octet-stream</pre><p>
+  status: 200
+  bodyFromFileAsBytes: response.pdf
+  headers:
+    Content-Type: application/octet-stream</pre><p>
 </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>You should use this approach whenever you want to work with binary payloads both for HTTP and messaging.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-http-top-level-elements" href="#contract-dsl-http-top-level-elements"></a>8.2.5&nbsp;HTTP Top-Level Elements</h3></div></div></div><p>The following methods can be called in the top-level closure of a contract definition.
 <code class="literal">request</code> and <code class="literal">response</code> are mandatory. <code class="literal">priority</code> is optional.</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
@@ -4065,7 +4206,7 @@ body:
     Content-Type: multipart/form-data;boundary=AaB03x
   multipart:
     params:
-    # key (parameter name), value (parameter value) pair
+      # key (parameter name), value (parameter value) pair
       formParameter: '"formParameterValue"'
       someBooleanParameter: true
     named:
@@ -4199,25 +4340,25 @@ need to use patterns and not exact values both for your test and your server sid
 }</pre><p>You can also provide only one side of the communication with a regular expression. If you
 do so, then the contract engine automatically provides the generated string that matches
 the provided regular expression. The following code shows an example:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
-    request {
-        method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'PUT'</span>
-        url value(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/foo/[0-9]{5}'</span>)))
-        body([
-                requestElement: $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{5}'</span>)))
-        ])
-        headers {
-            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>, $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application\\/vnd\\.fraud\\.v1\\+json;.*'</span>))))
-        }
-    }
-    response {
-        status OK()
-        body([
-                responseElement: $(producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{7}'</span>)))
-        ])
-        headers {
-            contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>)
-        }
-    }
+	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'PUT'</span>
+		url value(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/foo/[0-9]{5}'</span>)))
+		body([
+				requestElement: $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{5}'</span>)))
+		])
+		headers {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>, $(consumer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application\\/vnd\\.fraud\\.v1\\+json;.*'</span>))))
+		}
+	}
+	response {
+		status OK()
+		body([
+				responseElement: $(producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{7}'</span>)))
+		])
+		headers {
+			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>)
+		}
+	}
 }</pre><p>In the preceding example, the opposite side of the communication has the respective data
 generated for request and response.</p><p>Spring Cloud Contract comes with a series of predefined regular expressions that you can
 use in your contracts, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
@@ -4228,21 +4369,29 @@ use in your contracts, as shown in the following example:</p><pre class="program
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern POSITIVE_INT = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([1-9]\\d*)'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern DOUBLE = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?(\\d*\\.\\d+)'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HEX = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-fA-F0-9]+'</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern IP_ADDRESS = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])'</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HOSTNAME_PATTERN = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?'</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern EMAIL = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern IP_ADDRESS = Pattern.
+		compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HOSTNAME_PATTERN = Pattern.
+		compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern EMAIL = Pattern.
+		compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern URL = UrlHelper.URL
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HTTPS_URL = UrlHelper.HTTPS_URL
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern UUID = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ANY_DATE = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ANY_DATE_TIME = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ANY_TIME = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern UUID = Pattern.
+		compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ANY_DATE = Pattern.
+		compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ANY_DATE_TIME = Pattern.
+		compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ANY_TIME = Pattern.
+		compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NON_EMPTY = Pattern.compile(/[\S\s]+/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NON_BLANK = Pattern.compile(/^\s*\S[\S\s]*/)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ISO8601_WITH_OFFSET = Pattern.compile(/([<span class="hl-number">0</span>-<span class="hl-number">9</span>]{<span class="hl-number">4</span>})-(<span class="hl-number">1</span>[<span class="hl-number">0</span>-<span class="hl-number">2</span>]|<span class="hl-number">0</span>[<span class="hl-number">1</span>-<span class="hl-number">9</span>])-(<span class="hl-number">3</span>[<span class="hl-number">01</span>]|<span class="hl-number">0</span>[<span class="hl-number">1</span>-<span class="hl-number">9</span>]|[<span class="hl-number">12</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>])T(<span class="hl-number">2</span>[<span class="hl-number">0</span>-<span class="hl-number">3</span>]|[<span class="hl-number">01</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>]):([<span class="hl-number">0</span>-<span class="hl-number">5</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>]):([<span class="hl-number">0</span>-<span class="hl-number">5</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>])(\.\d{<span class="hl-number">3</span>})?(Z|[+-][<span class="hl-number">01</span>]\d:[<span class="hl-number">0</span>-<span class="hl-number">5</span>]\d)/)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ISO8601_WITH_OFFSET = Pattern.
+		compile(/([<span class="hl-number">0</span>-<span class="hl-number">9</span>]{<span class="hl-number">4</span>})-(<span class="hl-number">1</span>[<span class="hl-number">0</span>-<span class="hl-number">2</span>]|<span class="hl-number">0</span>[<span class="hl-number">1</span>-<span class="hl-number">9</span>])-(<span class="hl-number">3</span>[<span class="hl-number">01</span>]|<span class="hl-number">0</span>[<span class="hl-number">1</span>-<span class="hl-number">9</span>]|[<span class="hl-number">12</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>])T(<span class="hl-number">2</span>[<span class="hl-number">0</span>-<span class="hl-number">3</span>]|[<span class="hl-number">01</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>]):([<span class="hl-number">0</span>-<span class="hl-number">5</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>]):([<span class="hl-number">0</span>-<span class="hl-number">5</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>])(\.\d{<span class="hl-number">3</span>})?(Z|[+-][<span class="hl-number">01</span>]\d:[<span class="hl-number">0</span>-<span class="hl-number">5</span>]\d)/)
 
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern anyOf(String... values){
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(values.collect({<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"^$it\$"</span>}).join(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"|"</span>))
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern anyOf(String... values) {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(values.collect({ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"^$it\$"</span> }).join(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"|"</span>))
 }
 
 RegexProperty onlyAlphaUnicode() {
@@ -4293,7 +4442,7 @@ RegexProperty httpsUrl() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(HTTPS_URL).asString()
 }
 
-RegexProperty uuid(){
+RegexProperty uuid() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(UUID).asString()
 }
 
@@ -4320,28 +4469,28 @@ RegexProperty nonEmpty() {
 RegexProperty nonBlank() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(NON_BLANK).asString()
 }</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting">Contract dslWithOptionalsInString = Contract.make {
-    priority <span class="hl-number">1</span>
-    request {
-        method POST()
-        url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/password'</span>
-        headers {
-            contentType(applicationJson())
-        }
-        body(
-                email: $(consumer(optional(regex(email()))), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc@abc.com'</span>)),
-                callback_url: $(consumer(regex(hostname())), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://partners.com'</span>))
-        )
-    }
-    response {
-        status <span class="hl-number">404</span>
-        headers {
-            contentType(applicationJson())
-        }
-        body(
-                code: value(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>), producer(optional(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>))),
-                message: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"</span>
-        )
-    }
+	priority <span class="hl-number">1</span>
+	request {
+		method POST()
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/password'</span>
+		headers {
+			contentType(applicationJson())
+		}
+		body(
+				email: $(consumer(optional(regex(email()))), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc@abc.com'</span>)),
+				callback_url: $(consumer(regex(hostname())), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://partners.com'</span>))
+		)
+	}
+	response {
+		status <span class="hl-number">404</span>
+		headers {
+			contentType(applicationJson())
+		}
+		body(
+				code: value(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>), producer(optional(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"123123"</span>))),
+				message: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"</span>
+		)
+	}
 }</pre><p>To make matters even simpler you can use a set of predefined objects that will automatically assume that you want a regular expression to be passed.
 All of those methods start with <code class="literal">any</code> prefix:</p><pre class="programlisting">T anyAlphaUnicode()
 
@@ -4391,25 +4540,25 @@ T anyOf(String... values)</pre><p>and this is an example of how you can referenc
 	outputMessage {
 		sentTo <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'topic.rateablequote'</span>
 		body([
-				alpha: $(anyAlphaUnicode()),
-				number: $(anyNumber()),
-				anInteger: $(anyInteger()),
-				positiveInt: $(anyPositiveInt()),
-				aDouble: $(anyDouble()),
-				aBoolean: $(aBoolean()),
-				ip: $(anyIpAddress()),
-				hostname: $(anyHostname()),
-				email: $(anyEmail()),
-				url: $(anyUrl()),
-				httpsUrl: $(anyHttpsUrl()),
-				uuid: $(anyUuid()),
-				date: $(anyDate()),
-				dateTime: $(anyDateTime()),
-				time: $(anyTime()),
+				alpha            : $(anyAlphaUnicode()),
+				number           : $(anyNumber()),
+				anInteger        : $(anyInteger()),
+				positiveInt      : $(anyPositiveInt()),
+				aDouble          : $(anyDouble()),
+				aBoolean         : $(aBoolean()),
+				ip               : $(anyIpAddress()),
+				hostname         : $(anyHostname()),
+				email            : $(anyEmail()),
+				url              : $(anyUrl()),
+				httpsUrl         : $(anyHttpsUrl()),
+				uuid             : $(anyUuid()),
+				date             : $(anyDate()),
+				dateTime         : $(anyDateTime()),
+				time             : $(anyTime()),
 				iso8601WithOffset: $(anyIso8601WithOffset()),
-				nonBlankString: $(anyNonBlankString()),
-				nonEmptyString: $(anyNonEmptyString()),
-				anyOf: $(anyOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bar'</span>))
+				nonBlankString   : $(anyNonBlankString()),
+				nonEmptyString   : $(anyNonEmptyString()),
+				anyOf            : $(anyOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bar'</span>))
 		])
 	}
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_passing_optional_parameters" href="#_passing_optional_parameters"></a>8.5.3&nbsp;Passing Optional Parameters</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
@@ -4437,7 +4586,7 @@ optional parameters only for the following:</p><div class="itemizedlist"><ul cla
 		)
 	}
 }</pre><p>By wrapping a part of the body with the <code class="literal">optional()</code> method, you create a regular
-expression that must be present 0 or more times.</p><p>If you use Spock for, the following test would be generated from the previous example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+expression that must be present 0 or more times.</p><p>If you use Spock for, the following test would be generated from the previous example:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
 </span> given:
   def request = given()
     .header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>)
@@ -4453,7 +4602,7 @@ expression that must be present 0 or more times.</p><p>If you use Spock for, the
  and:
   DocumentContext parsedJson = JsonPath.parse(response.body.asString())
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['code']"</span>).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"(123123)?"</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"</span></pre><p>The following stub would also be generated:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"</span></pre><p>The following stub would also be generated:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span>{
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/users/password"</span>,
@@ -4489,13 +4638,13 @@ following code shows an example of the contract portion of the test case:</p><pr
 			header <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>
 		}
 		body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'\
-</span>				[{
-					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Gonna see you at Warsaw"</span>
-				}]
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</span>			[{
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Gonna see you at Warsaw"</span>
+			}]
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span>	}
 	response {
-		body (
+		body(
 				path: $(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/api/12'</span>), producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'^/api/[0-9]{2}$'</span>))),
 				correlationId: $(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'1223456'</span>), producer(execute(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'isProperCorrelationId($it)'</span>)))
 		)
@@ -4665,7 +4814,23 @@ Since we use the spring.factories extension approach, you can create an entry in
 org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExtensions
 org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.stubrunner.TestCustomYamlContractConverter</pre><p>The following is an example of a custom extension:</p><p><b>TestWireMockExtensions.groovy.&nbsp;</b>
-</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.dsl.wiremock
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.dsl.wiremock
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.tomakehurst.wiremock.extension.Extension
 
@@ -4988,7 +5153,7 @@ response:
     valueWithMinEmpty: []
     valueWithMaxEmpty: []
     key:
-      'complex.key' : 'foo'
+      'complex.key': 'foo'
     nulValue: null
   matchers:
     headers:
@@ -5102,7 +5267,7 @@ separates the autogenerated assertions and the assertion from matchers):</p><pre
 <code class="literal">assertThatValueIsANumber</code>. This method must be defined in the test base class or be
 statically imported to your tests. Notice that the <code class="literal">byCommand</code> call was converted to
 <code class="literal">assertThatValueIsANumber(parsedJson.read("$.duck"));</code>. That means that the engine took
-the method name and passed the proper JSON path as a parameter to it.</p></td></tr></table></div><p>The resulting WireMock stub is in the following example:</p><pre class="programlisting">				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+the method name and passed the proper JSON path as a parameter to it.</p></td></tr></table></div><p>The resulting WireMock stub is in the following example:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"urlPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/get"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
@@ -5203,7 +5368,7 @@ asserted. In order to fix this, you should apply the assertion to the whole <cod
 collection and assert it with the <code class="literal">byCommand(&#8230;&#8203;)</code> method.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_jax_rs_support" href="#_jax_rs_support"></a>8.6&nbsp;JAX-RS Support</h2></div></div></div><p>The Spring Cloud Contract Verifier supports the JAX-RS 2 Client API. The base class needs
 to define <code class="literal">protected WebTarget webTarget</code> and server initialization. The only option for
 testing JAX-RS API is to start a web server. Also, a request with a body needs to have a
-content type set. Otherwise, the default of <code class="literal">application/octet-stream</code> gets used.</p><p>In order to use JAX-RS mode, use the following settings:</p><pre class="programlisting">testMode == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'JAXRSCLIENT'</span></pre><p>The following example shows a generated test API:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+content type set. Otherwise, the default of <code class="literal">application/octet-stream</code> gets used.</p><p>In order to use JAX-RS mode, use the following settings:</p><pre class="programlisting">testMode == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'JAXRSCLIENT'</span></pre><p>The following example shows a generated test API:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// when:</span>
   Response response = webTarget
     .path(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/users"</span>)
@@ -5372,19 +5537,19 @@ as a <code class="literal">String</code> or <code class="literal">GString</code>
 both request and response. In place of the <code class="literal">jsonPath(&#8230;&#8203;)</code> method, the <code class="literal">org.springframework.cloud.contract.spec.internal.BodyMatchers.xPath</code>
 method should be used, with the desired <code class="literal">xPath</code> provided as the first argument
 and the appropriate <code class="literal">MatchingType</code> as second. All the body matchers apart from <code class="literal">byType()</code> are supported.</p><p>Here is an example of a Groovy DSL contract with XML response body:</p><pre class="programlisting">					Contract.make {
-				request {
-					method GET()
-					urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
-					headers {
-						contentType(applicationXml())
-					}
-				}
-				response {
-					status(OK())
-					headers {
-						contentType(applicationXml())
-					}
-					body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+						request {
+							method GET()
+							urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
+							headers {
+								contentType(applicationXml())
+							}
+						}
+						response {
+							status(OK())
+							headers {
+								contentType(applicationXml())
+							}
+							body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
 </span>&lt;test&gt;
 &lt;duck type=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'xtype'</span>&gt;<span class="hl-number">123</span>&lt;/duck&gt;
 &lt;alpha&gt;abc&lt;/alpha&gt;
@@ -5401,22 +5566,22 @@ and the appropriate <code class="literal">MatchingType</code> as second. All the
 &lt;valueWithoutAMatcher&gt;foo&lt;/valueWithoutAMatcher&gt;
 &lt;key&gt;&lt;complex&gt;foo&lt;/complex&gt;&lt;/key&gt;
 &lt;/test&gt;<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
-</span>					bodyMatchers {
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'test($it)'</span>))
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/xxx'</span>, byNull())
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byEquality())
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/alpha/text()'</span>, byRegex(onlyAlphaUnicode()))
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/alpha/text()'</span>, byEquality())
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/number/text()'</span>, byRegex(number()))
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/date/text()'</span>, byDate())
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/dateTime/text()'</span>, byTimestamp())
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/time/text()'</span>, byTime())
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/*/complex/text()'</span>, byEquality())
-						xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/@type'</span>, byEquality())
-					}
-				}
-			}</pre><p>And below is an example of a YAML contract with XML request and response bodies:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">include</span>::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml</pre><p>Here is an example of an automatically generated test for XML response body:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
+</span>							bodyMatchers {
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'test($it)'</span>))
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/xxx'</span>, byNull())
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/text()'</span>, byEquality())
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/alpha/text()'</span>, byRegex(onlyAlphaUnicode()))
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/alpha/text()'</span>, byEquality())
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/number/text()'</span>, byRegex(number()))
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/date/text()'</span>, byDate())
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/dateTime/text()'</span>, byTimestamp())
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/time/text()'</span>, byTime())
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/*/complex/text()'</span>, byEquality())
+								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/@type'</span>, byEquality())
+							}
+						}
+					}</pre><p>And below is an example of a YAML contract with XML request and response bodies:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">include</span>::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml</pre><p>Here is an example of an automatically generated test for XML response body:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_xmlMatches() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
 	MockMvcRequestSpecification request = given()
@@ -5497,7 +5662,7 @@ example:</p><p><b>Groovy DSL.&nbsp;</b>
 		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'input'</span>)
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// has the following body</span>
 		messageBody([
-		        bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
 		])
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and the following headers</span>
 		messageHeaders {
@@ -5507,7 +5672,7 @@ example:</p><p><b>Groovy DSL.&nbsp;</b>
 	outputMessage {
 		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'output'</span>)
 		body([
-		        bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
 		])
 		headers {
 			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
@@ -5546,24 +5711,24 @@ generates a test that sends the input message to the defined destination. On the
 use those paradigms in messaging. In addition, Spring Cloud Contract Verifier also
 provides the <code class="literal">consumer</code> and <code class="literal">producer</code> methods, as presented in the following example
 (note that you can use either <code class="literal">$</code> or <code class="literal">value</code> methods to provide <code class="literal">consumer</code> and <code class="literal">producer</code>
-parts):</p><pre class="programlisting">Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		messageFrom value(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>))
-		messageBody([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		messageHeaders {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
-		}
-	}
-	outputMessage {
-		sentTo $(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>))
-		body([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-	}
-}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-common" href="#contract-dsl-common"></a>8.11.4&nbsp;Common</h3></div></div></div><p>In the <code class="literal">input</code> or <code class="literal">outputMessage</code> section you can call <code class="literal">assertThat</code> with the name
+parts):</p><pre class="programlisting">					Contract.make {
+						label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+						input {
+							messageFrom value(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>))
+							messageBody([
+									bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+							])
+							messageHeaders {
+								header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+							}
+						}
+						outputMessage {
+							sentTo $(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>))
+							body([
+									bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+							])
+						}
+					}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-common" href="#contract-dsl-common"></a>8.11.4&nbsp;Common</h3></div></div></div><p>In the <code class="literal">input</code> or <code class="literal">outputMessage</code> section you can call <code class="literal">assertThat</code> with the name
 of a <code class="literal">method</code> (e.g. <code class="literal">assertThatMessageIsOnTheQueue()</code>) that you have defined in the
 base class or in a static import. Spring Cloud Contract will execute that method
 in the generated test.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_multiple_contracts_in_one_file" href="#_multiple_contracts_in_one_file"></a>8.12&nbsp;Multiple Contracts in One File</h2></div></div></div><p>You can define multiple contracts in one file. Such a contract might resemble the
@@ -5571,25 +5736,25 @@ following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
 
 [
-        Contract.make {
-            name(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"should post a user"</span>)
-            request {
-                method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
-                url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/1'</span>)
-            }
-            response {
-                status OK()
-            }
-        },
-        Contract.make {
-            request {
-                method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
-                url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/2'</span>)
-            }
-            response {
-                status OK()
-            }
-        }
+	Contract.make {
+		name(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"should post a user"</span>)
+		request {
+			method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
+			url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/1'</span>)
+		}
+		response {
+			status OK()
+		}
+	},
+	Contract.make {
+		request {
+			method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
+			url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/2'</span>)
+		}
+		response {
+			status OK()
+		}
+	}
 ]</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">---
@@ -5679,7 +5844,6 @@ testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org
 </p><p>Next you need to make some changes to your base class like the following example.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
-
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Rule;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.rules.TestName;
@@ -5704,29 +5868,32 @@ testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org
 	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> JUnitRestDocumentation restDocumentation = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JUnitRestDocumentation(OUTPUT);
 
-	<em><span class="hl-annotation" style="color: gray">@Rule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
+	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
 
 	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> WebApplicationContext context;
 
 	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
-	RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.context)
-			.apply(documentationConfiguration(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.restDocumentation))
-			.alwaysDo(document(getClass().getSimpleName() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"_"</span> + testName.getMethodName()))
-			.build());
+		RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.context)
+				.apply(documentationConfiguration(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.restDocumentation))
+				.alwaysDo(document(
+						getClass().getSimpleName() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"_"</span> + testName.getMethodName()))
+				.build());
 	}
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> assertThatRejectionReasonIsNull(Object rejectionReason) {
 		assert rejectionReason == null;
 	}
-}
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::base_class[]</span></pre><p>In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
+
+}</pre><p>In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Rule;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.rules.TestName;
+
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.restdocs.JUnitRestDocumentation;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -5740,17 +5907,19 @@ testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org
 	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> JUnitRestDocumentation restDocumentation = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JUnitRestDocumentation(OUTPUT);
 
-	<em><span class="hl-annotation" style="color: gray">@Rule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
+	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
 
 	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
-		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> FraudDetectionController())
+		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders
+				.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> FraudDetectionController())
 				.apply(documentationConfiguration(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.restDocumentation))
-				.alwaysDo(document(getClass().getSimpleName() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"_"</span> + testName.getMethodName())));
+				.alwaysDo(document(
+						getClass().getSimpleName() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"_"</span> + testName.getMethodName())));
 	}
 
-}
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::base_class[]</span></pre><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You don&#8217;t need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.</p></td></tr></table></div></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_customization" href="#_customization"></a>9.&nbsp;Customization</h1></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL</p></td></tr></table></div><p>You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
+}</pre><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You don&#8217;t need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.</p></td></tr></table></div></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_customization" href="#_customization"></a>9.&nbsp;Customization</h1></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL</p></td></tr></table></div><p>You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
 the remainder of this section.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_extending_the_dsl" href="#_extending_the_dsl"></a>9.1&nbsp;Extending the DSL</h2></div></div></div><p>You can provide your own functions to the DSL. The key requirement for this feature is to
 maintain the static compatibility. Later in this document, you can see examples of:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Creating a JAR with reusable classes.</li><li class="listitem">Referencing of these classes in the DSLs.</li></ul></div><p>You can find the full example
 <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples" target="_top">here</a>.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_common_jar" href="#_common_jar"></a>9.1.1&nbsp;Common JAR</h3></div></div></div><p>The following examples show three classes that can be reused in the DSLs.</p><p><span class="strong"><strong>PatternUtils</strong></span> contains functions used by both the <span class="strong"><strong>consumer</strong></span> and the <span class="strong"><strong>producer</strong></span>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
@@ -5976,7 +6145,7 @@ structure converter. The following code listing shows the <code class="literal">
  * Converter to be used to convert FROM {@link File} TO {@link Contract}
  * and from {@link Contract} to {@code T}
  *
- * @param &lt;T&gt; - type to which we want to convert the contract
+ * @param &lt;T &gt;     - type to which we want to convert the contract
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
@@ -6062,7 +6231,7 @@ set a <code class="literal">metaData</code> entry in the Pact file, with key <co
               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
             }
           },
-          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
             <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.clientId"</span>: {
               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
                 {
@@ -6197,15 +6366,31 @@ current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting">testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-pact"</span></pre><p class="secondary">
 </p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_test_generator" href="#_using_the_custom_test_generator"></a>10.2&nbsp;Using the Custom Test Generator</h2></div></div></div><p>If you want to generate tests for languages other than Java or you are not happy with the
 way the verifier builds Java tests, you can register your own implementation.</p><p>The <code class="literal">SingleTestGenerator</code> interface lets you register your own implementation.  The
-following code listing shows the <code class="literal">SingleTestGenerator</code> interface:</p><pre class="programlisting">	 *
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> properties                    - properties passed to the plugin
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> listOfFiles                   - list of parsed contracts with additional metadata
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> className                     - the name of the generated test <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> classPackage                  - the name of the <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> in which the test <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> should be stored
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> includedDirectoryRelativePath - relative path to the included directory
-	 * <em><span class="hl-annotation" style="color: gray">@return</span></em> contents of a single test <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>
-	 * <em><span class="hl-annotation" style="color: gray">@deprecated</span></em> use {<em><span class="hl-annotation" style="color: gray">@link</span></em> SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
-	 */
+following code listing shows the <code class="literal">SingleTestGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.builder
+
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
+
+<strong class="hl-tag" style="color: blue">/**
+ * Builds a single test.
+ *
+ * @since 1.1.0
+ */</strong>
+trait SingleTestGenerator {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Creates contents of a single test class in which all test scenarios from
+	 * the contract metadata should be placed.
+	 *
+	 * @param properties - properties passed to the plugin
+	 * @param listOfFiles - list of parsed contracts with additional metadata
+	 * @param className - the name of the generated test class
+	 * @param classPackage - the name of the package in which the test class should be stored
+	 * @param includedDirectoryRelativePath - relative path to the included directory
+	 * @return contents of a single test class
+	 * @deprecated use{@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
+	 */</strong>
 	<em><span class="hl-annotation" style="color: gray">@Deprecated</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> String buildClass(ContractVerifierConfigProperties properties,
 			Collection&lt;ContractMetadata&gt; listOfFiles, String className, String classPackage, String includedDirectoryRelativePath)
@@ -6214,15 +6399,18 @@ following code listing shows the <code class="literal">SingleTestGenerator</code
 	 * Creates contents of a single test class in which all test scenarios from
 	 * the contract metadata should be placed.
 	 *
-	 * @param properties                    - properties passed to the plugin
-	 * @param listOfFiles                   - list of parsed contracts with additional metadata
-	 * @param generatedClassData            - information about the generated class
+	 * @param properties - properties passed to the plugin
+	 * @param listOfFiles - list of parsed contracts with additional metadata
+	 * @param generatedClassData - information about the generated class
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 */</strong>
 	String buildClass(ContractVerifierConfigProperties properties,
 			Collection&lt;ContractMetadata&gt; listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> buildClass(properties, listOfFiles, generatedClassData.className, generatedClassData.classPackage, includedDirectoryRelativePath)
+		String className = generatedClassData.className
+		String classPackage = generatedClassData.classPackage
+		String path = includedDirectoryRelativePath
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> buildClass(properties, listOfFiles, className, classPackage, path)
 	}
 
 	<strong class="hl-tag" style="color: blue">/**
@@ -6251,6 +6439,7 @@ own implementation of the <code class="literal">StubGenerator</code> interface. 
 <code class="literal">StubGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.converter
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.transform.CompileStatic
+
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
 
@@ -6263,18 +6452,18 @@ own implementation of the <code class="literal">StubGenerator</code> interface. 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubGenerator {
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns {@code true} if the converter can handle the file to convert it into a stub.
+	 * @return {@code true} if the converter can handle the file to convert it into a stub.
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> canHandleFileName(String fileName)
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns the collection of converted contracts into stubs. One contract can
+	 * @return the collection of converted contracts into stubs. One contract can
 	 * result in multiple stubs.
 	 */</strong>
 	Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content)
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns the name of the converted stub file. If you have multiple contracts
+	 * @return the name of the converted stub file. If you have multiple contracts
 	 * in a single file then a prefix will be added to the generated file. If you
 	 * provide the {@link Contract#name} field then that field will override the
 	 * generated file name.
@@ -6344,17 +6533,19 @@ HTTP Stub server implementation, which might resemble the following example:</p>
 	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
 	HttpServerStub registerMappings(Collection&lt;File&gt; stubFiles) {
 		List&lt;RunnerSetting&gt; settings = stubFiles.findAll { it.name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"json"</span>) }
-				.collect {
+			.collect {
 			log.info(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Trying to parse [${it.name}]"</span>)
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> {
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).build()
-			} <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (Exception e) {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).
+					build()
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (Exception e) {
 				log.warn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Exception occurred while trying to parse file [${it.name}]"</span>, e)
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> null
 			}
 		}.findAll { it }
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.runner = JsonRunner.newJsonRunnerWithSetting(settings,
-				HttpArgs.httpArgs().withPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port).build())
+			HttpArgs.httpArgs().withPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port).build())
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.runner.run()
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.started = true
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
@@ -6427,6 +6618,12 @@ your test. The following code shows an example:</p><pre class="programlisting"><
 	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
 
+	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.setBase(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span>
+				+ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"wiremock.server.port"</span>));
+	}
+
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
@@ -6437,8 +6634,7 @@ your test. The following code shows an example:</p><pre class="programlisting"><
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
-}
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>To start the stub server on a different port use (for example),
+}</pre><p>To start the stub server on a different port use (for example),
 <code class="literal">@AutoConfigureWireMock(port=9999)</code>. For a random port, use a value of <code class="literal">0</code>. The stub
 server port can be bound in the test application context with the "wiremock.server.port"
 property. Using <code class="literal">@AutoConfigureWireMock</code> adds a bean of type <code class="literal">WiremockConfiguration</code> to
@@ -6486,14 +6682,14 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> WireMockClassRule wiremock = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
 
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP to wiremock's port</span>
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
+
 	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.setBase(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + wiremock.port());
 	}
-
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP to wiremock's port</span>
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
@@ -6505,8 +6701,7 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
-}
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
+}</pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
 have been run.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_relaxed_ssl_validation_for_rest_template" href="#_relaxed_ssl_validation_for_rest_template"></a>11.4&nbsp;Relaxed SSL Validation for Rest Template</h2></div></div></div><p>WireMock lets you stub a "secure" server with an "https" URL protocol. If your
 application wants to contact that stub server in an integration test, it will find that
 the SSL certificates are not valid (the usual problem with self-installed certificates).

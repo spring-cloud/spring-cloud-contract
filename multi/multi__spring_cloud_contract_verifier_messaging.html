@@ -36,20 +36,20 @@ meanings for different messaging implementations. For <span class="strong"><stro
 first resolved as a <code class="literal">destination</code> of a channel. Then, if there is no such <code class="literal">destination</code>
 it is resolved as a channel name. For <span class="strong"><strong>Camel</strong></span>, that&#8217;s a certain component (for example,
 <code class="literal">jms</code>).</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_1_no_input_message" href="#_scenario_1_no_input_message"></a>5.3.1&nbsp;Scenario 1: No Input Message</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookReturnedTriggered()'</span>)
-	}
-	outputMessage {
-		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'activemq:output'</span>)
-		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{ "bookName" : "foo" }'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
-		headers {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
-			messagingContentType(applicationJson())
-		}
-	}
-}</pre><p>
+</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookReturnedTriggered()'</span>)
+				}
+				outputMessage {
+					sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'activemq:output'</span>)
+					body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{ "bookName" : "foo" }'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+					headers {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+						messagingContentType(applicationJson())
+					}
+				}
+			}</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">label: some_label
 input:
@@ -61,7 +61,7 @@ outputMessage:
   headers:
     BOOK-NAME: foo
     contentType: application/json</pre><p>
-</p><p>The following JUnit test is created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</p><p>The following JUnit test is created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// when:</span>
   bookReturnedTriggered();
 
@@ -75,7 +75,7 @@ outputMessage:
  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span> when:
   bookReturnedTriggered()
 
@@ -89,27 +89,27 @@ outputMessage:
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>)
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_2_output_triggered_by_input" href="#_scenario_2_output_triggered_by_input"></a>5.3.2&nbsp;Scenario 2: Output Triggered by Input</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>)
-		messageBody([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		messageHeaders {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
-		}
-	}
-	outputMessage {
-		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>)
-		body([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		headers {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
-		}
-	}
-}</pre><p>
+</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>)
+					messageBody([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					messageHeaders {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+					}
+				}
+				outputMessage {
+					sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>)
+					body([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					headers {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+					}
+				}
+			}</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">label: some_label
 input:
@@ -124,7 +124,7 @@ outputMessage:
     bookName: foo
   headers:
     BOOK-NAME: foo</pre><p>
-</p><p>The following JUnit test is created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</p><p>The following JUnit test is created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>bookName\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span>
@@ -142,7 +142,7 @@ outputMessage:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\
 </span>given:
    ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{"bookName":"foo"}'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>,
@@ -160,19 +160,19 @@ and:
    DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
    assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_3_no_output_message" href="#_scenario_3_no_output_message"></a>5.3.3&nbsp;Scenario 3: No Output Message</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
-</p><pre class="programlisting">def contractDsl = Contract.make {
-	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
-	input {
-		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
-		messageBody([
-				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-		])
-		messageHeaders {
-			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
-		}
-		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
-	}
-}</pre><p>
+</p><pre class="programlisting">			def contractDsl = Contract.make {
+				label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
+				input {
+					messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>)
+					messageBody([
+							bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+					])
+					messageHeaders {
+						header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+					}
+					assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookWasDeleted()'</span>)
+				}
+			}</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">label: some_label
 input:
@@ -182,7 +182,7 @@ input:
   messageHeaders:
     sample: header
   assertThat: bookWasDeleted()</pre><p>
-</p><p>The following JUnit test is created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</p><p>The following JUnit test is created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>bookName\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span>
@@ -194,7 +194,7 @@ input:
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
  bookWasDeleted();
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><p>And the following Spock test would be created:</p><pre class="programlisting">					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span>given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 		\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'\'\'{"bookName":"foo"}\'\'\',

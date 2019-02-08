@@ -264,18 +264,18 @@
 <h3 id="test_dependencies_for_generated_contract_verification_tests">Test dependencies for generated contract verification tests</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.spockframework<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spock-core<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>1.0-groovy-2.4<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-starter-contract-verifier<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${it-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="xml">                <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.spockframework<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spock-core<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;version&gt;</span>1.0-groovy-2.4<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-starter-contract-verifier<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${it-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
 </div>
@@ -283,52 +283,54 @@
 <h3 id="project_configuration_for_spring_cloud_contract_verifier_groovy_spock_specifications_and_stub_publishing">Project configuration for Spring Cloud Contract Verifier, Groovy, Spock specifications and stub publishing</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">            <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${spring-cloud-verifier-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;extensions&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/extensions&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>hello.BaseAccurest<span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;testFramework&gt;</span>SPOCK<span style="color:#070;font-weight:bold">&lt;/testFramework&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span>
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${spring-cloud-verifier-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;extensions&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/extensions&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>hello.BaseAccurest<span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;testFramework&gt;</span>SPOCK<span style="color:#070;font-weight:bold">&lt;/testFramework&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span>
 
-            <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.codehaus.gmavenplus<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>gmavenplus-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;executions&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;execution&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;goals&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>compileTests<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;/goals&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;/execution&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/executions&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;testSources&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;testSource&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;directory&gt;</span>${project.basedir}/src/test/groovy<span style="color:#070;font-weight:bold">&lt;/directory&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;includes&gt;</span>
-                                <span style="color:#070;font-weight:bold">&lt;include&gt;</span>**/*.groovy<span style="color:#070;font-weight:bold">&lt;/include&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;/includes&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;/testSource&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;testSource&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;directory&gt;</span>${project.build.directory}/generated-test-sources/contracts<span style="color:#070;font-weight:bold">&lt;/directory&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;includes&gt;</span>
-                                <span style="color:#070;font-weight:bold">&lt;include&gt;</span>**/*.groovy<span style="color:#070;font-weight:bold">&lt;/include&gt;</span>
-                            <span style="color:#070;font-weight:bold">&lt;/includes&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;/testSource&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;/testSources&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>maven-surefire-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;includes&gt;</span>
-                        <span style="color:#070;font-weight:bold">&lt;include&gt;</span>**/*Spec.java<span style="color:#070;font-weight:bold">&lt;/include&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;/includes&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.codehaus.gmavenplus<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>gmavenplus-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;executions&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;execution&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;goals&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;goal&gt;</span>compileTests<span style="color:#070;font-weight:bold">&lt;/goal&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;/goals&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/execution&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/executions&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;testSources&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;testSource&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;directory&gt;</span>${project.basedir}/src/test/groovy<span style="color:#070;font-weight:bold">&lt;/directory&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;includes&gt;</span>
+                                                                <span style="color:#070;font-weight:bold">&lt;include&gt;</span>**/*.groovy<span style="color:#070;font-weight:bold">&lt;/include&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;/includes&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;/testSource&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;testSource&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;directory&gt;</span>
+                                                                ${project.build.directory}/generated-test-sources/contracts
+                                                        <span style="color:#070;font-weight:bold">&lt;/directory&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;includes&gt;</span>
+                                                                <span style="color:#070;font-weight:bold">&lt;include&gt;</span>**/*.groovy<span style="color:#070;font-weight:bold">&lt;/include&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;/includes&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;/testSource&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/testSources&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>maven-surefire-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;includes&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;include&gt;</span>**/*Spec.java<span style="color:#070;font-weight:bold">&lt;/include&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/includes&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
 </div>
 </div>
 </div>
@@ -336,21 +338,20 @@
 <h3 id="base_specification_class">Base Specification class</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/**
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/*
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Copyright 2013-2019 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */</span>
 <span style="color:#080;font-weight:bold">package</span> <span style="color:#707;font-weight:bold">hello</span>
 
@@ -359,9 +360,9 @@
 
 <span style="color:#707;font-weight:bold">class</span> <span style="color:#707;font-weight:bold">BaseAccurest</span> <span style="color:#707;font-weight:bold">extends</span> <span style="color:#707;font-weight:bold">Specification</span> {
 
-    <span style="color:#707;font-weight:bold">def</span> <span style="color:#707;font-weight:bold">setup</span>() {
-        <span style="color:#707;font-weight:bold">RestAssuredMockMvc.standaloneSetup</span>(<span style="color:#707;font-weight:bold">new</span> <span style="color:#707;font-weight:bold">GreetingController</span>())
-    }
+        <span style="color:#707;font-weight:bold">def</span> <span style="color:#707;font-weight:bold">setup</span>() {
+                <span style="color:#707;font-weight:bold">RestAssuredMockMvc.standaloneSetup</span>(<span style="color:#707;font-weight:bold">new</span> <span style="color:#707;font-weight:bold">GreetingController</span>())
+        }
 
 }</code></pre>
 </div>

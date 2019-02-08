@@ -176,7 +176,7 @@ name of the base class for the matched contract. You have to provide a list call
 <code class="literal">contractPackageRegex</code> to <code class="literal">baseClassFQN</code> mapping. Consider the following example:</p><pre class="programlisting">baseClassForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example.FooBase"</span>
 baseClassMappings {
 	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/com/.*'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.ComBase'</span>)
-	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/bar/.*'</span>:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.BarBase'</span>)
+	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/bar/.*'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.BarBase'</span>)
 }</pre><p>Let&#8217;s assume that you have contracts under
  - <code class="literal">src/test/resources/contract/com/</code>
  - <code class="literal">src/test/resources/contract/foo/</code></p><p>By providing the <code class="literal">baseClassForTests</code>, we have a fallback in case mapping did not succeed.

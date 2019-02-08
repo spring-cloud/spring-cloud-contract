@@ -12,7 +12,7 @@ structure converter. The following code listing shows the <code class="literal">
  * Converter to be used to convert FROM {@link File} TO {@link Contract}
  * and from {@link Contract} to {@code T}
  *
- * @param &lt;T&gt; - type to which we want to convert the contract
+ * @param &lt;T &gt;     - type to which we want to convert the contract
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
@@ -98,7 +98,7 @@ set a <code class="literal">metaData</code> entry in the Pact file, with key <co
               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
             }
           },
-          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
             <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.clientId"</span>: {
               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
                 {
@@ -233,15 +233,31 @@ current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting">testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-pact"</span></pre><p class="secondary">
 </p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_test_generator" href="#_using_the_custom_test_generator"></a>10.2&nbsp;Using the Custom Test Generator</h2></div></div></div><p>If you want to generate tests for languages other than Java or you are not happy with the
 way the verifier builds Java tests, you can register your own implementation.</p><p>The <code class="literal">SingleTestGenerator</code> interface lets you register your own implementation.  The
-following code listing shows the <code class="literal">SingleTestGenerator</code> interface:</p><pre class="programlisting">	 *
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> properties                    - properties passed to the plugin
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> listOfFiles                   - list of parsed contracts with additional metadata
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> className                     - the name of the generated test <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> classPackage                  - the name of the <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> in which the test <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> should be stored
-	 * <em><span class="hl-annotation" style="color: gray">@param</span></em> includedDirectoryRelativePath - relative path to the included directory
-	 * <em><span class="hl-annotation" style="color: gray">@return</span></em> contents of a single test <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>
-	 * <em><span class="hl-annotation" style="color: gray">@deprecated</span></em> use {<em><span class="hl-annotation" style="color: gray">@link</span></em> SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
-	 */
+following code listing shows the <code class="literal">SingleTestGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.builder
+
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
+
+<strong class="hl-tag" style="color: blue">/**
+ * Builds a single test.
+ *
+ * @since 1.1.0
+ */</strong>
+trait SingleTestGenerator {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Creates contents of a single test class in which all test scenarios from
+	 * the contract metadata should be placed.
+	 *
+	 * @param properties - properties passed to the plugin
+	 * @param listOfFiles - list of parsed contracts with additional metadata
+	 * @param className - the name of the generated test class
+	 * @param classPackage - the name of the package in which the test class should be stored
+	 * @param includedDirectoryRelativePath - relative path to the included directory
+	 * @return contents of a single test class
+	 * @deprecated use{@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
+	 */</strong>
 	<em><span class="hl-annotation" style="color: gray">@Deprecated</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> String buildClass(ContractVerifierConfigProperties properties,
 			Collection&lt;ContractMetadata&gt; listOfFiles, String className, String classPackage, String includedDirectoryRelativePath)
@@ -250,15 +266,18 @@ following code listing shows the <code class="literal">SingleTestGenerator</code
 	 * Creates contents of a single test class in which all test scenarios from
 	 * the contract metadata should be placed.
 	 *
-	 * @param properties                    - properties passed to the plugin
-	 * @param listOfFiles                   - list of parsed contracts with additional metadata
-	 * @param generatedClassData            - information about the generated class
+	 * @param properties - properties passed to the plugin
+	 * @param listOfFiles - list of parsed contracts with additional metadata
+	 * @param generatedClassData - information about the generated class
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 */</strong>
 	String buildClass(ContractVerifierConfigProperties properties,
 			Collection&lt;ContractMetadata&gt; listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> buildClass(properties, listOfFiles, generatedClassData.className, generatedClassData.classPackage, includedDirectoryRelativePath)
+		String className = generatedClassData.className
+		String classPackage = generatedClassData.classPackage
+		String path = includedDirectoryRelativePath
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> buildClass(properties, listOfFiles, className, classPackage, path)
 	}
 
 	<strong class="hl-tag" style="color: blue">/**
@@ -287,6 +306,7 @@ own implementation of the <code class="literal">StubGenerator</code> interface. 
 <code class="literal">StubGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.converter
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.transform.CompileStatic
+
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
 
@@ -299,18 +319,18 @@ own implementation of the <code class="literal">StubGenerator</code> interface. 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubGenerator {
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns {@code true} if the converter can handle the file to convert it into a stub.
+	 * @return {@code true} if the converter can handle the file to convert it into a stub.
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> canHandleFileName(String fileName)
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns the collection of converted contracts into stubs. One contract can
+	 * @return the collection of converted contracts into stubs. One contract can
 	 * result in multiple stubs.
 	 */</strong>
 	Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content)
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Returns the name of the converted stub file. If you have multiple contracts
+	 * @return the name of the converted stub file. If you have multiple contracts
 	 * in a single file then a prefix will be added to the generated file. If you
 	 * provide the {@link Contract#name} field then that field will override the
 	 * generated file name.
@@ -380,17 +400,19 @@ HTTP Stub server implementation, which might resemble the following example:</p>
 	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
 	HttpServerStub registerMappings(Collection&lt;File&gt; stubFiles) {
 		List&lt;RunnerSetting&gt; settings = stubFiles.findAll { it.name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"json"</span>) }
-				.collect {
+			.collect {
 			log.info(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Trying to parse [${it.name}]"</span>)
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> {
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).build()
-			} <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (Exception e) {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).
+					build()
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (Exception e) {
 				log.warn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Exception occurred while trying to parse file [${it.name}]"</span>, e)
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> null
 			}
 		}.findAll { it }
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.runner = JsonRunner.newJsonRunnerWithSetting(settings,
-				HttpArgs.httpArgs().withPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port).build())
+			HttpArgs.httpArgs().withPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port).build())
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.runner.run()
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.started = true
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>

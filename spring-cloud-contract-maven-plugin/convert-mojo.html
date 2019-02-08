@@ -316,7 +316,7 @@ stubs mappings.
 <td><tt>-</tt></td>
             
 <td>Directory containing Spring Cloud Contract Verifier contracts
-written using the GroovyDSL<br /><b>Default value is</b>: <tt>${project.basedir}/src/test/resources/contracts</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.contractsDirectory</tt>.<br /></td>
+written using the GroovyDSL.<br /><b>Default value is</b>: <tt>${project.basedir}/src/test/resources/contracts</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.contractsDirectory</tt>.<br /></td>
           </tr>
           
 <tr class="b">
@@ -327,7 +327,7 @@ written using the GroovyDSL<br /><b>Default value is</b>: <tt>${project.basedir}
             
 <td><tt>-</tt></td>
             
-<td>Picks the mode in which stubs will be found and registered<br /><b>Default value is</b>: <tt>CLASSPATH</tt>.<br /><b>User property is</b>: <tt>contractsMode</tt>.<br /></td>
+<td>Picks the mode in which stubs will be found and registered.<br /><b>Default value is</b>: <tt>CLASSPATH</tt>.<br /><b>User property is</b>: <tt>contractsMode</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -340,11 +340,10 @@ written using the GroovyDSL<br /><b>Default value is</b>: <tt>${project.basedir}
             
 <td>The path in the JAR with all the contracts where contracts for this
 particular service lay. If not provided will be resolved to
-<tt>groupid/artifactid</tt>. Example: <br />
-<br />
- If <tt>groupid</tt> is <tt>com.example</tt> and
-<tt>artifactid</tt> is <tt>service</tt> then the resolved
-path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>contractsPath</tt>.<br /></td>
+<tt>groupid/artifactid</tt>. Example: If <tt>groupid</tt>
+is <tt>com.example</tt> and <tt>artifactid</tt> is
+<tt>service</tt> then the resolved path will be
+<tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>contractsPath</tt>.<br /></td>
           </tr>
           
 <tr class="b">
@@ -356,7 +355,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td><tt>-</tt></td>
             
 <td>Map of properties that can be passed to custom
-<tt>StubDownloaderBuilder</tt><br /><b>User property is</b>: <tt>contractsProperties</tt>.<br /></td>
+<tt>StubDownloaderBuilder</tt>.<br /><b>User property is</b>: <tt>contractsProperties</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -437,7 +436,7 @@ taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUr
 <td><tt>-</tt></td>
             
 <td>If <tt>true</tt> then will convert contracts to a YAML
-representation<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>convertToYaml</tt>.<br /></td>
+representation.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>convertToYaml</tt>.<br /></td>
           </tr>
           
 <tr class="b">
@@ -449,7 +448,7 @@ representation<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User proper
 <td><tt>-</tt></td>
             
 <td>If set to <tt>false</tt> will NOT delete stubs from a temporary
-folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>deleteStubsAfterTest</tt>.<br /></td>
+folder after running tests.<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>deleteStubsAfterTest</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -534,7 +533,7 @@ create jar with stubs<br /><b>Default value is</b>: <tt>${project.build.director
 <p><b><a name="contractsDirectory">contractsDirectory</a>:</b></p>
         
 <div>Directory containing Spring Cloud Contract Verifier contracts
-written using the GroovyDSL</div>
+written using the GroovyDSL.</div>
         
 <ul>
           
@@ -548,7 +547,7 @@ written using the GroovyDSL</div>
         </ul><hr />
 <p><b><a name="contractsMode">contractsMode</a>:</b></p>
         
-<div>Picks the mode in which stubs will be found and registered</div>
+<div>Picks the mode in which stubs will be found and registered.</div>
         
 <ul>
           
@@ -564,11 +563,10 @@ written using the GroovyDSL</div>
         
 <div>The path in the JAR with all the contracts where contracts for this
 particular service lay. If not provided will be resolved to
-<tt>groupid/artifactid</tt>. Example: <br />
-<br />
- If <tt>groupid</tt> is <tt>com.example</tt> and
-<tt>artifactid</tt> is <tt>service</tt> then the resolved
-path will be <tt>/com/example/artifactid</tt></div>
+<tt>groupid/artifactid</tt>. Example: If <tt>groupid</tt>
+is <tt>com.example</tt> and <tt>artifactid</tt> is
+<tt>service</tt> then the resolved path will be
+<tt>/com/example/artifactid</tt></div>
         
 <ul>
           
@@ -581,7 +579,7 @@ path will be <tt>/com/example/artifactid</tt></div>
 <p><b><a name="contractsProperties">contractsProperties</a>:</b></p>
         
 <div>Map of properties that can be passed to custom
-<tt>StubDownloaderBuilder</tt></div>
+<tt>StubDownloaderBuilder</tt>.</div>
         
 <ul>
           
@@ -659,7 +657,7 @@ taken into consideration</div>
 <div><b>Deprecated.</b> - with 2.1.0 this option is redundant</div>
         
 <div>If <tt>true</tt> then will not assert whether a stub / contract
-JAR was downloaded from local or remote location</div>
+JAR was downloaded from local or remote location.</div>
         
 <ul>
           
@@ -674,7 +672,7 @@ JAR was downloaded from local or remote location</div>
 <p><b><a name="convertToYaml">convertToYaml</a>:</b></p>
         
 <div>If <tt>true</tt> then will convert contracts to a YAML
-representation</div>
+representation.</div>
         
 <ul>
           
@@ -689,7 +687,7 @@ representation</div>
 <p><b><a name="deleteStubsAfterTest">deleteStubsAfterTest</a>:</b></p>
         
 <div>If set to <tt>false</tt> will NOT delete stubs from a temporary
-folder after running tests</div>
+folder after running tests.</div>
         
 <ul>
           
