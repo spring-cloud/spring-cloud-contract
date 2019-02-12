@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import static org.apache.commons.text.StringEscapeUtils.unescapeXml
  * A utility class that can operate on a message body basing on the provided Content Type.
  *
  * @since 1.0.0
+ * @author Konstantin Shevchuk
  */
 @TypeChecked
 @Commons
@@ -448,8 +449,15 @@ class ContentUtils {
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}
 
+	/**
+	 * Creates new XmlSlurper with default error handler to avoid printing
+	 *
+	 * [Fatal Error] :1:1: Content is not allowed in prolog.
+	 *
+	 * @return XmlSlurper with default error handler
+	 */
     static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
-        def xmlSlurper = new XmlSlurper()
+		XmlSlurper xmlSlurper = new XmlSlurper()
         xmlSlurper.setErrorHandler(new DefaultHandler())
         return xmlSlurper
     }

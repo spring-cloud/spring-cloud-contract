@@ -7,6 +7,7 @@ import org.xml.sax.helpers.DefaultHandler
 
 /**
  * @author Marcin Grzejszczak
+ * @author Konstantin Shevchuk
  */
 class ContentUtilsSpec extends Specification {
 
