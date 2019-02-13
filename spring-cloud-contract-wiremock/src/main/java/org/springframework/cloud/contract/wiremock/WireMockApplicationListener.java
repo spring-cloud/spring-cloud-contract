@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
@@ -28,6 +25,9 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.SocketUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Listener that prepares the environment so that WireMock will work when it is
@@ -53,6 +53,7 @@ public class WireMockApplicationListener
 					.get("wiremock")).getSource();
 			source.put("wiremock.server.port",
 					SocketUtils.findAvailableTcpPort(10000, 12500));
+			source.put("wiremock.server.port-dynamic", true);
 		}
 		if (environment.getProperty("wiremock.server.https-port", Integer.class,
 				0) == 0) {
@@ -62,7 +63,16 @@ public class WireMockApplicationListener
 					.get("wiremock")).getSource();
 			source.put("wiremock.server.https-port",
 					SocketUtils.findAvailableTcpPort(12500, 15000));
+			source.put("wiremock.server.https-port-dynamic", true);
+		} else if (environment.getProperty("wiremock.server.https-port", Integer.class,
+										  0) != -1) {
+			MutablePropertySources propertySources = environment.getPropertySources();
+			addPropertySource(propertySources);
+			Map<String, Object> source = ((MapPropertySource) propertySources
+					.get("wiremock")).getSource();
+			source.put("wiremock.server.https-port-dynamic", false);
 		}
+
 	}
 
 	private void addPropertySource(MutablePropertySources propertySources) {

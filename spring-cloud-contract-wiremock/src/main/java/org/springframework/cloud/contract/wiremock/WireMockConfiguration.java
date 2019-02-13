@@ -16,20 +16,13 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -42,6 +35,13 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Configuration and lifecycle for a Spring Application context that wants to run a
@@ -254,6 +254,10 @@ class WireMockProperties {
 
 		private String[] files;
 
+		private boolean portDynamic = false;
+
+		private boolean httpsPortDynamic = true;
+
 		public int getPort() {
 			return this.port;
 		}
@@ -286,6 +290,21 @@ class WireMockProperties {
 			this.files = files;
 		}
 
+		public boolean isPortDynamic() {
+			return portDynamic;
+		}
+
+		public void setPortDynamic(boolean portDynamic) {
+			this.portDynamic = portDynamic;
+		}
+
+		public boolean isHttpsPortDynamic() {
+			return httpsPortDynamic;
+		}
+
+		public void setHttpsPortDynamic(boolean httpsPortDynamic) {
+			this.httpsPortDynamic = httpsPortDynamic;
+		}
 	}
 
 }

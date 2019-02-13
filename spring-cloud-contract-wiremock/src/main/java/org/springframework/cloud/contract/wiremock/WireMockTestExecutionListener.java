@@ -97,9 +97,9 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 
 	private boolean portIsFixed(TestContext testContext) {
 		WireMockConfiguration wireMockProperties = wireMockConfig(testContext);
-		int httpPort = wireMockProperties.wireMock.getServer().getPort();
-		int httpsPort = wireMockProperties.wireMock.getServer().getHttpsPort();
-		return (httpPort != 0 || httpsPort != -1) && httpsPort != 0;
+		boolean httpPortDynamic = wireMockProperties.wireMock.getServer().isPortDynamic();
+		boolean httpsPortDynamic = wireMockProperties.wireMock.getServer().isHttpsPortDynamic();
+		return !httpPortDynamic && !httpsPortDynamic;
 	}
 
 }
