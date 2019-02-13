@@ -34,8 +34,10 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 /**
  * Converts WireMock stubs into the DSL format
  *
- * @since 1.0.0
+ * @author Marcin Grzejszczak
  * @author Konstantin Shevchuk
+ *
+ * @since 1.0.0
  */
 @CompileDynamic
 class WireMockToDslConverter {
