@@ -450,7 +450,7 @@ class ContentUtils {
 	}
 
 	/**
-	 * Creates new XmlSlurper with default error handler
+	 * Creates new {@link XmlSlurper} with default error handler.
 	 *
 	 * @return XmlSlurper with default error handler
 	 */
