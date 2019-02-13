@@ -84,8 +84,11 @@ class JsonToJsonPathsConverter {
 		if (bodyMatchers?.hasMatchers()) {
 			bodyMatchers.matchers().each { BodyMatcher matcher ->
 				try {
-					context.delete(matcher.path())
-					removeTrailingContainers(matcher, context)
+					def entry = entry(context, matcher.path())
+					if (entry != null) {
+						context.delete(matcher.path())
+						removeTrailingContainers(matcher, context)
+					}
 				} catch (RuntimeException e) {
 					if (log.isDebugEnabled()) {
 						log.debug("Exception occurred while trying to delete path [${matcher.path()}]", e)
@@ -94,6 +97,17 @@ class JsonToJsonPathsConverter {
 			}
 		}
 		return jsonCopy
+	}
+
+	private static def entry(DocumentContext context, String path) {
+		try {
+			return context.read(path)
+		} catch (Exception ex) {
+			if (log.isDebugEnabled()) {
+				log.debug("Exception occurred while trying to retrieve element via path [${path}]", ex)
+			}
+			return null
+		}
 	}
 
 	/**
@@ -118,20 +132,24 @@ class JsonToJsonPathsConverter {
 	 * defining body...
 	 */
 	private static void removeTrailingContainers(BodyMatcher matcher, DocumentContext context) {
-		if (matcher.path().contains(ANY_ARRAY_NOTATION_IN_JSONPATH)) {
-			String pathWithoutAnyArray = matcher.path().substring(0, matcher.path().lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH))
-			def object = context.read(pathWithoutAnyArray)
-			if (object instanceof Iterable && containsOnlyEmptyElements(object)) {
-				String pathToDelete = pathToDelete(pathWithoutAnyArray)
-				context.delete(pathToDelete)
-			} else {
-				String lastParent = matcher.path().substring(0, matcher.path().lastIndexOf("."))
-				def lastParentObject = context.read(lastParent)
-				if (lastParentObject instanceof Iterable && containsOnlyEmptyElements(lastParentObject)) {
-					context.delete(lastParent)
-				}
+		String pathWithoutAnyArray = matcher.path().contains(ANY_ARRAY_NOTATION_IN_JSONPATH) ? matcher.path().substring(0, matcher.path().lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH)) : matcher.path()
+		def object = entry(context, pathWithoutAnyArray)
+		// object got removed and it was the only element
+		// let's get its parent and see if it contains an empty element
+		if (isIterable(object) && containsOnlyEmptyElements(object)) {
+			String pathToDelete = pathToDelete(pathWithoutAnyArray)
+			context.delete(pathToDelete)
+		} else {
+			String lastParent = matcher.path().substring(0, matcher.path().lastIndexOf("."))
+			def lastParentObject = context.read(lastParent)
+			if (isIterable(lastParentObject) && containsOnlyEmptyElements(lastParentObject)) {
+				context.delete(lastParent)
 			}
 		}
+	}
+
+	private static boolean isIterable(Object object) {
+		return object instanceof Iterable || object instanceof Map
 	}
 
 	private static String pathToDelete(String pathWithoutAnyArray) {

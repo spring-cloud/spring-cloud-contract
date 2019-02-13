@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.util
@@ -36,6 +35,7 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.xml.sax.helpers.DefaultHandler
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
@@ -49,8 +49,9 @@ import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNO
  *
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
- *
+ * @author Konstantin Shevchuk
  * @since 1.0.0
+ *
  */
 @CompileStatic
 class ContentUtils {
@@ -119,7 +120,7 @@ class ContentUtils {
 			return JSON
 		} catch(JsonException e) {
 			try {
-				new XmlSlurper().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+				getXmlSlurperWithDefaultErrorHandler().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
 				return ContentType.XML
 			} catch (Exception ignored) {
 				extractValueForGString(bodyAsValue, GET_STUB_SIDE)
@@ -134,7 +135,7 @@ class ContentUtils {
 			return JSON
 		} catch(JsonException e) {
 			try {
-				new XmlSlurper().parseText(bodyAsValue)
+                getXmlSlurperWithDefaultErrorHandler().parseText(bodyAsValue)
 				return ContentType.XML
 			} catch (Exception ignored) {
 				return UNKNOWN
@@ -234,7 +235,7 @@ class ContentUtils {
 				bodyAsValue.strings.clone() as String[]
 		)
 		// try to convert it to XML
-		new XmlSlurper().parseText(impl.toString())
+		getXmlSlurperWithDefaultErrorHandler().parseText(impl.toString())
 		return impl
 	}
 
@@ -464,7 +465,7 @@ class ContentUtils {
 				gString.strings.clone() as String[]
 		)
 		try {
-			new XmlSlurper().parseText(stringWithoutValues.toString())
+			getXmlSlurperWithDefaultErrorHandler().parseText(stringWithoutValues.toString())
 			return true
 		} catch (Exception ignored) {
 			// Not XML
@@ -547,4 +548,15 @@ class ContentUtils {
 		}
 		return contentType
 	}
+	/**
+	 * Creates new {@link XmlSlurper} with default error handler.
+	 *
+	 * @return XmlSlurper with default error handler
+	 */
+	static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
+		XmlSlurper xmlSlurper = new XmlSlurper()
+		xmlSlurper.setErrorHandler(new DefaultHandler())
+		return xmlSlurper
+    }
+
 }
