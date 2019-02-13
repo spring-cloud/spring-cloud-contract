@@ -112,7 +112,7 @@ class ContentUtils {
 			return ContentType.JSON
 		} catch(JsonException e) {
 			try {
-                getXmlSlurperWithDefaultErrorHandler().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+				getXmlSlurperWithDefaultErrorHandler().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
 				return ContentType.XML
 			} catch (Exception exception) {
 				extractValueForGString(bodyAsValue, GET_STUB_SIDE)
@@ -191,7 +191,7 @@ class ContentUtils {
 				bodyAsValue.strings.clone() as String[]
 		)
 		// try to convert it to XML
-        getXmlSlurperWithDefaultErrorHandler().parseText(impl.toString())
+		getXmlSlurperWithDefaultErrorHandler().parseText(impl.toString())
 		return impl
 	}
 
@@ -387,7 +387,7 @@ class ContentUtils {
 				gstring.strings.clone() as String[]
 		)
 		try {
-            getXmlSlurperWithDefaultErrorHandler().parseText(stringWithoutValues.toString())
+			getXmlSlurperWithDefaultErrorHandler().parseText(stringWithoutValues.toString())
 			return true
 		} catch (Exception e) {
 			// Not XML
@@ -450,16 +450,14 @@ class ContentUtils {
 	}
 
 	/**
-	 * Creates new XmlSlurper with default error handler to avoid printing
-	 *
-	 * [Fatal Error] :1:1: Content is not allowed in prolog.
+	 * Creates new XmlSlurper with default error handler
 	 *
 	 * @return XmlSlurper with default error handler
 	 */
-    static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
+	static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
 		XmlSlurper xmlSlurper = new XmlSlurper()
-        xmlSlurper.setErrorHandler(new DefaultHandler())
-        return xmlSlurper
+		xmlSlurper.setErrorHandler(new DefaultHandler())
+		return xmlSlurper
     }
 
 }

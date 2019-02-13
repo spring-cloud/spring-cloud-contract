@@ -29,6 +29,6 @@ class ContentUtilsSpec extends Specification {
         given:
         XmlSlurper xmlSlurper = ContentUtils.getXmlSlurperWithDefaultErrorHandler()
         expect:
-        xmlSlurper.getErrorHandler() in DefaultHandler
+        xmlSlurper.getErrorHandler() instanceof DefaultHandler
     }
 }
