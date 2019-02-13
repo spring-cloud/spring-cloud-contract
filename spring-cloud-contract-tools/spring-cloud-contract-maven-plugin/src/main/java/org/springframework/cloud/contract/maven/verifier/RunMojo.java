@@ -1,23 +1,25 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+
 import javax.inject.Inject;
 
 import org.apache.maven.execution.MavenSession;
@@ -28,6 +30,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.eclipse.aether.RepositorySystemSession;
+
 import org.springframework.cloud.contract.maven.verifier.stubrunner.LocalStubRunner;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.RemoteStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
@@ -37,11 +40,17 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.util.StringUtils;
 
 /**
+ * Mojo for running stubs.
  *
+ * @author Mariusz Smykula
  */
 @SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "run", requiresProject = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class RunMojo extends AbstractMojo {
+
+	private final LocalStubRunner localStubRunner;
+
+	private final RemoteStubRunner remoteStubRunner;
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -53,7 +62,7 @@ public class RunMojo extends AbstractMojo {
 	private File destination;
 
 	/**
-	 * HTTP port for the WireMock server that serves stubs
+	 * HTTP port for the WireMock server that serves stubs.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.http.port", defaultValue = "8080")
 	private int httpPort;
@@ -71,25 +80,25 @@ public class RunMojo extends AbstractMojo {
 	private boolean skipTestOnly;
 
 	/**
-	 * List of stubs to be downloaded and ran in a colon separated Ivy notation
+	 * List of stubs to be downloaded and ran in a colon separated Ivy notation.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.stubs")
 	private String stubs;
 
 	/**
-	 * Minimal port at which the stub should start
+	 * Minimal port at which the stub should start.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.http.minPort", defaultValue = "10000")
 	private int minPort;
 
 	/**
-	 * Maximal port at which the stub should start
+	 * Maximal port at which the stub should start.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.http.maxPort", defaultValue = "15000")
 	private int maxPort;
 
 	/**
-	 * Should the plugin wait for the user to press the key after starting the stubs
+	 * Should the plugin wait for the user to press the key after starting the stubs.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.wait-for-key-pressed", defaultValue = "true")
 	private boolean waitForKeyPressed;
@@ -102,10 +111,6 @@ public class RunMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${session}", readonly = true)
 	private MavenSession mavenSession;
-
-	private final LocalStubRunner localStubRunner;
-
-	private final RemoteStubRunner remoteStubRunner;
 
 	@Inject
 	public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {

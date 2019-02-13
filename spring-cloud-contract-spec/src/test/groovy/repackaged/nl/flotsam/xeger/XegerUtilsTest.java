@@ -15,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package repackaged.nl.flotsam.xeger;
 
 import java.util.Random;
@@ -26,7 +27,8 @@ import static org.junit.Assert.assertThat;
 
 public class XegerUtilsTest {
 
-	@Test public void shouldGenerateRandomNumberCorrectly() {
+	@Test
+	public void shouldGenerateRandomNumberCorrectly() {
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {
 			int number = Xeger.getRandomInt(3, 7, random);

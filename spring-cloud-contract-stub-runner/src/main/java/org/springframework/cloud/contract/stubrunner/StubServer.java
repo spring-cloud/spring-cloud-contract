@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner;
@@ -24,19 +24,20 @@ import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.spec.Contract;
 
 class StubServer {
 
 	private static final Log log = LogFactory.getLog(StubServer.class);
 
-	private final HttpServerStub httpServerStub;
-
 	final StubConfiguration stubConfiguration;
 
 	final Collection<File> mappings;
 
 	final Collection<Contract> contracts;
+
+	private final HttpServerStub httpServerStub;
 
 	StubServer(StubConfiguration stubConfiguration, Collection<File> mappings,
 			Collection<Contract> contracts, HttpServerStub httpServerStub) {
@@ -75,7 +76,8 @@ class StubServer {
 			int httpsPort = this.httpServerStub.httpsPort();
 			int httpPort = this.httpServerStub.port();
 			if (log.isDebugEnabled()) {
-				log.debug("Ports for this server are https [" + httpsPort + "] and http [" + httpPort + "]");
+				log.debug("Ports for this server are https [" + httpsPort + "] and http ["
+						+ httpPort + "]");
 			}
 			return httpsPort != -1 ? httpsPort : httpPort;
 		}
@@ -93,7 +95,8 @@ class StubServer {
 
 	public URL getStubUrl() {
 		try {
-			return new URL((hasHttps() ? "https:" : "http:") + "//localhost:" + getPort());
+			return new URL(
+					(hasHttps() ? "https:" : "http:") + "//localhost:" + getPort());
 		}
 		catch (MalformedURLException e) {
 			throw new IllegalStateException("Cannot parse URL", e);
@@ -118,10 +121,12 @@ class StubServer {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 		StubServer that = (StubServer) o;
 		return Objects.equals(this.stubConfiguration, that.stubConfiguration)
 				&& Objects.equals(this.contracts, that.contracts);

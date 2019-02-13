@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata modelVersion="1.1.0">
 	<groupId>com.example</groupId>
-    <artifactId>services-contracts</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+	<artifactId>services-contracts</artifactId>
+	<version>1.0.4-SNAPSHOT</version>
 	<versioning>
 		<snapshot>
 			<localCopy>true</localCopy>
@@ -11,12 +11,12 @@
 		<snapshotVersions>
 			<snapshotVersion>
 				<extension>jar</extension>
-                <version>1.0.4-SNAPSHOT</version>
+				<version>1.0.4-SNAPSHOT</version>
 				<updated>20160916125313</updated>
 			</snapshotVersion>
 			<snapshotVersion>
 				<extension>pom</extension>
-                <version>1.0.4-SNAPSHOT</version>
+				<version>1.0.4-SNAPSHOT</version>
 				<updated>20160916125313</updated>
 			</snapshotVersion>
 		</snapshotVersions>

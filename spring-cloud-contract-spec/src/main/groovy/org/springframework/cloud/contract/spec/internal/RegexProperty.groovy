@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.spec.internal
@@ -25,6 +24,7 @@ import groovy.transform.ToString
 import groovy.transform.TypeChecked
 import org.apache.commons.text.StringEscapeUtils
 import repackaged.nl.flotsam.xeger.Xeger
+
 /**
  * Represents a regular expression property
  *
@@ -58,11 +58,13 @@ class RegexProperty extends DslProperty implements CanBeDynamic {
 		if (dynamicValue instanceof Pattern) {
 			this.pattern = dynamicValue
 			this.clazz = clazz ?: String
-		} else if (dynamicValue instanceof RegexProperty) {
+		}
+		else if (dynamicValue instanceof RegexProperty) {
 			RegexProperty regexProperty = ((RegexProperty) dynamicValue)
 			this.pattern = regexProperty.pattern
 			this.clazz = clazz ?: regexProperty.clazz
-		} else {
+		}
+		else {
 			this.clazz = clazz
 		}
 	}
@@ -110,13 +112,13 @@ class RegexProperty extends DslProperty implements CanBeDynamic {
 	Object generate() {
 		String generatedValue = new Xeger(this.pattern.pattern()).generate()
 		switch (this.clazz) {
-			case Integer: return Integer.parseInt(generatedValue)
-			case Double: return Double.parseDouble(generatedValue)
-			case Float: return Float.parseFloat(generatedValue)
-			case Long: return Long.parseLong(generatedValue)
-			case Short: return Short.parseShort(generatedValue)
-			case Boolean: return Boolean.parseBoolean(generatedValue)
-			default: return generatedValue
+		case Integer: return Integer.parseInt(generatedValue)
+		case Double: return Double.parseDouble(generatedValue)
+		case Float: return Float.parseFloat(generatedValue)
+		case Long: return Long.parseLong(generatedValue)
+		case Short: return Short.parseShort(generatedValue)
+		case Boolean: return Boolean.parseBoolean(generatedValue)
+		default: return generatedValue
 		}
 	}
 
@@ -141,20 +143,32 @@ class RegexProperty extends DslProperty implements CanBeDynamic {
 	}
 
 	RegexProperty concreteClientEscapedDynamicProducer() {
-		return new RegexProperty(generateAndEscapeJavaStringIfNeeded(), this.pattern, this.clazz)
+		return new RegexProperty(
+				generateAndEscapeJavaStringIfNeeded(), this.pattern, this.clazz)
 	}
 
 	RegexProperty dynamicClientEscapedConcreteProducer() {
-		return new RegexProperty(this.pattern, generateAndEscapeJavaStringIfNeeded(), this.clazz)
+		return new RegexProperty(this.pattern,
+				generateAndEscapeJavaStringIfNeeded(), this.clazz)
 	}
 
 	boolean equals(o) {
-		if (this.is(o)) return true
-		if (getClass() != o.class) return false
-		if (!super.equals(o)) return false
+		if (this.is(o)) {
+			return true
+		}
+		if (getClass() != o.class) {
+			return false
+		}
+		if (!super.equals(o)) {
+			return false
+		}
 		RegexProperty that = (RegexProperty) o
-		if (this.clazz != that.clazz) return false
-		if (this.pattern != that.pattern) return false
+		if (this.clazz != that.clazz) {
+			return false
+		}
+		if (this.pattern != that.pattern) {
+			return false
+		}
 		return true
 	}
 

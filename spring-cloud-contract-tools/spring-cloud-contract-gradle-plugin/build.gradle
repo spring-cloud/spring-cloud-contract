@@ -5,12 +5,16 @@ buildscript {
 		mavenCentral()
 		mavenLocal()
 		maven { url 'https://repo.spring.io/plugins-release' }
-		if (project.hasProperty('fatJar')) jcenter()
+		if (project.hasProperty('fatJar')) {
+			jcenter()
+		}
 	}
 	dependencies {
 		classpath "com.bmuschko:gradle-nexus-plugin:2.3"
 		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
-		if (project.hasProperty('fatJar')) classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+		if (project.hasProperty('fatJar')) {
+			classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+		}
 	}
 }
 
@@ -18,10 +22,10 @@ ext {
 	repoUser = System.getenv('REPO_USERNAME') ?: project.findProperty('REPO_USERNAME') ?: ''
 	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
 
-	contractVerifierGradlePluginLibsDir ="$buildDir/contractVerifier-gradle-plugin-libs"
+	contractVerifierGradlePluginLibsDir = "$buildDir/contractVerifier-gradle-plugin-libs"
 	testSystemProperties = [
 			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
-			"WORK_OFFLINE" : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
+			"WORK_OFFLINE"                   : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
 	JavaVersion javaVer = JavaVersion.current()
 	println "Current Java version equal to [${javaVer}]"
@@ -86,7 +90,7 @@ dependencies {
 }
 
 task libtest() {
-	doLast{
+	doLast {
 		configurations.testCompile.files.each { println it }
 	}
 }

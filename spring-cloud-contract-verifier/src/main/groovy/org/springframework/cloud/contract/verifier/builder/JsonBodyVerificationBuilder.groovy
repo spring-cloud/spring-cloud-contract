@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -38,12 +37,12 @@ import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
+
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-
 @PackageScope
 @CompileStatic
 class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier {
@@ -63,11 +62,11 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	// Passing way more arguments here than I would like to, but since we are planning a major
 	// refactoring of this module for Hoxton release, leaving it this way for now
 	JsonBodyVerificationBuilder(ContractVerifierConfigProperties configProperties,
-								TemplateProcessor templateProcessor,
-								ContractTemplate contractTemplate,
-								Contract contract,
-								Optional<String> lineSuffix,
-								Closure postProcessJsonPathCall) {
+			TemplateProcessor templateProcessor,
+			ContractTemplate contractTemplate,
+			Contract contract,
+			Optional<String> lineSuffix,
+			Closure postProcessJsonPathCall) {
 		this.configProperties = configProperties
 		this.templateProcessor = templateProcessor
 		this.contractTemplate = contractTemplate
@@ -77,9 +76,9 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	Object addJsonResponseBodyCheck(BlockBuilder bb, Object convertedResponseBody,
-									BodyMatchers bodyMatchers,
-									String responseString,
-									boolean shouldCommentOutBDDBlocks) {
+			BodyMatchers bodyMatchers,
+			String responseString,
+			boolean shouldCommentOutBDDBlocks) {
 		appendJsonPath(bb, responseString)
 		DocumentContext parsedRequestBody
 		boolean dontParseStrings = convertedResponseBody instanceof Map
@@ -252,7 +251,8 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 				return entry
 			}
 			String entryAsString = (String) entry
-			if (templateProcessor.containsTemplateEntry(entryAsString) &&
+			if (templateProcessor.containsTemplateEntry(entryAsString)
+					&&
 					!templateProcessor.containsJsonPathTemplateEntry(entryAsString)) {
 				// TODO: HANDLEBARS LEAKING VIA request.
 				String justEntry = entryAsString - contractTemplate.
@@ -306,8 +306,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb,
-										 Object responseBody,
-										 boolean shouldCommentOutBDDBlocks) {
+			Object responseBody, boolean shouldCommentOutBDDBlocks) {
 		if (bodyMatchers?.hasMatchers()) {
 			addBodyMatchingBlock(bodyMatchers.
 					matchers(), bb, responseBody, shouldCommentOutBDDBlocks)

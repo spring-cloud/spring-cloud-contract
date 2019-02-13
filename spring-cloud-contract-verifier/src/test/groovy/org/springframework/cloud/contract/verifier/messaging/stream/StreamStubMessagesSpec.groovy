@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.messaging.stream
 
 import spock.lang.Issue
@@ -20,7 +36,7 @@ class StreamStubMessagesSpec extends Specification {
 			ApplicationContext applicationContext = Mock(ApplicationContext)
 			BindingServiceProperties properties = new BindingServiceProperties(
 					bindings: [
-							input: new BindingProperties(destination: "verifications"),
+							input : new BindingProperties(destination: "verifications"),
 							output: new BindingProperties(destination: "verifications"),
 					]
 			)
@@ -42,7 +58,7 @@ class StreamStubMessagesSpec extends Specification {
 			ApplicationContext applicationContext = Mock(ApplicationContext)
 			BindingServiceProperties properties = new BindingServiceProperties(
 					bindings: [
-							input: new BindingProperties(destination: "verifications"),
+							input : new BindingProperties(destination: "verifications"),
 							output: new BindingProperties(destination: "verifications"),
 					]
 			)
@@ -79,8 +95,8 @@ class StreamStubMessagesSpec extends Specification {
 		then:
 			1 * applicationContext.getBean("foo", MessageChannel) >> channel
 		where:
-			messageInteraction << [ { StreamStubMessages stream -> stream.send("foo", [:], "verifications")},
-									{ StreamStubMessages stream -> stream.receive("verifications")}]
+			messageInteraction << [{ StreamStubMessages stream -> stream.send("foo", [:], "verifications") },
+								   { StreamStubMessages stream -> stream.receive("verifications") }]
 	}
 
 	def "should resolve channel via channel name for send and receive"() {
@@ -103,8 +119,8 @@ class StreamStubMessagesSpec extends Specification {
 		then:
 			1 * applicationContext.getBean("verifications", MessageChannel) >> channel
 		where:
-			messageInteraction << [ { StreamStubMessages stream -> stream.send("foo", [:], "verifications")},
-									{ StreamStubMessages stream -> stream.receive("verifications")}]
+			messageInteraction << [{ StreamStubMessages stream -> stream.send("foo", [:], "verifications") },
+								   { StreamStubMessages stream -> stream.receive("verifications") }]
 	}
 
 	@Issue("694")
@@ -113,7 +129,7 @@ class StreamStubMessagesSpec extends Specification {
 			ApplicationContext applicationContext = Mock(ApplicationContext)
 			BindingServiceProperties properties = new BindingServiceProperties(
 					bindings: [
-							input: new BindingProperties(destination: "verificationsChannel"),
+							input : new BindingProperties(destination: "verificationsChannel"),
 							output: new BindingProperties(destination: "verificationsChannel"),
 					]
 			)
@@ -135,7 +151,7 @@ class StreamStubMessagesSpec extends Specification {
 			ApplicationContext applicationContext = Mock(ApplicationContext)
 			BindingServiceProperties properties = new BindingServiceProperties(
 					bindings: [
-							input: new BindingProperties(destination: "verificationsChannel"),
+							input : new BindingProperties(destination: "verificationsChannel"),
 							output: new BindingProperties(destination: "verificationsChannel"),
 					]
 			)
@@ -172,8 +188,8 @@ class StreamStubMessagesSpec extends Specification {
 		then:
 			1 * applicationContext.getBean("foo", MessageChannel) >> channel
 		where:
-			messageInteraction << [ { StreamStubMessages stream -> stream.send("foo", [:], "verificationsChannel")},
-									{ StreamStubMessages stream -> stream.receive("verificationsChannel")}]
+			messageInteraction << [{ StreamStubMessages stream -> stream.send("foo", [:], "verificationsChannel") },
+								   { StreamStubMessages stream -> stream.receive("verificationsChannel") }]
 	}
 
 	def "should resolve channel via channel name for send and receive and channel name is camel case"() {
@@ -196,7 +212,7 @@ class StreamStubMessagesSpec extends Specification {
 		then:
 			1 * applicationContext.getBean("verificationsChannel", MessageChannel) >> channel
 		where:
-			messageInteraction << [ { StreamStubMessages stream -> stream.send("foo", [:], "verificationsChannel")},
-									{ StreamStubMessages stream -> stream.receive("verificationsChannel")}]
+			messageInteraction << [{ StreamStubMessages stream -> stream.send("foo", [:], "verificationsChannel") },
+								   { StreamStubMessages stream -> stream.receive("verificationsChannel") }]
 	}
 }

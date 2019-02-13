@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
+
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
@@ -86,18 +87,17 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
 		Message message = org.springframework.amqp.core.MessageBuilder
 				.withBody(((String) payload).getBytes())
-				.andProperties(
-						MessagePropertiesBuilder.newInstance()
-								.setContentType(header(headers, "contentType"))
-								.copyHeaders(headers).build())
+				.andProperties(MessagePropertiesBuilder.newInstance()
+						.setContentType(header(headers, "contentType"))
+						.copyHeaders(headers).build())
 				.build();
 		if (headers != null && headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
 			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME,
 					headers.get(DEFAULT_CLASSID_FIELD_NAME));
 		}
 		if (headers != null && headers.containsKey(AmqpHeaders.RECEIVED_ROUTING_KEY)) {
-			message.getMessageProperties()
-					.setReceivedRoutingKey(header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
+			message.getMessageProperties().setReceivedRoutingKey(
+					header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
 		}
 		send(message, destination);
 	}
@@ -109,7 +109,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		Object value = headers.get(headerName);
 		if (value instanceof String) {
 			return (String) value;
-		} else if (value instanceof Iterable) {
+		}
+		else if (value instanceof Iterable) {
 			Iterable values = ((Iterable) value);
 			return values.iterator().hasNext() ? (String) values.iterator().next() : "";
 		}

@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.spec
@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.spec
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.spec.internal.Request
@@ -95,14 +96,17 @@ class Contract {
 
 	static void assertContract(Contract dsl) {
 		if (dsl.request) {
-			if (!dsl.request.url && !dsl.request.urlPath)
+			if (!dsl.request.url && !dsl.request.urlPath) {
 				throw new IllegalStateException("URL is missing for HTTP contract")
-			if (!dsl.request.method)
+			}
+			if (!dsl.request.method) {
 				throw new IllegalStateException("Method is missing for HTTP contract")
+			}
 		}
 		if (dsl.response) {
-			if (!dsl.response.status)
+			if (!dsl.response.status) {
 				throw new IllegalStateException("Status is missing for HTTP contract")
+			}
 		}
 		// Can't assert messaging part cause Pact doesn't require destinations it seems
 	}

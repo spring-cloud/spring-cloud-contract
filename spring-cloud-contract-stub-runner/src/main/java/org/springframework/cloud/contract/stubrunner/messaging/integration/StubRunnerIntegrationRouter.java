@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.stubrunner.messaging.integration;
 
 import java.util.Collection;
@@ -16,6 +32,7 @@ import org.springframework.messaging.MessageChannel;
 class StubRunnerIntegrationRouter extends AbstractMessageRouter {
 
 	private final StubRunnerIntegrationMessageSelector selector;
+
 	private final BeanFactory beanFactory;
 
 	StubRunnerIntegrationRouter(List<Contract> groovyDsls, BeanFactory beanFactory) {
@@ -32,8 +49,8 @@ class StubRunnerIntegrationRouter extends AbstractMessageRouter {
 			return Collections
 					.singleton((MessageChannel) this.beanFactory.getBean(channelName));
 		}
-		return Collections
-				.singleton((MessageChannel)
-						this.beanFactory.getBean(StubRunnerIntegrationConfiguration.DummyMessageHandler.CHANNEL_NAME));
+		return Collections.singleton((MessageChannel) this.beanFactory.getBean(
+				StubRunnerIntegrationConfiguration.DummyMessageHandler.CHANNEL_NAME));
 	}
+
 }

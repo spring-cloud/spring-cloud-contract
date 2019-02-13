@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
@@ -14,13 +15,14 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.2.RELEASE</version>
-		<relativePath />
+		<relativePath/>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-release-train.version>Greenwich.BUILD-SNAPSHOT</spring-cloud-release-train.version>
+		<spring-cloud-release-train.version>Greenwich.BUILD-SNAPSHOT
+		</spring-cloud-release-train.version>
 	</properties>
 
 	<dependencies>
@@ -176,7 +178,9 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
-										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
+										<argument>
+											-PverifierVersion=${spring-cloud-contract.version}
+										</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -206,7 +210,9 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
-										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
+										<argument>
+											-PverifierVersion=${spring-cloud-contract.version}
+										</argument>
 									</arguments>
 								</configuration>
 								<goals>

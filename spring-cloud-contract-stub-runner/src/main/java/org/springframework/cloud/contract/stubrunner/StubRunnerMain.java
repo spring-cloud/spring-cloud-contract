@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner;
@@ -24,11 +24,13 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
 /**
- * Class to run stub runner as a standalone process
+ * Class to run stub runner as a standalone process.
  *
+ * @author Marcin Grzejszczak
  * @deprecated - use Stub Runner Boot server
  */
 @Deprecated
@@ -51,15 +53,18 @@ public class StubRunnerMain {
 					.withRequiredArg().ofType(Integer.class).defaultsTo(15000);
 			ArgumentAcceptingOptionSpec<String> stubsOpt = parser.acceptsAll(
 					Arrays.asList("s", "stubs"),
-					"Comma separated list of Ivy representation of jars with stubs. Eg. groupid:artifactid1,groupid2:artifactid2:classifier")
+					"Comma separated list of Ivy representation "
+							+ "of jars with stubs. Eg. groupid:artifactid1,groupid2:artifactid2:classifier")
 					.withRequiredArg();
 			ArgumentAcceptingOptionSpec<String> classifierOpt = parser.acceptsAll(
 					Arrays.asList("c", "classifier"),
-					"Suffix for the jar containing stubs (e.g. 'stubs' if the stub jar would have a 'stubs' classifier for stubs: foobar-stubs ). Defaults to 'stubs'")
+					"Suffix for the jar containing stubs (e.g. 'stubs' "
+							+ "if the stub jar would have a 'stubs' classifier for stubs: foobar-stubs ). Defaults to 'stubs'")
 					.withRequiredArg().defaultsTo("stubs");
 			ArgumentAcceptingOptionSpec<String> rootOpt = parser.acceptsAll(
 					Arrays.asList("r", "root"),
-					"Location of a Jar containing server where you keep your stubs (e.g. http://nexus.net/content/repositories/repository)")
+					"Location of a Jar containing server where you keep "
+							+ "your stubs (e.g. http://nexus.net/content/repositories/repository)")
 					.withRequiredArg();
 			ArgumentAcceptingOptionSpec<String> usernameOpt = parser
 					.acceptsAll(Arrays.asList("u", "username"),
@@ -112,6 +117,10 @@ public class StubRunnerMain {
 		}
 	}
 
+	public static void main(String[] args) throws Exception {
+		new StubRunnerMain(args).execute();
+	}
+
 	private void printErrorMessage(Exception e, OptionParser parser) throws IOException {
 		System.err.println(e.getMessage());
 		System.err.println("java -jar stub-runner.jar [options...] ");
@@ -119,10 +128,6 @@ public class StubRunnerMain {
 		System.err.println();
 		System.err.println(
 				"Example: java -jar stub-runner.jar ${parser.printExample(ALL)}");
-	}
-
-	public static void main(String[] args) throws Exception {
-		new StubRunnerMain(args).execute();
 	}
 
 	private void execute() {

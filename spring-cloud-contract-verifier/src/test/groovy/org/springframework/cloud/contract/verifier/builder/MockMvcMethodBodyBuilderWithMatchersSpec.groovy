@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -37,7 +37,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			assertJsonSize: true
 	)
 
-	@Shared GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
+	@Shared
+	GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
 			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
 
 	@Issue('#185')
@@ -200,13 +201,14 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		and:
 			try {
 				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
-			} catch (ClassFormatError classFormatError) {
+			}
+			catch (ClassFormatError classFormatError) {
 				String output = outputCapture.toString()
 				assert output.contains('error: cannot find symbol')
 				assert output.contains('assertThatValueIsANumber(parsedJson.read("$.duck"));')
 			}
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | rootElement
+			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
@@ -272,11 +274,12 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		and:
 			try {
 				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
-			} catch (NoClassDefFoundError error) {
+			}
+			catch (NoClassDefFoundError error) {
 				// that's actually expected since we're creating an anonymous class
 			}
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | rootElement
+			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
@@ -327,11 +330,12 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		and:
 			try {
 				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
-			} catch (NoClassDefFoundError error) {
+			}
+			catch (NoClassDefFoundError error) {
 				// that's actually expected since we're creating an anonymous class
 			}
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | rootElement
+			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
@@ -367,7 +371,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		then:
 			test.contains('foo(parsedJson.read("' + rootElement + '.phoneNumbers[*].number")')
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | rootElement
+			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
@@ -403,7 +407,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			IllegalStateException e = thrown(IllegalStateException)
 			e.message.contains('Entry for the provided JSON path <$.nonExistingPhoneNumbers[*].number> doesn\'t exist in the body')
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | rootElement
+			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
@@ -443,7 +447,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		then:
 			test.contains('assertThat(parsedJson.read("' + rootElement + '[0][0].access_token", String.class)).isEqualTo("123")')
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | rootElement
+			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'

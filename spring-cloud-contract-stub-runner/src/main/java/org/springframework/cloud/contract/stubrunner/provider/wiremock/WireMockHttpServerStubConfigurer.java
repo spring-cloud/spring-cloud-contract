@@ -21,14 +21,18 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 
 /**
- * Typed implementation of {@link HttpServerStubConfigurer} for WireMock's {@link WireMockConfiguration}
+ * Typed implementation of {@link HttpServerStubConfigurer} for WireMock's
+ * {@link WireMockConfiguration}.
  *
  * @author Marcin Grzejszczak
  * @since 2.1.0
  */
-public class WireMockHttpServerStubConfigurer implements HttpServerStubConfigurer<WireMockConfiguration> {
+public class WireMockHttpServerStubConfigurer
+		implements HttpServerStubConfigurer<WireMockConfiguration> {
+
 	@Override
 	public boolean isAccepted(Object httpStubConfiguration) {
 		return httpStubConfiguration instanceof WireMockConfiguration;
 	}
+
 }

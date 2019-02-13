@@ -20,32 +20,32 @@
         },
         "generators": {
           "body": {
-            "$.clientId":{
+            "$.clientId": {
               "type": "Regex",
               "regex": "[0-9]{10}"
             }
           }
         },
-        "matchingRules":{
-          "header":{
-            "Content-Type":{
-              "matchers":[
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "matchers": [
                 {
-                  "match":"regex",
-                  "regex":"application/vnd\\.fraud\\.v1\\+json.*"
+                  "match": "regex",
+                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           },
-          "body":{
-            "$.clientId":{
-              "matchers":[
+          "body": {
+            "$.clientId": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           }
         }
@@ -59,26 +59,26 @@
           "fraudCheckStatus": "OK",
           "rejectionReason": null
         },
-        "matchingRules":{
-          "header":{
-            "Content-Type":{
-              "matchers":[
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "matchers": [
                 {
-                  "match":"regex",
-                  "regex":"application/vnd\\.fraud\\.v1\\+json.*"
+                  "match": "regex",
+                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           },
-          "body":{
-            "$.fraudCheckStatus":{
-              "matchers":[
+          "body": {
+            "$.fraudCheckStatus": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           }
         }

@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.verifier.util
@@ -53,7 +52,7 @@ class MapConverter {
 	}
 
 	/**
-	 * Returns the object with client side values of {@link org.springframework.cloud.contract.spec.internal.DslProperty}
+	 * @return the object with client side values of {@link org.springframework.cloud.contract.spec.internal.DslProperty}
 	 */
 	static def transformToClientValues(def value) {
 		return transformValues(value) {
@@ -65,7 +64,7 @@ class MapConverter {
 	 * Iterates over the structure of the object and executes the closure
 	 * on each element of that structure.
 	 *
-	 * Returns the transformed structure
+	 * @return the transformed structure
 	 */
 	static def transformValues(def value, Closure closure,
 			Closure parsingClosure = JSON_PARSING_CLOSURE) {
@@ -74,15 +73,19 @@ class MapConverter {
 				def json = parsingClosure(value)
 				if (json instanceof Map) {
 					return convert(json, closure, parsingClosure)
-				} else if (json instanceof List) {
+				}
+				else if (json instanceof List) {
 					return transformValues(json, closure, parsingClosure)
 				}
-			} catch (Exception ignore) {
+			}
+			catch (Exception ignore) {
 			}
 			return extractValue(value, closure)
-		} else if (value instanceof Map) {
+		}
+		else if (value instanceof Map) {
 			return convert(value as Map, closure, parsingClosure)
-		} else if (value instanceof List) {
+		}
+		else if (value instanceof List) {
 			return value.collect({ transformValues(it, closure, parsingClosure) })
 		}
 		return transformValue(closure, value, parsingClosure)
@@ -93,7 +96,7 @@ class MapConverter {
 	 * method access exception will occur at runtime.
 	 */
 	protected static Object transformValue(Closure closure, Object value, Closure parsingClosure) {
-		return extractValue(value, { Object val->
+		return extractValue(value, { Object val ->
 			Object newValue = closure(val)
 			if (newValue instanceof Map || newValue instanceof List || newValue instanceof String && value) {
 				return transformValues(newValue, closure, parsingClosure)
@@ -105,7 +108,8 @@ class MapConverter {
 	private static extractValue(Object value, Closure closure) {
 		try {
 			return closure(value)
-		} catch (Exception ignore) {
+		}
+		catch (Exception ignore) {
 			return value
 		}
 	}
@@ -129,11 +133,15 @@ class MapConverter {
 				return clientSide ?
 						getClientOrServerSideValues(dslProperty.clientValue, clientSide, parsingClosure) :
 						getClientOrServerSideValues(dslProperty.serverValue, clientSide, parsingClosure)
-			} else if (it instanceof GString) {
-				ContentType type = new MapConverter().templateProcessor.containsJsonPathTemplateEntry(
-							ContentUtils.extractValueForGString(it, ContentUtils.GET_TEST_SIDE).toString()
-					) ? ContentType.TEXT : null
-				return ContentUtils.extractValue(it , type, {
+			}
+			else if (it instanceof GString) {
+				ContentType type = new MapConverter().templateProcessor.
+						containsJsonPathTemplateEntry(
+								ContentUtils.
+										extractValueForGString(it, ContentUtils.GET_TEST_SIDE).
+										toString()
+						) ? ContentType.TEXT : null
+				return ContentUtils.extractValue(it, type, {
 					if (it instanceof DslProperty) {
 						return clientSide ?
 								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide, parsingClosure) :
@@ -141,7 +149,8 @@ class MapConverter {
 					}
 					return it
 				})
- 			} else if (it instanceof FromFileProperty) {
+			}
+			else if (it instanceof FromFileProperty) {
 				return it.isByte() ? it.asBytes() : it.asString()
 			}
 			return it

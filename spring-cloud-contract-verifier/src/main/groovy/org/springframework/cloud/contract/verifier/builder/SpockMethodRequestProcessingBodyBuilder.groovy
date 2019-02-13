@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -49,8 +49,8 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getG
 abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
 	SpockMethodRequestProcessingBodyBuilder(Contract stubDefinition,
-											ContractVerifierConfigProperties configProperties,
-											GeneratedClassDataForMethod classDataForMethod) {
+			ContractVerifierConfigProperties configProperties,
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
@@ -153,12 +153,14 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		String value
 		if (body instanceof ExecutionProperty) {
 			value = body.toString()
-		} else if (body instanceof FromFileProperty) {
+		}
+		else if (body instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) body
 			value = fileProperty.isByte() ?
 					readBytesFromFileString(fileProperty, CommunicationType.REQUEST) :
 					readStringFromFileString(fileProperty, CommunicationType.REQUEST)
-		} else {
+		}
+		else {
 			String escaped = escapeRequestSpecialChars(body.toString())
 			value = "'''$escaped'''"
 		}
@@ -167,7 +169,9 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	@Override
 	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return getGroovyMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty fileProp -> readBytesFromFileString(fileProp, CommunicationType.REQUEST) })
+		return getGroovyMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty fileProp ->
+			readBytesFromFileString(fileProp, CommunicationType.REQUEST)
+		})
 	}
 
 	@Override
@@ -177,13 +181,15 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
-		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		String gstringValue = ContentUtils.
+				extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, GString value) {
-		String gStringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		String gStringValue = ContentUtils.
+				extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processCookieElement(blockBuilder, key, gStringValue)
 	}
 
@@ -209,7 +215,8 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	protected String createBodyComparison(Pattern bodyValue) {
 		String patternAsString = bodyValue.pattern()
-		return patternComparison(RegexpBuilders.buildGStringRegexpForTestSide(patternAsString)) + ";"
+		return patternComparison(RegexpBuilders.
+				buildGStringRegexpForTestSide(patternAsString)) + ";"
 	}
 
 	protected String convertCookieComparison(Pattern cookieValue) {

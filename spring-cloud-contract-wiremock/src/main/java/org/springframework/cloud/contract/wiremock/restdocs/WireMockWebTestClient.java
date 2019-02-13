@@ -18,17 +18,17 @@ package org.springframework.cloud.contract.wiremock.restdocs;
 
 /**
  * Convenience class for setting up RestDocs to record WireMock stubs. Example usage:
- * 
+ *
  * <pre>
  * &#64;RunWith(SpringRunner.class)
  * &#64;SpringBootTest
  * &#64;AutoConfigureRestDocs(outputDir = "target/snippets")
  * &#64;AutoConfigureWebTestClient
  * public class WiremockServerRestDocsApplicationTests {
- * 
+ *
  * 	&#64;Autowired
  * 	private WebTestClient client;
- * 
+ *
  * 	&#64;Test
  * 	public void contextLoads() throws Exception {
  * 		client.get().uri("/resource").exchange()
@@ -36,16 +36,19 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  * 				.consumeWith(verify().stub("resource"));
  * 	}
  * </pre>
- * 
+ *
  * which creates a file "target/snippets/stubs/resource.json" matching any GET request to
  * "/resource". To match POST and PUT, you can also specify the content type using
  * <code>verify().contentType(...)</code> and JSON content of the body using
  * <code>verify().jsonPath(...)</code>.
- * 
- * @author Dave Syer
  *
+ * @author Dave Syer
  */
-public class WireMockWebTestClient {
+public final class WireMockWebTestClient {
+
+	private WireMockWebTestClient() {
+		throw new IllegalStateException("Can't instantiate a utility class");
+	}
 
 	public static ContractExchangeHandler verify() {
 		return new ContractExchangeHandler();

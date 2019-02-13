@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud;
@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
@@ -33,7 +34,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Custom version of {@link DiscoveryClient} that tries to find an instance in one of the
- * started WireMock servers
+ * started WireMock servers.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -49,7 +50,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	private final StubMapperProperties stubMapperProperties;
 
-	public StubRunnerDiscoveryClient(DiscoveryClient delegate, StubFinder stubFinder,
+	StubRunnerDiscoveryClient(DiscoveryClient delegate, StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties, String springAppName) {
 		this.delegate = delegate instanceof StubRunnerDiscoveryClient
 				? noOpDiscoveryClient() : delegate;
@@ -61,7 +62,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 		this.stubMapperProperties = stubMapperProperties;
 	}
 
-	public StubRunnerDiscoveryClient(StubFinder stubFinder,
+	StubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties, String springAppName) {
 		this.delegate = noOpDiscoveryClient();
 		if (log.isDebugEnabled()) {

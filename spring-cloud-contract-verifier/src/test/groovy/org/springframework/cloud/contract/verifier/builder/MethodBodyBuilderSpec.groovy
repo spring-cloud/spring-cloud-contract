@@ -36,7 +36,8 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 	@Rule
 	OutputCapture capture = new OutputCapture()
 
-	@Shared GeneratedClassDataForMethod classDataForMethod = new GeneratedClassDataForMethod(
+	@Shared
+	GeneratedClassDataForMethod classDataForMethod = new GeneratedClassDataForMethod(
 			new SingleTestGenerator.GeneratedClassData("ClassName", "com.example",
 					new File("target/test.java").toPath()),
 			"some_method"
@@ -110,7 +111,12 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		and:
 			LinkedList<String> lines = [] as LinkedList<String>
 			test.eachLine {
-				if (it.contains("assertThatJson") || it.contains("assertThat((String")) lines << it else it
+				if (it.contains("assertThatJson") || it.contains("assertThat((String")) {
+					lines << it
+				}
+				else {
+					it
+				}
 			}
 			lines.addFirst(jsonSample)
 			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
@@ -231,7 +237,14 @@ DocumentContext parsedJson = JsonPath.parse(json);
 '''
 		and:
 			LinkedList<String> lines = [] as LinkedList<String>
-			test.eachLine { if (it.contains('"foo".equals')) lines << it else it }
+			test.eachLine {
+				if (it.contains('"foo".equals')) {
+					lines << it
+				}
+				else {
+					it
+				}
+			}
 			lines.addFirst(jsonSample)
 			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
@@ -278,13 +291,22 @@ DocumentContext parsedJson = JsonPath.parse(json);
 '''
 		and:
 			LinkedList<String> lines = [] as LinkedList<String>
-			test.eachLine { if (it.contains('assertThatJson')) lines << it else it }
+			test.eachLine {
+				if (it.contains('assertThatJson')) {
+					lines << it
+				}
+				else {
+					it
+				}
+			}
 			lines.addFirst(jsonSample)
 			try {
 				SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
-			} catch (IllegalStateException e) {
+			}
+			catch (IllegalStateException e) {
 				assert e.message.contains("Parsed JSON [{}] doesn't match the JSON path")
-			} catch (InvocationTargetException e1) {
+			}
+			catch (InvocationTargetException e1) {
 				assert e1.cause.message.contains("Parsed JSON [{}] doesn't match the JSON path")
 			}
 		where:
@@ -364,7 +386,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 			asserter(test)
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | asserter
+			methodBuilderName                                             | methodBuilder                                                                                                   | asserter
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }        | { String testBody -> testBody.contains("response.header('Content-Length') == 4") && testBody.contains("response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/pdf.*')") }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                      | { String testBody -> testBody.contains('assertThat(response.header("Content-Length")).isEqualTo(4);') && testBody.contains('assertThat(response.header("Content-Type")).matches("application/pdf.*");') }
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String testBody -> testBody.contains("response.getHeaderString('Content-Length') == 4") && testBody.contains("  response.getHeaderString('Content-Type') ==~ java.util.regex.Pattern.compile('application/pdf.*')") }
@@ -466,7 +488,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | responseAsserter
+			methodBuilderName                                             | methodBuilder                                                                                                   | responseAsserter
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }        | { String string -> string.contains('responseBody == "My name"') }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                      | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String string -> string.contains('responseBody == "My name"') }
@@ -1187,8 +1209,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body(
 							[
 									content: [
-											one: "two",
-											two: "two",
+											one  : "two",
+											two  : "two",
 											three: [
 													six: "seven"
 											]
@@ -1213,10 +1235,53 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                                    | methodBuilder
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+	}
+
+	@Issue("#727")
+	def "should not leave empty arrays in a simple structure [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/list'
+				}
+				response {
+					status 200
+					body(
+							[
+									content: [
+											three: [
+													six: "seven"
+											]
+									]
+							]
+					)
+					bodyMatchers {
+						jsonPath('$.content.three.six', byRegex(".*seven.*"))
+						jsonPath('$.content.one', byRegex(".*two.*"))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains('''.isEmpty()''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
 	}
 
 }

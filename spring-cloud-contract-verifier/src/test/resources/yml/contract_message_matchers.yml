@@ -72,7 +72,7 @@ outputMessage:
     valueWithMinEmpty: []
     valueWithMaxEmpty: []
     key:
-      'complex.key' : 'foo'
+      'complex.key': 'foo'
   matchers:
     headers:
       - key: Content-Type

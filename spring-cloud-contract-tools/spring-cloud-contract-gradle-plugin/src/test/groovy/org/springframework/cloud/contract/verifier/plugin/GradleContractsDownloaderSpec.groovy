@@ -2,12 +2,13 @@ package org.springframework.cloud.contract.verifier.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import spock.lang.Specification
+
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import spock.lang.Specification
 
 /**
  * @author Marcin Grzejszczak
@@ -206,22 +207,22 @@ class GradleContractsDownloaderSpec extends Specification {
 
 	def "should pass contract dependency properties as a parameter to the builder"() {
 		given:
-		ContractVerifierExtension ext = new ContractVerifierExtension()
-		ext.with {
-			contractDependency {
-				groupId("com.example")
-				artifactId("foo")
-				version("1.0.0.BUILD-SNAPSHOT")
-				classifier("stubs")
+			ContractVerifierExtension ext = new ContractVerifierExtension()
+			ext.with {
+				contractDependency {
+					groupId("com.example")
+					artifactId("foo")
+					version("1.0.0.BUILD-SNAPSHOT")
+					classifier("stubs")
+				}
+				contractRepository {
+					repositoryUrl("foo")
+					username("foo1")
+					password("foo2")
+					proxyHost("foo3")
+					proxyPort(12)
+				}
 			}
-			contractRepository {
-				repositoryUrl("foo")
-				username("foo1")
-				password("foo2")
-				proxyHost("foo3")
-				proxyPort(12)
-			}
-		}
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
 			final ContractDownloader contractDownloader = Mock(ContractDownloader)

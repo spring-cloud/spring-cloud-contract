@@ -1,18 +1,19 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.verifier.spec.pact
 
 import java.util.regex.Pattern
@@ -70,28 +71,38 @@ class ValueGeneratorConverter {
 		Pattern pattern
 		if (generator instanceof RandomIntGenerator) {
 			pattern = INTEGER
-		} else if (generator instanceof RandomDecimalGenerator) {
+		}
+		else if (generator instanceof RandomDecimalGenerator) {
 			pattern = DECIMAL
-		} else if (generator instanceof RandomHexadecimalGenerator) {
+		}
+		else if (generator instanceof RandomHexadecimalGenerator) {
 			pattern = HEX
-		} else if (generator instanceof RandomStringGenerator) {
+		}
+		else if (generator instanceof RandomStringGenerator) {
 			pattern = ALPHA_NUMERIC
-		} else if (generator instanceof RegexGenerator) {
+		}
+		else if (generator instanceof RegexGenerator) {
 			pattern = Pattern.compile(generator.regex)
-		} else if (generator instanceof UuidGenerator) {
+		}
+		else if (generator instanceof UuidGenerator) {
 			pattern = UUID
-		} else if (generator instanceof DateGenerator) {
+		}
+		else if (generator instanceof DateGenerator) {
 			pattern = getDateTimePattern(generator.format, ANY_DATE)
-		} else if (generator instanceof TimeGenerator) {
+		}
+		else if (generator instanceof TimeGenerator) {
 			pattern = getDateTimePattern(generator.format, ANY_TIME)
-		} else if (generator instanceof DateTimeGenerator) {
+		}
+		else if (generator instanceof DateTimeGenerator) {
 			pattern = getDateTimePattern(generator.format, ANY_DATE_TIME)
-		} else if (generator instanceof RandomBooleanGenerator) {
+		}
+		else if (generator instanceof RandomBooleanGenerator) {
 			pattern = TRUE_OR_FALSE
 		}
 		if (pattern == null) {
 			throw new UnsupportedOperationException("We currently don't support a generator of type " + generator.class.simpleName)
-		} else {
+		}
+		else {
 			Object generatedValue = generator.generate(null)
 			return dslPropertyProvider(pattern, generatedValue)
 		}
@@ -125,45 +136,54 @@ class ValueGeneratorConverter {
 			v.each { Map.Entry entry ->
 				traverse(entry.value, dslPropertyValueProvider, path + "." + entry.key, generators, category)
 			}
-		} else if (v instanceof Collection) {
-			v.eachWithIndex{ def entry, int index ->
+		}
+		else if (v instanceof Collection) {
+			v.eachWithIndex { def entry, int index ->
 				traverse(entry, dslPropertyValueProvider, path + "[" + index + "]", generators, category)
 			}
-		} else if (v instanceof DslProperty) {
+		}
+		else if (v instanceof DslProperty) {
 			traverse(v, dslPropertyValueProvider, path, generators, category)
-		} else if (v instanceof RegexProperty || v instanceof Pattern) {
+		}
+		else if (v instanceof RegexProperty || v instanceof Pattern) {
 			RegexProperty regexProperty = new RegexProperty(v)
 			switch (regexProperty.pattern()) {
-				case INTEGER_PATTERN:
-					generators.addGenerator(category, path, new RandomIntGenerator(0, Integer.MAX_VALUE))
-					break
-				case DECIMAL_PATTERN:
-					generators.addGenerator(category, path, new RandomDecimalGenerator(10))
-					break
-				case HEX_PATTERN:
-					generators.addGenerator(category, path, new RandomHexadecimalGenerator(10))
-					break
-				case ALPHA_NUMERIC_PATTERN:
-					generators.addGenerator(category, path, new RandomStringGenerator(10))
-					break
-				case UUID_PATTERN:
-					generators.addGenerator(category, path, UuidGenerator.INSTANCE)
-					break
-				case ANY_DATE_PATTERN:
-					generators.addGenerator(category, path, new DateGenerator())
-					break
-				case ANY_TIME_PATTERN:
-					generators.addGenerator(category, path, new TimeGenerator())
-					break
-				case ANY_DATE_TIME_PATTERN:
-					generators.addGenerator(category, path, new DateTimeGenerator())
-					break
-				case TRUE_OR_FALSE_PATTERN:
-					generators.addGenerator(category, path, RandomBooleanGenerator.INSTANCE)
-					break
-				default:
-					generators.addGenerator(category, path, new RegexGenerator(regexProperty.pattern()))
-					break
+			case INTEGER_PATTERN:
+				generators.
+						addGenerator(category, path, new RandomIntGenerator(0, Integer.MAX_VALUE))
+				break
+			case DECIMAL_PATTERN:
+				generators.
+						addGenerator(category, path, new RandomDecimalGenerator(10))
+				break
+			case HEX_PATTERN:
+				generators.
+						addGenerator(category, path, new RandomHexadecimalGenerator(10))
+				break
+			case ALPHA_NUMERIC_PATTERN:
+				generators.addGenerator(category, path, new RandomStringGenerator(10))
+				break
+			case UUID_PATTERN:
+				generators.addGenerator(category, path, UuidGenerator.INSTANCE)
+				break
+			case ANY_DATE_PATTERN:
+				generators.addGenerator(category, path, new DateGenerator())
+				break
+			case ANY_TIME_PATTERN:
+				generators.addGenerator(category, path, new TimeGenerator())
+				break
+			case ANY_DATE_TIME_PATTERN:
+				generators.addGenerator(category, path, new DateTimeGenerator())
+				break
+			case TRUE_OR_FALSE_PATTERN:
+				generators.
+						addGenerator(category, path, RandomBooleanGenerator.INSTANCE)
+				break
+			default:
+				generators.
+						addGenerator(category, path, new RegexGenerator(regexProperty.
+								pattern()))
+				break
 			}
 		}
 	}

@@ -59,7 +59,25 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.trace;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
+/**
+ * Represents a snippet for a WireMock stub.
+ *
+ * @author Dave Syer
+ */
 public class WireMockSnippet implements Snippet {
+
+	private static final TemplateFormat TEMPLATE_FORMAT = new TemplateFormat() {
+
+		@Override
+		public String getId() {
+			return "json";
+		}
+
+		@Override
+		public String getFileExtension() {
+			return "json";
+		}
+	};
 
 	private String snippetName = "stubs";
 
@@ -76,19 +94,6 @@ public class WireMockSnippet implements Snippet {
 
 	private boolean hasXmlBodyRequestToMatch = false;
 
-	private static final TemplateFormat TEMPLATE_FORMAT = new TemplateFormat() {
-
-		@Override
-		public String getId() {
-			return "json";
-		}
-
-		@Override
-		public String getFileExtension() {
-			return "json";
-		}
-	};
-
 	@Override
 	public void document(Operation operation) throws IOException {
 		extractMatchers(operation);
@@ -96,9 +101,11 @@ public class WireMockSnippet implements Snippet {
 			this.stubMapping = request(operation).willReturn(response(operation)).build();
 		}
 		String json = Json.write(this.stubMapping);
-		RestDocumentationContext context = (RestDocumentationContext) operation
-				.getAttributes().get(RestDocumentationContext.class.getName());
-		RestDocumentationContextPlaceholderResolverFactory placeholders = new RestDocumentationContextPlaceholderResolverFactory();
+		RestDocumentationContext context;
+		context = (RestDocumentationContext) operation.getAttributes()
+				.get(RestDocumentationContext.class.getName());
+		RestDocumentationContextPlaceholderResolverFactory placeholders;
+		placeholders = new RestDocumentationContextPlaceholderResolverFactory();
 		WriterResolver writerResolver = new StandardWriterResolver(placeholders, "UTF-8",
 				TEMPLATE_FORMAT);
 		try (Writer writer = writerResolver.resolve(this.snippetName, operation.getName(),

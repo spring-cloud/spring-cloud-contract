@@ -1,11 +1,11 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,19 +21,16 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.util.StringUtils;
 
 /**
- * Reads property from system prop and from env var
+ * Reads property from system prop and from env var.
  *
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
 public final class StubRunnerPropertyUtils {
-
-	private StubRunnerPropertyUtils() {
-		throw new IllegalStateException("Can't instantiate a utility class");
-	}
 
 	private static final Log log = LogFactory.getLog(StubRunnerPropertyUtils.class);
 
@@ -41,9 +38,14 @@ public final class StubRunnerPropertyUtils {
 
 	static PropertyFetcher FETCHER = new PropertyFetcher();
 
+	private StubRunnerPropertyUtils() {
+		throw new IllegalStateException("Can't instantiate a utility class");
+	}
+
 	/**
-	 * For Env vars takes the prop name, converts dots to underscores and applies upper
-	 * case
+	 * @param propName property name
+	 * @return for Env vars takes the prop name, converts dots to underscores and applies
+	 * upper case
 	 */
 	public static boolean isPropertySet(String propName) {
 		String value = getProperty(new HashMap<>(), propName);
@@ -51,7 +53,10 @@ public final class StubRunnerPropertyUtils {
 	}
 
 	/**
-	 * For options, system props and env vars returns {@code true} when property is set
+	 * @param options map of options
+	 * @param propName property name
+	 * @return For options, system props and env vars returns {@code true} when property
+	 * is set
 	 */
 	public static boolean hasProperty(Map<String, String> options, String propName) {
 		String value = getProperty(options, propName);
@@ -59,8 +64,10 @@ public final class StubRunnerPropertyUtils {
 	}
 
 	/**
-	 * Tries to pick a value from options, for Env vars takes the prop name, converts dots
-	 * to underscores and applies upper case
+	 * @param options map of options
+	 * @param propName property name
+	 * @return Tries to pick a value from options, for Env vars takes the prop name,
+	 * converts dots to underscores and applies upper case
 	 */
 	public static String getProperty(Map<String, String> options, String propName) {
 		if (options != null && options.containsKey(propName)) {

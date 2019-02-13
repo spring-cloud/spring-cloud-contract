@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner;
@@ -43,21 +43,21 @@ import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessag
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 
 /**
- * Runs stubs for a particular {@link StubServer}
+ * Runs stubs for a particular {@link StubServer}.
  */
 class StubRunnerExecutor implements StubFinder {
 
-	private static final Log log = LogFactory.getLog(StubRunnerExecutor.class);
-
 	static final Set<StubServer> STUB_SERVERS = new ConcurrentHashSet<>();
+
+	private static final Log log = LogFactory.getLog(StubRunnerExecutor.class);
 
 	private final AvailablePortScanner portScanner;
 
 	private final MessageVerifier<?> contractVerifierMessaging;
 
-	private StubServer stubServer;
-
 	private final List<HttpServerStub> serverStubs;
+
+	private StubServer stubServer;
 
 	StubRunnerExecutor(AvailablePortScanner portScanner,
 			MessageVerifier<?> contractVerifierMessaging,
@@ -88,7 +88,8 @@ class StubRunnerExecutor implements StubFinder {
 		try {
 			HttpServerStubConfigurer configurer = stubRunnerOptions
 					.getHttpServerStubConfigurer().newInstance();
-			startStubServers(configurer, stubRunnerOptions, stubConfiguration, repository);
+			startStubServers(configurer, stubRunnerOptions, stubConfiguration,
+					repository);
 		}
 		catch (InstantiationException | IllegalAccessException ex) {
 			log.error("Failed to instantiate the HTTP stub configurer", ex);
@@ -272,8 +273,7 @@ class StubRunnerExecutor implements StubFinder {
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
 		HttpServerStubConfiguration configuration = new HttpServerStubConfiguration(
-				configurer, stubRunnerOptions, stubConfiguration, port
-		);
+				configurer, stubRunnerOptions, stubConfiguration, port);
 		if (!hasRequest(contracts) && mappings.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
@@ -293,9 +293,9 @@ class StubRunnerExecutor implements StubFinder {
 						public StubServer call(int availablePort) {
 							return new StubServer(stubConfiguration, mappings, contracts,
 									httpServerStub()).start(
-									new HttpServerStubConfiguration(
-											configurer, stubRunnerOptions, stubConfiguration, availablePort
-									));
+											new HttpServerStubConfiguration(configurer,
+													stubRunnerOptions, stubConfiguration,
+													availablePort));
 						}
 					});
 		}

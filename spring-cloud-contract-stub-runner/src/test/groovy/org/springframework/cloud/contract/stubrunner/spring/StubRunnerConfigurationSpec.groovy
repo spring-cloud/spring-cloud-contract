@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.spring
@@ -47,21 +47,26 @@ import org.springframework.util.SocketUtils
 // Not necessary if Spring Cloud is used. TODO: make it work without this.
 // tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = [" stubrunner.cloud.enabled=false", 
+@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
 		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
 // tag::annotation[]
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
-			httpServerStubConfigurer = HttpsForFraudDetection)
+		httpServerStubConfigurer = HttpsForFraudDetection)
 // end::annotation[]
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 
-	@Autowired StubFinder stubFinder
-	@Autowired Environment environment
-	@StubRunnerPort("fraudDetectionServer") int fraudDetectionServerPort
-	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer") int fraudDetectionServerPortWithGroupId
-	@Value('${foo}') Integer foo
+	@Autowired
+	StubFinder stubFinder
+	@Autowired
+	Environment environment
+	@StubRunnerPort("fraudDetectionServer")
+	int fraudDetectionServerPort
+	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
+	int fraudDetectionServerPortWithGroupId
+	@Value('${foo}')
+	Integer foo
 
 	@BeforeClass
 	@AfterClass

@@ -18,6 +18,7 @@
  * The class is bundled together with our code because it has not been
  * released to any central repository.
  */
+
 package repackaged.nl.flotsam.xeger;
 
 import java.util.List;
@@ -30,34 +31,36 @@ import dk.brics.automaton.Transition;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * An object that will generate text from a regular expression. In a way, it's the opposite of a regular expression
- * matcher: an instance of this class will produce text that is guaranteed to match the regular expression passed in.
+ * An object that will generate text from a regular expression. In a way, it's the
+ * opposite of a regular expression matcher: an instance of this class will produce text
+ * that is guaranteed to match the regular expression passed in.
  *
  * slight modifications by Marcin Grzejszczak
  */
 public class Xeger {
 
-	private final Automaton automaton;
-	private Random random;
 	// Added by Marcin Grzejszczak
 	// may lead to stackoverflow when regex is unbounded
 	static int ITERATION_LIMIT = 200;
 
+	private final Automaton automaton;
+
+	private Random random;
+
 	/**
 	 * Constructs a new instance, accepting the regular expression and the randomizer.
-	 *
-	 * @param regex  The regular expression. (Not <code>null</code>.)
-	 * @param random The object that will randomize the way the String is generated. (Not <code>null</code>.)
+	 * @param regex The regular expression. (Not <code>null</code>.)
+	 * @param random The object that will randomize the way the String is generated. (Not
+	 * <code>null</code>.)
 	 * @throws IllegalArgumentException If the regular expression is invalid.
 	 */
 	public Xeger(String regex, Random random) {
 		assert regex != null;
 		assert random != null;
 		// https://stackoverflow.com/questions/1578789/how-do-i-generate-text-matching-a-regular-expression-from-a-regular-expression
-		String pattern = regex
-				.replace("\\d", "[0-9]")        // Used d=Digit
+		String pattern = regex.replace("\\d", "[0-9]") // Used d=Digit
 				.replace("\\w", "[A-Za-z0-9_]") // Used =Word
-				.replace("\\s", "[ \t\r\n]");   // Used s="White"Space
+				.replace("\\s", "[ \t\r\n]"); // Used s="White"Space
 		this.automaton = new RegExp(pattern).toAutomaton();
 		this.random = random;
 		String generatedCharsSysProp = System
@@ -66,15 +69,15 @@ public class Xeger {
 				.getenv("SPRING_CLOUD_CONTRACT_GENERATED_CHARS_FROM_REGEX");
 		if (StringUtils.isNotEmpty(generatedCharsSysProp)) {
 			ITERATION_LIMIT = Integer.parseInt(generatedCharsSysProp);
-		} else if (StringUtils.isNotEmpty(generatedCharsEnvVar)) {
+		}
+		else if (StringUtils.isNotEmpty(generatedCharsEnvVar)) {
 			ITERATION_LIMIT = Integer.parseInt(generatedCharsEnvVar);
 		}
 	}
 
 	/**
-	 * As {@link Xeger#Xeger(String, java.util.Random)}, creating a {@link java.util.Random} instance
-	 * implicityly.
-	 *
+	 * As {@link Xeger#Xeger(String, java.util.Random)}, creating a
+	 * {@link java.util.Random} instance implicityly.
 	 * @param regex as string
 	 */
 	public Xeger(String regex) {
@@ -82,7 +85,21 @@ public class Xeger {
 	}
 
 	/**
-	 * Generates a random String that is guaranteed to match the regular expression passed to the constructor.
+	 * Generates a random number within the given bounds.
+	 * @param min The minimum number (inclusive).
+	 * @param max The maximum number (inclusive).
+	 * @param random The object used as the randomizer.
+	 * @return A random number in the given range.
+	 */
+	static int getRandomInt(int min, int max, Random random) {
+		// Use random.nextInt as it guarantees a uniform distribution
+		int maxForRandom = max - min + 1;
+		return random.nextInt(maxForRandom) + min;
+	}
+
+	/**
+	 * Generates a random String that is guaranteed to match the regular expression passed
+	 * to the constructor.
 	 * @return generated regexp
 	 */
 	public String generate() {
@@ -103,7 +120,7 @@ public class Xeger {
 		}
 		int nroptions = state.isAccept() ? transitions.size() : transitions.size() - 1;
 		int option = Xeger.getRandomInt(0, nroptions, this.random);
-		if (state.isAccept() && option == 0) {          // 0 is considered stop
+		if (state.isAccept() && option == 0) { // 0 is considered stop
 			return;
 		}
 		// Moving on to next transition
@@ -113,8 +130,8 @@ public class Xeger {
 	}
 
 	private void appendChoice(StringBuilder builder, Transition transition) {
-		char c = (char) Xeger
-				.getRandomInt(transition.getMin(), transition.getMax(), this.random);
+		char c = (char) Xeger.getRandomInt(transition.getMin(), transition.getMax(),
+				this.random);
 		builder.append(c);
 	}
 
@@ -126,17 +143,4 @@ public class Xeger {
 		this.random = random;
 	}
 
-	/**
-	 * Generates a random number within the given bounds.
-	 *
-	 * @param min The minimum number (inclusive).
-	 * @param max The maximum number (inclusive).
-	 * @param random The object used as the randomizer.
-	 * @return A random number in the given range.
-	 */
-	static int getRandomInt(int min, int max, Random random) {
-		// Use random.nextInt as it guarantees a uniform distribution
-		int maxForRandom = max - min + 1;
-		return random.nextInt(maxForRandom) + min;
-	}
 }

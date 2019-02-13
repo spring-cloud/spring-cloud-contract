@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.1.0.BUILD-SNAPSHOT</version>
+		<version>2.1.1.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-wiremock</artifactId>
 	<packaging>jar</packaging>
 	<name>spring-cloud-contract-wiremock</name>
 	<description>Spring Cloud Contract Wiremock</description>
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/libs-milestone-local</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-standalone</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.rest-assured</groupId>
@@ -95,10 +101,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>sagan</groupId>
-			<artifactId>sagan-site</artifactId>
+			<groupId>com.example.github</groupId>
+			<artifactId>github-webhook</artifactId>
 			<classifier>stubs</classifier>
-			<version>1.0.0.BUILD-SNAPSHOT</version>
+			<version>1.0.0.M1-190120_193303-VERSION</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -109,9 +115,9 @@
 		</dependency>
 		<dependency>
 			<groupId>com.example.github</groupId>
-			<artifactId>github-webhook</artifactId>
+			<artifactId>github-analytics</artifactId>
 			<classifier>stubs</classifier>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0.M1-190120_105104-VERSION</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>

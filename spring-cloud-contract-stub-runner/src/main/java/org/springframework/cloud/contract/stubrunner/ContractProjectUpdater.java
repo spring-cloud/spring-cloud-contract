@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
@@ -66,9 +67,9 @@ public class ContractProjectUpdater {
 	}
 
 	/**
-	 * Merges the folder with stubs with the project containing contracts
-	 * @param projectName
-	 * @param rootStubsFolder
+	 * Merges the folder with stubs with the project containing contracts.
+	 * @param projectName name of the project
+	 * @param rootStubsFolder root folder of the stubs
 	 */
 	public void updateContractProject(String projectName, Path rootStubsFolder) {
 		File clonedRepo = this.gitContractsRepo
@@ -161,8 +162,8 @@ public class ContractProjectUpdater {
 
 class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 
-	private static final List<String> FOLDERS_TO_DELETE = Arrays
-			.asList("contracts", "mappings");
+	private static final List<String> FOLDERS_TO_DELETE = Arrays.asList("contracts",
+			"mappings");
 
 	private static final Log log = LogFactory.getLog(DirectoryCopyingVisitor.class);
 
@@ -220,21 +221,25 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 		}
 		Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
 			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+					throws IOException {
 				Files.delete(file);
 				return FileVisitResult.CONTINUE;
 			}
 
 			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+					throws IOException {
 				// a hack for Windows not to fail when directory is removed
-				// related to https://github.com/spring-cloud/spring-cloud-sleuth/issues/834
+				// related to
+				// https://github.com/spring-cloud/spring-cloud-sleuth/issues/834
 				if (exc == null) {
 					int maxTries = 5;
 					int count = 0;
 					boolean deleted;
 					do {
-						if ((deleted = this.isDeleted(dir))) {
+						deleted = this.isDeleted(dir);
+						if (deleted) {
 							if (log.isDebugEnabled()) {
 								log.debug("Deleted [" + dir + "]");
 							}
@@ -257,7 +262,8 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 					while (count < maxTries);
 					if (!deleted) {
 						if (log.isDebugEnabled()) {
-							log.debug("Failed to delete [" + dir + "] after [" + maxTries + "] attempts to do it");
+							log.debug("Failed to delete [" + dir + "] after [" + maxTries
+									+ "] attempts to do it");
 						}
 						throw new DirectoryNotEmptyException(dir.toString());
 					}
@@ -272,7 +278,8 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 					return true;
 				}
 				catch (DirectoryNotEmptyException e) {
-					// happens sometimes if Windows is too slow to remove children of a directory
+					// happens sometimes if Windows is too slow to remove children of a
+					// directory
 					return false;
 				}
 			}

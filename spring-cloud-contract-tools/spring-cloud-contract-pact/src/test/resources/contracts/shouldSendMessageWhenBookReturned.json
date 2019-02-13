@@ -1,45 +1,45 @@
 {
-  "consumer":{
-    "name":"Consumer"
+  "consumer": {
+    "name": "Consumer"
   },
-  "provider":{
-    "name":"Provider"
+  "provider": {
+    "name": "Provider"
   },
-  "messages":[
+  "messages": [
     {
-      "description":"message sent to activemq:output",
-      "metaData":{
-        "BOOK-NAME":"foo",
-        "contentType":"application/json"
+      "description": "message sent to activemq:output",
+      "metaData": {
+        "BOOK-NAME": "foo",
+        "contentType": "application/json"
       },
-      "contents":{
-        "bookName":"foo"
+      "contents": {
+        "bookName": "foo"
       },
-      "providerStates":[
+      "providerStates": [
         {
-          "name":"bookReturnedTriggered()"
+          "name": "bookReturnedTriggered()"
         }
       ],
-      "matchingRules":{
-        "body":{
-          "$.bookName":{
-            "matchers":[
+      "matchingRules": {
+        "body": {
+          "$.bookName": {
+            "matchers": [
               {
-                "match":"type"
+                "match": "type"
               }
             ],
-            "combine":"AND"
+            "combine": "AND"
           }
         }
       }
     }
   ],
-  "metadata":{
-    "pact-specification":{
-      "version":"3.0.0"
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
     },
-    "pact-jvm":{
-      "version":"3.5.13"
+    "pact-jvm": {
+      "version": "3.5.13"
     }
   }
 }

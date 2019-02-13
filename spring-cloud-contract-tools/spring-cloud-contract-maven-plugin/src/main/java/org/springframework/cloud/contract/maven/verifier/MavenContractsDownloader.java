@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+
 import org.springframework.cloud.contract.stubrunner.ContractDownloader;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
@@ -33,7 +34,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.util.StringUtils;
 
 /**
- * Downloads JAR with contracts
+ * Downloads JAR with contracts.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0

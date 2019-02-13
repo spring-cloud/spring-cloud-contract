@@ -16,13 +16,13 @@
   -->
 
 <metadata>
-  <groupId>org.springframework.cloud.contract.verifier.stubs</groupId>
-  <artifactId>camelService</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <versioning>
-    <versions>
-      <version>0.0.1-SNAPSHOT</version>
-    </versions>
-    <lastUpdated>20160409062112</lastUpdated>
-  </versioning>
+	<groupId>org.springframework.cloud.contract.verifier.stubs</groupId>
+	<artifactId>camelService</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<versioning>
+		<versions>
+			<version>0.0.1-SNAPSHOT</version>
+		</versions>
+		<lastUpdated>20160409062112</lastUpdated>
+	</versioning>
 </metadata>

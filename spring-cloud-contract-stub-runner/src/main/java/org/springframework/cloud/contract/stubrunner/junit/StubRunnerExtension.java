@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.junit;
@@ -48,16 +48,22 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback, StubFinder, StubRunnerExtensionOptions {
+public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
+		StubFinder, StubRunnerExtensionOptions {
 
 	private static final String DELIMITER = ":";
+
 	private static final String LATEST_VERSION = "+";
+
 	private static final Log LOG = LogFactory.getLog(StubRunnerExtension.class);
 
 	StubRunnerExtension delegate = this;
+
 	private BatchStubRunner stubFinder;
+
 	private StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(
 			StubRunnerOptions.fromSystemProps());
+
 	private MessageVerifier verifier = new ExceptionThrowingMessageVerifier();
 
 	public StubRunnerExtension() {
@@ -85,7 +91,8 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
-	public URL findStubUrl(String groupId, String artifactId) throws StubNotFoundException {
+	public URL findStubUrl(String groupId, String artifactId)
+			throws StubNotFoundException {
 		return stubFinder().findStubUrl(groupId, artifactId);
 	}
 
@@ -175,21 +182,24 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
-	public PortStubRunnerExtension downloadStub(String groupId, String artifactId, String version, String classifier) {
+	public PortStubRunnerExtension downloadStub(String groupId, String artifactId,
+			String version, String classifier) {
 		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version
 				+ DELIMITER + classifier);
 		return new PortStubRunnerExtension(this.delegate);
 	}
 
 	@Override
-	public PortStubRunnerExtension downloadLatestStub(String groupId, String artifactId, String classifier) {
+	public PortStubRunnerExtension downloadLatestStub(String groupId, String artifactId,
+			String classifier) {
 		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION
 				+ DELIMITER + classifier);
 		return new PortStubRunnerExtension(this.delegate);
 	}
 
 	@Override
-	public PortStubRunnerExtension downloadStub(String groupId, String artifactId, String version) {
+	public PortStubRunnerExtension downloadStub(String groupId, String artifactId,
+			String version) {
 		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
 		return new PortStubRunnerExtension(this.delegate);
 	}
@@ -249,7 +259,8 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
-	public StubRunnerExtension withHttpServerStubConfigurer(Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer) {
+	public StubRunnerExtension withHttpServerStubConfigurer(
+			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer) {
 		builder().withHttpServerStubConfigurer(httpServerStubConfigurer);
 		return new PortStubRunnerExtension(this.delegate);
 	}
@@ -275,11 +286,13 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	/**
-	 * Helper class with additional port, related methods once you pick a stub to download
+	 * Helper class with additional port, related methods once you pick a stub to
+	 * download.
 	 *
 	 * @since 1.2.0
 	 */
-	public static class PortStubRunnerExtension extends StubRunnerExtension implements PortStubRunnerExtensionOptions {
+	public static class PortStubRunnerExtension extends StubRunnerExtension
+			implements PortStubRunnerExtensionOptions {
 
 		PortStubRunnerExtension(StubRunnerExtension delegate) {
 			super(delegate);
@@ -290,5 +303,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 			builder().withPort(port);
 			return this.delegate;
 		}
+
 	}
+
 }

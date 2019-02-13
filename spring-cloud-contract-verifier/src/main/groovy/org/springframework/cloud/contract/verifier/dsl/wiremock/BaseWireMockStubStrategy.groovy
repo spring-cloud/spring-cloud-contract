@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
@@ -71,9 +71,9 @@ abstract class BaseWireMockStubStrategy {
 	}
 
 	/**
-	 * Returns the stub side values from the object
+	 * @return the stub side values from the object
 	 */
-	protected getStubSideValue(Object object) {
+	protected Object getStubSideValue(Object object) {
 		return MapConverter.getStubSideValues(object)
 	}
 
@@ -139,7 +139,9 @@ abstract class BaseWireMockStubStrategy {
 					return it
 				}
 				return "${WRAPPER}${it}${WRAPPER}"
-			} else if (it instanceof String && processor.containsTemplateEntry(it) &&
+			}
+			else if (it instanceof String && processor.containsTemplateEntry(it)
+					&&
 					template.escapedBody() == it) {
 				return template.escapedBody()
 			}
@@ -155,7 +157,8 @@ abstract class BaseWireMockStubStrategy {
 		list.each {
 			if (it instanceof Map) {
 				result += MapConverter.getStubSideValues(it)
-			} else {
+			}
+			else {
 				result += parseBody(it, contentType)
 			}
 		}
@@ -166,7 +169,8 @@ abstract class BaseWireMockStubStrategy {
 	 * For the given {@link ContentType} returns the String version of the body
 	 */
 	String parseBody(GString value, ContentType contentType) {
- 		Object processedValue = extractValue(value, contentType, { Object o -> o instanceof DslProperty ? o.clientValue : o })
+		Object processedValue =
+				extractValue(value, contentType, { Object o -> o instanceof DslProperty ? o.clientValue : o })
 		if (processedValue instanceof GString) {
 			return parseBody(processedValue.toString(), contentType)
 		}
@@ -185,7 +189,8 @@ abstract class BaseWireMockStubStrategy {
 			Map convertedMap = MapConverter.transformValues(value) {
 				it instanceof GString ? it.toString() : it
 			} as Map
-			String jsonOutput = new JSONObject(new JsonBuilder(convertedMap).toString()).toString()
+			String jsonOutput = new JSONObject(new JsonBuilder(convertedMap).toString()).
+					toString()
 			return jsonOutput.replaceAll("\\\\\\\\\\\\", "\\\\")
 		}
 		return new JsonBuilder(value).toString()

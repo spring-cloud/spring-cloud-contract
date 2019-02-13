@@ -1,26 +1,25 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
 
-import groovy.transform.CompileStatic
-
 import java.lang.invoke.MethodHandles
 
 import groovy.transform.Canonical
+import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
 import org.apache.commons.logging.Log
@@ -53,13 +52,15 @@ class JavaTestGenerator implements SingleTestGenerator {
 	// TODO: Remove in next major
 	private static final String REST_ASSURED_2_0_CLASS = 'com.jayway.restassured.RestAssured'
 
-	@PackageScope ClassPresenceChecker checker = new ClassPresenceChecker()
+	@PackageScope
+	ClassPresenceChecker checker = new ClassPresenceChecker()
 
 	@Override
 	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
 		String className = generatedClassData.className
 		String classPackage = generatedClassData.classPackage
-		ClassBuilder clazz = ClassBuilder.createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
+		ClassBuilder clazz = ClassBuilder.createClass(
+				capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
 		if (configProperties.imports) {
 			configProperties.imports.each { String it ->
 				clazz.addImport(it)
@@ -72,7 +73,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 		}
 		if (isScenarioClass(listOfFiles)) {
 			clazz.addImports(configProperties.testFramework.getOrderAnnotationImports())
-			clazz.addClassLevelAnnotation(configProperties.testFramework.getOrderAnnotation())
+			clazz.addClassLevelAnnotation(configProperties.testFramework.
+					getOrderAnnotation())
 		}
 		// FIXME: change during Hoxton refactoring: we should only add either Json or Xml imports and not both
 		addJsonPathRelatedImports(clazz)
@@ -90,7 +92,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
 		boolean conditionalImportsAdded = false
 		boolean toIgnore = listOfFiles.find { it.ignored }
-		contracts.each {ParsedDsl key, TestType value ->
+		contracts.each { ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
 				clazz.addImports(getImports(configProperties.testFramework))
 				clazz.addStaticImports(getStaticImports(configProperties.testFramework))
@@ -119,16 +121,20 @@ class JavaTestGenerator implements SingleTestGenerator {
 		clazz.addImport(getRuleImport(configProperties.testFramework))
 		if (configProperties.testFramework.annotationLevelRules()) {
 			clazz.addClassLevelAnnotation(configProperties.testFramework
-					.getRuleAnnotation(configProperties.ruleClassForTests))
-		} else {
+														  .getRuleAnnotation(configProperties.ruleClassForTests))
+		}
+		else {
 			clazz.addRule(configProperties.ruleClassForTests)
 		}
 	}
 
 	private void addHttpRelatedEntries(ClassBuilder clazz, ContractVerifierConfigProperties configProperties) {
-		HttpImportProvider httpImportProvider = new HttpImportProvider(getRestAssuredPackage())
-		clazz.addImports(httpImportProvider.getImports(configProperties.testFramework, configProperties.testMode))
-		clazz.addStaticImports(httpImportProvider.getStaticImports(configProperties.testFramework, configProperties.testMode))
+		HttpImportProvider httpImportProvider = new HttpImportProvider(
+				getRestAssuredPackage())
+		clazz.addImports(httpImportProvider.
+				getImports(configProperties.testFramework, configProperties.testMode))
+		clazz.addStaticImports(httpImportProvider.
+				getStaticImports(configProperties.testFramework, configProperties.testMode))
 	}
 
 	// TODO for 2.2: leave only RestAssured 3
@@ -154,10 +160,11 @@ class JavaTestGenerator implements SingleTestGenerator {
 				log.debug("Stub content from file [${stubsFile.text}]")
 			}
 			Collection<Contract> stubContents = metadata.convertedContract
-			Map<ParsedDsl, TestType> entries = stubContents.collectEntries { Contract stubContent ->
-				TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
-				return [(new ParsedDsl(metadata, stubContent, stubsFile)): testType]
-			}
+			Map<ParsedDsl, TestType> entries = stubContents.
+					collectEntries { Contract stubContent ->
+						TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
+						return [(new ParsedDsl(metadata, stubContent, stubsFile)): testType]
+					}
 			dsls.putAll(entries)
 		}
 		return dsls
@@ -182,7 +189,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	private void addJsonPathRelatedImports(ClassBuilder clazz) {
 		clazz.addImports(['com.jayway.jsonpath.DocumentContext',
-		                  'com.jayway.jsonpath.JsonPath',
+						  'com.jayway.jsonpath.JsonPath',
 		])
 		if (this.checker.isClassPresent(JSON_ASSERT_CLASS)) {
 			clazz.addStaticImport(JSON_ASSERT_STATIC_IMPORT)
@@ -191,15 +198,15 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	private void addXPathRelatedImports(ClassBuilder clazz) {
 		clazz.addImports(['javax.xml.parsers.DocumentBuilder',
-		'javax.xml.parsers.DocumentBuilderFactory',
-		'org.w3c.dom.Document',
-		'org.xml.sax.InputSource',
-		'java.io.StringReader'])
+						  'javax.xml.parsers.DocumentBuilderFactory',
+						  'org.w3c.dom.Document',
+						  'org.xml.sax.InputSource',
+						  'java.io.StringReader'])
 	}
 
 	private void addMessagingRelatedEntries(ClassBuilder clazz) {
 		clazz.addField(['@Inject ContractVerifierMessaging contractVerifierMessaging',
-		                '@Inject ContractVerifierObjectMapper contractVerifierObjectMapper'
+						'@Inject ContractVerifierObjectMapper contractVerifierObjectMapper'
 		])
 		clazz.addImports(MessagingImportProvider.getImports())
 		clazz.addStaticImports(MessagingImportProvider.getStaticImports())
@@ -214,7 +221,8 @@ class ClassPresenceChecker {
 		try {
 			Class.forName(className)
 			return true
-		} catch (ClassNotFoundException ex) {
+		}
+		catch (ClassNotFoundException ex) {
 			if (log.isDebugEnabled()) {
 				log.debug("[${className}] is not present on classpath. Will not add a static import.")
 			}

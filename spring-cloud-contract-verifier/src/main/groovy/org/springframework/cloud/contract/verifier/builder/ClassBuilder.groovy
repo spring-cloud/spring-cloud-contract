@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -21,9 +21,9 @@ import groovy.transform.PackageScope
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.util.NamesUtil
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**
  * Builds a class. Adds all the imports, static imports etc.
@@ -62,28 +62,34 @@ class ClassBuilder {
 	}
 
 	/**
-	 * Returns a {@link ClassBuilder} for the given parameters
+	 * @return a{@link ClassBuilder} for the given parameters
 	 */
 	static ClassBuilder createClass(String className, String classPackage, ContractVerifierConfigProperties properties,
-									String includedDirectoryRelativePath) {
+			String includedDirectoryRelativePath) {
 		String baseClassForTests
 		if (properties.testFramework == TestFramework.SPOCK && !properties.baseClassForTests
-				&& !properties.packageWithBaseClasses && !properties.baseClassMappings) {
+				&& !properties.packageWithBaseClasses
+				&& !properties.baseClassMappings) {
 			baseClassForTests = 'spock.lang.Specification'
-		} else {
-			baseClassForTests = retrieveBaseClass(properties, includedDirectoryRelativePath)
+		}
+		else {
+			baseClassForTests =
+					retrieveBaseClass(properties, includedDirectoryRelativePath)
 		}
 		return new ClassBuilder(className, classPackage, baseClassForTests, properties.testFramework)
 	}
 
 	protected static String retrieveBaseClass(ContractVerifierConfigProperties properties, String includedDirectoryRelativePath) {
-		String contractPathAsPackage = includedDirectoryRelativePath.replace(File.separator, ".")
-		String contractPackage = includedDirectoryRelativePath.replace(File.separator, SEPARATOR)
+		String contractPathAsPackage = includedDirectoryRelativePath.
+				replace(File.separator, ".")
+		String contractPackage = includedDirectoryRelativePath.
+				replace(File.separator, SEPARATOR)
 		// package mapping takes super precedence
 		if (properties.baseClassMappings) {
-			Map.Entry<String, String> mapping = properties.baseClassMappings.find { String pattern, String fqn ->
-				return contractPathAsPackage.matches(pattern)
-			}
+			Map.Entry<String, String> mapping = properties.baseClassMappings.
+					find { String pattern, String fqn ->
+						return contractPathAsPackage.matches(pattern)
+					}
 			if (log.isDebugEnabled()) {
 				log.debug("Matching pattern for contract package [${contractPathAsPackage}] with setup ${properties.baseClassMappings} is [${mapping}]")
 			}
@@ -94,12 +100,14 @@ class ClassBuilder {
 		if (!properties.packageWithBaseClasses) {
 			return properties.baseClassForTests
 		}
-		String generatedClassName = generateDefaultBaseClassName(contractPackage, properties)
+		String generatedClassName =
+				generateDefaultBaseClassName(contractPackage, properties)
 		return "${generatedClassName}Base"
 	}
 
 	private static String generateDefaultBaseClassName(String classPackage, ContractVerifierConfigProperties properties) {
-		String[] splitPackage = NamesUtil.convertIllegalPackageChars(classPackage).split(SEPARATOR)
+		String[] splitPackage = NamesUtil.convertIllegalPackageChars(classPackage).
+				split(SEPARATOR)
 		if (splitPackage.size() > 1) {
 			String last = NamesUtil.capitalize(splitPackage[-1])
 			String butLast = NamesUtil.capitalize(splitPackage[-2])
@@ -182,7 +190,8 @@ class ClassBuilder {
 		clazz.startBlock()
 		rules.sort().each {
 			clazz.addLine("@Rule")
-			clazz.addLine("public $it ${NamesUtil.camelCase(it)} = new $it()$lang.lineSuffix")
+			clazz.
+					addLine("public $it ${NamesUtil.camelCase(it)} = new $it()$lang.lineSuffix")
 		}
 		clazz.endBlock()
 		if (!rules.empty) {

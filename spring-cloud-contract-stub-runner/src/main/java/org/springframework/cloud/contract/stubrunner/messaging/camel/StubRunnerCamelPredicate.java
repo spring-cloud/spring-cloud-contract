@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.messaging.camel;
@@ -47,7 +47,7 @@ import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;
 
 /**
- * Passes through a message that matches the one defined in the DSL
+ * Passes through a message that matches the one defined in the DSL.
  *
  * @author Marcin Grzejszczak
  */
@@ -56,9 +56,10 @@ class StubRunnerCamelPredicate implements Predicate {
 	private static final Log log = LogFactory.getLog(StubRunnerCamelPredicate.class);
 
 	private final List<Contract> groovyDsls;
+
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();
 
-	public StubRunnerCamelPredicate(List<Contract> groovyDsls) {
+	StubRunnerCamelPredicate(List<Contract> groovyDsls) {
 		this.groovyDsls = groovyDsls;
 	}
 
@@ -66,7 +67,8 @@ class StubRunnerCamelPredicate implements Predicate {
 	public boolean matches(Exchange exchange) {
 		Contract contract = getContract(exchange.getMessage());
 		if (log.isDebugEnabled()) {
-			log.debug("For exchange [" + exchange + "] found contract [" + contract + "]");
+			log.debug(
+					"For exchange [" + exchange + "] found contract [" + contract + "]");
 		}
 		if (contract == null) {
 			return false;
@@ -108,14 +110,19 @@ class StubRunnerCamelPredicate implements Predicate {
 			}
 			else if (!(inputMessage instanceof byte[])) {
 				if (log.isDebugEnabled()) {
-					log.debug("Contract provided byte comparison, but the input message is of type [" + inputMessage.getClass() + "]. Can't compare the two.");
+					log.debug(
+							"Contract provided byte comparison, but the input message is of type ["
+									+ inputMessage.getClass()
+									+ "]. Can't compare the two.");
 				}
 				return null;
 			}
 			else {
-				boolean matches = Arrays.equals(property.asBytes(), (byte[]) inputMessage);
+				boolean matches = Arrays.equals(property.asBytes(),
+						(byte[]) inputMessage);
 				if (log.isDebugEnabled() && !matches) {
-					log.debug("Contract provided byte comparison, but the byte arrays don't match");
+					log.debug(
+							"Contract provided byte comparison, but the byte arrays don't match");
 				}
 				return matches ? groovyDsl : null;
 			}
@@ -126,10 +133,11 @@ class StubRunnerCamelPredicate implements Predicate {
 		return null;
 	}
 
-	private boolean matchViaContent(Contract groovyDsl, Object inputMessage, Object dslBody) {
+	private boolean matchViaContent(Contract groovyDsl, Object inputMessage,
+			Object dslBody) {
 		boolean matches;
-		ContentType type = ContentUtils
-				.getClientContentType(inputMessage, groovyDsl.getInput().getMessageHeaders());
+		ContentType type = ContentUtils.getClientContentType(inputMessage,
+				groovyDsl.getInput().getMessageHeaders());
 		if (type == ContentType.JSON) {
 			BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
 			matches = matchesForJsonPayload(groovyDsl, inputMessage, matchers, dslBody);
@@ -138,7 +146,8 @@ class StubRunnerCamelPredicate implements Predicate {
 			Pattern pattern = ((RegexProperty) dslBody).getPattern();
 			matches = pattern.matcher((String) inputMessage).matches();
 			bodyUnmatchedLog(dslBody, matches, pattern);
-		} else {
+		}
+		else {
 			matches = dslBody.equals(inputMessage);
 			bodyUnmatchedLog(dslBody, matches, inputMessage);
 		}
@@ -147,12 +156,13 @@ class StubRunnerCamelPredicate implements Predicate {
 
 	private void bodyUnmatchedLog(Object dslBody, boolean matches, Object pattern) {
 		if (log.isDebugEnabled() && !matches) {
-			log.debug("Body was supposed to " + unmatchedText(pattern) + " but the value is [" + dslBody
-					.toString() + "]");
+			log.debug("Body was supposed to " + unmatchedText(pattern)
+					+ " but the value is [" + dslBody.toString() + "]");
 		}
 	}
 
-	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage, BodyMatchers matchers, Object dslBody) {
+	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage,
+			BodyMatchers matchers, Object dslBody) {
 		Object matchingInputMessage = JsonToJsonPathsConverter
 				.removeMatchingJsonPaths(dslBody, matchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter

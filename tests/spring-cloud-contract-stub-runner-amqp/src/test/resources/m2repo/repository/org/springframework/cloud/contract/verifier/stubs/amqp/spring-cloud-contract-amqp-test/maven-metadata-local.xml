@@ -16,13 +16,13 @@
   -->
 
 <metadata>
-  <groupId>org.springframework.cloud.contract.verifier.stubs.amqp</groupId>
-  <artifactId>spring-cloud-contract-amqp-test</artifactId>
-  <version>0.4.0-SNAPSHOT</version>
-  <versioning>
-    <versions>
-      <version>0.4.0-SNAPSHOT</version>
-    </versions>
-    <lastUpdated>20160409062112</lastUpdated>
-  </versioning>
+	<groupId>org.springframework.cloud.contract.verifier.stubs.amqp</groupId>
+	<artifactId>spring-cloud-contract-amqp-test</artifactId>
+	<version>0.4.0-SNAPSHOT</version>
+	<versioning>
+		<versions>
+			<version>0.4.0-SNAPSHOT</version>
+		</versions>
+		<lastUpdated>20160409062112</lastUpdated>
+	</versioning>
 </metadata>

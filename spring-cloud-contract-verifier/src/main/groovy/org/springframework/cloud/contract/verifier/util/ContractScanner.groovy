@@ -1,27 +1,20 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package org.springframework.cloud.contract.verifier.util
 
-import groovy.transform.CompileStatic
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.ContractConverter
-import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
-import org.springframework.core.io.support.SpringFactoriesLoader
+package org.springframework.cloud.contract.verifier.util
 
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -30,6 +23,15 @@ import java.nio.file.Paths
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.function.Predicate
+
+import groovy.transform.CompileStatic
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
+import org.springframework.core.io.support.SpringFactoriesLoader
 
 /**
  * Scans through the given directory and converts all files for
@@ -82,8 +84,8 @@ final class ContractScanner {
 								if (isContractDescriptor(file)) {
 									contractDescriptors
 											.addAll(ContractVerifierDslConverter
-													.convertAsCollection(
-															file.getParentFile(), file))
+											.convertAsCollection(
+											file.getParentFile(), file))
 								}
 								else if (converter != null
 										&& converter.isAccepted(file)) {
@@ -91,10 +93,10 @@ final class ContractScanner {
 											.addAll(converter.convertFrom(file))
 								}
 								else if (YamlContractConverter.INSTANCE
-										.isAccepted(file)) {
+															  .isAccepted(file)) {
 									contractDescriptors
 											.addAll(YamlContractConverter.INSTANCE
-													.convertFrom(file))
+																		 .convertFrom(file))
 								}
 							}
 							return super.visitFile(path, attrs)

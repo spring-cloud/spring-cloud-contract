@@ -144,7 +144,7 @@ response:
     valueWithMinEmpty: []
     valueWithMaxEmpty: []
     key:
-      'complex.key' : 'foo'
+      'complex.key': 'foo'
     nulValue: null
   matchers:
     headers:

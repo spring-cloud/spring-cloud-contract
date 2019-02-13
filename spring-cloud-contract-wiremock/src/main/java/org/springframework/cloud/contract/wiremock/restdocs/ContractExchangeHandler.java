@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.wiremock.restdocs;
 
 import java.io.IOException;
@@ -114,7 +115,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	private EntityExchangeResult<?> result;
 
-	public WireMockHttpRequestAdapter(EntityExchangeResult<?> result) {
+	WireMockHttpRequestAdapter(EntityExchangeResult<?> result) {
 		this.result = result;
 	}
 

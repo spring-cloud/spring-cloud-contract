@@ -1,31 +1,34 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.plugin
+
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
+import java.util.zip.ZipException
+import java.util.zip.ZipFile
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.BuildTask
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Specification
-
-import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
-import java.util.zip.ZipException
-import java.util.zip.ZipFile
 
 import static java.nio.charset.StandardCharsets.UTF_8
 
@@ -69,7 +72,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	protected void switchToJunitTestFramework(String from, String to) {
 		Path path = buildFile.toPath()
 		String content = new StringBuilder(new String(Files.readAllBytes(path), UTF_8)).replaceAll(SPOCK, JUNIT)
-				.replaceAll(from, to)
+																					   .replaceAll(from, to)
 		Files.write(path, content.getBytes(UTF_8))
 	}
 
@@ -92,17 +95,19 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	protected String[] checkAndPublishToMavenLocal() {
 		String[] args = ["check", "publishToMavenLocal", "--info", "--stacktrace"] as String[]
-		if (WORK_OFFLINE) args << "--offline"
+		if (WORK_OFFLINE) {
+			args << "--offline"
+		}
 		return args
 	}
 
 	protected BuildResult run(String... tasks) {
 		return GradleRunner.create()
-				.withProjectDir(testProjectDir)
-				.withArguments(tasks)
-				.withDebug(true)
-				.forwardOutput()
-				.build()
+						   .withProjectDir(testProjectDir)
+						   .withArguments(tasks)
+						   .withDebug(true)
+						   .forwardOutput()
+						   .build()
 	}
 
 	protected void copyResourcesToRoot(String srcDir) {
@@ -118,7 +123,8 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		File resourceFile = new File(resource.toURI())
 		if (resourceFile.file) {
 			Files.copy(resourceFile.toPath(), destinationFile.toPath())
-		} else {
+		}
+		else {
 			Files.walkFileTree(resourceFile.toPath(),
 					new CopyFileVisitor(destinationFile.toPath()))
 		}
@@ -151,7 +157,8 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 						}
 					}
 				}
-			}catch (ZipException zipEx) {
+			}
+			catch (ZipException zipEx) {
 				println "Unable to open file ${file.name}"
 			}
 		}
@@ -161,16 +168,18 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	private static class CopyFileVisitor extends SimpleFileVisitor<Path> {
 		private final Path targetPath
 		private Path sourcePath = null
+
 		CopyFileVisitor(Path targetPath) {
 			this.targetPath = targetPath
 		}
 
 		@Override
 		FileVisitResult preVisitDirectory(final Path dir,
-												 final BasicFileAttributes attrs) throws IOException {
+				final BasicFileAttributes attrs) throws IOException {
 			if (sourcePath == null) {
 				sourcePath = dir
-			} else {
+			}
+			else {
 				Files.createDirectories(targetPath.resolve(sourcePath
 						.relativize(dir)))
 			}
@@ -179,7 +188,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 		@Override
 		FileVisitResult visitFile(final Path file,
-										 final BasicFileAttributes attrs) throws IOException {
+				final BasicFileAttributes attrs) throws IOException {
 			Path target = targetPath.resolve(sourcePath.relativize(file))
 			if (!target.toFile().exists()) {
 				Files.copy(file, target)

@@ -1,22 +1,21 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.spring;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +41,10 @@ import org.springframework.util.StringUtils;
 
 /**
  * Configuration that initializes a {@link BatchStubRunner} that runs
- * {@link org.springframework.cloud.contract.stubrunner.StubRunner} instance for each stub
+ * {@link org.springframework.cloud.contract.stubrunner.StubRunner} instance for each
+ * stub.
+ *
+ * @author Marcin Grzejszczak
  */
 @Configuration
 @EnableConfigurationProperties(StubRunnerProperties.class)
@@ -67,9 +69,10 @@ public class StubRunnerConfiguration {
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its
 	 * instantiation JAR with stubs is downloaded and unpacked to a temporary folder and
 	 * WireMock server are started for each of those stubs
+	 * @return the batch stub runner bean
 	 */
 	@Bean
-	public BatchStubRunner batchStubRunner() throws IOException {
+	public BatchStubRunner batchStubRunner() {
 		StubRunnerOptionsBuilder builder = builder();
 		if (this.props.getProxyHost() != null) {
 			builder.withProxy(this.props.getProxyHost(), this.props.getProxyPort());
@@ -85,7 +88,7 @@ public class StubRunnerConfiguration {
 		return batchStubRunner;
 	}
 
-	private StubRunnerOptionsBuilder builder() throws IOException {
+	private StubRunnerOptionsBuilder builder() {
 		return new StubRunnerOptionsBuilder()
 				.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
 				.withStubRepositoryRoot(this.props.getRepositoryRoot())
@@ -111,8 +114,8 @@ public class StubRunnerConfiguration {
 	private void registerPort(RunningStubs runStubs) {
 		MutablePropertySources propertySources = this.environment.getPropertySources();
 		if (!propertySources.contains(STUBRUNNER_PREFIX)) {
-			propertySources.addFirst(new MapPropertySource(STUBRUNNER_PREFIX,
-					new HashMap<String, Object>()));
+			propertySources
+					.addFirst(new MapPropertySource(STUBRUNNER_PREFIX, new HashMap<>()));
 		}
 		Map<String, Object> source = ((MapPropertySource) propertySources
 				.get(STUBRUNNER_PREFIX)).getSource();

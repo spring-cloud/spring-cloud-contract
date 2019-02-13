@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.util.xml
@@ -63,9 +63,9 @@ class XmlToXPathsConverter {
 	static Object removeMatchingXPaths(Object body, BodyMatchers bodyMatchers) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
 		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder()
+			.newDocumentBuilder()
 		Document parsedXml = documentBuilder
-				.parse(new InputSource(new StringReader(body as String)))
+			.parse(new InputSource(new StringReader(body as String)))
 		bodyMatchers?.matchers()?.each({
 			Node node = xPath.evaluate(it.path(), parsedXml.documentElement, NODE) as Node
 			removeNode(node)
@@ -88,9 +88,9 @@ class XmlToXPathsConverter {
 	private static String getNodeValue(String path, Object body) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
 		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder()
+			.newDocumentBuilder()
 		Document parsedXml = documentBuilder.
-				parse(new InputSource(new StringReader(body as String)))
+			parse(new InputSource(new StringReader(body as String)))
 		return xPath.evaluate(path, parsedXml.documentElement)
 	}
 
@@ -99,7 +99,9 @@ class XmlToXPathsConverter {
 			if (isValueNode(node as Node)) {
 				node.getParentNode().removeChild(node)
 			}
-			else removeNode(node.getParentNode())
+			else {
+				removeNode(node.getParentNode())
+			}
 		}
 	}
 
@@ -126,10 +128,10 @@ class XmlToXPathsConverter {
 
 	static List<BodyMatcher> mapToMatchers(Object xml) {
 		DocumentBuilder documentBuilder = DocumentBuilderFactory
-				.newInstance()
-				.newDocumentBuilder()
+			.newInstance()
+			.newDocumentBuilder()
 		Document parsedXml = documentBuilder
-				.parse(new InputSource(new StringReader(xml as String)))
+			.parse(new InputSource(new StringReader(xml as String)))
 		List<List<Node>> valueNodes = getValueNodesWithParents(parsedXml)
 		List<BodyMatcher> matchers = []
 		List<NodePath> valueNodePaths = transformListEntries(valueNodes)
@@ -148,12 +150,12 @@ class XmlToXPathsConverter {
 		nodeLists.each { nodeList ->
 			List<Node> parentNodesList = nodeList.subList(1, nodeList.size())
 			int elementIndex = pathOccurrenceCounters.stream()
-					.map({ it })
-					.filter({
+				.map({ it })
+				.filter({
 				nodeNames(it.path) == nodeNames(parentNodesList)
 			}).findFirst()
-					.map({ ++it.counter })
-					.orElseGet({
+				.map({ ++it.counter })
+				.orElseGet({
 				PathOccurrenceCounter pathCounter = new PathOccurrenceCounter(parentNodesList)
 				pathOccurrenceCounters << pathCounter
 				return pathCounter.counter
@@ -165,8 +167,8 @@ class XmlToXPathsConverter {
 
 	private static List<String> nodeNames(List<Node> nodes) {
 		return nodes.stream()
-				.map({ it.getNodeName() })
-				.collect(toList())
+			.map({ it.getNodeName() })
+			.collect(toList())
 	}
 
 	static String buildXPath(List<Node> nodes, int index = 1) {
@@ -237,8 +239,8 @@ class XmlToXPathsConverter {
 	@CompileDynamic
 	private static List<Node> getNodeCollectionElements(def nodeCollection) {
 		return IntStream.range(0, nodeCollection.getLength())
-				.mapToObj({ nodeCollection.item(it) as Node })
-				.collect(toList())
+			.mapToObj({ nodeCollection.item(it) as Node })
+			.collect(toList())
 	}
 
 	private static List<Node> withParents(Node node) {

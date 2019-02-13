@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Dave Syer
  *
  */
-public class WireMockRestServiceServer {
+public final class WireMockRestServiceServer {
 
 	private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
@@ -163,7 +163,7 @@ public class WireMockRestServiceServer {
 	/**
 	 * Add some resource locations for files that represent response bodies. Wiremock
 	 * defaults to "file:src/test/resources/__files".
-	 * @param locations
+	 * @param locations locations with files
 	 * @return this
 	 */
 	public WireMockRestServiceServer files(String... locations) {
@@ -199,7 +199,8 @@ public class WireMockRestServiceServer {
 		}
 		for (StubMapping mapping : mappings) {
 			ResponseActions expect = responseActions(server, mapping);
-			expect.andExpect(method(HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
+			expect.andExpect(method(
+					HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
 			mapping.getRequest().getBodyPatterns();
 			bodyPatterns(expect, mapping.getRequest());
 			requestHeaders(expect, mapping.getRequest());
@@ -208,8 +209,10 @@ public class WireMockRestServiceServer {
 		return server;
 	}
 
-	private ResponseActions responseActions(MockRestServiceServer server, StubMapping mapping) {
-		if (StringUtils.hasText(mapping.getRequest().getUrl()) || StringUtils.hasText(mapping.getRequest().getUrlPath())) {
+	private ResponseActions responseActions(MockRestServiceServer server,
+			StubMapping mapping) {
+		if (StringUtils.hasText(mapping.getRequest().getUrl())
+				|| StringUtils.hasText(mapping.getRequest().getUrlPath())) {
 			return server.expect(requestTo(request(mapping.getRequest())));
 		}
 		return server.expect(requestTo(requestMatcher(mapping.getRequest())));
@@ -238,7 +241,6 @@ public class WireMockRestServiceServer {
 			public void match(ClientHttpRequest request)
 					throws IOException, AssertionError {
 				MockClientHttpRequest mockRequest = (MockClientHttpRequest) request;
-				;
 				MatchResult result = pattern.match(mockRequest.getBodyAsString());
 				MatcherAssert.assertThat(
 						"Request as string [" + mockRequest.getBodyAsString() + "]",
@@ -268,10 +270,14 @@ public class WireMockRestServiceServer {
 			protected boolean matchesSafely(String item) {
 				if (request.getUrlMatcher() != null) {
 					return request.getUrlMatcher().match(item).isExactMatch();
-				} else if (request.getUrlPathPattern() != null) {
-					return Pattern.compile(request.getUrlPathPattern()).matcher(item).matches();
-				} else if (request.getUrlPattern() != null) {
-					return Pattern.compile(request.getUrlPattern()).matcher(item).matches();
+				}
+				else if (request.getUrlPathPattern() != null) {
+					return Pattern.compile(request.getUrlPathPattern()).matcher(item)
+							.matches();
+				}
+				else if (request.getUrlPattern() != null) {
+					return Pattern.compile(request.getUrlPattern()).matcher(item)
+							.matches();
 				}
 				return false;
 			}

@@ -5,7 +5,7 @@ request:
     Content-Type: multipart/form-data;boundary=AaB03x
   multipart:
     params:
-    # key (parameter name), value (parameter value) pair
+      # key (parameter name), value (parameter value) pair
       formParameter: '"formParameterValue"'
       someBooleanParameter: true
     named:

@@ -12,14 +12,14 @@ import org.gradle.api.Project
 class OutputFolderBuilder {
 
 	private static final String DEFAULT_MAPPINGS_FOLDER = 'mappings'
-	
+
 	static String buildRootPath(Project project) {
 		String groupId = project.group as String
 		String artifactId = project.name
 		String version = project.version
 		return "META-INF/${groupId}/${artifactId}/${version}"
 	}
-	
+
 	static File outputMappingsDir(Project project, File stubsOutputDir) {
 		String root = OutputFolderBuilder.buildRootPath(project)
 		return stubsOutputDir != null ?

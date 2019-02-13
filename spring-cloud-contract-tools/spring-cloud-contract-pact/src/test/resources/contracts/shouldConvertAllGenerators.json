@@ -28,112 +28,112 @@
         },
         "generators": {
           "body": {
-            "$.someInteger":{
+            "$.someInteger": {
               "type": "RandomInt",
               "min": 0,
               "max": 2147483647
             },
-            "$.someDecimal":{
+            "$.someDecimal": {
               "type": "RandomDecimal",
               "digits": 10
             },
-            "$.someHex":{
+            "$.someHex": {
               "type": "RandomHexadecimal",
               "digits": 10
             },
-            "$.someAlphaNumeric":{
+            "$.someAlphaNumeric": {
               "type": "RandomString",
               "size": 10
             },
-            "$.someUUID":{
+            "$.someUUID": {
               "type": "Uuid"
             },
-            "$.someDate":{
+            "$.someDate": {
               "type": "Date"
             },
-            "$.someTime":{
+            "$.someTime": {
               "type": "Time"
             },
-            "$.someDateTime":{
+            "$.someDateTime": {
               "type": "DateTime"
             },
-            "$.someBoolean":{
+            "$.someBoolean": {
               "type": "RandomBoolean"
             },
-            "$.someRegex":{
+            "$.someRegex": {
               "type": "Regex",
               "regex": "[0-9]{10}"
             }
           }
         },
-        "matchingRules":{
+        "matchingRules": {
           "header": {
-            "Content-Type":{
-              "matchers":[
+            "Content-Type": {
+              "matchers": [
                 {
                   "match": "regex",
                   "regex": "application/json.*"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           },
-          "body":{
-            "$.someHex":{
-              "matchers":[
+          "body": {
+            "$.someHex": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someAlphaNumeric":{
-              "matchers":[
+            "$.someAlphaNumeric": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someUUID":{
-              "matchers":[
+            "$.someUUID": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someDate":{
-              "matchers":[
+            "$.someDate": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someTime":{
-              "matchers":[
+            "$.someTime": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someDateTime":{
-              "matchers":[
+            "$.someDateTime": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someBoolean":{
-              "matchers":[
+            "$.someBoolean": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           }
         }
@@ -157,112 +157,112 @@
         },
         "generators": {
           "body": {
-            "$.someInteger":{
+            "$.someInteger": {
               "type": "RandomInt",
               "min": 0,
               "max": 2147483647
             },
-            "$.someDecimal":{
+            "$.someDecimal": {
               "type": "RandomDecimal",
               "digits": 10
             },
-            "$.someHex":{
+            "$.someHex": {
               "type": "RandomHexadecimal",
               "digits": 10
             },
-            "$.someAlphaNumeric":{
+            "$.someAlphaNumeric": {
               "type": "RandomString",
               "size": 10
             },
-            "$.someUUID":{
+            "$.someUUID": {
               "type": "Uuid"
             },
-            "$.someDate":{
+            "$.someDate": {
               "type": "Date"
             },
-            "$.someTime":{
+            "$.someTime": {
               "type": "Time"
             },
-            "$.someDateTime":{
+            "$.someDateTime": {
               "type": "DateTime"
             },
-            "$.someBoolean":{
+            "$.someBoolean": {
               "type": "RandomBoolean"
             },
-            "$.someRegex":{
+            "$.someRegex": {
               "type": "Regex",
               "regex": "[0-9]{10}"
             }
           }
         },
-        "matchingRules":{
-          "header":{
-            "Content-Type":{
-              "matchers":[
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "matchers": [
                 {
                   "match": "regex",
                   "regex": "application/json.*"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           },
-          "body":{
-            "$.someHex":{
-              "matchers":[
+          "body": {
+            "$.someHex": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someAlphaNumeric":{
-              "matchers":[
+            "$.someAlphaNumeric": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someUUID":{
-              "matchers":[
+            "$.someUUID": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someDate":{
-              "matchers":[
+            "$.someDate": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someTime":{
-              "matchers":[
+            "$.someTime": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someDateTime":{
-              "matchers":[
+            "$.someDateTime": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             },
-            "$.someBoolean":{
-              "matchers":[
+            "$.someBoolean": {
+              "matchers": [
                 {
-                  "match":"type"
+                  "match": "type"
                 }
               ],
-              "combine":"AND"
+              "combine": "AND"
             }
           }
         }

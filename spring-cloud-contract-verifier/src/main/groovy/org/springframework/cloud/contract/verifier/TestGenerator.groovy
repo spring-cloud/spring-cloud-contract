@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier
@@ -42,6 +42,7 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeL
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.convertIllegalPackageChars
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.directoryToPackage
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastDot
+
 /**
  * @author Jakub Kubrynski, codearte.io
  */
@@ -60,11 +61,13 @@ class TestGenerator {
 
 	TestGenerator(ContractVerifierConfigProperties configProperties) {
 		this(configProperties, singleTestGenerator(),
-				new FileSaver(configProperties.generatedTestSourcesDir, singleTestGenerator(), configProperties))
+				new FileSaver(configProperties.generatedTestSourcesDir,
+						singleTestGenerator(), configProperties))
 	}
 
 	private static SingleTestGenerator singleTestGenerator() {
-		List<SingleTestGenerator> factories = SpringFactoriesLoader.loadFactories(SingleTestGenerator, null)
+		List<SingleTestGenerator> factories = SpringFactoriesLoader.
+				loadFactories(SingleTestGenerator, null)
 		if (factories.empty) {
 			return new JavaTestGenerator()
 		}
@@ -97,9 +100,11 @@ class TestGenerator {
 	private String basePackageName() {
 		if (configProperties.basePackageForTests) {
 			return configProperties.basePackageForTests
-		} else if (configProperties.baseClassForTests) {
+		}
+		else if (configProperties.baseClassForTests) {
 			return toLastDot(configProperties.baseClassForTests)
-		} else if (configProperties.packageWithBaseClasses) {
+		}
+		else if (configProperties.packageWithBaseClasses) {
 			return configProperties.packageWithBaseClasses
 		}
 		return DEFAULT_TEST_PACKAGE
@@ -107,14 +112,19 @@ class TestGenerator {
 
 	@PackageScope
 	void generateTestClasses(final String basePackageName) {
-		ListMultimap<Path, ContractMetadata> contracts = contractFileScanner.findContracts()
+		ListMultimap<Path, ContractMetadata> contracts = contractFileScanner.
+				findContracts()
 		contracts.asMap().entrySet().each {
-			Map.Entry<Path, Collection<ContractMetadata>> entry -> processIncludedDirectory(relativizeContractPath(entry), (Collection<ContractMetadata>) entry.getValue(), basePackageName)
+			Map.Entry<Path, Collection<ContractMetadata>> entry ->
+				processIncludedDirectory(
+						relativizeContractPath(entry), (Collection<ContractMetadata>) entry.
+						getValue(), basePackageName)
 		}
 	}
 
 	private String relativizeContractPath(Map.Entry<Path, Collection<ContractMetadata>> entry) {
-		Path relativePath = configProperties.contractsDslDir.toPath().relativize(entry.getKey())
+		Path relativePath = configProperties.contractsDslDir.toPath().
+				relativize(entry.getKey())
 		if (StringUtils.isEmpty(relativePath.toString())) {
 			return DEFAULT_CLASS_PREFIX
 		}
@@ -129,11 +139,15 @@ class TestGenerator {
 		if (contracts.size()) {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
 			def convertedClassName = convertIllegalPackageChars(className)
-			def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
-			Path dir = saver.generateTestBaseDir(basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()))
+			def packageName =
+					buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
+			Path dir = saver.generateTestBaseDir(basePackageNameForClass,
+					convertIllegalPackageChars(includedDirectoryRelativePath.toString()))
 			Path classPath = saver.pathToClass(dir, convertedClassName)
-			def classBytes = generator.buildClass(configProperties, contracts, includedDirectoryRelativePath,
-					new SingleTestGenerator.GeneratedClassData(convertedClassName, packageName, classPath)).getBytes(StandardCharsets.UTF_8)
+			def classBytes = generator.
+					buildClass(configProperties, contracts, includedDirectoryRelativePath,
+							new SingleTestGenerator.GeneratedClassData(convertedClassName, packageName, classPath)).
+					getBytes(StandardCharsets.UTF_8)
 			saver.saveClassFile(classPath, classBytes)
 			counter.incrementAndGet()
 		}

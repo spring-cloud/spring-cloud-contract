@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.example.fraud;
 
 import java.io.File;
@@ -19,13 +35,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class TestController {
 
 	private final byte[] request;
+
 	private final byte[] response;
 
 	public TestController() {
-		this.request = toByte(TestController.class
-				.getResource("/contracts/binary/request.pdf"));
-		this.response = toByte(TestController.class
-				.getResource("/contracts/binary/response.pdf"));
+		this.request = toByte(
+				TestController.class.getResource("/contracts/binary/request.pdf"));
+		this.response = toByte(
+				TestController.class.getResource("/contracts/binary/response.pdf"));
 	}
 
 	private byte[] toByte(URL url) {
@@ -39,23 +56,22 @@ public class TestController {
 
 	@PostMapping("/tests")
 	public Test createNew(@RequestPart MultipartFile file1,
-			@RequestPart MultipartFile file2,
-			@RequestPart Test test) {
+			@RequestPart MultipartFile file2, @RequestPart Test test) {
 		return new Test("ok");
 	}
 
-	@PutMapping(value = "/1",
-			consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE,
-			produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@PutMapping(value = "/1", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public byte[] response(@RequestBody byte[] requestBody) {
 		if (!Arrays.equals(this.request, requestBody)) {
 			throw new IllegalStateException("Invalid request body");
 		}
 		return this.response;
 	}
+
 }
 
 class Test {
+
 	private String status;
 
 	public Test(String status) {
@@ -72,4 +88,5 @@ class Test {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
 }

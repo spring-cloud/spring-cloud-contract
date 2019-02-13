@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
@@ -44,11 +45,11 @@ class StubRepository {
 
 	private static final Log log = LogFactory.getLog(StubRepository.class);
 
-	private final File path;
-
 	final List<File> stubs;
 
 	final Collection<Contract> contracts;
+
+	private final File path;
 
 	private final List<ContractConverter> contractConverters;
 
@@ -95,14 +96,14 @@ class StubRepository {
 	}
 
 	/**
-	 * Returns a list of contracts
+	 * @return a list of contracts
 	 */
 	private Collection<Contract> contracts() {
 		return new ArrayList<>(contractDescriptors());
 	}
 
 	/**
-	 * Returns the list of stubs
+	 * @return the list of stubs
 	 */
 	private List<File> stubs() {
 		return new ArrayList<>(collectedStubs());
@@ -156,11 +157,11 @@ class StubRepository {
 	}
 
 	private Collection<Contract> contractDescriptors() {
-		return (this.path.exists() ?
-				ContractScanner.collectContractDescriptors(this.path, this::isStubPerConsumerPathMatching)
+		return (this.path.exists()
+				? ContractScanner.collectContractDescriptors(this.path,
+						this::isStubPerConsumerPathMatching)
 				: Collections.<Contract>emptySet());
 	}
-
 
 	private boolean isStubPerConsumerPathMatching(File file) {
 		if (!this.options.isStubsPerConsumer()) {

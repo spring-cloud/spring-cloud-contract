@@ -16,13 +16,13 @@
   -->
 
 <metadata>
-  <groupId>org.springframework.cloud.contract.verifier.stubs</groupId>
-  <artifactId>integrationService</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <versioning>
-    <snapshot>
-      <localCopy>true</localCopy>
-    </snapshot>
-    <lastUpdated>20160409062112</lastUpdated>
-  </versioning>
+	<groupId>org.springframework.cloud.contract.verifier.stubs</groupId>
+	<artifactId>integrationService</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<versioning>
+		<snapshot>
+			<localCopy>true</localCopy>
+		</snapshot>
+		<lastUpdated>20160409062112</lastUpdated>
+	</versioning>
 </metadata>

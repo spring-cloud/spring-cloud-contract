@@ -25,5 +25,6 @@ package org.springframework.cloud.contract.verifier.plugin
  */
 interface ExtensionHolderSpec {
 	Closure getExtensionClosure()
+
 	void setExtensionClosure(Closure closure)
 }

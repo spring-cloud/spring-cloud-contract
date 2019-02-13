@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
@@ -14,14 +15,16 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.2.RELEASE</version>
-		<relativePath />
+		<relativePath/>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-release.version>Greenwich.BUILD-SNAPSHOT</spring-cloud-release.version>
+		<spring-cloud-contract.version>2.1.1.BUILD-SNAPSHOT
+		</spring-cloud-contract.version>
+		<spring-cloud-release.version>Greenwich.BUILD-SNAPSHOT
+		</spring-cloud-release.version>
 	</properties>
 
 	<dependencies>
@@ -124,8 +127,11 @@
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>org.springframework.cloud</groupId>
-										<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-										<versionRange>[${spring-cloud-contract.version},)</versionRange>
+										<artifactId>spring-cloud-contract-maven-plugin
+										</artifactId>
+										<versionRange>
+											[${spring-cloud-contract.version},)
+										</versionRange>
 										<goals>
 											<goal>convert</goal>
 											<goal>generateTests</goal>
@@ -217,7 +223,9 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
-										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
+										<argument>
+											-PverifierVersion=${spring-cloud-contract.version}
+										</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -247,7 +255,9 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
-										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
+										<argument>
+											-PverifierVersion=${spring-cloud-contract.version}
+										</argument>
 									</arguments>
 								</configuration>
 								<goals>

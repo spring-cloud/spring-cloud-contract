@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,6 +38,7 @@ import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
+
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.StringUtils;
@@ -103,15 +104,11 @@ public class AetherStubDownloader implements StubDownloader {
 		registerShutdownHook();
 	}
 
-	private boolean remoteReposMissing() {
-		return this.remoteRepos == null || this.remoteRepos.isEmpty();
-	}
-
 	/**
-	 * Used by the Maven Plugin
-	 * @param repositorySystem
-	 * @param remoteRepositories - remote artifact repositories
-	 * @param session
+	 * Used by the Maven Plugin.
+	 * @param repositorySystem Maven repository system
+	 * @param remoteRepositories remote artifact repositories
+	 * @param session repository system session
 	 */
 	public AetherStubDownloader(RepositorySystem repositorySystem,
 			List<RemoteRepository> remoteRepositories, RepositorySystemSession session) {
@@ -125,6 +122,19 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 		this.workOffline = false;
 		registerShutdownHook();
+	}
+
+	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {
+		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage
+				.createTempDir(TEMP_DIR_PREFIX);
+		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
+		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
+		TemporaryFileStorage.add(tmpDirWhereStubsWillBeUnzipped);
+		return tmpDirWhereStubsWillBeUnzipped;
+	}
+
+	private boolean remoteReposMissing() {
+		return this.remoteRepos == null || this.remoteRepos.isEmpty();
 	}
 
 	private List<RemoteRepository> remoteRepositories(
@@ -260,15 +270,6 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 		return rangeResult.getHighestVersion() == null ? null
 				: rangeResult.getHighestVersion().toString();
-	}
-
-	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {
-		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage
-				.createTempDir(TEMP_DIR_PREFIX);
-		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
-		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
-		TemporaryFileStorage.add(tmpDirWhereStubsWillBeUnzipped);
-		return tmpDirWhereStubsWillBeUnzipped;
 	}
 
 	private void registerShutdownHook() {

@@ -1,27 +1,29 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.verifier.util
+
+import java.nio.file.Files
 
 import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
-
-import java.nio.file.Files
 
 /**
  * Allows conversion of Contract files to files.
@@ -69,10 +71,12 @@ final class ToFileContractsTransformer {
 			log.info("Input path [" + path + "]")
 			log.info("FQN of the converter [" + fqn + "]")
 			log.info("Output path [" + outputPath + "]")
-			Collection<Contract> contracts = ContractScanner.collectContractDescriptors(new File(path))
+			Collection<Contract> contracts = ContractScanner.
+					collectContractDescriptors(new File(path))
 			log.info("Found [" + contracts.size() + "] contract definition")
 			Class<?> name = Class.forName(fqn)
-			ContractConverter<Collection> contractConverter = (ContractConverter) name.newInstance()
+			ContractConverter<Collection> contractConverter = (ContractConverter) name.
+					newInstance()
 			Collection converted = contractConverter.convertTo(contracts)
 			log.info("Successfully converted contracts definitions")
 			Map<String, byte[]> stored = contractConverter.store(converted)
@@ -85,11 +89,17 @@ final class ToFileContractsTransformer {
 			for (Map.Entry<String, byte[]> entry : entries) {
 				File outputFile = new File(outputFolder, entry.getKey())
 				Files.write(outputFile.toPath(), entry.getValue())
-				log.info("[" + i + "/" + entries.size() + "] Successfully stored [" + outputFile.getName() + "]")
+				log.info("[" + i + "/"
+						+ entries.
+						size()
+						+ "] Successfully stored ["
+						+ outputFile.getName()
+						+ "]")
 				files.add(outputFile)
 			}
 			return files
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new IllegalStateException(ex)
 		}
 	}
