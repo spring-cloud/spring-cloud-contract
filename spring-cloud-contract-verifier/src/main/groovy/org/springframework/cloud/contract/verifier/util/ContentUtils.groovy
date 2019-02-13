@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.xml.sax.helpers.DefaultHandler
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -43,6 +44,7 @@ import static org.apache.commons.text.StringEscapeUtils.unescapeXml
  * A utility class that can operate on a message body basing on the provided Content Type.
  *
  * @since 1.0.0
+ * @author Konstantin Shevchuk
  */
 @TypeChecked
 @Commons
@@ -110,7 +112,7 @@ class ContentUtils {
 			return ContentType.JSON
 		} catch(JsonException e) {
 			try {
-				new XmlSlurper().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+				getXmlSlurperWithDefaultErrorHandler().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
 				return ContentType.XML
 			} catch (Exception exception) {
 				extractValueForGString(bodyAsValue, GET_STUB_SIDE)
@@ -125,7 +127,7 @@ class ContentUtils {
 			return ContentType.JSON
 		} catch(JsonException e) {
 			try {
-				new XmlSlurper().parseText(bodyAsValue)
+                getXmlSlurperWithDefaultErrorHandler().parseText(bodyAsValue)
 				return ContentType.XML
 			} catch (Exception exception) {
 				return ContentType.UNKNOWN
@@ -189,7 +191,7 @@ class ContentUtils {
 				bodyAsValue.strings.clone() as String[]
 		)
 		// try to convert it to XML
-		new XmlSlurper().parseText(impl.toString())
+		getXmlSlurperWithDefaultErrorHandler().parseText(impl.toString())
 		return impl
 	}
 
@@ -385,7 +387,7 @@ class ContentUtils {
 				gstring.strings.clone() as String[]
 		)
 		try {
-			new XmlSlurper().parseText(stringWithoutValues.toString())
+			getXmlSlurperWithDefaultErrorHandler().parseText(stringWithoutValues.toString())
 			return true
 		} catch (Exception e) {
 			// Not XML
@@ -446,5 +448,16 @@ class ContentUtils {
 		}
 		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}
+
+	/**
+	 * Creates new XmlSlurper with default error handler
+	 *
+	 * @return XmlSlurper with default error handler
+	 */
+	static XmlSlurper getXmlSlurperWithDefaultErrorHandler() {
+		XmlSlurper xmlSlurper = new XmlSlurper()
+		xmlSlurper.setErrorHandler(new DefaultHandler())
+		return xmlSlurper
+    }
 
 }

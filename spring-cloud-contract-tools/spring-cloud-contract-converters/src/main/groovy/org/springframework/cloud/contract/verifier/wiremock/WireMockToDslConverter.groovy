@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2019 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import groovy.transform.CompileDynamic
 import groovy.xml.XmlUtil
 import org.springframework.cloud.contract.spec.Contract
 import repackaged.nl.flotsam.xeger.Xeger
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 
 import java.nio.charset.StandardCharsets
 
@@ -33,6 +34,7 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
  * Converts WireMock stubs into the DSL format
  *
  * @since 1.0.0
+ * @author Konstantin Shevchuk
  */
 @CompileDynamic
 class WireMockToDslConverter {
@@ -123,7 +125,7 @@ class WireMockToDslConverter {
 			return wrapWithMultilineGString(JsonOutput.prettyPrint(responseBody))
 		} catch (Exception jsonException) {
 			try {
-				def xml = new XmlSlurper().parseText(responseBody)
+				def xml = ContentUtils.getXmlSlurperWithDefaultErrorHandler().parseText(responseBody)
 				return wrapWithMultilineGString(XmlUtil.serialize(responseBody))
 			} catch (Exception xmlException) {
 				return wrapWithMultilineGString(responseBody)

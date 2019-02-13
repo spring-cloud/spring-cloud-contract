@@ -3,9 +3,11 @@ package org.springframework.cloud.contract.verifier.util
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import spock.lang.Specification
+import org.xml.sax.helpers.DefaultHandler
 
 /**
  * @author Marcin Grzejszczak
+ * @author Konstantin Shevchuk
  */
 class ContentUtilsSpec extends Specification {
 
@@ -22,4 +24,11 @@ class ContentUtilsSpec extends Specification {
 		expect:
 			"test" == ContentUtils.GET_TEST_SIDE(dslProperty)
 	}
+
+    def "should return XmlSlurper with default error handler"() {
+        given:
+        XmlSlurper xmlSlurper = ContentUtils.getXmlSlurperWithDefaultErrorHandler()
+        expect:
+        xmlSlurper.getErrorHandler() instanceof DefaultHandler
+    }
 }
