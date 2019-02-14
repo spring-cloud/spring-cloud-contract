@@ -157,7 +157,8 @@ public class WireMockSnippet implements Snippet {
 		}
 		for (String queryPair : rawQuery.split("&")) {
 			String[] splitQueryPair = queryPair.split("=");
-			request = request.withQueryParam(splitQueryPair[0], WireMock.equalTo(splitQueryPair[1]));
+			String value = splitQueryPair.length > 1 ? splitQueryPair[1] : "" ;
+			request = request.withQueryParam(splitQueryPair[0], WireMock.equalTo(value));
 		}
 		return request;
 	}

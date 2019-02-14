@@ -139,6 +139,19 @@ public class WireMockSnippetTests {
 				.isEqualTo(HttpStatus.ACCEPTED.value());
 	}
 
+	@Test
+	public void should_accept_empty_value_for_query_params() throws IOException {
+		this.operation = operation(requestPostWithEmptyQueryParamValue(), response(), this.context);
+		WireMockSnippet snippet = new WireMockSnippet();
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/foo.json");
+		assertThat(stub).exists();
+		WireMockStubMapping
+				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+	}
+
 	private Operation operation(OperationRequest request, OperationResponse response,
 			RestDocumentationContext context) {
 		return operation("foo", request, response, context);
@@ -377,6 +390,55 @@ public class WireMockSnippetTests {
 			@Override
 			public URI getUri() {
 				return URI.create("http://foo/bar");
+			}
+
+			@Override
+			public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
+			}
+		};
+	}
+
+	private OperationRequest requestPostWithEmptyQueryParamValue() {
+		return new OperationRequest() {
+			@Override
+			public byte[] getContent() {
+				return new byte[0];
+			}
+
+			@Override
+			public String getContentAsString() {
+				return "";
+			}
+
+			@Override
+			public HttpHeaders getHeaders() {
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders
+						.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+				return httpHeaders;
+			}
+
+			@Override
+			public HttpMethod getMethod() {
+				return HttpMethod.POST;
+			}
+
+			@Override
+			public Parameters getParameters() {
+				Parameters parameters = new Parameters();
+				parameters.put("myParam", Collections.singletonList(""));
+				return parameters;
+			}
+
+			@Override
+			public Collection<OperationRequestPart> getParts() {
+				return null;
+			}
+
+			@Override
+			public URI getUri() {
+				return URI.create("http://foo/bar?myParam=");
 			}
 
 			@Override
