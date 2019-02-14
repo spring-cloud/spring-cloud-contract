@@ -49,7 +49,7 @@ public class AutoConfigureWireMockRandomPortApplicationTests {
 	}
 
 	@Test
-	public void contextIsNotReload() throws Exception {
+	public void dynamicPortsAreResolvedCorrectly() throws Exception {
 		assertThat(wireMockProperties.getServer().getPort()).isNotEqualTo(0);
 		assertThat(wireMockProperties.getServer().isPortDynamic()).isTrue();
 		assertThat(wireMockProperties.getServer().isHttpsPortDynamic()).isTrue();

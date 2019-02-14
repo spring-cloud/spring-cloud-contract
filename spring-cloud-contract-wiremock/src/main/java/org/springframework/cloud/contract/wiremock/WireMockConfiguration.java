@@ -52,6 +52,7 @@ import javax.annotation.PostConstruct;
  * {@link WireMockSpring#options()}) to your test context.
  *
  * @author Dave Syer
+ * @author Matt Garner
  *
  */
 @Configuration

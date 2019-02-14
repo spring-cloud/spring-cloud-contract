@@ -28,6 +28,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  * Dirties the test context if WireMock was running on a fixed port.
  *
  * @author Marcin Grzejszczak
+ * @author Matt Garner
  * @since 1.2.6
  */
 public final class WireMockTestExecutionListener extends AbstractTestExecutionListener {
