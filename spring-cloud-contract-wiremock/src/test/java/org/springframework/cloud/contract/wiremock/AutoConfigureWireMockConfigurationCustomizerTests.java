@@ -17,9 +17,9 @@
 package org.springframework.cloud.contract.wiremock;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -41,10 +41,20 @@ public class AutoConfigureWireMockConfigurationCustomizerTests {
 	@Autowired
 	private Config config;
 
+	@Autowired
+	private WireMockProperties wireMockProperties;
+
 	@Test
 	public void contextLoads() throws Exception {
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		assertThat(this.config.isExecuted()).isTrue();
+	}
+
+	@Test
+	public void portsAreNotFixed() {
+		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
+		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
+		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
 	}
 
 	@Configuration

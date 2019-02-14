@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -30,6 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class, properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock(port = 0)
@@ -49,10 +51,10 @@ public class AutoConfigureWireMockRandomPortApplicationTests {
 	}
 
 	@Test
-	public void dynamicPortsAreResolvedCorrectly() throws Exception {
-		assertThat(wireMockProperties.getServer().getPort()).isNotEqualTo(0);
-		assertThat(wireMockProperties.getServer().isPortDynamic()).isTrue();
-		assertThat(wireMockProperties.getServer().isHttpsPortDynamic()).isTrue();
+	public void portsAreNotFixed() {
+		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
+		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
+		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
 	}
 
 }

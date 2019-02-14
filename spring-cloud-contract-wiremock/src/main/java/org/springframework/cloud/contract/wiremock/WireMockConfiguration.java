@@ -306,6 +306,7 @@ class WireMockProperties {
 		public void setHttpsPortDynamic(boolean httpsPortDynamic) {
 			this.httpsPortDynamic = httpsPortDynamic;
 		}
+
 	}
 
 }

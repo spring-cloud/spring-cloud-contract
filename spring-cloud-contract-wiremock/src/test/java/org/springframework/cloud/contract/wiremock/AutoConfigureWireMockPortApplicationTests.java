@@ -38,11 +38,21 @@ public class AutoConfigureWireMockPortApplicationTests {
 	@Autowired
 	private Service service;
 
+	@Autowired
+	private WireMockProperties wireMockProperties;
+
 	@Test
 	public void contextLoads() throws Exception {
 		stubFor(get(urlEqualTo("/test")).willReturn(aResponse()
 				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
+	}
+
+	@Test
+	public void portsAreFixed() {
+		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
+		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
+		assertThat(!httpPortDynamic || !httpsPortDynamic).isTrue();
 	}
 
 }

@@ -65,8 +65,9 @@ public class WireMockApplicationListener
 			source.put("wiremock.server.https-port",
 					SocketUtils.findAvailableTcpPort(12500, 15000));
 			source.put("wiremock.server.https-port-dynamic", true);
-		} else if (environment.getProperty("wiremock.server.https-port", Integer.class,
-										  0) != -1) {
+		}
+		else if (environment.getProperty("wiremock.server.https-port", Integer.class,
+				0) != -1) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
