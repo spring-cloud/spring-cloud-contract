@@ -41,20 +41,10 @@ public class AutoConfigureWireMockConfigurationCustomizerTests {
 	@Autowired
 	private Config config;
 
-	@Autowired
-	private WireMockProperties wireMockProperties;
-
 	@Test
 	public void contextLoads() throws Exception {
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		assertThat(this.config.isExecuted()).isTrue();
-	}
-
-	@Test
-	public void portsAreNotFixed() {
-		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
-		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
-		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
 	}
 
 	@Configuration

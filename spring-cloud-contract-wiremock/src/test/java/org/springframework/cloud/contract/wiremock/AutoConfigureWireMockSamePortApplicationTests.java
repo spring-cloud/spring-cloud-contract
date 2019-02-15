@@ -39,21 +39,10 @@ public class AutoConfigureWireMockSamePortApplicationTests {
 	@Autowired
 	private Service service;
 
-	@Autowired
-	private WireMockProperties wireMockProperties;
-
 	@Test
 	public void contextLoads() throws Exception {
 		stubFor(get(urlEqualTo("/test2")).willReturn(aResponse()
 				.withHeader("Content-Type", "text/plain").withBody("Hello World2!")));
 		assertThat(this.service.go2()).isEqualTo("Hello World2!");
 	}
-
-	@Test
-	public void portsAreFixed() {
-		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
-		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
-		assertThat(!httpPortDynamic || !httpsPortDynamic).isTrue();
-	}
-
 }

@@ -19,15 +19,12 @@ package org.springframework.cloud.contract.wiremock;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class, properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -38,9 +35,6 @@ public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 
 	@Value("${wiremock.server.port}")
 	int wiremockPort;
-
-	@Autowired
-	private WireMockProperties wireMockProperties;
 
 	@Test
 	public void should_work_for_analytics() throws Exception {
@@ -56,13 +50,6 @@ public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 				"http://localhost:" + this.wiremockPort + "/", String.class);
 
 		BDDAssertions.then(response).contains("spring-cloud/spring-cloud-netflix");
-	}
-
-	@Test
-	public void portsAreNotFixed() {
-		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
-		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
-		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
 	}
 
 	@Configuration
