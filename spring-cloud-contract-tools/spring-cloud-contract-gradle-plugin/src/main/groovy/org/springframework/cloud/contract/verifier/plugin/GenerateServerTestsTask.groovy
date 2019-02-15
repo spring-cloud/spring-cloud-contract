@@ -55,7 +55,10 @@ class GenerateServerTestsTask extends ConventionTask {
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${props.includedContracts}]")
 
-		project.sourceSets.test.groovy {
+		def sourceSetType = getConfigProperties().getTestFramework() == TestFramework.SPOCK ?
+				"groovy" : "java"
+
+		project.sourceSets.test."${sourceSetType}" {
 			project.logger.
 					info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
 			srcDir getConfigProperties().getGeneratedTestSourcesDir()
