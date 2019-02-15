@@ -23,6 +23,7 @@ import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.config.TestFramework
 
 import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
 /**
@@ -53,7 +54,10 @@ class GenerateServerTestsTask extends ConventionTask {
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${props.includedContracts}]")
 
-		project.sourceSets.test.groovy {
+		def sourceSetType = getConfigProperties().getTestFramework() == TestFramework.SPOCK ?
+				"groovy" : "java"
+
+		project.sourceSets.test."${sourceSetType}" {
 			project.logger.info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
 			srcDir getConfigProperties().generatedTestSourcesDir
 		}
