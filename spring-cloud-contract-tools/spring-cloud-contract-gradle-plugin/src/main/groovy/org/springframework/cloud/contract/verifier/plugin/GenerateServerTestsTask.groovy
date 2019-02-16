@@ -55,7 +55,7 @@ class GenerateServerTestsTask extends ConventionTask {
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${props.includedContracts}]")
 
-		def sourceSetType = getConfigProperties().getTargetFramework() == TestFramework.SPOCK ?
+		def sourceSetType = getConfigProperties().getTestFramework() == TestFramework.SPOCK ?
 				"groovy" : "java"
 
 		project.sourceSets.test."${sourceSetType}" {
