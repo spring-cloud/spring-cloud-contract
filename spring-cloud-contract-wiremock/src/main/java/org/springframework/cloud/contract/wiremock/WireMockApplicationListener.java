@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
@@ -25,9 +28,6 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.SocketUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Listener that prepares the environment so that WireMock will work when it is
