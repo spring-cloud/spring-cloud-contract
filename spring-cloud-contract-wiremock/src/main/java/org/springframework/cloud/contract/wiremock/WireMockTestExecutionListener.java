@@ -28,6 +28,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  * Dirties the test context if WireMock was running on a fixed port.
  *
  * @author Marcin Grzejszczak
+ * @author Matt Garner
  * @since 1.2.6
  */
 public final class WireMockTestExecutionListener extends AbstractTestExecutionListener {
@@ -45,7 +46,7 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 			if (log.isWarnEnabled()) {
 				log.warn("You've used fixed ports for WireMock setup - "
 						+ "will mark context as dirty. Please use random ports, as much "
-						+ "as possible. Your tests will be faster and more reliable and this"
+						+ "as possible. Your tests will be faster and more reliable and this "
 						+ "warning will go away");
 			}
 			testContext
@@ -97,9 +98,10 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 
 	private boolean portIsFixed(TestContext testContext) {
 		WireMockConfiguration wireMockProperties = wireMockConfig(testContext);
-		int httpPort = wireMockProperties.wireMock.getServer().getPort();
-		int httpsPort = wireMockProperties.wireMock.getServer().getHttpsPort();
-		return (httpPort != 0 || httpsPort != -1) && httpsPort != 0;
+		boolean httpPortDynamic = wireMockProperties.wireMock.getServer().isPortDynamic();
+		boolean httpsPortDynamic = wireMockProperties.wireMock.getServer()
+				.isHttpsPortDynamic();
+		return !httpPortDynamic || !httpsPortDynamic;
 	}
 
 }

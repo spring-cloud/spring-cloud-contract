@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 the original author or authors.
+ * Copyright 2012-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.springframework.util.SocketUtils;
  * initialized. For example, by finding free ports for the server to listen on.
  *
  * @author Dave Syer
+ * @author Matt Garner
  *
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
@@ -53,6 +54,7 @@ public class WireMockApplicationListener
 					.get("wiremock")).getSource();
 			source.put("wiremock.server.port",
 					SocketUtils.findAvailableTcpPort(10000, 12500));
+			source.put("wiremock.server.port-dynamic", true);
 		}
 		if (environment.getProperty("wiremock.server.https-port", Integer.class,
 				0) == 0) {
@@ -62,7 +64,17 @@ public class WireMockApplicationListener
 					.get("wiremock")).getSource();
 			source.put("wiremock.server.https-port",
 					SocketUtils.findAvailableTcpPort(12500, 15000));
+			source.put("wiremock.server.https-port-dynamic", true);
 		}
+		else if (environment.getProperty("wiremock.server.https-port", Integer.class,
+				0) != -1) {
+			MutablePropertySources propertySources = environment.getPropertySources();
+			addPropertySource(propertySources);
+			Map<String, Object> source = ((MapPropertySource) propertySources
+					.get("wiremock")).getSource();
+			source.put("wiremock.server.https-port-dynamic", false);
+		}
+
 	}
 
 	private void addPropertySource(MutablePropertySources propertySources) {

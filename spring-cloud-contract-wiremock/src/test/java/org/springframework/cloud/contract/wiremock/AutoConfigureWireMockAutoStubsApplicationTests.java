@@ -35,9 +35,19 @@ public class AutoConfigureWireMockAutoStubsApplicationTests {
 	@Autowired
 	private Service service;
 
+	@Autowired
+	private WireMockProperties wireMockProperties;
+
 	@Test
 	public void contextLoads() throws Exception {
 		assertThat(this.service.go()).isEqualTo("Hello World");
+	}
+
+	@Test
+	public void portsAreNotFixed() {
+		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
+		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
+		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
 	}
 
 }

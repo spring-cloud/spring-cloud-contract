@@ -38,5 +38,4 @@ public class AutoConfigureWireMockStubsApplicationWithSlashTests {
 	public void contextLoads() throws Exception {
 		assertThat(this.service.go()).isEqualTo("Hello World");
 	}
-
 }

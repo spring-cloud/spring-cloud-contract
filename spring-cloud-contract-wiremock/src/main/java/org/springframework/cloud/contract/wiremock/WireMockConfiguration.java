@@ -52,6 +52,7 @@ import org.springframework.util.StringUtils;
  * {@link WireMockSpring#options()}) to your test context.
  *
  * @author Dave Syer
+ * @author Matt Garner
  *
  */
 @Configuration
@@ -254,6 +255,10 @@ class WireMockProperties {
 
 		private String[] files;
 
+		private boolean portDynamic = false;
+
+		private boolean httpsPortDynamic = true;
+
 		public int getPort() {
 			return this.port;
 		}
@@ -284,6 +289,22 @@ class WireMockProperties {
 
 		public void setFiles(String[] files) {
 			this.files = files;
+		}
+
+		public boolean isPortDynamic() {
+			return portDynamic;
+		}
+
+		public void setPortDynamic(boolean portDynamic) {
+			this.portDynamic = portDynamic;
+		}
+
+		public boolean isHttpsPortDynamic() {
+			return httpsPortDynamic;
+		}
+
+		public void setHttpsPortDynamic(boolean httpsPortDynamic) {
+			this.httpsPortDynamic = httpsPortDynamic;
 		}
 
 	}
