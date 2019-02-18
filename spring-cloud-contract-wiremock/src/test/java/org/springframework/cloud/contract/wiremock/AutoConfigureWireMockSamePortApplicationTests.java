@@ -45,4 +45,5 @@ public class AutoConfigureWireMockSamePortApplicationTests {
 				.withHeader("Content-Type", "text/plain").withBody("Hello World2!")));
 		assertThat(this.service.go2()).isEqualTo("Hello World2!");
 	}
+
 }

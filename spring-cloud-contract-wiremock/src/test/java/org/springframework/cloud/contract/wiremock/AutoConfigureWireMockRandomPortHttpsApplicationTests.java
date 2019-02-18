@@ -50,9 +50,10 @@ public class AutoConfigureWireMockRandomPortHttpsApplicationTests {
 
 	@Test
 	public void portsAreNotFixed() {
-		boolean httpPortDynamic = wireMockProperties.getServer().isPortDynamic();
-		boolean httpsPortDynamic = wireMockProperties.getServer().isHttpsPortDynamic();
-		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
+		boolean httpPortDynamic = this.wireMockProperties.getServer().isPortDynamic();
+		boolean httpsPortDynamic = this.wireMockProperties.getServer().isHttpsPortDynamic();
+		assertThat(httpPortDynamic).isTrue();
+		assertThat(httpsPortDynamic).isTrue();
 	}
 
 }
