@@ -90,10 +90,9 @@ class Service {
 	public String pom() {
 		String requestUrl = this.base + "/pom.xml";
 		log.info("Will send a request to [" + requestUrl + "]");
-		return this.restTemplate
-				.exchange(RequestEntity.get(URI.create(requestUrl))
-						.accept(mediaTypes()).build(), String.class)
-				.getBody();
+		return this.restTemplate.exchange(
+				RequestEntity.get(URI.create(requestUrl)).accept(mediaTypes()).build(),
+				String.class).getBody();
 	}
 
 	private MediaType[] mediaTypes() {
@@ -106,8 +105,7 @@ class Service {
 	public String go2() {
 		String requestUrl = this.base + "/test2";
 		log.info("Will send a request to [" + requestUrl + "]");
-		return this.restTemplate.getForEntity(requestUrl, String.class)
-				.getBody();
+		return this.restTemplate.getForEntity(requestUrl, String.class).getBody();
 	}
 
 	public void setBase(String base) {

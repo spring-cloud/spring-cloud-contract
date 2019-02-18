@@ -46,7 +46,8 @@ public class AutoConfigureWireMockAutoStubsApplicationTests {
 	@Test
 	public void portsAreNotFixed() {
 		boolean httpPortDynamic = this.wireMockProperties.getServer().isPortDynamic();
-		boolean httpsPortDynamic = this.wireMockProperties.getServer().isHttpsPortDynamic();
+		boolean httpsPortDynamic = this.wireMockProperties.getServer()
+				.isHttpsPortDynamic();
 		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
 	}
 
