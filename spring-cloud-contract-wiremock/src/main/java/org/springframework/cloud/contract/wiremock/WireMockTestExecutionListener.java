@@ -103,7 +103,7 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 				.isHttpsPortDynamic();
 		if (log.isDebugEnabled()) {
 			int httpPort = wireMockProperties.wireMock.getServer().getPort();
-			int httpsPort = wireMockProperties.wireMock.getServer().getPort();
+			int httpsPort = wireMockProperties.wireMock.getServer().getHttpsPort();
 			log.debug("Http port [" + httpPort + "] dynamic [" + httpPortDynamic + "]"
 					+ " https port [" + httpsPort + "] dynamic [" + httpsPortDynamic
 					+ "]");
