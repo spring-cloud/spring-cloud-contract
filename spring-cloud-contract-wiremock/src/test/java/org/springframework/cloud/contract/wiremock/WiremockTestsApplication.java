@@ -19,6 +19,9 @@ package org.springframework.cloud.contract.wiremock;
 import java.net.URI;
 import java.util.stream.Stream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -67,6 +70,8 @@ class Controller {
 @Component
 class Service {
 
+	private static final Log log = LogFactory.getLog(Service.class);
+
 	@Value("${app.baseUrl:http://example.org}")
 	String base;
 
@@ -77,13 +82,16 @@ class Service {
 	}
 
 	public String go() {
-		return this.restTemplate.getForEntity(this.base + "/test", String.class)
-				.getBody();
+		String requestUrl = this.base + "/test";
+		log.info("Will send a request to [" + requestUrl + "]");
+		return this.restTemplate.getForEntity(requestUrl, String.class).getBody();
 	}
 
 	public String pom() {
+		String requestUrl = this.base + "/pom.xml";
+		log.info("Will send a request to [" + requestUrl + "]");
 		return this.restTemplate
-				.exchange(RequestEntity.get(URI.create(this.base + "/pom.xml"))
+				.exchange(RequestEntity.get(URI.create(requestUrl))
 						.accept(mediaTypes()).build(), String.class)
 				.getBody();
 	}
@@ -96,7 +104,9 @@ class Service {
 	}
 
 	public String go2() {
-		return this.restTemplate.getForEntity(this.base + "/test2", String.class)
+		String requestUrl = this.base + "/test2";
+		log.info("Will send a request to [" + requestUrl + "]");
+		return this.restTemplate.getForEntity(requestUrl, String.class)
 				.getBody();
 	}
 
