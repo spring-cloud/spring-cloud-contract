@@ -27,6 +27,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -128,6 +129,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 	}
 
 	private void registerStubs() throws IOException {
+		if (log.isDebugEnabled()) {
+			log.debug("Will register [" + this.wireMock.getServer().getStubs().length
+					+ "] stubs");
+		}
 		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
@@ -140,9 +145,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 					pattern = pattern + "**/*.json";
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
-					this.server.addStubMapping(WireMockStubMapping
+					StubMapping stubMapping = WireMockStubMapping
 							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
-									Charset.forName("UTF-8"))));
+									Charset.forName("UTF-8")));
+					this.server.addStubMapping(stubMapping);
 				}
 			}
 		}
@@ -260,9 +266,9 @@ class WireMockProperties {
 
 		private int httpsPort = -1;
 
-		private String[] stubs;
+		private String[] stubs = new String[0];
 
-		private String[] files;
+		private String[] files = new String[0];
 
 		private boolean portDynamic = false;
 
