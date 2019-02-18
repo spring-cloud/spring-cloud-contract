@@ -71,7 +71,7 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 			if (log.isDebugEnabled()) {
 				log.debug(
 						"Resetting mappings for the next test to restart them. That's necessary when"
-								+ "reusing the same context with new servers running on random ports");
+								+ " reusing the same context with new servers running on random ports");
 			}
 			wireMockConfig(testContext).resetMappings();
 		}

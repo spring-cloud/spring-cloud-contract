@@ -109,17 +109,22 @@ public class WireMockConfiguration implements SmartLifecycle {
 			this.server = new WireMockServer(this.options);
 		}
 		registerStubs();
-		if (log.isDebugEnabled()) {
-			log.debug("WireMock server has [" + this.server.getStubMappings().size()
-					+ "] stubs registered");
-		}
+		logRegisteredMappings();
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
 	}
 
+	private void logRegisteredMappings() {
+		if (log.isDebugEnabled()) {
+			log.debug("WireMock server has [" + this.server.getStubMappings().size()
+					+ "] stubs registered");
+		}
+	}
+
 	void resetMappings() {
-		this.server.resetToDefaultMappings();
+		this.server.resetAll();
+		logRegisteredMappings();
 	}
 
 	private void registerStubs() throws IOException {
