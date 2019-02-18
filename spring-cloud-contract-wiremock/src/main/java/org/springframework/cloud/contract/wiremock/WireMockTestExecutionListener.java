@@ -36,6 +36,21 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	private static final Log log = LogFactory.getLog(WireMockTestExecutionListener.class);
 
 	@Override
+	public void beforeTestClass(TestContext testContext) throws Exception {
+		if (applicationContextBroken(testContext)
+				|| wireMockConfigurationMissing(testContext)
+				|| annotationMissing(testContext)) {
+			return;
+		}
+		if (!portIsFixed(testContext)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Re-registering default mappings");
+			}
+			wireMockConfig(testContext).init();
+		}
+	}
+
+	@Override
 	public void afterTestClass(TestContext testContext) {
 		if (applicationContextBroken(testContext)
 				|| wireMockConfigurationMissing(testContext)
@@ -51,6 +66,14 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 			}
 			testContext
 					.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
+		}
+		else {
+			if (log.isDebugEnabled()) {
+				log.debug(
+						"Resetting mappings for the next test to restart them. That's necessary when"
+								+ "reusing the same context with new servers running on random ports");
+			}
+			wireMockConfig(testContext).resetMappings();
 		}
 	}
 

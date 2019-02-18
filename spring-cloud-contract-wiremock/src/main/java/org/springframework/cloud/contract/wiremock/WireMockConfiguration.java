@@ -118,6 +118,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 	}
 
+	void resetMappings() {
+		this.server.resetToDefaultMappings();
+	}
+
 	private void registerStubs() throws IOException {
 		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
