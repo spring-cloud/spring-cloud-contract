@@ -43,6 +43,8 @@ class PactContractConverterSpec extends Specification {
 		getResource("/pact/pact_v2.json").toURI())
 	File pactv3Json = new File(PactContractConverterSpec.
 		getResource("/pact/pact_v3.json").toURI())
+	File pactv3Issue889Json = new File(PactContractConverterSpec.
+		getResource("/pact/pact_v3_issue_889.json").toURI())
 	File pactv3MessagingJson = new File(PactContractConverterSpec.
 		getResource("/pact/pact_v3_messaging.json").toURI())
 	File pactv3UnsupportedRuleLogicJson = new File(PactContractConverterSpec.
@@ -679,6 +681,14 @@ class PactContractConverterSpec extends Specification {
 			Collection<Contract> contracts = converter.convertFrom(pactv3Json)
 		then:
 			contracts == expectedContracts
+	}
+
+	@Issue("#889")
+	def "should not throw an exception when parsing Pact file with different matchers"() {
+		when:
+			converter.convertFrom(pactv3Issue889Json)
+		then:
+			noExceptionThrown()
 	}
 
 	def "should convert from pact v3 messaging to one SC message contract"() {
