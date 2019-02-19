@@ -33,7 +33,9 @@ import au.com.dius.pact.model.v3.messaging.Message
 import au.com.dius.pact.model.v3.messaging.MessagePact
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 
@@ -46,6 +48,8 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 @CompileStatic
 @PackageScope
 class MessagingSCContractCreator {
+
+	RegexPatterns regexPatterns = new RegexPatterns()
 
 	private static final String FULL_BODY = '$'
 
@@ -104,13 +108,13 @@ class MessagingSCContractCreator {
 											} else if (rule instanceof NumberTypeMatcher) {
 												switch (rule.numberType) {
 													case NumberTypeMatcher.NumberType.NUMBER:
-														jsonPath(key, byRegex(number()))
+														jsonPath(key, byRegex(regexPatterns.number()))
 														break
 													case NumberTypeMatcher.NumberType.INTEGER:
-														jsonPath(key, byRegex(anInteger()))
+														jsonPath(key, byRegex(regexPatterns.anInteger()))
 														break
 													case NumberTypeMatcher.NumberType.DECIMAL:
-														jsonPath(key, byRegex(aDouble()))
+														jsonPath(key, byRegex(regexPatterns.aDouble()))
 														break
 													default:
 														throw new RuntimeException("Unsupported number type!")
