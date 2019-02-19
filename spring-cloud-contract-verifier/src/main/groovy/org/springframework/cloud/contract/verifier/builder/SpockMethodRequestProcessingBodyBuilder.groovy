@@ -198,11 +198,11 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	protected String convertHeaderComparison(Pattern headerValue) {
-		return patternComparison(headerValue)
+		return patternComparisonWithMatchesCheck(escapeJava(headerValue.pattern()))
 	}
 
 	protected String convertHeaderComparison(RegexProperty headerValue) {
-		return convertHeaderComparison(headerValue.pattern)
+		return patternComparisonWithMatchesCheck(escapeJava(headerValue.pattern.pattern()))
 	}
 
 	protected String convertCookieComparison(String cookieValue) {
@@ -220,7 +220,7 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	protected String convertCookieComparison(Pattern cookieValue) {
-		return patternComparison(cookieValue)
+		return patternComparisonWithMatchesCheck(convertUnicodeEscapesIfRequired(cookieValue.pattern()))
 	}
 
 	protected String patternComparison(Pattern pattern) {
@@ -229,6 +229,10 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	protected String patternComparison(String pattern) {
 		String converted = escapeJava(convertUnicodeEscapesIfRequired(pattern))
+		return patternComparisonWithMatchesCheck(converted)
+	}
+
+	private String patternComparisonWithMatchesCheck(String converted) {
 		return "==~ java.util.regex.Pattern.compile('${converted}')"
 	}
 }
