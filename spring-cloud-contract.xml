@@ -2187,7 +2187,8 @@ to find contracts. E.g. for <literal>com.example:foo:1.0.0</literal> the path wo
 			&lt;/goals&gt;
 			&lt;configuration&gt;
 				&lt;!-- We want to pick contracts from a Git repository --&gt;
-				&lt;contractsRepositoryUrl&gt;git://file://${env.ROOT}/target/contract_empty_git/&lt;/contractsRepositoryUrl&gt;
+				&lt;contractsRepositoryUrl&gt;git://file://${env.ROOT}/target/contract_empty_git/
+				&lt;/contractsRepositoryUrl&gt;
 				&lt;!-- Example of URL via git protocol --&gt;
 				&lt;!--&lt;contractsRepositoryUrl&gt;git://git@github.com:spring-cloud-samples/spring-cloud-contract-samples.git&lt;/contractsRepositoryUrl&gt;--&gt;
 				&lt;!-- Example of URL via http protocol --&gt;
