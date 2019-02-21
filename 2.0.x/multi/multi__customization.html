@@ -145,7 +145,7 @@ visible in your Groovy files. The following examples show how to test the depend
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
-</p><pre class="programlisting">testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span>)</pre><p class="secondary">
+</p><pre class="programlisting">testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1.BUILD-SNAPSHOT"</span>)</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_test_a_dependency_in_the_plugin_s_dependencies" href="#_test_a_dependency_in_the_plugin_s_dependencies"></a>9.1.4&nbsp;Test a Dependency in the Plugin&#8217;s Dependencies</h3></div></div></div><p>Now, you must add the dependency for the plugin to reuse at runtime, as shown in the
 following example:</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
@@ -172,7 +172,7 @@ following example:</p><p class="primary"><b>Maven.&nbsp;</b>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
-</p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span></pre><p class="secondary">
+</p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1.BUILD-SNAPSHOT"</span></pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>9.1.5&nbsp;Referencing classes in DSLs</h3></div></div></div><p>You can now reference your classes in your DSL, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts.beer.rest
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ConsumerUtils
