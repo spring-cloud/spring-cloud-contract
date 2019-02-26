@@ -27,6 +27,7 @@ import java.util.regex.Pattern
  *
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
+ * @author Michael Wirth
  * @since 1.0.0
  */
 @CompileStatic
@@ -189,7 +190,10 @@ class UrlHelper {
 			// domain name
 			"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
 			// TLD identifier must have >= 2 characters
-			"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))"
+			"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+			"|" +
+			// localhost
+			"(?:localhost))"
 
 	// Example: ":8042".
 	private static final String REGEX_PORT = "(?::\\d{2,5})?"

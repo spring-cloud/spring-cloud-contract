@@ -93,6 +93,13 @@ class RegexPatternsSpec extends Specification {
 			'http://a.b-c.de'                                   || true
 			'http://223.255.255.254'                            || true
 			'foo.com'                                           || true
+	    	'localhost'                                         || true
+	        'localhost:8080'                                    || true
+		    'localhost:8080/wpstyle/?p=364'                     || true
+			'http://localhost'                                  || true
+			'http://localhost:8080'                             || true
+			'https://localhost'                                 || true
+			'https://localhost:8443'                            || true
 			'a.b.'                                              || false
 			'http://'                                           || false
 			'http://.'                                          || false
