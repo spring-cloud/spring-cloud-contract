@@ -64,6 +64,8 @@ class RegexPatternsSpec extends Specification {
 			textToMatch                                         || shouldMatch
 			'ftp://asd.com:9090/asd/a?a=b'                      || true
 			'http://foo.com/blah_blah'                          || true
+			'ftp://localhost/api'                               || true
+			'http://localhost:8080/api'                         || true
 			'http://foo.com/blah_blah/'                         || true
 			'http://foo.com/blah_blah_(wikipedia)'              || true
 			'http://foo.com/blah_blah_(wikipedia)_(again)'      || true
