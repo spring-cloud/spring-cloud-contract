@@ -186,7 +186,7 @@ class UrlHelper {
 	// Optional component. Example: "suzie:abc123@". The use of the format "user:password" is deprecated.
 	private static final String REGEX_USERINFO = "(?:\\S+(?::\\S*)?@)?"
 
-	// Examples: "fitbit.com", "22.231.113.64".
+	// Examples: "fitbit.com", "22.231.113.64", "localhost"
 	private static final String REGEX_HOST = "(?:" +
 			// @Author = http://www.regular-expressions.info/examples.html
 			// IP address
@@ -197,7 +197,7 @@ class UrlHelper {
 			// domain name
 			"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
 			// TLD identifier must have >= 2 characters
-			"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))"
+			"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))|(?:localhost))"
 
 	// Example: ":8042".
 	private static final String REGEX_PORT = "(?::\\d{2,5})?"
