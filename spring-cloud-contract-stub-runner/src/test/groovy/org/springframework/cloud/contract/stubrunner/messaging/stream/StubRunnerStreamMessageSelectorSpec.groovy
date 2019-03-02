@@ -1,24 +1,27 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.stubrunner.messaging.stream
+
+import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.http.MediaType
 import org.springframework.messaging.Message
-import spock.lang.Specification
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -111,10 +114,10 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 		and:
 			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
 			message.headers >> [
-					foo: 123,
-					bar: "bar",
+					foo        : 123,
+					bar        : "bar",
 					contentType: MediaType.APPLICATION_JSON_UTF8,
-					regex: 234
+					regex      : 234
 			]
 			message.payload >> [
 					foo: 123
@@ -138,7 +141,7 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 		and:
 			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
 			message.headers >> [
-					foo: 123,
+					foo        : 123,
 					contentType: "text/plain"
 			]
 			message.payload >> "123"
@@ -161,7 +164,7 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 		and:
 			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
 			message.headers >> [
-					foo: 123,
+					foo        : 123,
 					contentType: "application/octet-stream"
 			]
 			message.payload >> StubRunnerStreamMessageSelectorSpec.getResource("/request.pdf").bytes
@@ -184,7 +187,7 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 		and:
 			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
 			message.headers >> [
-					foo: 123,
+					foo        : 123,
 					contentType: "application/octet-stream"
 			]
 			message.payload >> "hello world"

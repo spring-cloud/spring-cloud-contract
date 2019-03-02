@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,10 +19,12 @@ package org.springframework.cloud.contract.verifier.plugin
 import org.gradle.api.Task
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.TaskAction
+
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter
 
 import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
+
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
  * Generates stubs from the contracts. The name is WireMock related but the implementation
@@ -55,7 +57,8 @@ class GenerateClientStubsFromDslTask extends ConventionTask {
 	private ContractVerifierConfigProperties props(Task task) {
 		try {
 			return task.ext.contractVerifierConfigProperties
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			project.logger.error("Couldn't retrieve the configuration property set by the copy contracts task", e)
 			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
 			getDownloader().downloadAndUnpackContractsIfRequired(getConfigProperties(), props)
@@ -66,7 +69,8 @@ class GenerateClientStubsFromDslTask extends ConventionTask {
 	private File contractsDslDir(Task task, ContractVerifierConfigProperties props) {
 		try {
 			return task.ext.contractsDslDir
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			project.logger.error("Couldn't retrieve the contract dsl property set by the copy contracts task", e)
 			return props.contractsDslDir
 		}

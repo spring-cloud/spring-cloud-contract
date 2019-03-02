@@ -1,13 +1,15 @@
 {
-  "request" : {
-    "urlPath" : "/body",
-    "method" : "POST",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$.things[?(@.name == 'RequiredThing')]"
-    } ]
+  "request": {
+    "urlPath": "/body",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.things[?(@.name == 'RequiredThing')]"
+      }
+    ]
   },
-  "response" : {
-    "status" : 200,
-    "body" : "Hello Body"
+  "response": {
+    "status": 200,
+    "body": "Hello Body"
   }
 }

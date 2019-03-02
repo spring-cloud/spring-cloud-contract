@@ -18,34 +18,35 @@ package org.springframework.cloud.contract.wiremock.restdocs;
 
 /**
  * Convenience class for setting up RestDocs to record WireMock stubs. Example usage:
- * 
+ *
  * <pre>
  * &#64;RunWith(SpringRunner.class)
  * &#64;SpringBootTest
  * &#64;AutoConfigureRestDocs(outputDir = "target/snippets")
  * &#64;AutoConfigureMockMvc
  * public class WiremockServerRestDocsApplicationTests {
- * 
+ *
  * 	&#64;Autowired
  * 	private MockMvc mockMvc;
- * 
+ *
  * 	&#64;Test
  * 	public void contextLoads() throws Exception {
  * 		mockMvc.perform(get("/resource"))
  * 				.andExpect(content().string("Hello World"))
  * 				.andDo(verify().stub("resource"));
  * 	}
- * </pre>
- * 
- * which creates a file "target/snippets/stubs/resource.json" matching any GET request to
- * "/resource". To match POST and PUT, you can also specify the content type using
- * <code>verify().contentType(...)</code> and JSON content of the body using
+ * </pre> which creates a file "target/snippets/stubs/resource.json" matching any GET
+ * request to "/resource". To match POST and PUT, you can also specify the content type
+ * using <code>verify().contentType(...)</code> and JSON content of the body using
  * <code>verify().jsonPath(...)</code>.
- * 
- * @author Dave Syer
  *
+ * @author Dave Syer
  */
-public class WireMockRestDocs {
+public final class WireMockRestDocs {
+
+	private WireMockRestDocs() {
+		throw new IllegalStateException("Can't instantiate a utility class");
+	}
 
 	public static ContractResultHandler verify() {
 		return new ContractResultHandler();

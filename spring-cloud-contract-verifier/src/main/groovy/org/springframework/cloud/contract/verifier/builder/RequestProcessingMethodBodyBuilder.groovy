@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -75,7 +74,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	/**
-	 * Returns code used to retrieve a response for the given {@link Request}
+	 * @return code used to retrieve a response for the given {@link Request}
 	 */
 	protected abstract String getInputString(Request request)
 
@@ -85,28 +84,28 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	/**
-	 * Returns {@code true} if a response body is expected
+	 * @return {@code true} if a response body is expected
 	 */
 	protected boolean expectsResponseBody() {
 		return response.body != null
 	}
 
 	/**
-	 * Returns {@code true} if the query parameter is allowed
+	 * @return {@code true} if the query parameter is allowed
 	 */
 	protected boolean allowedQueryParameter(QueryParameter param) {
 		return allowedQueryParameter(param.serverValue)
 	}
 
 	/**
-	 * Returns {@code true} if the query parameter is allowed
+	 * @return {@code true} if the query parameter is allowed
 	 */
 	protected boolean allowedQueryParameter(MatchingStrategy matchingStrategy) {
 		return matchingStrategy.type != MatchingStrategy.Type.ABSENT
 	}
 
 	/**
-	 * Returns {@code true} if the query parameter is allowed
+	 * @return {@code true} if the query parameter is allowed
 	 */
 	protected boolean allowedQueryParameter(Object o) {
 		return true
@@ -131,17 +130,20 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		if (request.body) {
 			Object body = null
 			switch (request.body.serverValue) {
-				case ExecutionProperty:
-				case FromFileProperty:
-					body = request.body?.serverValue
-					break
-				default:
-					body = getBodyAsString()
+			case ExecutionProperty:
+			case FromFileProperty:
+				body = request.body?.serverValue
+				break
+			default:
+				body = getBodyAsString()
 			}
 			bb.addLine(getBodyString(body))
 		}
 		if (request.multipart) {
-			multipartParameters?.each { Map.Entry<String, Object> entry -> bb.addLine(getMultipartParameterLine(entry)) }
+			multipartParameters?.each { Map.Entry<String, Object> entry ->
+				bb.
+						addLine(getMultipartParameterLine(entry))
+			}
 		}
 	}
 
@@ -179,8 +181,9 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	@TypeChecked(TypeCheckingMode.SKIP)
 	protected addQueryParameters(Url buildUrl, BlockBuilder bb) {
-		if(hasQueryParams(buildUrl)){
-			List<QueryParameter> queryParameters = buildUrl.queryParameters.parameters.findAll(this.&allowedQueryParameter)
+		if (hasQueryParams(buildUrl)) {
+			List<QueryParameter> queryParameters = buildUrl.queryParameters.parameters.
+					findAll(this.&allowedQueryParameter)
 			for (queryParam in queryParameters) {
 				addQueryParameter(queryParam, bb)
 			}
@@ -189,10 +192,12 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	@TypeChecked(TypeCheckingMode.SKIP)
 	protected addQueryParameter(QueryParameter queryParam, BlockBuilder bb) {
-		bb.addLine(/.${QUERY_PARAM_METHOD}(${DOUBLE_QUOTE}${queryParam.name}${DOUBLE_QUOTE},${DOUBLE_QUOTE}${resolveParamValue(queryParam).toString()}${DOUBLE_QUOTE})/)
+		bb.addLine(".${QUERY_PARAM_METHOD}(${DOUBLE_QUOTE}${queryParam.name}"
+				+
+				"${DOUBLE_QUOTE},${DOUBLE_QUOTE}${resolveParamValue(queryParam).toString()}${DOUBLE_QUOTE})")
 	}
-	
-	protected addUrl(Url buildUrl, BlockBuilder bb){
+
+	protected addUrl(Url buildUrl, BlockBuilder bb) {
 		Object testSideUrl = MapConverter.getTestSideValues(buildUrl)
 		String method = request.method.serverValue.toString().toLowerCase()
 		String url = testSideUrl.toString()
@@ -227,13 +232,15 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
-		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		String gstringValue = ContentUtils.
+				extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, GString value) {
-		String gStringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		String gStringValue = ContentUtils.
+				extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processCookieElement(blockBuilder, key, gStringValue)
 	}
 
@@ -245,20 +252,23 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String getBodyAsString() {
 		ContentType contentType = contentType()
-		Object bodyValue = extractServerValueFromBody(contentType, request.body.serverValue)
+		Object bodyValue =
+				extractServerValueFromBody(contentType, request.body.serverValue)
 		if (contentType == ContentType.FORM) {
 			if (bodyValue instanceof Map) {
 				// [a:3, b:4] == "a=3&b=4"
 				return ((Map) bodyValue).collect {
 					convertUnicodeEscapesIfRequired(it.key.toString() + "=" + it.value)
 				}.join("&")
-			} else if (bodyValue instanceof List) {
+			}
+			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
 				return ((List) bodyValue).collect {
 					convertUnicodeEscapesIfRequired(it.toString())
 				}.join("&")
 			}
-		} else {
+		}
+		else {
 			String json = new JsonOutput().toJson(bodyValue)
 			json = convertUnicodeEscapesIfRequired(json)
 			return trimRepeatedQuotes(json)
@@ -266,7 +276,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	/**
-	 * Returns a map of server side multipart parameters
+	 * @return a map of server side multipart parameters
 	 */
 	protected Map<String, Object> getMultipartParameters() {
 		return (Map<String, Object>) request?.multipart?.serverValue
@@ -280,19 +290,21 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	/**
-	 * Returns a String URL from {@link Request}'s test side values. It can be
+	 * @return a String URL from {@link Request}'s test side values. It can be
 	 * a concrete value of the URL or a path.
 	 */
 	protected Url getUrl(Request request) {
-		if (request.url)
+		if (request.url) {
 			return request.url
-		if (request.urlPath)
+		}
+		if (request.urlPath) {
 			return request.urlPath
+		}
 		throw new IllegalStateException("URL is not set!")
 	}
 
 	/**
-	 * Returns a line of code to send a multi part parameter in the request
+	 * @return a line of code to send a multi part parameter in the request
 	 */
 	protected String getMultipartParameterLine(Map.Entry<String, Object> parameter) {
 		if (parameter.value instanceof NamedProperty) {

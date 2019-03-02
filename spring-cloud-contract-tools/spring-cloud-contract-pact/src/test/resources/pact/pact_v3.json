@@ -66,49 +66,68 @@
           "header": {
             "Some-Header": {
               "matchers": [
-                { "match" : "regex", "regex" : "[a-zA-Z]{9}" }
+                {
+                  "match": "regex",
+                  "regex": "[a-zA-Z]{9}"
+                }
               ]
             }
           },
           "body": {
             "$[0].id": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[1].id": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[*].nullValue": {
               "matchers": [
-                { "match": "null" }
+                {
+                  "match": "null"
+                }
               ]
             },
             "$[*].aNumber": {
               "matchers": [
-                { "match": "number" }
+                {
+                  "match": "number"
+                }
               ]
             },
             "$[*].positiveInteger": {
               "matchers": [
-                { "match": "integer" }
+                {
+                  "match": "integer"
+                }
               ]
             },
             "$[*].negativeInteger": {
               "matchers": [
-                { "match": "integer" }
+                {
+                  "match": "integer"
+                }
               ]
             },
             "$[*].positiveDecimalNumber": {
               "matchers": [
-                { "match": "decimal" }
+                {
+                  "match": "decimal"
+                }
               ]
             },
             "$[*].negativeDecimalNumber": {
               "matchers": [
-                { "match": "decimal" }
+                {
+                  "match": "decimal"
+                }
               ]
             }
           }
@@ -147,37 +166,51 @@
           "body": {
             "$[2].name": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[0].id": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[1].id": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[2].id": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[1].name": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[0].name": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$[0].dob": {
               "matchers": [
-                { "date": "yyyy-MM-dd" }
+                {
+                  "date": "yyyy-MM-dd"
+                }
               ]
             }
           }
@@ -224,42 +257,61 @@
           "body": {
             "$.data.array3[0]": {
               "matchers": [
-                { "max": 5, "match": "type" }
+                {
+                  "max": 5,
+                  "match": "type"
+                }
               ]
             },
             "$.data.array1": {
               "matchers": [
-                { "min": 0, "match": "type" }
+                {
+                  "min": 0,
+                  "match": "type"
+                }
               ]
             },
             "$.data.array2": {
               "matchers": [
-                { "min": 1, "match": "type" }
+                {
+                  "min": 1,
+                  "match": "type"
+                }
               ]
             },
             "$.id": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$.data.array2[*].name": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$.data.array2[*].address": {
               "matchers": [
-                { "regex": "(\\d{1,3}\\.)+\\d{1,3}" }
+                {
+                  "regex": "(\\d{1,3}\\.)+\\d{1,3}"
+                }
               ]
             },
             "$.data.array1[*].name": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             },
             "$.data.array1[*].id": {
               "matchers": [
-                { "match": "type" }
+                {
+                  "match": "type"
+                }
               ]
             }
           }

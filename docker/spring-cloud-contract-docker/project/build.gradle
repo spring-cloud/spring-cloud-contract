@@ -61,7 +61,8 @@ contracts {
 	baseClassForTests = "contracts.RestBase"
 	testMode = "EXPLICIT"
 	if (getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
-		logger.lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
+		logger.
+				lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
 		// tests - contracts from an artifact
 		contractsPath = getProp("EXTERNAL_CONTRACTS_PATH") ?: ""
 		if (Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) == false) {
@@ -76,8 +77,10 @@ contracts {
 			delegate.classifier = getProp("EXTERNAL_CONTRACTS_CLASSIFIER") ?: ""
 			delegate.version = getProp("EXTERNAL_CONTRACTS_VERSION") ?: "+"
 		}
-		contractsMode = Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) ? "LOCAL" : "REMOTE"
-	} else {
+		contractsMode = Boolean.
+				parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) ? "LOCAL" : "REMOTE"
+	}
+	else {
 		logger.lifecycle("Will use contracts from the mounted [/contracts] folder")
 		// tests - contracts in this repo
 		contractsDslDir = new File("/contracts")
@@ -90,9 +93,9 @@ task wrapper(type: Wrapper) {
 
 task cleanOutput(type: Delete) {
 	def dirName = "/spring-cloud-contract-output"
-  file(dirName).list().each {
-      f -> delete "${dirName}/${f}"
-  }
+	file(dirName).list().each {
+		f -> delete "${dirName}/${f}"
+	}
 }
 
 task copyOutput(type: Copy) {
@@ -126,7 +129,9 @@ boolean publishEnabled = Boolean.parseBoolean(publishArtifacts)
 publish.setEnabled(publishEnabled)
 
 gradle.taskGraph.whenReady { graph ->
-    graph.allTasks.findAll { it.name.startsWith("publish") && "publishStubsToScm" != it.name }*.setEnabled(publishEnabled)
+	graph.allTasks.
+			findAll { it.name.startsWith("publish") && "publishStubsToScm" != it.name }*.
+			setEnabled(publishEnabled)
 }
 
 if (Boolean.parseBoolean(getProp("PUBLISH_STUBS_TO_SCM"))) {

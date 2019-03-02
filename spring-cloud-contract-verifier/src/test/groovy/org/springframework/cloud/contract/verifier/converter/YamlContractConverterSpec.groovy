@@ -1,23 +1,24 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.converter
 
 import java.util.regex.Pattern
 
+import groovy.json.JsonSlurper
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -49,12 +50,18 @@ import static org.springframework.cloud.contract.spec.internal.MatchingType.TYPE
  */
 class YamlContractConverterSpec extends Specification {
 
-	@Shared URL ymlUrl = YamlContractConverterSpec.getResource("/yml/contract.yml")
-	@Shared File ymlWithRest = new File(ymlUrl.toURI())
-	@Shared URL ymlUrl2 = YamlContractConverterSpec.getResource("/yml/contract_rest.yml")
-	@Shared File ymlWithRest2 = new File(ymlUrl2.toURI())
-	@Shared URL ymlUrl3 = YamlContractConverterSpec.getResource("/yml/contract_rest_with_path.yml")
-	@Shared File ymlWithRest3 = new File(ymlUrl3.toURI())
+	@Shared
+	URL ymlUrl = YamlContractConverterSpec.getResource("/yml/contract.yml")
+	@Shared
+	File ymlWithRest = new File(ymlUrl.toURI())
+	@Shared
+	URL ymlUrl2 = YamlContractConverterSpec.getResource("/yml/contract_rest.yml")
+	@Shared
+	File ymlWithRest2 = new File(ymlUrl2.toURI())
+	@Shared
+	URL ymlUrl3 = YamlContractConverterSpec.getResource("/yml/contract_rest_with_path.yml")
+	@Shared
+	File ymlWithRest3 = new File(ymlUrl3.toURI())
 	URL ymlMsgUrl = YamlContractConverterSpec.getResource("/yml/contract_message.yml")
 	File ymlMessaging = new File(ymlMsgUrl.toURI())
 	URL ymlMsgMethodUrl = YamlContractConverterSpec.getResource("/yml/contract_message_method.yml")
@@ -118,14 +125,24 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.method.clientValue == "PUT"
 			contract.request.url.clientValue == "/foo"
 			contract.request.cookies.entries.find { it.key == "foo" && it.serverValue == "bar" }
-			contract.request.cookies.entries.find { it.key == "fooRegex" && ((Pattern) it.clientValue).pattern == "reg" && it.serverValue == "reg" }
-			contract.request.cookies.entries.find { it.key == "fooPredefinedRegex" && ((Pattern) it.clientValue).pattern == "(true|false)" && it.serverValue == true }
+			contract.request.cookies.entries.find {
+				it.key == "fooRegex" && ((Pattern) it.clientValue).pattern == "reg" && it.serverValue == "reg"
+			}
+			contract.request.cookies.entries.find {
+				it.key == "fooPredefinedRegex" && ((Pattern) it.clientValue).pattern == "(true|false)" && it.serverValue == true
+			}
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.cookies.entries.find { it.key == "foo" && it.clientValue == "baz" }
-			contract.response.cookies.entries.find { it.key == "fooRegex" && ((Pattern) it.serverValue).pattern == "[0-9]+" && it.clientValue == 123 }
-			contract.response.cookies.entries.find { it.key == "source" && ((Pattern) it.serverValue).pattern == "ip_address" && it.clientValue == "ip_address" }
-			contract.response.cookies.entries.find { it.key == "fooPredefinedRegex" && ((Pattern) it.serverValue).pattern == "(true|false)" && it.clientValue == true }
+			contract.response.cookies.entries.find {
+				it.key == "fooRegex" && ((Pattern) it.serverValue).pattern == "[0-9]+" && it.clientValue == 123
+			}
+			contract.response.cookies.entries.find {
+				it.key == "source" && ((Pattern) it.serverValue).pattern == "ip_address" && it.clientValue == "ip_address"
+			}
+			contract.response.cookies.entries.find {
+				it.key == "fooPredefinedRegex" && ((Pattern) it.serverValue).pattern == "(true|false)" && it.clientValue == true
+			}
 			contract.response.body.clientValue == ["status": "OK"]
 	}
 
@@ -149,23 +166,38 @@ class YamlContractConverterSpec extends Specification {
 			url.queryParameters.parameters[1].name == "b"
 			url.queryParameters.parameters[1].serverValue == "c"
 			contract.request.method.clientValue == "PUT"
-			contract.request.headers.entries.find { it.name == "foo" &&
-					((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar" }
-			contract.request.headers.entries.find { it.name == "fooReq" &&
-					it.serverValue == "baz" }
+			contract.request.headers.entries.find {
+				it.name == "foo" &&
+						((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar"
+			}
+			contract.request.headers.entries.find {
+				it.name == "fooReq" &&
+						it.serverValue == "baz"
+			}
 			contract.request.body.clientValue == [foo: "bar"]
 			contract.request.bodyMatchers.matchers[0].path() == '$.foo'
 			contract.request.bodyMatchers.matchers[0].matchingType() == REGEX
 			contract.request.bodyMatchers.matchers[0].value().pattern() == 'bar'
 		and:
 			contract.response.status.clientValue == 200
-			if (yamlFile == ymlWithRest) contract.response.delay.clientValue == 1000 else !contract.response.delay
-			contract.response.headers.entries.find { it.name == "foo2" &&
-					((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar" }
-			contract.response.headers.entries.find { it.name == "foo3" &&
-					((ExecutionProperty) it.serverValue).insertValue('foo') == "andMeToo(foo)" }
-			contract.response.headers.entries.find { it.name == "fooRes" &&
-					it.clientValue == "baz" }
+			if (yamlFile == ymlWithRest) {
+				contract.response.delay.clientValue == 1000
+			}
+			else {
+				!contract.response.delay
+			}
+			contract.response.headers.entries.find {
+				it.name == "foo2" &&
+						((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar"
+			}
+			contract.response.headers.entries.find {
+				it.name == "foo3" &&
+						((ExecutionProperty) it.serverValue).insertValue('foo') == "andMeToo(foo)"
+			}
+			contract.response.headers.entries.find {
+				it.name == "fooRes" &&
+						it.clientValue == "baz"
+			}
 			contract.response.body.clientValue == [foo2: "bar", foo3: "baz", nullValue: null]
 			contract.response.bodyMatchers.matchers[0].path() == '$.foo2'
 			contract.response.bodyMatchers.matchers[0].matchingType() == REGEX
@@ -226,8 +258,10 @@ class YamlContractConverterSpec extends Specification {
 			contracts.size() == 1
 			Contract contract = contracts.first()
 			RegexPatterns patterns = new RegexPatterns()
-			contract.request.headers.entries.find { it.name == "Content-Type" &&
-					((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json" }
+			contract.request.headers.entries.find {
+				it.name == "Content-Type" &&
+						((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json"
+			}
 			((Pattern) contract.request.urlPath.clientValue).pattern() == "/get/[0-9]"
 			contract.request.urlPath.serverValue == "/get/1"
 			contract.request.urlPath.queryParameters.parameters.size() == 8
@@ -284,7 +318,9 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.bodyMatchers.matchers[12].minTypeOccurrence() == 1
 			contract.request.bodyMatchers.matchers[12].maxTypeOccurrence() == 3
 			contract.request.cookies.entries.find { it.key == "foo" }.clientValue instanceof Pattern
-			contract.request.cookies.entries.find { it.key == "bar" }.serverValue == new ExecutionProperty('equals($it)')
+			contract.request.cookies.entries.find {
+				it.key == "bar"
+			}.serverValue == new ExecutionProperty('equals($it)')
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.bodyMatchers.matchers[0].path() == '$.duck'
@@ -336,14 +372,16 @@ class YamlContractConverterSpec extends Specification {
 	}
 
 	protected Object assertQueryParam(QueryParameters queryParameters, String queryParamName, Object serverValue,
-									  MatchingStrategy.Type clientType, Object clientValue) {
+			MatchingStrategy.Type clientType, Object clientValue) {
 		if (clientType == MatchingStrategy.Type.ABSENT) {
-			return ! queryParameters.parameters.find { it.name == queryParamName}
+			return !queryParameters.parameters.find { it.name == queryParamName }
 		}
-		return queryParameters.parameters.find { it.name == queryParamName &&
-				it.serverValue == serverValue &&
-				((MatchingStrategy) it.clientValue).type == clientType &&
-				((MatchingStrategy) it.clientValue).clientValue == clientValue  }
+		return queryParameters.parameters.find {
+			it.name == queryParamName &&
+					it.serverValue == serverValue &&
+					((MatchingStrategy) it.clientValue).type == clientType &&
+					((MatchingStrategy) it.clientValue).clientValue == clientValue
+		}
 	}
 
 	@Issue("#604")
@@ -356,8 +394,10 @@ class YamlContractConverterSpec extends Specification {
 			contracts.size() == 1
 			Contract contract = contracts.first()
 			RegexPatterns patterns = new RegexPatterns()
-			contract.input.messageHeaders.entries.find { it.name == "contentType" &&
-					((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json" }
+			contract.input.messageHeaders.entries.find {
+				it.name == "contentType" &&
+						((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json"
+			}
 			contract.input.bodyMatchers.matchers[0].path() == '$.duck'
 			contract.input.bodyMatchers.matchers[0].matchingType() == REGEX
 			contract.input.bodyMatchers.matchers[0].value().pattern() == '[0-9]{3}'
@@ -442,9 +482,11 @@ class YamlContractConverterSpec extends Specification {
 		then:
 			contracts.size() == 1
 			Contract contract = contracts.first()
-			contract.request.body.clientValue == '''{ "hello" : "request" }'''
+			new JsonSlurper().parseText(contract.request.body.clientValue.toString()) ==
+					new JsonSlurper().parseText('''{ "hello" : "request" }''')
 		and:
-			contract.response.body.clientValue == '''{ "hello" : "response" }'''
+			new JsonSlurper().parseText(contract.response.body.clientValue.toString()) ==
+					new JsonSlurper().parseText('''{ "hello" : "response" }''')
 	}
 
 	def "should convert YAML with REST with multipart"() {
@@ -488,20 +530,28 @@ class YamlContractConverterSpec extends Specification {
 			contract.input.assertThat.toString() == "bar()"
 			contract.input.messageFrom.serverValue == "foo"
 			contract.input.triggeredBy.toString() == "foo()"
-			contract.input.messageHeaders.entries.find { it.name == "foo" &&
-					((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar" }
+			contract.input.messageHeaders.entries.find {
+				it.name == "foo" &&
+						((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar"
+			}
 			contract.input.messageBody.clientValue == [foo: "bar"]
 			contract.input.bodyMatchers.matchers[0].path() == '$.bar'
 			contract.input.bodyMatchers.matchers[0].matchingType() == REGEX
 			contract.input.bodyMatchers.matchers[0].value().pattern() == 'bar'
 		and:
 			contract.outputMessage.assertThat.toString() == "baz()"
-			contract.outputMessage.headers.entries.find { it.name == "foo2" &&
-					((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar" }
-			contract.outputMessage.headers.entries.find { it.name == "foo3" &&
-					((ExecutionProperty) it.serverValue).insertValue('foo') == "andMeToo(foo)" }
-			contract.outputMessage.headers.entries.find { it.name == "fooRes" &&
-					it.clientValue == "baz" }
+			contract.outputMessage.headers.entries.find {
+				it.name == "foo2" &&
+						((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar"
+			}
+			contract.outputMessage.headers.entries.find {
+				it.name == "foo3" &&
+						((ExecutionProperty) it.serverValue).insertValue('foo') == "andMeToo(foo)"
+			}
+			contract.outputMessage.headers.entries.find {
+				it.name == "fooRes" &&
+						it.clientValue == "baz"
+			}
 			contract.outputMessage.body.clientValue == [foo2: "bar", foo3: "baz"]
 			contract.outputMessage.bodyMatchers.matchers[0].path() == '$.foo2'
 			contract.outputMessage.bodyMatchers.matchers[0].matchingType() == REGEX
@@ -525,7 +575,8 @@ class YamlContractConverterSpec extends Specification {
 		and:
 			contract.outputMessage.sentTo.clientValue == "output"
 			contract.outputMessage.headers.entries.find {
-				it.name == "BOOK-NAME" && it.clientValue == "foo" }
+				it.name == "BOOK-NAME" && it.clientValue == "foo"
+			}
 			contract.outputMessage.body.clientValue == [bookName: "foo"]
 	}
 
@@ -540,13 +591,16 @@ class YamlContractConverterSpec extends Specification {
 			contract.description == "Some description"
 			contract.label == "some_label"
 			contract.input.messageFrom.serverValue == "input"
-			contract.input.messageHeaders.entries.find { it.name == "sample" &&
-					it.serverValue == "header" }
+			contract.input.messageHeaders.entries.find {
+				it.name == "sample" &&
+						it.serverValue == "header"
+			}
 			contract.input.messageBody.clientValue == [bookName: "foo"]
 		and:
 			contract.outputMessage.sentTo.clientValue == "output"
 			contract.outputMessage.headers.entries.find {
-				it.name == "BOOK-NAME" && it.clientValue == "foo" }
+				it.name == "BOOK-NAME" && it.clientValue == "foo"
+			}
 			contract.outputMessage.body.clientValue == [bookName: "foo"]
 	}
 
@@ -704,15 +758,15 @@ ignored: false
 '''
 		when:
 			Map<String, byte[]> strings = converter.store([
-			        new YamlContract(
+					new YamlContract(
 							name: "post1",
 							request: new YamlContract.Request(method: "POST", url: "/users/1"),
 							response: new YamlContract.Response(status: 200)
-					),new YamlContract(
-							name: "post2",
-							request: new YamlContract.Request(method: "POST", url: "/users/2"),
-							response: new YamlContract.Response(status: 200)
-					),
+					), new YamlContract(
+					name: "post2",
+					request: new YamlContract.Request(method: "POST", url: "/users/2"),
+					response: new YamlContract.Response(status: 200)
+			),
 			])
 		then:
 			strings.size() == 2
@@ -730,7 +784,7 @@ ignored: false
 		and:
 			contracts.first().input != null || contracts.first().outputMessage != null
 		where:
-			file << [1,2,3].collect {
+			file << [1, 2, 3].collect {
 				new File(YamlContractConverterSpec.getResource("/yml/contract_message_scenario${it}.yml").toURI())
 			}
 	}
@@ -801,7 +855,7 @@ ignored: false
 						header("BOOK-NAME", "foo")
 					}
 				}
-			},Contract.make {
+			}, Contract.make {
 				input {
 					description("Some description2")
 					label("some_label2")
@@ -932,16 +986,16 @@ ignored: false
 				input {
 					messageFrom("input")
 					messageBody([
-							duck: 123,
-							alpha: "abc",
-							number: 123,
-							aBoolean: true,
-							date: "2017-01-01",
-							dateTime: "2017-01-01T01:23:45",
-							time: "01:02:34",
+							duck                : 123,
+							alpha               : "abc",
+							number              : 123,
+							aBoolean            : true,
+							date                : "2017-01-01",
+							dateTime            : "2017-01-01T01:23:45",
+							time                : "01:02:34",
 							valueWithoutAMatcher: "foo",
-							valueWithTypeMatch: "string",
-							key: ["complex.key": 'foo']
+							valueWithTypeMatch  : "string",
+							key                 : ["complex.key": 'foo']
 					])
 					bodyMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
@@ -962,22 +1016,22 @@ ignored: false
 				}
 				outputMessage {
 					sentTo("channel")
-					body([duck: 123,
-						  alpha: "abc",
-						  number: 123,
-						  aBoolean: true,
-						  date: "2017-01-01",
-						  dateTime: "2017-01-01T01:23:45",
-						  time: "01:02:34",
+					body([duck                : 123,
+						  alpha               : "abc",
+						  number              : 123,
+						  aBoolean            : true,
+						  date                : "2017-01-01",
+						  dateTime            : "2017-01-01T01:23:45",
+						  time                : "01:02:34",
 						  valueWithoutAMatcher: "foo",
-						  valueWithTypeMatch: "string",
-						  valueWithMin: [1, 2, 3],
-						  valueWithMax: [1, 2, 3],
-						  valueWithMinMax: [1, 2, 3],
-						  valueWithMinEmpty: [],
-						  valueWithMaxEmpty: [],
-						  key: ['complex.key' : 'foo'],
-						  nullValue: null
+						  valueWithTypeMatch  : "string",
+						  valueWithMin        : [1, 2, 3],
+						  valueWithMax        : [1, 2, 3],
+						  valueWithMinMax     : [1, 2, 3],
+						  valueWithMinEmpty   : [],
+						  valueWithMaxEmpty   : [],
+						  key                 : ['complex.key': 'foo'],
+						  nullValue           : null
 					])
 					bodyMatchers {
 						// asserts the jsonpath value against manual regex
@@ -1040,23 +1094,23 @@ ignored: false
 			yamlContract.label == "card_rejected"
 			yamlContract.input.messageFrom == "input"
 			yamlContract.input.messageBody == [
-					duck: 123,
-					alpha: "abc",
-					number: 123,
-					aBoolean: true,
-					date: "2017-01-01",
-					dateTime: "2017-01-01T01:23:45",
-					time: "01:02:34",
+					duck                : 123,
+					alpha               : "abc",
+					number              : 123,
+					aBoolean            : true,
+					date                : "2017-01-01",
+					dateTime            : "2017-01-01T01:23:45",
+					time                : "01:02:34",
 					valueWithoutAMatcher: "foo",
-					valueWithTypeMatch: "string",
-					key: ["complex.key": 'foo']
+					valueWithTypeMatch  : "string",
+					key                 : ["complex.key": 'foo']
 			]
 			yamlContract.input.messageHeaders == [
-					sample: 'foo',
+					sample     : 'foo',
 					contentType: "application/json"
 			]
 			yamlContract.input.matchers.headers == [
-			        new YamlContract.KeyValueMatcher(
+					new YamlContract.KeyValueMatcher(
 							key: "sample", regex: "foo.*")
 			]
 			yamlContract.input.matchers.body == [
@@ -1096,23 +1150,23 @@ ignored: false
 							type: YamlContract.StubMatcherType.by_equality),
 			]
 			yamlContract.outputMessage.sentTo == "channel"
-			yamlContract.outputMessage.body == [duck: 123,
-												alpha: "abc",
-												number: 123,
-												aBoolean: true,
-												date: "2017-01-01",
-												dateTime: "2017-01-01T01:23:45",
-												time: "01:02:34",
+			yamlContract.outputMessage.body == [duck                : 123,
+												alpha               : "abc",
+												number              : 123,
+												aBoolean            : true,
+												date                : "2017-01-01",
+												dateTime            : "2017-01-01T01:23:45",
+												time                : "01:02:34",
 												valueWithoutAMatcher: "foo",
-												valueWithTypeMatch: "string",
-												valueWithMin: [1, 2, 3],
-												valueWithMax: [1, 2, 3],
-												valueWithMinMax: [1, 2, 3],
-												valueWithMinEmpty: [],
-												valueWithMaxEmpty: [],
-												key: ['complex.key' : 'foo'],
-												nullValue: null
-												]
+												valueWithTypeMatch  : "string",
+												valueWithMin        : [1, 2, 3],
+												valueWithMax        : [1, 2, 3],
+												valueWithMinMax     : [1, 2, 3],
+												valueWithMinEmpty   : [],
+												valueWithMaxEmpty   : [],
+												key                 : ['complex.key': 'foo'],
+												nullValue           : null
+			]
 			yamlContract.outputMessage.headers == [
 					"contentType": "application/json",
 					"Some-Header": "someValue"

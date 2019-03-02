@@ -1,9 +1,12 @@
 package org.springframework.cloud.contract.verifier.plugin
 
+import java.util.concurrent.ConcurrentHashMap
+
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubDownloader
@@ -13,7 +16,6 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.StringUtils
 
-import java.util.concurrent.ConcurrentHashMap
 /**
  * @author Marcin Grzejszczak
  */
@@ -26,14 +28,14 @@ class GradleContractsDownloader {
 	private final Project project
 	private final Logger log
 	protected static final Map<StubConfiguration, File> downloadedContract = new ConcurrentHashMap<>()
-	
+
 	GradleContractsDownloader(Project project, Logger log) {
 		this.project = project
 		this.log = log
 	}
-	
+
 	File downloadAndUnpackContractsIfRequired(ContractVerifierExtension extension,
-											  ContractVerifierConfigProperties config) {
+			ContractVerifierConfigProperties config) {
 		File defaultContractsDir = extension.contractsDslDir
 		this.log.info("Project has group id [{}], artifact id [{}]", this.project.group, this.project.name)
 		// download contracts, unzip them and pass as output directory
@@ -73,12 +75,12 @@ class GradleContractsDownloader {
 	}
 
 	protected StubDownloader stubDownloader(ContractVerifierExtension extension) {
-        StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
+		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
 		return provider.get(options(extension))
 	}
 
 	protected StubRunnerOptions options(ContractVerifierExtension extension) {
-        StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
+		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
 				.withStubsMode(extension.contractsMode)
@@ -92,7 +94,8 @@ class GradleContractsDownloader {
 		return options.build()
 	}
 
-	@PackageScope StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
+	@PackageScope
+	StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
 		String groupId = contractDependency.groupId
 		String artifactId = contractDependency.artifactId
 		String version = StringUtils.hasText(contractDependency.version) ?

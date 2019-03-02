@@ -130,7 +130,7 @@ class ContractVerifierSpec extends Specification {
 				baseClassForTests = "com.example.FooBase"
 				baseClassMappings {
 					baseClassMapping('.*/com/.*', 'com.example.ComBase')
-					baseClassMapping('.*/bar/.*':'com.example.BarBase')
+					baseClassMapping('.*/bar/.*': 'com.example.BarBase')
 				}
 				// end::base_class_mappings[]
 			}

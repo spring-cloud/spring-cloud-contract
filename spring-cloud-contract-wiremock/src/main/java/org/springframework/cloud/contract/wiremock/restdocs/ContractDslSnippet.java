@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.wiremock.restdocs;
 
 import java.io.File;
@@ -36,13 +52,13 @@ public class ContractDslSnippet extends TemplatedSnippet {
 
 	private static final String SNIPPET_NAME = "dsl-contract";
 
-	private Map<String, Object> model = new HashMap<>();
-
 	private static final Set<String> IGNORED_HEADERS = new HashSet<>(
 			Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
 
 	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper(
 			"{", "}");
+
+	private Map<String, Object> model = new HashMap<>();
 
 	/**
 	 * Creates a new {@code ContractDslSnippet} with no additional attributes.
@@ -82,7 +98,8 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("response_status", response.getStatus().value());
 		model.put("response_body_present", response.getContent().length > 0);
 		model.put("response_body", response.getContentAsString());
-		Map<String, String> headers = new HashMap<>(response.getHeaders().toSingleValueMap());
+		Map<String, String> headers = new HashMap<>(
+				response.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("response_headers_present", !headers.isEmpty());
 		model.put("response_headers", headers.entrySet());
@@ -105,7 +122,8 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("request_url", prepareRequestUrl(request.getUri()));
 		model.put("request_body_present", request.getContent().length > 0);
 		model.put("request_body", request.getContentAsString());
-		Map<String, String> headers = new HashMap<>(request.getHeaders().toSingleValueMap());
+		Map<String, String> headers = new HashMap<>(
+				request.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("request_headers_present", !headers.isEmpty());
 		model.put("request_headers", headers.entrySet());

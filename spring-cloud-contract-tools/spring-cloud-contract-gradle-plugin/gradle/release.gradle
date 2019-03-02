@@ -38,8 +38,12 @@ ext {
 	isReleaseToCentral = project.hasProperty('central')
 
 	resolveVersion = { String version ->
-		if (isMilestoneVersion) return 'milestone'
-		if (isReleaseVersion) return 'release'
+		if (isMilestoneVersion) {
+			return 'milestone'
+		}
+		if (isReleaseVersion) {
+			return 'release'
+		}
 		return 'snapshot'
 	}
 

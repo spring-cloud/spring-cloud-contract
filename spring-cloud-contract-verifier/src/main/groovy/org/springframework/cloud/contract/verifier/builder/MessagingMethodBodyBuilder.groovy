@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -50,8 +49,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final OutputMessage outputMessage
 
 	MessagingMethodBodyBuilder(Contract stubDefinition,
-							ContractVerifierConfigProperties configProperties,
-							   GeneratedClassDataForMethod classDataForMethod) {
+			ContractVerifierConfigProperties configProperties,
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(configProperties, stubDefinition, classDataForMethod)
 		this.inputMessage = stubDefinition.input
 		this.outputMessage = stubDefinition.outputMessage
@@ -88,7 +87,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 				bb.endBlock()
 				if (outputMessage.headers) {
 					bb.addLine(addCommentSignIfRequired('and:')).startBlock()
-				} else {
+				}
+				else {
 					bb.startBlock()
 				}
 				validateResponseBodyBlock(bb, outputMessage.bodyMatchers, outputMessage.body.serverValue)
@@ -102,7 +102,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
-		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		String gstringValue = ContentUtils.
+				extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
@@ -118,12 +119,15 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 
 	protected String getBodyAsString() {
 		ContentType contentType = contentType()
-		Object bodyValue = extractServerValueFromBody(contentType, inputMessage.messageBody.serverValue)
+		Object bodyValue =
+				extractServerValueFromBody(contentType, inputMessage.messageBody.serverValue)
 		if (bodyValue instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) bodyValue
 			return fileProperty.isByte() ?
-					indentBody(readBytesFromFileString(fileProperty, CommunicationType.REQUEST)) :
-					indentStringBody(readStringFromFileString(fileProperty, CommunicationType.REQUEST))
+					indentBody(
+							readBytesFromFileString(fileProperty, CommunicationType.REQUEST)) :
+					indentStringBody(
+							readStringFromFileString(fileProperty, CommunicationType.REQUEST))
 		}
 		String json = new JsonOutput().toJson(bodyValue)
 		json = convertUnicodeEscapesIfRequired(json)

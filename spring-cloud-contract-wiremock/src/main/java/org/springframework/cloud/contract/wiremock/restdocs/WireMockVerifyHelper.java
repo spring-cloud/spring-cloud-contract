@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.wiremock.restdocs;
 
 import java.nio.charset.Charset;
@@ -31,8 +32,9 @@ import org.springframework.http.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
+ * @param <T> result type
+ * @param <S> stub type
  * @author Dave Syer
- *
  */
 public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, S>> {
 

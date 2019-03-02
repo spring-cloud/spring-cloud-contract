@@ -1,31 +1,32 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.regex.Pattern
+
 import groovy.transform.TypeChecked
 import org.codehaus.groovy.runtime.GStringImpl
+
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.util.RegexpUtils
 
-import java.util.regex.Pattern
-
-import static org.apache.commons.text.StringEscapeUtils.escapeJson
-import static ContentType.*
 import static ContentUtils.extractValue
+import static org.apache.commons.text.StringEscapeUtils.escapeJson
+import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 
 /**
  * Useful utility methods to work with regular expressions
@@ -106,7 +107,8 @@ class RegexpBuilders {
 	private final static String WS = /\s*/
 
 	static String buildJSONRegexpMatch(GString gString) {
-		return buildJSONRegexpMatch(extractValue(gString, JSON, { DslProperty dslProperty -> dslProperty.clientValue }))
+		return buildJSONRegexpMatch(
+				extractValue(gString, JSON, { DslProperty dslProperty -> dslProperty.clientValue }))
 	}
 
 	static String buildJSONRegexpMatch(Map jsonMap) {
@@ -121,7 +123,8 @@ class RegexpBuilders {
 	 * Converts the map into String representation of regular expressions
 	 */
 	static String buildJSONRegexpMatch(Map.Entry<String, Object> entry) {
-		return buildJSONRegexpMatchString(escapeJson(entry.key)) + ":" + buildJSONRegexpMatch(entry.value)
+		return buildJSONRegexpMatchString(escapeJson(entry.key)) + ":" +
+				buildJSONRegexpMatch(entry.value)
 	}
 
 	/**

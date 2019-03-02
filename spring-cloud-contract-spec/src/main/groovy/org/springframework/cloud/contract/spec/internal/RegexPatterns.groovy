@@ -1,26 +1,26 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.regex.Pattern
+
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
-import java.util.regex.Pattern
 
 /**
  * Contains most common regular expression patterns
@@ -43,21 +43,29 @@ class RegexPatterns {
 	protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d*)')
 	protected static final Pattern DOUBLE = Pattern.compile('-?(\\d*\\.\\d+)')
 	protected static final Pattern HEX = Pattern.compile('[a-fA-F0-9]+')
-	protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
-	protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
-	protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
+	protected static final Pattern IP_ADDRESS = Pattern.
+			compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
+	protected static final Pattern HOSTNAME_PATTERN = Pattern.
+			compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
+	protected static final Pattern EMAIL = Pattern.
+			compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
 	protected static final Pattern URL = UrlHelper.URL
 	protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL
-	protected static final Pattern UUID = Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
-	protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
-	protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
-	protected static final Pattern ANY_TIME = Pattern.compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+	protected static final Pattern UUID = Pattern.
+			compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
+	protected static final Pattern ANY_DATE = Pattern.
+			compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
+	protected static final Pattern ANY_DATE_TIME = Pattern.
+			compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+	protected static final Pattern ANY_TIME = Pattern.
+			compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 	protected static final Pattern NON_EMPTY = Pattern.compile(/[\S\s]+/)
 	protected static final Pattern NON_BLANK = Pattern.compile(/^\s*\S[\S\s]*/)
-	protected static final Pattern ISO8601_WITH_OFFSET = Pattern.compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
+	protected static final Pattern ISO8601_WITH_OFFSET = Pattern.
+			compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
 
-	protected static Pattern anyOf(String... values){
-		return Pattern.compile(values.collect({"^$it\$"}).join("|"))
+	protected static Pattern anyOf(String... values) {
+		return Pattern.compile(values.collect({ "^$it\$" }).join("|"))
 	}
 
 	RegexProperty onlyAlphaUnicode() {
@@ -108,7 +116,7 @@ class RegexPatterns {
 		return new RegexProperty(HTTPS_URL).asString()
 	}
 
-	RegexProperty uuid(){
+	RegexProperty uuid() {
 		return new RegexProperty(UUID).asString()
 	}
 
@@ -137,7 +145,7 @@ class RegexPatterns {
 	}
 
 	// end::regexps[]
-	
+
 	static String multipartParam(Object name, Object value) {
 		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"\r\n(Content-Type: .*\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$value\r\n--\\1.*"
 	}
@@ -178,7 +186,7 @@ class UrlHelper {
 	// Optional component. Example: "suzie:abc123@". The use of the format "user:password" is deprecated.
 	private static final String REGEX_USERINFO = "(?:\\S+(?::\\S*)?@)?"
 
-	// Examples: "fitbit.com", "22.231.113.64".
+	// Examples: "fitbit.com", "22.231.113.64", "localhost"
 	private static final String REGEX_HOST = "(?:" +
 			// @Author = http://www.regular-expressions.info/examples.html
 			// IP address
@@ -189,7 +197,7 @@ class UrlHelper {
 			// domain name
 			"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
 			// TLD identifier must have >= 2 characters
-			"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))"
+			"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))|(?:localhost))"
 
 	// Example: ":8042".
 	private static final String REGEX_PORT = "(?::\\d{2,5})?"
@@ -197,9 +205,12 @@ class UrlHelper {
 	//Example: "/user/heartrate?foo=bar#element1".
 	private static final String REGEX_RESOURCE_PATH = "(?:/\\S*)?"
 
-	protected static final Pattern HTTPS_URL = Pattern.compile("^(?:" + HTTPS_REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION +
-			REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")\$")
+	protected static final Pattern HTTPS_URL = Pattern.
+			compile("^(?:" + HTTPS_REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION +
+					REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")\$")
 
-	protected static final Pattern URL = Pattern.compile("^(?:(?:" + REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION + ")?" +
-			REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")\$")
+	protected static final Pattern URL = Pattern.
+			compile("^(?:(?:" + REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION + ")?" +
+					REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")\$")
 }
+

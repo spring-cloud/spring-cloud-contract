@@ -1,10 +1,25 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.example;
 
 import java.io.IOException;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.junit.ClassRule;
@@ -51,7 +66,7 @@ public class WiremockServerApplicationTests {
 	public void randomData() throws Exception {
 		stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
-		expected.expectCause(instanceOf(ClientProtocolException.class));
+		this.expected.expectCause(instanceOf(ClientProtocolException.class));
 		assertThat(this.service.go()).isEqualTo("Oops!");
 	}
 
@@ -59,7 +74,7 @@ public class WiremockServerApplicationTests {
 	public void emptyResponse() throws Exception {
 		stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withFault(Fault.EMPTY_RESPONSE)));
-		expected.expectCause(instanceOf(NoHttpResponseException.class));
+		this.expected.expectCause(instanceOf(NoHttpResponseException.class));
 		assertThat(this.service.go()).isEqualTo("Oops!");
 	}
 
@@ -68,8 +83,8 @@ public class WiremockServerApplicationTests {
 		stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
 		// It's a different exception type than Jetty, but it's in the right ballpark
-		expected.expectCause(instanceOf(IOException.class));
-		expected.expectMessage("chunk");
+		this.expected.expectCause(instanceOf(IOException.class));
+		this.expected.expectMessage("chunk");
 		assertThat(this.service.go()).isEqualTo("Oops!");
 	}
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +37,9 @@ import static org.assertj.core.api.BDDAssertions.then;
  */
 public class ContractProjectUpdaterTest extends AbstractGitTest {
 
+	@Rule
+	public OutputCapture outputCapture = new OutputCapture();
+
 	File originalProject;
 
 	File project;
@@ -46,9 +49,6 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 	GitRepo gitRepo;
 
 	File origin;
-
-	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
 
 	@Before
 	public void setup() throws Exception {
@@ -85,8 +85,8 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 		BDDAssertions.then(new File(this.project,
 				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
 				.exists();
-		BDDAssertions.then(gitRepo.gitFactory.provider).isNull();
-		BDDAssertions.then(outputCapture.toString())
+		BDDAssertions.then(this.gitRepo.gitFactory.provider).isNull();
+		BDDAssertions.then(this.outputCapture.toString())
 				.contains("No custom credentials provider will be set");
 	}
 
@@ -119,7 +119,7 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 		BDDAssertions.then(new File(this.project,
 				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
 				.exists();
-		BDDAssertions.then(outputCapture.toString()).contains(
+		BDDAssertions.then(this.outputCapture.toString()).contains(
 				"Passed username and password - will set a custom credentials provider");
 	}
 
@@ -147,7 +147,7 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 		BDDAssertions.then(new File(this.project,
 				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
 				.exists();
-		BDDAssertions.then(outputCapture.toString()).contains(
+		BDDAssertions.then(this.outputCapture.toString()).contains(
 				"Passed username and password - will set a custom credentials provider");
 	}
 

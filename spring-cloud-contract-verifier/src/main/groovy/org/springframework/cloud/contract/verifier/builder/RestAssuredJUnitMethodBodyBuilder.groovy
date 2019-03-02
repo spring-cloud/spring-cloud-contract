@@ -1,23 +1,26 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -26,7 +29,6 @@ import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
-import java.util.regex.Pattern
 /**
  * A {@link JUnitMethodBodyBuilder} implementation that uses Rest Assured.
  *
@@ -39,7 +41,7 @@ import java.util.regex.Pattern
 class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	RestAssuredJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties,
-									GeneratedClassDataForMethod classDataForMethod) {
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
@@ -79,9 +81,11 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			blockBuilder.addLine("assertThat(response.header(\"$property\"))." +
+			blockBuilder.addLine("assertThat(response.header(\"$property\"))."
+					+
 					"${createMatchesMethod((value as NotToEscapePattern).serverValue.pattern().replace("\\", "\\\\"))};")
-		} else {
+		}
+		else {
 			// fallback
 			processHeaderElement(blockBuilder, property, value.toString())
 		}
@@ -89,17 +93,20 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
-		blockBuilder.addLine("assertThat(response.header(\"$property\")).${createHeaderComparison(value)}")
+		blockBuilder.
+				addLine("assertThat(response.header(\"$property\")).${createHeaderComparison(value)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number value) {
-		blockBuilder.addLine("assertThat(response.header(\"$property\")).isEqualTo(${value});")
+		blockBuilder.
+				addLine("assertThat(response.header(\"$property\")).isEqualTo(${value});")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
-		blockBuilder.addLine("assertThat(response.header(\"$property\")).${createHeaderComparison(pattern)}")
+		blockBuilder.
+				addLine("assertThat(response.header(\"$property\")).${createHeaderComparison(pattern)}")
 	}
 
 	@Override
@@ -110,12 +117,14 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
 		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).isNotNull();")
-		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).${createCookieComparison(pattern)}")
+		blockBuilder.
+				addLine("assertThat(response.getCookie(\"$key\")).${createCookieComparison(pattern)}")
 	}
 
 	@Override
 	protected void processCookieElement(BlockBuilder blockBuilder, String key, String value) {
 		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).isNotNull();")
-		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).${createCookieComparison(value)}")
+		blockBuilder.
+				addLine("assertThat(response.getCookie(\"$key\")).${createCookieComparison(value)}")
 	}
 }

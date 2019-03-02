@@ -1,6 +1,23 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+
 import org.springframework.cloud.contract.spec.ContractTemplate
 
 /**
@@ -54,8 +71,7 @@ class FromRequest {
 	}
 
 	/**
-	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}
-	 * @param index
+	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}* @param index
 	 */
 	DslProperty path(int index) {
 		return new DslProperty(template.escapedPath(index))
@@ -131,8 +147,7 @@ class FromRequest {
 	}
 
 	/**
-	 * Unescaped nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}
-	 * @param index
+	 * Unescaped nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}* @param index
 	 */
 	DslProperty rawPath(int index) {
 		return new DslProperty(template.path(index))

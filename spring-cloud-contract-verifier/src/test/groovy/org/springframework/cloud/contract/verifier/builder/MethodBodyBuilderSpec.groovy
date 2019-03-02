@@ -36,7 +36,8 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 	@Rule
 	OutputCapture capture = new OutputCapture()
 
-	@Shared GeneratedClassDataForMethod classDataForMethod = new GeneratedClassDataForMethod(
+	@Shared
+	GeneratedClassDataForMethod classDataForMethod = new GeneratedClassDataForMethod(
 			new SingleTestGenerator.GeneratedClassData("ClassName", "com.example",
 					new File("target/test.java").toPath()),
 			"some_method"
@@ -110,7 +111,12 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		and:
 			LinkedList<String> lines = [] as LinkedList<String>
 			test.eachLine {
-				if (it.contains("assertThatJson") || it.contains("assertThat((String")) lines << it else it
+				if (it.contains("assertThatJson") || it.contains("assertThat((String")) {
+					lines << it
+				}
+				else {
+					it
+				}
 			}
 			lines.addFirst(jsonSample)
 			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
@@ -231,7 +237,14 @@ DocumentContext parsedJson = JsonPath.parse(json);
 '''
 		and:
 			LinkedList<String> lines = [] as LinkedList<String>
-			test.eachLine { if (it.contains('"foo".equals')) lines << it else it }
+			test.eachLine {
+				if (it.contains('"foo".equals')) {
+					lines << it
+				}
+				else {
+					it
+				}
+			}
 			lines.addFirst(jsonSample)
 			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
@@ -278,13 +291,22 @@ DocumentContext parsedJson = JsonPath.parse(json);
 '''
 		and:
 			LinkedList<String> lines = [] as LinkedList<String>
-			test.eachLine { if (it.contains('assertThatJson')) lines << it else it }
+			test.eachLine {
+				if (it.contains('assertThatJson')) {
+					lines << it
+				}
+				else {
+					it
+				}
+			}
 			lines.addFirst(jsonSample)
 			try {
 				SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
-			} catch (IllegalStateException e) {
+			}
+			catch (IllegalStateException e) {
 				assert e.message.contains("Parsed JSON [{}] doesn't match the JSON path")
-			} catch (InvocationTargetException e1) {
+			}
+			catch (InvocationTargetException e1) {
 				assert e1.cause.message.contains("Parsed JSON [{}] doesn't match the JSON path")
 			}
 		where:
@@ -364,7 +386,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 			asserter(test)
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | asserter
+			methodBuilderName                                             | methodBuilder                                                                                                   | asserter
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }        | { String testBody -> testBody.contains("response.header('Content-Length') == 4") && testBody.contains("response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/pdf.*')") }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                      | { String testBody -> testBody.contains('assertThat(response.header("Content-Length")).isEqualTo(4);') && testBody.contains('assertThat(response.header("Content-Type")).matches("application/pdf.*");') }
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String testBody -> testBody.contains("response.getHeaderString('Content-Length') == 4") && testBody.contains("  response.getHeaderString('Content-Type') ==~ java.util.regex.Pattern.compile('application/pdf.*')") }
@@ -466,7 +488,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                                             | methodBuilder                                                                               | responseAsserter
+			methodBuilderName                                             | methodBuilder                                                                                                   | responseAsserter
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }        | { String string -> string.contains('responseBody == "My name"') }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }                      | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
 			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String string -> string.contains('responseBody == "My name"') }
@@ -1187,8 +1209,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body(
 							[
 									content: [
-											one: "two",
-											two: "two",
+											one  : "two",
+											two  : "two",
 											three: [
 													six: "seven"
 											]
@@ -1260,6 +1282,42 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+	}
+
+	@Issue("#892")
+	def "should not unnecessarily escape non json body [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method GET()
+					url $(consumer(regex("/api/v1/files/" + uuid())),
+							producer("/api/v1/files/b0683f29-741a-4178-b5c6-6e62202e3cf1"))
+				}
+				response {
+					status OK()
+					body($(consumer("some-content"), producer(regex(nonBlank()))))
+					headers {
+						header(contentLength(), $(consumer(2647691), producer(regex(positiveInt()))))
+						header(contentType(), $(consumer(applicationOctetStream()), producer(regex(nonBlank()))))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+			asserter(test)
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder | asserter
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String testContent -> assert testContent.contains('''response.header('Content-Length') ==~ java.util.regex.Pattern.compile('([1-9]\\\\d*)')''') && testContent.contains('''response.header('Content-Type') ==~ java.util.regex.Pattern.compile('^\\\\s*\\\\S[\\\\S\\\\s]*')'''); return true }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) } | { String testContent -> assert testContent.contains('''assertThat(response.header("Content-Type")).matches("^\\\\s*\\\\S[\\\\S\\\\s]*")''') && testContent.contains('''assertThat(response.header("Content-Length")).matches("([1-9]\\\\d*)")'''); return true }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } |  { String testContent -> assert testContent.contains('''response.getHeaderString('Content-Length') ==~ java.util.regex.Pattern.compile('([1-9]\\\\d*)')''') && testContent.contains('''response.getHeaderString('Content-Type') ==~ java.util.regex.Pattern.compile('^\\\\s*\\\\S[\\\\S\\\\s]*')'''); return true }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) } | { String testContent -> assert testContent.contains('''assertThat(response.getHeaderString("Content-Type")).matches("^\\\\s*\\\\S[\\\\S\\\\s]*")''') && testContent.contains('''assertThat(response.getHeaderString("Content-Length")).matches("([1-9]\\\\d*)")'''); return true }
 	}
 
 }

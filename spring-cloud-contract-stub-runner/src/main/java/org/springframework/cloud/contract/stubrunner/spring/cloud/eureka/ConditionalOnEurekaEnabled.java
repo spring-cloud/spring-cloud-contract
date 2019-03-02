@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 /**
- * Conditional that checks if Eureka is enabled
+ * Conditional that checks if Eureka is enabled.
  *
  * @author Marcin Grzejszczak
  *

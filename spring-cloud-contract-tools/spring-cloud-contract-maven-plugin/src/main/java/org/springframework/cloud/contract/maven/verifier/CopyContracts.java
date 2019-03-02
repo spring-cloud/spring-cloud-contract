@@ -1,18 +1,19 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
@@ -27,9 +28,11 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 
 class CopyContracts {
+
 	private static final Log log = LogFactory.getLog(CopyContracts.class);
 
 	private final MavenProject project;
@@ -51,9 +54,9 @@ class CopyContracts {
 
 	public void copy(File contractsDirectory, File outputDirectory)
 			throws MojoExecutionException {
-		log.info("Copying Spring Cloud Contract Verifier contracts to ["+ outputDirectory + "]"
-				+ ". Only files matching [" + this.config.getIncludedContracts() + "] pattern will end up in "
-				+ "the final JAR with stubs.");
+		log.info("Copying Spring Cloud Contract Verifier contracts to [" + outputDirectory
+				+ "]" + ". Only files matching [" + this.config.getIncludedContracts()
+				+ "] pattern will end up in " + "the final JAR with stubs.");
 		Resource resource = new Resource();
 		String includedRootFolderAntPattern = this.config
 				.getIncludedRootFolderAntPattern() + "*.*";

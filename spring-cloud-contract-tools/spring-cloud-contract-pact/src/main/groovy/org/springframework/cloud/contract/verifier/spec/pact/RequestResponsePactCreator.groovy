@@ -1,18 +1,19 @@
 /*
- *  Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
@@ -23,6 +24,7 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.model.RequestResponsePact
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.DslProperty
@@ -77,12 +79,17 @@ class RequestResponsePactCreator {
 
 	private void traverseValues(def value, Closure dslPropertyValueExtractor, Closure closure) {
 		if (value instanceof DslProperty) {
-			traverseValues(dslPropertyValueExtractor(value), dslPropertyValueExtractor, closure)
-		} else if (value instanceof Map) {
-			value.values().forEach({traverseValues(it, dslPropertyValueExtractor, closure)})
-		} else if (value instanceof Collection) {
-			value.forEach({traverseValues(it, dslPropertyValueExtractor, closure)})
-		} else {
+			traverseValues(
+					dslPropertyValueExtractor(value), dslPropertyValueExtractor, closure)
+		}
+		else if (value instanceof Map) {
+			value.values().
+					forEach({ traverseValues(it, dslPropertyValueExtractor, closure) })
+		}
+		else if (value instanceof Collection) {
+			value.forEach({ traverseValues(it, dslPropertyValueExtractor, closure) })
+		}
+		else {
 			closure(value)
 		}
 	}
@@ -103,11 +110,14 @@ class RequestResponsePactCreator {
 			}
 		}
 		if (request.body) {
-			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, { DslProperty property -> property.serverValue })
+			DslPart pactRequestBody = BodyConverter.
+					toPactBody(request.body, { DslProperty property -> property.serverValue })
 			if (request.bodyMatchers) {
-				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.bodyMatchers))
+				pactRequestBody.setMatchers(MatchingRulesConverter.
+						matchingRulesForBody(request.bodyMatchers))
 			}
-			pactRequestBody.setGenerators(ValueGeneratorConverter.extract(request.body, { DslProperty dslProperty -> dslProperty.clientValue }))
+			pactRequestBody.setGenerators(ValueGeneratorConverter.
+					extract(request.body, { DslProperty dslProperty -> dslProperty.clientValue }))
 			pactDslRequest = pactDslRequest.body(pactRequestBody)
 		}
 		return pactDslRequest
@@ -129,11 +139,14 @@ class RequestResponsePactCreator {
 			}
 		}
 		if (request.body) {
-			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, { DslProperty property -> property.serverValue })
+			DslPart pactRequestBody = BodyConverter.
+					toPactBody(request.body, { DslProperty property -> property.serverValue })
 			if (request.bodyMatchers) {
-				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.bodyMatchers))
+				pactRequestBody.setMatchers(MatchingRulesConverter.
+						matchingRulesForBody(request.bodyMatchers))
 			}
-			pactRequestBody.setGenerators(ValueGeneratorConverter.extract(request.body, { DslProperty dslProperty -> dslProperty.clientValue }))
+			pactRequestBody.setGenerators(ValueGeneratorConverter.
+					extract(request.body, { DslProperty dslProperty -> dslProperty.clientValue }))
 			pactDslRequest = pactDslRequest.body(pactRequestBody)
 		}
 		return pactDslRequest
@@ -142,18 +155,21 @@ class RequestResponsePactCreator {
 	private PactDslResponse createPactDslResponse(Contract contract, PactDslRequestWithPath pactDslRequest) {
 		Response response = contract.response
 		PactDslResponse pactDslResponse = pactDslRequest.willRespondWith()
-				.status(response.status.clientValue as Integer)
+														.status(response.status.clientValue as Integer)
 		if (response.headers) {
 			response.headers.entries.each { Header header ->
 				pactDslResponse = processHeader(pactDslResponse, header)
 			}
 		}
 		if (response.body) {
-			DslPart pactResponseBody = BodyConverter.toPactBody(response.body, { DslProperty property -> property.clientValue })
+			DslPart pactResponseBody = BodyConverter.
+					toPactBody(response.body, { DslProperty property -> property.clientValue })
 			if (response.bodyMatchers) {
-				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.bodyMatchers))
+				pactResponseBody.setMatchers(MatchingRulesConverter.
+						matchingRulesForBody(response.bodyMatchers))
 			}
-			pactResponseBody.setGenerators(ValueGeneratorConverter.extract(response.body, { DslProperty dslProperty -> dslProperty.serverValue }))
+			pactResponseBody.setGenerators(ValueGeneratorConverter.
+					extract(response.body, { DslProperty dslProperty -> dslProperty.serverValue }))
 			pactDslResponse = pactDslResponse.body(pactResponseBody)
 		}
 		return pactDslResponse
@@ -162,7 +178,8 @@ class RequestResponsePactCreator {
 	private String url(Request request) {
 		if (request.urlPath) {
 			return request.urlPath.serverValue.toString()
-		} else if (request.url) {
+		}
+		else if (request.url) {
 			return request.url.serverValue.toString()
 		}
 		throw new IllegalStateException("No url provided")
@@ -186,7 +203,8 @@ class RequestResponsePactCreator {
 	private QueryParameters queryParams(Request request) {
 		if (request.urlPath) {
 			return request.urlPath.queryParameters
-		} else if (request.url) {
+		}
+		else if (request.url) {
 			return request.url.queryParameters
 		}
 		throw new IllegalStateException("No url provided")
@@ -197,7 +215,8 @@ class RequestResponsePactCreator {
 		if (header.isSingleValue()) {
 			String value = getDslPropertyServerValue(header).toString()
 			return pactDslRequest.headers(header.name, value)
-		} else {
+		}
+		else {
 			String regex = getDslPropertyClientValue(header).toString()
 			String example = getDslPropertyServerValue(header).toString()
 			return pactDslRequest.matchHeader(header.name, regex, example)
@@ -207,8 +226,9 @@ class RequestResponsePactCreator {
 	private PactDslResponse processHeader(PactDslResponse pactDslResponse, Header header) {
 		if (header.isSingleValue()) {
 			String value = getDslPropertyClientValue(header).toString()
-			return pactDslResponse.headers([(header.name) : value])
-		} else {
+			return pactDslResponse.headers([(header.name): value])
+		}
+		else {
 			String regex = getDslPropertyServerValue(header).toString()
 			String example = getDslPropertyClientValue(header).toString()
 			return pactDslResponse.matchHeader(header.name, regex, example)

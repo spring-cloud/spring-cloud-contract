@@ -23,13 +23,13 @@ request:
     </test>
   matchers:
     body:
-    - path: /test/duck/text()
-      type: by_regex
-      value: "[0-9]{10}"
-    - path: /test/duck/text()
-      type: by_equality
-    - path: /test/time/text()
-      type: by_time
+      - path: /test/duck/text()
+        type: by_regex
+        value: "[0-9]{10}"
+      - path: /test/duck/text()
+        type: by_equality
+      - path: /test/time/text()
+        type: by_time
 response:
   status: 200
   headers:
@@ -54,15 +54,15 @@ response:
     </test>
   matchers:
     body:
-    - path: /test/duck/text()
-      type: by_regex
-      value: "[0-9]{10}"
-    - path: /test/duck/text()
-      type: by_command
-      value: "test($it)"
-    - path: /test/duck/xxx
-      type: by_null
-    - path: /test/duck/text()
-      type: by_equality
-    - path: /test/time/text()
-      type: by_time
+      - path: /test/duck/text()
+        type: by_regex
+        value: "[0-9]{10}"
+      - path: /test/duck/text()
+        type: by_command
+        value: "test($it)"
+      - path: /test/duck/xxx
+        type: by_null
+      - path: /test/duck/text()
+        type: by_equality
+      - path: /test/time/text()
+        type: by_time

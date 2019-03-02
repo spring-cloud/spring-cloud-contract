@@ -52,8 +52,9 @@
 			<item name="Configuration snippets" href="configs.html"/>
 		</menu>
 		<menu name="Related Projects">
-			<item name="Spring Cloud Contract" href="https://github.com/spring-cloud/spring-cloud-contract"/>
+			<item name="Spring Cloud Contract"
+				  href="https://github.com/spring-cloud/spring-cloud-contract"/>
 		</menu>
-		<menu ref="reports" />
+		<menu ref="reports"/>
 	</body>
 </project>

@@ -1,18 +1,17 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.example.loan;
@@ -39,8 +38,8 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties="service.port=${wiremock.server.port}")
-@AutoConfigureWireMock(port=0)
+@SpringBootTest(properties = "service.port=${wiremock.server.port}")
+@AutoConfigureWireMock(port = 0)
 public class XmlServiceTests {
 
 	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/should_return_empty_content.json")
@@ -54,11 +53,13 @@ public class XmlServiceTests {
 
 	@Test
 	public void shouldSuccessfullyReturnFullResponse() throws Exception {
-		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
-				full.getInputStream(), Charset.forName("UTF-8"))));
+		server.addStubMapping(StubMapping.buildFrom(StreamUtils
+				.copyToString(full.getInputStream(), Charset.forName("UTF-8"))));
 
-		ResponseEntity<XmlResponseBody> responseEntity = new RestTemplate().exchange(
-				RequestEntity.post(URI.create("http://localhost:" + server.port() + "/xmlfraud"))
+		ResponseEntity<XmlResponseBody> responseEntity = new RestTemplate()
+				.exchange(RequestEntity
+						.post(URI.create(
+								"http://localhost:" + server.port() + "/xmlfraud"))
 						.contentType(MediaType.valueOf("application/xml;charset=UTF-8"))
 						.body(new XmlRequestBody("foo")), XmlResponseBody.class);
 
@@ -68,11 +69,13 @@ public class XmlServiceTests {
 
 	@Test
 	public void shouldSuccessfullyReturnEmptyResponse() throws Exception {
-		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
-				empty.getInputStream(), Charset.forName("UTF-8"))));
+		server.addStubMapping(StubMapping.buildFrom(StreamUtils
+				.copyToString(empty.getInputStream(), Charset.forName("UTF-8"))));
 
-		ResponseEntity<XmlResponseBody> responseEntity = new RestTemplate().exchange(
-				RequestEntity.post(URI.create("http://localhost:" + server.port() + "/xmlfraud"))
+		ResponseEntity<XmlResponseBody> responseEntity = new RestTemplate()
+				.exchange(RequestEntity
+						.post(URI.create(
+								"http://localhost:" + server.port() + "/xmlfraud"))
 						.contentType(MediaType.valueOf("application/xml;charset=UTF-8"))
 						.body(new XmlRequestBody("")), XmlResponseBody.class);
 
@@ -83,14 +86,17 @@ public class XmlServiceTests {
 }
 
 class XmlRequestBody {
+
 	public String name;
 
 	public XmlRequestBody(String name) {
 		this.name = name;
 	}
+
 }
 
 class XmlResponseBody {
+
 	public String status;
 
 	public XmlResponseBody(String status) {
@@ -99,4 +105,5 @@ class XmlResponseBody {
 
 	public XmlResponseBody() {
 	}
+
 }

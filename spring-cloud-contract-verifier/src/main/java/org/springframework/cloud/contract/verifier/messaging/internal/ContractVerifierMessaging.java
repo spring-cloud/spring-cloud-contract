@@ -21,8 +21,12 @@ import java.util.Map;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
- * @author Dave Syer
+ * Wrapper around messaging. Abstracts all message related operations like sending,
+ * converting and receiving. Delegates the actual work to an implementation of a
+ * {@link MessageVerifier}.
  *
+ * @param <M> message type
+ * @author Dave Syer
  */
 public class ContractVerifierMessaging<M> {
 

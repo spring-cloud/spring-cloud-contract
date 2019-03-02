@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner
 
-import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.FileSystemResource
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.FileSystemResource
 
 class StubRunnerOptionsBuilderSpec extends Specification {
 
@@ -31,199 +31,199 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 	def shouldReturnURIOfAResourceFromString() {
 
 		given:
-		builder.withStubRepositoryRoot("classpath:/logback.xml")
+			builder.withStubRepositoryRoot("classpath:/logback.xml")
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getStubRepositoryRootAsString().startsWith("file:/")
-		options.getStubRepositoryRootAsString().endsWith("logback.xml")
+			options.getStubRepositoryRootAsString().startsWith("file:/")
+			options.getStubRepositoryRootAsString().endsWith("logback.xml")
 	}
 
 	def shouldReturnURIOfAResourceFromResource() {
 
 		given:
-		builder.withStubRepositoryRoot(new ClassPathResource("logback.xml"))
+			builder.withStubRepositoryRoot(new ClassPathResource("logback.xml"))
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getStubRepositoryRootAsString().startsWith("file:/")
-		options.getStubRepositoryRootAsString().endsWith("logback.xml")
+			options.getStubRepositoryRootAsString().startsWith("file:/")
+			options.getStubRepositoryRootAsString().endsWith("logback.xml")
 	}
 
 	def shouldReturnEmptyStringWhenFileNotFound() {
 
 		given:
-		builder.withStubRepositoryRoot(new ClassPathResource("fileThatDoesNotExist.xml"))
+			builder.withStubRepositoryRoot(new ClassPathResource("fileThatDoesNotExist.xml"))
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getStubRepositoryRootAsString() == ""
+			options.getStubRepositoryRootAsString() == ""
 	}
 
 	def shouldCreateDependenciesForStub() {
 
 		given:
-		builder.withStubs('foo:bar')
+			builder.withStubs('foo:bar')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[foo:bar:+:stubs]'
+			options.getDependencies().toString() == '[foo:bar:+:stubs]'
 	}
 
 	def shouldCreateDependenciesForStubWithSameGroupAndArtifactId() {
 
 		given:
-		builder.withStubs('foo:bar:1.0', 'foo:bar:2.0')
+			builder.withStubs('foo:bar:1.0', 'foo:bar:2.0')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[foo:bar:1.0:stubs, foo:bar:2.0:stubs]'
+			options.getDependencies().toString() == '[foo:bar:1.0:stubs, foo:bar:2.0:stubs]'
 	}
 
 	def shouldCreateDependenciesForMultipleStubsWithSameGroup() {
 
 		given:
-		builder.withStubs('foo:bar', 'foo:baz', 'foo:baz2')
+			builder.withStubs('foo:bar', 'foo:baz', 'foo:baz2')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[foo:bar:+:stubs, foo:baz:+:stubs, foo:baz2:+:stubs]'
+			options.getDependencies().toString() == '[foo:bar:+:stubs, foo:baz:+:stubs, foo:baz2:+:stubs]'
 	}
 
 	def shouldCreateDependenciesForMultipleStubsWithSameArtifactId() {
 
 		given:
-		builder.withStubs('bar:foo', 'baz:foo', 'baz2:foo')
+			builder.withStubs('bar:foo', 'baz:foo', 'baz2:foo')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
+			options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
 	}
 
 	def shouldCreateDependenciesForCommaSeparatedStubs() {
 
 		given:
-		builder.withStubs('foo:bar,bar:foo,foo:baz')
+			builder.withStubs('foo:bar,bar:foo,foo:baz')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().size() == 3
+			options.getDependencies().size() == 3
 	}
 
 	def shouldCreateDependenciesForCommaSeparatedStubsWithSameArtifact() {
 
 		given:
-		builder.withStubs('bar:foo,baz:foo,baz2:foo')
+			builder.withStubs('bar:foo,baz:foo,baz2:foo')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
+			options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
 	}
 
 	def shouldMapStubsWithPort() {
 
 		given:
-		builder.withStubs('foo:bar:8080')
+			builder.withStubs('foo:bar:8080')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getStubIdsToPortMapping().toString() == '[foo:bar:+:stubs:8080]'
+			options.getStubIdsToPortMapping().toString() == '[foo:bar:+:stubs:8080]'
 	}
 
 	def shouldCreateDependenciesWithVersion() {
 
 		given:
-		builder.withStubs('foo:1.2.3:bar')
+			builder.withStubs('foo:1.2.3:bar')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[foo:1.2.3:bar:stubs]'
+			options.getDependencies().toString() == '[foo:1.2.3:bar:stubs]'
 	}
 
 	def shouldCreateDependenciesWithClassifier() {
 
 		given:
-		builder.withStubs('foo:bar').withStubsClassifier('xxx')
+			builder.withStubs('foo:bar').withStubsClassifier('xxx')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[foo:bar:+:xxx]'
+			options.getDependencies().toString() == '[foo:bar:+:xxx]'
 	}
 
 	@Issue("#176")
 	def shouldCreateDependenciesWithEmptyPort() {
 
 		given:
-		builder.withStubs('groupId:artifactId:version:classifier:')
+			builder.withStubs('groupId:artifactId:version:classifier:')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[groupId:artifactId:version:classifier]'
+			options.getDependencies().toString() == '[groupId:artifactId:version:classifier]'
 	}
 
 	@Issue("#210")
 	def shouldCreateDependenciesWithVersionRange() {
 
 		given:
-		builder.withStubs('groupId:artifactId:[,0.0.1]:classifier','groupId2:artifactId2:[,0.0.2]:classifier2')
+			builder.withStubs('groupId:artifactId:[,0.0.1]:classifier', 'groupId2:artifactId2:[,0.0.2]:classifier2')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[groupId:artifactId:[,0.0.1]:classifier, groupId2:artifactId2:[,0.0.2]:classifier2]'
+			options.getDependencies().toString() == '[groupId:artifactId:[,0.0.1]:classifier, groupId2:artifactId2:[,0.0.2]:classifier2]'
 	}
 
 	@Issue("#210")
 	def shouldCreateDependenciesWithVersionRangeWhenSingleOneWasPassed() {
 
 		given:
-		builder.withStubs('groupId:artifactId:[,0.0.1]:classifier')
+			builder.withStubs('groupId:artifactId:[,0.0.1]:classifier')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[groupId:artifactId:[,0.0.1]:classifier]'
+			options.getDependencies().toString() == '[groupId:artifactId:[,0.0.1]:classifier]'
 	}
 
 	@Issue("#210")
 	def shouldCreateDependenciesWithVersionRangeWhenManyWerePassedInASingleLine() {
 
 		given:
-		builder.withStubs('groupId:artifactId:[,0.0.1]:classifier,groupId2:artifactId2:[,0.0.2]:classifier2')
+			builder.withStubs('groupId:artifactId:[,0.0.1]:classifier,groupId2:artifactId2:[,0.0.2]:classifier2')
 
 		when:
-		StubRunnerOptions options = builder.build()
+			StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().toString() == '[groupId2:artifactId2:[,0.0.2]:classifier2, groupId:artifactId:[,0.0.1]:classifier]'
+			options.getDependencies().toString() == '[groupId2:artifactId2:[,0.0.2]:classifier2, groupId:artifactId:[,0.0.1]:classifier]'
 	}
 
 	@Issue("#466")

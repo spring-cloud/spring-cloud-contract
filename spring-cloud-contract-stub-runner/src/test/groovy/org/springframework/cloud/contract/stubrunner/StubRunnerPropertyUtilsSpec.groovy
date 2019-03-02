@@ -107,7 +107,7 @@ class StubRunnerPropertyUtilsSpec extends Specification {
 			"foo.bar-baz" | [:]                    | "ab"           | "bc"        | true
 			"foo.bar-baz" | [:]                    | ""             | "bc"        | true
 			"foo.bar-baz" | null                   | ""             | "bc"        | true
-			"foo.bar-baz" | null                   | null           | null        | false          
+			"foo.bar-baz" | null                   | null           | null        | false
 	}
 
 	def cleanupSpec() {

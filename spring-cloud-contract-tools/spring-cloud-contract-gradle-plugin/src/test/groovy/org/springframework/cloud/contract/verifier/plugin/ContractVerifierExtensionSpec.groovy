@@ -62,7 +62,7 @@ class ContractVerifierExtensionSpec extends Specification {
 					contractsPath: "foo25",
 					contractsMode: StubRunnerProperties.StubsMode.CLASSPATH,
 					packageWithBaseClasses: "foo26",
-					baseClassMappings:  [foo27: "foo28"],
+					baseClassMappings: [foo27: "foo28"],
 					excludeBuildFolders: false,
 					deleteStubsAfterTest: false,
 					convertToYaml: false,
@@ -106,11 +106,11 @@ class ContractVerifierExtensionSpec extends Specification {
 				contractsPath = "bar25"
 				contractsMode = StubRunnerProperties.StubsMode.REMOTE
 				packageWithBaseClasses = "bar26"
-				baseClassMappings =  [bar27 : "bar28"]
+				baseClassMappings = [bar27: "bar28"]
 				excludeBuildFolders = true
 				deleteStubsAfterTest = true
 				convertToYaml = true
-				contractsProperties = [bar29 : "bar30"]
+				contractsProperties = [bar29: "bar30"]
 			}
 		then:
 			copy.testFramework == TestFramework.JUNIT5
@@ -144,10 +144,10 @@ class ContractVerifierExtensionSpec extends Specification {
 			copy.contractsPath == "foo25"
 			copy.contractsMode == StubRunnerProperties.StubsMode.CLASSPATH
 			copy.packageWithBaseClasses == "foo26"
-			copy.baseClassMappings ==  [foo27 : "foo28"]
+			copy.baseClassMappings == [foo27: "foo28"]
 			copy.excludeBuildFolders == false
 			copy.deleteStubsAfterTest == false
 			copy.convertToYaml == false
-			copy.contractsProperties == 	[foo29 : "foo30"]
+			copy.contractsProperties == [foo29: "foo30"]
 	}
 }

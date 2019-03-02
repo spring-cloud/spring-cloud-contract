@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner
@@ -26,28 +26,28 @@ class BatchStubRunnerSpec extends Specification {
 
 	def 'should provide stub URL from enclosed stub runner'() {
 		given:
-		BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
+			BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
 		expect:
-		batchStubRunner.findStubUrl(KNOWN_STUB_PATH) == KNOWN_STUB_URL
+			batchStubRunner.findStubUrl(KNOWN_STUB_PATH) == KNOWN_STUB_URL
 	}
 
 	def 'should throw an exception for unknown stub path'() {
 		given:
-		BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
+			BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
 		when:
-		batchStubRunner.findStubUrl(UNKNOWN_STUB_PATH)
+			batchStubRunner.findStubUrl(UNKNOWN_STUB_PATH)
 		then:
-		thrown(StubNotFoundException)
+			thrown(StubNotFoundException)
 	}
 
 	def 'should throw exception if trying to execute not available trigger'() {
 		given:
-		BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
+			BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
 		when:
-		batchStubRunner.trigger('non existing label')
+			batchStubRunner.trigger('non existing label')
 		then:
-		IllegalArgumentException exception = thrown(IllegalArgumentException)
-		exception.message == "No label with name [non existing label] was found. Here you have the list of dependencies and their labels [Dependency [a:b:c] has labels [foo]]"
+			IllegalArgumentException exception = thrown(IllegalArgumentException)
+			exception.message == "No label with name [non existing label] was found. Here you have the list of dependencies and their labels [Dependency [a:b:c] has labels [foo]]"
 	}
 
 	Collection<StubRunner> runners() {
@@ -55,7 +55,7 @@ class BatchStubRunnerSpec extends Specification {
 		runner.findStubUrl("group", "knownArtifact") >> KNOWN_STUB_URL
 		runner.findStubUrl("group:knownArtifact") >> KNOWN_STUB_URL
 		runner.findStubUrl("group:unknownArtifact") >> { throw new StubNotFoundException(UNKNOWN_STUB_PATH) }
-		runner.labels() >> ['a:b:c' : ['foo']]
+		runner.labels() >> ['a:b:c': ['foo']]
 		return [runner]
 	}
 

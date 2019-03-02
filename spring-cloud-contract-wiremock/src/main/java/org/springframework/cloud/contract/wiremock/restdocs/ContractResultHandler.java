@@ -70,6 +70,11 @@ import static wiremock.com.google.common.collect.FluentIterable.from;
 import static wiremock.com.google.common.collect.Lists.newArrayList;
 import static wiremock.com.google.common.io.ByteStreams.toByteArray;
 
+/**
+ * Converts a {@link MvcResult} to a WireMock response.
+ *
+ * @author Dave Syer
+ */
 public class ContractResultHandler extends
 		WireMockVerifyHelper<MvcResult, ContractResultHandler> implements ResultHandler {
 
@@ -131,6 +136,7 @@ public class ContractResultHandler extends
 				.getBody();
 		return body != null ? body : new byte[0];
 	}
+
 }
 
 // COPIED FROM WIREMOCK

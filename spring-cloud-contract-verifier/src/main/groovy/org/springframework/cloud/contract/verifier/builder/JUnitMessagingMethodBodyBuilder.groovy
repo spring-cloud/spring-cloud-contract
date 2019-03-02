@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -53,8 +53,8 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	JUnitMessagingMethodBodyBuilder(Contract stubDefinition,
-									ContractVerifierConfigProperties configProperties,
-									GeneratedClassDataForMethod classDataForMethod) {
+			ContractVerifierConfigProperties configProperties,
+			GeneratedClassDataForMethod classDataForMethod) {
 		super(stubDefinition, configProperties, classDataForMethod)
 	}
 
@@ -108,25 +108,29 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
 		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
-		blockBuilder.addLine("assertThat(response.getHeader(\"$property\").toString()).${createHeaderComparison(value)}")
+		blockBuilder.
+				addLine("assertThat(response.getHeader(\"$property\").toString()).${createHeaderComparison(value)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number value) {
 		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
-		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isEqualTo(${value});")
+		blockBuilder.
+				addLine("assertThat(response.getHeader(\"$property\")).isEqualTo(${value});")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
 		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
-		blockBuilder.addLine("assertThat(response.getHeader(\"$property\").toString()).${createHeaderComparison(pattern)}")
+		blockBuilder.
+				addLine("assertThat(response.getHeader(\"$property\").toString()).${createHeaderComparison(pattern)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
-		blockBuilder.addLine("${exec.insertValue("response.getHeader(\"$property\").toString()")};")
+		blockBuilder.
+				addLine("${exec.insertValue("response.getHeader(\"$property\").toString()")};")
 	}
 
 	@Override
@@ -149,7 +153,9 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
-		bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive(${sentToValue(outputMessage.sentTo.serverValue)});""")
+		bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive(${
+			sentToValue(outputMessage.sentTo.serverValue)
+		});""")
 		bb.addLine("""assertThat(response).isNotNull();""")
 		outputMessage.headers?.executeForEachHeader { Header header ->
 			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?

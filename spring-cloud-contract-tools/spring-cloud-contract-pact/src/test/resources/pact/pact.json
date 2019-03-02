@@ -13,7 +13,10 @@
         "method": "GET",
         "path": "/mallory",
         "query": "name=ron&status=good",
-        "body" : {"id": "123", "method": "create"},
+        "body": {
+          "id": "123",
+          "method": "create"
+        },
         "headers": {
           "Content-Type": "application/json"
         },

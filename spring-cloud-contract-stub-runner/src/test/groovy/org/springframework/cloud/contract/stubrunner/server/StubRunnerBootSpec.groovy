@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner.server
@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.stubrunner.StubRunning
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -35,7 +36,8 @@ import org.springframework.test.context.ContextConfiguration
 @ActiveProfiles("test")
 class StubRunnerBootSpec extends Specification {
 
-	@Autowired StubRunning stubRunning
+	@Autowired
+	StubRunning stubRunning
 
 	def setup() {
 		RestAssuredMockMvc.standaloneSetup(new HttpStubsController(stubRunning),
@@ -76,7 +78,7 @@ class StubRunnerBootSpec extends Specification {
 			String response = RestAssuredMockMvc.get('/triggers').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book", "return_book_1", "return_book_2"])
 	}
 
 	def 'should trigger a messaging label'() {

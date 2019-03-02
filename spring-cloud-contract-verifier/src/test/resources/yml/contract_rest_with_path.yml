@@ -6,7 +6,7 @@ ignored: true
 request:
   method: PUT
   urlPath: /foo
-#end::url_path[]
+  #end::url_path[]
   queryParameters:
     a: b
     b: c

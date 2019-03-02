@@ -1,22 +1,20 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
-
-import static java.util.Collections.emptyList;
 
 import java.util.List;
 
@@ -31,6 +29,7 @@ import org.springframework.amqp.support.converter.MessagingMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,9 +42,11 @@ import org.springframework.cloud.contract.verifier.messaging.stream.ContractVeri
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static java.util.Collections.emptyList;
+
 /**
  * Configuration setting up {@link MessageVerifier} for use with plain
- * spring-rabbit/spring-amqp
+ * spring-rabbit/spring-amqp.
  *
  * @author Mathias Düsterhöft
  * @since 1.0.2
@@ -69,12 +70,16 @@ public class ContractVerifierAmqpAutoConfiguration {
 	@Autowired(required = false)
 	private List<Binding> bindings = emptyList();
 
+	@Autowired
+	private RabbitProperties rabbitProperties;
+
 	@Bean
 	@ConditionalOnMissingBean
 	public MessageVerifier<Message> contractVerifierMessageExchange() {
 		return new SpringAmqpStubMessages(this.rabbitTemplate,
 				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry,
-						this.simpleMessageListenerContainers, this.bindings));
+						this.simpleMessageListenerContainers, this.bindings),
+				this.rabbitProperties);
 	}
 
 	@Bean
@@ -91,7 +96,7 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message> {
 
 	private final MessageConverter messageConverter;
 
-	public ContractVerifierHelper(MessageVerifier<Message> exchange,
+	ContractVerifierHelper(MessageVerifier<Message> exchange,
 			MessageConverter messageConverter) {
 		super(exchange);
 		this.messageConverter = messageConverter;
@@ -101,7 +106,8 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message> {
 	protected ContractVerifierMessage convert(Message message) {
 		MessagingMessageConverter messageConverter = new MessagingMessageConverter(
 				this.messageConverter, new SimpleAmqpHeaderMapper());
-		org.springframework.messaging.Message<?> messagingMessage = (org.springframework.messaging.Message<?>) messageConverter
+		org.springframework.messaging.Message<?> messagingMessage;
+		messagingMessage = (org.springframework.messaging.Message<?>) messageConverter
 				.fromMessage(message);
 		return new ContractVerifierMessage(messagingMessage.getPayload(),
 				messagingMessage.getHeaders());

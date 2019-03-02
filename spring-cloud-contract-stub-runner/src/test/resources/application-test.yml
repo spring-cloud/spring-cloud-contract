@@ -6,7 +6,7 @@ stubrunner:
     - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
     - org.springframework.cloud.contract.verifier.stubs:bootService
   stubs-mode: remote
-# end::test[]
+  # end::test[]
   cloud:
     enabled: false
 

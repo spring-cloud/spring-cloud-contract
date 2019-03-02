@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner;
@@ -28,7 +28,6 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
-import org.springframework.util.StringUtils;
 import shaded.org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import shaded.org.apache.maven.settings.Settings;
 import shaded.org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
@@ -44,7 +43,9 @@ import shaded.org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import shaded.org.eclipse.aether.transport.file.FileTransporterFactory;
 import shaded.org.eclipse.aether.transport.http.HttpTransporterFactory;
 
-class AetherFactories {
+import org.springframework.util.StringUtils;
+
+final class AetherFactories {
 
 	private static final Log log = LogFactory.getLog(AetherFactories.class);
 
@@ -55,6 +56,10 @@ class AetherFactories {
 	private static final String MAVEN_GLOBAL_SETTINGS_LOCATION = "org.apache.maven.global-settings";
 
 	private static final Random RANDOM = new Random();
+
+	private AetherFactories() {
+		throw new IllegalStateException("Can't instantiate a utility class");
+	}
 
 	public static RepositorySystem newRepositorySystem() {
 		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();

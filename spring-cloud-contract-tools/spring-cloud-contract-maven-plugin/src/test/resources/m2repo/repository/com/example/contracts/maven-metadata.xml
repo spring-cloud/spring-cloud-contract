@@ -16,13 +16,13 @@
   -->
 
 <metadata>
-  <groupId>com.example</groupId>
-  <artifactId>contracts</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <versioning>
-    <versions>
-      <version>0.0.1-SNAPSHOT</version>
-    </versions>
-    <lastUpdated>20160409062112</lastUpdated>
-  </versioning>
+	<groupId>com.example</groupId>
+	<artifactId>contracts</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<versioning>
+		<versions>
+			<version>0.0.1-SNAPSHOT</version>
+		</versions>
+		<lastUpdated>20160409062112</lastUpdated>
+	</versioning>
 </metadata>

@@ -60,7 +60,7 @@ import org.springframework.restdocs.snippet.Snippet;
  * @author Marcin Grzejszczak
  * @since 1.0.4
  */
-public class SpringCloudContractRestDocs {
+public final class SpringCloudContractRestDocs {
 
 	private SpringCloudContractRestDocs() {
 

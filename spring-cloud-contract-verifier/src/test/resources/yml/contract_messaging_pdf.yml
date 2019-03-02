@@ -1,11 +1,11 @@
 label: some_label
 input:
-    messageFrom: jms:input
-    messageBodyFromFileAsBytes: request.pdf
-    messageHeaders:
-        contentType: application/octet-stream
+  messageFrom: jms:input
+  messageBodyFromFileAsBytes: request.pdf
+  messageHeaders:
+    contentType: application/octet-stream
 outputMessage:
-    sentTo: jms:output
-    bodyFromFileAsBytes: response.pdf
-    headers:
-        contentType: application/octet-stream
+  sentTo: jms:output
+  bodyFromFileAsBytes: response.pdf
+  headers:
+    contentType: application/octet-stream

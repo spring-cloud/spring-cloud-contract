@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.wiremock.restdocs;
 
 import java.io.File;
@@ -39,17 +55,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class WireMockSnippetTests {
 
-	Operation operation;
-	RestDocumentationContext context;
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder();
+
+	Operation operation;
+
+	RestDocumentationContext context;
+
 	private File outputFolder;
 
 	@Before
 	public void setup() throws IOException {
 		this.outputFolder = this.tmp.newFolder();
-		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder
-				.getAbsolutePath());
+		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(
+				this.outputFolder.getAbsolutePath());
 		restDocumentation.beforeTest(this.getClass(), "method");
 		this.context = restDocumentation.beforeOperation();
 		this.operation = operation(request(), response(), this.context);
@@ -71,10 +90,9 @@ public class WireMockSnippetTests {
 	}
 
 	@Test
-	public void should_use_placeholders_in_stub_file_name()
-			throws Exception {
-		this.operation = operation("{method-name}/{step}",
-				request(), response(), this.context);
+	public void should_use_placeholders_in_stub_file_name() throws Exception {
+		this.operation = operation("{method-name}/{step}", request(), response(),
+				this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -90,7 +108,8 @@ public class WireMockSnippetTests {
 	@Test
 	public void should_use_equal_to_json_pattern_for_body_when_request_content_type_is_json_when_generating_stub()
 			throws Exception {
-		this.operation = operation(requestPostWithJsonContentType(), response(), this.context);
+		this.operation = operation(requestPostWithJsonContentType(), response(),
+				this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -108,7 +127,8 @@ public class WireMockSnippetTests {
 	@Test
 	public void should_use_equal_to_xml_pattern_for_body_when_request_content_type_is_xml_when_generating_stub()
 			throws Exception {
-		this.operation = operation(requestPostWithXmlContentType(), response(), this.context);
+		this.operation = operation(requestPostWithXmlContentType(), response(),
+				this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -139,13 +159,26 @@ public class WireMockSnippetTests {
 				.isEqualTo(HttpStatus.ACCEPTED.value());
 	}
 
+	@Test
+	public void should_accept_empty_value_for_query_params() throws IOException {
+		this.operation = operation(requestPostWithEmptyQueryParamValue(), response(),
+				this.context);
+		WireMockSnippet snippet = new WireMockSnippet();
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/foo.json");
+		assertThat(stub).exists();
+		WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+	}
+
 	private Operation operation(OperationRequest request, OperationResponse response,
 			RestDocumentationContext context) {
 		return operation("foo", request, response, context);
 	}
 
-	private Operation operation(String name, OperationRequest request, OperationResponse response,
-			RestDocumentationContext context) {
+	private Operation operation(String name, OperationRequest request,
+			OperationResponse response, RestDocumentationContext context) {
 		return new Operation() {
 
 			Map<String, Object> map = new HashMap<>();
@@ -354,8 +387,8 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpHeaders getHeaders() {
 				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders
-						.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
+						MediaType.APPLICATION_JSON_VALUE);
 				return httpHeaders;
 			}
 
@@ -385,4 +418,54 @@ public class WireMockSnippetTests {
 			}
 		};
 	}
+
+	private OperationRequest requestPostWithEmptyQueryParamValue() {
+		return new OperationRequest() {
+			@Override
+			public byte[] getContent() {
+				return new byte[0];
+			}
+
+			@Override
+			public String getContentAsString() {
+				return "";
+			}
+
+			@Override
+			public HttpHeaders getHeaders() {
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
+						MediaType.APPLICATION_JSON_VALUE);
+				return httpHeaders;
+			}
+
+			@Override
+			public HttpMethod getMethod() {
+				return HttpMethod.POST;
+			}
+
+			@Override
+			public Parameters getParameters() {
+				Parameters parameters = new Parameters();
+				parameters.put("myParam", Collections.singletonList(""));
+				return parameters;
+			}
+
+			@Override
+			public Collection<OperationRequestPart> getParts() {
+				return null;
+			}
+
+			@Override
+			public URI getUri() {
+				return URI.create("http://foo/bar?myParam=");
+			}
+
+			@Override
+			public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
+			}
+		};
+	}
+
 }

@@ -5,6 +5,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -18,13 +19,16 @@ public abstract class FraudBaseWithStandaloneSetup {
 	@Rule
 	public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
 
-	@Rule public TestName testName = new TestName();
+	@Rule
+	public TestName testName = new TestName();
 
 	@Before
 	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders.standaloneSetup(new FraudDetectionController())
+		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders
+				.standaloneSetup(new FraudDetectionController())
 				.apply(documentationConfiguration(this.restDocumentation))
-				.alwaysDo(document(getClass().getSimpleName() + "_" + testName.getMethodName())));
+				.alwaysDo(document(
+						getClass().getSimpleName() + "_" + testName.getMethodName())));
 	}
 
 }

@@ -1,15 +1,31 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.builder.handlebars
 
-import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WireMockHelpers
-import org.apache.commons.text.StringEscapeUtils
-import wiremock.com.github.jknack.handlebars.Helper
-import wiremock.com.github.jknack.handlebars.Options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel
+import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WireMockHelpers
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import groovy.transform.CompileStatic
+import wiremock.com.github.jknack.handlebars.Helper
+import wiremock.com.github.jknack.handlebars.Options
 
 import org.springframework.cloud.contract.verifier.builder.TestSideRequestTemplateModel
+
 /**
  * A Handlebars helper for the {@code jsonpath} helper function.
  *
@@ -31,11 +47,13 @@ class HandlebarsJsonPathHelper implements Helper<Object> {
 			Object model = oldContext.get(REQUEST_MODEL_NAME)
 			if (model instanceof TestSideRequestTemplateModel) {
 				return returnObjectForTest(model, jsonPath)
-			} else if (model instanceof RequestTemplateModel) {
+			}
+			else if (model instanceof RequestTemplateModel) {
 				return returnObjectForStub(model, jsonPath)
 			}
 			throw new IllegalArgumentException("Unsupported model")
-		} else if (context instanceof String) {
+		}
+		else if (context instanceof String) {
 			Object value = WireMockHelpers.jsonPath.apply(context, options)
 			if (testSideModel(options)) {
 				return processTestResponseValue(value)
@@ -55,7 +73,8 @@ class HandlebarsJsonPathHelper implements Helper<Object> {
 	}
 
 	private Object returnObjectForStub(Object model, String jsonPath) {
-		DocumentContext documentContext = JsonPath.parse(((RequestTemplateModel) model).body)
+		DocumentContext documentContext = JsonPath.
+				parse(((RequestTemplateModel) model).body)
 		return documentContext.read(jsonPath)
 	}
 

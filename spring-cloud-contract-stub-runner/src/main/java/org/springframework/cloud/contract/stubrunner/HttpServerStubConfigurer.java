@@ -17,24 +17,26 @@
 package org.springframework.cloud.contract.stubrunner;
 
 /**
- * Allows to perform additional configuration of the HTTP Server stub
+ * Allows to perform additional configuration of the HTTP Server stub.
  *
+ * @param <T> type of the stub configuration
  * @author Marcin Grzejszczak
  * @since 2.1.0
  */
 public interface HttpServerStubConfigurer<T> {
 
 	/**
-	 * Ensures that the HTTP server stub implementation configuration type is accepted
+	 * Ensures that the HTTP server stub implementation configuration type is accepted.
 	 * @param httpStubConfiguration - HTTP server stub implementation
 	 * @return {@code true} when this configurer can be applied for this object
 	 */
 	boolean isAccepted(Object httpStubConfiguration);
 
 	/**
-	 * Performs additional configuration of the HTTP Server Stub
+	 * Performs additional configuration of the HTTP Server Stub.
 	 * @param httpStubConfiguration - stub implementation to configure
 	 * @param httpServerStubConfiguration - Spring Cloud Contract stub configuration
+	 * @return the modified stub configuration
 	 */
 	default T configure(T httpStubConfiguration,
 			HttpServerStubConfiguration httpServerStubConfiguration) {
@@ -42,14 +44,17 @@ public interface HttpServerStubConfigurer<T> {
 	}
 
 	/**
-	 * Implementation that does nothing
+	 * Implementation that does nothing.
 	 */
 	class NoOpHttpServerStubConfigurer implements HttpServerStubConfigurer {
+
 		public static HttpServerStubConfigurer INSTANCE = new NoOpHttpServerStubConfigurer();
 
 		@Override
 		public boolean isAccepted(Object httpStubConfiguration) {
 			return false;
 		}
+
 	}
+
 }

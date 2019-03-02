@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.converter
 
 import groovy.transform.CompileStatic
+
 import org.springframework.cloud.contract.spec.ContractVerifierException
 
 /**

@@ -1,11 +1,11 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
@@ -24,6 +25,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.FileSystemUtils;
 
@@ -109,28 +111,27 @@ public class GitStubDownloaderTests {
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git/").getAbsolutePath() + "/")
+								+ file("/git_samples/contract-git/").getAbsolutePath()
+								+ "/")
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:+"));
+				.downloadAndUnpackStubJar(new StubConfiguration(
+						"com.example:beer-api-producer-external:+"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "1.0.0.BUILD-SNAPSHOT");
 
-		entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:latest"));
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.example:beer-api-producer-external:latest"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "1.0.0.BUILD-SNAPSHOT");
 
-		entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:LATEST"));
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.example:beer-api-producer-external:LATEST"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
@@ -145,20 +146,20 @@ public class GitStubDownloaderTests {
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git/").getAbsolutePath() + "/")
+								+ file("/git_samples/contract-git/").getAbsolutePath()
+								+ "/")
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:release"));
+				.downloadAndUnpackStubJar(new StubConfiguration(
+						"com.example:beer-api-producer-external:release"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "1.0.0.RELEASE");
 
-		entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:RELEASE"));
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.example:beer-api-producer-external:RELEASE"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
@@ -173,28 +174,28 @@ public class GitStubDownloaderTests {
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-predefined-names-git/").getAbsolutePath() + "/")
+								+ file("/git_samples/contract-predefined-names-git/")
+										.getAbsolutePath()
+								+ "/")
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:+"));
+				.downloadAndUnpackStubJar(new StubConfiguration(
+						"com.example:beer-api-producer-external:+"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "latest");
 
-		entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:latest"));
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.example:beer-api-producer-external:latest"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "latest");
 
-		entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:LATEST"));
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.example:beer-api-producer-external:LATEST"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
@@ -209,20 +210,21 @@ public class GitStubDownloaderTests {
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-predefined-names-git/").getAbsolutePath() + "/")
+								+ file("/git_samples/contract-predefined-names-git/")
+										.getAbsolutePath()
+								+ "/")
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:release"));
+				.downloadAndUnpackStubJar(new StubConfiguration(
+						"com.example:beer-api-producer-external:release"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "release");
 
-		entry = stubDownloader
-				.downloadAndUnpackStubJar(
-						new StubConfiguration("com.example:beer-api-producer-external:RELEASE"));
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.example:beer-api-producer-external:RELEASE"));
 
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
@@ -238,7 +240,7 @@ public class GitStubDownloaderTests {
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 						.withStubRepositoryRoot("git://"
 								+ file("/git_samples/contract-git").getAbsolutePath()
-						+ "/")
+								+ "/")
 						.withProperties(props()).build());
 
 		try {

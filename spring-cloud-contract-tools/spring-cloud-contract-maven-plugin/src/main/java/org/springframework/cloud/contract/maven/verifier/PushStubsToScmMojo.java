@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
 import org.springframework.cloud.contract.stubrunner.ContractProjectUpdater;
 import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
@@ -32,6 +34,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * The generated stubs get committed to the SCM repo and pushed to origin.
+ *
+ * @author Marcin Grzejszczak
  */
 @SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "pushStubsToScm")
@@ -44,13 +48,13 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	private File outputDirectory;
 
 	/**
-	 * Set this to "true" to bypass the whole Verifier execution
+	 * Set this to "true" to bypass the whole Verifier execution.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
 	private boolean skip;
 
 	/**
-	 * Set this to "true" to bypass only JAR creation
+	 * Set this to "true" to bypass only JAR creation.
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.publish-stubs-to-scm.skip", defaultValue = "false")
 	private boolean taskSkip;
@@ -73,27 +77,27 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	/**
 	 * The URL from which a contracts should get downloaded. If not provided but
 	 * artifactid / coordinates notation was provided then the current Maven's build
-	 * repositories will be taken into consideration
+	 * repositories will be taken into consideration.
 	 */
 	@Parameter(property = "contractsRepositoryUrl")
 	private String contractsRepositoryUrl;
 
 	/**
-	 * Picks the mode in which stubs will be found and registered
+	 * Picks the mode in which stubs will be found and registered.
 	 */
 	@Parameter(property = "contractsMode", defaultValue = "CLASSPATH")
 	private StubRunnerProperties.StubsMode contractsMode;
 
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
-	 * tests
+	 * tests.
 	 */
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
 	/**
 	 * Map of properties that can be passed to custom
-	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
@@ -109,8 +113,8 @@ public class PushStubsToScmMojo extends AbstractMojo {
 		}
 		if (StringUtils.isEmpty(this.contractsRepositoryUrl) || !ScmStubDownloaderBuilder
 				.isProtocolAccepted(this.contractsRepositoryUrl)) {
-			getLog().info(
-					"Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't match any of the accepted protocols");
+			getLog().info("Skipping pushing stubs to scm since your "
+					+ "[contractsRepositoryUrl] property doesn't match any of the accepted protocols");
 			return;
 		}
 		String projectName = this.project.getGroupId() + ":"
