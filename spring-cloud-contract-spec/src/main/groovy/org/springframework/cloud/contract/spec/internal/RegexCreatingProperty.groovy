@@ -38,6 +38,10 @@ interface RegexCreatingProperty<T extends DslProperty> {
 
 	T anyPositiveInt()
 
+	T anyLong()
+
+	T anyPositiveLong()
+
 	T anyDouble()
 
 	T anyHex()

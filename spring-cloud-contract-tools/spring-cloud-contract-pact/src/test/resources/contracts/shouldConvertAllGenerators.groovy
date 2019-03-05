@@ -22,6 +22,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url '/'
 		body([
 				someInteger     : $(c(anyInteger()), p(1234567890)),
+				someLong        : $(c(anyLong()), p(1234567890123)),
 				someDecimal     : $(c(anyDouble()), p(123.123)),
 				someHex         : $(c(anyHex()), p('DEADC0DE')),
 				someAlphaNumeric:
@@ -41,6 +42,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		status OK()
 		body([
 				someInteger     : $(c(1234567890), p(anyInteger())),
+				someLong        : $(c(1234567890123), p(anyLong())),
 				someDecimal     : $(c(123.123), p(anyDouble())),
 				someHex         : $(c('DEADC0DE'), p(anyHex())),
 				someAlphaNumeric:

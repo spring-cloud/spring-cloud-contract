@@ -77,9 +77,20 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 	}
 
 	@Override
+	T anyLong() {
+		return createAndValidateProperty(RegexPatterns.INTEGER, this.random.nextLong())
+	}
+
+	@Override
 	T anyPositiveInt() {
 		return createAndValidateProperty(RegexPatterns.POSITIVE_INT, Math.
 				abs(this.random.nextInt() + 1))
+	}
+
+	@Override
+	T anyPositiveLong() {
+		return createAndValidateProperty(RegexPatterns.POSITIVE_LONG, Math.
+				abs(this.random.nextLong() + 1))
 	}
 
 	@Override

@@ -39,9 +39,11 @@ class RegexPatterns {
 	protected static final Pattern ALPHA_NUMERIC = Pattern.compile('[a-zA-Z0-9]+')
 	protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 	protected static final Pattern NUMBER = Pattern.compile('-?(\\d*\\.\\d+|\\d+)')
-	protected static final Pattern INTEGER = Pattern.compile('-?(\\d+)')
+	// min is not Integer.MIN_VALUE, but -1_999_999_999 for simplicity
+	protected static final Pattern INTEGER = Pattern.compile('-?([1-9]\\d{0,9})')
 	// max is not Integer.MAX_VALUE (2_147_483_647), but 1_999_999_999 for simplicity
 	protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d{0,9})')
+	protected static final Pattern LONG = Pattern.compile('-?([1-9]\\d*)')
 	protected static final Pattern POSITIVE_LONG = Pattern.compile('([1-9]\\d*)')
 	protected static final Pattern DOUBLE = Pattern.compile('-?(\\d*\\.\\d+)')
 	protected static final Pattern HEX = Pattern.compile('[a-fA-F0-9]+')
@@ -96,6 +98,10 @@ class RegexPatterns {
 
 	RegexProperty anInteger() {
 		return new RegexProperty(INTEGER).asInteger()
+	}
+
+	RegexProperty aLong() {
+		return new RegexProperty(LONG).asInteger()
 	}
 
 	RegexProperty aDouble() {
