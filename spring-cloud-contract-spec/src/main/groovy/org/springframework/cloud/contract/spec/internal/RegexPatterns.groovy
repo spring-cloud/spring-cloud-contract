@@ -40,7 +40,9 @@ class RegexPatterns {
 	protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 	protected static final Pattern NUMBER = Pattern.compile('-?(\\d*\\.\\d+|\\d+)')
 	protected static final Pattern INTEGER = Pattern.compile('-?(\\d+)')
-	protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d*)')
+	// max is not Integer.MAX_VALUE (2_147_483_647), but 1_999_999_999 for simplicity
+	protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d{0,9})')
+	protected static final Pattern POSITIVE_LONG = Pattern.compile('([1-9]\\d*)')
 	protected static final Pattern DOUBLE = Pattern.compile('-?(\\d*\\.\\d+)')
 	protected static final Pattern HEX = Pattern.compile('[a-fA-F0-9]+')
 	protected static final Pattern IP_ADDRESS = Pattern.
@@ -82,6 +84,10 @@ class RegexPatterns {
 
 	RegexProperty positiveInt() {
 		return new RegexProperty(POSITIVE_INT).asInteger()
+	}
+
+	RegexProperty positiveLong() {
+		return new RegexProperty(POSITIVE_LONG).asLong()
 	}
 
 	RegexProperty anyBoolean() {
