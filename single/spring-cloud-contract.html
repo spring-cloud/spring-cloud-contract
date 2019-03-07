@@ -68,7 +68,7 @@ in place yet, so the automatically-generated contract tests fail.</p></td></tr><
 pass the stub artifact IDs and artifact repository URL as <code class="literal">Spring Cloud Contract
 Stub Runner</code> properties, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example:http-server-dsl:+:stubs:8080'</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: http://repo.spring.io/libs-snapshot</pre></li></ul></div><p>Now you can annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation,
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: https://repo.spring.io/libs-snapshot</pre></li></ul></div><p>Now you can annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation,
 provide the <code class="literal">group-id</code> and <code class="literal">artifact-id</code> values for <code class="literal">Spring Cloud Contract Stub Runner</code> to
 run the collaborators' stubs for you, as shown in the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment=WebEnvironment.NONE)</span></em>
@@ -248,7 +248,7 @@ in place, so the automatically-generated contract tests fail.</p></td></tr></tab
 pass the stub artifact IDs and artifact repository URl as <code class="literal">Spring Cloud Contract Stub
 Runner</code> properties, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example:http-server-dsl:+:stubs:8080'</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: http://repo.spring.io/libs-snapshot</pre></li></ul></div><p>Now you can annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation,
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: https://repo.spring.io/libs-snapshot</pre></li></ul></div><p>Now you can annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation,
 provide the <code class="literal">group-id</code> and <code class="literal">artifact-id</code> for <code class="literal">Spring Cloud Contract Stub Runner</code> to run
 the collaborators' stubs for you, as shown in the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment=WebEnvironment.NONE)</span></em>
@@ -491,9 +491,9 @@ following section to your build:</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting">repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 }</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consumer_side_loan_issuance" href="#_consumer_side_loan_issuance"></a>2.5.2&nbsp;Consumer side (Loan Issuance)</h3></div></div></div><p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server), you might do the following steps:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">Start doing TDD by writing a test for your feature.</li><li class="listitem">Write the missing implementation.</li><li class="listitem">Clone the Fraud Detection service repository locally.</li><li class="listitem">Define the contract locally in the repo of Fraud Detection service.</li><li class="listitem">Add the Spring Cloud Contract Verifier plugin.</li><li class="listitem">Run the integration tests.</li><li class="listitem">File a pull request.</li><li class="listitem">Create an initial implementation.</li><li class="listitem">Take over the pull request.</li><li class="listitem">Write the missing implementation.</li><li class="listitem">Deploy your app.</li><li class="listitem">Work online.</li></ol></div><p><span class="strong"><strong>Start doing TDD by writing a test for your feature.</strong></span></p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> shouldBeRejectedDueToAbnormalLoanAmount() {
@@ -841,7 +841,7 @@ side are automatically downloaded from Nexus/Artifactory. You can set the value 
 <code class="literal">stubsMode</code> to <code class="literal">REMOTE</code>. The following code shows an example of
 achieving the same thing by changing the properties.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example:http-server-dsl:+:stubs:8080'</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: http://repo.spring.io/libs-snapshot</pre><p>That&#8217;s it!</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_dependencies" href="#_dependencies"></a>2.6&nbsp;Dependencies</h2></div></div></div><p>The best way to add dependencies is to use the proper <code class="literal">starter</code> dependency.</p><p>For <code class="literal">stub-runner</code>, use <code class="literal">spring-cloud-starter-stub-runner</code>. When you use a plugin, add
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: https://repo.spring.io/libs-snapshot</pre><p>That&#8217;s it!</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_dependencies" href="#_dependencies"></a>2.6&nbsp;Dependencies</h2></div></div></div><p>The best way to add dependencies is to use the proper <code class="literal">starter</code> dependency.</p><p>For <code class="literal">stub-runner</code>, use <code class="literal">spring-cloud-starter-stub-runner</code>. When you use a plugin, add
 <code class="literal">spring-cloud-starter-contract-verifier</code>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_additional_links" href="#_additional_links"></a>2.7&nbsp;Additional Links</h2></div></div></div><p>Here are some resources related to Spring Cloud Contract Verifier and Stub Runner. Note
 that some may be outdated, because the Spring Cloud Contract Verifier project is under
 constant development.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_spring_cloud_contract_video" href="#_spring_cloud_contract_video"></a>2.7.1&nbsp;Spring Cloud Contract video</h3></div></div></div><p>You can check out the video from the Warsaw JUG about Spring Cloud Contract:</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_readings" href="#_readings"></a>2.7.2&nbsp;Readings</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="link" href="http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura" target="_top">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</a></li><li class="listitem"><a class="link" href="http://toomuchcoding.com/blog/categories/accurest/" target="_top">Accurest related articles from Marcin Grzejszczak&#8217;s blog</a></li><li class="listitem"><a class="link" href="http://toomuchcoding.com/blog/categories/spring-cloud-contract/" target="_top">Spring Cloud Contract related articles from Marcin Grzejszczak&#8217;s blog</a></li><li class="listitem"><a class="link" href="http://groovy-lang.org/json.html" target="_top">Groovy docs regarding JSON</a></li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_samples" href="#_samples"></a>2.8&nbsp;Samples</h2></div></div></div><p>You can find some samples at
@@ -1597,9 +1597,9 @@ which are automatically uploaded after every successful build, as shown here:</p
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 	}
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="gradle-add-stubs" href="#gradle-add-stubs"></a>4.1.5&nbsp;Add stubs</h3></div></div></div><p>By default, Spring Cloud Contract Verifier is looking for stubs in the
 <code class="literal">src/test/resources/contracts</code> directory.</p><p>The directory containing stub definitions is treated as a class name, and each stub
@@ -2555,9 +2555,9 @@ versions, which are automatically uploaded after every successful build:</p><p c
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 	}</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="publishing-stubs-as-jars" href="#publishing-stubs-as-jars"></a>6.2&nbsp;Publishing Stubs as JARs</h2></div></div></div><p>The easiest approach would be to centralize the way stubs are kept. For example, you can
 keep them as jars in a Maven repository.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>For both Maven and Gradle, the setup comes ready to work. However, you can customize
@@ -3253,7 +3253,7 @@ the Stub Runner server. It will be available at port <code class="literal">8750<
 }</pre><p>As you can see we want to start a Stub Runner Boot server <code class="literal">@EnableStubRunnerServer</code>, enable Eureka client <code class="literal">@EnableEurekaClient</code>
 and we want to have the stub runner feature turned on <code class="literal">@AutoConfigureStubRunner</code>.</p><p>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <code class="literal">java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</code> where
- <code class="literal">${SYSTEM_PROPS}</code> would contain the following list of properties</p><pre class="programlisting">* -Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (<span class="hl-number">1</span>)
+ <code class="literal">${SYSTEM_PROPS}</code> would contain the following list of properties</p><pre class="programlisting">* -Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (<span class="hl-number">1</span>)
 * -Dstubrunner.cloud.stubbed.discovery.enabled=false (<span class="hl-number">2</span>)
 * -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.
 * springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.

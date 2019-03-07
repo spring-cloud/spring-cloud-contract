@@ -249,7 +249,7 @@ pass the stub artifact IDs and artifact repository URL as <literal>Spring Cloud 
 Stub Runner</literal> properties, as shown in the following example:</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</programlisting>
 </listitem>
 </itemizedlist>
 <simpara>Now you can annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation,
@@ -518,7 +518,7 @@ pass the stub artifact IDs and artifact repository URl as <literal>Spring Cloud 
 Runner</literal> properties, as shown in the following example:</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</programlisting>
 </listitem>
 </itemizedlist>
 <simpara>Now you can annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation,
@@ -822,9 +822,9 @@ following section to your build:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/release" }
 }</programlisting>
 </para>
 </formalpara>
@@ -1351,7 +1351,7 @@ side are automatically downloaded from Nexus/Artifactory. You can set the value 
 achieving the same thing by changing the properties.</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</programlisting>
 <simpara>That&#8217;s it!</simpara>
 </section>
 </section>
@@ -2666,9 +2666,9 @@ which are automatically uploaded after every successful build, as shown here:</s
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}
 }</programlisting>
 </section>
@@ -4351,9 +4351,9 @@ versions, which are automatically uploaded after every successful build:</simpar
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}</programlisting>
 </para>
 </formalpara>
@@ -5401,7 +5401,7 @@ and we want to have the stub runner feature turned on <literal>@AutoConfigureStu
 <simpara>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <literal>java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</literal> where
  <literal>${SYSTEM_PROPS}</literal> would contain the following list of properties</simpara>
-<programlisting language="bash" linenumbering="unnumbered">* -Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+<programlisting language="bash" linenumbering="unnumbered">* -Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (1)
 * -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
 * -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.
 * springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.

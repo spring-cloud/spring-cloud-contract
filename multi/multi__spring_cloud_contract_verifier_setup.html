@@ -53,9 +53,9 @@ which are automatically uploaded after every successful build, as shown here:</p
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 	}
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="gradle-add-stubs" href="#gradle-add-stubs"></a>4.1.5&nbsp;Add stubs</h3></div></div></div><p>By default, Spring Cloud Contract Verifier is looking for stubs in the
 <code class="literal">src/test/resources/contracts</code> directory.</p><p>The directory containing stub definitions is treated as a class name, and each stub
