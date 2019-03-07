@@ -231,7 +231,7 @@ Stub Runner` properties, as shown in the following example:
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -562,7 +562,7 @@ Runner` properties, as shown in the following example:
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -896,9 +896,9 @@ following section to your build:
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/release" }
 }
 ----
 
@@ -1512,7 +1512,7 @@ achieving the same thing by changing the properties.
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 That's it!

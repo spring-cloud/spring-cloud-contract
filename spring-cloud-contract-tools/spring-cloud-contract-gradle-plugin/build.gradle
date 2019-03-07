@@ -49,10 +49,10 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	jcenter()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/libs-release-local" }
-	maven { url "http://repo.spring.io/libs-staging-local/" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/libs-release-local" }
+	maven { url "https://repo.spring.io/libs-staging-local/" }
 }
 
 //Dependencies in all subprojects - http://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
