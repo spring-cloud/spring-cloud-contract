@@ -34,3 +34,6 @@ target/
 
 interpolated-settings.xml
 interpolated-pom.xml
+
+**/bin/**
+samples/
