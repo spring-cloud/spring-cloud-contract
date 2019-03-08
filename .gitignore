@@ -41,3 +41,5 @@ hs_err_pid*
 interpolated-settings.xml
 interpolated-pom.xml
 dependency-reduced-pom.xml
+
+.vscode/
