@@ -33,6 +33,9 @@
 	<suppress files=".*RabbitManager.*" checks="LineLengthCheck"/>
 	<suppress files=".*GenerateTestsMojo.*" checks="LineLengthCheck"/>
 	<suppress files=".*StubRunnerBoot.*" checks="LineLengthCheck"/>
+	<suppress files=".*StubRunnerBoot.*" checks="HideUtilityClassConstructor"/>
+	<suppress files=".*StubRunnerBoot.*" checks="FinalClass"/>
+	<suppress files=".*StubRunnerMain.*" checks="FinalClass"/>
 	<suppress files=".*StubRunnerJUnit5ExtensionCustomMessageVerifierTests.*" checks="RegexpSinglelineJavaCheck"/>
 	<suppress files=".*StubRunnerJUnit5ExtensionExceptionThrowingTests.*" checks="RegexpSinglelineJavaCheck"/>
 	<suppress files=".*StubRunnerSliceTests.*" checks="LineLengthCheck"/>
