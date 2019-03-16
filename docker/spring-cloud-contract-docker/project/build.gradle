@@ -3,9 +3,9 @@ buildscript {
 		mavenLocal()
 		mavenCentral()
 		if (!"${verifierVersion}".contains("RELEASE")) {
-			maven { url "http://repo.spring.io/snapshot" }
-			maven { url "http://repo.spring.io/milestone" }
-			maven { url "http://repo.spring.io/release" }
+			maven { url "https://repo.spring.io/snapshot" }
+			maven { url "https://repo.spring.io/milestone" }
+			maven { url "https://repo.spring.io/release" }
 		}
 	}
 
@@ -22,9 +22,9 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	if (!"${verifierVersion}".contains("RELEASE")) {
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}
 }
 
