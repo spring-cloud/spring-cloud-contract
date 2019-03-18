@@ -51,8 +51,8 @@ class StubRunnerMessageRouter extends AbstractMessageRouter {
 			return Collections
 					.singleton((MessageChannel) this.beanFactory.getBean(channelName));
 		}
-		return Collections.singleton((MessageChannel) this.beanFactory
-				.getBean(StubRunnerStreamConfiguration.DummyMessageHandler.CHANNEL_NAME));
+		return Collections
+				.singleton((MessageChannel) this.beanFactory.getBean("nullChannel"));
 	}
 
 }

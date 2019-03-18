@@ -71,12 +71,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
-			<version>3.0.2</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>org.eclipse.sisu</groupId>
 			<artifactId>org.eclipse.sisu.plexus</artifactId>
 			<version>${org.eclipse.sisu.plexus.version}</version>
@@ -162,8 +156,6 @@
 								<filter>
 									<excludes>
 										<exclude>org/slf4j/</exclude>
-										<exclude>org/apache/commons/lang3/</exclude>
-										<exclude>com/google/common/base/</exclude>
 									</excludes>
 								</filter>
 							</filters>

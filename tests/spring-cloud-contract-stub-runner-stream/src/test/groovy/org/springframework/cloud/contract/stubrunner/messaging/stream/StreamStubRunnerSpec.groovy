@@ -38,7 +38,6 @@ import org.springframework.cloud.stream.messaging.Source
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -145,7 +144,7 @@ class StreamStubRunnerSpec extends Specification {
 			assertJsons(receivedMessage.payload)
 			receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
-
+	
 	def 'should trigger a label with no output message'() {
 		when:
 			// tag::trigger_no_output[]
