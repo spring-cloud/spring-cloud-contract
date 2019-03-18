@@ -451,9 +451,9 @@ following section to your build:</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting">repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 }</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consumer_side_loan_issuance" href="#_consumer_side_loan_issuance"></a>2.4.2&nbsp;Consumer side (Loan Issuance)</h3></div></div></div><p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server), you might do the following steps:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">Start doing TDD by writing a test for your feature.</li><li class="listitem">Write the missing implementation.</li><li class="listitem">Clone the Fraud Detection service repository locally.</li><li class="listitem">Define the contract locally in the repo of Fraud Detection service.</li><li class="listitem">Add the Spring Cloud Contract Verifier plugin.</li><li class="listitem">Run the integration tests.</li><li class="listitem">File a pull request.</li><li class="listitem">Create an initial implementation.</li><li class="listitem">Take over the pull request.</li><li class="listitem">Write the missing implementation.</li><li class="listitem">Deploy your app.</li><li class="listitem">Work online.</li></ol></div><p><span class="strong"><strong>Start doing TDD by writing a test for your feature.</strong></span></p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> shouldBeRejectedDueToAbnormalLoanAmount() {
