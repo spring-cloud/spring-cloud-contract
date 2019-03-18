@@ -10141,6 +10141,12 @@ for requests that follow a given pattern. Also, you can use regular expressions 
 need to use patterns and not exact values both for your test and your server side tests.</p>
 </div>
 <div class="paragraph">
+<p>Make sure that regex matches a whole region of a sequence as internally a call to
+<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html#matches--">Pattern.matches()</a>
+is called. For instance, <code>abc</code> pattern doesn&#8217;t match <code>aabc</code> string but <code>.abc</code> does.
+There are several additional <a href="#regex-limitations">known limitations</a> as well.</p>
+</div>
+<div class="paragraph">
 <p>The following example shows how to use regular expressions to write a request:</p>
 </div>
 <div class="listingblock">
@@ -10436,6 +10442,37 @@ T anyOf(String... values)</code></pre>
 		])
 	}
 }</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="regex-limitations"><a class="link" href="#regex-limitations">Limitations</a></h5>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Due to certain limitations of <code>Xeger</code> library that generates string out of
+regex, do not use <code>$</code> and <code>^</code> signs in your regex if you rely on automatic
+generation. <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/899">Issue 899</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Do not use <code>LocalDate</code> instance as a value for <code>$</code> like this <code>$(consumer(LocalDate.now()))</code>.
+It causes <code>java.lang.StackOverflowError</code>. Use <code>$(consumer(LocalDate.now().toString()))</code> instead.
+<a href="https://github.com/spring-cloud/spring-cloud-contract/issues/900">Issue 900</a>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
