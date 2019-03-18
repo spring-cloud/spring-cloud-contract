@@ -241,9 +241,9 @@ following section to your build:</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting">repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+	maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 }</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consumer_side_loan_issuance" href="#_consumer_side_loan_issuance"></a>2.4.2&nbsp;Consumer side (Loan Issuance)</h3></div></div></div><p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server), you might do the following steps:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">Start doing TDD by writing a test for your feature.</li><li class="listitem">Write the missing implementation.</li><li class="listitem">Clone the Fraud Detection service repository locally.</li><li class="listitem">Define the contract locally in the repo of Fraud Detection service.</li><li class="listitem">Add the Spring Cloud Contract Verifier plugin.</li><li class="listitem">Run the integration tests.</li><li class="listitem">File a pull request.</li><li class="listitem">Create an initial implementation.</li><li class="listitem">Take over the pull request.</li><li class="listitem">Write the missing implementation.</li><li class="listitem">Deploy your app.</li><li class="listitem">Work online.</li></ol></div><p><span class="strong"><strong>Start doing TDD by writing a test for your feature.</strong></span></p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> shouldBeRejectedDueToAbnormalLoanAmount() {
@@ -663,7 +663,7 @@ expectations of the 3 consumers (<code class="literal">client1</code>, <code cla
 contract files as described throughout this documentation. This repository has to produce a JAR file that maps
 one to one to the contents of the repo.</p><p>Example of a <code class="literal">pom.xml</code> inside the <code class="literal">server</code> folder.</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;modelVersion&gt;</span>4.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/modelVersion&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
@@ -772,7 +772,7 @@ one to one to the contents of the repo.</p><p>Example of a <code class="literal"
 Those poms are necessary for the consumer side to run <code class="literal">mvn clean install -DskipTests</code> to locally install
  stubs of the producer project.</p><p>The <code class="literal">pom.xml</code> in the root folder can look like this:</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
-		 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+		 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;modelVersion&gt;</span>4.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/modelVersion&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example.standalone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
@@ -913,9 +913,9 @@ which are automatically uploaded after every successful build, as shown here:</p
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 	}
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="gradle-add-stubs" href="#gradle-add-stubs"></a>4.1.5&nbsp;Add stubs</h3></div></div></div><p>By default, Spring Cloud Contract Verifier is looking for stubs in the
 <code class="literal">src/test/resources/contracts</code> directory.</p><p>The directory containing stub definitions is treated as a class name, and each stub
@@ -1785,9 +1785,9 @@ versions, which are automatically uploaded after every successful build:</p><p c
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
-		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
 	}</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_publishing_stubs_as_jars" href="#_publishing_stubs_as_jars"></a>6.2&nbsp;Publishing Stubs as JARs</h2></div></div></div><p>The easiest approach would be to centralize the way stubs are kept. For example, you can
 keep them as jars in a Maven repository.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>For both Maven and Gradle, the setup comes ready to work. However, you can customize
