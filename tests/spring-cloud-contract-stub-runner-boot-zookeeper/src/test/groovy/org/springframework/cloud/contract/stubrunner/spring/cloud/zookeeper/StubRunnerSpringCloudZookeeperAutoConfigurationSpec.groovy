@@ -75,8 +75,8 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
-			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+			restTemplate.getForObject('https://loanIssuance/name', String) == 'loanIssuance'
+			restTemplate.getForObject('https://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
 	def 'should have all apps registered in Service Discovery'() {

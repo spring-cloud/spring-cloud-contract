@@ -61,7 +61,7 @@ class Service {
 
 	private final RestTemplate restTemplate;
 
-	@Value("${app.baseUrl:http://example.org}")
+	@Value("${app.baseUrl:https://example.org}")
 	private String base;
 
 	Service(RestTemplate restTemplate) {
