@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?asciidoc-toc maxdepth="3"?>
 <?asciidoc-numbered?>
-<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
+<book xmlns="https://docbook.org/ns/docbook" xmlns:xl="https://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
 <date>2019-03-08</date>
@@ -695,7 +695,7 @@ You get a running WireMock instance/Messaging route that simulates the service.
 You would like to feed that instance with a proper stub definition.</simpara>
 <simpara>At some point in time, you need to send a request to the Fraud Detection service.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
-		"http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+		"https://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
 		new HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.class);</programlisting>
 <simpara>Annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
@@ -890,7 +890,7 @@ amount is received, the system should reject that loan application with some des
 that you need to send the request containing the ID of the client and the amount the
 client wants to borrow. You want to send it to the <literal>/fraudcheck</literal> url via the <literal>PUT</literal> method.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
-		"http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+		"https://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
 		new HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.class);</programlisting>
 <simpara>For simplicity, the port of the Fraud Detection service is set to <literal>8080</literal>, and the
 application runs on <literal>8090</literal>.</simpara>
@@ -1375,7 +1375,7 @@ constant development.</simpara>
 <title>Readings</title>
 <itemizedlist>
 <listitem>
-<simpara><link xl:href="http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</link></simpara>
+<simpara><link xl:href="https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</link></simpara>
 </listitem>
 <listitem>
 <simpara><link xl:href="http://toomuchcoding.com/blog/categories/accurest/">Accurest related articles from Marcin Grzejszczak&#8217;s blog</link></simpara>
@@ -1611,9 +1611,9 @@ contract files as described throughout this documentation. This repository has t
 one to one to the contents of the repo.</simpara>
 <simpara>Example of a <literal>pom.xml</literal> inside the <literal>server</literal> folder.</simpara>
 <programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+&lt;project xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="https://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
 	&lt;groupId&gt;com.example&lt;/groupId&gt;
@@ -1725,9 +1725,9 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
  stubs of the producer project.</simpara>
 <simpara>The <literal>pom.xml</literal> in the root folder can look like this:</simpara>
 <programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+&lt;project xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="https://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
 	&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -1769,9 +1769,9 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
 
 &lt;/project&gt;</programlisting>
 <simpara>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+<programlisting language="xml" linenumbering="unnumbered">&lt;assembly xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+		  xmlns="https://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+		  xsi:schemaLocation="https://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;project&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -1805,7 +1805,7 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
 consumer team clones the common repository, goes to the required producer&#8217;s folder (e.g. <literal>com/example/server</literal>)
 and runs <literal>mvn clean install -DskipTests</literal> to install locally the stubs converted from the contracts.</simpara>
 <tip>
-<simpara>You need to have <link xl:href="http://maven.apache.org/download.cgi">Maven installed locally</link></simpara>
+<simpara>You need to have <link xl:href="https://maven.apache.org/download.cgi">Maven installed locally</link></simpara>
 </tip>
 </section>
 <section xml:id="_producer">
@@ -1818,7 +1818,7 @@ of the JAR containing the contracts:</simpara>
 	&lt;configuration&gt;
 		&lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
 		&lt;contractsRepositoryUrl&gt;
-			http://link/to/your/nexus/or/artifactory/or/sth
+			https://link/to/your/nexus/or/artifactory/or/sth
 		&lt;/contractsRepositoryUrl&gt;
 		&lt;contractDependency&gt;
 			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -1827,7 +1827,7 @@ of the JAR containing the contracts:</simpara>
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</programlisting>
 <simpara>With this setup the JAR with groupid <literal>com.example.standalone</literal> and artifactid <literal>contracts</literal> will be downloaded
-from <literal><link xl:href="http://link/to/your/nexus/or/artifactory/or/sth">http://link/to/your/nexus/or/artifactory/or/sth</link></literal>. It will be then unpacked in a local temporary folder
+from <literal><link xl:href="https://link/to/your/nexus/or/artifactory/or/sth">https://link/to/your/nexus/or/artifactory/or/sth</link></literal>. It will be then unpacked in a local temporary folder
 and contracts present under the <literal>com/example/server</literal> will be picked as the ones used to generate the
 tests and the stubs. Due to this convention the producer team will know which consumer teams will be broken
 when some incompatible changes are done.</simpara>
@@ -1849,7 +1849,7 @@ allows us to do that. Also <literal><literal>contractsPath</literal></literal> n
    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
    &lt;configuration&gt;
       &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
-      &lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
+      &lt;contractsRepositoryUrl&gt;https://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
       &lt;contractDependency&gt;
          &lt;groupId&gt;com.example&lt;/groupId&gt;
          &lt;artifactId&gt;common-repo-with-contracts&lt;/artifactId&gt;
@@ -2315,7 +2315,7 @@ to find stub definitions and contracts. E.g. for <literal>com.example:foo:1.0.0<
 </section>
 <section xml:id="_can_i_use_the_pact_broker">
 <title>Can I use the Pact Broker?</title>
-<simpara>When using <link xl:href="http://pact.io/">Pact</link> you can use the <link xl:href="https://github.com/pact-foundation/pact_broker">Pact Broker</link>
+<simpara>When using <link xl:href="https://pact.io/">Pact</link> you can use the <link xl:href="https://github.com/pact-foundation/pact_broker">Pact Broker</link>
 to store and share Pact definitions. Starting from Spring Cloud Contract
 2.0.0 one can fetch Pact files from the Pact Broker to generate
 tests and stubs.</simpara>
@@ -2354,7 +2354,7 @@ Pact Broker. An example of such setup can be found <link xl:href="https://github
         &lt;!-- Base class mappings etc. --&gt;
 
         &lt;!-- We want to pick contracts from a Git repository --&gt;
-        &lt;contractsRepositoryUrl&gt;pact://http://localhost:8085&lt;/contractsRepositoryUrl&gt;
+        &lt;contractsRepositoryUrl&gt;pact://https://localhost:8085&lt;/contractsRepositoryUrl&gt;
 
         &lt;!-- We reuse the contract dependency section to set up the path
         to the folder that contains the contract definitions. In our case the
@@ -2401,7 +2401,7 @@ contracts {
 		stringNotation = "${project.group}:${project.name}:+"
 	}
 	contractRepository {
-		repositoryUrl = "pact://http://localhost:8085"
+		repositoryUrl = "pact://https://localhost:8085"
 	}
 	// The mode can't be classpath
 	contractsMode = "REMOTE"
@@ -2480,12 +2480,12 @@ dependencies {
 </para>
 </formalpara>
 <simpara>Next, just pass the URL of the Pact Broker to <literal>repositoryRoot</literal>, prefixed
-with <literal>pact://</literal> protocol. E.g. <literal>pact://http://localhost:8085</literal></simpara>
+with <literal>pact://</literal> protocol. E.g. <literal>pact://https://localhost:8085</literal></simpara>
 <programlisting language="java" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		ids = "com.example:beer-api-producer-pact",
-		repositoryRoot = "pact://http://localhost:8085")
+		repositoryRoot = "pact://https://localhost:8085")
 public class BeerControllerTest {
     //Inject the port of the running stub
     @StubRunnerPort("beer-api-producer-pact") int producerPort;
@@ -2599,7 +2599,7 @@ following sections:</simpara>
 Gradle or a Maven plugin.</simpara>
 <warning>
 <simpara>If you want to use Spock in your projects, you must add separately the
-<literal>spock-core</literal> and <literal>spock-spring</literal> modules. Check <link xl:href="http://spockframework.github.io/">Spock
+<literal>spock-core</literal> and <literal>spock-spring</literal> modules. Check <link xl:href="https://spockframework.github.io/">Spock
 docs for more information</link></simpara>
 </warning>
 </section>
@@ -3374,7 +3374,7 @@ public abstract class BaseTestClass {
 
 	@Before
 	public void setup() {
-		RestAssured.baseURI = "http://localhost:" + this.port;
+		RestAssured.baseURI = "https://localhost:" + this.port;
 	}
 }</programlisting>
 <simpara>If you use the <literal>JAXRSCLIENT</literal> mode, this base class should also contain a <literal>protected WebTarget webTarget</literal> field. Right
@@ -3708,7 +3708,7 @@ like them to be available for others to download / reference or reuse. In case
 of the JVM world those artifacts would be JARs, for Ruby these are gems
 and for Docker those would be Docker images. You can store those artifacts
 in a manager. Examples of such managers can be <link xl:href="https://jfrog.com/artifactory/">Artifactory</link>
-or <link xl:href="http://www.sonatype.org/nexus/">Nexus</link>.</simpara>
+or <link xl:href="https://www.sonatype.org/nexus/">Nexus</link>.</simpara>
 </listitem>
 </itemizedlist>
 </section>
@@ -3749,7 +3749,7 @@ your running application, to the Artifact manager instance etc.</simpara>
 <simpara><literal>PROJECT_NAME</literal> - artifact id. Defaults to <literal>example</literal></simpara>
 </listitem>
 <listitem>
-<simpara><literal>REPO_WITH_BINARIES_URL</literal> - URL of your Artifact Manager. Defaults to <literal><link xl:href="http://localhost:8081/artifactory/libs-release-local">http://localhost:8081/artifactory/libs-release-local</link></literal>
+<simpara><literal>REPO_WITH_BINARIES_URL</literal> - URL of your Artifact Manager. Defaults to <literal><link xl:href="https://localhost:8081/artifactory/libs-release-local">https://localhost:8081/artifactory/libs-release-local</link></literal>
 which is the default URL of <link xl:href="https://jfrog.com/artifactory/">Artifactory</link> running locally</simpara>
 </listitem>
 <listitem>
@@ -3779,7 +3779,7 @@ this feature you must set the <literal>EXTERNAL_CONTRACTS_ARTIFACT_ID</literal> 
 </listitem>
 <listitem>
 <simpara><literal>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</literal> - URL of your Artifact Manager. Defaults to value of <literal>REPO_WITH_BINARIES_URL</literal> env var.
-If that&#8217;s not set, defaults to <literal><link xl:href="http://localhost:8081/artifactory/libs-release-local">http://localhost:8081/artifactory/libs-release-local</link></literal>
+If that&#8217;s not set, defaults to <literal><link xl:href="https://localhost:8081/artifactory/libs-release-local">https://localhost:8081/artifactory/libs-release-local</link></literal>
 which is the default URL of <link xl:href="https://jfrog.com/artifactory/">Artifactory</link> running locally</simpara>
 </listitem>
 <listitem>
@@ -3884,8 +3884,8 @@ will be executed against the running application</simpara>
 </listitem>
 <listitem>
 <simpara>the stubs will be uploaded to Artifactory. You can check them out
-under <link xl:href="http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/">http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/</link> .
-The stubs will be here <link xl:href="http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar">http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar</link>.</simpara>
+under <link xl:href="https://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/">https://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/</link> .
+The stubs will be here <link xl:href="https://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar">https://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar</link>.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>To see how the client side looks like check out the <xref linkend="stubrunner-docker"/> section.</simpara>
@@ -4398,9 +4398,9 @@ it if you want to.</simpara>
 
 &lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;
 &lt;assembly
-	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+	xmlns="https://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;stubs&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -4466,7 +4466,7 @@ publishing {
 <section xml:id="_stub_runner_core">
 <title>Stub Runner Core</title>
 <simpara>Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of
-<link xl:href="http://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</link>.</simpara>
+<link xl:href="https://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</link>.</simpara>
 <simpara>Stub Runner allows you to automatically download the stubs of the provided dependencies (or pick those from the classpath), start WireMock servers for them and feed them with proper stub definitions.
 For messaging, special stub routes are defined.</simpara>
 <section xml:id="_retrieving_stubs">
@@ -4500,7 +4500,7 @@ For messaging, special stub routes are defined.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>Example:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095", stubsMode = StubRunnerProperties.StubsMode.LOCAL)</programlisting>
+<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="https://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095", stubsMode = StubRunnerProperties.StubsMode.LOCAL)</programlisting>
 </section>
 <section xml:id="_classpath_scanning">
 <title>Classpath scanning</title>
@@ -4710,7 +4710,7 @@ static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
 mappingsOutputFolder = "target/outputmappings/")</programlisting>
 <simpara>and for the JUnit approach like this:</simpara>
 <programlisting language="java" linenumbering="unnumbered">@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
-			.repoRoot("http://some_url")
+			.repoRoot("https://some_url")
 			.downloadStub("a.b.c", "loanIssuance")
 			.downloadStub("a.b.c:fraudDetectionServer")
 			.withMappingsOutputFolder("target/outputmappings")</programlisting>
@@ -4959,9 +4959,9 @@ public static void setupProps() {
 }</programlisting>
 <simpara>You can see that for this example the following test is valid:</simpara>
 <programlisting language="java" linenumbering="unnumbered">then(rule.findStubUrl("loanIssuance"))
-		.isEqualTo(URI.create("http://localhost:12345").toURL());
+		.isEqualTo(URI.create("https://localhost:12345").toURL());
 then(rule.findStubUrl("fraudDetectionServer"))
-		.isEqualTo(URI.create("http://localhost:12346").toURL());</programlisting>
+		.isEqualTo(URI.create("https://localhost:12346").toURL());</programlisting>
 </section>
 <section xml:id="_stub_runner_with_spring">
 <title>Stub Runner with Spring</title>
@@ -5162,8 +5162,8 @@ or <literal>DiscoveryClient</literal> directly, to call those stubbed servers in
 		"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 		"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 	and: 'Stubs can be reached via load service discovery'
-		restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-		restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+		restTemplate.getForObject('https://loanIssuance/name', String) == 'loanIssuance'
+		restTemplate.getForObject('https://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 }</programlisting>
 <simpara>for the following configuration file</simpara>
 <programlisting language="yml" linenumbering="unnumbered">stubrunner:
@@ -5234,7 +5234,7 @@ $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 </section>
 <section xml:id="_spring_cloud_cli">
 <title>Spring Cloud CLI</title>
-<simpara>Starting from <literal>1.4.0.RELEASE</literal> version of the <link xl:href="http://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</link>
+<simpara>Starting from <literal>1.4.0.RELEASE</literal> version of the <link xl:href="https://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</link>
 project you can start Stub Runner Boot by executing <literal>spring cloud stubrunner</literal>.</simpara>
 <simpara>In order to pass the configuration just create a <literal>stubrunner.yml</literal> file in the current working directory
 or a subdirectory called <literal>config</literal> or in <literal>~/.spring-cloud</literal>. The file could look like this
@@ -5663,9 +5663,9 @@ $ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITO
 <simpara>On the server side we built a stateful stub. Let&#8217;s use curl to assert
 that the stubs are setup properly.</simpara>
 <programlisting language="bash" linenumbering="unnumbered"># let's execute the first request (no response is returned)
-$ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "genre" : "Genre", "description" : "Description", "author" : "Author", "publisher" : "Publisher", "pages" : 100, "image_url" : "https://d213dhlpdb53mu.cloudfront.net/assets/pivotal-square-logo-41418bd391196c3022f3cd9f3959b3f6d7764c47873d858583384e759c7db435.svg", "buy_url" : "https://pivotal.io" }' http://localhost:9876/api/books
+$ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "genre" : "Genre", "description" : "Description", "author" : "Author", "publisher" : "Publisher", "pages" : 100, "image_url" : "https://d213dhlpdb53mu.cloudfront.net/assets/pivotal-square-logo-41418bd391196c3022f3cd9f3959b3f6d7764c47873d858583384e759c7db435.svg", "buy_url" : "https://pivotal.io" }' https://localhost:9876/api/books
 # Now time for the second request
-$ curl -X GET http://localhost:9876/api/books
+$ curl -X GET https://localhost:9876/api/books
 # You will receive contents of the JSON</programlisting>
 <important>
 <simpara>If you want use the stubs that you have built locally, on your host,
@@ -5968,13 +5968,13 @@ classpath. Remember to annotate your test class with <literal>@AutoConfigureStub
 }</programlisting>
 <simpara>and the following Spring Integration Route:</simpara>
 <programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;beans:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			 xmlns:beans="http://www.springframework.org/schema/beans"
-			 xmlns="http://www.springframework.org/schema/integration"
-			 xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
-			http://www.springframework.org/schema/integration
-			http://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
+&lt;beans:beans xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:beans="https://www.springframework.org/schema/beans"
+			 xmlns="https://www.springframework.org/schema/integration"
+			 xsi:schemaLocation="https://www.springframework.org/schema/beans
+			https://www.springframework.org/schema/beans/spring-beans.xsd
+			https://www.springframework.org/schema/integration
+			https://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
 
 
 	&lt;!-- REQUIRED FOR TESTING --&gt;
@@ -6754,7 +6754,7 @@ the recommended way, as doing so makes the tests <emphasis role="strong">host-in
 		method 'GET'
 
 		// Specifying `url` and `urlPath` in one contract is illegal.
-		url('http://localhost:8888/users')
+		url('https://localhost:8888/users')
 	}
 
 	response {
@@ -7679,7 +7679,7 @@ matches the JSON Path.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>If you&#8217;re using the YAML contract definition you have to use the
-<link xl:href="http://handlebarsjs.com/">Handlebars</link> <literal>{{{ }}}</literal> notation with custom, Spring Cloud Contract
+<link xl:href="https://handlebarsjs.com/">Handlebars</link> <literal>{{{ }}}</literal> notation with custom, Spring Cloud Contract
  functions to achieve this.</simpara>
 <itemizedlist>
 <listitem>
@@ -8779,7 +8779,7 @@ class ContextPathTestingBaseClass {
 
 	@Before
 	public void setup() {
-		RestAssured.baseURI = "http://localhost";
+		RestAssured.baseURI = "https://localhost";
 		RestAssured.port = this.port;
 	}
 }</programlisting>
@@ -10365,7 +10365,7 @@ public class WiremockForDocsTests {
 
 	@Before
 	public void setup() {
-		this.service.setBase("http://localhost:"
+		this.service.setBase("https://localhost:"
 				+ this.environment.getProperty("wiremock.server.port"));
 	}
 
@@ -10455,7 +10455,7 @@ public class WiremockForDocsClassRuleTests {
 
 	@Before
 	public void setup() {
-		this.service.setBase("http://localhost:" + wiremock.port());
+		this.service.setBase("https://localhost:" + wiremock.port());
 	}
 
 	// Using the WireMock APIs in the normal way:
@@ -10527,7 +10527,7 @@ public class WiremockForDocsMockServerApplicationTests {
 	public void contextLoads() throws Exception {
 		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.baseUrl("https://example.org").stubs("classpath:/stubs/resource.json")
 				.build();
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
@@ -10538,7 +10538,7 @@ public class WiremockForDocsMockServerApplicationTests {
 <simpara>The <literal>baseUrl</literal> value is prepended to all mock calls, and the <literal>stubs()</literal> method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 <literal>/stubs/resource.json</literal> is loaded into the mock server. If the <literal>RestTemplate</literal> is asked to
-visit <literal><link xl:href="http://example.org/">http://example.org/</link></literal>, it gets the responses as being declared at that URL. More
+visit <literal><link xl:href="https://example.org/">https://example.org/</link></literal>, it gets the responses as being declared at that URL. More
 than one stub pattern can be specified, and each one can be a directory (for a recursive
 list of all ".json"), a fixed filename (as in the example above), or an Ant-style
 pattern. The JSON format is the normal WireMock format, which you can read about in the
@@ -10824,9 +10824,9 @@ structure presented in the previous snippet.</simpara>
 &lt;!-- start of stub.xml--&gt;
 
 &lt;assembly
-	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+	xmlns="https://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;stubs&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
