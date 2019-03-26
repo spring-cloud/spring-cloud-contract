@@ -53,8 +53,8 @@ public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 		Release release = this.client.getRelease("spring-framework", "5.0.0.RC4");
 
 		then(release.releaseStatus).isEqualTo("PRERELEASE");
-		then(release.refDocUrl).isEqualTo("http://docs.spring.io/spring/docs/{version}/spring-framework-reference/");
-		then(release.apiDocUrl).isEqualTo("http://docs.spring.io/spring/docs/{version}/javadoc-api/");
+		then(release.refDocUrl).isEqualTo("https://docs.spring.io/spring/docs/{version}/spring-framework-reference/");
+		then(release.apiDocUrl).isEqualTo("https://docs.spring.io/spring/docs/{version}/javadoc-api/");
 		then(release.groupId).isEqualTo("org.springframework");
 		then(release.artifactId).isEqualTo("spring-context");
 		then(release.repository.id).isEqualTo("spring-milestones");
