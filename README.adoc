@@ -18,7 +18,7 @@ producers and consumers -- for both HTTP and message-based interactions.
 
 If you prefer to learn about the project by doing some tutorials, you can check out the
 workshops under
-http://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this link].
+https://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this link].
 
 === Spring Cloud Contract Verifier
 
@@ -221,7 +221,7 @@ Stub Runner` properties, as shown in the following example:
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -506,7 +506,7 @@ Runner` properties, as shown in the following example:
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -826,9 +826,9 @@ following section to your build:
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/release" }
 }
 ----
 
@@ -1409,7 +1409,7 @@ achieving the same thing by changing the properties.
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 That's it!
@@ -1435,7 +1435,7 @@ video::sAAklvxmPmk[youtube,start=538,width=640,height=480]
 
 ==== Readings
 
-- http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
+- https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
 - http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
 - http://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
 - http://groovy-lang.org/json.html[Groovy docs regarding JSON]
@@ -1669,7 +1669,7 @@ public class WiremockForDocsMockServerApplicationTests {
 	public void contextLoads() throws Exception {
 		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.baseUrl("https://example.org").stubs("classpath:/stubs/resource.json")
 				.build();
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
@@ -1681,7 +1681,7 @@ public class WiremockForDocsMockServerApplicationTests {
 The `baseUrl` value is prepended to all mock calls, and the `stubs()` method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 `/stubs/resource.json` is loaded into the mock server. If the `RestTemplate` is asked to
-visit `http://example.org/`, it gets the responses as being declared at that URL. More
+visit `https://example.org/`, it gets the responses as being declared at that URL. More
 than one stub pattern can be specified, and each one can be a directory (for a recursive
 list of all ".json"), a fixed filename (as in the example above), or an Ant-style
 pattern. The JSON format is the normal WireMock format, which you can read about in the
@@ -1974,7 +1974,7 @@ added after the original pull request but before a merge.
   `eclipse-code-formatter.xml` file from the
   https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-dependencies-parent/eclipse-code-formatter.xml[Spring
   Cloud Build] project. If using IntelliJ, you can use the
-  http://plugins.jetbrains.com/plugin/6546[Eclipse Code Formatter
+  https://plugins.jetbrains.com/plugin/6546[Eclipse Code Formatter
   Plugin] to import the same file.
 * Make sure all new `.java` files to have a simple Javadoc class comment with at least an
   `@author` tag identifying you, and preferably at least a paragraph on what the class is
@@ -1987,7 +1987,7 @@ added after the original pull request but before a merge.
 * A few unit tests would help a lot as well -- someone has to do it.
 * If no-one else is using your branch, please rebase it against the current master (or
   other target branch in the main project).
-* When writing a commit message please follow http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
+* When writing a commit message please follow https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
   if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
   message (where XXXX is the issue number).
 
