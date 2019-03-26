@@ -575,7 +575,7 @@ given name.
 matches the JSON Path.
 
 If you're using the YAML contract definition you have to use the
-http://handlebarsjs.com/[Handlebars] `{{{ }}}` notation with custom, Spring Cloud Contract
+https://handlebarsjs.com/[Handlebars] `{{{ }}}` notation with custom, Spring Cloud Contract
  functions to achieve this.
 
 * `{{{ request.url }}}`: Returns the request URL and query parameters.

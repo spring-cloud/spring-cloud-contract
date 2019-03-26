@@ -71,7 +71,7 @@ public class GitStubDownloaderTests {
 
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-				.withStubRepositoryRoot("http://foo.com")
+				.withStubRepositoryRoot("http://www.foo.com/")
 				.withProperties(props())
 				.build());
 

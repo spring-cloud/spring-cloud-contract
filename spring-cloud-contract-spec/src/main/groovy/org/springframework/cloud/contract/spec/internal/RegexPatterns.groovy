@@ -170,7 +170,7 @@ class UrlHelper {
 
 	// Examples: "fitbit.com", "22.231.113.64".
 	private static final String REGEX_HOST = "(?:" +
-			// @Author = http://www.regular-expressions.info/examples.html
+			// @Author = https://www.regular-expressions.info/examples.html
 			// IP address
 			"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" +
 			"|" +
