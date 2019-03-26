@@ -33,7 +33,7 @@ In order to use Spring Cloud Contract Verifier with WireMock, you muse use eithe
 Gradle or a Maven plugin.
 
 WARNING: If you want to use Spock in your projects, you must add separately the
-`spock-core` and `spock-spring` modules. Check http://spockframework.github.io/[Spock
+`spock-core` and `spock-spring` modules. Check https://spockframework.github.io/[Spock
 docs for more information]
 
 [[gradle-add-gradle-plugin]]
@@ -1041,7 +1041,7 @@ like them to be available for others to download / reference or reuse. In case
 of the JVM world those artifacts would be JARs, for Ruby these are gems
 and for Docker those would be Docker images. You can store those artifacts
 in a manager. Examples of such managers can be https://jfrog.com/artifactory/[Artifactory]
-or http://www.sonatype.org/nexus/[Nexus].
+or https://www.sonatype.org/nexus/[Nexus].
 
 ==== How it works
 

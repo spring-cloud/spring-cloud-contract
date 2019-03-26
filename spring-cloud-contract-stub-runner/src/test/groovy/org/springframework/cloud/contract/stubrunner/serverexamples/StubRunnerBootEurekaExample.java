@@ -42,7 +42,7 @@ public class StubRunnerBootEurekaExample {
 /*
 
 // tag::stubrunnereureka_args[]
--Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (1)
 -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
