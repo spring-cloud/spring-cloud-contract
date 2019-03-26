@@ -313,7 +313,7 @@ When the *consumer* wants to work on the contracts offline, instead of cloning t
 consumer team clones the common repository, goes to the required producer's folder (e.g. `com/example/server`)
 and runs `mvn clean install -DskipTests` to install locally the stubs converted from the contracts.
 
-TIP: You need to have http://maven.apache.org/download.cgi[Maven installed locally]
+TIP: You need to have https://maven.apache.org/download.cgi[Maven installed locally]
 
 ==== Producer
 
