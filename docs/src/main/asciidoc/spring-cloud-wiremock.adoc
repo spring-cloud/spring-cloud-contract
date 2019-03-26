@@ -152,7 +152,7 @@ include::{doc_samples}/src/test/java/com/example/WiremockForDocsMockServerApplic
 The `baseUrl` value is prepended to all mock calls, and the `stubs()` method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 `/stubs/resource.json` is loaded into the mock server. If the `RestTemplate` is asked to
-visit `http://example.org/`, it gets the responses as being declared at that URL. More
+visit `https://example.org/`, it gets the responses as being declared at that URL. More
 than one stub pattern can be specified, and each one can be a directory (for a recursive
 list of all ".json"), a fixed filename (as in the example above), or an Ant-style
 pattern. The JSON format is the normal WireMock format, which you can read about in the
