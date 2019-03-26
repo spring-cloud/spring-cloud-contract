@@ -90,7 +90,7 @@ class AmqpMessagingApplicationSpec extends Specification {
 					Contract.make {
 						description("""
 Represents scenario 2 from documentation: 
-http://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publisher_side_test_generation
+https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publisher_side_test_generation
 
 "The input message triggers an output message."
 

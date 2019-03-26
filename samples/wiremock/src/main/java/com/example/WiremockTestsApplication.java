@@ -51,7 +51,7 @@ class Controller {
 @Component
 class Service {
 
-	@Value("${app.baseUrl:http://example.org}")
+	@Value("${app.baseUrl:https://example.org}")
 	String base;
 
 	private RestTemplate restTemplate;
