@@ -7,7 +7,7 @@
 In order to use Spring Cloud Contract Verifier with WireMock you have to use Gradle or Maven plugin.
 
 WARNING: If you want to use Spock in your projects you have to add separately
-the `spock-core` and `spock-spring` modules. Check http://spockframework.github.io/[Spock docs for more information]
+the `spock-core` and `spock-spring` modules. Check https://spockframework.github.io/[Spock docs for more information]
 
 ====== Add gradle plugin with dependencies
 

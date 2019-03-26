@@ -75,7 +75,7 @@ The `baseUrl` is prepended to all mock calls, and the `stubs()`
 method takes a stub path resource pattern as an argument. So in this
 example the stub defined at `/stubs/resource.json` is loaded into the
 mock server, so if the `RestTemplate` is asked to visit
-`http://example.org/` it will get the responses as declared
+`https://example.org/` it will get the responses as declared
 there. More than one stub pattern can be specified, and each one can
 be a directory (for a recursive list of all ".json"), or a fixed
 filename (like in the example above) or an ant-style pattern. The JSON

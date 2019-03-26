@@ -1507,7 +1507,7 @@ World.'''"""
 						"id":"01fbe706f872cb32",
 						"name":"Washington",
 						"place_type":"city",
-						"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+						"url": "https://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
 					}
 				}]
 			'''

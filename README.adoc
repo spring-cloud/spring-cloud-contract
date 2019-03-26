@@ -135,7 +135,7 @@ public class WiremockForDocsMockServerApplicationTests {
 	public void contextLoads() throws Exception {
 		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.baseUrl("https://example.org").stubs("classpath:/stubs/resource.json")
 				.build();
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
@@ -148,7 +148,7 @@ The `baseUrl` is prepended to all mock calls, and the `stubs()`
 method takes a stub path resource pattern as an argument. So in this
 example the stub defined at `/stubs/resource.json` is loaded into the
 mock server, so if the `RestTemplate` is asked to visit
-`http://example.org/` it will get the responses as declared
+`https://example.org/` it will get the responses as declared
 there. More than one stub pattern can be specified, and each one can
 be a directory (for a recursive list of all ".json"), or a fixed
 filename (like in the example above) or an ant-style pattern. The JSON
@@ -296,7 +296,7 @@ number of different ways, including as described above using
 
 === Introduction
 
-IMPORTANT: http://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
+IMPORTANT: https://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
 
 TIP: The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski (http://codearte.io[codearte.io])
 
@@ -871,7 +871,7 @@ example of achieving the same by changing the properties.
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 And that's it!
@@ -911,7 +911,7 @@ https://vimeo.com/130779882[click here to see the video]
 
 ===== Readings
 
-- http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
+- https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
 - http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
 - http://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
 
@@ -978,7 +978,7 @@ added after the original pull request but before a merge.
   `eclipse-code-formatter.xml` file from the
   https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-dependencies-parent/eclipse-code-formatter.xml[Spring
   Cloud Build] project. If using IntelliJ, you can use the
-  http://plugins.jetbrains.com/plugin/6546[Eclipse Code Formatter
+  https://plugins.jetbrains.com/plugin/6546[Eclipse Code Formatter
   Plugin] to import the same file.
 * Make sure all new `.java` files to have a simple Javadoc class comment with at least an
   `@author` tag identifying you, and preferably at least a paragraph on what the class is
@@ -991,7 +991,7 @@ added after the original pull request but before a merge.
 * A few unit tests would help a lot as well -- someone has to do it.
 * If no-one else is using your branch, please rebase it against the current master (or
   other target branch in the main project).
-* When writing a commit message please follow http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
+* When writing a commit message please follow https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
   if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
   message (where XXXX is the issue number).
 

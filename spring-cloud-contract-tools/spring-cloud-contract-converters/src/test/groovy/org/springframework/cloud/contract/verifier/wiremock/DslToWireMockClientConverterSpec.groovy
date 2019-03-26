@@ -123,7 +123,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 							"id":"01fbe706f872cb32",
 							"name":"Washington",
 							"place_type":"city",
-							"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+							"url": "https://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
 						}
 					}]
 				'''
@@ -162,7 +162,7 @@ class DslToWireMockClientConverterSpec extends Specification {
     }, {
       "matchesJsonPath" : "$[*].place.bounding_box[?(@.type == 'Polygon')]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.url == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
+      "matchesJsonPath" : "$[*].place[?(@.url == 'https://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
     }, {
       "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"
     }, {

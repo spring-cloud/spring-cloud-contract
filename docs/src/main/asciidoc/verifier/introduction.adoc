@@ -2,7 +2,7 @@
 
 === Introduction
 
-IMPORTANT: http://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
+IMPORTANT: https://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
 
 TIP: The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski (http://codearte.io[codearte.io])
 
@@ -454,7 +454,7 @@ https://vimeo.com/130779882[click here to see the video]
 
 ===== Readings
 
-- http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
+- https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
 - http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
 - http://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
 
