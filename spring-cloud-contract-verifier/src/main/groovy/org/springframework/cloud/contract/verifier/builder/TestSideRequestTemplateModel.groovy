@@ -71,7 +71,7 @@ class TestSideRequestTemplateModel {
 	}
 
 	private static List<String> buildPathsFromUrl(String url) {
-		String fakeUrl = "http://foo.bar" + (url.startsWith("/") ? url : "/" + url)
+		String fakeUrl = "https://foo.bar" + (url.startsWith("/") ? url : "/" + url)
 		List<String> paths = new URL(fakeUrl).path.split("/") as List<String>
 		if (!paths.isEmpty()) {
 			paths.remove(0)
