@@ -316,7 +316,7 @@ When the *consumer* wants to work on the contracts offline, instead of cloning t
 consumer team clones the common repository, goes to the required producer's folder (e.g. `com/example/server`)
 and runs `mvn clean install -DskipTests` to install locally the stubs converted from the contracts.
 
-TIP: You need to have http://maven.apache.org/download.cgi[Maven installed locally]
+TIP: You need to have https://maven.apache.org/download.cgi[Maven installed locally]
 
 ==== Producer
 
@@ -708,7 +708,7 @@ to find stub definitions and contracts. E.g. for `com.example:foo:1.0.0` the pat
 
 === Can I use the Pact Broker?
 
-When using http://pact.io/[Pact] you can use the https://github.com/pact-foundation/pact_broker[Pact Broker]
+When using https://pact.io/[Pact] you can use the https://github.com/pact-foundation/pact_broker[Pact Broker]
 to store and share Pact definitions. Starting from Spring Cloud Contract
 2.0.0 one can fetch Pact files from the Pact Broker to generate
 tests and stubs.
