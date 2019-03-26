@@ -127,7 +127,7 @@ a Spring <code class="literal">MockRestServiceServer</code>. The following code 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// will read stubs classpath</span>
 		MockRestServiceServer server = WireMockRestServiceServer.with(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.restTemplate)
-				.baseUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://example.org"</span>).stubs(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"classpath:/stubs/resource.json"</span>)
+				.baseUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://example.org"</span>).stubs(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"classpath:/stubs/resource.json"</span>)
 				.build();
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// We're asserting if WireMock responded properly</span>
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World"</span>);
@@ -136,7 +136,7 @@ a Spring <code class="literal">MockRestServiceServer</code>. The following code 
 }</pre><p>The <code class="literal">baseUrl</code> value is prepended to all mock calls, and the <code class="literal">stubs()</code> method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 <code class="literal">/stubs/resource.json</code> is loaded into the mock server. If the <code class="literal">RestTemplate</code> is asked to
-visit <code class="literal"><a class="link" href="http://example.org/" target="_top">http://example.org/</a></code>, it gets the responses as being declared at that URL. More
+visit <code class="literal"><a class="link" href="https://example.org/" target="_top">https://example.org/</a></code>, it gets the responses as being declared at that URL. More
 than one stub pattern can be specified, and each one can be a directory (for a recursive
 list of all ".json"), a fixed filename (as in the example above), or an Ant-style
 pattern. The JSON format is the normal WireMock format, which you can read about in the

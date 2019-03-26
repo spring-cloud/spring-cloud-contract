@@ -8,7 +8,7 @@
 <title>Spring Cloud Contract</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
-/* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
 /* Remove comment around @import statement below when using as a custom stylesheet */
 /*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
 article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	color: #ffffff;
 }
 </style>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
 <script type="text/javascript">
 function addBlockSwitches() {
 	$('.primary').each(function() {
@@ -1085,7 +1085,7 @@ public class WiremockForDocsMockServerApplicationTests {
 	public void contextLoads() throws Exception {
 		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.baseUrl("https://example.org").stubs("classpath:/stubs/resource.json")
 				.build();
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
@@ -1099,7 +1099,7 @@ public class WiremockForDocsMockServerApplicationTests {
 method takes a stub path resource pattern as an argument. So in this
 example the stub defined at <code>/stubs/resource.json</code> is loaded into the
 mock server, so if the <code>RestTemplate</code> is asked to visit
-<code><a href="http://example.org/" class="bare">http://example.org/</a></code> it will get the responses as declared
+<code><a href="https://example.org/" class="bare">https://example.org/</a></code> it will get the responses as declared
 there. More than one stub pattern can be specified, and each one can
 be a directory (for a recursive list of all ".json"), or a fixed
 filename (like in the example above) or an ant-style pattern. The JSON
@@ -1372,7 +1372,7 @@ Contract.make {
 <div class="title">Important</div>
 </td>
 <td class="content">
-<a href="http://codearte.github.io/accurest">The documentation to the deprecated Accurest project in version 1.1.0 is available here.</a>
+<a href="https://codearte.github.io/accurest">The documentation to the deprecated Accurest project in version 1.1.0 is available here.</a>
 </td>
 </tr>
 </table>
@@ -1705,9 +1705,9 @@ all the contract are present in the producer&#8217;s repository
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/release" }
 }</code></pre>
 </div>
 </div>
@@ -2300,7 +2300,7 @@ example of achieving the same by changing the properties.</p>
 <div class="content">
 <pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</code></pre>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2329,7 +2329,7 @@ is under constant development.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</a></p>
+<p><a href="https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</a></p>
 </li>
 <li>
 <p><a href="http://toomuchcoding.com/blog/categories/accurest/">Accurest related articles from Marcin Grzejszczak&#8217;s blog</a></p>
@@ -2708,7 +2708,7 @@ one to one to the contents of the repo.</p>
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
 	&lt;groupId&gt;com.example&lt;/groupId&gt;
@@ -2828,7 +2828,7 @@ Those poms are necessary for the consumer side to run <code>mvn clean install -D
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
 	&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -2876,7 +2876,7 @@ Those poms are necessary for the consumer side to run <code>mvn clean install -D
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;project&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -2921,7 +2921,7 @@ and runs <code>mvn clean install -DskipTests</code> to install locally the stubs
 <div class="title">Tip</div>
 </td>
 <td class="content">
-You need to have <a href="http://maven.apache.org/download.cgi">Maven installed locally</a>
+You need to have <a href="https://maven.apache.org/download.cgi">Maven installed locally</a>
 </td>
 </tr>
 </table>
@@ -2997,7 +2997,7 @@ of either Gradle or Maven plugins.</p>
 </td>
 <td class="content">
 If you want to use Spock in your projects you have to add separately
-the <code>spock-core</code> and <code>spock-spring</code> modules. Check <a href="http://spockframework.github.io/">Spock docs for more information</a>
+the <code>spock-core</code> and <code>spock-spring</code> modules. Check <a href="https://spockframework.github.io/">Spock docs for more information</a>
 </td>
 </tr>
 </table>
@@ -3079,9 +3079,9 @@ and will modify the imports accordingly.</p>
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}
 }</code></pre>
 </div>
@@ -4494,9 +4494,9 @@ automatically for you.</p>
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}</code></pre>
 </div>
 </div>
@@ -4549,7 +4549,7 @@ For both Maven and Gradle the setup comes out of the box. But you can customize 
 &lt;assembly
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;stubs&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -4617,7 +4617,7 @@ publishing {
 <h3 id="_stub_runner_core">Stub Runner Core</h3>
 <div class="paragraph">
 <p>Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of
-<a href="http://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</a>.</p>
+<a href="https://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</a>.</p>
 </div>
 <div class="paragraph">
 <p>Stub Runner allows you to automatically download the stubs of the provided dependencies, start WireMock servers for them and feed them with proper stub definitions.
@@ -5375,7 +5375,7 @@ and we want to have the stub runner feature turned on <code>@AutoConfigureStubRu
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+<pre class="highlight"><code class="language-bash" data-lang="bash">-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (1)
 -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
@@ -5639,7 +5639,7 @@ the Stub Runner to take into consideration. You can read more about the <a href=
 </table>
 </div>
 <div class="paragraph">
-<p>Taken from <a href="http://download.eclipse.org/aether/aether-core/0.9.0/apidocs/org/eclipse/aether/util/version/GenericVersionScheme.html">Aether Docs</a>:</p>
+<p>Taken from <a href="https://download.eclipse.org/aether/aether-core/0.9.0/apidocs/org/eclipse/aether/util/version/GenericVersionScheme.html">Aether Docs</a>:</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -6095,9 +6095,9 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			 xmlns:beans="http://www.springframework.org/schema/beans"
 			 xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
+			https://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
-			http://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
+			https://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
 
 
 	&lt;!-- REQUIRED FOR TESTING --&gt;
@@ -6638,7 +6638,7 @@ a tiny subset of it (namely literals, method calls and closures). What&#8217;s m
 				"id":"01fbe706f872cb32",
 				"name":"Washington",
 				"place_type":"city",
-				"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+				"url": "https://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
 			}
 		}]
 	'''

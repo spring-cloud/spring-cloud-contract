@@ -19,7 +19,7 @@
  * <p>
  *
  * For a fairly comprehensive set of languages see the
- * <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html#langs">README</a>
+ * <a href="https://google-code-prettify.googlecode.com/svn/trunk/README.html#langs">README</a>
  * file that came with this source.  At a minimum, the lexer should work on a
  * number of languages including C and friends, Java, Python, Bash, SQL, HTML,
  * XML, CSS, Javascript, and Makefiles.  It works passably on Ruby, PHP and Awk
@@ -176,7 +176,7 @@ window['_pr_isIE6'] = function () {
 
   /** A set of tokens that can precede a regular expression literal in
     * javascript.
-    * http://www.mozilla.org/js/language/js20/rationale/syntax.html has the full
+    * https://www.mozilla.org/js/language/js20/rationale/syntax.html has the full
     * list, but I've removed ones that might be problematic when seen in
     * languages that don't support regular expression literals.
     *
@@ -1086,7 +1086,7 @@ window['_pr_isIE6'] = function () {
     var trailingSpaceRe = /[ \r\n]$/;
     var lastWasSpace = true;  // the last text chunk emitted ended with a space.
 
-    // See bug 71 and http://stackoverflow.com/questions/136443/why-doesnt-ie7-
+    // See bug 71 and https://stackoverflow.com/questions/136443/why-doesnt-ie7-
     var isIE678 = window['_pr_isIE6']();
     var lineBreakHtml = (
         isIE678
@@ -1147,7 +1147,7 @@ window['_pr_isIE6'] = function () {
         // into pre blocks for some strange reason.
         // It's necessary for IE though which seems to lose the preformattedness
         // of <pre> tags when their innerHTML is assigned.
-        // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
+        // https://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
         // and it serves to undo the conversion of <br>s to newlines done in
         // chunkify.
         var htmlChunk = textToHtml(
