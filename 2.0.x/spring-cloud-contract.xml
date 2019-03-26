@@ -246,7 +246,7 @@ pass the stub artifact IDs and artifact repository URL as <literal>Spring Cloud 
 Stub Runner</literal> properties, as shown in the following example:</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</programlisting>
 </listitem>
 </itemizedlist>
 <simpara>Now you can annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation,
@@ -492,7 +492,7 @@ pass the stub artifact IDs and artifact repository URl as <literal>Spring Cloud 
 Runner</literal> properties, as shown in the following example:</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</programlisting>
 </listitem>
 </itemizedlist>
 <simpara>Now you can annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation,
@@ -1276,7 +1276,7 @@ side are automatically downloaded from Nexus/Artifactory. You can set the value 
 achieving the same thing by changing the properties.</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</programlisting>
 <simpara>That&#8217;s it!</simpara>
 </section>
 </section>
@@ -1300,7 +1300,7 @@ constant development.</simpara>
 <title>Readings</title>
 <itemizedlist>
 <listitem>
-<simpara><link xl:href="http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</link></simpara>
+<simpara><link xl:href="https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</link></simpara>
 </listitem>
 <listitem>
 <simpara><link xl:href="http://toomuchcoding.com/blog/categories/accurest/">Accurest related articles from Marcin Grzejszczak&#8217;s blog</link></simpara>
@@ -1691,7 +1691,7 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
 <simpara>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</simpara>
 <programlisting language="xml" linenumbering="unnumbered">&lt;assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;project&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -1725,7 +1725,7 @@ Those poms are necessary for the consumer side to run <literal>mvn clean install
 consumer team clones the common repository, goes to the required producer&#8217;s folder (e.g. <literal>com/example/server</literal>)
 and runs <literal>mvn clean install -DskipTests</literal> to install locally the stubs converted from the contracts.</simpara>
 <tip>
-<simpara>You need to have <link xl:href="http://maven.apache.org/download.cgi">Maven installed locally</link></simpara>
+<simpara>You need to have <link xl:href="https://maven.apache.org/download.cgi">Maven installed locally</link></simpara>
 </tip>
 </section>
 <section xml:id="_producer">
@@ -2143,7 +2143,7 @@ to find stub definitions and contracts. E.g. for <literal>com.example:foo:1.0.0<
 </section>
 <section xml:id="_can_i_use_the_pact_broker">
 <title>Can I use the Pact Broker?</title>
-<simpara>When using <link xl:href="http://pact.io/">Pact</link> you can use the <link xl:href="https://github.com/pact-foundation/pact_broker">Pact Broker</link>
+<simpara>When using <link xl:href="https://pact.io/">Pact</link> you can use the <link xl:href="https://github.com/pact-foundation/pact_broker">Pact Broker</link>
 to store and share Pact definitions. Starting from Spring Cloud Contract
 2.0.0 one can fetch Pact files from the Pact Broker to generate
 tests and stubs.</simpara>
@@ -2427,7 +2427,7 @@ following sections:</simpara>
 Gradle or a Maven plugin.</simpara>
 <warning>
 <simpara>If you want to use Spock in your projects, you must add separately the
-<literal>spock-core</literal> and <literal>spock-spring</literal> modules. Check <link xl:href="http://spockframework.github.io/">Spock
+<literal>spock-core</literal> and <literal>spock-spring</literal> modules. Check <link xl:href="https://spockframework.github.io/">Spock
 docs for more information</link></simpara>
 </warning>
 </section>
@@ -3508,7 +3508,7 @@ like them to be available for others to download / reference or reuse. In case
 of the JVM world those artifacts would be JARs, for Ruby these are gems
 and for Docker those would be Docker images. You can store those artifacts
 in a manager. Examples of such managers can be <link xl:href="https://jfrog.com/artifactory/">Artifactory</link>
-or <link xl:href="http://www.sonatype.org/nexus/">Nexus</link>.</simpara>
+or <link xl:href="https://www.sonatype.org/nexus/">Nexus</link>.</simpara>
 </listitem>
 </itemizedlist>
 </section>
@@ -4266,7 +4266,7 @@ publishing {
 <section xml:id="_stub_runner_core">
 <title>Stub Runner Core</title>
 <simpara>Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of
-<link xl:href="http://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</link>.</simpara>
+<link xl:href="https://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</link>.</simpara>
 <simpara>Stub Runner allows you to automatically download the stubs of the provided dependencies (or pick those from the classpath), start WireMock servers for them and feed them with proper stub definitions.
 For messaging, special stub routes are defined.</simpara>
 <section xml:id="_retrieving_stubs">
@@ -4300,7 +4300,7 @@ For messaging, special stub routes are defined.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>Example:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095", stubsMode = StubRunnerProperties.StubsMode.LOCAL)</programlisting>
+<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="https://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095", stubsMode = StubRunnerProperties.StubsMode.LOCAL)</programlisting>
 </section>
 <section xml:id="_classpath_scanning">
 <title>Classpath scanning</title>
@@ -4890,7 +4890,7 @@ $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 </section>
 <section xml:id="_spring_cloud_cli">
 <title>Spring Cloud CLI</title>
-<simpara>Starting from <literal>1.4.0.RELEASE</literal> version of the <link xl:href="http://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</link>
+<simpara>Starting from <literal>1.4.0.RELEASE</literal> version of the <link xl:href="https://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</link>
 project you can start Stub Runner Boot by executing <literal>spring cloud stubrunner</literal>.</simpara>
 <simpara>In order to pass the configuration just create a <literal>stubrunner.yml</literal> file in the current working directory
 or a subdirectory called <literal>config</literal> or in <literal>~/.spring-cloud</literal>. The file could look like this
@@ -5056,7 +5056,7 @@ and we want to have the stub runner feature turned on <literal>@AutoConfigureStu
 <simpara>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <literal>java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</literal> where
  <literal>${SYSTEM_PROPS}</literal> would contain the following list of properties</simpara>
-<programlisting language="bash" linenumbering="unnumbered">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+<programlisting language="bash" linenumbering="unnumbered">-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (1)
 -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
@@ -5507,9 +5507,9 @@ classpath. Remember to annotate your test class with <literal>@AutoConfigureStub
 			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			 xmlns:beans="http://www.springframework.org/schema/beans"
 			 xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
+			https://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
-			http://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
+			https://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
 
 
 	&lt;!-- REQUIRED FOR TESTING --&gt;
@@ -5896,7 +5896,7 @@ the <literal>Contract</literal> class: <literal>import org.springframework.cloud
 				"id":"01fbe706f872cb32",
 				"name":"Washington",
 				"place_type":"city",
-				"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+				"url": "https://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
 			}
 		}]
 	'''
@@ -7131,7 +7131,7 @@ matches the JSON Path.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>If you&#8217;re using the YAML contract definition you have to use the
-<link xl:href="http://handlebarsjs.com/">Handlebars</link> <literal>{{{ }}}</literal> notation with custom, Spring Cloud Contract
+<link xl:href="https://handlebarsjs.com/">Handlebars</link> <literal>{{{ }}}</literal> notation with custom, Spring Cloud Contract
  functions to achieve this.</simpara>
 <itemizedlist>
 <listitem>
@@ -9784,7 +9784,7 @@ public class WiremockForDocsMockServerApplicationTests {
 	public void contextLoads() throws Exception {
 		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.baseUrl("https://example.org").stubs("classpath:/stubs/resource.json")
 				.build();
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
@@ -9794,7 +9794,7 @@ public class WiremockForDocsMockServerApplicationTests {
 <simpara>The <literal>baseUrl</literal> value is prepended to all mock calls, and the <literal>stubs()</literal> method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 <literal>/stubs/resource.json</literal> is loaded into the mock server. If the <literal>RestTemplate</literal> is asked to
-visit <literal><link xl:href="http://example.org/">http://example.org/</link></literal>, it gets the responses as being declared at that URL. More
+visit <literal><link xl:href="https://example.org/">https://example.org/</link></literal>, it gets the responses as being declared at that URL. More
 than one stub pattern can be specified, and each one can be a directory (for a recursive
 list of all ".json"), a fixed filename (as in the example above), or an Ant-style
 pattern. The JSON format is the normal WireMock format, which you can read about in the
@@ -10083,7 +10083,7 @@ structure presented in the previous snippet.</simpara>
 &lt;assembly
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;stubs&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
