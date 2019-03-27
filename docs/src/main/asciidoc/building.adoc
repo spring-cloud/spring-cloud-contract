@@ -8,6 +8,8 @@ IMPORTANT: You need to have all the necessary Groovy plugins
 IMPORTANT: Spring Cloud Contract builds Docker images. Remember to
 have Docker installed.
 
+IMPORTANT: If you want to run the build in offline mode, you have to have Maven 3.5.2+ installed.
+
 === Project structure
 
 Here you can find the Spring Cloud Contract folder structure

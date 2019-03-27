@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,6 @@ import org.springframework.integration.dsl.GenericEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.transformer.MessageTransformingHandler;
-import org.springframework.messaging.Message;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -96,11 +95,6 @@ public class StubRunnerStreamConfiguration {
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
 				.getContracts();
-		IntegrationFlowBuilder dummyBuilder = IntegrationFlows
-				.from(DummyMessageHandler.CHANNEL_NAME)
-				.handle(new DummyMessageHandler(), "handle");
-		beanFactory.initializeBean(dummyBuilder.get(),
-				DummyMessageHandler.CHANNEL_NAME + ".flow");
 		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
 				.entrySet()) {
 			StubConfiguration key = entry.getKey();
@@ -156,15 +150,6 @@ public class StubRunnerStreamConfiguration {
 
 		}
 		return new FlowRegistrar();
-	}
-
-	static class DummyMessageHandler {
-
-		static String CHANNEL_NAME = "stub_runner_dummy_channel";
-
-		public void handle(Message<?> message) {
-		}
-
 	}
 
 	static class FlowRegistrar {

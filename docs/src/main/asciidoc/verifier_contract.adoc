@@ -453,6 +453,11 @@ particularly useful when you want to indicate that a given response should be pr
 for requests that follow a given pattern. Also, you can use regular expressions when you
 need to use patterns and not exact values both for your test and your server side tests.
 
+Make sure that regex matches a whole region of a sequence as internally a call to
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html#matches--[Pattern.matches()]
+is called. For instance, `abc` pattern doesn't match `aabc` string but `.abc` does.
+There are several additional <<regex-limitations,known limitations>> as well.
+
 The following example shows how to use regular expressions to write a request:
 
 [source,groovy,indent=0]
@@ -501,6 +506,17 @@ and this is an example of how you can reference those methods:
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=regex_creating_props,indent=0]
 ----
+
+[[regex-limitations]]
+===== Limitations
+
+WARNING: Due to certain limitations of `Xeger` library that generates string out of
+regex, do not use `$` and `^` signs in your regex if you rely on automatic
+generation. https://github.com/spring-cloud/spring-cloud-contract/issues/899[Issue 899]
+
+WARNING: Do not use `LocalDate` instance as a value for `$` like this `$(consumer(LocalDate.now()))`.
+It causes `java.lang.StackOverflowError`. Use `$(consumer(LocalDate.now().toString()))` instead.
+https://github.com/spring-cloud/spring-cloud-contract/issues/900[Issue 900]
 
 ==== Passing Optional Parameters
 

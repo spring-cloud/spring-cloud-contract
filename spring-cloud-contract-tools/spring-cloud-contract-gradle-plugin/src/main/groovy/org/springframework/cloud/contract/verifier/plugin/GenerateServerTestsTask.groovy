@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.config.TestFramework
 
 import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
 
@@ -55,7 +56,10 @@ class GenerateServerTestsTask extends ConventionTask {
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${props.includedContracts}]")
 
-		project.sourceSets.test.groovy {
+		def sourceSetType = getConfigProperties().getTestFramework() == TestFramework.SPOCK ?
+				"groovy" : "java"
+
+		project.sourceSets.test."${sourceSetType}" {
 			project.logger.
 					info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
 			srcDir getConfigProperties().getGeneratedTestSourcesDir()

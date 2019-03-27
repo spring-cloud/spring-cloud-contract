@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +34,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.util.RegexpBuilders
 
 import static groovy.json.StringEscapeUtils.escapeJava
+import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
@@ -214,7 +215,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	protected String createHeaderComparison(Pattern headerValue) {
-		return buildEscapedMatchesMethod(headerValue) + ";"
+		return createMatchesMethod(escapeJava(headerValue.pattern())) + ";"
 	}
 
 	protected String createBodyComparison(Pattern bodyValue) {
@@ -229,7 +230,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	protected String createCookieComparison(Pattern cookieValue) {
-		return buildEscapedMatchesMethod(cookieValue) + ";"
+		return createMatchesMethod(escapeJava(cookieValue.pattern())) + ";"
 	}
 
 	private String buildEscapedMatchesMethod(Pattern escapedValue) {

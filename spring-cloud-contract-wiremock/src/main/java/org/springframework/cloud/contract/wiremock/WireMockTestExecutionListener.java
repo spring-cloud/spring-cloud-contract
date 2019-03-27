@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,21 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	private static final Log log = LogFactory.getLog(WireMockTestExecutionListener.class);
 
 	@Override
+	public void beforeTestClass(TestContext testContext) throws Exception {
+		if (applicationContextBroken(testContext)
+				|| wireMockConfigurationMissing(testContext)
+				|| annotationMissing(testContext)) {
+			return;
+		}
+		if (!portIsFixed(testContext)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Re-registering default mappings");
+			}
+			wireMockConfig(testContext).init();
+		}
+	}
+
+	@Override
 	public void afterTestClass(TestContext testContext) {
 		if (applicationContextBroken(testContext)
 				|| wireMockConfigurationMissing(testContext)
@@ -51,6 +66,14 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 			}
 			testContext
 					.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
+		}
+		else {
+			if (log.isDebugEnabled()) {
+				log.debug(
+						"Resetting mappings for the next test to restart them. That's necessary when"
+								+ " reusing the same context with new servers running on random ports");
+			}
+			wireMockConfig(testContext).resetMappings();
 		}
 	}
 
@@ -101,6 +124,13 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 		boolean httpPortDynamic = wireMockProperties.wireMock.getServer().isPortDynamic();
 		boolean httpsPortDynamic = wireMockProperties.wireMock.getServer()
 				.isHttpsPortDynamic();
+		if (log.isDebugEnabled()) {
+			int httpPort = wireMockProperties.wireMock.getServer().getPort();
+			int httpsPort = wireMockProperties.wireMock.getServer().getHttpsPort();
+			log.debug("Http port [" + httpPort + "] dynamic [" + httpPortDynamic + "]"
+					+ " https port [" + httpsPort + "] dynamic [" + httpsPortDynamic
+					+ "]");
+		}
 		return !httpPortDynamic || !httpsPortDynamic;
 	}
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -1282,6 +1282,42 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+	}
+
+	@Issue("#892")
+	def "should not unnecessarily escape non json body [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method GET()
+					url $(consumer(regex("/api/v1/files/" + uuid())),
+							producer("/api/v1/files/b0683f29-741a-4178-b5c6-6e62202e3cf1"))
+				}
+				response {
+					status OK()
+					body($(consumer("some-content"), producer(regex(nonBlank()))))
+					headers {
+						header(contentLength(), $(consumer(2647691), producer(regex(positiveInt()))))
+						header(contentType(), $(consumer(applicationOctetStream()), producer(regex(nonBlank()))))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+			asserter(test)
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder | asserter
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } | { String testContent -> assert testContent.contains('''response.header('Content-Length') ==~ java.util.regex.Pattern.compile('([1-9]\\\\d*)')''') && testContent.contains('''response.header('Content-Type') ==~ java.util.regex.Pattern.compile('^\\\\s*\\\\S[\\\\S\\\\s]*')'''); return true }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) } | { String testContent -> assert testContent.contains('''assertThat(response.header("Content-Type")).matches("^\\\\s*\\\\S[\\\\S\\\\s]*")''') && testContent.contains('''assertThat(response.header("Content-Length")).matches("([1-9]\\\\d*)")'''); return true }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) } |  { String testContent -> assert testContent.contains('''response.getHeaderString('Content-Length') ==~ java.util.regex.Pattern.compile('([1-9]\\\\d*)')''') && testContent.contains('''response.getHeaderString('Content-Type') ==~ java.util.regex.Pattern.compile('^\\\\s*\\\\S[\\\\S\\\\s]*')'''); return true }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) } | { String testContent -> assert testContent.contains('''assertThat(response.getHeaderString("Content-Type")).matches("^\\\\s*\\\\S[\\\\S\\\\s]*")''') && testContent.contains('''assertThat(response.getHeaderString("Content-Length")).matches("([1-9]\\\\d*)")'''); return true }
 	}
 
 }

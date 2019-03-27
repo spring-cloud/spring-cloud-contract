@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,7 @@ import org.springframework.amqp.support.converter.MessagingMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -69,12 +70,16 @@ public class ContractVerifierAmqpAutoConfiguration {
 	@Autowired(required = false)
 	private List<Binding> bindings = emptyList();
 
+	@Autowired
+	private RabbitProperties rabbitProperties;
+
 	@Bean
 	@ConditionalOnMissingBean
 	public MessageVerifier<Message> contractVerifierMessageExchange() {
 		return new SpringAmqpStubMessages(this.rabbitTemplate,
 				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry,
-						this.simpleMessageListenerContainers, this.bindings));
+						this.simpleMessageListenerContainers, this.bindings),
+				this.rabbitProperties);
 	}
 
 	@Bean

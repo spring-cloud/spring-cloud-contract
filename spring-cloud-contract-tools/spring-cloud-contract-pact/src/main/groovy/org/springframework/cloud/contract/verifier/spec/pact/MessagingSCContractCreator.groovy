@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 
@@ -48,6 +49,8 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 @CompileStatic
 @PackageScope
 class MessagingSCContractCreator {
+
+	RegexPatterns regexPatterns = new RegexPatterns()
 
 	private static final String FULL_BODY = '$'
 	private static final String DESTINATION_KEY = "sentTo"
@@ -121,15 +124,15 @@ class MessagingSCContractCreator {
 														switch (rule.numberType) {
 														case NumberTypeMatcher.NumberType.NUMBER:
 															jsonPath(key,
-																	byRegex(number()))
+																	byRegex(regexPatterns.number()))
 															break
 														case NumberTypeMatcher.NumberType.INTEGER:
 															jsonPath(key,
-																	byRegex(anInteger()))
+																	byRegex(regexPatterns.anInteger()))
 															break
 														case NumberTypeMatcher.NumberType.DECIMAL:
 															jsonPath(key,
-																	byRegex(aDouble()))
+																	byRegex(regexPatterns.aDouble()))
 															break
 														default:
 															throw new RuntimeException("Unsupported number type!")

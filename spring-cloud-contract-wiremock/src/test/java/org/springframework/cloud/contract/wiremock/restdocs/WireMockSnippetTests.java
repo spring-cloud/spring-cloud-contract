@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -157,6 +157,19 @@ public class WireMockSnippetTests {
 		assertThat(stubMapping.getRequest().getBodyPatterns()).isNullOrEmpty();
 		assertThat(stubMapping.getResponse().getStatus())
 				.isEqualTo(HttpStatus.ACCEPTED.value());
+	}
+
+	@Test
+	public void should_accept_empty_value_for_query_params() throws IOException {
+		this.operation = operation(requestPostWithEmptyQueryParamValue(), response(),
+				this.context);
+		WireMockSnippet snippet = new WireMockSnippet();
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/foo.json");
+		assertThat(stub).exists();
+		WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 	}
 
 	private Operation operation(OperationRequest request, OperationResponse response,
@@ -397,6 +410,55 @@ public class WireMockSnippetTests {
 			@Override
 			public URI getUri() {
 				return URI.create("http://foo/bar");
+			}
+
+			@Override
+			public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
+			}
+		};
+	}
+
+	private OperationRequest requestPostWithEmptyQueryParamValue() {
+		return new OperationRequest() {
+			@Override
+			public byte[] getContent() {
+				return new byte[0];
+			}
+
+			@Override
+			public String getContentAsString() {
+				return "";
+			}
+
+			@Override
+			public HttpHeaders getHeaders() {
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
+						MediaType.APPLICATION_JSON_VALUE);
+				return httpHeaders;
+			}
+
+			@Override
+			public HttpMethod getMethod() {
+				return HttpMethod.POST;
+			}
+
+			@Override
+			public Parameters getParameters() {
+				Parameters parameters = new Parameters();
+				parameters.put("myParam", Collections.singletonList(""));
+				return parameters;
+			}
+
+			@Override
+			public Collection<OperationRequestPart> getParts() {
+				return null;
+			}
+
+			@Override
+			public URI getUri() {
+				return URI.create("http://foo/bar?myParam=");
 			}
 
 			@Override

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.rabbitmq.client.Channel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mockito.ArgumentCaptor;
@@ -33,6 +34,7 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.util.Assert;
 
@@ -64,7 +66,9 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 
 	private final MessageListenerAccessor messageListenerAccessor;
 
-	@Autowired
+	private RabbitProperties rabbitProperties;
+
+	@Deprecated
 	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate,
 			MessageListenerAccessor messageListenerAccessor) {
 		Assert.notNull(rabbitTemplate, "RabbitTemplate must be set");
@@ -81,6 +85,27 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 																				// spy
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
+	}
+
+	@Autowired
+	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate,
+			MessageListenerAccessor messageListenerAccessor,
+			RabbitProperties rabbitProperties) {
+		Assert.notNull(rabbitTemplate, "RabbitTemplate must be set");
+		Assert.isTrue(
+				mockingDetails(rabbitTemplate).isSpy()
+						|| mockingDetails(rabbitTemplate).isMock(),
+				"StubRunner AMQP will work only if RabbiTemplate is a spy"); // we get
+																				// send
+																				// messages
+																				// by
+																				// capturing
+																				// arguments
+																				// on the
+																				// spy
+		this.rabbitTemplate = rabbitTemplate;
+		this.messageListenerAccessor = messageListenerAccessor;
+		this.rabbitProperties = rabbitProperties;
 	}
 
 	@Override
@@ -128,12 +153,10 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		}
 		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
 			Object messageListener = listenerContainer.getMessageListener();
-			if (messageListener instanceof ChannelAwareMessageListener
-					&& listenerContainer.getConnectionFactory() != null) {
+			if (isChannelAwareListener(listenerContainer, messageListener)) {
 				try {
 					((ChannelAwareMessageListener) messageListener).onMessage(message,
-							listenerContainer.getConnectionFactory().createConnection()
-									.createChannel(true));
+							createChannel(listenerContainer, transactionalChannel()));
 				}
 				catch (Exception e) {
 					throw new RuntimeException(e);
@@ -143,6 +166,26 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 				((MessageListener) messageListener).onMessage(message);
 			}
 		}
+	}
+
+	Channel createChannel(SimpleMessageListenerContainer listenerContainer,
+			boolean transactional) {
+		return listenerContainer.getConnectionFactory().createConnection()
+				.createChannel(transactional);
+	}
+
+	boolean isChannelAwareListener(SimpleMessageListenerContainer listenerContainer,
+			Object messageListener) {
+		return messageListener instanceof ChannelAwareMessageListener
+				&& listenerContainer.getConnectionFactory() != null;
+	}
+
+	private boolean transactionalChannel() {
+		if (this.rabbitProperties == null) {
+			// backward compatibility
+			return true;
+		}
+		return !this.rabbitProperties.isPublisherConfirms();
 	}
 
 	@Override

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -109,16 +110,29 @@ public class WireMockConfiguration implements SmartLifecycle {
 			this.server = new WireMockServer(this.options);
 		}
 		registerStubs();
-		if (log.isDebugEnabled()) {
-			log.debug("WireMock server has [" + this.server.getStubMappings().size()
-					+ "] stubs registered");
-		}
+		logRegisteredMappings();
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
 	}
 
+	private void logRegisteredMappings() {
+		if (log.isDebugEnabled()) {
+			log.debug("WireMock server has [" + this.server.getStubMappings().size()
+					+ "] stubs registered");
+		}
+	}
+
+	void resetMappings() {
+		this.server.resetAll();
+		logRegisteredMappings();
+	}
+
 	private void registerStubs() throws IOException {
+		if (log.isDebugEnabled()) {
+			log.debug("Will register [" + this.wireMock.getServer().getStubs().length
+					+ "] stubs");
+		}
 		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
@@ -131,9 +145,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 					pattern = pattern + "**/*.json";
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
-					this.server.addStubMapping(WireMockStubMapping
+					StubMapping stubMapping = WireMockStubMapping
 							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
-									Charset.forName("UTF-8"))));
+									Charset.forName("UTF-8")));
+					this.server.addStubMapping(stubMapping);
 				}
 			}
 		}
@@ -251,9 +266,9 @@ class WireMockProperties {
 
 		private int httpsPort = -1;
 
-		private String[] stubs;
+		private String[] stubs = new String[0];
 
-		private String[] files;
+		private String[] files = new String[0];
 
 		private boolean portDynamic = false;
 
@@ -292,7 +307,7 @@ class WireMockProperties {
 		}
 
 		public boolean isPortDynamic() {
-			return portDynamic;
+			return this.portDynamic;
 		}
 
 		public void setPortDynamic(boolean portDynamic) {
@@ -300,7 +315,7 @@ class WireMockProperties {
 		}
 
 		public boolean isHttpsPortDynamic() {
-			return httpsPortDynamic;
+			return this.httpsPortDynamic;
 		}
 
 		public void setHttpsPortDynamic(boolean httpsPortDynamic) {

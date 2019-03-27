@@ -154,11 +154,7 @@ shown in the following example:
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
 The following listing shows how to add the plugin, which should go in the build/plugins
@@ -203,11 +199,7 @@ following example:
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
 
 You can get the Producer-side stubs installed in your Maven repository in either of two
@@ -231,7 +223,7 @@ Stub Runner` properties, as shown in the following example:
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -341,33 +333,14 @@ The following example shows a Camel messaging contract expressed in Groovy DSL:
 
 [source,groovy]
 ----
-			def contractDsl = Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('jms:delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
+Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
 ----
 
 The following example shows the same contract expressed in YAML:
 
 [source,yml,indent=0]
 ----
-label: some_label
-input:
-  messageFrom: jms:delete
-  messageBody:
-    bookName: 'foo'
-  messageHeaders:
-    sample: header
-  assertThat: bookWasDeleted()
+Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
 ----
 
 Then you can add Spring Cloud Contract Verifier dependency and plugin to your build file,
@@ -375,11 +348,7 @@ as shown in the following example:
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
 The following listing shows how to add the plugin, which should go in the build/plugins
@@ -534,11 +503,7 @@ To get started, add the dependency to `Spring Cloud Contract Stub Runner`:
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
 
 You can get the Producer-side stubs installed in your Maven repository in either of two
@@ -562,7 +527,7 @@ Runner` properties, as shown in the following example:
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -608,136 +573,13 @@ the PUT method.
 .Groovy DSL
 [source,groovy,indent=0]
 ----
-/*
- * Copyright 2013-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package contracts
-
-org.springframework.cloud.contract.spec.Contract.make {
-	request { // (1)
-		method 'PUT' // (2)
-		url '/fraudcheck' // (3)
-		body([ // (4)
-			   "client.id": $(regex('[0-9]{10}')),
-			   loanAmount : 99999
-		])
-		headers { // (5)
-			contentType('application/json')
-		}
-	}
-	response { // (6)
-		status OK() // (7)
-		body([ // (8)
-			   fraudCheckStatus  : "FRAUD",
-			   "rejection.reason": "Amount too high"
-		])
-		headers { // (9)
-			contentType('application/json')
-		}
-	}
-}
-
-/*
-From the Consumer perspective, when shooting a request in the integration test:
-
-(1) - If the consumer sends a request
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `client.id` that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/json`
-(6) - then the response will be sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` equal to `application/json`
-
-From the Producer perspective, in the autogenerated producer-side test:
-
-(1) - A request will be sent to the producer
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `client.id` that will have a generated value that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/json`
-(6) - then the test will assert if the response has been sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` matching `application/json.*`
- */
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 ----
 
 .YAML
 [source,yml,indent=0]
 ----
-request: # (1)
-  method: PUT # (2)
-  url: /fraudcheck # (3)
-  body: # (4)
-    "client.id": 1234567890
-    loanAmount: 99999
-  headers: # (5)
-    Content-Type: application/json
-  matchers:
-    body:
-      - path: $.['client.id'] # (6)
-        type: by_regex
-        value: "[0-9]{10}"
-response: # (7)
-  status: 200 # (8)
-  body:  # (9)
-    fraudCheckStatus: "FRAUD"
-    "rejection.reason": "Amount too high"
-  headers: # (10)
-    Content-Type: application/json;charset=UTF-8
-
-
-#From the Consumer perspective, when shooting a request in the integration test:
-#
-#(1) - If the consumer sends a request
-#(2) - With the "PUT" method
-#(3) - to the URL "/fraudcheck"
-#(4) - with the JSON body that
-# * has a field `client.id`
-# * has a field `loanAmount` that is equal to `99999`
-#(5) - with header `Content-Type` equal to `application/json`
-#(6) - and a `client.id` json entry matches the regular expression `[0-9]{10}`
-#(7) - then the response will be sent with
-#(8) - status equal `200`
-#(9) - and JSON body equal to
-# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-#(10) - with header `Content-Type` equal to `application/json`
-#
-#From the Producer perspective, in the autogenerated producer-side test:
-#
-#(1) - A request will be sent to the producer
-#(2) - With the "PUT" method
-#(3) - to the URL "/fraudcheck"
-#(4) - with the JSON body that
-# * has a field `client.id` `1234567890`
-# * has a field `loanAmount` that is equal to `99999`
-#(5) - with header `Content-Type` equal to `application/json`
-#(7) - then the test will assert if the response has been sent with
-#(8) - status equal `200`
-#(9) - and JSON body equal to
-# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-#(10) - with header `Content-Type` equal to `application/json;charset=UTF-8`
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
 ----
 
 ==== Client Side
@@ -750,21 +592,14 @@ At some point in time, you need to send a request to the Fraud Detection service
 
 [source,groovy,indent=0]
 ----
-ResponseEntity<FraudServiceResponse> response = restTemplate.exchange(
-        "http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
-        new HttpEntity<>(request, httpHeaders), FraudServiceResponse.class);
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
 ----
 
 Annotate your test class with `@AutoConfigureStubRunner`. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.
 
 [source,groovy,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {
-		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-public class LoanApplicationServiceTests {
-
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
 ----
 
 After that, during the tests, Spring Cloud Contract automatically finds the stubs
@@ -836,70 +671,13 @@ following section to your build:
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-<repositories>
-    <repository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>https://repo.spring.io/snapshot</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>https://repo.spring.io/milestone</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-releases</id>
-        <name>Spring Releases</name>
-        <url>https://repo.spring.io/release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-</repositories>
-<pluginRepositories>
-    <pluginRepository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>https://repo.spring.io/snapshot</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>https://repo.spring.io/milestone</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-releases</id>
-        <name>Spring Releases</name>
-        <url>https://repo.spring.io/release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-</pluginRepositories>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-repositories {
-	mavenCentral()
-	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
-}
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
 ----
 
 ==== Consumer side (Loan Issuance)
@@ -923,18 +701,7 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 
 [source,groovy,indent=0]
 ----
-@Test
-public void shouldBeRejectedDueToAbnormalLoanAmount() {
-    // given:
-    LoanApplication application = new LoanApplication(new Client("1234567890"),
-            99999);
-    // when:
-    LoanApplicationResult loanApplication = service.loanApplication(application);
-    // then:
-    assertThat(loanApplication.getLoanApplicationStatus())
-            .isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
-    assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
-}
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
 ----
 
 Assume that you have written a test of your new feature. If a loan application for a big
@@ -948,9 +715,7 @@ client wants to borrow. You want to send it to the `/fraudcheck` url via the `PU
 
 [source,groovy,indent=0]
 ----
-ResponseEntity<FraudServiceResponse> response = restTemplate.exchange(
-        "http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
-        new HttpEntity<>(request, httpHeaders), FraudServiceResponse.class);
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
 ----
 
 For simplicity, the port of the Fraud Detection service is set to `8080`, and the
@@ -980,136 +745,13 @@ is important because the producer's test base class name references that folder.
 .Groovy DSL
 [source,groovy,indent=0]
 ----
-/*
- * Copyright 2013-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package contracts
-
-org.springframework.cloud.contract.spec.Contract.make {
-	request { // (1)
-		method 'PUT' // (2)
-		url '/fraudcheck' // (3)
-		body([ // (4)
-			   "client.id": $(regex('[0-9]{10}')),
-			   loanAmount : 99999
-		])
-		headers { // (5)
-			contentType('application/json')
-		}
-	}
-	response { // (6)
-		status OK() // (7)
-		body([ // (8)
-			   fraudCheckStatus  : "FRAUD",
-			   "rejection.reason": "Amount too high"
-		])
-		headers { // (9)
-			contentType('application/json')
-		}
-	}
-}
-
-/*
-From the Consumer perspective, when shooting a request in the integration test:
-
-(1) - If the consumer sends a request
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `client.id` that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/json`
-(6) - then the response will be sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` equal to `application/json`
-
-From the Producer perspective, in the autogenerated producer-side test:
-
-(1) - A request will be sent to the producer
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `client.id` that will have a generated value that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/json`
-(6) - then the test will assert if the response has been sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` matching `application/json.*`
- */
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 ----
 
 .YAML
 [source,yml,indent=0]
 ----
-request: # (1)
-  method: PUT # (2)
-  url: /fraudcheck # (3)
-  body: # (4)
-    "client.id": 1234567890
-    loanAmount: 99999
-  headers: # (5)
-    Content-Type: application/json
-  matchers:
-    body:
-      - path: $.['client.id'] # (6)
-        type: by_regex
-        value: "[0-9]{10}"
-response: # (7)
-  status: 200 # (8)
-  body:  # (9)
-    fraudCheckStatus: "FRAUD"
-    "rejection.reason": "Amount too high"
-  headers: # (10)
-    Content-Type: application/json;charset=UTF-8
-
-
-#From the Consumer perspective, when shooting a request in the integration test:
-#
-#(1) - If the consumer sends a request
-#(2) - With the "PUT" method
-#(3) - to the URL "/fraudcheck"
-#(4) - with the JSON body that
-# * has a field `client.id`
-# * has a field `loanAmount` that is equal to `99999`
-#(5) - with header `Content-Type` equal to `application/json`
-#(6) - and a `client.id` json entry matches the regular expression `[0-9]{10}`
-#(7) - then the response will be sent with
-#(8) - status equal `200`
-#(9) - and JSON body equal to
-# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-#(10) - with header `Content-Type` equal to `application/json`
-#
-#From the Producer perspective, in the autogenerated producer-side test:
-#
-#(1) - A request will be sent to the producer
-#(2) - With the "PUT" method
-#(3) - to the URL "/fraudcheck"
-#(4) - with the JSON body that
-# * has a field `client.id` `1234567890`
-# * has a field `loanAmount` that is equal to `99999`
-#(5) - with header `Content-Type` equal to `application/json`
-#(7) - then the test will assert if the response has been sent with
-#(8) - status equal `200`
-#(9) - and JSON body equal to
-# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-#(10) - with header `Content-Type` equal to `application/json;charset=UTF-8`
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
 ----
 
 The YML contract is quite straight-forward. However when you take a look at the Contract
@@ -1148,33 +790,14 @@ First, add the `Spring Cloud Contract` BOM.
 
 [source,xml,indent=0]
 ----
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud-release.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Next, add the `Spring Cloud Contract Verifier` Maven plugin
 
 [source,xml,indent=0]
 ----
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <version>${spring-cloud-contract.version}</version>
-    <extensions>true</extensions>
-    <configuration>
-        <packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
-        <convertToYaml>true</convertToYaml>
-    </configuration>
-</plugin>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 Since the plugin was added, you get the `Spring Cloud Contract Verifier` features which,
@@ -1230,28 +853,14 @@ Add the `Spring Cloud Contract` BOM:
 
 [source,xml,indent=0]
 ----
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud-release-train.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Add the dependency to `Spring Cloud Contract Stub Runner`:
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
 
 Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
@@ -1261,12 +870,7 @@ can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`
 
 [source,groovy,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {
-		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-public class LoanApplicationServiceTests {
-
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
 ----
 
 Now, when you run your tests, you see something like this:
@@ -1305,9 +909,8 @@ As a reminder, you can see the initial implementation here:
 
 [source,java,indent=0]
 ----
-@RequestMapping(value = "/fraudcheck", method = PUT)
-public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -1323,27 +926,14 @@ You must add the dependencies needed by the autogenerated tests:
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
 In the configuration of the Maven plugin, pass the `packageWithBaseClasses` property
 
 [source,xml,indent=0]
 ----
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <version>${spring-cloud-contract.version}</version>
-    <extensions>true</extensions>
-    <configuration>
-        <packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
-        <convertToYaml>true</convertToYaml>
-    </configuration>
-</plugin>
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 IMPORTANT: This example uses "convention based" naming by setting the
@@ -1359,52 +949,7 @@ start the server side `FraudDetectionController`.
 
 [source,java,indent=0]
 ----
-/*
- * Copyright 2013-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.example.fraud;
-
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.junit.Before;
-
-public class FraudBase {
-
-	@Before
-	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
-				new FraudStatsController(stubbedStatsProvider()));
-	}
-
-	private StatsProvider stubbedStatsProvider() {
-		return fraudType -> {
-			switch (fraudType) {
-			case DRUNKS:
-				return 100;
-			case ALL:
-				return 200;
-			}
-			return 0;
-		};
-	}
-
-	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
-		assert rejectionReason == null;
-	}
-
-}
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBase.java[]
 ----
 
 Now, if you run the `./mvnw clean install`, you get something like this:
@@ -1461,12 +1006,9 @@ implementation:
 
 [source,java,indent=0]
 ----
-@RequestMapping(value = "/fraudcheck", method = PUT)
-public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-if (amountGreaterThanThreshold(fraudCheck)) {
-    return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
-}
-return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+Unresolved directive in verifier_introduction.adoc - include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -1512,7 +1054,7 @@ achieving the same thing by changing the properties.
 ----
 stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+  repositoryRoot: https://repo.spring.io/libs-snapshot
 ----
 
 That's it!
@@ -1562,7 +1104,7 @@ Marcin Grzejszczak]
 
 === Spring Cloud Contract WireMock
 
-:core_path: ../../../..
+:core_path: ../../..
 :doc_samples: {core_path}/samples/wiremock-jetty
 :wiremock_tests: {core_path}/spring-cloud-contract-wiremock
 
@@ -1582,32 +1124,8 @@ your test. The following code shows an example:
 
 [source,java,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock(port = 0)
-public class WiremockForDocsTests {
-
-	// A service that calls out over HTTP
-	@Autowired
-	private Service service;
-
-	@Before
-	public void setup() {
-		this.service.setBase("http://localhost:"
-				+ this.environment.getProperty("wiremock.server.port"));
-	}
-
-	// Using the WireMock APIs in the normal way:
-	@Test
-	public void contextLoads() throws Exception {
-		// Stubbing WireMock
-		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
-				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World!");
-	}
-
-}
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test1]
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test2]
 ----
 
 To start the stub server on a different port use (for example),
@@ -1651,7 +1169,7 @@ stubs are stored under `/META-INF/group-id/artifact-id/versions/mappings/` folde
 
 [source,java,indent=0]
 ----
-@AutoConfigureWireMock(port = 0, stubs = "classpath*:/META-INF/**/mappings/**/*.json")
+Unresolved directive in spring-cloud-wiremock.adoc - include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockFilesApplicationWithUrlResourceTests.java[tags=load_all_stubs]
 ----
 
 === Using Files to Specify the Stub Bodies
@@ -1679,36 +1197,8 @@ instance, as shown in the following example:
 
 [source,java,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class WiremockForDocsClassRuleTests {
-
-	// Start WireMock on some dynamic port
-	// for some reason `dynamicPort()` is not working properly
-	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().dynamicPort());
-
-	// A service that calls out over HTTP to wiremock's port
-	@Autowired
-	private Service service;
-
-	@Before
-	public void setup() {
-		this.service.setBase("http://localhost:" + wiremock.port());
-	}
-
-	// Using the WireMock APIs in the normal way:
-	@Test
-	public void contextLoads() throws Exception {
-		// Stubbing WireMock
-		wiremock.stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
-				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World!");
-	}
-
-}
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test1]
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test2]
 ----
 
 The `@ClassRule` means that the server shuts down after all the methods in this class
@@ -1770,28 +1260,7 @@ a Spring `MockRestServiceServer`. The following code shows an example:
 
 [source,java,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
-public class WiremockForDocsMockServerApplicationTests {
-
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private Service service;
-
-	@Test
-	public void contextLoads() throws Exception {
-		// will read stubs classpath
-		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
-				.build();
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World");
-		server.verify();
-	}
-
-}
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsMockServerApplicationTests.java[tags=wiremock_test]
 ----
 
 The `baseUrl` value is prepended to all mock calls, and the `stubs()` method takes a stub
@@ -1816,15 +1285,9 @@ Example:
 
 [source,java,indent=0]
 ----
-		@Bean
-		WireMockConfigurationCustomizer optionsCustomizer() {
-			return new WireMockConfigurationCustomizer() {
-				@Override
-				public void customize(WireMockConfiguration options) {
+Unresolved directive in spring-cloud-wiremock.adoc - include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_1]
 // perform your customization here
-				}
-			};
-		}
+Unresolved directive in spring-cloud-wiremock.adoc - include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_2]
 ----
 
 === Generating Stubs using REST Docs
@@ -1998,19 +1461,7 @@ Consider the following test:
 
 [source,java]
 ----
-		this.mockMvc
-				.perform(post("/foo").accept(MediaType.APPLICATION_PDF)
-						.accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
-				.andExpect(status().isOk()).andExpect(content().string("bar"))
-				// first WireMock
-				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
-						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
-						.contentType(MediaType.valueOf("application/json"))
-						.stub("shouldGrantABeerIfOldEnough"))
-				// then Contract DSL documentation
-				.andDo(document("index", SpringCloudContractRestDocs.dslContract()));
+Unresolved directive in spring-cloud-wiremock.adoc - include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/restdocs/ContractDslSnippetTests.java[tags=contract_snippet]
 ----
 
 The preceding test creates the stub presented in the previous section, generating both
@@ -2090,7 +1541,7 @@ added after the original pull request but before a merge.
   `eclipse-code-formatter.xml` file from the
   https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-dependencies-parent/eclipse-code-formatter.xml[Spring
   Cloud Build] project. If using IntelliJ, you can use the
-  http://plugins.jetbrains.com/plugin/6546[Eclipse Code Formatter
+  https://plugins.jetbrains.com/plugin/6546[Eclipse Code Formatter
   Plugin] to import the same file.
 * Make sure all new `.java` files to have a simple Javadoc class comment with at least an
   `@author` tag identifying you, and preferably at least a paragraph on what the class is
@@ -2103,7 +1554,7 @@ added after the original pull request but before a merge.
 * A few unit tests would help a lot as well -- someone has to do it.
 * If no-one else is using your branch, please rebase it against the current master (or
   other target branch in the main project).
-* When writing a commit message please follow http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
+* When writing a commit message please follow https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
   if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
   message (where XXXX is the issue number).
 
@@ -2174,7 +1625,7 @@ If you need to suppress some rules (e.g. line length needs to be longer), then i
 <?xml version="1.0"?>
 <!DOCTYPE suppressions PUBLIC
 		"-//Puppy Crawl//DTD Suppressions 1.1//EN"
-		"http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+		"https://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
 	<suppress files=".*ConfigServerApplication\.java" checks="HideUtilityClassConstructor"/>
 	<suppress files=".*ConfigClientWatch\.java" checks="LineLengthCheck"/>
@@ -2248,6 +1699,8 @@ IMPORTANT: You need to have all the necessary Groovy plugins
 
 IMPORTANT: Spring Cloud Contract builds Docker images. Remember to
 have Docker installed.
+
+IMPORTANT: If you want to run the build in offline mode, you have to have Maven 3.5.2+ installed.
 
 === Project structure
 

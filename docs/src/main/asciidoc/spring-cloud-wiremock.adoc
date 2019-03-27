@@ -1,4 +1,4 @@
-:core_path: ../../../..
+:core_path: ../../..
 :doc_samples: {core_path}/samples/wiremock-jetty
 :wiremock_tests: {core_path}/spring-cloud-contract-wiremock
 
