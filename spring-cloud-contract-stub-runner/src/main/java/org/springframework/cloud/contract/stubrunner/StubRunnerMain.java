@@ -64,7 +64,7 @@ public class StubRunnerMain {
 			ArgumentAcceptingOptionSpec<String> rootOpt = parser.acceptsAll(
 					Arrays.asList("r", "root"),
 					"Location of a Jar containing server where you keep "
-							+ "your stubs (e.g. http://nexus.net/content/repositories/repository)")
+							+ "your stubs (e.g. https://nexus.net/content/repositories/repository)")
 					.withRequiredArg();
 			ArgumentAcceptingOptionSpec<String> usernameOpt = parser
 					.acceptsAll(Arrays.asList("u", "username"),
