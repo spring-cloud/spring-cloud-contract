@@ -427,7 +427,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 					}
 					body(
 							email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+							callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 					)
 				}
 				response {
@@ -482,7 +482,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password".toURI())
 					.header("Content-Type", "application/json")
-					.body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+					.body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
 					, String)
 			response.headers.get('Content-Type') == ['application/json']
 			response.statusCodeValue == 404
@@ -728,7 +728,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 						}
 						body(
 							email: 'abc@abc.com',
-							callback_url: 'http://partners.com'
+							callback_url: 'https://partners.com'
 						)
 						stubMatchers {
 							jsonPath('$.[\\'email\\']', byRegex(email()))
@@ -790,7 +790,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
 					.header("Content-Type", "application/json")
-					.body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+					.body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
 					, String)
 			response.headers.get('Content-Type') == ['application/json']
 			response.statusCodeValue == 404
@@ -814,7 +814,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 						}
 						body(
 							email: 'abc@abc.com',
-							callback_url: 'http://partners.com'
+							callback_url: 'https://partners.com'
 						)
 						stubMatchers {
 							jsonPath('$.[\\'email\\']', byRegex(email()))
@@ -888,7 +888,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
 					.header("Content-Type", "application/json")
-					.body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+					.body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
 					, String)
 			response.headers.get('Content-Type') == ['application/json;charset=UTF-8']
 			response.statusCodeValue == 400

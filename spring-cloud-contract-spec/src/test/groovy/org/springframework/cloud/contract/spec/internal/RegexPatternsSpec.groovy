@@ -93,7 +93,7 @@ class RegexPatternsSpec extends Specification {
 			'https://j.mp'                                       || true
 			'ftp://foo.bar/baz'                                 || true
 			'https://foo.bar/?q=Test%20URL-encoded%20stuff'      || true
-			'http://1337.net'                                   || true
+			'https://1224.net/'                                   || true
 			'https://a.b-c.de'                                   || true
 			'https://223.255.255.254'                            || true
 			'foo.com'                                           || true

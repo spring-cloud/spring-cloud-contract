@@ -52,7 +52,7 @@ public class StubRunnerMain {
 							"Suffix for the jar containing stubs (e.g. 'stubs' if the stub jar would have a 'stubs' classifier for stubs: foobar-stubs ). Defaults to 'stubs'")
 					.withRequiredArg().defaultsTo("stubs");
 			ArgumentAcceptingOptionSpec<String> rootOpt = parser
-					.acceptsAll(Arrays.asList("r", "root"),"Location of a Jar containing server where you keep your stubs (e.g. http://nexus.net/content/repositories/repository)")
+					.acceptsAll(Arrays.asList("r", "root"),"Location of a Jar containing server where you keep your stubs (e.g. https://nexus.net/content/repositories/repository)")
 					.withRequiredArg();
 			ArgumentAcceptingOptionSpec<String> usernameOpt = parser
 					.acceptsAll(Arrays.asList("u", "username"),"Username to user when connecting to repository")

@@ -852,7 +852,7 @@ name of `scenario1` and the three following steps:
 . logout marked as `Step2` which will close the scenario.
 
 More details about WireMock scenarios can be found at
-http://wiremock.org/stateful-behaviour.html[http://wiremock.org/stateful-behaviour.html]
+https://wiremock.org/stateful-behaviour.html[https://wiremock.org/stateful-behaviour.html]
 
 Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.
 
@@ -918,7 +918,7 @@ It's enough for you to mount your contracts, pass the environment variables
 
 - generate the contract tests
 - execute the tests against the provided URL
-- generate the http://wiremock.org[WireMock] stubs
+- generate the https://github.com/tomakehurst/wiremock[WireMock] stubs
 - (optional - turned on by default) publish the stubs to a Artifact Manager
 
 ===== Environment Variables

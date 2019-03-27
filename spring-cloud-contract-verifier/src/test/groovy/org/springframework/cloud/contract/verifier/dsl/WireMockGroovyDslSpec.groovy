@@ -1341,7 +1341,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 					body(
 							email: $(consumer(regex(email())), producer('not.existing@user.com')),
-							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+							callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 					)
 				}
 				response {
@@ -1480,7 +1480,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						}
 						body(
 								email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-								callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+								callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 						)
 					}
 					response {
@@ -1505,7 +1505,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						body(
 								""" {
 								"email" : "${value(consumer(optional(regex(email()))), producer('abc@abc.com'))}",
-								"callback_url" : "${value(consumer(regex(hostname())), producer('http://partners.com'))}"
+								"callback_url" : "${value(consumer(regex(hostname())), producer('https://partners.com'))}"
 								}
 							"""
 						)

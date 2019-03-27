@@ -161,7 +161,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 }
 ----
 
-IMPORTANT: Please read the http://groovy-lang.org/json.html[Groovy docs related to JSON] to understand how to
+IMPORTANT: Please read the https://groovy-lang.org/json.html[Groovy docs related to JSON] to understand how to
 properly structure the request / response bodies.
 
 === How to do Stubs versioning?
