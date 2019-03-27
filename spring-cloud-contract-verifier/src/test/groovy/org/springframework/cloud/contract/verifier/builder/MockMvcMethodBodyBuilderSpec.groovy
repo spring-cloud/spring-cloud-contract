@@ -117,7 +117,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			}
 			body(
 					email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-					callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+					callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 			)
 		}
 		response {
@@ -148,7 +148,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 						value(consumer(optional(regex(email()))), producer('abc@abc.com'))
 					}",
 								"callback_url" : "${
-						value(consumer(regex(hostname())), producer('http://partners.com'))
+						value(consumer(regex(hostname())), producer('https://partners.com'))
 					}"
 								}
 							"""
@@ -967,7 +967,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 					}
 					body(
 							email: $(consumer(regex(email())), producer('not.existing@user.com')),
-							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+							callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 					)
 				}
 				response {

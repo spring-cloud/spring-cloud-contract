@@ -187,7 +187,7 @@ You can set the following options to the main class:
 
 ===== HTTP Stubs
 
-Stubs are defined in JSON documents, whose syntax is defined in http://wiremock.org/stubbing.html[WireMock documentation]
+Stubs are defined in JSON documents, whose syntax is defined in https://wiremock.org/stubbing.html[WireMock documentation]
 
 Example:
 
