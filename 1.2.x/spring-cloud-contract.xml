@@ -24,7 +24,7 @@ that a contract is kept by producers and consumers.</simpara>
 <title>Spring Cloud Contract Verifier Introduction</title>
 <tip>
 <simpara>The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski
-(<link xl:href="http://codearte.io">codearte.io</link>)</simpara>
+(<link xl:href="https://github.com/Codearte">Codearte</link>)</simpara>
 </tip>
 <simpara>Spring Cloud Contract Verifier enables Consumer Driven Contract (CDC) development of
 JVM-based applications. It moves TDD to the level of software architecture.</simpara>
@@ -646,7 +646,7 @@ a map notation or String with interpolations.
 for more information.</link> We highly recommend using the map notation!</simpara>
 <tip>
 <simpara>You must understand the map notation in order to set up contracts. Please read the
-<link xl:href="http://groovy-lang.org/json.html">Groovy docs regarding JSON</link>.</simpara>
+<link xl:href="https://groovy-lang.org/json.html">Groovy docs regarding JSON</link>.</simpara>
 </tip>
 <simpara>The previously shown contract is an agreement between two sides that:</simpara>
 <itemizedlist>
@@ -823,7 +823,7 @@ the <literal>contracts</literal> folder, pick only one, which should be <literal
 capitalize <literal>fraud</literal>. That gives you the <literal>FraudBase</literal> test class name.</simpara>
 </important>
 <simpara>All the generated tests extend that class. Over there, you can set up your Spring Context
-or whatever is necessary. In this case, use <link xl:href="http://rest-assured.io/">Rest Assured MVC</link> to
+or whatever is necessary. In this case, use <link xl:href="https://github.com/rest-assured/rest-assured">Rest Assured MVC</link> to
 start the server side <literal>FraudDetectionController</literal>.</simpara>
 <programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
 
@@ -951,13 +951,13 @@ constant development.</simpara>
 <simpara><link xl:href="https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</link></simpara>
 </listitem>
 <listitem>
-<simpara><link xl:href="http://toomuchcoding.com/blog/categories/accurest/">Accurest related articles from Marcin Grzejszczak&#8217;s blog</link></simpara>
+<simpara><link xl:href="https://toomuchcoding.com/blog/categories/accurest/">Accurest related articles from Marcin Grzejszczak&#8217;s blog</link></simpara>
 </listitem>
 <listitem>
-<simpara><link xl:href="http://toomuchcoding.com/blog/categories/spring-cloud-contract/">Spring Cloud Contract related articles from Marcin Grzejszczak&#8217;s blog</link></simpara>
+<simpara><link xl:href="https://toomuchcoding.com/blog/categories/spring-cloud-contract/">Spring Cloud Contract related articles from Marcin Grzejszczak&#8217;s blog</link></simpara>
 </listitem>
 <listitem>
-<simpara><link xl:href="http://groovy-lang.org/json.html">Groovy docs regarding JSON</link></simpara>
+<simpara><link xl:href="https://groovy-lang.org/json.html">Groovy docs regarding JSON</link></simpara>
 </listitem>
 </itemizedlist>
 </section>
@@ -1094,7 +1094,7 @@ for time and UUID are simplified and most likely invalid but we want to keep thi
 			}
 }</programlisting>
 <important>
-<simpara>Please read the <link xl:href="http://groovy-lang.org/json.html">Groovy docs related to JSON</link> to understand how to
+<simpara>Please read the <link xl:href="https://groovy-lang.org/json.html">Groovy docs related to JSON</link> to understand how to
 properly structure the request / response bodies.</simpara>
 </important>
 </section>
@@ -2390,7 +2390,7 @@ name of <literal>scenario1</literal> and the three following steps:</simpara>
 </listitem>
 </orderedlist>
 <simpara>More details about WireMock scenarios can be found at
-<link xl:href="http://wiremock.org/stateful-behaviour.html">http://wiremock.org/stateful-behaviour.html</link></simpara>
+<link xl:href="https://wiremock.org/stateful-behaviour.html">https://wiremock.org/stateful-behaviour.html</link></simpara>
 <simpara>Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.</simpara>
 </section>
 <section xml:id="docker-project">
@@ -2470,7 +2470,7 @@ purposes).</simpara>
 <simpara>execute the tests against the provided URL</simpara>
 </listitem>
 <listitem>
-<simpara>generate the <link xl:href="http://wiremock.org">WireMock</link> stubs</simpara>
+<simpara>generate the <link xl:href="https://github.com/tomakehurst/wiremock">WireMock</link> stubs</simpara>
 </listitem>
 <listitem>
 <simpara>(optional - turned on by default) publish the stubs to a Artifact Manager</simpara>
@@ -3380,7 +3380,7 @@ HTTP stubs without the need to download artifacts.</simpara>
 </section>
 <section xml:id="_http_stubs">
 <title>HTTP Stubs</title>
-<simpara>Stubs are defined in JSON documents, whose syntax is defined in <link xl:href="http://wiremock.org/stubbing.html">WireMock documentation</link></simpara>
+<simpara>Stubs are defined in JSON documents, whose syntax is defined in <link xl:href="https://wiremock.org/stubbing.html">WireMock documentation</link></simpara>
 <simpara>Example:</simpara>
 <programlisting language="javascript" linenumbering="unnumbered">{
     "request": {
@@ -3959,7 +3959,7 @@ and we want to have the stub runner feature turned on <literal>@AutoConfigureStu
 <simpara>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <literal>java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</literal> where
  <literal>${SYSTEM_PROPS}</literal> would contain the following list of properties</simpara>
-<programlisting language="bash" linenumbering="unnumbered">-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (1)
+<programlisting language="bash" linenumbering="unnumbered">-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshot (1)
 -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
@@ -5837,7 +5837,7 @@ String nonBlank() {
 		}
 		body(
 				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-				callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+				callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 		)
 	}
 	response {
@@ -5879,7 +5879,7 @@ optional parameters only for the following:</simpara>
 		}
 		body(
 				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-				callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+				callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 		)
 	}
 	response {
@@ -5899,7 +5899,7 @@ expression that must be present 0 or more times.</simpara>
  given:
   def request = given()
     .header("Content-Type", "application/json")
-    .body('''{"email":"abc@abc.com","callback_url":"http://partners.com"}''')
+    .body('''{"email":"abc@abc.com","callback_url":"https://partners.com"}''')
 
  when:
   def response = given().spec(request)
@@ -8116,7 +8116,7 @@ used. If you provide more than one, then the first one on the list is used.</sim
 </chapter>
 <chapter xml:id="_spring_cloud_contract_wiremock">
 <title>Spring Cloud Contract WireMock</title>
-<simpara>The Spring Cloud Contract WireMock modules let you use <link xl:href="http://wiremock.org">WireMock</link> in a
+<simpara>The Spring Cloud Contract WireMock modules let you use <link xl:href="https://github.com/tomakehurst/wiremock">WireMock</link> in a
 Spring Boot application. Check out the
 <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.2.x/samples">samples</link>
 for more details.</simpara>
@@ -8294,7 +8294,7 @@ visit <literal><link xl:href="https://example.org/">https://example.org/</link><
 than one stub pattern can be specified, and each one can be a directory (for a recursive
 list of all ".json"), a fixed filename (as in the example above), or an Ant-style
 pattern. The JSON format is the normal WireMock format, which you can read about in the
-<link xl:href="http://wiremock.org/docs/stubbing/">WireMock website</link>.</simpara>
+<link xl:href="https://wiremock.org/docs/stubbing/">WireMock website</link>.</simpara>
 <simpara>Currently, the Spring Cloud Contract Verifier supports Tomcat, Jetty, and Undertow as
 Spring Boot embedded servers, and Wiremock itself has "native" support for a particular
 version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
