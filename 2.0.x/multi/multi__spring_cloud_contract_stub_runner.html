@@ -246,7 +246,7 @@ HTTP stubs without the need to download artifacts.</p></div></div><div class="se
 --sm, --stubsMode               Stubs mode to be used. Acceptable values
                                   [CLASSPATH, LOCAL, REMOTE]
 -u, --username                  Username to user when connecting to
-                                  repository</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_http_stubs" href="#_http_stubs"></a>HTTP Stubs</h4></div></div></div><p>Stubs are defined in JSON documents, whose syntax is defined in <a class="link" href="http://wiremock.org/stubbing.html" target="_top">WireMock documentation</a></p><p>Example:</p><pre class="programlisting">{
+                                  repository</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_http_stubs" href="#_http_stubs"></a>HTTP Stubs</h4></div></div></div><p>Stubs are defined in JSON documents, whose syntax is defined in <a class="link" href="https://wiremock.org/stubbing.html" target="_top">WireMock documentation</a></p><p>Example:</p><pre class="programlisting">{
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span>: {
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"GET"</span>,
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/ping"</span>
@@ -630,7 +630,7 @@ the Stub Runner server. It will be available at port <code class="literal">8750<
 }</pre><p>As you can see we want to start a Stub Runner Boot server <code class="literal">@EnableStubRunnerServer</code>, enable Eureka client <code class="literal">@EnableEurekaClient</code>
 and we want to have the stub runner feature turned on <code class="literal">@AutoConfigureStubRunner</code>.</p><p>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <code class="literal">java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</code> where
- <code class="literal">${SYSTEM_PROPS}</code> would contain the following list of properties</p><pre class="programlisting">-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (<span class="hl-number">1</span>)
+ <code class="literal">${SYSTEM_PROPS}</code> would contain the following list of properties</p><pre class="programlisting">-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshot (<span class="hl-number">1</span>)
 -Dstubrunner.cloud.stubbed.discovery.enabled=false (<span class="hl-number">2</span>)
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (<span class="hl-number">3</span>)
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (<span class="hl-number">4</span>)
