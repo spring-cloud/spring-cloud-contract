@@ -2787,7 +2787,7 @@ one to one to the contents of the repo.</p>
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
 	&lt;groupId&gt;com.example&lt;/groupId&gt;
@@ -2909,7 +2909,7 @@ Those poms are necessary for the consumer side to run <code>mvn clean install -D
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
 	&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -2959,7 +2959,7 @@ Those poms are necessary for the consumer side to run <code>mvn clean install -D
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;project&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -3025,7 +3025,7 @@ of the JAR containing the contracts:</p>
 	&lt;configuration&gt;
 		&lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
 		&lt;contractsRepositoryUrl&gt;
-			http://link/to/your/nexus/or/artifactory/or/sth
+			https://link/to/your/nexus/or/artifactory/or/sth
 		&lt;/contractsRepositoryUrl&gt;
 		&lt;contractDependency&gt;
 			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -6304,7 +6304,7 @@ it if you want to.
 &lt;assembly
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;stubs&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -8457,9 +8457,9 @@ classpath. Remember to annotate your test class with <code>@AutoConfigureStubRun
 			 xmlns:beans="http://www.springframework.org/schema/beans"
 			 xmlns="http://www.springframework.org/schema/integration"
 			 xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
+			https://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
-			http://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
+			https://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
 
 
 	&lt;!-- REQUIRED FOR TESTING --&gt;
