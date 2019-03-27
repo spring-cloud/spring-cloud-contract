@@ -13,5 +13,5 @@ Feature ideas:
 - [x] `DiscoveryClient` support so backends can be stubbed or mocked transparently (declaratively)
 - [ ] Actuator endpoints that verify the state of contracts supported by the host service
 - [x] Something to make PACT easier to use in Spring Boot apps?
-- [ ] Support [Citrus](http://www.citrusframework.org/) users (somehow?)
+- [ ] Support [Citrus](https://citrusframework.org/) users (somehow?)
 - [x] Schema registries for binary formats like protobuf, thrift, avro - Stream does it
