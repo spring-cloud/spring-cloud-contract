@@ -23,7 +23,7 @@ producers and consumers -- for both HTTP and message-based interactions.
 
 If you prefer to learn about the project by doing some tutorials, you can check out the
 workshops under
-http://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this link].
+https://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this link].
 
 === Spring Cloud Contract Verifier
 
@@ -49,7 +49,7 @@ Spring Cloud Contract Verifier.
 
 Before becoming Spring Cloud Contract, this project was called https://github.com/Codearte/accurest[Accurest].
 It was created by https://twitter.com/mgrzejszczak[Marcin Grzejszczak] and https://twitter.com/jkubrynski[Jakub Kubrynski]
-from (http://codearte.io[codearte.io].
+from (https://github.com/Codearte[Codearte].
 
 The `0.1.0` release took place on 26 Jan 2015 and it became stable with `1.0.0` release on 29 Feb 2016.
 
@@ -765,7 +765,7 @@ a map notation or String with interpolations.
 Consult the <<contract-dsl>> section for more information. We highly recommend using the map notation!
 
 TIP: You must understand the map notation in order to set up contracts. Please read the
-http://groovy-lang.org/json.html[Groovy docs regarding JSON].
+https://groovy-lang.org/json.html[Groovy docs regarding JSON].
 
 The previously shown contract is an agreement between two sides that:
 
@@ -944,7 +944,7 @@ the `contracts` folder, pick only one, which should be `fraud`. Add the `Base` s
 capitalize `fraud`. That gives you the `FraudBase` test class name.
 
 All the generated tests extend that class. Over there, you can set up your Spring Context
-or whatever is necessary. In this case, use http://rest-assured.io/[Rest Assured MVC] to
+or whatever is necessary. In this case, use https://github.com/rest-assured/rest-assured[Rest Assured MVC] to
 start the server side `FraudDetectionController`.
 
 [source,java,indent=0]
@@ -1080,10 +1080,10 @@ video::sAAklvxmPmk[youtube,start=538,width=640,height=480]
 
 ==== Readings
 
-- http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
-- http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
-- http://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
-- http://groovy-lang.org/json.html[Groovy docs regarding JSON]
+- https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
+- https://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
+- https://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
+- https://groovy-lang.org/json.html[Groovy docs regarding JSON]
 
 === Samples
 
@@ -1110,7 +1110,7 @@ Marcin Grzejszczak]
 
 == Spring Cloud Contract WireMock
 
-The Spring Cloud Contract WireMock modules let you use http://wiremock.org[WireMock] in a
+The Spring Cloud Contract WireMock modules let you use https://github.com/tomakehurst/wiremock[WireMock] in a
 Spring Boot application. Check out the
 https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples[samples]
 for more details.
@@ -1266,11 +1266,11 @@ Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/
 The `baseUrl` value is prepended to all mock calls, and the `stubs()` method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 `/stubs/resource.json` is loaded into the mock server. If the `RestTemplate` is asked to
-visit `http://example.org/`, it gets the responses as being declared at that URL. More
+visit `https://example.org/`, it gets the responses as being declared at that URL. More
 than one stub pattern can be specified, and each one can be a directory (for a recursive
 list of all ".json"), a fixed filename (as in the example above), or an Ant-style
 pattern. The JSON format is the normal WireMock format, which you can read about in the
-http://wiremock.org/docs/stubbing/[WireMock website].
+https://wiremock.org/docs/stubbing/[WireMock website].
 
 Currently, the Spring Cloud Contract Verifier supports Tomcat, Jetty, and Undertow as
 Spring Boot embedded servers, and Wiremock itself has "native" support for a particular
