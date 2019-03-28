@@ -859,7 +859,7 @@ optional parameters only for the following:</p><div class="itemizedlist"><ul cla
 		}
 		body(
 				email: $(consumer(optional(regex(email()))), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc@abc.com'</span>)),
-				callback_url: $(consumer(regex(hostname())), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://partners.com'</span>))
+				callback_url: $(consumer(regex(hostname())), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'https://partners.com'</span>))
 		)
 	}
 	response {
@@ -876,7 +876,7 @@ expression that must be present 0 or more times.</p><p>If you use Spock for, the
 </span> given:
   def request = given()
     .header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>)
-    .body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{"email":"abc@abc.com","callback_url":"http://partners.com"}'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+    .body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{"email":"abc@abc.com","callback_url":"https://partners.com"}'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
 
  when:
   def response = given().spec(request)
