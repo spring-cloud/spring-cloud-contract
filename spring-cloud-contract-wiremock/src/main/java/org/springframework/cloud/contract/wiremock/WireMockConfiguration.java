@@ -272,7 +272,7 @@ class WireMockProperties {
 
 		private boolean portDynamic = false;
 
-		private boolean httpsPortDynamic = true;
+		private boolean httpsPortDynamic = false;
 
 		public int getPort() {
 			return this.port;
