@@ -39,4 +39,5 @@ public class AutoConfigureWireMockFilesApplicationTests {
 		assertThat(this.service.go())
 				.isEqualToIgnoringWhitespace("{\"message\":\"Hello Root\"}");
 	}
+
 }
