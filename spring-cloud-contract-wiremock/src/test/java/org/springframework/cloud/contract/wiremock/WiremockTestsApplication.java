@@ -72,7 +72,7 @@ class Service {
 
 	private static final Log log = LogFactory.getLog(Service.class);
 
-	@Value("${app.baseUrl:http://example.org}")
+	@Value("${app.baseUrl:https://example.org}")
 	String base;
 
 	private RestTemplate restTemplate;

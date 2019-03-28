@@ -33,7 +33,7 @@ In order to use Spring Cloud Contract Verifier with WireMock, you muse use eithe
 Gradle or a Maven plugin.
 
 WARNING: If you want to use Spock in your projects, you must add separately the
-`spock-core` and `spock-spring` modules. Check http://spockframework.github.io/[Spock
+`spock-core` and `spock-spring` modules. Check https://spockframework.github.io/[Spock
 docs for more information]
 
 [[gradle-add-gradle-plugin]]
@@ -1007,7 +1007,7 @@ name of `scenario1` and the three following steps:
 . logout marked as `Step2` which will close the scenario.
 
 More details about WireMock scenarios can be found at
-http://wiremock.org/docs/stateful-behaviour/[http://wiremock.org/docs/stateful-behaviour/]
+https://wiremock.org/docs/stateful-behaviour/[https://wiremock.org/docs/stateful-behaviour/]
 
 Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.
 
@@ -1059,7 +1059,7 @@ like them to be available for others to download / reference or reuse. In case
 of the JVM world those artifacts would be JARs, for Ruby these are gems
 and for Docker those would be Docker images. You can store those artifacts
 in a manager. Examples of such managers can be https://jfrog.com/artifactory/[Artifactory]
-or http://www.sonatype.org/nexus/[Nexus].
+or https://www.sonatype.org/nexus/[Nexus].
 
 ==== How it works
 
@@ -1073,7 +1073,7 @@ It's enough for you to mount your contracts, pass the environment variables
 
 - generate the contract tests
 - execute the tests against the provided URL
-- generate the http://wiremock.org[WireMock] stubs
+- generate the https://github.com/tomakehurst/wiremock[WireMock] stubs
 - (optional - turned on by default) publish the stubs to a Artifact Manager
 
 ===== Environment Variables
