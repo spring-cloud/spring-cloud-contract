@@ -5974,7 +5974,7 @@ classpath. Remember to annotate your test class with <literal>@AutoConfigureStub
 			 xsi:schemaLocation="http://www.springframework.org/schema/beans
 			https://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
-			https://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
+			http://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
 
 
 	&lt;!-- REQUIRED FOR TESTING --&gt;
