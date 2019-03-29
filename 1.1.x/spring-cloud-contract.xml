@@ -339,9 +339,9 @@ all the contract are present in the producer&#8217;s repository</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/release" }
 }</programlisting>
 </para>
 </formalpara>
@@ -694,7 +694,7 @@ You can switch off the value of the <literal>workOffline</literal> parameter in 
 example of achieving the same by changing the properties.</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+  repositoryRoot: https://repo.spring.io/libs-snapshot</programlisting>
 <simpara>And that&#8217;s it!</simpara>
 </section>
 </section>
@@ -717,7 +717,7 @@ is under constant development.</simpara>
 <title>Readings</title>
 <itemizedlist>
 <listitem>
-<simpara><link xl:href="http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</link></simpara>
+<simpara><link xl:href="https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</link></simpara>
 </listitem>
 <listitem>
 <simpara><link xl:href="http://toomuchcoding.com/blog/categories/accurest/">Accurest related articles from Marcin Grzejszczak&#8217;s blog</link></simpara>
@@ -745,7 +745,7 @@ is under constant development.</simpara>
 <simpara>In order to use Spring Cloud Contract Verifier with WireMock you have to use Gradle or Maven plugin.</simpara>
 <warning>
 <simpara>If you want to use Spock in your projects you have to add separately
-the <literal>spock-core</literal> and <literal>spock-spring</literal> modules. Check <link xl:href="http://spockframework.github.io/">Spock docs for more information</link></simpara>
+the <literal>spock-core</literal> and <literal>spock-spring</literal> modules. Check <link xl:href="https://spockframework.github.io/">Spock docs for more information</link></simpara>
 </warning>
 </section>
 <section xml:id="_add_gradle_plugin_with_dependencies">
@@ -809,9 +809,9 @@ and will modify the imports accordingly.</simpara>
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}
 }</programlisting>
 </section>
@@ -1929,9 +1929,9 @@ automatically for you.</simpara>
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}</programlisting>
 </para>
 </formalpara>
@@ -1976,7 +1976,7 @@ automatically for you.</simpara>
 &lt;assembly
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;stubs&lt;/id&gt;
 	&lt;formats&gt;
 		&lt;format&gt;jar&lt;/format&gt;
@@ -2042,7 +2042,7 @@ publishing {
 <section xml:id="_stub_runner_core">
 <title>Stub Runner Core</title>
 <simpara>Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of
-<link xl:href="http://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</link>.</simpara>
+<link xl:href="https://martinfowler.com/articles/consumerDrivenContracts.html">Consumer Driven Contracts</link>.</simpara>
 <simpara>Stub Runner allows you to automatically download the stubs of the provided dependencies (or pick those from the classpath), start WireMock servers for them and feed them with proper stub definitions.
 For messaging, special stub routes are defined.</simpara>
 <section xml:id="_retrieving_stubs">
@@ -2067,7 +2067,7 @@ to <literal>true</literal> then Stub Runner will connect to the given server and
 It will then unpack the JAR to a temporary folder and reference those files in further
 contract processing.</simpara>
 <simpara>Example:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095")</programlisting>
+<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="https://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095")</programlisting>
 </section>
 <section xml:id="_classpath_scanning">
 <title>Classpath scanning</title>
@@ -2570,7 +2570,7 @@ project for more information.</simpara>
 </section>
 <section xml:id="_spring_cloud_cli">
 <title>Spring Cloud CLI</title>
-<simpara>Starting from <literal>1.4.0.RELEASE</literal> version of the <link xl:href="http://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</link>
+<simpara>Starting from <literal>1.4.0.RELEASE</literal> version of the <link xl:href="https://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</link>
 project you can start Stub Runner Boot by executing <literal>spring cloud stubrunner</literal>.</simpara>
 <simpara>In order to pass the configuration just create a <literal>stubrunner.yml</literal> file in the current working directory
 or a subdirectory called <literal>config</literal> or in <literal>~/.spring-cloud</literal>. The file could look like this
@@ -2736,7 +2736,7 @@ and we want to have the stub runner feature turned on <literal>@AutoConfigureStu
 <simpara>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
  We can do it by running the app <literal>java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</literal> where
  <literal>${SYSTEM_PROPS}</literal> would contain the following list of properties</simpara>
-<programlisting language="bash" linenumbering="unnumbered">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+<programlisting language="bash" linenumbering="unnumbered">-Dstubrunner.repositoryRoot=https://repo.spring.io/snapshots (1)
 -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
@@ -2920,7 +2920,7 @@ information about the reasons behind this change.</simpara>
 <simpara>Starting from version 1.0.4 as a version you can provide a range of versions that you would like
 the Stub Runner to take into consideration. You can read more about the <link xl:href="https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges">Aether versioning ranges here</link>.</simpara>
 </important>
-<simpara>Taken from <link xl:href="http://download.eclipse.org/aether/aether-core/0.9.0/apidocs/org/eclipse/aether/util/version/GenericVersionScheme.html">Aether Docs</link>:</simpara>
+<simpara>Taken from <link xl:href="https://download.eclipse.org/aether/aether-core/0.9.0/apidocs/org/eclipse/aether/util/version/GenericVersionScheme.html">Aether Docs</link>:</simpara>
 <blockquote>
 <simpara>This scheme accepts versions of any form, interpreting a version as a sequence of numeric and alphabetic segments. The characters '-', '_', and '.' as well as the mere
 transitions from digit to letter and vice versa delimit the version segments. Delimiters are treated as equivalent.</simpara>
@@ -3212,9 +3212,9 @@ Remember to annotate your test class with <literal>@AutoConfigureStubRunner</lit
 			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			 xmlns:beans="http://www.springframework.org/schema/beans"
 			 xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
+			https://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
-			http://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
+			https://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
 
 
 	&lt;!-- REQUIRED FOR TESTING --&gt;
@@ -3573,7 +3573,7 @@ Cloud Contract Verifier repository</link>.</simpara>
 				"id":"01fbe706f872cb32",
 				"name":"Washington",
 				"place_type":"city",
-				"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+				"url": "https://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
 			}
 		}]
 	'''
@@ -6153,7 +6153,7 @@ public class WiremockForDocsMockServerApplicationTests {
 	public void contextLoads() throws Exception {
 		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.baseUrl("https://example.org").stubs("classpath:/stubs/resource.json")
 				.build();
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
@@ -6164,7 +6164,7 @@ public class WiremockForDocsMockServerApplicationTests {
 method takes a stub path resource pattern as an argument. So in this
 example the stub defined at <literal>/stubs/resource.json</literal> is loaded into the
 mock server, so if the <literal>RestTemplate</literal> is asked to visit
-<literal><link xl:href="http://example.org/">http://example.org/</link></literal> it will get the responses as declared
+<literal><link xl:href="https://example.org/">https://example.org/</link></literal> it will get the responses as declared
 there. More than one stub pattern can be specified, and each one can
 be a directory (for a recursive list of all ".json"), or a fixed
 filename (like in the example above) or an ant-style pattern. The JSON
