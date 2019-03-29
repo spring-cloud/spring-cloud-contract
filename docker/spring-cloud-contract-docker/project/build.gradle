@@ -60,6 +60,7 @@ test {
 contracts {
 	baseClassForTests = "contracts.RestBase"
 	testMode = "EXPLICIT"
+	stubsSuffix = getProp("PRODUCER_STUBS_CLASSIFIER") ?: "stubs"
 	if (getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
 		logger.
 				lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
