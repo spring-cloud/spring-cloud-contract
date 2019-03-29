@@ -10,8 +10,8 @@ Download
         <p>The recommended way to get started using <code>{{ site.project }}</code> in
         your project is with a dependency management system &ndash; the snippet below can
         be copied and pasted into your build. Need help? See our getting started guides
-        on building with <a href="http://spring.io/guides/gs/maven/">Maven</a> and
-        <a href="http://spring.io/guides/gs/gradle/">Gradle</a>. The example below is
+        on building with <a href="https://spring.io/guides/gs/maven/">Maven</a> and
+        <a href="https://spring.io/guides/gs/gradle/">Gradle</a>. The example below is
         showing how to use the Spring Cloud Contract plugin. In order to use
         Spring Cloud Contract Stub Runner you just have to use different libraries
         as presented in the later part of this guide. Of course instead of adding the
