@@ -33,7 +33,7 @@
 	color: #ffffff;
 }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
 <script type="text/javascript">
 function addBlockSwitches() {
 	$('.primary').each(function() {
@@ -5493,10 +5493,10 @@ your running application, to the Artifact manager instance etc.</p>
 which is the default URL of <a href="https://jfrog.com/artifactory/">Artifactory</a> running locally</p>
 </li>
 <li>
-<p><code>REPO_WITH_BINARIES_USERNAME</code> - (optional) username when the Artifact Manager is secured</p>
+<p><code>REPO_WITH_BINARIES_USERNAME</code> - (optional) username when the Artifact Manager is secured, defaults to <code>admin</code>.</p>
 </li>
 <li>
-<p><code>REPO_WITH_BINARIES_PASSWORD</code> - (optional) password when the Artifact Manager is secured</p>
+<p><code>REPO_WITH_BINARIES_PASSWORD</code> - (optional) password when the Artifact Manager is secured, defaults to <code>password</code>.</p>
 </li>
 <li>
 <p><code>PUBLISH_ARTIFACTS</code> - if set to <code>true</code> then will publish artifact to binary storage. Defaults to <code>true</code>.</p>
@@ -5525,6 +5525,14 @@ this feature you must set the <code>EXTERNAL_CONTRACTS_ARTIFACT_ID</code> enviro
 <p><code>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</code> - URL of your Artifact Manager. Defaults to value of <code>REPO_WITH_BINARIES_URL</code> env var.
 If that&#8217;s not set, defaults to <code><a href="http://localhost:8081/artifactory/libs-release-local" class="bare">http://localhost:8081/artifactory/libs-release-local</a></code>
 which is the default URL of <a href="https://jfrog.com/artifactory/">Artifactory</a> running locally</p>
+</li>
+<li>
+<p><code>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME</code> - (optional) username if the <code>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</code>
+requires authentication, defaults to <code>REPO_WITH_BINARIES_USERNAME</code>. If that&#8217;s not set defaults to <code>admin</code>.</p>
+</li>
+<li>
+<p><code>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD</code> - (optional) password if the <code>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</code>
+requires authentication, defaults to <code>REPO_WITH_BINARIES_PASSWORD</code>. If that&#8217;s not set defaults to <code>password</code>.</p>
 </li>
 <li>
 <p><code>EXTERNAL_CONTRACTS_PATH</code> - path to contracts for the given project, inside the project with contracts.
