@@ -97,9 +97,9 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
 			conditions.eventually {
-				assert restTemplate.getForObject('https://loanIssuance/name', String) == 'loanIssuance'
+				assert restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
 			}
-			restTemplate.getForObject('https://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
 	@Configuration
