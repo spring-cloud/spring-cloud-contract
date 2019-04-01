@@ -3037,7 +3037,7 @@ of the JAR containing the contracts:</p>
 </div>
 <div class="paragraph">
 <p>With this setup the JAR with groupid <code>com.example.standalone</code> and artifactid <code>contracts</code> will be downloaded
-from <code><a href="http://link/to/your/nexus/or/artifactory/or/sth" class="bare">http://link/to/your/nexus/or/artifactory/or/sth</a></code>. It will be then unpacked in a local temporary folder
+from <code><a href="https://link/to/your/nexus/or/artifactory/or/sth" class="bare">https://link/to/your/nexus/or/artifactory/or/sth</a></code>. It will be then unpacked in a local temporary folder
 and contracts present under the <code>com/example/server</code> will be picked as the ones used to generate the
 tests and the stubs. Due to this convention the producer team will know which consumer teams will be broken
 when some incompatible changes are done.</p>
@@ -3068,7 +3068,7 @@ allows us to do that. Also <code><code>contractsPath</code></code> need to be sp
    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
    &lt;configuration&gt;
       &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
-      &lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
+      &lt;contractsRepositoryUrl&gt;https://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
       &lt;contractDependency&gt;
          &lt;groupId&gt;com.example&lt;/groupId&gt;
          &lt;artifactId&gt;common-repo-with-contracts&lt;/artifactId&gt;
@@ -6721,7 +6721,7 @@ mappingsOutputFolder = "target/outputmappings/")</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
-			.repoRoot("http://some_url")
+			.repoRoot("https://some_url")
 			.downloadStub("a.b.c", "loanIssuance")
 			.downloadStub("a.b.c:fraudDetectionServer")
 			.withMappingsOutputFolder("target/outputmappings")</code></pre>
@@ -8467,7 +8467,7 @@ classpath. Remember to annotate your test class with <code>@AutoConfigureStubRun
 			 xsi:schemaLocation="http://www.springframework.org/schema/beans
 			https://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
-			https://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
+			http://www.springframework.org/schema/integration/spring-integration.xsd"&gt;
 
 
 	&lt;!-- REQUIRED FOR TESTING --&gt;
