@@ -55,12 +55,12 @@ repositories {
 	maven { url "https://repo.spring.io/libs-staging-local/" }
 }
 
-//Dependencies in all subprojects - http://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
+//Dependencies in all subprojects - https://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
 task allDeps(type: DependencyReportTask) {}
 task allInsight(type: DependencyInsightReportTask) {}
 
 configurations {
-	// fixing the groovydoc issue http://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
+	// fixing the groovydoc issue https://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
 	jansi.extendsFrom(runtime)
 
 	contractVerifierGradlePluginLibs
