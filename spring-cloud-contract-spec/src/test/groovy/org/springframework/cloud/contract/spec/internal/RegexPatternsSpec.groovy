@@ -102,7 +102,7 @@ class RegexPatternsSpec extends Specification {
 			'https://../'                                        || false
 			'http://?'                                          || false
 			'http://??'                                         || false
-			'http://??/'                                        || false
+			'https://??/'                                        || false
 			'http://#'                                          || false
 			'http://##'                                         || false
 			'http://##/'                                        || false
@@ -111,7 +111,7 @@ class RegexPatternsSpec extends Specification {
 			'//a'                                               || false
 			'///a'                                              || false
 			'///'                                               || false
-			'http:///a'                                         || false
+			'https:///a'                                         || false
 			'rdar://1234'                                       || false
 			'h://test'                                          || false
 			'http:// shouldfail.com'                            || false
@@ -122,7 +122,7 @@ class RegexPatternsSpec extends Specification {
 			'https://a.b-.co'                                    || false
 			'https://1.1.1.1.1'                                  || false
 			'https://123.123.123'                                || false
-			'http://3628126748'                                 || false
+			'https://3628126748'                                 || false
 			'https://.www.foo.bar/'                              || false
 			'https://www.foo.bar./'                              || false
 			'https://.www.foo.bar./'                             || false

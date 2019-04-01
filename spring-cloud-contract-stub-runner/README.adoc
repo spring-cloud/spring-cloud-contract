@@ -257,7 +257,7 @@ and for the JUnit approach like this:
 [source,java]
 ----
 @ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
-			.repoRoot("http://some_url")
+			.repoRoot("https://some_url")
 			.downloadStub("a.b.c", "loanIssuance")
 			.downloadStub("a.b.c:fraudDetectionServer")
 			.withMappingsOutputFolder("target/outputmappings")
