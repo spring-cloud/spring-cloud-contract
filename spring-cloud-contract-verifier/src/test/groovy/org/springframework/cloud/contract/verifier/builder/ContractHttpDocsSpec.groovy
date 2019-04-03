@@ -287,7 +287,7 @@ class ContractHttpDocsSpec extends Specification {
 					}
 					body(
 							email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+							callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 					)
 				}
 				response {
@@ -315,7 +315,7 @@ class ContractHttpDocsSpec extends Specification {
  given:
   def request = given()
     .header("Content-Type", "application/json")
-    .body('''{"email":"abc@abc.com","callback_url":"http://partners.com"}''')
+    .body('''{"email":"abc@abc.com","callback_url":"https://partners.com"}''')
 
  when:
   def response = given().spec(request)

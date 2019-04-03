@@ -109,7 +109,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 
 	@Override
 	T anyHostname() {
-		return createAndValidateProperty(RegexPatterns.HOSTNAME_PATTERN, "http://foo"
+		return createAndValidateProperty(RegexPatterns.HOSTNAME_PATTERN, "https://foo"
 				+ this.random.
 				nextInt()
 				+ ".com")
@@ -125,7 +125,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 
 	@Override
 	T anyUrl() {
-		return createAndValidateProperty(RegexPatterns.URL, "http://foo"
+		return createAndValidateProperty(RegexPatterns.URL, "https://foo"
 				+ this.random.
 				nextInt()
 				+ ".com")

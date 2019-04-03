@@ -69,6 +69,10 @@ contracts {
 			contractRepository {
 				repositoryUrl = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
 						getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+				username = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME') ?:
+						getProp('REPO_WITH_BINARIES_USERNAME') ?: 'admin'
+				password = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD') ?:
+						getProp('REPO_WITH_BINARIES_PASSWORD') ?: 'password'
 			}
 		}
 		contractDependency {

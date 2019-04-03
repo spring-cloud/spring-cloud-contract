@@ -266,7 +266,7 @@ public class WireMockSnippetTests {
 
 			@Override
 			public URI getUri() {
-				return URI.create("http://foo/bar");
+				return URI.create("https://foo/bar");
 			}
 
 			@Override
@@ -314,7 +314,7 @@ public class WireMockSnippetTests {
 
 			@Override
 			public URI getUri() {
-				return URI.create("http://foo/bar");
+				return URI.create("https://foo/bar");
 			}
 
 			@Override
@@ -362,7 +362,7 @@ public class WireMockSnippetTests {
 
 			@Override
 			public URI getUri() {
-				return URI.create("http://foo/bar");
+				return URI.create("https://foo/bar");
 			}
 
 			@Override
@@ -409,7 +409,7 @@ public class WireMockSnippetTests {
 
 			@Override
 			public URI getUri() {
-				return URI.create("http://foo/bar");
+				return URI.create("https://foo/bar");
 			}
 
 			@Override
@@ -458,7 +458,7 @@ public class WireMockSnippetTests {
 
 			@Override
 			public URI getUri() {
-				return URI.create("http://foo/bar?myParam=");
+				return URI.create("https://foo/bar?myParam=");
 			}
 
 			@Override
