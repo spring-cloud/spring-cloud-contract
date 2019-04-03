@@ -13,7 +13,9 @@ jobs:
     resource_class: large
     steps:
       - setup_remote_docker
-      - checkout
+      - checkout:
+          post:
+            git pull --ff-only origin "refs/pull/${CI_PULL_REQUEST//*pull\//}/merge"
       - restore_cache:
           key: sc-contract-{{ .Branch }}
       - run:
