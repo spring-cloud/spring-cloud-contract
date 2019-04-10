@@ -56,9 +56,8 @@ public class WireMockApplicationListener
 					SocketUtils.findAvailableTcpPort(10000, 12500));
 			source.put("wiremock.server.port-dynamic", true);
 		}
-		int httpsPortProperty = environment.getProperty("wiremock.server.https-port",
-				Integer.class, 0);
-		if (httpsPortProperty == 0) {
+		if (environment.getProperty("wiremock.server.https-port", Integer.class,
+				0) == 0) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
@@ -67,12 +66,13 @@ public class WireMockApplicationListener
 					SocketUtils.findAvailableTcpPort(12500, 15000));
 			source.put("wiremock.server.https-port-dynamic", true);
 		}
-		else if (httpsPortProperty == -1) {
+		else if (environment.getProperty("wiremock.server.https-port", Integer.class,
+				0) != -1) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
 					.get("wiremock")).getSource();
-			source.put("wiremock.server.https-port-dynamic", true);
+			source.put("wiremock.server.https-port-dynamic", false);
 		}
 
 	}
