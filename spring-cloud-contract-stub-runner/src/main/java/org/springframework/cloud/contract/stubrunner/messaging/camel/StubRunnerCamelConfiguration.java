@@ -46,7 +46,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass(RoutesBuilder.class)
-@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
+		matchIfMissing = true)
 public class StubRunnerCamelConfiguration {
 
 	static final String STUBRUNNER_DESTINATION_URL_HEADER_NAME = "STUBRUNNER_DESTINATION_URL";

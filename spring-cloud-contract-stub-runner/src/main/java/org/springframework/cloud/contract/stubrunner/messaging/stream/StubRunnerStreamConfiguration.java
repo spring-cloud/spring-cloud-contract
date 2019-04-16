@@ -60,7 +60,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass({ IntegrationFlows.class, EnableBinding.class })
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
+		matchIfMissing = true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
 

@@ -39,13 +39,16 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true)
+@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE,
+		requiresProject = true)
 public class GenerateStubsMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
+			required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
+	@Parameter(property = "stubsDirectory",
+			defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -57,7 +60,8 @@ public class GenerateStubsMojo extends AbstractMojo {
 	/**
 	 * Set this to "true" to bypass only JAR creation.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.jar.skip", defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.jar.skip",
+			defaultValue = "false")
 	private boolean jarSkip;
 
 	@Component

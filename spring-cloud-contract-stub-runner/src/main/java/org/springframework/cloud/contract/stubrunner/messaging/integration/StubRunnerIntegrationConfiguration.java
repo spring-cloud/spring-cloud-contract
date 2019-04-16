@@ -50,7 +50,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass(IntegrationFlowBuilder.class)
-@ConditionalOnProperty(name = "stubrunner.integration.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.integration.enabled", havingValue = "true",
+		matchIfMissing = true)
 public class StubRunnerIntegrationConfiguration {
 
 	@Bean

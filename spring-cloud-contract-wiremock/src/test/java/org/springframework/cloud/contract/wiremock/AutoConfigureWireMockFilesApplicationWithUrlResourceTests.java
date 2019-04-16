@@ -28,7 +28,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class, properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+		classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class,
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
+		webEnvironment = SpringBootTest.WebEnvironment.NONE)
 // tag::load_all_stubs[]
 @AutoConfigureWireMock(port = 0, stubs = "classpath*:/META-INF/**/mappings/**/*.json")
 // end::load_all_stubs[]

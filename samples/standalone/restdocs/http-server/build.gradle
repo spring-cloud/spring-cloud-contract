@@ -10,7 +10,7 @@ buildscript {
 		maven { url "https://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.2.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${findProperty('bootVersion') ?: bootVersion}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }

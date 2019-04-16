@@ -40,8 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @WebMvcTest
 @AutoConfigureStubRunner(ids = {
 		"org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
-		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" }, minPort = 10001, maxPort = 10020, mappingsOutputFolder = "target/outputmappings/", properties = {
-				"hello=world", "foo=bar" })
+		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" },
+		minPort = 10001, maxPort = 10020, mappingsOutputFolder = "target/outputmappings/",
+		properties = { "hello=world", "foo=bar" })
 @ActiveProfiles("test")
 public class StubRunnerSliceTests {
 

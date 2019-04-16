@@ -40,7 +40,8 @@ public class WireMockRestTemplateConfiguration {
 
 	@Bean
 	@ConditionalOnClass(SSLContextBuilder.class)
-	@ConditionalOnProperty(value = "wiremock.rest-template-ssl-enabled", matchIfMissing = true)
+	@ConditionalOnProperty(value = "wiremock.rest-template-ssl-enabled",
+			matchIfMissing = true)
 	public RestTemplateCustomizer wiremockRestTemplateCustomizer() {
 		return new RestTemplateCustomizer() {
 			@Override

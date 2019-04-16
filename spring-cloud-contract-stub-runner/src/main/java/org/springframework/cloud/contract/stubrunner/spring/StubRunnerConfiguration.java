@@ -48,7 +48,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @EnableConfigurationProperties(StubRunnerProperties.class)
-@ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
+@ConditionalOnMissingBean(
+		type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 @Import(StubRunnerPortBeanPostProcessor.class)
 public class StubRunnerConfiguration {
 

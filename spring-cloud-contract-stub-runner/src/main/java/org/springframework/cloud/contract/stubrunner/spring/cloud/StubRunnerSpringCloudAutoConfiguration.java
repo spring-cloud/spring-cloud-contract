@@ -55,7 +55,8 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(DiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
-	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
+	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled",
+			havingValue = "false", matchIfMissing = true)
 	public DiscoveryClient noOpStubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
 			@Value("${spring.application.name:unknown}") String springAppName) {

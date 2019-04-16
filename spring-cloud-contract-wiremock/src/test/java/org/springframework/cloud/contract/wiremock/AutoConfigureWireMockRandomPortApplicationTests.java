@@ -33,7 +33,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = WiremockTestsApplication.class, properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(classes = WiremockTestsApplication.class,
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
+		webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock(port = 0)
 public class AutoConfigureWireMockRandomPortApplicationTests {
 

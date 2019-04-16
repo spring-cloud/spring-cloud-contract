@@ -27,8 +27,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = WiremockTestsApplication.class, properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
-@AutoConfigureWireMock(port = 0, files = "classpath:/root/", stubs = "file:src/test/resources/io.stubs/mappings")
+@SpringBootTest(classes = WiremockTestsApplication.class,
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
+		webEnvironment = WebEnvironment.NONE)
+@AutoConfigureWireMock(port = 0, files = "classpath:/root/",
+		stubs = "file:src/test/resources/io.stubs/mappings")
 public class AutoConfigureWireMockStubsAndFilesApplicationTests {
 
 	@Autowired

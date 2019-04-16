@@ -41,10 +41,12 @@ import org.springframework.util.StringUtils;
 @Mojo(name = "pushStubsToScm")
 public class PushStubsToScmMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
+			required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
+	@Parameter(property = "stubsDirectory",
+			defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -56,7 +58,8 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	/**
 	 * Set this to "true" to bypass only JAR creation.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.publish-stubs-to-scm.skip", defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.publish-stubs-to-scm.skip",
+			defaultValue = "false")
 	private boolean taskSkip;
 
 	@Parameter(defaultValue = "${project}", readonly = true)

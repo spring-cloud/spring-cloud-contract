@@ -44,7 +44,8 @@ import static org.mockito.Mockito.when;
  */
 @Configuration
 @ConditionalOnBean(ContractVerifierAmqpAutoConfiguration.class)
-@ConditionalOnProperty(value = "stubrunner.amqp.mockConnection", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = "stubrunner.amqp.mockConnection", havingValue = "true",
+		matchIfMissing = true)
 public class RabbitMockConnectionFactoryAutoConfiguration {
 
 	@Bean
