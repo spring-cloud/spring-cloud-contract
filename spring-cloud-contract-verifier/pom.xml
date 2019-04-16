@@ -67,7 +67,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-standalone</artifactId>
+			<artifactId>wiremock-jre8-standalone</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.toomuchcoding.jsonassert</groupId>

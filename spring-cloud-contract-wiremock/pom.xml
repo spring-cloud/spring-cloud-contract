@@ -26,7 +26,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-standalone</artifactId>
+			<artifactId>wiremock-jre8-standalone</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.rest-assured</groupId>
