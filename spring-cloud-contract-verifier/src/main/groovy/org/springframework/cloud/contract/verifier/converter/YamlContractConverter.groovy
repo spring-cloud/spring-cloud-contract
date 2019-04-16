@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.converter
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
-
+import groovy.util.logging.Slf4j
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 
@@ -28,6 +28,7 @@ import org.springframework.cloud.contract.spec.ContractConverter
  * @since 1.2.1* @author Marcin Grzejszczak
  * @author Tim Ysewyn
  */
+@Slf4j
 @CompileStatic
 class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 
@@ -39,7 +40,18 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 	@Override
 	boolean isAccepted(File file) {
 		String name = file.getName()
-		return name.endsWith(".yml") || name.endsWith(".yaml")
+		boolean acceptFile = name.endsWith(".yml") || name.endsWith(".yaml")
+
+		if (acceptFile){
+			try {
+				yamlToContracts.convertFrom(file)
+			} catch (e) {
+				log.warn("Error Processing yaml file. Skipping Contract Generation ", e)
+				acceptFile = false
+			}
+		}
+
+		return acceptFile
 	}
 
 	@Override

@@ -89,6 +89,10 @@ class YamlContractConverterSpec extends Specification {
 	URL ymlRestXmlFile = YamlContractConverterSpec.
 			getResource("/yml/contract_rest_xml.yml")
 	File ymlRestXml = new File(ymlRestXmlFile.toURI())
+
+	URL oa3SpecUrl = YamlContractConverterSpec.getResource('/yml/oa3/openapi_petstore.yml')
+	File oa3File = new File(oa3SpecUrl.toURI())
+
 	YamlContractConverter converter = new YamlContractConverter()
 	String xmlContractBody = '''
 <test>
@@ -638,7 +642,7 @@ class YamlContractConverterSpec extends Specification {
 		given:
 			File yml = new File(YamlContractConverterSpec.getResource("/yml/contract_broken_request_headers.yml").toURI())
 		and:
-			assert converter.isAccepted(yml)
+			assert !converter.isAccepted(yml)  //expecting to fail
 		when:
 			converter.convertFrom(yml)
 		then:
@@ -650,7 +654,7 @@ class YamlContractConverterSpec extends Specification {
 		given:
 			File yml = new File(YamlContractConverterSpec.getResource("/yml/contract_broken_response_headers.yml").toURI())
 		and:
-			assert converter.isAccepted(yml)
+			assert !converter.isAccepted(yml) //expecting to fail
 		when:
 			converter.convertFrom(yml)
 		then:
@@ -1320,5 +1324,21 @@ ignored: false
 			contract.response.body.serverValue.replaceAll("\n", "")
 					.replaceAll(' ', '') == xmlContractBody
 					.replaceAll("\n", "").replaceAll(' ', '')
+	}
+
+	def "Should accept file"(){
+		when:
+		def accepted = converter.isAccepted(ymlWithRest3)
+
+		then:
+		accepted
+	}
+
+	def "Should NOT accept file"(){
+		when:
+		def accepted = converter.isAccepted(oa3File)
+
+		then:
+		!accepted
 	}
 }
