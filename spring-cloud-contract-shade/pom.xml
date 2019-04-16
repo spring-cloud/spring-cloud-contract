@@ -119,9 +119,14 @@
 							<shadedArtifactAttached>false</shadedArtifactAttached>
 							<createSourcesJar>true</createSourcesJar>
 							<shadeSourcesContent>true</shadeSourcesContent>
-							<keepDependenciesWithProvidedScope>true
+							<keepDependenciesWithProvidedScope>false
 							</keepDependenciesWithProvidedScope>
 							<relocations>
+								<relocation>
+									<pattern>com.google</pattern>
+									<shadedPattern>shaded.com.google
+									</shadedPattern>
+								</relocation>
 								<relocation>
 									<pattern>org.eclipse.aether.connector</pattern>
 									<shadedPattern>shaded.org.eclipse.aether.connector
