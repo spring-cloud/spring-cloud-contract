@@ -41,16 +41,14 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 	boolean isAccepted(File file) {
 		String name = file.getName()
 		boolean acceptFile = name.endsWith(".yml") || name.endsWith(".yaml")
-
 		if (acceptFile){
 			try {
-				yamlToContracts.convertFrom(file)
+				this.yamlToContracts.convertFrom(file)
 			} catch (e) {
 				log.warn("Error Processing yaml file. Skipping Contract Generation ", e)
 				acceptFile = false
 			}
 		}
-
 		return acceptFile
 	}
 

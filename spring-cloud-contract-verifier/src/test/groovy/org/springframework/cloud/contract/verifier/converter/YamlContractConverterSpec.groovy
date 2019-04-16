@@ -89,10 +89,8 @@ class YamlContractConverterSpec extends Specification {
 	URL ymlRestXmlFile = YamlContractConverterSpec.
 			getResource("/yml/contract_rest_xml.yml")
 	File ymlRestXml = new File(ymlRestXmlFile.toURI())
-
 	URL oa3SpecUrl = YamlContractConverterSpec.getResource('/yml/oa3/openapi_petstore.yml')
 	File oa3File = new File(oa3SpecUrl.toURI())
-
 	YamlContractConverter converter = new YamlContractConverter()
 	String xmlContractBody = '''
 <test>
@@ -1326,7 +1324,7 @@ ignored: false
 					.replaceAll("\n", "").replaceAll(' ', '')
 	}
 
-	def "Should accept file"(){
+	def "should accept a yaml file that is a proper scc YAML contract"(){
 		when:
 		def accepted = converter.isAccepted(ymlWithRest3)
 
@@ -1334,7 +1332,7 @@ ignored: false
 		accepted
 	}
 
-	def "Should NOT accept file"(){
+	def "should not accept a YAML file that is not a scc YAML contract"(){
 		when:
 		def accepted = converter.isAccepted(oa3File)
 
