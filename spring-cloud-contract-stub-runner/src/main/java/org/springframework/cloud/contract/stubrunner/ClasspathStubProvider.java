@@ -21,6 +21,7 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StringUtils;
 
 /**
  * Stub downloader that picks stubs and contracts from the provided resource.
@@ -174,7 +175,7 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 
 	private List<RepoRoot> repoRoot(StubRunnerOptions stubRunnerOptions,
 			StubConfiguration configuration) {
-		if (stubRunnerOptions.getStubRepositoryRoot() != null) {
+		if (StringUtils.hasText(stubRunnerOptions.getStubRepositoryRootAsString())) {
 			return Collections
 					.singletonList(new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
 		}
