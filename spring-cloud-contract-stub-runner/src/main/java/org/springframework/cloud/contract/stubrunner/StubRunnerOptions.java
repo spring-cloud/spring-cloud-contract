@@ -221,6 +221,9 @@ public class StubRunnerOptions {
 	}
 
 	public String getStubRepositoryRootAsString() {
+		if (this.stubRepositoryRoot == null) {
+			return "";
+		}
 		try {
 			return this.stubRepositoryRoot.getURI().toString();
 		}
