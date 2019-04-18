@@ -54,31 +54,34 @@ class MapConverter {
 		}
 	}
 
+	protected static final Closure JSON_TEXT_TRANSFORMATION = { Object input -> new JsonSlurper().parseText(input)}
+
 	/**
-	 * Iterates over the structure of the object and executes the closure
+	 * Iterates over the structure of the object and executes the objectTransformation
 	 * on each element of that structure.
 	 *
 	 * Returns the transformed structure
 	 */
-	static def transformValues(def value, Closure closure) {
+	static def transformValues(def value, Closure objectTransformation, Closure textParser = JSON_TEXT_TRANSFORMATION) {
 		if (value instanceof String && value) {
 			try {
-				def json = new JsonSlurper().parseText(value)
-				if (json instanceof Map) {
-					return convert(json, closure)
-				} else if (json instanceof List) {
-					return transformValues(json, closure)
+				def parsed = textParser(value)
+				if (parsed instanceof Map) {
+					return convert(parsed, objectTransformation)
+				} else if (parsed instanceof List) {
+					return transformValues(parsed, objectTransformation)
 				}
 			} catch (Exception ignore) {
 			}
-			return extractValue(value, closure)
+			return extractValue(value, objectTransformation)
 		} else if (value instanceof Map) {
-			return convert(value as Map, closure)
+			return convert(value as Map, objectTransformation)
 		} else if (value instanceof List) {
-			return value.collect({ transformValues(it, closure) })
+			return value.collect({ transformValues(it, objectTransformation) })
 		}
-		return transformValue(closure, value)
+		return transformValue(objectTransformation, value)
 	}
+
 
 	/**
 	 * Transforms a value with the given closure. Needs to be protected, otherwise
@@ -113,8 +116,8 @@ class MapConverter {
 	 * If {@code clientSide} is {@code true} returns the client side value for the
 	 * provided object
 	 */
-	static Object getClientOrServerSideValues(json, boolean clientSide) {
-		return transformValues(json) {
+	static Object getClientOrServerSideValues(json, boolean clientSide, Closure textTansformation = JSON_TEXT_TRANSFORMATION) {
+		return transformValues(json, {
 			if (it instanceof DslProperty) {
 				DslProperty dslProperty = ((DslProperty) it)
 				return clientSide ?
@@ -132,7 +135,7 @@ class MapConverter {
 				})
 			}
 			return it
-		}
+		}, textTansformation)
 	}
 
 	static Object getStubSideValues(json) {
@@ -141,5 +144,13 @@ class MapConverter {
 
 	static Object getTestSideValues(json) {
 		return getClientOrServerSideValues(json, TEST_SIDE)
+	}
+
+	static Object getStubSideValuesForNonBody(object) {
+		return getClientOrServerSideValues(object, STUB_SIDE, Closure.IDENTITY)
+	}
+
+	static Object getTestSideValuesForNonBody(object) {
+		return getClientOrServerSideValues(object, TEST_SIDE, Closure.IDENTITY)
 	}
 }

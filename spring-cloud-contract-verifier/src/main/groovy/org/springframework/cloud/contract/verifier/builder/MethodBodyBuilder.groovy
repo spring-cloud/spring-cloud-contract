@@ -736,6 +736,19 @@ abstract class MethodBodyBuilder {
 	}
 
 	/**
+	 * Depending on the object type extracts the test side values and
+	 * combines them into a String representation. Unlike the body transformation
+	 * done via {@link MethodBodyBuilder#getTestSideValue(java.lang.Object)} will
+	 * not try to guess the type of the value of the header (e.g. if it's a JSON).
+	 */
+	protected String getTestSideForNonBodyValue(Object object) {
+		if (object instanceof ExecutionProperty) {
+			return getTestSideValue((ExecutionProperty) object)
+		}
+		return quotedAndEscaped(MapConverter.getTestSideValuesForNonBody(object).toString())
+	}
+
+	/**
 	 * Extracts the executable test side values and
 	 * returns the code of the executable
 	 */
