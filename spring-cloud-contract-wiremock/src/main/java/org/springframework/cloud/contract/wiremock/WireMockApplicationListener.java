@@ -47,7 +47,15 @@ public class WireMockApplicationListener
 	}
 
 	private void registerPort(ConfigurableEnvironment environment) {
-		if (environment.getProperty("wiremock.server.port", Integer.class, 0) == 0) {
+		Integer httpPortProperty = environment.getProperty("wiremock.server.port",
+				Integer.class);
+		// If the httpPortProperty is not found it means the AutoConfigureWireMock hasn't
+		// been initialised.
+		if (httpPortProperty == null) {
+			return;
+		}
+
+		if (httpPortProperty.equals(0)) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
