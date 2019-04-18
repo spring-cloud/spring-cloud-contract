@@ -140,12 +140,12 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	@Override
 	protected String getHeaderString(Header header) {
-		return ".header(${getTestSideValue(header.name)}, ${getTestSideValue(header.serverValue)})"
+		return ".header(${getTestSideForNonBodyValue(header.name)}, ${getTestSideForNonBodyValue(header.serverValue)})"
 	}
 
 	@Override
 	protected String getCookieString(Cookie cookie) {
-		return ".cookie(${getTestSideValue(cookie.key)}, ${getTestSideValue(cookie.serverValue)})"
+		return ".cookie(${getTestSideForNonBodyValue(cookie.key)}, ${getTestSideForNonBodyValue(cookie.serverValue)})"
 	}
 
 	@Override

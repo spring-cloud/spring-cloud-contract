@@ -133,6 +133,10 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		return ContentType.UNKNOWN
 	}
 
+	protected String quotedAndEscaped(String string) {
+		return '"' + StringEscapeUtils.escapeJava(string) + '"'
+	}
+
 	/**
 	 * Builds the response body validation code block
 	 */
@@ -566,6 +570,19 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	 */
 	protected String getTestSideValue(Object object) {
 		return '"' + MapConverter.getTestSideValues(object).toString() + '"'
+	}
+
+	/**
+	 * Depending on the object type extracts the test side values and
+	 * combines them into a String representation. Unlike the body transformation
+	 * done via {@link MethodBodyBuilder#getTestSideValue(java.lang.Object)} will
+	 * not try to guess the type of the value of the header (e.g. if it's a JSON).
+	 */
+	protected String getTestSideForNonBodyValue(Object object) {
+		if (object instanceof ExecutionProperty) {
+			return getTestSideValue((ExecutionProperty) object)
+		}
+		return quotedAndEscaped(MapConverter.getTestSideValuesForNonBody(object).toString())
 	}
 
 	/**
