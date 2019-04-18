@@ -35,9 +35,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StringUtils;
 
 /**
  * Stub downloader that picks stubs and contracts from the provided resource. If
@@ -206,17 +208,20 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 
 	private List<RepoRoot> repoRoot(StubRunnerOptions stubRunnerOptions,
 			StubConfiguration configuration) {
-		if (stubRunnerOptions.getStubRepositoryRoot() != null) {
-			return Collections.singletonList(
-					new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
+		Resource repositoryRoot = stubRunnerOptions.getStubRepositoryRoot();
+		if (repositoryRoot instanceof ClassPathResource) {
+			ClassPathResource classPathResource = (ClassPathResource) repositoryRoot;
+			String path = classPathResource.getPath();
+			if (StringUtils.hasText(path)) {
+				return Collections.singletonList(
+						new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
+			}
 		}
-		else {
-			String path = "/**/" + configuration.getGroupId() + "/"
-					+ configuration.getArtifactId();
-			return Arrays.asList(new RepoRoot("classpath*:/META-INF" + path, "/**/*.*"),
-					new RepoRoot("classpath*:/contracts" + path, "/**/*.*"),
-					new RepoRoot("classpath*:/mappings" + path, "/**/*.*"));
-		}
+		String path = "/**/" + configuration.getGroupId() + "/"
+				+ configuration.getArtifactId();
+		return Arrays.asList(new RepoRoot("classpath*:/META-INF" + path, "/**/*.*"),
+				new RepoRoot("classpath*:/contracts" + path, "/**/*.*"),
+				new RepoRoot("classpath*:/mappings" + path, "/**/*.*"));
 	}
 
 	// Taken from Guava
