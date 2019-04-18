@@ -154,7 +154,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 			if (header.name == 'Content-Type' || header.name == 'Accept') {
 				return
 			}
-			bb.addLine(".header(\"${header.name}\", \"${header.serverValue}\")")
+			bb.addLine(".header(\"${header.name}\", ${quotedAndEscaped(header.serverValue as String)})")
 		}
 	}
 
@@ -164,7 +164,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 				return
 			}
 
-			bb.addLine(".cookie(\"${cookie.key}\", \"${cookie.serverValue}\")")
+			bb.addLine(".cookie(\"${cookie.key}\", ${quotedAndEscaped(cookie.serverValue as String)})")
 		}
 	}
 

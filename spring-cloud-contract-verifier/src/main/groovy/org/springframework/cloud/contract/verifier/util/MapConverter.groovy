@@ -70,12 +70,12 @@ class MapConverter {
 			Closure parsingClosure = JSON_PARSING_CLOSURE) {
 		if (value instanceof String && value) {
 			try {
-				def json = parsingClosure(value)
-				if (json instanceof Map) {
-					return convert(json, closure, parsingClosure)
+				def parsed = parsingClosure(value)
+				if (parsed instanceof Map) {
+					return convert(parsed, closure, parsingClosure)
 				}
-				else if (json instanceof List) {
-					return transformValues(json, closure, parsingClosure)
+				else if (parsed instanceof List) {
+					return transformValues(parsed, closure, parsingClosure)
 				}
 			}
 			catch (Exception ignore) {
@@ -163,5 +163,13 @@ class MapConverter {
 
 	static Object getTestSideValues(json, Closure parsingClosure = JSON_PARSING_CLOSURE) {
 		return getClientOrServerSideValues(json, TEST_SIDE, parsingClosure)
+	}
+
+	static Object getStubSideValuesForNonBody(object) {
+		return getClientOrServerSideValues(object, STUB_SIDE, Closure.IDENTITY)
+	}
+
+	static Object getTestSideValuesForNonBody(object) {
+		return getClientOrServerSideValues(object, TEST_SIDE, Closure.IDENTITY)
 	}
 }
