@@ -50,7 +50,7 @@
 		<junit-jupiter.version>5.4.2</junit-jupiter.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>2.4.15</groovy.version>
+		<groovy.version>2.4.16</groovy.version>
 		<!-- For Takari plugin -->
 		<maven.version>3.3.9</maven.version>
 		<aether.version>1.1.0</aether.version>
