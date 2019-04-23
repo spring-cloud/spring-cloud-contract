@@ -49,6 +49,7 @@
 		<junit-vintage.version>5.4.2</junit-vintage.version>
 		<junit-jupiter.version>5.4.2</junit-jupiter.version>
 		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
 		<gmavenplus-plugin.version>1.6.3</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->

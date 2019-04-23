@@ -187,6 +187,7 @@
 				<artifactId>gmavenplus-plugin</artifactId>
 			</plugin>
 			<plugin>
+				<!-- Will run JUnit 4 -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<dependencies>
@@ -207,6 +208,36 @@
 						org.junit.jupiter:junit-vintage-engine
 					</junitPlatformArtifactName>
 				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Will run JUnit 5 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>${junit-jupiter.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<includes>
+						<include>**/*Test.*</include>
+						<include>**/*Tests.*</include>
+						<include>**/*Spec.*</include>
+					</includes>
+					<reportFormat>plain</reportFormat>
+					<failIfNoTests>true</failIfNoTests>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
