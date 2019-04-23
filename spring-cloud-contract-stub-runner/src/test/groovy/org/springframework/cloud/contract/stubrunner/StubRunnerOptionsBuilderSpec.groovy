@@ -290,7 +290,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			System.setProperty("stubrunner.properties.foo-bar", "bar")
 			System.setProperty("stubrunner.properties.foo-baz", "baz")
 			System.setProperty("stubrunner.properties.bar.bar", "foo")
-			System.setProperty("stubrunner.httpServerStubConfigurer", "org.springframework.cloud.contract.stubrunner.Foo")
+			System.setProperty("stubrunner.http-server-stub-configurer", "org.springframework.cloud.contract.stubrunner.Foo")
 		when:
 			StubRunnerOptions options = StubRunnerOptions.fromSystemProps()
 		then:

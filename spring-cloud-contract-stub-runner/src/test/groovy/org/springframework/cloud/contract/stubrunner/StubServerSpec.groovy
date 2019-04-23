@@ -31,7 +31,7 @@ class StubServerSpec extends Specification {
 		given:
 			List<File> mappingDescriptors = new StubRepository(repository).getStubs()
 			StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
-					new WireMockHttpServerStub()).start(STUB_SERVER_PORT)
+					new WireMockHttpServerStub()).start(new HttpServerStubConfiguration(new HttpServerStubConfigurer.NoOpHttpServerStubConfigurer(), StubRunnerOptions.fromSystemProps(), new StubConfiguration("a:b:c:d"), STUB_SERVER_PORT))
 		when:
 			pingStubServer.start()
 		then:
@@ -43,7 +43,7 @@ class StubServerSpec extends Specification {
 		given:
 			List<File> mappingDescriptors = new StubRepository(repository).getStubs()
 			StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
-					new WireMockHttpServerStub()).start(STUB_SERVER_PORT)
+					new WireMockHttpServerStub()).start(new HttpServerStubConfiguration(new HttpServerStubConfigurer.NoOpHttpServerStubConfigurer(), StubRunnerOptions.fromSystemProps(), new StubConfiguration("a:b:c:d"), STUB_SERVER_PORT))
 		when:
 			pingStubServer.start()
 		then:
