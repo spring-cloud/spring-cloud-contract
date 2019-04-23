@@ -170,12 +170,28 @@ public class StubRunnerOptions {
 				.withDeleteStubsAfterTest(Boolean.parseBoolean(
 						System.getProperty("stubrunner.delete-stubs-after-test", "true")))
 				.withProperties(stubRunnerProps());
+		builder = httpStubConfigurer(builder);
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost,
 					Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
 		}
 		return builder.build();
+	}
+
+	private static StubRunnerOptionsBuilder httpStubConfigurer(
+			StubRunnerOptionsBuilder builder) {
+		String classProperty = System.getProperty(
+				"stubrunner.http-server-stub-configurer",
+				HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class.getName());
+		try {
+			Class clazz = Class.forName(classProperty);
+			return builder.withHttpServerStubConfigurer(clazz);
+		}
+		catch (ClassNotFoundException ex) {
+			throw new IllegalStateException("Class [" + classProperty + "] not found",
+					ex);
+		}
 	}
 
 	private static Map<String, String> stubRunnerProps() {

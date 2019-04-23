@@ -195,6 +195,7 @@ public class StubRunnerOptionsBuilder {
 				? options.stubIdsToPortMapping : new LinkedHashMap<>();
 		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
 		this.properties = options.getProperties();
+		this.httpServerStubConfigurer = options.getHttpServerStubConfigurer();
 		return this;
 	}
 

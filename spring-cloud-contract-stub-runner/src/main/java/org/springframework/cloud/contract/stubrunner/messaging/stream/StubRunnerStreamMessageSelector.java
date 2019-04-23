@@ -158,8 +158,9 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 			BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
 			matches = matchesForJsonPayload(groovyDsl, inputMessage, matchers, dslBody);
 		}
-		else if (dslBody instanceof RegexProperty && inputMessage instanceof String) {
-			Pattern pattern = ((RegexProperty) dslBody).getPattern();
+		else if ((dslBody instanceof RegexProperty || dslBody instanceof Pattern)
+				&& inputMessage instanceof String) {
+			Pattern pattern = new RegexProperty(dslBody).getPattern();
 			matches = pattern.matcher((String) inputMessage).matches();
 			bodyUnmatchedLog(dslBody, matches, pattern);
 		}
