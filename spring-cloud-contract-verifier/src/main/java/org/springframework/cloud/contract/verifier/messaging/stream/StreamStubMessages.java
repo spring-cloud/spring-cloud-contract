@@ -47,13 +47,12 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 
 	private final ApplicationContext context;
 
-	private final MessageCollector messageCollector;
+	private MessageCollector messageCollector;
 
 	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
 
 	public StreamStubMessages(ApplicationContext context) {
 		this.context = context;
-		this.messageCollector = context.getBean(MessageCollector.class);
 	}
 
 	@Override
@@ -82,8 +81,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 			MessageChannel messageChannel = this.context.getBean(
 					resolvedDestination(destination, DefaultChannels.INPUT),
 					MessageChannel.class);
-			return this.messageCollector.forChannel(messageChannel).poll(timeout,
-					timeUnit);
+			return messageCollector().forChannel(messageChannel).poll(timeout, timeUnit);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "
@@ -144,6 +142,13 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	@Override
 	public Message<?> receive(String destination) {
 		return receive(destination, 5, TimeUnit.SECONDS);
+	}
+
+	private MessageCollector messageCollector() {
+		if (this.messageCollector == null) {
+			this.messageCollector = context.getBean(MessageCollector.class);
+		}
+		return this.messageCollector;
 	}
 
 }
