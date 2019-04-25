@@ -118,15 +118,6 @@ public class StubRunnerStreamConfiguration {
 							dsl.getInput().getMessageFrom().getClientValue());
 					map.add(from, dsl);
 				}
-				else if (dsl.getOutputMessage() != null
-						&& dsl.getOutputMessage().getSentTo() != null
-						&& StringUtils.hasText(
-								dsl.getOutputMessage().getSentTo().getClientValue())) {
-					BinderAwareChannelResolver resolver = beanFactory
-							.getBean(BinderAwareChannelResolver.class);
-					resolver.resolveDestination(
-							dsl.getOutputMessage().getSentTo().getClientValue());
-				}
 			}
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
 				final String flowName = name + "_" + entries.getKey() + "_"
