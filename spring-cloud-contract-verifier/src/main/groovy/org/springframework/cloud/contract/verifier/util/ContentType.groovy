@@ -26,6 +26,8 @@ enum ContentType {
 	XML("application/xml"),
 	TEXT("text/plain"),
 	FORM("application/x-www-form-urlencoded"),
+	// the content-type was defined and we don't want to override it
+	DEFINED(""),
 	UNKNOWN("application/octet-stream")
 
 	final String mimeType

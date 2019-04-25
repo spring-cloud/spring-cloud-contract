@@ -41,6 +41,7 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
 import static org.apache.commons.text.StringEscapeUtils.escapeXml11
 import static org.apache.commons.text.StringEscapeUtils.unescapeXml
+import static org.springframework.cloud.contract.verifier.util.ContentType.DEFINED
 import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNOWN
 
@@ -391,6 +392,12 @@ class ContentUtils {
 		}
 		if (content?.contains("form-urlencoded")) {
 			return ContentType.FORM
+		}
+		if (content?.contains("octet-stream")) {
+			return UNKNOWN
+		}
+		if (content) {
+			return DEFINED
 		}
 		return UNKNOWN
 	}
