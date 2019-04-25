@@ -152,7 +152,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		retrievedValue = retrievedValue instanceof RegexProperty ?
 				((RegexProperty) retrievedValue).getPattern().pattern() : retrievedValue
 		String valueAsParam = retrievedValue instanceof String ?
-				quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
+				quotedAndEscaped(retrievedValue.toString()) : objectToString(retrievedValue)
 		if (arrayRelated(path) && MatchingType.regexRelated(bodyMatcher.matchingType())) {
 			buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)
 		}
@@ -164,6 +164,11 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 			bb.addLine(postProcessJsonPathCall(method))
 		}
 		addColonIfRequired(lineSuffix, bb)
+	}
+
+	private String objectToString(Object value) {
+		return value instanceof Long
+				? String.valueOf(value).concat("L") : String.valueOf(value)
 	}
 
 	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {

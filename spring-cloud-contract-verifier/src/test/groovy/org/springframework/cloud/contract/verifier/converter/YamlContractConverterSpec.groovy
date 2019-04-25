@@ -89,6 +89,9 @@ class YamlContractConverterSpec extends Specification {
 	URL ymlRestXmlFile = YamlContractConverterSpec.
 			getResource("/yml/contract_rest_xml.yml")
 	File ymlRestXml = new File(ymlRestXmlFile.toURI())
+	URL issue1052File = YamlContractConverterSpec.
+			getResource("/yml/issue1052.yml")
+	File issue1052 = new File(issue1052File.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
 	String xmlContractBody = '''
 <test>
