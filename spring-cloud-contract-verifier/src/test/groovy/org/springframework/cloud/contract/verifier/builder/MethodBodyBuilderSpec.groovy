@@ -27,6 +27,7 @@ import spock.lang.Specification
 import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
@@ -1346,6 +1347,56 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			String test = blockBuilder.toString()
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 			!test.contains('''[value:123]''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+	}
+
+	@Issue("#1052")
+	def "should work with large numbers [#methodBuilderName]"() {
+		given:
+			String yaml = '''\
+request:
+  url: /numbers
+  queryParameters:
+    page: 0
+    size: 2
+  method: GET
+  headers:
+    Content-Type: application/json
+
+response:
+  status: 200
+  headers:
+    Content-Type: application/json;charset=UTF-8
+  body:
+    - number: 1541609556000
+    - number: 1541609316000
+  matchers:
+    body:
+      - path: $.[0].number
+        type: by_equality
+      - path: $.[1].number
+        type: by_equality
+'''
+			File tmpFile = File.createTempFile("foo", ".yml")
+			tmpFile.createNewFile()
+			tmpFile.text = yaml
+			Contract contractDsl = new YamlContractConverter().convertFrom(tmpFile).first()
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains('''(1541609556000)''')
+			test.contains('''(1541609556000L)''')
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
