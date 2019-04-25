@@ -44,6 +44,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.StringUtils
 
+import static org.springframework.cloud.contract.verifier.util.ContentType.DEFINED
 import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
 import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 import static org.springframework.cloud.contract.verifier.util.ContentType.TEXT
@@ -421,7 +422,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 			convertedResponseBody =
 					extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
-		if (TEXT != contentType && FORM != contentType) {
+		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
 			boolean dontParseStrings = contentType == JSON && convertedResponseBody instanceof Map
 			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
 			convertedResponseBody = MapConverter.
