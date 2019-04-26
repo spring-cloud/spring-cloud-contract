@@ -40,7 +40,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureStubRunner(repositoryRoot = "classpath:m2repo/repository/", ids = {
-		"org.springframework.cloud.contract.verifier.stubs:contextPathFraudDetectionServer" }, stubsMode = StubRunnerProperties.StubsMode.REMOTE)
+		"org.springframework.cloud.contract.verifier.stubs:contextPathFraudDetectionServer" },
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE)
 public class LoanApplicationServiceTests {
 
 	// end::autoconfigure_stubrunner[]

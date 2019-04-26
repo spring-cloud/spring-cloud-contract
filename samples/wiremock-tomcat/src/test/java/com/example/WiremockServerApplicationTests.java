@@ -84,7 +84,6 @@ public class WiremockServerApplicationTests {
 				.willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
 		// It's a different exception type than Jetty, but it's in the right ballpark
 		this.expected.expectCause(instanceOf(IOException.class));
-		this.expected.expectMessage("chunk");
 		assertThat(this.service.go()).isEqualTo("Oops!");
 	}
 

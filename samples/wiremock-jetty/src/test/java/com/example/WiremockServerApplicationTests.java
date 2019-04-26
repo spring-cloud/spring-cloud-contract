@@ -18,7 +18,6 @@ package com.example;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import org.apache.http.MalformedChunkCodingException;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.junit.ClassRule;
@@ -81,7 +80,7 @@ public class WiremockServerApplicationTests {
 	public void malformed() throws Exception {
 		stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
-		this.expected.expectCause(instanceOf(MalformedChunkCodingException.class));
+		this.expected.expectCause(instanceOf(ClientProtocolException.class));
 		assertThat(this.service.go()).isEqualTo("Oops!");
 	}
 
