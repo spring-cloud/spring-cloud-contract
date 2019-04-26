@@ -43,7 +43,7 @@
 		<plexus-archiver.version>3.6.0</plexus-archiver.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
 		<maven-site-plugin.version>3.7.1</maven-site-plugin.version>
-		<plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
+		<plexus-component-metadata.version>2.0.0</plexus-component-metadata.version>
 		<takari-lifecycle-plugin.version>1.13.7</takari-lifecycle-plugin.version>
 	</properties>
 
