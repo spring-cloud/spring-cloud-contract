@@ -37,7 +37,7 @@
 		<spring-cloud-commons.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.3</jopt-simple.version>
 		<cglib.version>3.2.9</cglib.version>
-		<spock-spring.version>1.0-groovy-2.4</spock-spring.version>
+		<spock-spring.version>1.3-groovy-2.5</spock-spring.version>
 		<spock-global-unroll.version>0.5.1</spock-global-unroll.version>
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.6</commons-text.version>
