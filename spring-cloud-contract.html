@@ -8997,7 +8997,9 @@ public SimpleMessageListenerContainer simpleMessageListenerContainer(
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RabbitListener(bindings = @QueueBinding(value = @Queue("test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RabbitListener(bindings = @QueueBinding(value = @Queue("test.queue"),
+		exchange = @Exchange(value = "contract-test.exchange",
+				ignoreDeclarationExceptions = "true")))
 public void handlePerson(Person person) {
 	this.person = person;
 }</code></pre>
