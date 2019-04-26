@@ -26,6 +26,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.runtime.GStringImpl
+import org.xml.sax.helpers.DefaultHandler
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -35,7 +36,7 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
-import org.xml.sax.helpers.DefaultHandler
+import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
@@ -128,7 +129,8 @@ class ContentUtils {
 		catch (JsonException e) {
 			try {
 				getXmlSlurperWithDefaultErrorHandler()
-						.parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+						.parseText(
+						extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
 				return ContentType.XML
 			}
 			catch (Exception ignored) {
@@ -145,7 +147,7 @@ class ContentUtils {
 		}
 		catch (JsonException e) {
 			try {
-                getXmlSlurperWithDefaultErrorHandler()
+				getXmlSlurperWithDefaultErrorHandler()
 						.parseText(bodyAsValue)
 				return ContentType.XML
 			}
@@ -244,7 +246,9 @@ class ContentUtils {
 	private static Object extractValueForJSON(GString bodyAsValue, Closure valueProvider) {
 		GString transformedString = new GStringImpl(
 				bodyAsValue.values.
-						collect { transformJSONStringValue(it, valueProvider) } as String[],
+						collect {
+							transformJSONStringValue(it, valueProvider)
+						} as String[],
 				bodyAsValue.strings.clone() as String[]
 		)
 		def parsedJson = new JsonSlurper().
@@ -255,7 +259,9 @@ class ContentUtils {
 	private static GStringImpl extractValueForXML(GString bodyAsValue, Closure valueProvider) {
 		GStringImpl impl = new GStringImpl(
 				bodyAsValue.values.
-						collect { transformXMLStringValue(it, valueProvider) } as String[],
+						collect {
+							transformXMLStringValue(it, valueProvider)
+						} as String[],
 				bodyAsValue.strings.clone() as String[]
 		)
 		// try to convert it to XML
@@ -396,26 +402,28 @@ class ContentUtils {
 		if (content?.contains("octet-stream")) {
 			return UNKNOWN
 		}
-		if (content) {
+		if (content && isNotTemplate(content)) {
 			return DEFINED
 		}
 		return UNKNOWN
 	}
 
 	static ContentType recognizeContentTypeFromHeader(Headers headers) {
-		return recognizeContentTypeFromHeader(headers, { Header header -> header?.clientValue })
+		return recognizeContentTypeFromHeader(headers,
+				{ Header header -> header?.clientValue })
 	}
 
 	static ContentType recognizeContentTypeFromTestHeader(Headers headers) {
-		return recognizeContentTypeFromHeader(headers, { Header header -> header?.serverValue })
+		return recognizeContentTypeFromHeader(headers,
+				{ Header header -> header?.serverValue })
 	}
 
 	static MatchingStrategy.Type getEqualsTypeFromContentType(ContentType contentType) {
 		switch (contentType) {
-		case JSON:
-			return MatchingStrategy.Type.EQUAL_TO_JSON
-		case ContentType.XML:
-			return MatchingStrategy.Type.EQUAL_TO_XML
+			case JSON:
+				return MatchingStrategy.Type.EQUAL_TO_JSON
+			case ContentType.XML:
+				return MatchingStrategy.Type.EQUAL_TO_XML
 		}
 		return MatchingStrategy.Type.EQUAL_TO
 	}
@@ -523,10 +531,10 @@ class ContentUtils {
 
 	static ContentType recognizeContentTypeFromMatchingStrategy(MatchingStrategy.Type type) {
 		switch (type) {
-		case MatchingStrategy.Type.EQUAL_TO_XML:
-			return ContentType.XML
-		case MatchingStrategy.Type.EQUAL_TO_JSON:
-			return JSON
+			case MatchingStrategy.Type.EQUAL_TO_XML:
+				return ContentType.XML
+			case MatchingStrategy.Type.EQUAL_TO_JSON:
+				return JSON
 		}
 		return UNKNOWN
 	}
@@ -579,7 +587,8 @@ class ContentUtils {
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
-			return "[" + fromFileProperty.asBytes().collect { it }.join(", ") + "] as byte[]"
+			return "[" + fromFileProperty.asBytes().collect { it }.
+					join(", ") + "] as byte[]"
 		}
 		return quote +
 				escapeJava(property.value.serverValue.toString()) + quote + ".bytes"
@@ -598,9 +607,11 @@ class ContentUtils {
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
-			return "new byte[] {" + fromFileProperty.asBytes().collect { it }.join(", ") + "}"
+			return "new byte[] {" + fromFileProperty.asBytes().collect { it }.
+					join(", ") + "}"
 		}
-		return quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
+		return quote +
+				escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}
 
 	static ContentType evaluateContentType(Headers contractHeaders, Object body) {
@@ -620,6 +631,11 @@ class ContentUtils {
 		XmlSlurper xmlSlurper = new XmlSlurper()
 		xmlSlurper.setErrorHandler(new DefaultHandler())
 		return xmlSlurper
-    }
+	}
+
+	private static boolean isNotTemplate(String content) {
+		return !new HandlebarsTemplateProcessor().containsTemplateEntry(content)
+	}
+
 
 }
