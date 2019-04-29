@@ -3,7 +3,7 @@ language: java
 jdk:
 - oraclejdk8
 script:
-- test/run.sh
+- export JAVA_OPTS="-Xms1024m -Xmx1024m" && ./mvnw clean install
 notifications:
   slack:
     secure: Ces2qauynvAzEFvvYCBLTvatyct8JE6EjHWUGDBdaIGuFpqtW+9zuwWL4Ls0+w+GZoprVAIk+G47qt/ax/Us4xQlIcmp8w+IHbyhSK2oGKzGumP5KOUrMqu6zEt3PhTr3q3ub9RNvafdsIhpDVWtmSZbNHkm8uOpzd14mjUn9ACp0WOt3MWNqh+wgkJnep2PSrF3mzuPs1Yqs2FN379qqijjQTsAs5dmJO9KDejELnB3SaAIicr0hFzMU/x1LR1VXTIF+M4s+bJcxUdmN8BJWsvwNf5sBAzTRMoNitONfOCrf53v9nl//cK8xDp2/CyCj/ZZB1W7XmTxeyS5l+U2QivoEvPEjqQTktbbFNeBxtEPucizMlE5nOkBA5zq1MQlDQM/0NoUKd3yb46FZQiHKWOcQ9erwPZuuoS9tecdM2k0hzMbZ/jhNMOsyiM3fo6VcrEh1oVlgTfgx9cNHuSplI9BwReyB1R+m4GVF6j72Kp2Om938xBZtT14gcuAjpORYVXFqGYmUM3m3qxGghEJMs7f1uoTNiSRstYJpZQdPZDYW+X9teSsyRss9iw7xYminYOiywjyGJEdnFBETdFPQ0u5A6mC/dyTE+k4vCyOJXHK+6m62UnObonqYIbSJFiBGnBU0KOloj2DyqtgifcU8wTu5OEg7ljlqu9qfxwuzmQ=
