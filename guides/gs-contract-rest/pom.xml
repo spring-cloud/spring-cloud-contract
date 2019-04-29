@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="https://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.guide</groupId>
+	<artifactId>spring-guides</artifactId>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Spring Guides</name>
+	<description>Spring Guides</description>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>exec-maven-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>Run tests</id>
+						<phase>test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<skip>${skipTests}</skip>
+							<executable>${basedir}/test/run.sh</executable>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
