@@ -34,7 +34,7 @@
 		<takari-plugin-testing.version>2.9.2</takari-plugin-testing.version>
 		<takari-plugin-integration-testing.version>2.9.2
 		</takari-plugin-integration-testing.version>
-		<jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
 		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0
 		</maven-project-info-reports-plugin.version>
