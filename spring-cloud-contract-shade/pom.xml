@@ -8,7 +8,7 @@
 		<org.eclipse.sisu.plexus.version>0.1.1</org.eclipse.sisu.plexus.version>
 		<sisu-guice.version>4.2.0</sisu-guice.version>
 		<guice.version>4.2.2</guice.version>
-		<guava.version>27.0-jre</guava.version>
+		<guava.version>27.1-jre</guava.version>
 		<asm.version>7.1</asm.version>
 
 		<maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
