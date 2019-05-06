@@ -17,7 +17,8 @@
 package org.springframework.cloud.contract.wiremock;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,18 +138,20 @@ public class WireMockConfiguration implements SmartLifecycle {
 			if (StringUtils.hasText(stubs)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
 						this.resourceLoader);
-				String pattern = stubs;
-				if (!pattern.contains("*")) {
-					if (!pattern.endsWith("/")) {
-						pattern = pattern + "/";
+				StringBuilder pattern = new StringBuilder(stubs);
+				if (!stubs.contains("*")) {
+					if (!stubs.endsWith("/")) {
+						pattern.append("/");
 					}
-					pattern = pattern + "**/*.json";
+					pattern.append("**/*.json");
 				}
-				for (Resource resource : resolver.getResources(pattern)) {
-					StubMapping stubMapping = WireMockStubMapping
-							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
-									Charset.forName("UTF-8")));
-					this.server.addStubMapping(stubMapping);
+				for (Resource resource : resolver.getResources(pattern.toString())) {
+					try (InputStream inputStream = resource.getInputStream()) {
+						StubMapping stubMapping = WireMockStubMapping
+								.buildFrom(StreamUtils.copyToString(inputStream,
+										StandardCharsets.UTF_8));
+						this.server.addStubMapping(stubMapping);
+					}
 				}
 			}
 		}
