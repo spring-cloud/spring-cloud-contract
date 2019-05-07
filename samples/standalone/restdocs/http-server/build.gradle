@@ -77,10 +77,6 @@ contracts {
 
 generateClientStubs.enabled = false
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.10'
-}
-
 task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses']) {
 	baseName = project.name
 	classifier = 'stubs'

@@ -16,6 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 
+import javax.servlet.Filter
+import javax.servlet.FilterChain
+import javax.servlet.FilterConfig
+import javax.servlet.ServletException
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -135,13 +142,33 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 			}
 			return template
 		}
-
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableEurekaServer
 	static class EurekaServer {
+
+		@Bean
+		Filter httpTraceFilter() {
+			return new Filter() {
+				@Override
+				void init(FilterConfig filterConfig) throws ServletException {
+
+				}
+
+				@Override
+				void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+					filterChain.doFilter(servletRequest, servletResponse)
+				}
+
+				@Override
+				void destroy() {
+
+				}
+			}
+		}
+
 
 	}
 }

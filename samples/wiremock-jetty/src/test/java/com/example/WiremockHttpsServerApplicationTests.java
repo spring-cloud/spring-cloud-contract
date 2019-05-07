@@ -34,13 +34,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest("app.baseUrl=https://localhost:8443")
+@SpringBootTest("app.baseUrl=https://localhost:10443")
 @AutoConfigureHttpClient
 public class WiremockHttpsServerApplicationTests {
 
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().httpsPort(8443));
+			WireMockSpring.options().httpsPort(10443));
 
 	@Autowired
 	private Service service;
