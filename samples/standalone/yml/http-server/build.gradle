@@ -66,10 +66,6 @@ test {
 	}
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.10'
-}
-
 clean.doFirst {
 	delete "~/.m2/repository/com/example/http-server-dsl-gradle"
 }
