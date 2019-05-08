@@ -55,10 +55,6 @@ test {
 	}
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.10'
-}
-
 task resolveDependencies {
 	doLast {
 		project.rootProject.allprojects.each { subProject ->
