@@ -4,8 +4,8 @@ jobs:
     docker:
       - image: springcloud/pipeline-base
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms300m -Xmx300m"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms300m -Xmx300m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false'
+      JAVA_TOOL_OPTIONS: "-Xms256m -Xmx256m"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms256m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false'
       TERM: dumb
     branches:
       ignore:
