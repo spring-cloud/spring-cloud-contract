@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class ClassToBuild {
 	private ClassMetaData metaData;
