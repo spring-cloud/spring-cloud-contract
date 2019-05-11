@@ -16,10 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-
 /**
  * Builds a block of code. Allows to start, end, indent etc. pieces of code.
  *
@@ -96,6 +96,15 @@ class BlockBuilder {
 	BlockBuilder addBlock(MethodBuilder methodBuilder) {
 		startBlock()
 		methodBuilder.appendTo(this)
+		endBlock()
+		addEmptyLine()
+		return this
+	}
+
+	@PackageScope
+	BlockBuilder inBraces(Runnable runnable) {
+		startBlock()
+		runnable.run()
 		endBlock()
 		addEmptyLine()
 		return this
