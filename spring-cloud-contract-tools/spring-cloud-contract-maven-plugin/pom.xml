@@ -47,25 +47,10 @@
 		<takari-lifecycle-plugin.version>1.13.7</takari-lifecycle-plugin.version>
 	</properties>
 
-	<version>2.2.0.BUILD-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>addSources</goal>
-							<goal>generateStubs</goal>
-							<goal>compile</goal>
-							<goal>removeStubs</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
@@ -97,7 +82,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>${maven-failsafe-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
