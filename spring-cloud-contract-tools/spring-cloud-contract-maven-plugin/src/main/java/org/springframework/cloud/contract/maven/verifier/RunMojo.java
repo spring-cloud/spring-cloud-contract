@@ -44,7 +44,6 @@ import org.springframework.util.StringUtils;
  *
  * @author Mariusz Smykula
  */
-@SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "run", requiresProject = false,
 		requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class RunMojo extends AbstractMojo {
@@ -124,6 +123,7 @@ public class RunMojo extends AbstractMojo {
 		this.remoteStubRunner = remoteStubRunner;
 	}
 
+	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.skipTestOnly) {
 			getLog().info(

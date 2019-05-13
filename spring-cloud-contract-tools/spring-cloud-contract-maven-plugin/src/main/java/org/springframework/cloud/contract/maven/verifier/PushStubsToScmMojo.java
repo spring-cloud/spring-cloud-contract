@@ -37,7 +37,6 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "pushStubsToScm")
 public class PushStubsToScmMojo extends AbstractMojo {
 
@@ -105,6 +104,7 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
+	@Override
 	public void execute() {
 		if (this.skip || this.taskSkip) {
 			getLog().info(

@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -35,7 +33,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
 
-import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.TestGenerator;
@@ -52,8 +49,6 @@ import org.springframework.cloud.contract.verifier.config.TestMode;
 @Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
 		requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
-
-	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -234,11 +229,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
-	@Inject
-	public GenerateTestsMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
-		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
-	}
-
+	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.mavenTestSkip || this.skipTests) {
 			if (this.skip) {

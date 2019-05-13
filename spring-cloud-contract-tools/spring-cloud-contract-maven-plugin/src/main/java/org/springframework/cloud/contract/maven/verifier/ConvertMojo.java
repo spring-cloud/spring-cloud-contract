@@ -20,8 +20,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -34,7 +32,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.eclipse.aether.RepositorySystemSession;
 
-import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
@@ -56,8 +53,6 @@ public class ConvertMojo extends AbstractMojo {
 	static final String MAPPINGS_PATH = "/mappings";
 	static final String CONTRACTS_PATH = "/contracts";
 	static final String ORIGINAL_PATH = "/original";
-
-	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -186,11 +181,7 @@ public class ConvertMojo extends AbstractMojo {
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
-	@Inject
-	public ConvertMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
-		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
-	}
-
+	@Override
 	public void execute() throws MojoExecutionException {
 		if (this.skip) {
 			getLog().info(String.format(
