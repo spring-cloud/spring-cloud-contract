@@ -59,6 +59,7 @@
 		<aether.version>1.1.0</aether.version>
 		<xpath2.processor.version>2.1.100</xpath2.processor.version>
 		<xerces.version>2.11.0</xerces.version>
+		<jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
 	</properties>
 
 	<modules>
@@ -618,7 +619,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.7.7.201606060606</version>
+						<version>${jacoco-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>pre-unit-test</id>
