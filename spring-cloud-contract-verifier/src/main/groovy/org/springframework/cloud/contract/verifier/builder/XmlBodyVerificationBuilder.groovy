@@ -97,6 +97,6 @@ class XmlBodyVerificationBuilder implements BodyMethodGeneration {
 
 	@Override
 	void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
-		throw new UnsupportedOperationException("The `getNodeValue()` method in `org.w3c.dom.Node` always returns String.")
+		throw new UnsupportedOperationException("The `getNodeValue()` methodBuilder in `org.w3c.dom.Node` always returns String.")
 	}
 }

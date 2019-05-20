@@ -1431,7 +1431,7 @@ request:
   queryParameters:
     page: 0
     size: 2
-  method: GET
+  methodBuilder: GET
   headers:
     Content-Type: application/json
 

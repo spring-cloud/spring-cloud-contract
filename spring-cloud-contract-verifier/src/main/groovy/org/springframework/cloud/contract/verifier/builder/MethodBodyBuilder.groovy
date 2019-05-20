@@ -52,7 +52,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
 
 /**
- * Main class for building method body.
+ * Main class for building methodBuilder body.
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

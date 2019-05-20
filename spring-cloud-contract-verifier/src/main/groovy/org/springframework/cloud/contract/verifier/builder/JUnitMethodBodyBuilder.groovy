@@ -40,7 +40,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
 
 /**
- * Root class for JUnit method building
+ * Root class for JUnit methodBuilder building
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

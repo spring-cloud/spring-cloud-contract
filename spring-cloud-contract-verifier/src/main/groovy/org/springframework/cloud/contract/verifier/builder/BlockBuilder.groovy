@@ -103,9 +103,11 @@ class BlockBuilder {
 
 	@PackageScope
 	BlockBuilder inBraces(Runnable runnable) {
+		builder.append(" {")
 		startBlock()
 		runnable.run()
 		endBlock()
+		builder.append("}")
 		addEmptyLine()
 		return this
 	}

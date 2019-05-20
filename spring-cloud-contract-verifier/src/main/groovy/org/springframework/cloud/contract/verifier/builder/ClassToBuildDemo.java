@@ -19,7 +19,8 @@ class JUnit4Imports implements Imports {
 		// org.junit.Assume2
 		// org.junit.Assume3
 		// org.junit.foo.bar.Assume4
-		return null;
+		this.blockBuilder.addLine("import org.junit.Assert");
+		return this;
 	}
 
 	@Override
@@ -125,11 +126,6 @@ class JavaClassMetaData implements ClassMetaData {
 	}
 
 	@Override
-	public ClassMetaData fileExtension() {
-		return this;
-	}
-
-	@Override
 	public ClassMetaData suffix() {
 		return this;
 	}
@@ -147,11 +143,6 @@ class JavaClassMetaData implements ClassMetaData {
 	@Override
 	public ClassMetaData className() {
 		return this;
-	}
-
-	@Override
-	public ClassMetaData call() {
-		return null;
 	}
 
 	@Override

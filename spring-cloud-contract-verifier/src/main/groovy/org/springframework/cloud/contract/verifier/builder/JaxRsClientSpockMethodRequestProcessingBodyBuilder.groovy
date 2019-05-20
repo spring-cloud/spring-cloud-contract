@@ -34,7 +34,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 /**
- * Knows how to build a Spock test method for JaxRs.
+ * Knows how to build a Spock test methodBuilder for JaxRs.
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *
@@ -145,10 +145,10 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 			else {
 				value = "'${bodyAsString}'"
 			}
-			bb.addLine(".method('${method.toUpperCase()}', entity(${value}, '$contentType'))")
+			bb.addLine(".methodBuilder('${method.toUpperCase()}', entity(${value}, '$contentType'))")
 		}
 		else {
-			bb.addLine(".method('${method.toUpperCase()}')")
+			bb.addLine(".methodBuilder('${method.toUpperCase()}')")
 		}
 	}
 

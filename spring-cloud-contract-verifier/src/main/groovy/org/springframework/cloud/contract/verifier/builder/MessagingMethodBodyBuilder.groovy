@@ -32,7 +32,7 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
 
 /**
- * Root class for messaging method building.
+ * Root class for messaging methodBuilder building.
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

@@ -2056,7 +2056,7 @@ World.'''"""
 			SyntaxChecker.tryToCompileGroovy(HttpSpockMethodRequestProcessingBodyBuilder.simpleName, blockBuilder.toString())
 		then:
 			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching method Script1#assertThatRejectionReasonIsNull")
+			e.message.contains("Cannot find matching methodBuilder Script1#assertThatRejectionReasonIsNull")
 	}
 
 	@Issue('#85')
@@ -2151,7 +2151,7 @@ World.'''"""
 			SyntaxChecker.tryToCompileGroovy(HttpSpockMethodRequestProcessingBodyBuilder.simpleName, blockBuilder.toString())
 		then:
 			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching method Script1#getOAuthTokenHeader")
+			e.message.contains("Cannot find matching methodBuilder Script1#getOAuthTokenHeader")
 	}
 
 	@Issue('#150')
@@ -2202,7 +2202,7 @@ World.'''"""
 			SyntaxChecker.tryToCompileGroovy(HttpSpockMethodRequestProcessingBodyBuilder.simpleName, blockBuilder.toString())
 		then:
 			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching method Script1#foo")
+			e.message.contains("Cannot find matching methodBuilder Script1#foo")
 	}
 
 	@Issue('#149')
@@ -2237,7 +2237,7 @@ World.'''"""
 			SyntaxChecker.tryToCompileGroovy(HttpSpockMethodRequestProcessingBodyBuilder.simpleName, blockBuilder.toString())
 		then:
 			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching method Script1#getOAuthTokenHeader()")
+			e.message.contains("Cannot find matching methodBuilder Script1#getOAuthTokenHeader()")
 	}
 
 	@Issue('#149')
@@ -2561,9 +2561,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			!test.contains("'executedMethod()'")
 		where:
 			methodBuilderName                                             | methodBuilder                                                                                                            | missingMethodAssertion
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching methodBuilder Script1#executedMethod") }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(executedMethod())") }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching methodBuilder Script1#executedMethod") }
 			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("path(executedMethod())") }
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(executedMethod())") }
 	}
@@ -2632,8 +2632,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			methodBuilderName                                             | methodBuilder                                                                                                            | requestAssertion                                                                      | responseAssertion
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { String body -> body.contains("body('''12000''')") }                                 | { String body -> body.contains('responseBody == "12000"') }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { String body -> body.contains(""".method('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { String body -> body.contains(""".methodBuilder('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { String body -> body.contains(""".methodBuilder("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 	}
 

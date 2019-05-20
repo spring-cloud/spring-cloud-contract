@@ -62,7 +62,7 @@ class ContractHttpDocsSpec extends Specification {
 			// tag::request[]
 			org.springframework.cloud.contract.spec.Contract.make {
 				request {
-					// HTTP request method (GET/POST/PUT/DELETE).
+					// HTTP request methodBuilder (GET/POST/PUT/DELETE).
 					method 'GET'
 
 					// Path component of request URL is specified as follows.
@@ -333,7 +333,7 @@ class ContractHttpDocsSpec extends Specification {
 	}
 
 	org.springframework.cloud.contract.spec.Contract method =
-			// tag::method[]
+			// tag::methodBuilder[]
 			org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'PUT'
@@ -355,7 +355,7 @@ class ContractHttpDocsSpec extends Specification {
 					status OK()
 				}
 			}
-	// end::method[]
+	// end::methodBuilder[]
 
 	private String stripped(String string) {
 		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '').replace(' ', '')

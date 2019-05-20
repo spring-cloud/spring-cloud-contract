@@ -62,7 +62,7 @@ class YamlMockMvcMethodBodyBuilderSpec extends Specification implements WireMock
 	String contractDslWithCookiesValue = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/foo"
   headers:
     'Accept': 'application/json'
@@ -82,7 +82,7 @@ response:
 	String contractDslWithCookiesPattern = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/foo"
   headers:
     'Accept': 'application/json'
@@ -111,7 +111,7 @@ response:
 	String contractDslWithAbsentCookies = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/foo"
   headers:
     'Accept': 'application/json'
@@ -141,7 +141,7 @@ response:
 ---
 priority: 1
 request:
-  method: "POST"
+  methodBuilder: "POST"
   url: "/users/password"
   headers:
     'Content-Type': 'application/json'
@@ -183,7 +183,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -215,7 +215,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -249,7 +249,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -288,7 +288,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -325,7 +325,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
   body:
     items: 
@@ -357,7 +357,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
   body: "property1=VAL1"
 response:
@@ -388,7 +388,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -421,7 +421,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -460,7 +460,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -496,7 +496,7 @@ response:
 			String contract = """\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -530,7 +530,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   status: 200
@@ -568,7 +568,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   urlPath: "/users"
   queryParameters:
     'limit': "10"
@@ -642,7 +642,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   urlPath: "/foo/123456"
   queryParameters:
     'limit': "10"
@@ -717,7 +717,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "POST"
+  methodBuilder: "POST"
   url: "/ws/payments"
   body: ""
 response:
@@ -747,7 +747,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "POST"
+  methodBuilder: "POST"
   url: "test"
   body: ""
 response:
@@ -780,7 +780,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "POST"
+  methodBuilder: "POST"
   url: "/partners/1000/users"
   headers:
     "Content-Type": "application/json"
@@ -831,7 +831,7 @@ response:
 ---
 priority: 10
 request:
-  method: "POST"
+  methodBuilder: "POST"
   url: "/validation/client"
   headers:
     "Content-Type": "application/json"
@@ -880,7 +880,7 @@ response:
 ---
 priority: 10
 request:
-  method: "PUT"
+  methodBuilder: "PUT"
   url: "/fraudcheck"
 response:
   status: 201
@@ -920,7 +920,7 @@ response:
 ---
 priority: 10
 request:
-  method: "PUT"
+  methodBuilder: "PUT"
   url: "/v1/payments/e86df6f693de4b35ae648464c5b0dc09/енев"
   headers:
     "Content-Type": "application/json"
@@ -971,7 +971,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "PUT"
+  methodBuilder: "PUT"
   url: "/multipart"
   headers:
     "Content-Type": 'multipart/form-data;boundary=AaB03x'
@@ -1044,7 +1044,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "PUT"
+  methodBuilder: "PUT"
   url: "/multipart"
   headers:
     "Content-Type": 'multipart/form-data;boundary=AaB03x'
@@ -1111,7 +1111,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "PUT"
+  methodBuilder: "PUT"
   url: "/multipart"
   headers:
     "Content-Type": 'multipart/form-data;boundary=AaB03x'
@@ -1186,7 +1186,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/auth/oauth/check_token"
 response:
   status: 200
@@ -1218,7 +1218,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/auth/oauth/check_token"
 response:
   status: 200
@@ -1248,7 +1248,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "PUT"
+  methodBuilder: "PUT"
   url: "/fraudcheck"
 response:
   status: 200
@@ -1282,7 +1282,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/foos"
 response:
   status: 200
@@ -1319,7 +1319,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/api/tags"
 response:
   status: 200
@@ -1360,7 +1360,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/api/tags"
 response:
   status: 200
@@ -1397,7 +1397,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/api/categories"
 response:
   status: 200
@@ -1431,7 +1431,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "test"
 response:
   async: true
@@ -1461,7 +1461,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/test"
   queryParameters:
     param: value
@@ -1493,7 +1493,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/api/tags"
 response:
   status: 200
@@ -1527,7 +1527,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
 response:
   status: 200
@@ -1559,7 +1559,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
 response:
   status: 200
@@ -1585,7 +1585,7 @@ response:
 			SyntaxChecker.tryToCompileGroovy(HttpSpockMethodRequestProcessingBodyBuilder.simpleName, blockBuilder.toString())
 		then:
 			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains('Cannot find matching method Script1#assertThatRejectionReasonIsNull')
+			e.message.contains('Cannot find matching methodBuilder Script1#assertThatRejectionReasonIsNull')
 	}
 
 	@Issue('#85')
@@ -1594,7 +1594,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
 response:
   status: 200
@@ -1627,7 +1627,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
 response:
   status: 200
@@ -1660,7 +1660,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
   headers:
     authorization: Bearer token
@@ -1683,7 +1683,7 @@ response:
 			SyntaxChecker.tryToCompileGroovy(HttpSpockMethodRequestProcessingBodyBuilder.simpleName, blockBuilder.toString())
 		then:
 			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains('Cannot find matching method Script1#getOAuthTokenHeader')
+			e.message.contains('Cannot find matching methodBuilder Script1#getOAuthTokenHeader')
 	}
 
 	@Issue('#150')
@@ -1692,7 +1692,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
 response:
   status: 200
@@ -1720,7 +1720,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
 response:
   status: 200
@@ -1742,7 +1742,7 @@ response:
 			SyntaxChecker.tryToCompileGroovy(HttpSpockMethodRequestProcessingBodyBuilder.simpleName, blockBuilder.toString())
 		then:
 			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains('Cannot find matching method Script1#foo')
+			e.message.contains('Cannot find matching methodBuilder Script1#foo')
 	}
 
 	@Issue('#162')
@@ -1751,7 +1751,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/get"
   headers:
     "Content-Type": "application/vnd.fraud.v1+json"
@@ -1791,7 +1791,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/foo"
 response:
   status: 200
@@ -1830,7 +1830,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/foo"
 response:
   status: 200
@@ -1869,7 +1869,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "POST"
+  methodBuilder: "POST"
   url: "/foo"
   body:
     xyz: 'abc'
@@ -1931,9 +1931,9 @@ response:
 			!test.contains("'executedMethod()'")
 		where:
 			methodBuilderName                                             | methodBuilder                                                                                                            | missingMethodAssertion
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching methodBuilder Script1#executedMethod") }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(executedMethod())") }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching method Script1#executedMethod") }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching methodBuilder Script1#executedMethod") }
 			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("path(executedMethod())") }
 	}
 
@@ -1943,7 +1943,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/api/v1/xxxx"
 response:
   status: 200
@@ -1980,7 +1980,7 @@ response:
 			String contract = '''\
 ---
 request:
-  method: "GET"
+  methodBuilder: "GET"
   url: "/api/v1/xxxx"
   body: 12000
 response:
@@ -2002,8 +2002,8 @@ response:
 			methodBuilderName                                             | methodBuilder                                                                                                            | requestAssertion                                                                      | responseAssertion
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | { String body -> body.contains("body('''12000''')") }                                 | { String body -> body.contains('responseBody == "12000"') }
 			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { String body -> body.contains(""".method('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | { String body -> body.contains(""".methodBuilder('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | { String body -> body.contains(""".methodBuilder("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 	}
 }

@@ -781,8 +781,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                                    | methodBuilder                                                                                                                                                    | methodString
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ".method('GET')"
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | 'method("GET")'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ".methodBuilder('GET')"
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | 'methodBuilder("GET")'
 	}
 
 	def "should generate a call with an url path and query parameters with JUnit - we'll put it into docs"() {
@@ -835,7 +835,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
     .queryParam("name", "Denis.Stepanov")
     .queryParam("email", "bob@email.com")
     .request()
-    .method("GET");
+    .methodBuilder("GET");
 
   String responseAsString = response.readEntity(String.class);
 
@@ -1312,7 +1312,7 @@ DATA
 			def test = blockBuilder.toString()
 		then:
 			!test.contains('entity("\\"\\n')
-			test.contains('''.method("POST", entity("{\\"foo\\":\\"bar\\"}", "application/json"))''')
+			test.contains('''.methodBuilder("POST", entity("{\\"foo\\":\\"bar\\"}", "application/json"))''')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:

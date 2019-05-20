@@ -41,7 +41,7 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
 
 /**
- * An abstraction for creating a test method that includes processing of an HTTP request
+ * An abstraction for creating a test methodBuilder that includes processing of an HTTP request
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

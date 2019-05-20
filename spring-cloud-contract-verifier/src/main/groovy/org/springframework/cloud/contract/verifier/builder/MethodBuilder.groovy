@@ -31,7 +31,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
 
 /**
- * Builds a test method. Adds an ignore annotation on a method if necessary.
+ * Builds a test methodBuilder. Adds an ignore annotation on a methodBuilder if necessary.
  *
  * @author Jakub Kubrynski, codearte.io
  *
@@ -58,7 +58,7 @@ class MethodBuilder {
 	}
 
 	/**
-	 * A factory method that creates a {@link MethodBuilder} for the given arguments
+	 * A factory methodBuilder that creates a {@link MethodBuilder} for the given arguments
 	 */
 	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties, SingleTestGenerator.GeneratedClassData generatedClassData) {
 		if (log.isDebugEnabled()) {
@@ -82,13 +82,13 @@ class MethodBuilder {
 			int index = contract.convertedContract.findIndexOf { it == stubContent }
 			String name = "${camelCasedMethodFromFileName(stubsFile)}_${index}"
 			if (log.isDebugEnabled()) {
-				log.debug("Scenario found. The method name will be [" + name + "]")
+				log.debug("Scenario found. The methodBuilder name will be [" + name + "]")
 			}
 			return name
 		}
 		String name = camelCasedMethodFromFileName(stubsFile)
 		if (log.isDebugEnabled()) {
-			log.debug("The method name will be [" + name + "]")
+			log.debug("The methodBuilder name will be [" + name + "]")
 		}
 		return name
 	}

@@ -37,7 +37,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 
 /**
  * JaxRs implementation of the {@link JUnitMethodBodyBuilder}. Knows how to build
- * a test method for JaxRs.
+ * a test methodBuilder for JaxRs.
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *
@@ -139,10 +139,10 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 			else {
 				value = "\"${getBodyAsString()}\""
 			}
-			bb.addLine(".method(\"${method.toUpperCase()}\", entity(${value}, \"$contentType\"))")
+			bb.addLine(".methodBuilder(\"${method.toUpperCase()}\", entity(${value}, \"$contentType\"))")
 		}
 		else {
-			bb.addLine(".method(\"${method.toUpperCase()}\")")
+			bb.addLine(".methodBuilder(\"${method.toUpperCase()}\")")
 		}
 	}
 

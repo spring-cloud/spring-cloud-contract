@@ -847,7 +847,7 @@ then:
 				label 'shouldPublishMessage'
 				// input to the contract
 				input {
-					// the contract will be triggered by a method
+					// the contract will be triggered by a methodBuilder
 					triggeredBy('foo()')
 				}
 				// output message of the contract
