@@ -5,12 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.util.ContentType;
-
-
 
 // JSON
 // HTTP
@@ -44,7 +43,6 @@ Variants:
 
  */
 
-
 /*
 Pojos:
 - ContractMetaData
@@ -57,14 +55,11 @@ Builders
 
  */
 
-
-
 /**
  * Contents of the generated test.
  *
  * @author Olga Maciaszek-Sharma
  * @author Marcin Grzejszczak
- *
  * @since 2.2.0
  */
 public class GeneratedTestClass {
@@ -86,7 +81,6 @@ public class GeneratedTestClass {
  *
  * @author Olga Maciaszek-Sharma
  * @author Marcin Grzejszczak
- *
  * @since 2.2.0
  */
 class ContractMetaData {
@@ -120,12 +114,11 @@ class ContractMetaData {
 }
 
 /**
- * A generated test class consists of the class meta data (e.g. packages, imports)
- * fields and methods. The latter are generated via the {@link ClassBodyBuilder}.
+ * A generated test class consists of the class meta data (e.g. packages, imports) fields
+ * and methods. The latter are generated via the {@link ClassBodyBuilder}.
  *
  * @author Olga Maciaszek-Sharma
  * @author Marcin Grzejszczak
- *
  * @since 2.2.0
  */
 class GeneratedTestClassBuilder {
@@ -179,9 +172,8 @@ class GeneratedTestClassBuilder {
 	}
 
 	/**
-	 * From a matching {@link ClassMetaData} given the present input data, builds
-	 * a generated test class.
-	 *
+	 * From a matching {@link ClassMetaData} given the present input data, builds a
+	 * generated test class.
 	 * @return generated test class
 	 */
 	GeneratedTestClass build() {
@@ -213,11 +205,10 @@ class GeneratedTestClassBuilder {
 }
 
 /**
- * Builds the body of the class. Sets fields, methods and methodAnnotations.
+ * Builds the body of the class. Sets fields, methods.
  *
  * @author Olga Maciaszek-Sharma
  * @author Marcin Grzejszczak
- *
  * @since 2.2.0
  */
 class ClassBodyBuilder {
@@ -302,29 +293,25 @@ interface Field extends Visitor<Field> {
 
 }
 
-interface Given extends Visitor<Given> {
-
-}
-
-interface MethodAnnotations extends Visitor<MethodAnnotations> {
-
-}
-
 /**
  * Builds a single method body. Must be executed per contract.
  *
  * @author Olga Maciaszek-Sharma
  * @author Marcin Grzejszczak
- *
  * @since 2.2.0
  */
 class SingleMethodBuilder {
 
 	private List<MethodAnnotations> methodAnnotations = new ArrayList<>();
+
 	private MethodMetadata methodMetadata;
+
 	private List<Given> givens = new ArrayList<>();
+
 	private List<When> whens = new ArrayList<>();
+
 	private List<Then> thens = new ArrayList<>();
+
 	private List<ContractMetaData> contractMetaData = new LinkedList<>();
 
 	private final BlockBuilder blockBuilder;
@@ -372,10 +359,9 @@ class SingleMethodBuilder {
 	 * @return block builder with contents of a single methodBuilder
 	 */
 	BlockBuilder build() {
-		// TODO: we need to pass metaData to all the components below
 		this.contractMetaData.forEach(metaData -> {
 			// @Test
-			visit(this.methodAnnotations);
+			visit(this.methodAnnotations, metaData);
 			// \n
 			this.blockBuilder.addEmptyLine();
 			// public void validate_foo()
@@ -383,25 +369,27 @@ class SingleMethodBuilder {
 			// (space) {
 			this.blockBuilder.inBraces(() -> {
 				// (indent) given
-				visit(this.givens);
+				visit(this.givens, metaData);
 				// (indent) when
-				visit(this.whens);
+				visit(this.whens, metaData);
 				// (indent) then
-				visit(this.thens);
+				visit(this.thens, metaData);
 			});
 			// }
 		});
 		return this.blockBuilder;
 	}
 
-	private void visit(List<? extends Visitor> list) {
+	private void visit(List<? extends MethodVisitor> list, ContractMetaData metaData) {
 		// TODO: Consider setting new lines
-		list.stream().filter(Acceptor::accept).forEach(Visitor::call);
+		list.stream().filter(Acceptor::accept).forEach(o -> o.apply(contractMetaData));
 	}
 
 }
 
-
+/**
+ * Describes metadata of a single method.
+ */
 interface MethodMetadata {
 
 	// validate_foo()
@@ -415,52 +403,33 @@ interface MethodMetadata {
 
 }
 
-interface Method {
-
-	Method given();
-
-	Method when();
-
-	Method then();
+interface Example {
 
 	default void example_of_how_to_use_this() {
 		BlockBuilder blockBuilder = new BlockBuilder(" ");
 		List<ContractMetaData> contractMetaData = new ArrayList<>();
 
-		// TODO: Maybe all of these for methods should be Function<MetaData,Given>
-		// Function<MetaData,When> etc? That way we will describe how to build it
-		// but we will build it at runtime
-		SingleMethodBuilder methodBuilder = SingleMethodBuilder
-				.builder(blockBuilder)
+		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(blockBuilder)
 				// JUnitMethodAnnotation
 				.methodAnnotation(null)
 				// JavaMethodMetadata
 				// SpockMethodMetadata
-				.methodMetadata(null)
-				.contractMetaData(contractMetaData)
+				.methodMetadata(null).contractMetaData(contractMetaData)
 				// MockMvcGiven
-				.given(null)
-				.given(null)
+				.given(null).given(null)
 				// MockMvcWhen
-				.when(null)
-				.when(null)
+				.when(null).when(null)
 				// MockMvcThen
-				.then(null)
-				.then(null);
+				.then(null).then(null);
 
-		ClassBodyBuilder bodyBuilder = ClassBodyBuilder
-				.builder(blockBuilder)
+		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(blockBuilder)
 				// Junit5Field
-				.field(null)
-				.field(null)
-				.field(null)
-				.methodBuilder(methodBuilder);
+				.field(null).field(null).field(null).methodBuilder(methodBuilder);
 
-		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder.builder(blockBuilder)
-				.classBodyBuilder(bodyBuilder)
+		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder
+				.builder(blockBuilder).classBodyBuilder(bodyBuilder)
 				.imports(new JsonImports(blockBuilder), new JUnit4Imports(blockBuilder))
-				.classAnnotations(new JUnit4ClassAnnotation(blockBuilder))
-				.build();
+				.classAnnotations(new JUnit4ClassAnnotation(blockBuilder)).build();
 
 		// SingleTestGenerator requires a String
 		String contentsOfASingleClass = generatedTestClass.asClassString();
@@ -468,21 +437,28 @@ interface Method {
 
 }
 
-interface Assertions extends Visitor<Then> {
+interface MethodAnnotations extends MethodVisitor<MethodAnnotations> {
 
 }
 
-interface Then extends Visitor<Then> {
-
-	Assertions assertions();
+interface Given extends MethodVisitor<Given> {
 
 }
 
-interface When extends Visitor<When> {
+interface When extends MethodVisitor<When> {
+
+}
+
+interface Then extends MethodVisitor<Then> {
 
 }
 
 interface Visitor<T> extends Acceptor, OurCallable<T> {
+
+}
+
+interface MethodVisitor<T>
+		extends Acceptor, Function<ContractMetaData, MethodVisitor<T>> {
 
 }
 
