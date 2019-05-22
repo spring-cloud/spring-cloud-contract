@@ -83,43 +83,6 @@ class JavaClassMetaData implements ClassMetaData {
 		return this;
 	}
 
-	/*
-	package ....
-
-	imports ....
-
-	@annotations
-	modifier class name extends parent {
-
-		(indent) modifier methodname() {
-
-		}
-
-		(indent) modifier methodname() {
-
-		}
-
-	}
-
-
-	packageDefinition()
-	// block builder new line
-	.imports()
-	// block builder new line
-	.classAnnotations()
-	.modifier().className().parentClass()
-	.call( cos -> {
-		cos.methods.
-		filter(Acceptor::accept).
-		.forEach(Visitor::call)
-
-		cos.methods.
-		filter(Acceptor::accept).
-		.forEach(Visitor::call)
-	})
-
-	 */
-
 	@Override
 	public ClassMetaData modifier() {
 		return this;

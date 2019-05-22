@@ -6,10 +6,58 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.util.ContentType;
+
+
+
+// JSON
+// HTTP
+// MOCK MVC [standalone, mockmvc, webclient]
+// Scenario
+// Custom rule
+
+// JUNIT4
+
+// ClassMetaData -> new JavaClassMetaData()
+
+// Imports -> new JUnit4JsonMockMvcImports()
+// Imports -> new Junit4Imports()
+// Imports -> new JsonImports()
+// Imports -> new MockMvcImports()
+
+// ClassAnnotation -> new JUnit4ClassAnnotation()
+
+// Field -> new
+
+// MockMvcJsonMethodBuilder
+// MockMvcBinaryMethodBuilder
+// MockMvcFromFileMethodBuilder
+
+/*
+
+Variants:
+- Content Type (Json, Xml, Binary)
+-
+
+
+ */
+
+
+/*
+Pojos:
+- ContractMetaData
+- GeneratedTestClass
+
+Builders
+- GeneratedTestClassBuilder (package, imports, class annotation, delegates to class body)
+- ClassBodyBuilder (class body, fields, delegates to method)
+- SingleMethodBuilder (a single method)
+
+ */
+
+
 
 /**
  * Contents of the generated test.
@@ -43,8 +91,6 @@ public class GeneratedTestClass {
  */
 class ContractMetaData {
 
-	final Contract contract;
-
 	final ContentType contentType;
 
 	final ContractVerifierConfigProperties configProperties;
@@ -55,11 +101,10 @@ class ContractMetaData {
 
 	final SingleTestGenerator.GeneratedClassData generatedClassData;
 
-	ContractMetaData(Contract contract, ContractVerifierConfigProperties configProperties,
+	ContractMetaData(ContractVerifierConfigProperties configProperties,
 			Collection<ContractMetadata> listOfFiles,
 			String includedDirectoryRelativePath,
 			SingleTestGenerator.GeneratedClassData generatedClassData) {
-		this.contract = contract;
 		this.configProperties = configProperties;
 		this.listOfFiles = listOfFiles;
 		this.includedDirectoryRelativePath = includedDirectoryRelativePath;
@@ -140,10 +185,11 @@ class GeneratedTestClassBuilder {
 	 * @return generated test class
 	 */
 	GeneratedTestClass build() {
-		// com.example
+		// picks a matching class meta data
 		ClassMetaData classMetaData = this.metaData.stream().filter(Acceptor::accept)
 				.findFirst().orElseThrow(() -> new IllegalStateException(
 						"There is no matching meta data"));
+		// package com.example
 		classMetaData.setupLineEnding().packageDefinition();
 		// \n
 		this.blockBuilder.addEmptyLine();
@@ -178,7 +224,7 @@ class ClassBodyBuilder {
 
 	private List<Field> fields = new ArrayList<>();
 
-	private MySuperMethodBuilder methodBuilder;
+	private SingleMethodBuilder methodBuilder;
 
 	private final BlockBuilder blockBuilder;
 
@@ -195,7 +241,7 @@ class ClassBodyBuilder {
 		return this;
 	}
 
-	ClassBodyBuilder methodBuilder(MySuperMethodBuilder methodBuilder) {
+	ClassBodyBuilder methodBuilder(SingleMethodBuilder methodBuilder) {
 		this.methodBuilder = methodBuilder;
 		return this;
 	}
@@ -256,66 +302,23 @@ interface Field extends Visitor<Field> {
 
 }
 
-interface Given extends Visitor<Method> {
+interface Given extends Visitor<Given> {
 
 }
 
-interface MethodAnnotations extends Visitor<Method> {
-
-}
-
-// JSON
-// HTTP
-// MOCK MVC [standalone, mockmvc, webclient]
-// Scenario
-// Custom rule
-
-// JUNIT4
-
-// ClassMetaData -> new JavaClassMetaData()
-
-// Imports -> new JUnit4JsonMockMvcImports()
-// Imports -> new Junit4Imports()
-// Imports -> new JsonImports()
-// Imports -> new MockMvcImports()
-
-// ClassAnnotation -> new JUnit4ClassAnnotation()
-
-// Field -> new
-
-// MockMvcJsonMethodBuilder
-// MockMvcBinaryMethodBuilder
-// MockMvcFromFileMethodBuilder
-
-
-interface MyMethodBuilder extends Visitor<Method> {
-
-	MyMethodBuilder annotations(MethodAnnotations annotations);
-
-	// JunitMethodMetadata
-	// SpockMethodMetadata
-	MyMethodBuilder methodMetadata(MethodMetadata methodMetadata);
-
-	// MockMvcJsonGiven
-	MyMethodBuilder given(Given given);
-
-	// MockMvcWhen
-	MyMethodBuilder when(When when);
-
-	// JsonPayloadThen
-	MyMethodBuilder then(Then then);
+interface MethodAnnotations extends Visitor<MethodAnnotations> {
 
 }
 
 /**
- * Builds a single methodBuilder body. Must be executed per contract.
+ * Builds a single method body. Must be executed per contract.
  *
  * @author Olga Maciaszek-Sharma
  * @author Marcin Grzejszczak
  *
  * @since 2.2.0
  */
-class MySuperMethodBuilder {
+class SingleMethodBuilder {
 
 	private List<MethodAnnotations> methodAnnotations = new ArrayList<>();
 	private MethodMetadata methodMetadata;
@@ -326,40 +329,40 @@ class MySuperMethodBuilder {
 
 	private final BlockBuilder blockBuilder;
 
-	private MySuperMethodBuilder(BlockBuilder blockBuilder) {
+	private SingleMethodBuilder(BlockBuilder blockBuilder) {
 		this.blockBuilder = blockBuilder;
 	}
 
-	static MySuperMethodBuilder builder(BlockBuilder blockBuilder) {
-		return new MySuperMethodBuilder(blockBuilder);
+	static SingleMethodBuilder builder(BlockBuilder blockBuilder) {
+		return new SingleMethodBuilder(blockBuilder);
 	}
 
-	MySuperMethodBuilder methodAnnotation(MethodAnnotations methodAnnotations) {
+	SingleMethodBuilder methodAnnotation(MethodAnnotations methodAnnotations) {
 		this.methodAnnotations.add(methodAnnotations);
 		return this;
 	}
 
-	MySuperMethodBuilder methodMetadata(MethodMetadata methodMetadata) {
+	SingleMethodBuilder methodMetadata(MethodMetadata methodMetadata) {
 		this.methodMetadata = methodMetadata;
 		return this;
 	}
 
-	MySuperMethodBuilder contractMetaData(List<ContractMetaData> contractMetaData) {
+	SingleMethodBuilder contractMetaData(List<ContractMetaData> contractMetaData) {
 		this.contractMetaData.addAll(contractMetaData);
 		return this;
 	}
 
-	MySuperMethodBuilder given(Given given) {
+	SingleMethodBuilder given(Given given) {
 		this.givens.add(given);
 		return this;
 	}
 
-	MySuperMethodBuilder when(When when) {
+	SingleMethodBuilder when(When when) {
 		this.whens.add(when);
 		return this;
 	}
 
-	MySuperMethodBuilder then(Then then) {
+	SingleMethodBuilder then(Then then) {
 		this.thens.add(then);
 		return this;
 	}
@@ -423,20 +426,28 @@ interface Method {
 	default void example_of_how_to_use_this() {
 		BlockBuilder blockBuilder = new BlockBuilder(" ");
 		List<ContractMetaData> contractMetaData = new ArrayList<>();
+
 		// TODO: Maybe all of these for methods should be Function<MetaData,Given>
 		// Function<MetaData,When> etc? That way we will describe how to build it
 		// but we will build it at runtime
-		MySuperMethodBuilder methodBuilder = MySuperMethodBuilder
+		SingleMethodBuilder methodBuilder = SingleMethodBuilder
 				.builder(blockBuilder)
+				// JUnitMethodAnnotation
 				.methodAnnotation(null)
+				// JavaMethodMetadata
+				// SpockMethodMetadata
 				.methodMetadata(null)
 				.contractMetaData(contractMetaData)
+				// MockMvcGiven
 				.given(null)
 				.given(null)
+				// MockMvcWhen
 				.when(null)
 				.when(null)
+				// MockMvcThen
 				.then(null)
 				.then(null);
+
 		ClassBodyBuilder bodyBuilder = ClassBodyBuilder
 				.builder(blockBuilder)
 				// Junit5Field
@@ -444,11 +455,13 @@ interface Method {
 				.field(null)
 				.field(null)
 				.methodBuilder(methodBuilder);
+
 		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder.builder(blockBuilder)
 				.classBodyBuilder(bodyBuilder)
 				.imports(new JsonImports(blockBuilder), new JUnit4Imports(blockBuilder))
 				.classAnnotations(new JUnit4ClassAnnotation(blockBuilder))
 				.build();
+
 		// SingleTestGenerator requires a String
 		String contentsOfASingleClass = generatedTestClass.asClassString();
 	}
@@ -465,7 +478,7 @@ interface Then extends Visitor<Then> {
 
 }
 
-interface When extends Visitor<Method> {
+interface When extends Visitor<When> {
 
 }
 
