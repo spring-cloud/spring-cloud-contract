@@ -100,6 +100,20 @@ class SingleContractMetadata {
 		this.http = contract.request != null
 	}
 
+	boolean isJson() {
+		return this.inputContentType == ContentType.JSON ||
+				this.outputContentType == ContentType.JSON
+	}
+
+	boolean isIgnored() {
+		return this.contract.ignored
+	}
+
+	boolean isXml() {
+		return this.inputContentType == ContentType.XML ||
+				this.outputContentType == ContentType.XML
+	}
+
 	boolean isHttp() {
 		return this.http
 	}

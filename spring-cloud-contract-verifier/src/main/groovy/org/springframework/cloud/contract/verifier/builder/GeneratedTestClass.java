@@ -1,6 +1,5 @@
 package org.springframework.cloud.contract.verifier.builder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -9,7 +8,6 @@ import java.util.function.Function;
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
-import org.springframework.cloud.contract.verifier.util.ContentType;
 
 // JSON
 // HTTP
@@ -26,7 +24,7 @@ import org.springframework.cloud.contract.verifier.util.ContentType;
 // Imports -> new JsonImports()
 // Imports -> new MockMvcImports()
 
-// ClassAnnotation -> new JUnit4ClassAnnotation()
+// ClassAnnotation -> new JUnit4OrderClassAnnotation()
 
 // Field -> new
 
@@ -45,7 +43,7 @@ Variants:
 
 /*
 Pojos:
-- ContractMetaData
+- GeneratedClassMetaData
 - GeneratedTestClass
 
 Builders
@@ -83,9 +81,7 @@ public class GeneratedTestClass {
  * @author Marcin Grzejszczak
  * @since 2.2.0
  */
-class ContractMetaData {
-
-	final ContentType contentType;
+class GeneratedClassMetaData {
 
 	final ContractVerifierConfigProperties configProperties;
 
@@ -95,7 +91,7 @@ class ContractMetaData {
 
 	final SingleTestGenerator.GeneratedClassData generatedClassData;
 
-	ContractMetaData(ContractVerifierConfigProperties configProperties,
+	GeneratedClassMetaData(ContractVerifierConfigProperties configProperties,
 			Collection<ContractMetadata> listOfFiles,
 			String includedDirectoryRelativePath,
 			SingleTestGenerator.GeneratedClassData generatedClassData) {
@@ -103,11 +99,6 @@ class ContractMetaData {
 		this.listOfFiles = listOfFiles;
 		this.includedDirectoryRelativePath = includedDirectoryRelativePath;
 		this.generatedClassData = generatedClassData;
-		this.contentType = contentType();
-	}
-
-	private ContentType contentType() {
-		return this.contentType;
 	}
 
 }
@@ -122,11 +113,13 @@ class ContractMetaData {
  */
 class GeneratedTestClassBuilder {
 
-	private List<ClassMetaData> metaData = new ArrayList<>();
+	private List<ClassMetaData> metaData = new LinkedList<>();
 
-	private List<Imports> imports = new ArrayList<>();
+	private List<Imports> imports = new LinkedList<>();
 
-	private List<ClassAnnotation> annotations = new ArrayList<>();
+	private List<Imports> staticImports = new LinkedList<>();
+
+	private List<ClassAnnotation> annotations = new LinkedList<>();
 
 	private ClassBodyBuilder classBodyBuilder;
 
@@ -159,6 +152,20 @@ class GeneratedTestClassBuilder {
 		return this;
 	}
 
+	GeneratedTestClassBuilder staticImports(Imports imports) {
+		this.staticImports.add(imports);
+		return this;
+	}
+
+	GeneratedTestClassBuilder staticImports(Imports... imports) {
+		return imports(Arrays.asList(imports));
+	}
+
+	GeneratedTestClassBuilder staticImports(List<Imports> imports) {
+		this.staticImports.addAll(imports);
+		return this;
+	}
+
 	GeneratedTestClassBuilder classAnnotations(ClassAnnotation... annotations) {
 		List<ClassAnnotation> classAnnotations = Arrays.asList(annotations);
 		this.annotations.addAll(classAnnotations);
@@ -187,9 +194,16 @@ class GeneratedTestClassBuilder {
 		visit(this.imports);
 		// \n
 		this.blockBuilder.addEmptyLine();
+		visit(this.staticImports);
+		// \n
+		this.blockBuilder.addEmptyLine();
 		visit(this.annotations);
 		// public FooSpec extends Parent
-		classMetaData.modifier().className().suffix().parentClass();
+		this.blockBuilder
+				.appendWithSpace(classMetaData::modifier)
+				.appendWithSpace(classMetaData::className)
+				.appendWithSpace(classMetaData::suffix)
+				.appendWithSpace(classMetaData::parentClass);
 		// public FooSpec extends Parent {
 		// (indent)
 		// }
@@ -212,7 +226,7 @@ class GeneratedTestClassBuilder {
  */
 class ClassBodyBuilder {
 
-	private List<Field> fields = new ArrayList<>();
+	private List<Field> fields = new LinkedList<>();
 
 	private SingleMethodBuilder methodBuilder;
 
@@ -281,15 +295,6 @@ interface Imports extends Visitor<Imports> {
 
 interface Field extends Visitor<Field> {
 
-	// @Rule
-	Field annotations();
-
-	// public
-	Field modifier();
-
-	// Block Builder
-	Field field();
-
 }
 
 /**
@@ -301,17 +306,17 @@ interface Field extends Visitor<Field> {
  */
 class SingleMethodBuilder {
 
-	private List<MethodAnnotations> methodAnnotations = new ArrayList<>();
+	private List<MethodAnnotations> methodAnnotations = new LinkedList<>();
 
 	private MethodMetadata methodMetadata;
 
-	private List<Given> givens = new ArrayList<>();
+	private List<Given> givens = new LinkedList<>();
 
-	private List<When> whens = new ArrayList<>();
+	private List<When> whens = new LinkedList<>();
 
-	private List<Then> thens = new ArrayList<>();
+	private List<Then> thens = new LinkedList<>();
 
-	private List<ContractMetaData> contractMetaData = new LinkedList<>();
+	private GeneratedClassMetaData generatedClassMetaData;
 
 	private final BlockBuilder blockBuilder;
 
@@ -333,8 +338,8 @@ class SingleMethodBuilder {
 		return this;
 	}
 
-	SingleMethodBuilder contractMetaData(List<ContractMetaData> contractMetaData) {
-		this.contractMetaData.addAll(contractMetaData);
+	SingleMethodBuilder contractMetaData(GeneratedClassMetaData generatedClassMetaData) {
+		this.generatedClassMetaData = generatedClassMetaData;
 		return this;
 	}
 
@@ -358,7 +363,7 @@ class SingleMethodBuilder {
 	 * @return block builder with contents of a single methodBuilder
 	 */
 	BlockBuilder build() {
-		this.contractMetaData.forEach(metaData -> {
+		this.generatedClassMetaData.listOfFiles.forEach(metaData -> {
 			// @Test
 			visit(this.methodAnnotations, metaData);
 			// \n
@@ -379,9 +384,9 @@ class SingleMethodBuilder {
 		return this.blockBuilder;
 	}
 
-	private void visit(List<? extends MethodVisitor> list, ContractMetaData metaData) {
+	private void visit(List<? extends MethodVisitor> list, ContractMetadata metaData) {
 		// TODO: Consider setting new lines
-		list.stream().filter(Acceptor::accept).forEach(o -> o.apply(contractMetaData));
+		list.stream().filter(Acceptor::accept).forEach(o -> o.apply(metaData));
 	}
 
 }
@@ -399,45 +404,6 @@ interface MethodMetadata {
 
 	// void
 	MethodMetadata returnType();
-
-}
-
-interface Example {
-
-	default void example_of_how_to_use_this() {
-		BlockBuilder blockBuilder = new BlockBuilder(" ");
-		List<ContractMetaData> contractMetaData = new ArrayList<>();
-
-		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(blockBuilder)
-				// JUnitMethodAnnotation
-				.methodAnnotation(null)
-				// JavaMethodMetadata
-				// SpockMethodMetadata
-				.methodMetadata(null).contractMetaData(contractMetaData)
-				// MockMvcGiven
-				.given(null).given(null)
-				// MockMvcWhen
-				.when(null).when(null)
-				// MockMvcThen
-				.then(null).then(null);
-
-		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(blockBuilder)
-				// Junit5Field
-				.field(null).field(null).field(null).methodBuilder(methodBuilder);
-
-		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder
-				.builder(blockBuilder).classBodyBuilder(bodyBuilder)
-				// SpockMetaData
-				// JavaMetaData
-				.metaData(new JavaClassMetaData(blockBuilder, contractMetaData))
-				.imports(new CustomImports(blockBuilder, contractMetaData),
-						new JsonImports(blockBuilder),
-						new JUnit4Imports(blockBuilder, contractMetaData))
-				.classAnnotations(new JUnit4ClassAnnotation(blockBuilder)).build();
-
-		// SingleTestGenerator requires a String
-		String contentsOfASingleClass = generatedTestClass.asClassString();
-	}
 
 }
 
@@ -462,7 +428,7 @@ interface Visitor<T> extends Acceptor, OurCallable<T> {
 }
 
 interface MethodVisitor<T>
-		extends Acceptor, Function<ContractMetaData, MethodVisitor<T>> {
+		extends Acceptor, Function<GeneratedClassMetaData, MethodVisitor<T>> {
 
 }
 

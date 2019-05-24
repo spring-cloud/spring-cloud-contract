@@ -100,6 +100,12 @@ class BlockBuilder {
 		return this
 	}
 
+	BlockBuilder appendWithSpace(Runnable runnable) {
+		builder << " "
+		runnable.run()
+		return this
+	}
+
 	@CompileDynamic
 	private void addIndentation() {
 		indents.times {
