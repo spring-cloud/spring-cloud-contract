@@ -33,6 +33,7 @@ class BlockBuilder {
 	private final StringBuilder builder
 	private final String spacer
 	private int indents
+	private String lineEnding = ""
 
 	/**
 	 * @param spacer - char used for spacing
@@ -40,6 +41,14 @@ class BlockBuilder {
 	BlockBuilder(String spacer) {
 		this.spacer = spacer
 		builder = new StringBuilder()
+	}
+
+	/**
+	 * Setup line ending
+	 */
+	BlockBuilder lineEnding(String lineEnding) {
+		this.lineEnding = lineEnding
+		return this
 	}
 
 	/**
@@ -77,6 +86,12 @@ class BlockBuilder {
 	BlockBuilder addLine(String line) {
 		addIndentation()
 		builder << "$line\n"
+		return this
+	}
+
+	BlockBuilder addLineWithEnding(String line) {
+		addIndentation()
+		builder << "${line}${lineEnding}\n"
 		return this
 	}
 

@@ -107,7 +107,6 @@ class ContractMetaData {
 	}
 
 	private ContentType contentType() {
-		// TODO: logic
 		return this.contentType;
 	}
 
@@ -428,7 +427,12 @@ interface Example {
 
 		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder
 				.builder(blockBuilder).classBodyBuilder(bodyBuilder)
-				.imports(new JsonImports(blockBuilder), new JUnit4Imports(blockBuilder))
+				// SpockMetaData
+				// JavaMetaData
+				.metaData(new JavaClassMetaData(blockBuilder, contractMetaData))
+				.imports(new CustomImports(blockBuilder, contractMetaData),
+						new JsonImports(blockBuilder),
+						new JUnit4Imports(blockBuilder, contractMetaData))
 				.classAnnotations(new JUnit4ClassAnnotation(blockBuilder)).build();
 
 		// SingleTestGenerator requires a String

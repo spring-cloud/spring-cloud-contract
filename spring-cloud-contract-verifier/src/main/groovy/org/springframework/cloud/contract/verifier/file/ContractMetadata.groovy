@@ -23,6 +23,10 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 
 /**
  * Contains metadata for a particular file with a DSL
@@ -55,6 +59,10 @@ class ContractMetadata {
 	 * The list of contracts for the given file
 	 */
 	final Collection<Contract> convertedContract = []
+	/**
+	 * Converted contracts with meta data information
+	 */
+	final Collection<SingleContractMetadata> convertedContractWithMetadata = []
 
 	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Contract convertedContract) {
 		this(path, ignored, groupSize, order, [convertedContract])
@@ -66,5 +74,53 @@ class ContractMetadata {
 		this.ignored = ignored
 		this.order = order
 		this.convertedContract.addAll(convertedContract)
+		this.convertedContractWithMetadata.addAll(
+				this.convertedContract
+						.collect { new SingleContractMetadata(it) })
+	}
+}
+
+@CompileStatic
+@EqualsAndHashCode
+@ToString
+class SingleContractMetadata {
+	final Contract contract
+	final ContentType inputContentType
+	final ContentType outputContentType
+	private final boolean http
+
+	SingleContractMetadata(Contract contract) {
+		this.contract = contract
+		Headers inputHeaders = inputHeaders(contract)
+		DslProperty inputBody = inputBody(contract)
+		Headers outputHeaders = outputHeaders(contract)
+		DslProperty outputBody = outputBody(contract)
+		this.inputContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody)
+		this.outputContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody)
+		this.http = contract.request != null
+	}
+
+	boolean isHttp() {
+		return this.http
+	}
+
+	boolean isMessaging() {
+		return !isHttp()
+	}
+
+	private DslProperty inputBody(Contract contract) {
+		return contract.request?.body ?: contract.input?.messageBody
+	}
+
+	private Headers inputHeaders(Contract contract) {
+		return contract.request?.headers ?: contract.input?.messageHeaders
+	}
+
+	private DslProperty outputBody(Contract contract) {
+		return contract.response?.body ?: contract.outputMessage?.body
+	}
+
+	private Headers outputHeaders(Contract contract) {
+		return contract.response?.headers ?: contract.outputMessage?.headers
 	}
 }

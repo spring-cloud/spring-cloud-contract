@@ -67,6 +67,7 @@ class ClassBuilder {
 	static ClassBuilder createClass(String className, String classPackage, ContractVerifierConfigProperties properties,
 			String includedDirectoryRelativePath) {
 		String baseClassForTests
+		// SpockMetaData
 		if (properties.testFramework == TestFramework.SPOCK && !properties.baseClassForTests
 				&& !properties.packageWithBaseClasses
 				&& !properties.baseClassMappings) {
