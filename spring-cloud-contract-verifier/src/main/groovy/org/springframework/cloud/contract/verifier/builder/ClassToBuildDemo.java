@@ -2,14 +2,17 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
+import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
 import org.springframework.util.StringUtils;
@@ -67,8 +70,9 @@ class Junit4IgnoreImports implements Imports {
 	@Override
 	public boolean accept() {
 		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isIgnored));
+				.anyMatch(metadata -> metadata.isIgnored()
+						|| metadata.getConvertedContractWithMetadata().stream()
+								.anyMatch(SingleContractMetadata::isIgnored));
 	}
 
 }
@@ -301,8 +305,7 @@ class MessagingFields implements Field {
 
 	@Override
 	public Field call() {
-		Arrays.stream(FIELDS)
-				.forEach(this.blockBuilder::addLineWithEnding);
+		Arrays.stream(FIELDS).forEach(this.blockBuilder::addLineWithEnding);
 		return this;
 	}
 
@@ -416,7 +419,7 @@ class JavaClassMetaData implements ClassMetaData {
 
 	private final BlockBuilder blockBuilder;
 
-	private final BaseClassRetriever baseClassRetriever = new BaseClassRetriever();
+	private final BaseClassProvider baseClassProvider = new BaseClassProvider();
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
@@ -460,7 +463,7 @@ class JavaClassMetaData implements ClassMetaData {
 	public ClassMetaData parentClass() {
 		ContractVerifierConfigProperties properties = this.generatedClassMetaData.configProperties;
 		String includedDirectoryRelativePath = this.generatedClassMetaData.includedDirectoryRelativePath;
-		String baseClass = this.baseClassRetriever.retrieveBaseClass(properties,
+		String baseClass = this.baseClassProvider.retrieveBaseClass(properties,
 				includedDirectoryRelativePath);
 		this.blockBuilder.addAtTheEnd(baseClass);
 		return this;
@@ -484,9 +487,9 @@ class JavaClassMetaData implements ClassMetaData {
 
 }
 
-class BaseClassRetriever {
+class BaseClassProvider {
 
-	private static final Log log = LogFactory.getLog(BaseClassRetriever.class);
+	private static final Log log = LogFactory.getLog(BaseClassProvider.class);
 
 	private static final String SEPARATOR = "_REPLACEME_";
 
@@ -560,6 +563,86 @@ class JUnit4OrderClassAnnotation implements ClassAnnotation {
 	public boolean accept() {
 		return this.generatedClassMetaData.listOfFiles.stream()
 				.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class JunitMethodMetadata implements MethodMetadata {
+
+	private final BlockBuilder blockBuilder;
+
+	private final NameProvider nameProvider = new NameProvider();
+
+	JunitMethodMetadata(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodMetadata name(SingleContractMetadata metaData) {
+		this.blockBuilder.addAtTheEnd(this.nameProvider.methodName(metaData));
+		return this;
+	}
+
+	@Override
+	public MethodMetadata modifier() {
+		this.blockBuilder.addAtTheEnd("public");
+		return this;
+	}
+
+	@Override
+	public MethodMetadata returnType() {
+		this.blockBuilder.addAtTheEnd("void");
+		return this;
+	}
+
+}
+
+class NameProvider {
+
+	private static final Log log = LogFactory.getLog(NameProvider.class);
+
+	String methodName(SingleContractMetadata singleContractMetadata) {
+		ContractMetadata contractMetadata = singleContractMetadata.getContractMetadata();
+		File stubsFile = contractMetadata.getPath().toFile();
+		Contract stubContent = singleContractMetadata.getContract();
+		if (StringUtils.hasText(stubContent.getName())) {
+			String name = NamesUtil.camelCase(
+					NamesUtil.convertIllegalPackageChars(stubContent.getName()));
+			if (log.isDebugEnabled()) {
+				log.debug("Overriding the default test name with [" + name + "]");
+			}
+			return name;
+		}
+		else if (contractMetadata.getConvertedContract().size() > 1) {
+			int index = findIndexOf(contractMetadata.getConvertedContract(), stubContent);
+			String name = camelCasedMethodFromFileName(stubsFile) + "_" + index;
+			if (log.isDebugEnabled()) {
+				log.debug(
+						"Scenario found. The methodBuilder name will be [" + name + "]");
+			}
+			return name;
+		}
+		String name = camelCasedMethodFromFileName(stubsFile);
+		if (log.isDebugEnabled()) {
+			log.debug("The methodBuilder name will be [" + name + "]");
+		}
+		return name;
+	}
+
+	private int findIndexOf(Collection<Contract> contracts, Contract stubContent) {
+		int i = 0;
+		for (Contract contract : contracts) {
+			if (contract.equals(stubContent)) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+
+	private String camelCasedMethodFromFileName(File stubsFile) {
+		return NamesUtil.camelCase(NamesUtil.convertIllegalMethodNameChars(NamesUtil
+				.toLastDot(NamesUtil.afterLast(stubsFile.getPath(), File.separator))));
 	}
 
 }

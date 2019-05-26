@@ -76,7 +76,7 @@ class ContractMetadata {
 		this.convertedContract.addAll(convertedContract)
 		this.convertedContractWithMetadata.addAll(
 				this.convertedContract
-						.collect { new SingleContractMetadata(it) })
+						.collect { new SingleContractMetadata(it, this) })
 	}
 }
 
@@ -84,12 +84,13 @@ class ContractMetadata {
 @EqualsAndHashCode
 @ToString
 class SingleContractMetadata {
+	final ContractMetadata contractMetadata
 	final Contract contract
 	final ContentType inputContentType
 	final ContentType outputContentType
 	private final boolean http
 
-	SingleContractMetadata(Contract contract) {
+	SingleContractMetadata(Contract contract, ContractMetadata contractMetadata) {
 		this.contract = contract
 		Headers inputHeaders = inputHeaders(contract)
 		DslProperty inputBody = inputBody(contract)
@@ -98,6 +99,7 @@ class SingleContractMetadata {
 		this.inputContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody)
 		this.outputContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody)
 		this.http = contract.request != null
+		this.contractMetadata = contractMetadata
 	}
 
 	boolean isJson() {

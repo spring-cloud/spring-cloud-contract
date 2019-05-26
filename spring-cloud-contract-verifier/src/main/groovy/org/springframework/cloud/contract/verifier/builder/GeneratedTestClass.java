@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
 // JSON
 // HTTP
@@ -99,6 +101,12 @@ class GeneratedClassMetaData {
 		this.listOfFiles = listOfFiles;
 		this.includedDirectoryRelativePath = includedDirectoryRelativePath;
 		this.generatedClassData = generatedClassData;
+	}
+
+	Collection<SingleContractMetadata> toSingleContractMetadata() {
+		return this.listOfFiles.stream()
+				.flatMap(metadata -> metadata.getConvertedContractWithMetadata().stream())
+				.collect(Collectors.toList());
 	}
 
 }
@@ -199,8 +207,7 @@ class GeneratedTestClassBuilder {
 		this.blockBuilder.addEmptyLine();
 		visit(this.annotations);
 		// public FooSpec extends Parent
-		this.blockBuilder
-				.appendWithSpace(classMetaData::modifier)
+		this.blockBuilder.appendWithSpace(classMetaData::modifier)
 				.appendWithSpace(classMetaData::className)
 				.appendWithSpace(classMetaData::suffix)
 				.appendWithSpace(classMetaData::parentClass);
@@ -363,13 +370,15 @@ class SingleMethodBuilder {
 	 * @return block builder with contents of a single methodBuilder
 	 */
 	BlockBuilder build() {
-		this.generatedClassMetaData.listOfFiles.forEach(metaData -> {
+		this.generatedClassMetaData.toSingleContractMetadata().forEach(metaData -> {
 			// @Test
 			visit(this.methodAnnotations, metaData);
 			// \n
 			this.blockBuilder.addEmptyLine();
 			// public void validate_foo()
-			this.methodMetadata.modifier().returnType().name();
+			this.blockBuilder.appendWithSpace(methodMetadata::modifier);
+			this.blockBuilder.appendWithSpace(methodMetadata::returnType);
+			this.blockBuilder.appendWithSpace(() -> methodMetadata.name(metaData));
 			// (space) {
 			this.blockBuilder.inBraces(() -> {
 				// (indent) given
@@ -384,7 +393,8 @@ class SingleMethodBuilder {
 		return this.blockBuilder;
 	}
 
-	private void visit(List<? extends MethodVisitor> list, ContractMetadata metaData) {
+	private void visit(List<? extends MethodVisitor> list,
+			SingleContractMetadata metaData) {
 		// TODO: Consider setting new lines
 		list.stream().filter(Acceptor::accept).forEach(o -> o.apply(metaData));
 	}
@@ -397,7 +407,7 @@ class SingleMethodBuilder {
 interface MethodMetadata {
 
 	// validate_foo()
-	MethodMetadata name();
+	MethodMetadata name(SingleContractMetadata metadata);
 
 	// public
 	MethodMetadata modifier();
@@ -428,7 +438,7 @@ interface Visitor<T> extends Acceptor, OurCallable<T> {
 }
 
 interface MethodVisitor<T>
-		extends Acceptor, Function<GeneratedClassMetaData, MethodVisitor<T>> {
+		extends Acceptor, Function<SingleContractMetadata, MethodVisitor<T>> {
 
 }
 
