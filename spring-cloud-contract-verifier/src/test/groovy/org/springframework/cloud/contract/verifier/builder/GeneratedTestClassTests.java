@@ -1,53 +1,35 @@
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+
+import org.assertj.core.api.BDDAssertions;
 import org.junit.Test;
+
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
+import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 
 public class GeneratedTestClassTests {
 
 	@Test
 	public void should_work_for_junit4_mockmvc_json_non_binary() {
-		// given
-		BlockBuilder builder = new BlockBuilder(" ");
-		GeneratedClassMetaData metaData = null;
+		//given
+		RefactoredSingleTestGenerator generator = new RefactoredSingleTestGenerator();
+		ContractVerifierConfigProperties configProperties = new ContractVerifierConfigProperties();
+		Collection<ContractMetadata> contracts = Collections.emptyList();
+		String includedDirectoryRelativePath = "some/path";
+		String convertedClassName = "fooBar";
+		String packageName = "com.example";
+		Path classPath = new File("/tmp").toPath();
 
-		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(builder)
-				.contractMetaData(metaData)
-				// JUnitMethodAnnotation
-				.methodAnnotation(null)
-				// JavaMethodMetadata
-				// SpockMethodMetadata
-				.methodMetadata(null)
-				// MockMvcGiven
-				.given(null).given(null)
-				// MockMvcWhen
-				.when(null).when(null)
-				// MockMvcThen
-				.then(null).then(null);
+		//when
+		String builtClass = generator.buildClass(configProperties, contracts, includedDirectoryRelativePath,
+				new SingleTestGenerator.GeneratedClassData(convertedClassName, packageName, classPath));
 
-		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
-				.field(new MessagingFields(builder, metaData))
-				.methodBuilder(methodBuilder);
-
-		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder.builder(builder)
-				.classBodyBuilder(bodyBuilder)
-				.metaData(new JavaClassMetaData(builder, metaData))
-				.imports(new CustomImports(builder, metaData),
-						new JsonImports(builder, metaData),
-						new JUnit4Imports(builder, metaData),
-						new Junit4IgnoreImports(builder, metaData),
-						new JUnit4OrderImports(builder, metaData),
-						new JsonPathImports(builder, metaData),
-						new XmlImports(builder, metaData),
-						new MessagingImports(builder, metaData),
-						new RestAssured3MockMvcImports(builder, metaData))
-				.staticImports(new DefaultStaticImports(builder, metaData),
-						new CustomStaticImports(builder, metaData),
-						new MessagingStaticImports(builder, metaData))
-				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))
-				.build();
-
-		// SingleTestGenerator requires a String
-		String contentsOfASingleClass = generatedTestClass.asClassString();
+		//then
+		BDDAssertions.then(builtClass).isNotEmpty();
 	}
 
 }
