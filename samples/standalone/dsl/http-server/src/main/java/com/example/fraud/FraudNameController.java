@@ -16,7 +16,6 @@
 
 package com.example.fraud;
 
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,7 +40,7 @@ class FraudNameController {
 		this.fraudVerifier = fraudVerifier;
 	}
 
-	@PutMapping(value = "/frauds/name", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@PutMapping(value = "/frauds/name")
 	public NameResponse checkByName(@RequestBody NameRequest request) {
 		boolean fraud = this.fraudVerifier.isFraudByName(request.getName());
 		if (fraud) {
@@ -51,7 +50,7 @@ class FraudNameController {
 				"Don't worry " + request.getName() + " you're not a fraud");
 	}
 
-	@GetMapping(value = "/frauds/name", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(value = "/frauds/name")
 	public String checkByName(@CookieValue("name") String value,
 			@CookieValue("name2") String value2) {
 		return value + " " + value2;

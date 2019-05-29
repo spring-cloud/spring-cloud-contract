@@ -22,7 +22,6 @@ import com.example.fraud.model.FraudCheck;
 import com.example.fraud.model.FraudCheckResult;
 import com.example.fraud.model.FraudCheckStatus;
 
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +38,7 @@ public class FraudDetectionController {
 	private static final BigDecimal MAX_AMOUNT = new BigDecimal("5000");
 
 	// tag::server_api[]
-	@RequestMapping(value = "/fraudcheck", method = PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/fraudcheck", method = PUT)
 	public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
 		// end::server_api[]
 		// tag::new_impl[]

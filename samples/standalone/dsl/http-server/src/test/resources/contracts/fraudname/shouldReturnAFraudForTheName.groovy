@@ -35,7 +35,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 				result: "Sorry ${fromRequest().body('$.name')} but you're a fraud"
 		])
 		headers {
-			header(contentType(), "${fromRequest().header(contentType())};charset=UTF-8")
+			header(contentType(), "${fromRequest().header(contentType())}")
 		}
 	}
 }

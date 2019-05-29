@@ -15,4 +15,4 @@ response:
   body:
     result: "Don't worry {{{ jsonpath this '$.name' }}} you're not a fraud"
   headers:
-    Content-Type: "{{{ request.headers.Content-Type.0 }}};charset=UTF-8"
+    Content-Type: "{{{ request.headers.Content-Type.0 }}}"

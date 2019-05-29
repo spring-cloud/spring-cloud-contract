@@ -16,7 +16,6 @@
 
 package com.example.fraud;
 
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,12 +40,12 @@ public class FraudStatsController {
 		this.statsProvider = statsProvider;
 	}
 
-	@GetMapping(value = "/frauds", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(value = "/frauds")
 	public Response countAllFrauds() {
 		return new Response(this.statsProvider.count(FraudType.ALL));
 	}
 
-	@GetMapping(value = "/drunks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(value = "/drunks")
 	public Response countAllDrunks() {
 		return new Response(this.statsProvider.count(FraudType.DRUNKS));
 	}
