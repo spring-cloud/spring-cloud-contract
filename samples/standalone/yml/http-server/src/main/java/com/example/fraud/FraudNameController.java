@@ -16,6 +16,7 @@
 
 package com.example.fraud;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,7 @@ class FraudNameController {
 		this.fraudVerifier = fraudVerifier;
 	}
 
-	@PutMapping(value = "/frauds/name")
+	@PutMapping(value = "/frauds/name", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public NameResponse checkByName(@RequestBody NameRequest request) {
 		boolean fraud = this.fraudVerifier.isFraudByName(request.getName());
 		if (fraud) {

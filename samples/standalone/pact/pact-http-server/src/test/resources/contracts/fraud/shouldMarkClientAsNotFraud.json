@@ -22,7 +22,7 @@
       "response": {
         "status": 200,
         "headers": {
-          "Content-Type": "application/vnd.fraud.v1+json;charset=UTF-8"
+          "Content-Type": "application/vnd.fraud.v1+json"
         },
         "body": {
           "fraudCheckStatus": "OK",
