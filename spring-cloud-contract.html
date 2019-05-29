@@ -1372,7 +1372,7 @@ response: # (7)
     fraudCheckStatus: "FRAUD"
     "rejection.reason": "Amount too high"
   headers: # (10)
-    Content-Type: application/json;charset=UTF-8
+    Content-Type: application/json
 
 
 #From the Consumer perspective, when shooting a request in the integration test:
@@ -1404,7 +1404,7 @@ response: # (7)
 #(8) - status equal `200`
 #(9) - and JSON body equal to
 # { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-#(10) - with header `Content-Type` equal to `application/json;charset=UTF-8`</code></pre>
+#(10) - with header `Content-Type` equal to `application/json`</code></pre>
 </div>
 </div>
 </div>
@@ -1819,7 +1819,7 @@ response: # (7)
     fraudCheckStatus: "FRAUD"
     "rejection.reason": "Amount too high"
   headers: # (10)
-    Content-Type: application/json;charset=UTF-8
+    Content-Type: application/json
 
 
 #From the Consumer perspective, when shooting a request in the integration test:
@@ -1851,7 +1851,7 @@ response: # (7)
 #(8) - status equal `200`
 #(9) - and JSON body equal to
 # { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-#(10) - with header `Content-Type` equal to `application/json;charset=UTF-8`</code></pre>
+#(10) - with header `Content-Type` equal to `application/json`</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -13351,7 +13351,7 @@ set a <code>metaData</code> entry in the Pact file, with key <code>sentTo</code>
       "response": {
         "status": 200,
         "headers": {
-          "Content-Type": "application/vnd.fraud.v1+json;charset=UTF-8"
+          "Content-Type": "application/vnd.fraud.v1+json"
         },
         "body": {
           "fraudCheckStatus": "FRAUD",
