@@ -69,6 +69,11 @@ class SpockDefinition implements TestFrameworkDefinition {
 	}
 
 	@Override
+	boolean usesIgnoreAnnotations() {
+		return true
+	}
+
+	@Override
 	String getIgnoreAnnotation() {
 		return '@Ignore'
 	}

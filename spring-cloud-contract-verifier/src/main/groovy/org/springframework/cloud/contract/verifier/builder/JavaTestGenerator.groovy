@@ -112,7 +112,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 					key.groovyDsl, configProperties, generatedClassData))
 		}
 
-		if (toIgnore) {
+		if (toIgnore && configProperties.testFramework.usesIgnoreAnnotations()) {
 			clazz.addImport(configProperties.testFramework.getIgnoreClass())
 		}
 	}

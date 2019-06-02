@@ -21,6 +21,7 @@ import org.springframework.cloud.contract.verifier.config.framework.JUnit5Defini
 import org.springframework.cloud.contract.verifier.config.framework.JUnitDefinition
 import org.springframework.cloud.contract.verifier.config.framework.SpockDefinition
 import org.springframework.cloud.contract.verifier.config.framework.TestFrameworkDefinition
+import org.springframework.cloud.contract.verifier.config.framework.TestNGDefinition
 
 /**
  * Contains main building blocks for a test class for the given framework
@@ -35,6 +36,7 @@ enum TestFramework {
 	SPOCK(new SpockDefinition()),
 	JUNIT(new JUnitDefinition()),
 	JUNIT5(new JUnit5Definition()),
+	TESTNG(new TestNGDefinition()),
 	CUSTOM(new CustomDefinition())
 
 	@Delegate
@@ -99,6 +101,11 @@ enum TestFramework {
 			@Override
 			String getOrderAnnotation() {
 				return orderAnnotation
+			}
+
+			@Override
+			boolean usesIgnoreAnnotations() {
+				return true
 			}
 
 			@Override

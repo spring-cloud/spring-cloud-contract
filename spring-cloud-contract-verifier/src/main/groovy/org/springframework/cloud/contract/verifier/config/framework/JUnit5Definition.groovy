@@ -69,6 +69,11 @@ class JUnit5Definition implements TestFrameworkDefinition {
 	}
 
 	@Override
+	boolean usesIgnoreAnnotations() {
+		return true
+	}
+
+	@Override
 	String getIgnoreAnnotation() {
 		return '@Disabled'
 	}

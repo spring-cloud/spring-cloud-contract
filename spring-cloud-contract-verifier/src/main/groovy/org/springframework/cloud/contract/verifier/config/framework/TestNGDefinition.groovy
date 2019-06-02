@@ -19,14 +19,14 @@ package org.springframework.cloud.contract.verifier.config.framework
 import groovy.transform.CompileStatic
 
 /**
- * Defines elements characteristic of JUnit test framework to be used during test class construction.
+ * Defines elements characteristic of TestNG test framework to be used during test class construction.
  *
- * @author Olga Maciaszek-Sharma
+ * @author André Hoffmann
  *
- * @since 2.1.0
+ * @since 2.2.0
  */
 @CompileStatic
-class JUnitDefinition implements TestFrameworkDefinition {
+class TestNGDefinition implements TestFrameworkDefinition {
 
 	@Override
 	String getClassModifier() {
@@ -45,7 +45,7 @@ class JUnitDefinition implements TestFrameworkDefinition {
 
 	@Override
 	String getClassExtension() {
-		return '.java'
+		'.java'
 	}
 
 	@Override
@@ -55,27 +55,27 @@ class JUnitDefinition implements TestFrameworkDefinition {
 
 	@Override
 	String getIgnoreClass() {
-		return 'org.junit.Ignore'
+		throw new UnsupportedOperationException('There is no @Ignore annotation for TestNG. A test can be disabled directly in the @Test annotation')
 	}
 
 	@Override
 	List<String> getOrderAnnotationImports() {
-		return ['org.junit.FixMethodOrder', 'org.junit.runners.MethodSorters']
+		throw new UnsupportedOperationException('Not implemented yet in TestNG')
 	}
 
 	@Override
 	String getOrderAnnotation() {
-		return '@FixMethodOrder(MethodSorters.NAME_ASCENDING)'
+		throw new UnsupportedOperationException('Not implemented yet in TestNG')
 	}
 
 	@Override
 	boolean usesIgnoreAnnotations() {
-		return true
+		return false
 	}
 
 	@Override
 	String getIgnoreAnnotation() {
-		return '@Ignore'
+		throw new UnsupportedOperationException('There is no @Ignore annotation for TestNG. A test can be disabled directly in the @Test annotation')
 	}
 
 	@Override
@@ -85,6 +85,6 @@ class JUnitDefinition implements TestFrameworkDefinition {
 
 	@Override
 	String getRuleAnnotation(String annotationValue) {
-		throw new UnsupportedOperationException('Not available in JUnit.')
+		throw new UnsupportedOperationException('Not available in TestNG.')
 	}
 }

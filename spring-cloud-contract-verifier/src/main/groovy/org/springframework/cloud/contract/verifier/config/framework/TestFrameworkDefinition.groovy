@@ -73,6 +73,12 @@ interface TestFrameworkDefinition {
 	String getOrderAnnotation()
 
 	/**
+	 * @return whether annotations are used for ignoring or disabling tests. E.g. for TestNG tests this method will
+	 * return false as with TestNG tests are disabled directly in the @Test annotation {@code @Test(enabled = false)}
+	 * */
+	boolean usesIgnoreAnnotations()
+
+	/**
 	 * @return the annotation used for ignoring or disabling tests. E.g. for JUnit tests that would mean {@code @Ignore}
 	 * */
 	String getIgnoreAnnotation()

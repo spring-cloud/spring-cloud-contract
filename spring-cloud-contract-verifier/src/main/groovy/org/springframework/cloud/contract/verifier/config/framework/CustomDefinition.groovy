@@ -69,6 +69,11 @@ class CustomDefinition implements TestFrameworkDefinition {
 	}
 
 	@Override
+	boolean usesIgnoreAnnotations() {
+		return true
+	}
+
+	@Override
 	String getIgnoreAnnotation() {
 		return '@Ignore'
 	}

@@ -29,6 +29,7 @@ import org.springframework.cloud.contract.verifier.util.NamesUtil
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.config.TestFramework.TESTNG
 
 /**
  * Builds a test method. Adds an ignore annotation on a method if necessary.
@@ -102,11 +103,19 @@ class MethodBuilder {
 	 * Appends to the {@link BlockBuilder} the contents of the test
 	 */
 	void appendTo(BlockBuilder blockBuilder) {
-		if (isJUnitType()) {
-			blockBuilder.addLine('@Test')
-		}
-		if (ignored) {
-			blockBuilder.addLine(configProperties.testFramework.ignoreAnnotation)
+		if (isTestNGType()) {
+			if (ignored) {
+				blockBuilder.addLine('@Test(enabled = false)')
+			} else {
+				blockBuilder.addLine('@Test')
+			}
+		} else {
+			if (isJUnitType()) {
+				blockBuilder.addLine('@Test')
+			}
+			if (ignored) {
+				blockBuilder.addLine(configProperties.testFramework.ignoreAnnotation)
+			}
 		}
 		blockBuilder.
 				addLine(configProperties.testFramework.methodModifier + "validate_$methodName() throws Exception {")
@@ -116,25 +125,25 @@ class MethodBuilder {
 
 	private MethodBodyBuilder getMethodBodyBuilder() {
 		if (stubContent.input || stubContent.outputMessage) {
-			if (isJUnitType()) {
+			if (isJUnitType() || isTestNGType()) {
 				return new JUnitMessagingMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 			}
 			return new SpockMessagingMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 		}
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
-			if (isJUnitType()) {
+			if (isJUnitType() || isTestNGType()) {
 				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 			}
 			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 		}
 		else if (configProperties.testMode == TestMode.WEBTESTCLIENT) {
-			if (isJUnitType()) {
+			if (isJUnitType() || isTestNGType()) {
 				return new WebTestClientJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 			}
 			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 		}
 		else if (configProperties.testMode == TestMode.EXPLICIT) {
-			if (isJUnitType()) {
+			if (isJUnitType() || isTestNGType()) {
 				return new ExplicitJUnitMethodBodyBuilder(stubContent, configProperties, this.generatedClassDataForMethod)
 			}
 			// in Groovy we're using def so we don't have to update the imports
@@ -148,5 +157,9 @@ class MethodBuilder {
 
 	private boolean isJUnitType() {
 		return JUNIT == configProperties.testFramework || JUNIT5 == configProperties.testFramework
+	}
+
+	private boolean isTestNGType() {
+		return TESTNG == configProperties.testFramework
 	}
 }

@@ -142,12 +142,12 @@ class ClassBuilder {
 	}
 
 	ClassBuilder addField(String fieldToAdd) {
-		fields << appendColonIfJUniTest(fieldToAdd)
+		fields << appendColonIfJavaTestFrameworkTest(fieldToAdd)
 		return this
 	}
 
 	ClassBuilder addField(List<String> fieldsToAdd) {
-		fields.addAll(fieldsToAdd.collect { appendColonIfJUniTest(it) })
+		fields.addAll(fieldsToAdd.collect { appendColonIfJavaTestFrameworkTest(it) })
 		return this
 	}
 
@@ -219,14 +219,14 @@ class ClassBuilder {
 		classLevelAnnotations << annotation
 	}
 
-	private String appendColonIfJUniTest(String field) {
-		if (isJUnitType(field)) {
+	private String appendColonIfJavaTestFrameworkTest(String field) {
+		if (isJavaLanguageTestFramework(field)) {
 			return "$field;"
 		}
 		return field
 	}
 
-	private boolean isJUnitType(String field) {
-		TestFramework.JUNIT == lang || TestFramework.JUNIT5 == lang && !field.endsWith(';')
+	private boolean isJavaLanguageTestFramework(String field) {
+		TestFramework.TESTNG == lang || TestFramework.JUNIT == lang || TestFramework.JUNIT5 == lang && !field.endsWith(';')
 	}
 }
