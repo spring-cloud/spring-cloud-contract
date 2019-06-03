@@ -1,4 +1,4 @@
-:branch: master
+:branch: 2.1.x
 
 == Groovy Project with Spock Specifications
 

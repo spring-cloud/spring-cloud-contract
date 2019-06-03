@@ -1,5 +1,5 @@
-:branch: master
-:samples_branch: 2.0.x
+:branch: 2.1.x
+:samples_branch: 2.1.x
 
 === Stub Runner Core
 
