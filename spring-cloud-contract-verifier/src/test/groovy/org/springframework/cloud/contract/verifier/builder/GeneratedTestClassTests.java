@@ -23,6 +23,7 @@ public class GeneratedTestClassTests {
 		String convertedClassName = "fooBar";
 		String packageName = "com.example";
 		Path classPath = new File("/tmp").toPath();
+		configProperties.setBaseClassForTests("BazBar");
 
 		//when
 		String builtClass = generator.buildClass(configProperties, contracts, includedDirectoryRelativePath,

@@ -438,7 +438,7 @@ class JavaClassMetaData implements ClassMetaData {
 
 	@Override
 	public ClassMetaData modifier() {
-		this.blockBuilder.addAtTheEnd("public");
+		this.blockBuilder.append("public");
 		return this;
 	}
 
@@ -465,7 +465,9 @@ class JavaClassMetaData implements ClassMetaData {
 		String includedDirectoryRelativePath = this.generatedClassMetaData.includedDirectoryRelativePath;
 		String baseClass = this.baseClassProvider.retrieveBaseClass(properties,
 				includedDirectoryRelativePath);
-		this.blockBuilder.addAtTheEnd(baseClass);
+		if (StringUtils.hasText(baseClass)) {
+			this.blockBuilder.append("extends ").append(baseClass).append(" ");
+		}
 		return this;
 	}
 
@@ -500,7 +502,8 @@ class BaseClassProvider {
 		String contractPackage = includedDirectoryRelativePath.replace(File.separator,
 				SEPARATOR);
 		// package mapping takes super precedence
-		if (!properties.getBaseClassMappings().isEmpty()) {
+		if (properties.getBaseClassMappings() != null
+				&& !properties.getBaseClassMappings().isEmpty()) {
 			Optional<Map.Entry<String, String>> mapping = properties
 					.getBaseClassMappings().entrySet().stream().filter(entry -> {
 						String pattern = entry.getKey();
@@ -555,14 +558,44 @@ class JUnit4OrderClassAnnotation implements ClassAnnotation {
 
 	@Override
 	public ClassAnnotation call() {
-		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addLine);
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(meta -> meta.getOrder() != null);
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class JUnit4ClassAnnotation implements ClassAnnotation {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] ANNOTATIONS = { "@Test" };
+
+	JUnit4ClassAnnotation(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public ClassAnnotation call() {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT;
 	}
 
 }
@@ -650,15 +683,20 @@ class NameProvider {
 class RefactoredSingleTestGenerator implements SingleTestGenerator {
 
 	@Override
-	public String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
+	public String buildClass(ContractVerifierConfigProperties properties,
+			Collection<ContractMetadata> listOfFiles, String className,
+			String classPackage, String includedDirectoryRelativePath) {
 		throw new UnsupportedOperationException("Deprecated method");
 	}
 
 	@Override
-	public String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
+	public String buildClass(ContractVerifierConfigProperties properties,
+			Collection<ContractMetadata> listOfFiles,
+			String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
 		// given
 		BlockBuilder builder = new BlockBuilder("\t");
-		GeneratedClassMetaData metaData = null;
+		GeneratedClassMetaData metaData = new GeneratedClassMetaData(properties,
+				listOfFiles, includedDirectoryRelativePath, generatedClassData);
 
 		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(builder)
 				.contractMetaData(metaData)
@@ -693,7 +731,8 @@ class RefactoredSingleTestGenerator implements SingleTestGenerator {
 				.staticImports(new DefaultStaticImports(builder, metaData),
 						new CustomStaticImports(builder, metaData),
 						new MessagingStaticImports(builder, metaData))
-				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))
+				.classAnnotations(new JUnit4ClassAnnotation(builder, metaData),
+						new JUnit4OrderClassAnnotation(builder, metaData))
 				.build();
 
 		// SingleTestGenerator requires a String
@@ -704,4 +743,5 @@ class RefactoredSingleTestGenerator implements SingleTestGenerator {
 	public String fileExtension(ContractVerifierConfigProperties properties) {
 		return properties.getTestFramework().getClassExtension();
 	}
+
 }

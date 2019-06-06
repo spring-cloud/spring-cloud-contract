@@ -166,7 +166,7 @@ class GeneratedTestClassBuilder {
 	}
 
 	GeneratedTestClassBuilder staticImports(Imports... imports) {
-		return imports(Arrays.asList(imports));
+		return staticImports(Arrays.asList(imports));
 	}
 
 	GeneratedTestClassBuilder staticImports(List<Imports> imports) {
@@ -199,19 +199,17 @@ class GeneratedTestClassBuilder {
 		classMetaData.setupLineEnding().packageDefinition();
 		// \n
 		this.blockBuilder.addEmptyLine();
+		// import ... \n
 		visit(this.imports);
-		// \n
-		this.blockBuilder.addEmptyLine();
+		// import static ... \n
 		visit(this.staticImports);
-		// \n
-		this.blockBuilder.addEmptyLine();
+		// @Test ... \n
 		visit(this.annotations);
 		// public FooSpec extends Parent
-		this.blockBuilder.appendWithSpace(classMetaData::modifier)
-				.appendWithSpace(classMetaData::className)
-				.appendWithSpace(classMetaData::suffix)
+		this.blockBuilder.append(classMetaData::modifier).appendWithSpace("class")
+				.appendWithSpace(classMetaData::className).append(classMetaData::suffix)
 				.appendWithSpace(classMetaData::parentClass);
-		// public FooSpec extends Parent {
+		// public class FooSpec extends Parent {
 		// (indent)
 		// }
 		this.blockBuilder.inBraces(() -> classBodyBuilder.build());
@@ -219,7 +217,12 @@ class GeneratedTestClassBuilder {
 	}
 
 	void visit(List<? extends Visitor> list) {
-		list.stream().filter(Acceptor::accept).forEach(Visitor::call);
+		List<Visitor> elements = list.stream().filter(Acceptor::accept)
+				.collect(Collectors.toList());
+		elements.forEach(visitor -> {
+			visitor.call();
+			this.blockBuilder.addEmptyLine();
+		});
 	}
 
 }
@@ -270,8 +273,15 @@ class ClassBodyBuilder {
 	}
 
 	void visit(List<? extends Visitor> list) {
-		// TODO: Consider setting new lines
-		list.stream().filter(Acceptor::accept).forEach(Visitor::call);
+		List<Visitor> elements = list.stream().filter(Acceptor::accept)
+				.collect(Collectors.toList());
+		elements.forEach(visitor -> {
+			visitor.call();
+			this.blockBuilder.addEmptyLine();
+		});
+		if (!elements.isEmpty()) {
+			this.blockBuilder.addEmptyLine();
+		}
 	}
 
 }
@@ -373,8 +383,6 @@ class SingleMethodBuilder {
 		this.generatedClassMetaData.toSingleContractMetadata().forEach(metaData -> {
 			// @Test
 			visit(this.methodAnnotations, metaData);
-			// \n
-			this.blockBuilder.addEmptyLine();
 			// public void validate_foo()
 			this.blockBuilder.appendWithSpace(methodMetadata::modifier);
 			this.blockBuilder.appendWithSpace(methodMetadata::returnType);
@@ -395,8 +403,10 @@ class SingleMethodBuilder {
 
 	private void visit(List<? extends MethodVisitor> list,
 			SingleContractMetadata metaData) {
-		// TODO: Consider setting new lines
-		list.stream().filter(Acceptor::accept).forEach(o -> o.apply(metaData));
+		list.stream().filter(Acceptor::accept).forEach(visitor -> {
+			visitor.apply(metaData);
+			this.blockBuilder.addEmptyLine();
+		});
 	}
 
 }

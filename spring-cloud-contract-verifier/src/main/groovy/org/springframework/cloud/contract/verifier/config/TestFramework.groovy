@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.config
 
+import groovy.transform.CompileStatic
+
 import org.springframework.cloud.contract.verifier.config.framework.CustomDefinition
 import org.springframework.cloud.contract.verifier.config.framework.JUnit5Definition
 import org.springframework.cloud.contract.verifier.config.framework.JUnitDefinition
@@ -30,6 +32,7 @@ import org.springframework.cloud.contract.verifier.config.framework.TestFramewor
  *
  * @since 1.0.0
  */
+@CompileStatic
 enum TestFramework {
 
 	SPOCK(new SpockDefinition()),
@@ -37,7 +40,6 @@ enum TestFramework {
 	JUNIT5(new JUnit5Definition()),
 	CUSTOM(new CustomDefinition())
 
-	@Delegate
 	private final TestFrameworkDefinition testFrameworkDefinition
 
 
@@ -116,5 +118,49 @@ enum TestFramework {
 				throw new UnsupportedOperationException('Not available in framework.')
 			}
 		}
+	}
+
+	String getClassModifier() {
+		return this.testFrameworkDefinition.classModifier
+	}
+
+	String getMethodModifier() {
+		return this.testFrameworkDefinition.methodModifier
+	}
+
+	String getLineSuffix() {
+		return this.testFrameworkDefinition.lineSuffix
+	}
+
+	String getClassExtension() {
+		return this.testFrameworkDefinition.classExtension
+	}
+
+	String getClassNameSuffix() {
+		return this.testFrameworkDefinition.classNameSuffix
+	}
+
+	String getIgnoreClass() {
+		return this.testFrameworkDefinition.ignoreClass
+	}
+
+	List<String> getOrderAnnotationImports() {
+		return this.testFrameworkDefinition.orderAnnotationImports
+	}
+
+	String getOrderAnnotation() {
+		return this.testFrameworkDefinition.orderAnnotation
+	}
+
+	String getIgnoreAnnotation() {
+		return this.testFrameworkDefinition.ignoreAnnotation
+	}
+
+	boolean annotationLevelRules() {
+		return this.testFrameworkDefinition.annotationLevelRules()
+	}
+
+	String getRuleAnnotation(String annotationValue) {
+		return this.testFrameworkDefinition.getRuleAnnotation(annotationValue)
 	}
 }

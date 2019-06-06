@@ -84,8 +84,12 @@ class BlockBuilder {
 	}
 
 	BlockBuilder addLine(String line) {
+		return addIndented(line).append("\n");
+	}
+
+	BlockBuilder addIndented(String line) {
 		addIndentation()
-		builder << "$line\n"
+		builder << line
 		return this
 	}
 
@@ -100,9 +104,25 @@ class BlockBuilder {
 		return this
 	}
 
+	BlockBuilder appendWithSpace(String text) {
+		builder << " " + text
+		return this
+	}
+
 	BlockBuilder appendWithSpace(Runnable runnable) {
 		builder << " "
 		runnable.run()
+		return this
+	}
+
+	// synactic sugar
+	BlockBuilder append(Runnable runnable) {
+		runnable.run()
+		return this
+	}
+
+	BlockBuilder append(String string) {
+		builder << string
 		return this
 	}
 
@@ -124,12 +144,12 @@ class BlockBuilder {
 
 	@PackageScope
 	BlockBuilder inBraces(Runnable runnable) {
-		builder.append(" {")
+		builder.append("{")
 		startBlock()
 		runnable.run()
 		endBlock()
-		builder.append("}")
 		addEmptyLine()
+		addLine("}")
 		return this
 	}
 
