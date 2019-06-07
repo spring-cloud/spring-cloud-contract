@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.function.Consumer
 import java.util.regex.Pattern
 
 import groovy.transform.EqualsAndHashCode
@@ -23,7 +24,6 @@ import groovy.transform.ToString
 import groovy.transform.TypeChecked
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
-
 /**
  * Represents a set of headers of a request / response or a message
  *
@@ -55,6 +55,12 @@ class Headers {
 	void executeForEachHeader(Closure closure) {
 		entries?.each {
 			header -> closure(header)
+		}
+	}
+
+	void executeForEachHeader(Consumer<Header> consumer) {
+		entries?.each {
+			header -> consumer.accept(header)
 		}
 	}
 

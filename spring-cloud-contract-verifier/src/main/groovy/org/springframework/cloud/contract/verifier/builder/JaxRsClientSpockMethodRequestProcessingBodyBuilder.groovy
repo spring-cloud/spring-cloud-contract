@@ -34,7 +34,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 /**
- * Knows how to build a Spock test methodBuilder for JaxRs.
+ * Knows how to build a Spock test method for JaxRs.
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

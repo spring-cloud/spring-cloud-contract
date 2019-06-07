@@ -21,12 +21,15 @@ import java.nio.file.Path
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
+import org.springframework.cloud.contract.verifier.util.NamesUtil
 
 /**
  * Contains metadata for a particular file with a DSL
@@ -36,8 +39,6 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
  * @since 1.0.0
  */
 @CompileStatic
-@EqualsAndHashCode
-@ToString
 class ContractMetadata {
 	/**
 	 * Path to the file
@@ -81,25 +82,32 @@ class ContractMetadata {
 }
 
 @CompileStatic
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(excludes = ["contractMetadata"])
+@ToString(excludes = ["contractMetadata"])
 class SingleContractMetadata {
+
+	private static final Log log = LogFactory.getLog(SingleContractMetadata)
+
 	final ContractMetadata contractMetadata
+	private final File stubsFile
 	final Contract contract
+	private final Collection<Contract> allContracts
 	final ContentType inputContentType
 	final ContentType outputContentType
 	private final boolean http
 
-	SingleContractMetadata(Contract contract, ContractMetadata contractMetadata) {
-		this.contract = contract
-		Headers inputHeaders = inputHeaders(contract)
-		DslProperty inputBody = inputBody(contract)
-		Headers outputHeaders = outputHeaders(contract)
-		DslProperty outputBody = outputBody(contract)
+	SingleContractMetadata(Contract currentContract, ContractMetadata contractMetadata) {
+		this.allContracts = contractMetadata.convertedContract
+		this.contract = currentContract
+		Headers inputHeaders = inputHeaders(currentContract)
+		DslProperty inputBody = inputBody(currentContract)
+		Headers outputHeaders = outputHeaders(currentContract)
+		DslProperty outputBody = outputBody(currentContract)
 		this.inputContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody)
 		this.outputContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody)
-		this.http = contract.request != null
+		this.http = currentContract.request != null
 		this.contractMetadata = contractMetadata
+		this.stubsFile = contractMetadata.getPath().toFile()
 	}
 
 	boolean isJson() {
@@ -138,5 +146,34 @@ class SingleContractMetadata {
 
 	private Headers outputHeaders(Contract contract) {
 		return contract.response?.headers ?: contract.outputMessage?.headers
+	}
+	
+	String methodName() {
+		if (contract.name) {
+			String name = NamesUtil.
+					camelCase(NamesUtil.convertIllegalPackageChars(contract.name))
+			if (log.isDebugEnabled()) {
+				log.debug("Overriding the default test name with [" + name + "]")
+			}
+			return name
+		}
+		else if (allContracts.size() > 1) {
+			int index = allContracts.findIndexOf { it == contract }
+			String name = "${camelCasedMethodFromFileName(stubsFile)}_${index}"
+			if (log.isDebugEnabled()) {
+				log.debug("Scenario found. The method name will be [" + name + "]")
+			}
+			return name
+		}
+		String name = camelCasedMethodFromFileName(stubsFile)
+		if (log.isDebugEnabled()) {
+			log.debug("The method name will be [" + name + "]")
+		}
+		return name
+	}
+
+	private static String camelCasedMethodFromFileName(File stubsFile) {
+		return NamesUtil.camelCase(NamesUtil.convertIllegalMethodNameChars(NamesUtil.
+				toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator))))
 	}
 }

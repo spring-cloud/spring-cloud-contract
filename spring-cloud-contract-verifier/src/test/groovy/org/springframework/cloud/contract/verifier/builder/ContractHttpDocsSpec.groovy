@@ -62,7 +62,7 @@ class ContractHttpDocsSpec extends Specification {
 			// tag::request[]
 			org.springframework.cloud.contract.spec.Contract.make {
 				request {
-					// HTTP request methodBuilder (GET/POST/PUT/DELETE).
+					// HTTP request method (GET/POST/PUT/DELETE).
 					method 'GET'
 
 					// Path component of request URL is specified as follows.

@@ -37,7 +37,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 
 /**
  * JaxRs implementation of the {@link JUnitMethodBodyBuilder}. Knows how to build
- * a test methodBuilder for JaxRs.
+ * a test method for JaxRs.
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

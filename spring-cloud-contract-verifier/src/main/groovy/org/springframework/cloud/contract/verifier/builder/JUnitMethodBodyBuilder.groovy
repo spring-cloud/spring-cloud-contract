@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-
 import java.util.regex.Pattern
 
 import groovy.json.StringEscapeUtils
@@ -33,14 +32,12 @@ import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.RegexpBuilders
 
-import static groovy.json.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
-
 /**
- * Root class for JUnit methodBuilder building
+ * Root class for JUnit method building
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

@@ -156,7 +156,7 @@ class SingleTestGeneratorSpec extends Specification {
 		file.write('''
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
-						methodBuilder 'PUT'
+						method 'PUT'
 						url 'url'
 					}
 					response {
@@ -261,7 +261,7 @@ class SingleTestGeneratorSpec extends Specification {
 			file.write('''
 					org.springframework.cloud.contract.spec.Contract.make {
 						request {
-							methodBuilder 'PUT'
+							method 'PUT'
 							url 'url1'
 							headers {
 								contentType(applicationJson())
@@ -281,7 +281,7 @@ class SingleTestGeneratorSpec extends Specification {
 			file2.write('''
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
-						methodBuilder 'PUT'
+						method 'PUT'
 						url 'url2'
 						headers {
 							contentType(applicationJson())
@@ -408,7 +408,7 @@ class SingleTestGeneratorSpec extends Specification {
 						org.springframework.cloud.contract.spec.Contract.make {
 							ignored()
 							request {
-								methodBuilder 'PUT'
+								method 'PUT'
 								url 'url'
 							}
 							response {
@@ -472,7 +472,7 @@ class SingleTestGeneratorSpec extends Specification {
 						// tag::context_path_contract[]
 						org.springframework.cloud.contract.spec.Contract.make {
 							request {
-								methodBuilder 'GET'
+								method 'GET'
 								url '/my-context-path/url'
 							}
 							response {
@@ -505,7 +505,7 @@ class SingleTestGeneratorSpec extends Specification {
 							org.springframework.cloud.contract.spec.Contract.make {
 								name("MySuperMethod")
 								request {
-									methodBuilder 'PUT'
+									method 'PUT'
 									url 'url'
 								}
 								response {

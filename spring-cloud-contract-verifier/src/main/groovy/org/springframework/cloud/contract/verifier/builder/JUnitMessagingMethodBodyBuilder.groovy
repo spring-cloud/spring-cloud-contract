@@ -38,7 +38,7 @@ import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 
 /**
- * Builds a JUnit methodBuilder for messaging
+ * Builds a JUnit method for messaging
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

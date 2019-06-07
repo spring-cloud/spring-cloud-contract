@@ -152,7 +152,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							// results in verification of size of array (max 0)
 							maxOccurrence(0)
 						})
-						// will execute a methodBuilder `assertThatValueIsANumber`
+						// will execute a method `assertThatValueIsANumber`
 						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 						jsonPath("\$.['key'].['complex.key']", byEquality())
 						jsonPath('$.nullValue', byNull())

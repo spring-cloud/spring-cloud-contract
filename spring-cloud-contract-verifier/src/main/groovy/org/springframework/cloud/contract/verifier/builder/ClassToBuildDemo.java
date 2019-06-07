@@ -1,22 +1,62 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.builder;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import groovy.json.JsonOutput;
+import groovy.lang.Closure;
+import groovy.lang.GString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 
 import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.internal.Body;
+import org.springframework.cloud.contract.spec.internal.Cookie;
+import org.springframework.cloud.contract.spec.internal.DslProperty;
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
+import org.springframework.cloud.contract.spec.internal.Header;
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
+import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
+import org.springframework.cloud.contract.verifier.config.TestMode;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.ContentType;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
 import org.springframework.util.StringUtils;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
+import static org.springframework.cloud.contract.verifier.util.ContentType.JSON;
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue;
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize;
 
 class ClassToBuildDemo {
@@ -139,7 +179,9 @@ class DefaultStaticImports implements Imports {
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] IMPORTS = {
-			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson" };
+			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson",
+			"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat",
+			"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*" };
 
 	DefaultStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
@@ -357,7 +399,6 @@ class RestAssured3MockMvcImports implements Imports {
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] IMPORTS = {
-			"io.restassured.module.mockmvc.RestAssuredMockMvc.*",
 			"io.restassured.module.mockmvc.specification.MockMvcRequestSpecification",
 			"io.restassured.response.ResponseOptions" };
 
@@ -377,9 +418,38 @@ class RestAssured3MockMvcImports implements Imports {
 	@Override
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
-				|| this.generatedClassMetaData.configProperties
-						.getTestFramework() == TestFramework.JUNIT5;
+				.getTestMode() == TestMode.MOCKMVC
+				&& this.generatedClassMetaData.isAnyHttp();
+	}
+
+}
+
+class RestAssured3MockMvcStaticImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = {
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.*" };
+
+	RestAssured3MockMvcStaticImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestMode() == TestMode.MOCKMVC;
 	}
 
 }
@@ -572,7 +642,38 @@ class JUnit4OrderClassAnnotation implements ClassAnnotation {
 
 }
 
-class JUnit4ClassAnnotation implements ClassAnnotation {
+class JUnit4IgnoreMethodAnnotation implements MethodAnnotations {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] ANNOTATIONS = { "@Ignore" };
+
+	JUnit4IgnoreMethodAnnotation(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+	@Override
+	public MethodVisitor<MethodAnnotations> apply(
+			SingleContractMetadata singleContractMetadata) {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
+	}
+
+}
+
+class JUnit4MethodAnnotation implements MethodAnnotations {
 
 	private final BlockBuilder blockBuilder;
 
@@ -580,22 +681,23 @@ class JUnit4ClassAnnotation implements ClassAnnotation {
 
 	private static final String[] ANNOTATIONS = { "@Test" };
 
-	JUnit4ClassAnnotation(BlockBuilder blockBuilder,
+	JUnit4MethodAnnotation(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
-	public ClassAnnotation call() {
-		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
-		return this;
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT;
 	}
 
 	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT;
+	public MethodVisitor<MethodAnnotations> apply(
+			SingleContractMetadata singleContractMetadata) {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
 	}
 
 }
@@ -618,7 +720,7 @@ class JunitMethodMetadata implements MethodMetadata {
 
 	@Override
 	public MethodMetadata modifier() {
-		this.blockBuilder.addAtTheEnd("public");
+		this.blockBuilder.addIndented("public");
 		return this;
 	}
 
@@ -635,6 +737,10 @@ class NameProvider {
 	private static final Log log = LogFactory.getLog(NameProvider.class);
 
 	String methodName(SingleContractMetadata singleContractMetadata) {
+		return "validate_" + generateMethodName(singleContractMetadata);
+	}
+
+	private String generateMethodName(SingleContractMetadata singleContractMetadata) {
 		ContractMetadata contractMetadata = singleContractMetadata.getContractMetadata();
 		File stubsFile = contractMetadata.getPath().toFile();
 		Contract stubContent = singleContractMetadata.getContract();
@@ -650,14 +756,13 @@ class NameProvider {
 			int index = findIndexOf(contractMetadata.getConvertedContract(), stubContent);
 			String name = camelCasedMethodFromFileName(stubsFile) + "_" + index;
 			if (log.isDebugEnabled()) {
-				log.debug(
-						"Scenario found. The methodBuilder name will be [" + name + "]");
+				log.debug("Scenario found. The method name will be [" + name + "]");
 			}
 			return name;
 		}
 		String name = camelCasedMethodFromFileName(stubsFile);
 		if (log.isDebugEnabled()) {
-			log.debug("The methodBuilder name will be [" + name + "]");
+			log.debug("The method name will be [" + name + "]");
 		}
 		return name;
 	}
@@ -680,6 +785,373 @@ class NameProvider {
 
 }
 
+class MockMvcGiven implements Given {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final List<Given> givens = new LinkedList<>();
+
+	MockMvcGiven(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+		this.givens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
+				new MockMvcCookiesGiven(blockBuilder),
+				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData)));
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata singleContractMetadata) {
+		this.blockBuilder.addIndented("// given:").addEmptyLine().startBlock()
+				.addIndented("MockMvcRequestSpecification request = given()");
+		List<Given> givens = this.givens.stream()
+				.filter(given -> given.accept(singleContractMetadata))
+				.collect(Collectors.toList());
+		if (givens.isEmpty()) {
+			this.blockBuilder.addEnding().addEmptyLine();
+			return this;
+		}
+		this.blockBuilder.addEmptyLine().indent();
+		Iterator<Given> iterator = givens.iterator();
+		while (iterator.hasNext()) {
+			Given given = iterator.next();
+			given.apply(singleContractMetadata);
+			if (iterator.hasNext()) {
+				this.blockBuilder.addEmptyLine();
+			}
+		}
+		this.blockBuilder.addEnding().unindent().endBlock().addEmptyLine();
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestMode() == TestMode.MOCKMVC && singleContractMetadata.isHttp();
+	}
+
+}
+
+class MockMvcWhen implements When {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MockMvcWhen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
+		this.blockBuilder.addIndented("// when:").addEmptyLine().startBlock().endBlock();
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestMode() == TestMode.MOCKMVC && singleContractMetadata.isHttp();
+	}
+
+}
+
+class MockMvcHeadersGiven implements Given {
+
+	private final BlockBuilder blockBuilder;
+
+	MockMvcHeadersGiven(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		processInput(this.blockBuilder, metadata.getContract().getRequest());
+		return this;
+	}
+
+	private void processInput(BlockBuilder bb, Request request) {
+		request.getHeaders().executeForEachHeader(header -> {
+			if (ofAbsentType(header)) {
+				return;
+			}
+			bb.addIndented(string(header));
+		});
+	}
+
+	private String string(Header header) {
+		return ".header(" + ContentHelper.getTestSideForNonBodyValue(header.getName())
+				+ ", " + ContentHelper.getTestSideForNonBodyValue(header.getServerValue())
+				+ ")";
+	}
+
+	private boolean ofAbsentType(Header header) {
+		return header.getServerValue() instanceof MatchingStrategy
+				&& MatchingStrategy.Type.ABSENT
+						.equals(((MatchingStrategy) header.getServerValue()).getType());
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		return request != null && request.getHeaders() != null;
+	}
+
+}
+
+class MockMvcCookiesGiven implements Given {
+
+	private final BlockBuilder blockBuilder;
+
+	MockMvcCookiesGiven(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		processInput(this.blockBuilder, metadata.getContract().getRequest());
+		return this;
+	}
+
+	private void processInput(BlockBuilder bb, Request request) {
+		request.getCookies().executeForEachCookie(cookie -> {
+			if (ofAbsentType(cookie)) {
+				return;
+			}
+			bb.addIndented(string(cookie));
+		});
+	}
+
+	private String string(Cookie cookie) {
+		return ".cookie(" + ContentHelper.getTestSideForNonBodyValue(cookie.getKey())
+				+ ", " + ContentHelper.getTestSideForNonBodyValue(cookie.getServerValue())
+				+ ")";
+	}
+
+	private boolean ofAbsentType(Cookie cookie) {
+		return cookie.getServerValue() instanceof MatchingStrategy
+				&& MatchingStrategy.Type.ABSENT
+						.equals(((MatchingStrategy) cookie.getServerValue()).getType());
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		return request != null && request.getCookies() != null;
+	}
+
+}
+
+class MockMvcBodyGiven implements Given {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MockMvcBodyGiven(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		processInput(this.blockBuilder, metadata);
+		return this;
+	}
+
+	private void processInput(BlockBuilder bb, SingleContractMetadata metadata) {
+		Object body;
+		Request request = metadata.getContract().getRequest();
+		Object serverValue = request.getBody().getServerValue();
+		if (serverValue instanceof ExecutionProperty
+				|| serverValue instanceof FromFileProperty) {
+			body = request.getBody().getServerValue();
+		}
+		else {
+			body = getBodyAsString(metadata);
+		}
+		bb.addIndented(getBodyString(metadata, body));
+	}
+
+	private String getBodyString(SingleContractMetadata metadata, Object body) {
+		String value;
+		if (body instanceof ExecutionProperty) {
+			value = body.toString();
+		}
+		else if (body instanceof FromFileProperty) {
+			FromFileProperty fileProperty = (FromFileProperty) body;
+			value = fileProperty.isByte()
+					? readBytesFromFileString(metadata, fileProperty,
+							CommunicationType.REQUEST)
+					: readStringFromFileString(metadata, fileProperty,
+							CommunicationType.REQUEST);
+		}
+		else {
+			String escaped = escapeRequestSpecialChars(metadata, body.toString());
+			value = "\"" + escaped + "\"";
+		}
+		return ".body(" + value + ")";
+	}
+
+	@SuppressWarnings("unchecked")
+	private String getBodyAsString(SingleContractMetadata metadata) {
+		ContentType contentType = metadata.getInputContentType();
+		Body body = metadata.getContract().getRequest().getBody();
+		Object bodyValue =
+				extractServerValueFromBody(contentType, body.getServerValue());
+		if (contentType == ContentType.FORM) {
+			if (bodyValue instanceof Map) {
+				// [a:3, b:4] == "a=3&b=4"
+				return ((Map) bodyValue).entrySet()
+						.stream()
+						.map(o -> {
+							Map.Entry entry = (Map.Entry) o;
+							return convertUnicodeEscapesIfRequired(entry.getKey().toString() + "=" + entry.getValue());
+						})
+						.collect(Collectors.joining("&")).toString();
+			}
+			else if (bodyValue instanceof List) {
+				// ["a=3", "b=4"] == "a=3&b=4"
+				return ((List) bodyValue)
+						.stream()
+						.map(o -> convertUnicodeEscapesIfRequired(o.toString()))
+						.collect(Collectors.joining("&")).toString();
+			}
+		}
+		else {
+			String json = JsonOutput.toJson(bodyValue);
+			json = convertUnicodeEscapesIfRequired(json);
+			return trimRepeatedQuotes(json);
+		}
+		return "";
+	}
+
+	private String convertUnicodeEscapesIfRequired(String json) {
+		String unescapedJson = StringEscapeUtils.unescapeEcmaScript(json);
+		return escapeJava(unescapedJson);
+	}
+
+	private String trimRepeatedQuotes(String toTrim) {
+		if (toTrim.startsWith("\"")) {
+			return toTrim.replaceAll("\"", "");
+			//#261
+		}
+		else if (toTrim.startsWith("\\\"") && toTrim.endsWith("\\\"")) {
+			return toTrim.substring(2, toTrim.length() - 2);
+		}
+		return toTrim;
+	}
+
+	/**
+	 * Converts the passed body into ints server side representation. All {@link DslProperty}
+	 * will return their server side values
+	 */
+	private Object extractServerValueFromBody(ContentType contentType, Object bodyValue) {
+		if (bodyValue instanceof GString) {
+			return extractValue((GString) bodyValue, contentType, MapConverterUtils.GET_SERVER_VALUE);
+		}
+		boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
+		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE;
+		return MapConverter.transformValues(bodyValue, MapConverterUtils.GET_SERVER_VALUE, parsingClosure);
+	}
+
+	private String readBytesFromFileString(SingleContractMetadata metadata,
+			FromFileProperty property, CommunicationType side) {
+		String fileName = byteBodyToAFileForTestMethod(metadata, property, side);
+		return "fileToBytes(this, \"" + fileName + "\")";
+	}
+
+	private String readStringFromFileString(SingleContractMetadata metadata,
+			FromFileProperty property, CommunicationType side) {
+		return "new String(" + readBytesFromFileString(metadata, property, side) + ")";
+	}
+
+	private String byteBodyToAFileForTestMethod(SingleContractMetadata metadata,
+			FromFileProperty property, CommunicationType side) {
+		GeneratedClassDataForMethod classDataForMethod = new GeneratedClassDataForMethod(
+				this.generatedClassMetaData.generatedClassData, metadata.methodName());
+		String newFileName = classDataForMethod.getMethodName() + "_"
+				+ side.name().toLowerCase() + "_" + property.fileName();
+		File newFile = new File(classDataForMethod.testClassPath().getParent().toFile(),
+				newFileName);
+		// for IDE
+		try {
+			Files.write(newFile.toPath(), property.asBytes());
+			// for plugin
+			generatedTestResourcesFileBytes(property, newFile);
+		}
+		catch (IOException ex) {
+			throw new IllegalStateException(ex);
+		}
+		return newFileName;
+	}
+
+	private String escapeRequestSpecialChars(SingleContractMetadata metadata,
+			String string) {
+		if (metadata.getInputContentType() == ContentType.JSON) {
+			return string.replaceAll("\\\\n", "\\\\\\\\n");
+		}
+		return string;
+	}
+
+	private void generatedTestResourcesFileBytes(FromFileProperty property, File newFile)
+			throws IOException {
+		java.nio.file.Path relativePath = this.generatedClassMetaData.configProperties
+				.getGeneratedTestSourcesDir().toPath().relativize(newFile.toPath());
+		File newFileInGeneratedTestSources = new File(
+				this.generatedClassMetaData.configProperties
+						.getGeneratedTestResourcesDir(),
+				relativePath.toString());
+		newFileInGeneratedTestSources.getParentFile().mkdirs();
+		Files.write(newFileInGeneratedTestSources.toPath(), property.asBytes());
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		return request != null && request.getBody() != null;
+	}
+
+}
+
+final class ContentHelper {
+
+	/**
+	 * Depending on the object type extracts the test side values and combines them into a
+	 * String representation. Unlike the body transformation done via
+	 * {@link MethodBodyBuilder#getTestSideValue(java.lang.Object)} will not try to guess
+	 * the type of the value of the header (e.g. if it's a JSON).
+	 */
+	static String getTestSideForNonBodyValue(Object object) {
+		if (object instanceof ExecutionProperty) {
+			return getTestSideValue(object);
+		}
+		return quotedAndEscaped(
+				MapConverter.getTestSideValuesForNonBody(object).toString());
+	}
+
+	/**
+	 * Depending on the object type extracts the test side values and combines them into a
+	 * String representation
+	 */
+	private static String getTestSideValue(Object object) {
+		if (object instanceof ExecutionProperty) {
+			return object.toString();
+		}
+		return '"' + MapConverter.getTestSideValues(object).toString() + '"';
+	}
+
+	private static String quotedAndEscaped(String string) {
+		return '"' + StringEscapeUtils.escapeJava(string) + '"';
+	}
+
+}
+
 class RefactoredSingleTestGenerator implements SingleTestGenerator {
 
 	@Override
@@ -693,7 +1165,6 @@ class RefactoredSingleTestGenerator implements SingleTestGenerator {
 	public String buildClass(ContractVerifierConfigProperties properties,
 			Collection<ContractMetadata> listOfFiles,
 			String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		// given
 		BlockBuilder builder = new BlockBuilder("\t");
 		GeneratedClassMetaData metaData = new GeneratedClassMetaData(properties,
 				listOfFiles, includedDirectoryRelativePath, generatedClassData);
@@ -701,16 +1172,18 @@ class RefactoredSingleTestGenerator implements SingleTestGenerator {
 		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(builder)
 				.contractMetaData(metaData)
 				// JUnitMethodAnnotation
-				.methodAnnotation(null)
+				.methodAnnotation(new JUnit4MethodAnnotation(builder, metaData),
+						new JUnit4IgnoreMethodAnnotation(builder, metaData))
 				// JavaMethodMetadata
 				// SpockMethodMetadata
-				.methodMetadata(null)
+				.methodMetadata(new JunitMethodMetadata(builder))
 				// MockMvcGiven
-				.given(null).given(null)
-				// MockMvcWhen
-				.when(null).when(null)
-				// MockMvcThen
-				.then(null).then(null);
+				.given(new MockMvcGiven(builder, metaData))
+				// // MockMvcWhen
+				.when(new MockMvcWhen(builder, metaData))
+		// // MockMvcThen
+		// .then(null).then(null);
+		;
 
 		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
 				.field(new MessagingFields(builder, metaData))
@@ -729,13 +1202,11 @@ class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new MessagingImports(builder, metaData),
 						new RestAssured3MockMvcImports(builder, metaData))
 				.staticImports(new DefaultStaticImports(builder, metaData),
+						new RestAssured3MockMvcStaticImports(builder, metaData),
 						new CustomStaticImports(builder, metaData),
 						new MessagingStaticImports(builder, metaData))
-				.classAnnotations(new JUnit4ClassAnnotation(builder, metaData),
-						new JUnit4OrderClassAnnotation(builder, metaData))
+				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))
 				.build();
-
-		// SingleTestGenerator requires a String
 		return generatedTestClass.asClassString();
 	}
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
@@ -109,6 +125,31 @@ class GeneratedClassMetaData {
 				.collect(Collectors.toList());
 	}
 
+	boolean isAnyJson() {
+		return toSingleContractMetadata().stream()
+				.anyMatch(SingleContractMetadata::isJson);
+	}
+
+	boolean isAnyIgnored() {
+		return toSingleContractMetadata().stream()
+				.anyMatch(SingleContractMetadata::isIgnored);
+	}
+
+	boolean isAnyXml() {
+		return toSingleContractMetadata().stream()
+				.anyMatch(SingleContractMetadata::isXml);
+	}
+
+	boolean isAnyHttp() {
+		return toSingleContractMetadata().stream()
+				.anyMatch(SingleContractMetadata::isHttp);
+	}
+
+	boolean isAnyMessaging() {
+		return toSingleContractMetadata().stream()
+				.anyMatch(SingleContractMetadata::isMessaging);
+	}
+
 }
 
 /**
@@ -205,24 +246,30 @@ class GeneratedTestClassBuilder {
 		visit(this.staticImports);
 		// @Test ... \n
 		visit(this.annotations);
-		// public FooSpec extends Parent
-		this.blockBuilder.append(classMetaData::modifier).appendWithSpace("class")
-				.appendWithSpace(classMetaData::className).append(classMetaData::suffix)
+		// @formatter:off
+		// public
+		this.blockBuilder.append(classMetaData::modifier)
+				// class
+				.appendWithSpace("class")
+				// Foo
+				.appendWithSpace(classMetaData::className)
+				// Spec
+				.append(classMetaData::suffix)
+				// extends Parent
 				.appendWithSpace(classMetaData::parentClass);
-		// public class FooSpec extends Parent {
-		// (indent)
-		// }
-		this.blockBuilder.inBraces(() -> classBodyBuilder.build());
+		// public class FooSpec extends Parent
+		// @formatter:on
+		this.classBodyBuilder.build();
 		return new GeneratedTestClass(this.blockBuilder);
 	}
 
 	void visit(List<? extends Visitor> list) {
 		List<Visitor> elements = list.stream().filter(Acceptor::accept)
 				.collect(Collectors.toList());
-		elements.forEach(visitor -> {
-			visitor.call();
+		elements.forEach(OurCallable::call);
+		if (!elements.isEmpty()) {
 			this.blockBuilder.addEmptyLine();
-		});
+		}
 	}
 
 }
@@ -268,20 +315,15 @@ class ClassBodyBuilder {
 		// @Rule ...
 		visit(this.fields);
 		// new line if fields added
-		this.methodBuilder.build();
+		this.blockBuilder.inBraces(() -> this.methodBuilder.build());
 		return this.blockBuilder;
 	}
 
 	void visit(List<? extends Visitor> list) {
-		List<Visitor> elements = list.stream().filter(Acceptor::accept)
-				.collect(Collectors.toList());
-		elements.forEach(visitor -> {
+		list.stream().filter(Acceptor::accept).forEach(visitor -> {
 			visitor.call();
 			this.blockBuilder.addEmptyLine();
 		});
-		if (!elements.isEmpty()) {
-			this.blockBuilder.addEmptyLine();
-		}
 	}
 
 }
@@ -350,6 +392,11 @@ class SingleMethodBuilder {
 		return this;
 	}
 
+	SingleMethodBuilder methodAnnotation(MethodAnnotations... methodAnnotations) {
+		this.methodAnnotations.addAll(Arrays.asList(methodAnnotations));
+		return this;
+	}
+
 	SingleMethodBuilder methodMetadata(MethodMetadata methodMetadata) {
 		this.methodMetadata = methodMetadata;
 		return this;
@@ -380,13 +427,17 @@ class SingleMethodBuilder {
 	 * @return block builder with contents of a single methodBuilder
 	 */
 	BlockBuilder build() {
+		// \n
+		this.blockBuilder.addEmptyLine();
 		this.generatedClassMetaData.toSingleContractMetadata().forEach(metaData -> {
 			// @Test
 			visit(this.methodAnnotations, metaData);
+			// @formatter:off
 			// public void validate_foo()
-			this.blockBuilder.appendWithSpace(methodMetadata::modifier);
-			this.blockBuilder.appendWithSpace(methodMetadata::returnType);
-			this.blockBuilder.appendWithSpace(() -> methodMetadata.name(metaData));
+			this.blockBuilder.append(methodMetadata::modifier)
+					.appendWithSpace(methodMetadata::returnType)
+					.appendWithSpace(() -> methodMetadata.name(metaData))
+					.append("() throws Exception ");
 			// (space) {
 			this.blockBuilder.inBraces(() -> {
 				// (indent) given
@@ -398,12 +449,13 @@ class SingleMethodBuilder {
 			});
 			// }
 		});
+		// @formatter:on
 		return this.blockBuilder;
 	}
 
 	private void visit(List<? extends MethodVisitor> list,
 			SingleContractMetadata metaData) {
-		list.stream().filter(Acceptor::accept).forEach(visitor -> {
+		list.stream().filter(o -> o.accept(metaData)).forEach(visitor -> {
 			visitor.apply(metaData);
 			this.blockBuilder.addEmptyLine();
 		});
@@ -448,7 +500,7 @@ interface Visitor<T> extends Acceptor, OurCallable<T> {
 }
 
 interface MethodVisitor<T>
-		extends Acceptor, Function<SingleContractMetadata, MethodVisitor<T>> {
+		extends MethodAcceptor, Function<SingleContractMetadata, MethodVisitor<T>> {
 
 }
 
@@ -461,5 +513,11 @@ interface OurCallable<T> {
 interface Acceptor {
 
 	boolean accept();
+
+}
+
+interface MethodAcceptor {
+
+	boolean accept(SingleContractMetadata metadata);
 
 }

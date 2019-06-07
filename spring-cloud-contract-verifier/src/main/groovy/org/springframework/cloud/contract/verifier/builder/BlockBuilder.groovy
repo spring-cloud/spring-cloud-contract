@@ -84,7 +84,7 @@ class BlockBuilder {
 	}
 
 	BlockBuilder addLine(String line) {
-		return addIndented(line).append("\n");
+		return addIndented(line).append("\n")
 	}
 
 	BlockBuilder addIndented(String line) {
@@ -96,6 +96,11 @@ class BlockBuilder {
 	BlockBuilder addLineWithEnding(String line) {
 		addIndentation()
 		builder << "${line}${lineEnding}\n"
+		return this
+	}
+
+	BlockBuilder addEnding() {
+		builder << lineEnding
 		return this
 	}
 
@@ -144,7 +149,7 @@ class BlockBuilder {
 
 	@PackageScope
 	BlockBuilder inBraces(Runnable runnable) {
-		builder.append("{")
+		builder.append("{\n")
 		startBlock()
 		runnable.run()
 		endBlock()
