@@ -77,6 +77,7 @@ public class GeneratedTestClassTests {
 						convertedClassName, packageName, classPath));
 
 		// then
+		System.out.println(builtClass);
 		BDDAssertions.then(builtClass).isNotEmpty();
 	}
 

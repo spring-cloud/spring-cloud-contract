@@ -801,8 +801,8 @@ class MockMvcGiven implements Given {
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.givens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
 				new MockMvcCookiesGiven(blockBuilder),
-				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData),
-				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData)));
+				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData),
+				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData)));
 	}
 
 	@Override
