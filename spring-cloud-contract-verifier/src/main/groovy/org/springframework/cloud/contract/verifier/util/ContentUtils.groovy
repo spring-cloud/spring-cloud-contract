@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.function.Consumer
+import java.util.function.Function
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -544,6 +546,11 @@ class ContentUtils {
 		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
 				"${groovyNamedPropertyValue(propertyValue, "'", bytesFromFile)}" +
 				namedContentTypeNameIfPresent(propertyValue, "'")
+	}
+
+	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Function<FromFileProperty, String> bytesFromFile) {
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty property -> bytesFromFile.apply(property) })
 	}
 
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,

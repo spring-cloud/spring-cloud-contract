@@ -43,6 +43,7 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
+import org.springframework.cloud.contract.spec.internal.NamedProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
@@ -57,6 +58,7 @@ import org.springframework.util.StringUtils;
 import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.springframework.cloud.contract.verifier.util.ContentType.JSON;
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue;
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent;
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize;
 
 class ClassToBuildDemo {
@@ -799,6 +801,7 @@ class MockMvcGiven implements Given {
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.givens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
 				new MockMvcCookiesGiven(blockBuilder),
+				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData),
 				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData)));
 	}
 
@@ -950,12 +953,12 @@ class MockMvcBodyGiven implements Given {
 
 	private final BlockBuilder blockBuilder;
 
-	private final GeneratedClassMetaData generatedClassMetaData;
+	private final BodyReader bodyReader;
 
 	MockMvcBodyGiven(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
+		this.bodyReader = new BodyReader(generatedClassMetaData);
 	}
 
 	@Override
@@ -986,9 +989,9 @@ class MockMvcBodyGiven implements Given {
 		else if (body instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) body;
 			value = fileProperty.isByte()
-					? readBytesFromFileString(metadata, fileProperty,
+					? this.bodyReader.readBytesFromFileString(metadata, fileProperty,
 							CommunicationType.REQUEST)
-					: readStringFromFileString(metadata, fileProperty,
+					: this.bodyReader.readStringFromFileString(metadata, fileProperty,
 							CommunicationType.REQUEST);
 		}
 		else {
@@ -1002,23 +1005,19 @@ class MockMvcBodyGiven implements Given {
 	private String getBodyAsString(SingleContractMetadata metadata) {
 		ContentType contentType = metadata.getInputContentType();
 		Body body = metadata.getContract().getRequest().getBody();
-		Object bodyValue =
-				extractServerValueFromBody(contentType, body.getServerValue());
+		Object bodyValue = extractServerValueFromBody(contentType, body.getServerValue());
 		if (contentType == ContentType.FORM) {
 			if (bodyValue instanceof Map) {
 				// [a:3, b:4] == "a=3&b=4"
-				return ((Map) bodyValue).entrySet()
-						.stream()
-						.map(o -> {
-							Map.Entry entry = (Map.Entry) o;
-							return convertUnicodeEscapesIfRequired(entry.getKey().toString() + "=" + entry.getValue());
-						})
-						.collect(Collectors.joining("&")).toString();
+				return ((Map) bodyValue).entrySet().stream().map(o -> {
+					Map.Entry entry = (Map.Entry) o;
+					return convertUnicodeEscapesIfRequired(
+							entry.getKey().toString() + "=" + entry.getValue());
+				}).collect(Collectors.joining("&")).toString();
 			}
 			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
-				return ((List) bodyValue)
-						.stream()
+				return ((List) bodyValue).stream()
 						.map(o -> convertUnicodeEscapesIfRequired(o.toString()))
 						.collect(Collectors.joining("&")).toString();
 			}
@@ -1039,7 +1038,7 @@ class MockMvcBodyGiven implements Given {
 	private String trimRepeatedQuotes(String toTrim) {
 		if (toTrim.startsWith("\"")) {
 			return toTrim.replaceAll("\"", "");
-			//#261
+			// #261
 		}
 		else if (toTrim.startsWith("\\\"") && toTrim.endsWith("\\\"")) {
 			return toTrim.substring(2, toTrim.length() - 2);
@@ -1048,25 +1047,52 @@ class MockMvcBodyGiven implements Given {
 	}
 
 	/**
-	 * Converts the passed body into ints server side representation. All {@link DslProperty}
-	 * will return their server side values
+	 * Converts the passed body into ints server side representation. All
+	 * {@link DslProperty} will return their server side values
 	 */
 	private Object extractServerValueFromBody(ContentType contentType, Object bodyValue) {
 		if (bodyValue instanceof GString) {
-			return extractValue((GString) bodyValue, contentType, MapConverterUtils.GET_SERVER_VALUE);
+			return extractValue((GString) bodyValue, contentType,
+					MapConverterUtils.GET_SERVER_VALUE);
 		}
 		boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
-		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE;
-		return MapConverter.transformValues(bodyValue, MapConverterUtils.GET_SERVER_VALUE, parsingClosure);
+		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
+				: MapConverter.JSON_PARSING_CLOSURE;
+		return MapConverter.transformValues(bodyValue, MapConverterUtils.GET_SERVER_VALUE,
+				parsingClosure);
 	}
 
-	private String readBytesFromFileString(SingleContractMetadata metadata,
+	private String escapeRequestSpecialChars(SingleContractMetadata metadata,
+			String string) {
+		if (metadata.getInputContentType() == ContentType.JSON) {
+			return string.replaceAll("\\\\n", "\\\\\\\\n");
+		}
+		return string;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		return request != null && request.getBody() != null;
+	}
+
+}
+
+class BodyReader {
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	BodyReader(GeneratedClassMetaData generatedClassMetaData) {
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	String readBytesFromFileString(SingleContractMetadata metadata,
 			FromFileProperty property, CommunicationType side) {
 		String fileName = byteBodyToAFileForTestMethod(metadata, property, side);
 		return "fileToBytes(this, \"" + fileName + "\")";
 	}
 
-	private String readStringFromFileString(SingleContractMetadata metadata,
+	String readStringFromFileString(SingleContractMetadata metadata,
 			FromFileProperty property, CommunicationType side) {
 		return "new String(" + readBytesFromFileString(metadata, property, side) + ")";
 	}
@@ -1091,14 +1117,6 @@ class MockMvcBodyGiven implements Given {
 		return newFileName;
 	}
 
-	private String escapeRequestSpecialChars(SingleContractMetadata metadata,
-			String string) {
-		if (metadata.getInputContentType() == ContentType.JSON) {
-			return string.replaceAll("\\\\n", "\\\\\\\\n");
-		}
-		return string;
-	}
-
 	private void generatedTestResourcesFileBytes(FromFileProperty property, File newFile)
 			throws IOException {
 		java.nio.file.Path relativePath = this.generatedClassMetaData.configProperties
@@ -1111,10 +1129,65 @@ class MockMvcBodyGiven implements Given {
 		Files.write(newFileInGeneratedTestSources.toPath(), property.asBytes());
 	}
 
+}
+
+class MockMvcMultipartGiven implements Given {
+
+	private final BlockBuilder blockBuilder;
+
+	private final BodyReader bodyReader;
+
+	MockMvcMultipartGiven(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.bodyReader = new BodyReader(generatedClassMetaData);
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		processInput(this.blockBuilder, metadata);
+		return this;
+	}
+
+	private void processInput(BlockBuilder bb, SingleContractMetadata metadata) {
+		getMultipartParameters(metadata).entrySet()
+				.forEach(entry -> bb.addLine(getMultipartParameterLine(metadata, entry)));
+	}
+
+	/**
+	 * @return a line of code to send a multi part parameter in the request
+	 */
+	private String getMultipartParameterLine(SingleContractMetadata metadata,
+			Map.Entry<String, Object> parameter) {
+		if (parameter.getValue() instanceof NamedProperty) {
+			return ".multiPart(" + getMultipartFileParameterContent(metadata,
+					parameter.getKey(), (NamedProperty) parameter.getValue()) + ")";
+		}
+		return getParameterString(parameter);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getMultipartParameters(SingleContractMetadata metadata) {
+		return (Map<String, Object>) metadata.getContract().getRequest().getMultipart()
+				.getServerValue();
+	}
+
+	private String getMultipartFileParameterContent(SingleContractMetadata metadata,
+			String propertyName, NamedProperty propertyValue) {
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue,
+				fileProp -> this.bodyReader.readBytesFromFileString(metadata, fileProp,
+						CommunicationType.REQUEST));
+	}
+
+	private String getParameterString(Map.Entry<String, Object> parameter) {
+		return ".param(\"" + escapeJava(parameter.getKey()) + "\", \""
+				+ escapeJava((String) parameter.getValue()) + "\")";
+	}
+
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
-		return request != null && request.getBody() != null;
+		return request != null && request.getMultipart() != null;
 	}
 
 }
