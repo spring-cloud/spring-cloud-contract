@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -442,8 +443,10 @@ class SingleMethodBuilder {
 			this.blockBuilder.inBraces(() -> {
 				// (indent) given
 				visit(this.givens, metaData);
+				this.blockBuilder.addEmptyLine();
 				// (indent) when
 				visit(this.whens, metaData);
+				this.blockBuilder.addEmptyLine();
 				// (indent) then
 				visit(this.thens, metaData);
 			});
@@ -455,10 +458,16 @@ class SingleMethodBuilder {
 
 	private void visit(List<? extends MethodVisitor> list,
 			SingleContractMetadata metaData) {
-		list.stream().filter(o -> o.accept(metaData)).forEach(visitor -> {
+		List<? extends MethodVisitor> visitors = list.stream().filter(o -> o.accept(metaData))
+				.collect(Collectors.toList());
+		Iterator<? extends MethodVisitor> iterator = visitors.iterator();
+		while (iterator.hasNext()) {
+			MethodVisitor visitor = iterator.next();
 			visitor.apply(metaData);
-			this.blockBuilder.addEmptyLine();
-		});
+			if (iterator.hasNext()) {
+				this.blockBuilder.addEmptyLine();
+			}
+		}
 	}
 
 }

@@ -22,47 +22,26 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import groovy.json.JsonOutput;
-import groovy.lang.Closure;
-import groovy.lang.GString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.StringEscapeUtils;
 
 import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.cloud.contract.spec.internal.Body;
-import org.springframework.cloud.contract.spec.internal.Cookie;
-import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
-import org.springframework.cloud.contract.spec.internal.Header;
-import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
-import org.springframework.cloud.contract.spec.internal.NamedProperty;
-import org.springframework.cloud.contract.spec.internal.OptionalProperty;
-import org.springframework.cloud.contract.spec.internal.QueryParameter;
-import org.springframework.cloud.contract.spec.internal.Request;
-import org.springframework.cloud.contract.spec.internal.Response;
-import org.springframework.cloud.contract.spec.internal.Url;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
-import org.springframework.cloud.contract.verifier.config.TestMode;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
-import org.springframework.cloud.contract.verifier.util.ContentType;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
 import org.springframework.util.StringUtils;
 
-import static org.apache.commons.text.StringEscapeUtils.escapeJava;
-import static org.springframework.cloud.contract.verifier.util.ContentType.JSON;
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue;
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent;
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize;
 
 class ClassToBuildDemo {
@@ -95,34 +74,6 @@ class CustomImports implements Imports {
 
 }
 
-class Junit4IgnoreImports implements Imports {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	Junit4IgnoreImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public Imports call() {
-		this.blockBuilder.addLineWithEnding("import org.junit.Ignore");
-		return this;
-	}
-
-	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.isIgnored()
-						|| metadata.getConvertedContractWithMetadata().stream()
-								.anyMatch(SingleContractMetadata::isIgnored));
-	}
-
-}
-
 class CustomStaticImports implements Imports {
 
 	private final BlockBuilder blockBuilder;
@@ -145,35 +96,6 @@ class CustomStaticImports implements Imports {
 	@Override
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties.getStaticImports().length > 0;
-	}
-
-}
-
-class JUnit4Imports implements Imports {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private static final String[] IMPORTS = { "org.junit.Test", "org.junit.Rule" };
-
-	JUnit4Imports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
-		return this;
-	}
-
-	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT;
 	}
 
 }
@@ -206,36 +128,6 @@ class DefaultStaticImports implements Imports {
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT;
-	}
-
-}
-
-class JUnit4OrderImports implements Imports {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private static final String[] IMPORTS = { "org.junit.FixMethodOrder",
-			"org.junit.runners.MethodSorters" };
-
-	JUnit4OrderImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
-		return this;
-	}
-
-	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(meta -> meta.getOrder() != null);
 	}
 
 }
@@ -398,68 +290,6 @@ class MessagingStaticImports implements Imports {
 
 }
 
-class RestAssured3MockMvcImports implements Imports {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private static final String[] IMPORTS = {
-			"io.restassured.module.mockmvc.specification.MockMvcRequestSpecification",
-			"io.restassured.response.ResponseOptions" };
-
-	RestAssured3MockMvcImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
-		return this;
-	}
-
-	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.MOCKMVC
-				&& this.generatedClassMetaData.isAnyHttp();
-	}
-
-}
-
-class RestAssured3MockMvcStaticImports implements Imports {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private static final String[] IMPORTS = {
-			"io.restassured.module.mockmvc.RestAssuredMockMvc.*" };
-
-	RestAssured3MockMvcStaticImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
-		return this;
-	}
-
-	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.MOCKMVC;
-	}
-
-}
-
 class JsonPathImports implements Imports {
 
 	private final BlockBuilder blockBuilder;
@@ -617,97 +447,6 @@ class BaseClassProvider {
 
 }
 
-class JUnit4OrderClassAnnotation implements ClassAnnotation {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private static final String[] ANNOTATIONS = {
-			"@FixMethodOrder(MethodSorters.NAME_ASCENDING)" };
-
-	JUnit4OrderClassAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public ClassAnnotation call() {
-		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
-		return this;
-	}
-
-	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
-				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(meta -> meta.getOrder() != null);
-	}
-
-}
-
-class JUnit4IgnoreMethodAnnotation implements MethodAnnotations {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private static final String[] ANNOTATIONS = { "@Ignore" };
-
-	JUnit4IgnoreMethodAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
-				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(meta -> meta.getOrder() != null);
-	}
-
-	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
-		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
-		return this;
-	}
-
-}
-
-class JUnit4MethodAnnotation implements MethodAnnotations {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private static final String[] ANNOTATIONS = { "@Test" };
-
-	JUnit4MethodAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT;
-	}
-
-	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
-		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
-		return this;
-	}
-
-}
-
 class JunitMethodMetadata implements MethodMetadata {
 
 	private final BlockBuilder blockBuilder;
@@ -791,254 +530,6 @@ class NameProvider {
 
 }
 
-class MockMvcGiven implements Given, BodyMethodVisitor, MockMvcAcceptor {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private final List<Given> givens = new LinkedList<>();
-
-	MockMvcGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-		this.givens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
-				new MockMvcCookiesGiven(blockBuilder),
-				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData),
-				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData)));
-	}
-
-	@Override
-	public MethodVisitor<Given> apply(SingleContractMetadata singleContractMetadata) {
-		startBodyBlock(this.blockBuilder, "// given:")
-				.addIndented("MockMvcRequestSpecification request = given()");
-		bodyBlock(this.blockBuilder, this.givens, singleContractMetadata);
-		return this;
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return acceptMockMvc(this.generatedClassMetaData, singleContractMetadata);
-	}
-
-}
-
-class MockMvcHeadersGiven implements Given {
-
-	private final BlockBuilder blockBuilder;
-
-	MockMvcHeadersGiven(BlockBuilder blockBuilder) {
-		this.blockBuilder = blockBuilder;
-	}
-
-	@Override
-	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		processInput(this.blockBuilder, metadata.getContract().getRequest());
-		return this;
-	}
-
-	private void processInput(BlockBuilder bb, Request request) {
-		request.getHeaders().executeForEachHeader(header -> {
-			if (ofAbsentType(header)) {
-				return;
-			}
-			bb.addIndented(string(header));
-		});
-	}
-
-	private String string(Header header) {
-		return ".header(" + ContentHelper.getTestSideForNonBodyValue(header.getName())
-				+ ", " + ContentHelper.getTestSideForNonBodyValue(header.getServerValue())
-				+ ")";
-	}
-
-	private boolean ofAbsentType(Header header) {
-		return header.getServerValue() instanceof MatchingStrategy
-				&& MatchingStrategy.Type.ABSENT
-						.equals(((MatchingStrategy) header.getServerValue()).getType());
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata metadata) {
-		Request request = metadata.getContract().getRequest();
-		return request != null && request.getHeaders() != null;
-	}
-
-}
-
-class MockMvcCookiesGiven implements Given {
-
-	private final BlockBuilder blockBuilder;
-
-	MockMvcCookiesGiven(BlockBuilder blockBuilder) {
-		this.blockBuilder = blockBuilder;
-	}
-
-	@Override
-	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		processInput(this.blockBuilder, metadata.getContract().getRequest());
-		return this;
-	}
-
-	private void processInput(BlockBuilder bb, Request request) {
-		request.getCookies().executeForEachCookie(cookie -> {
-			if (ofAbsentType(cookie)) {
-				return;
-			}
-			bb.addIndented(string(cookie));
-		});
-	}
-
-	private String string(Cookie cookie) {
-		return ".cookie(" + ContentHelper.getTestSideForNonBodyValue(cookie.getKey())
-				+ ", " + ContentHelper.getTestSideForNonBodyValue(cookie.getServerValue())
-				+ ")";
-	}
-
-	private boolean ofAbsentType(Cookie cookie) {
-		return cookie.getServerValue() instanceof MatchingStrategy
-				&& MatchingStrategy.Type.ABSENT
-						.equals(((MatchingStrategy) cookie.getServerValue()).getType());
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata metadata) {
-		Request request = metadata.getContract().getRequest();
-		return request != null && request.getCookies() != null;
-	}
-
-}
-
-class MockMvcBodyGiven implements Given {
-
-	private final BlockBuilder blockBuilder;
-
-	private final BodyReader bodyReader;
-
-	MockMvcBodyGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.bodyReader = new BodyReader(generatedClassMetaData);
-	}
-
-	@Override
-	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		processInput(this.blockBuilder, metadata);
-		return this;
-	}
-
-	private void processInput(BlockBuilder bb, SingleContractMetadata metadata) {
-		Object body;
-		Request request = metadata.getContract().getRequest();
-		Object serverValue = request.getBody().getServerValue();
-		if (serverValue instanceof ExecutionProperty
-				|| serverValue instanceof FromFileProperty) {
-			body = request.getBody().getServerValue();
-		}
-		else {
-			body = getBodyAsString(metadata);
-		}
-		bb.addIndented(getBodyString(metadata, body));
-	}
-
-	private String getBodyString(SingleContractMetadata metadata, Object body) {
-		String value;
-		if (body instanceof ExecutionProperty) {
-			value = body.toString();
-		}
-		else if (body instanceof FromFileProperty) {
-			FromFileProperty fileProperty = (FromFileProperty) body;
-			value = fileProperty.isByte()
-					? this.bodyReader.readBytesFromFileString(metadata, fileProperty,
-							CommunicationType.REQUEST)
-					: this.bodyReader.readStringFromFileString(metadata, fileProperty,
-							CommunicationType.REQUEST);
-		}
-		else {
-			String escaped = escapeRequestSpecialChars(metadata, body.toString());
-			value = "\"" + escaped + "\"";
-		}
-		return ".body(" + value + ")";
-	}
-
-	@SuppressWarnings("unchecked")
-	private String getBodyAsString(SingleContractMetadata metadata) {
-		ContentType contentType = metadata.getInputContentType();
-		Body body = metadata.getContract().getRequest().getBody();
-		Object bodyValue = extractServerValueFromBody(contentType, body.getServerValue());
-		if (contentType == ContentType.FORM) {
-			if (bodyValue instanceof Map) {
-				// [a:3, b:4] == "a=3&b=4"
-				return ((Map) bodyValue).entrySet().stream().map(o -> {
-					Map.Entry entry = (Map.Entry) o;
-					return convertUnicodeEscapesIfRequired(
-							entry.getKey().toString() + "=" + entry.getValue());
-				}).collect(Collectors.joining("&")).toString();
-			}
-			else if (bodyValue instanceof List) {
-				// ["a=3", "b=4"] == "a=3&b=4"
-				return ((List) bodyValue).stream()
-						.map(o -> convertUnicodeEscapesIfRequired(o.toString()))
-						.collect(Collectors.joining("&")).toString();
-			}
-		}
-		else {
-			String json = JsonOutput.toJson(bodyValue);
-			json = convertUnicodeEscapesIfRequired(json);
-			return trimRepeatedQuotes(json);
-		}
-		return "";
-	}
-
-	private String convertUnicodeEscapesIfRequired(String json) {
-		String unescapedJson = StringEscapeUtils.unescapeEcmaScript(json);
-		return escapeJava(unescapedJson);
-	}
-
-	private String trimRepeatedQuotes(String toTrim) {
-		if (toTrim.startsWith("\"")) {
-			return toTrim.replaceAll("\"", "");
-			// #261
-		}
-		else if (toTrim.startsWith("\\\"") && toTrim.endsWith("\\\"")) {
-			return toTrim.substring(2, toTrim.length() - 2);
-		}
-		return toTrim;
-	}
-
-	/**
-	 * Converts the passed body into ints server side representation. All
-	 * {@link DslProperty} will return their server side values
-	 */
-	private Object extractServerValueFromBody(ContentType contentType, Object bodyValue) {
-		if (bodyValue instanceof GString) {
-			return extractValue((GString) bodyValue, contentType,
-					MapConverterUtils.GET_SERVER_VALUE);
-		}
-		boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
-		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
-				: MapConverter.JSON_PARSING_CLOSURE;
-		return MapConverter.transformValues(bodyValue, MapConverterUtils.GET_SERVER_VALUE,
-				parsingClosure);
-	}
-
-	private String escapeRequestSpecialChars(SingleContractMetadata metadata,
-			String string) {
-		if (metadata.getInputContentType() == ContentType.JSON) {
-			return string.replaceAll("\\\\n", "\\\\\\\\n");
-		}
-		return string;
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata metadata) {
-		Request request = metadata.getContract().getRequest();
-		return request != null && request.getBody() != null;
-	}
-
-}
-
 class BodyReader {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
@@ -1092,247 +583,78 @@ class BodyReader {
 
 }
 
-class MockMvcMultipartGiven implements Given {
-
-	private final BlockBuilder blockBuilder;
-
-	private final BodyReader bodyReader;
-
-	MockMvcMultipartGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.bodyReader = new BodyReader(generatedClassMetaData);
-	}
-
-	@Override
-	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		getMultipartParameters(metadata).entrySet()
-				.forEach(entry -> this.blockBuilder.addIndented(getMultipartParameterLine(metadata, entry)));
-		return this;
-	}
-
-	private String getMultipartParameterLine(SingleContractMetadata metadata,
-			Map.Entry<String, Object> parameter) {
-		if (parameter.getValue() instanceof NamedProperty) {
-			return ".multiPart(" + getMultipartFileParameterContent(metadata,
-					parameter.getKey(), (NamedProperty) parameter.getValue()) + ")";
-		}
-		return getParameterString(parameter);
-	}
-
-	@SuppressWarnings("unchecked")
-	private Map<String, Object> getMultipartParameters(SingleContractMetadata metadata) {
-		return (Map<String, Object>) metadata.getContract().getRequest().getMultipart()
-				.getServerValue();
-	}
-
-	private String getMultipartFileParameterContent(SingleContractMetadata metadata,
-			String propertyName, NamedProperty propertyValue) {
-		return getJavaMultipartFileParameterContent(propertyName, propertyValue,
-				fileProp -> this.bodyReader.readBytesFromFileString(metadata, fileProp,
-						CommunicationType.REQUEST));
-	}
-
-	private String getParameterString(Map.Entry<String, Object> parameter) {
-		return ".param(\"" + escapeJava(parameter.getKey()) + "\", \""
-				+ escapeJava((String) parameter.getValue()) + "\")";
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata metadata) {
-		Request request = metadata.getContract().getRequest();
-		return request != null && request.getMultipart() != null;
-	}
-
-}
-
-class MockMvcWhen implements When, BodyMethodVisitor, MockMvcAcceptor {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	private final List<When> whens = new LinkedList<>();
-
-	MockMvcWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-		this.whens.addAll(Arrays.asList(
-				new MockMvcUrlWhen(this.blockBuilder, this.generatedClassMetaData),
-				new MockMvcAsyncWhen(this.blockBuilder, this.generatedClassMetaData)));
-	}
-
-	@Override
-	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
-		startBodyBlock(this.blockBuilder, "// when:")
-				.addIndented("ResponseOptions response = given().spec(request)");
-		bodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
-		return this;
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return acceptMockMvc(this.generatedClassMetaData, singleContractMetadata);
-	}
-
-}
-
-class MockMvcUrlWhen implements When, MockMvcAcceptor {
-
-	private static final String DOUBLE_QUOTE = "\"";
-
-	private static final String QUERY_PARAM_METHOD = "queryParam";
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	MockMvcUrlWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		Request request = metadata.getContract().getRequest();
-		Url url = getUrl(request);
-		addQueryParameters(url);
-		addUrl(url, request);
-		return this;
-	}
-
-	private Url getUrl(Request request) {
-		if (request.getUrl() != null) {
-			return request.getUrl();
-		}
-		if (request.getUrlPath() != null) {
-			return request.getUrlPath();
-		}
-		throw new IllegalStateException("URL is not set!");
-	}
-
-	private void addQueryParameters(Url buildUrl) {
-		if (buildUrl.getQueryParameters() != null) {
-			buildUrl.getQueryParameters().getParameters().stream()
-					.filter(this::allowedQueryParameter).forEach(this::addQueryParameter);
-		}
-	}
-
-	private boolean allowedQueryParameter(Object o) {
-		if (o instanceof QueryParameter) {
-			return allowedQueryParameter(((QueryParameter) o).getServerValue());
-		}
-		else if (o instanceof MatchingStrategy) {
-			return MatchingStrategy.Type.ABSENT.equals(((MatchingStrategy) o).getType());
-		}
-		return true;
-	}
-
-	private void addQueryParameter(QueryParameter queryParam) {
-		this.blockBuilder.addLine("." + QUERY_PARAM_METHOD + "(" + DOUBLE_QUOTE
-				+ queryParam.getName() + DOUBLE_QUOTE + "," + DOUBLE_QUOTE
-				+ resolveParamValue(queryParam) + DOUBLE_QUOTE + ")");
-	}
-
-	/**
-	 * Converts the query parameter value into String
-	 */
-	private String resolveParamValue(Object value) {
-		if (value instanceof QueryParameter) {
-			return resolveParamValue(((QueryParameter) value).getServerValue());
-		}
-		else if (value instanceof OptionalProperty) {
-			return resolveParamValue(((OptionalProperty) value).optionalPattern());
-		}
-		else if (value instanceof MatchingStrategy) {
-			return ((MatchingStrategy) value).getServerValue().toString();
-		}
-		return value.toString();
-	}
-
-	private void addUrl(Url buildUrl, Request request) {
-		Object testSideUrl = MapConverter.getTestSideValues(buildUrl);
-		String method = request.getMethod().getServerValue().toString().toLowerCase();
-		String url = testSideUrl.toString();
-		if (!(testSideUrl instanceof ExecutionProperty)) {
-			url = DOUBLE_QUOTE + testSideUrl.toString() + DOUBLE_QUOTE;
-		}
-		this.blockBuilder.addIndented("." + method + "(" + url + ")");
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata metadata) {
-		return acceptMockMvc(this.generatedClassMetaData, metadata);
-	}
-
-}
-
-class MockMvcAsyncWhen implements When, MockMvcAcceptor {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	MockMvcAsyncWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		Response response = metadata.getContract().getResponse();
-		if (response.getAsync()) {
-			this.blockBuilder.addIndented(".when().async()");
-		}
-		if (response.getDelay() != null) {
-			this.blockBuilder
-					.addIndented(".timeout(" + response.getDelay().getServerValue() + ")");
-		}
-		return this;
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata metadata) {
-		boolean accept = acceptMockMvc(this.generatedClassMetaData, metadata);
-		if (!accept) {
-			return false;
-		}
-		Response response = metadata.getContract().getResponse();
-		return response.getAsync() || response.getDelay() != null;
-	}
-
-}
-
-interface MockMvcAcceptor {
-
-	default boolean acceptMockMvc(GeneratedClassMetaData generatedClassMetaData,
-			SingleContractMetadata singleContractMetadata) {
-		return generatedClassMetaData.configProperties.getTestMode() == TestMode.MOCKMVC
-				&& singleContractMetadata.isHttp();
-	}
-
-}
-
+/**
+ * Adds a label, proper indents and line endings for the body of a method.
+ */
 interface BodyMethodVisitor {
 
+	/**
+	 * Adds a starting body method block. E.g. //given: together with all indents
+	 * @param blockBuilder
+	 * @param label
+	 * @return
+	 */
 	default BlockBuilder startBodyBlock(BlockBuilder blockBuilder, String label) {
 		return blockBuilder.addIndented(label).addEmptyLine().startBlock();
 	}
 
-	default void bodyBlock(BlockBuilder blockBuilder,
+	/**
+	 * Picks matching elements, visits them and applies indents.
+	 * @param blockBuilder
+	 * @param methodVisitors
+	 * @param singleContractMetadata
+	 */
+	default void indentedBodyBlock(BlockBuilder blockBuilder,
 			List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
-		List<MethodVisitor> visitors = methodVisitors.stream()
-				.filter(given -> given.accept(singleContractMetadata))
-				.collect(Collectors.toList());
+		List<MethodVisitor> visitors = filterVisitors(methodVisitors, singleContractMetadata);
 		if (visitors.isEmpty()) {
-			blockBuilder.addEnding().addEmptyLine();
+			blockBuilder.addEndingIfNotPresent().addEmptyLine();
 			return;
 		}
 		blockBuilder.addEmptyLine().indent();
+		applyVisitors(blockBuilder, singleContractMetadata, visitors);
+		endIndentedBodyBlock(blockBuilder);
+	}
+
+	/**
+	 * Picks matching visitors.
+	 * @param methodVisitors
+	 * @param singleContractMetadata
+	 * @return
+	 */
+	default List<MethodVisitor> filterVisitors(List<? extends MethodVisitor> methodVisitors, SingleContractMetadata singleContractMetadata) {
+		return methodVisitors.stream()
+				.filter(given -> given.accept(singleContractMetadata))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Picks matching elements, visits them. Doesn't apply indents.
+	 * Useful for the // then: block where there is no method chaining.
+	 * @param blockBuilder
+	 * @param methodVisitors
+	 * @param singleContractMetadata
+	 */
+	default void bodyBlock(BlockBuilder blockBuilder,
+			List<? extends MethodVisitor> methodVisitors,
+			SingleContractMetadata singleContractMetadata) {
+		List<MethodVisitor> visitors = filterVisitors(methodVisitors, singleContractMetadata);
+		if (visitors.isEmpty()) {
+			blockBuilder.addEndingIfNotPresent().addEmptyLine();
+			return;
+		}
+		applyVisitors(blockBuilder, singleContractMetadata, visitors);
+		endBodyBlock(blockBuilder);
+	}
+
+	/**
+	 * Executes logic for all the matching visitors.
+	 * @param blockBuilder
+	 * @param singleContractMetadata
+	 * @param visitors
+	 */
+	default void applyVisitors(BlockBuilder blockBuilder, SingleContractMetadata singleContractMetadata, List<MethodVisitor> visitors) {
 		Iterator<MethodVisitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			MethodVisitor when = iterator.next();
@@ -1341,11 +663,15 @@ interface BodyMethodVisitor {
 				blockBuilder.addEmptyLine();
 			}
 		}
-		endBodyBlock(blockBuilder);
+	}
+
+
+	default void endIndentedBodyBlock(BlockBuilder blockBuilder) {
+		blockBuilder.addEndingIfNotPresent().unindent().endBlock().addEmptyLine();
 	}
 
 	default void endBodyBlock(BlockBuilder blockBuilder) {
-		blockBuilder.addEnding().unindent().endBlock().addEmptyLine();
+		blockBuilder.addEndingIfNotPresent().endBlock();
 	}
 
 }
@@ -1408,13 +734,9 @@ class RefactoredSingleTestGenerator implements SingleTestGenerator {
 				// JavaMethodMetadata
 				// SpockMethodMetadata
 				.methodMetadata(new JunitMethodMetadata(builder))
-				// MockMvcGiven
 				.given(new MockMvcGiven(builder, metaData))
-				// // MockMvcWhen
 				.when(new MockMvcWhen(builder, metaData))
-		// // MockMvcThen
-		// .then(null).then(null);
-		;
+				.then(new MockMvcThen(builder, metaData));
 
 		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
 				.field(new MessagingFields(builder, metaData))
@@ -1431,9 +753,9 @@ class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new JsonPathImports(builder, metaData),
 						new XmlImports(builder, metaData),
 						new MessagingImports(builder, metaData),
-						new RestAssured3MockMvcImports(builder, metaData))
+						new MockMvcRestAssured3Imports(builder, metaData))
 				.staticImports(new DefaultStaticImports(builder, metaData),
-						new RestAssured3MockMvcStaticImports(builder, metaData),
+						new MockMvcRestAssured3StaticImports(builder, metaData),
 						new CustomStaticImports(builder, metaData),
 						new MessagingStaticImports(builder, metaData))
 				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))
