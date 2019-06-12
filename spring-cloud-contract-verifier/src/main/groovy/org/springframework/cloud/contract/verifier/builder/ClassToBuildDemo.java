@@ -44,7 +44,11 @@ import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.NamedProperty;
+import org.springframework.cloud.contract.spec.internal.OptionalProperty;
+import org.springframework.cloud.contract.spec.internal.QueryParameter;
 import org.springframework.cloud.contract.spec.internal.Request;
+import org.springframework.cloud.contract.spec.internal.Response;
+import org.springframework.cloud.contract.spec.internal.Url;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
@@ -787,7 +791,7 @@ class NameProvider {
 
 }
 
-class MockMvcGiven implements Given {
+class MockMvcGiven implements Given, BodyMethodVisitor, MockMvcAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -807,58 +811,15 @@ class MockMvcGiven implements Given {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata singleContractMetadata) {
-		this.blockBuilder.addIndented("// given:").addEmptyLine().startBlock()
+		startBodyBlock(this.blockBuilder, "// given:")
 				.addIndented("MockMvcRequestSpecification request = given()");
-		List<Given> givens = this.givens.stream()
-				.filter(given -> given.accept(singleContractMetadata))
-				.collect(Collectors.toList());
-		if (givens.isEmpty()) {
-			this.blockBuilder.addEnding().addEmptyLine();
-			return this;
-		}
-		this.blockBuilder.addEmptyLine().indent();
-		Iterator<Given> iterator = givens.iterator();
-		while (iterator.hasNext()) {
-			Given given = iterator.next();
-			given.apply(singleContractMetadata);
-			if (iterator.hasNext()) {
-				this.blockBuilder.addEmptyLine();
-			}
-		}
-		this.blockBuilder.addEnding().unindent().endBlock().addEmptyLine();
+		bodyBlock(this.blockBuilder, this.givens, singleContractMetadata);
 		return this;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.MOCKMVC && singleContractMetadata.isHttp();
-	}
-
-}
-
-class MockMvcWhen implements When {
-
-	private final BlockBuilder blockBuilder;
-
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	MockMvcWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
-		this.blockBuilder.addIndented("// when:").addEmptyLine().startBlock().endBlock();
-		return this;
-	}
-
-	@Override
-	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.MOCKMVC && singleContractMetadata.isHttp();
+		return acceptMockMvc(this.generatedClassMetaData, singleContractMetadata);
 	}
 
 }
@@ -1145,18 +1106,11 @@ class MockMvcMultipartGiven implements Given {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		processInput(this.blockBuilder, metadata);
+		getMultipartParameters(metadata).entrySet()
+				.forEach(entry -> this.blockBuilder.addIndented(getMultipartParameterLine(metadata, entry)));
 		return this;
 	}
 
-	private void processInput(BlockBuilder bb, SingleContractMetadata metadata) {
-		getMultipartParameters(metadata).entrySet()
-				.forEach(entry -> bb.addLine(getMultipartParameterLine(metadata, entry)));
-	}
-
-	/**
-	 * @return a line of code to send a multi part parameter in the request
-	 */
 	private String getMultipartParameterLine(SingleContractMetadata metadata,
 			Map.Entry<String, Object> parameter) {
 		if (parameter.getValue() instanceof NamedProperty) {
@@ -1188,6 +1142,210 @@ class MockMvcMultipartGiven implements Given {
 	public boolean accept(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
 		return request != null && request.getMultipart() != null;
+	}
+
+}
+
+class MockMvcWhen implements When, BodyMethodVisitor, MockMvcAcceptor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final List<When> whens = new LinkedList<>();
+
+	MockMvcWhen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+		this.whens.addAll(Arrays.asList(
+				new MockMvcUrlWhen(this.blockBuilder, this.generatedClassMetaData),
+				new MockMvcAsyncWhen(this.blockBuilder, this.generatedClassMetaData)));
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
+		startBodyBlock(this.blockBuilder, "// when:")
+				.addIndented("ResponseOptions response = given().spec(request)");
+		bodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return acceptMockMvc(this.generatedClassMetaData, singleContractMetadata);
+	}
+
+}
+
+class MockMvcUrlWhen implements When, MockMvcAcceptor {
+
+	private static final String DOUBLE_QUOTE = "\"";
+
+	private static final String QUERY_PARAM_METHOD = "queryParam";
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MockMvcUrlWhen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		Url url = getUrl(request);
+		addQueryParameters(url);
+		addUrl(url, request);
+		return this;
+	}
+
+	private Url getUrl(Request request) {
+		if (request.getUrl() != null) {
+			return request.getUrl();
+		}
+		if (request.getUrlPath() != null) {
+			return request.getUrlPath();
+		}
+		throw new IllegalStateException("URL is not set!");
+	}
+
+	private void addQueryParameters(Url buildUrl) {
+		if (buildUrl.getQueryParameters() != null) {
+			buildUrl.getQueryParameters().getParameters().stream()
+					.filter(this::allowedQueryParameter).forEach(this::addQueryParameter);
+		}
+	}
+
+	private boolean allowedQueryParameter(Object o) {
+		if (o instanceof QueryParameter) {
+			return allowedQueryParameter(((QueryParameter) o).getServerValue());
+		}
+		else if (o instanceof MatchingStrategy) {
+			return MatchingStrategy.Type.ABSENT.equals(((MatchingStrategy) o).getType());
+		}
+		return true;
+	}
+
+	private void addQueryParameter(QueryParameter queryParam) {
+		this.blockBuilder.addLine("." + QUERY_PARAM_METHOD + "(" + DOUBLE_QUOTE
+				+ queryParam.getName() + DOUBLE_QUOTE + "," + DOUBLE_QUOTE
+				+ resolveParamValue(queryParam) + DOUBLE_QUOTE + ")");
+	}
+
+	/**
+	 * Converts the query parameter value into String
+	 */
+	private String resolveParamValue(Object value) {
+		if (value instanceof QueryParameter) {
+			return resolveParamValue(((QueryParameter) value).getServerValue());
+		}
+		else if (value instanceof OptionalProperty) {
+			return resolveParamValue(((OptionalProperty) value).optionalPattern());
+		}
+		else if (value instanceof MatchingStrategy) {
+			return ((MatchingStrategy) value).getServerValue().toString();
+		}
+		return value.toString();
+	}
+
+	private void addUrl(Url buildUrl, Request request) {
+		Object testSideUrl = MapConverter.getTestSideValues(buildUrl);
+		String method = request.getMethod().getServerValue().toString().toLowerCase();
+		String url = testSideUrl.toString();
+		if (!(testSideUrl instanceof ExecutionProperty)) {
+			url = DOUBLE_QUOTE + testSideUrl.toString() + DOUBLE_QUOTE;
+		}
+		this.blockBuilder.addIndented("." + method + "(" + url + ")");
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return acceptMockMvc(this.generatedClassMetaData, metadata);
+	}
+
+}
+
+class MockMvcAsyncWhen implements When, MockMvcAcceptor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MockMvcAsyncWhen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		Response response = metadata.getContract().getResponse();
+		if (response.getAsync()) {
+			this.blockBuilder.addIndented(".when().async()");
+		}
+		if (response.getDelay() != null) {
+			this.blockBuilder
+					.addIndented(".timeout(" + response.getDelay().getServerValue() + ")");
+		}
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		boolean accept = acceptMockMvc(this.generatedClassMetaData, metadata);
+		if (!accept) {
+			return false;
+		}
+		Response response = metadata.getContract().getResponse();
+		return response.getAsync() || response.getDelay() != null;
+	}
+
+}
+
+interface MockMvcAcceptor {
+
+	default boolean acceptMockMvc(GeneratedClassMetaData generatedClassMetaData,
+			SingleContractMetadata singleContractMetadata) {
+		return generatedClassMetaData.configProperties.getTestMode() == TestMode.MOCKMVC
+				&& singleContractMetadata.isHttp();
+	}
+
+}
+
+interface BodyMethodVisitor {
+
+	default BlockBuilder startBodyBlock(BlockBuilder blockBuilder, String label) {
+		return blockBuilder.addIndented(label).addEmptyLine().startBlock();
+	}
+
+	default void bodyBlock(BlockBuilder blockBuilder,
+			List<? extends MethodVisitor> methodVisitors,
+			SingleContractMetadata singleContractMetadata) {
+		List<MethodVisitor> visitors = methodVisitors.stream()
+				.filter(given -> given.accept(singleContractMetadata))
+				.collect(Collectors.toList());
+		if (visitors.isEmpty()) {
+			blockBuilder.addEnding().addEmptyLine();
+			return;
+		}
+		blockBuilder.addEmptyLine().indent();
+		Iterator<MethodVisitor> iterator = visitors.iterator();
+		while (iterator.hasNext()) {
+			MethodVisitor when = iterator.next();
+			when.apply(singleContractMetadata);
+			if (iterator.hasNext()) {
+				blockBuilder.addEmptyLine();
+			}
+		}
+		endBodyBlock(blockBuilder);
+	}
+
+	default void endBodyBlock(BlockBuilder blockBuilder) {
+		blockBuilder.addEnding().unindent().endBlock().addEmptyLine();
 	}
 
 }
