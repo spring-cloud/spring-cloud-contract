@@ -161,12 +161,13 @@ class SingleTestGeneratorSpec extends Specification {
 					}
 					response {
 						status OK()
+						body(["foo" : "bar"])
 					}
 				}
 ''')
 	}
 
-	def 'should build test class for #testFramework'() {
+	def 'should build test class for #testFramework and mode #mode'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework

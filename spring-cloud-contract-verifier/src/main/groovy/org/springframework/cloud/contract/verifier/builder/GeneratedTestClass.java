@@ -246,7 +246,7 @@ class GeneratedTestClassBuilder {
 		// import static ... \n
 		visit(this.staticImports);
 		// @Test ... \n
-		visit(this.annotations);
+		visitWithNoEnding(this.annotations);
 		// @formatter:off
 		// public
 		this.blockBuilder.append(classMetaData::modifier)
@@ -265,10 +265,20 @@ class GeneratedTestClassBuilder {
 	}
 
 	void visit(List<? extends Visitor> list) {
+		visit(list, true);
+	}
+
+	void visitWithNoEnding(List<? extends Visitor> list) {
+		visit(list, false);
+	}
+
+	private void visit(List<? extends Visitor> list, boolean addEnding) {
 		List<Visitor> elements = list.stream().filter(Acceptor::accept)
 				.collect(Collectors.toList());
 		elements.forEach(OurCallable::call);
-		this.blockBuilder.addEndingIfNotPresent();
+		if (addEnding) {
+			this.blockBuilder.addEndingIfNotPresent();
+		}
 		if (!elements.isEmpty()) {
 			this.blockBuilder.addEmptyLine();
 		}
@@ -314,19 +324,26 @@ class ClassBodyBuilder {
 	 * @return block builder with contents of built methods
 	 */
 	BlockBuilder build() {
-		// @Rule ...
-		visit(this.fields);
-		// new line if fields added
-		this.blockBuilder.inBraces(() -> this.methodBuilder.build());
+		this.blockBuilder.inBraces(() -> {
+			// @Rule ...
+			visit(this.fields);
+			// new line if fields added
+			this.methodBuilder.build();
+		});
 		return this.blockBuilder;
 	}
 
 	void visit(List<? extends Visitor> list) {
-		list.stream().filter(Acceptor::accept).forEach(visitor -> {
+		List<? extends Visitor> visitors = list.stream().filter(Acceptor::accept).collect(Collectors.toList());
+		Iterator<? extends Visitor> iterator = visitors.iterator();
+		while (iterator.hasNext()) {
+			Visitor visitor = iterator.next();
 			visitor.call();
 			this.blockBuilder.addEndingIfNotPresent();
-			this.blockBuilder.addEmptyLine();
-		});
+			if (iterator.hasNext()) {
+				this.blockBuilder.addEmptyLine();
+			}
+		}
 	}
 
 }

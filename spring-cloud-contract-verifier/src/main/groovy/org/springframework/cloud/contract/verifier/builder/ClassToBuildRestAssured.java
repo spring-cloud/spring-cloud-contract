@@ -319,14 +319,13 @@ class RestAssuredGiven implements Given, BodyMethodVisitor {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata singleContractMetadata) {
-		startBodyBlock(this.blockBuilder, "// given:")
-				.addIndentation();
+		startBodyBlock(this.blockBuilder, "// given:");
 		addRequestGivenLine(singleContractMetadata);
 		indentedBodyBlock(this.blockBuilder, this.bodyGivens, singleContractMetadata);
 		return this;
 	}
 
-	public void addRequestGivenLine(SingleContractMetadata singleContractMetadata) {
+	private void addRequestGivenLine(SingleContractMetadata singleContractMetadata) {
 		this.requestGivens
 				.stream()
 				.filter(given -> given.accept(singleContractMetadata))
@@ -354,7 +353,7 @@ class MockMvcRequestGiven implements Given, MockMvcAcceptor {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		this.blockBuilder.append("MockMvcRequestSpecification request = given()");
+		this.blockBuilder.addIndented("MockMvcRequestSpecification request = given()");
 		return this;
 	}
 
@@ -377,7 +376,7 @@ class ExplicitRequestGiven implements Given, ExplicitAcceptor {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		this.blockBuilder.append("RequestSpecification request = given()");
+		this.blockBuilder.addIndented("RequestSpecification request = given()");
 		return this;
 	}
 

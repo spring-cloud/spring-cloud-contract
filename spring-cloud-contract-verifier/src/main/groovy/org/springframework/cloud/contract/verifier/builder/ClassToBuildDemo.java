@@ -612,6 +612,7 @@ interface BodyMethodVisitor {
 		List<MethodVisitor> visitors = filterVisitors(methodVisitors, singleContractMetadata);
 		if (visitors.isEmpty()) {
 			blockBuilder.addEndingIfNotPresent().addEmptyLine();
+			blockBuilder.endBlock();
 			return;
 		}
 		blockBuilder.addEmptyLine().indent();
