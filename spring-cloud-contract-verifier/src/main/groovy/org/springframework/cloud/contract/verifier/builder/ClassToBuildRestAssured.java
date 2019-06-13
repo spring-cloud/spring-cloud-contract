@@ -67,19 +67,22 @@ import static org.springframework.cloud.contract.verifier.util.ContentType.XML;
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue;
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent;
 
-class ClassToBuildMockMvc {
+class ClassToBuildRestAssured {
 
 }
 
-/**
- *
- */
 interface MockMvcAcceptor {
 
-	default boolean acceptMockMvc(GeneratedClassMetaData generatedClassMetaData,
-			SingleContractMetadata singleContractMetadata) {
-		return generatedClassMetaData.configProperties.getTestMode() == TestMode.MOCKMVC
-				&& singleContractMetadata.isHttp();
+	default boolean acceptType(GeneratedClassMetaData generatedClassMetaData, SingleContractMetadata singleContractMetadata) {
+		return generatedClassMetaData.configProperties.getTestMode() == TestMode.MOCKMVC && singleContractMetadata.isHttp();
+	}
+
+}
+
+interface ExplicitAcceptor {
+
+	default boolean acceptType(GeneratedClassMetaData generatedClassMetaData) {
+		return generatedClassMetaData.configProperties.getTestMode() == TestMode.EXPLICIT;
 	}
 
 }
@@ -111,7 +114,7 @@ class MockMvcAsyncWhen implements When, MockMvcAcceptor {
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		boolean accept = acceptMockMvc(this.generatedClassMetaData, metadata);
+		boolean accept = acceptType(this.generatedClassMetaData, metadata);
 		if (!accept) {
 			return false;
 		}
@@ -293,19 +296,22 @@ class MockMvcCookiesGiven implements Given {
 
 }
 
-class MockMvcGiven implements Given, BodyMethodVisitor, MockMvcAcceptor {
+class RestAssuredGiven implements Given, BodyMethodVisitor {
 
 	private final BlockBuilder blockBuilder;
 
-	private final GeneratedClassMetaData generatedClassMetaData;
+	private final List<Given> requestGivens = new LinkedList<>();
 
-	private final List<Given> givens = new LinkedList<>();
+	private final List<Given> bodyGivens = new LinkedList<>();
 
-	MockMvcGiven(BlockBuilder blockBuilder,
+	RestAssuredGiven(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
-		this.givens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
+		this.requestGivens.addAll(Arrays.asList(
+				new MockMvcRequestGiven(blockBuilder, generatedClassMetaData),
+				new ExplicitRequestGiven(blockBuilder, generatedClassMetaData)
+		));
+		this.bodyGivens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
 				new MockMvcCookiesGiven(blockBuilder),
 				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData),
 				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData)));
@@ -314,16 +320,71 @@ class MockMvcGiven implements Given, BodyMethodVisitor, MockMvcAcceptor {
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata singleContractMetadata) {
 		startBodyBlock(this.blockBuilder, "// given:")
-				.addIndented("MockMvcRequestSpecification request = given()");
-		indentedBodyBlock(this.blockBuilder, this.givens, singleContractMetadata);
+				.addIndentation();
+		addRequestGivenLine(singleContractMetadata);
+		indentedBodyBlock(this.blockBuilder, this.bodyGivens, singleContractMetadata);
 		return this;
+	}
+
+	public void addRequestGivenLine(SingleContractMetadata singleContractMetadata) {
+		this.requestGivens
+				.stream()
+				.filter(given -> given.accept(singleContractMetadata))
+				.findFirst()
+				.orElseThrow(() -> new IllegalStateException("No matching request building Given implementation for Rest Assured")).apply(singleContractMetadata);
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return acceptMockMvc(this.generatedClassMetaData, singleContractMetadata);
+		return singleContractMetadata.isHttp();
 	}
 
+}
+
+class MockMvcRequestGiven implements Given, MockMvcAcceptor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MockMvcRequestGiven(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = metaData;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.append("MockMvcRequestSpecification request = given()");
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return acceptType(this.generatedClassMetaData, metadata);
+	}
+}
+
+class ExplicitRequestGiven implements Given, ExplicitAcceptor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	ExplicitRequestGiven(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = metaData;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.append("RequestSpecification request = given()");
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return acceptType(this.generatedClassMetaData);
+	}
 }
 
 class MockMvcHeadersGiven implements Given {
@@ -541,7 +602,7 @@ class MockMvcWhen implements When, BodyMethodVisitor, MockMvcAcceptor {
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return acceptMockMvc(this.generatedClassMetaData, singleContractMetadata);
+		return acceptType(this.generatedClassMetaData, singleContractMetadata);
 	}
 
 }
@@ -575,7 +636,7 @@ class MockMvcThen implements Then, BodyMethodVisitor, MockMvcAcceptor {
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return acceptMockMvc(this.generatedClassMetaData, singleContractMetadata);
+		return acceptType(this.generatedClassMetaData, singleContractMetadata);
 	}
 
 }
@@ -703,6 +764,38 @@ class MockMvcRestAssured3Imports implements Imports {
 
 }
 
+class ExplicitRestAssured3Imports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = {
+			"io.restassured.specification.RequestSpecification",
+			"io.restassured.response.Response" };
+
+	ExplicitRestAssured3Imports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestMode() == TestMode.EXPLICIT
+				&& this.generatedClassMetaData.isAnyHttp();
+	}
+
+}
+
 class MockMvcRestAssured3StaticImports implements Imports {
 
 	private final BlockBuilder blockBuilder;
@@ -729,6 +822,36 @@ class MockMvcRestAssured3StaticImports implements Imports {
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties
 				.getTestMode() == TestMode.MOCKMVC;
+	}
+
+}
+
+class ExplicitRestAssured3StaticImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = {
+			"io.restassured.RestAssured.*" };
+
+	ExplicitRestAssured3StaticImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestMode() == TestMode.EXPLICIT;
 	}
 
 }
@@ -814,16 +937,17 @@ class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
 
 	private final BlockBuilder blockBuilder;
 	private final TemplateProcessor templateProcessor;
-	private final ContractTemplate contractTemplate;
-	private final BodyReader bodyReader;
-	private final GeneratedClassMetaData generatedClassMetaData;
+	private final List<Then> thens = new LinkedList<>();
 
 	MockMvcBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
 		this.templateProcessor = new HandlebarsTemplateProcessor();
-		this.contractTemplate = new HandlebarsTemplateProcessor();
-		this.bodyReader = new BodyReader(metaData);
-		this.generatedClassMetaData = metaData;
+		this.thens.addAll(Arrays.asList(
+				new MockMvcBinaryBodyThen(blockBuilder, metaData),
+				new MockMvcTextBodyThen(blockBuilder, metaData),
+				new MockMvcJsonBodyThen(blockBuilder, metaData),
+				new MockMvcXmlBodyThen(blockBuilder)
+		));
 	}
 
 	@Override
@@ -832,34 +956,80 @@ class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
 		this.blockBuilder.addEmptyLine();
 		startBodyBlock(this.blockBuilder, "// and:");
 		Request request = metadata.getContract().getRequest();
-		// TODO: Cut this out to 3 classes
-		validateResponseBodyBlock(metadata);
+		this.thens.stream()
+				.filter(then -> then.accept(metadata))
+				.forEach(then -> then.apply(metadata));
 		String newBody = this.templateProcessor.transform(request, this.blockBuilder.toString());
 		this.blockBuilder.updateContents(newBody);
 		return this;
 	}
 
-	/**
-	 * Builds the response body verification part. The code will differ depending on the
-	 * ContentType, type of response etc. The result will be appended to {@link BlockBuilder}
-	 */
-	private void validateResponseBodyBlock(SingleContractMetadata metadata) {
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.getContract().getResponse().getBody() != null;
+	}
+
+}
+
+class MockMvcTextBodyThen implements Then, BodyParser {
+
+	private final BlockBuilder blockBuilder;
+
+	private final BodyAssertionLineCreator bodyAssertionLineCreator;
+
+	MockMvcTextBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder, metaData);
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		Object convertedResponseBody = convertBody(metadata);
+		convertedResponseBody = StringEscapeUtils.
+				escapeJava(convertedResponseBody.toString());
+		simpleTextResponseBodyCheck(metadata, convertedResponseBody);
+		return this;
+	}
+
+	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata, Object convertedResponseBody) {
+		this.blockBuilder.addLineWithEnding(getSimpleResponseBodyString(getResponseAsString()));
+		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "", convertedResponseBody);
+		this.blockBuilder.addEndingIfNotPresent();
+	}
+
+	private String getSimpleResponseBodyString(String responseString) {
+		return "String responseBody = " + responseString + this.blockBuilder.getLineEnding();
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		ContentType outputTestContentType = metadata.getOutputTestContentType();
+		return outputTestContentType != JSON && outputTestContentType != XML;
+	}
+
+}
+
+class MockMvcJsonBodyThen implements Then, BodyParser {
+
+	private final BlockBuilder blockBuilder;
+	private final BodyAssertionLineCreator bodyAssertionLineCreator;
+	private final GeneratedClassMetaData generatedClassMetaData;
+	private final TemplateProcessor templateProcessor;
+	private final ContractTemplate contractTemplate;
+
+	MockMvcJsonBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder, metaData);
+		this.generatedClassMetaData = metaData;
+		this.templateProcessor = new HandlebarsTemplateProcessor();
+		this.contractTemplate = new HandlebarsTemplateProcessor();
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		BodyMatchers bodyMatchers = metadata.getContract().getResponse().getBodyMatchers();
-		Object responseBody = metadata.getContract().getResponse().getBody();
+		Object convertedResponseBody = convertBody(metadata);
 		ContentType contentType = metadata.getOutputTestContentType();
-		Object convertedResponseBody = responseBody;
-		// TODO: Cut here
-		if (convertedResponseBody instanceof FromFileProperty) {
-			if (((FromFileProperty) convertedResponseBody).isByte()) {
-				byteResponseBodyCheck(metadata, (FromFileProperty) convertedResponseBody);
-				return;
-			}
-			convertedResponseBody = ((FromFileProperty) convertedResponseBody).asString();
-		}
-		if (convertedResponseBody instanceof GString) {
-			convertedResponseBody =
-					extractValue((GString) convertedResponseBody, contentType, o -> o instanceof DslProperty ? ((DslProperty) o).getServerValue(): o);
-		}
 		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
 			boolean dontParseStrings = contentType == JSON && convertedResponseBody instanceof Map;
 			Function parsingClosure = dontParseStrings ? Function.identity() : MapConverter.JSON_PARSING_FUNCTION;
@@ -870,106 +1040,8 @@ class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
 			convertedResponseBody = StringEscapeUtils.
 					escapeJava(convertedResponseBody.toString());
 		}
-		// TODO: Cut here
-		if (JSON == contentType) {
-			addJsonBodyVerification(metadata, convertedResponseBody, bodyMatchers);
-		}
-		// TODO: Cut here
-		else if (XML == contentType) {
-			XmlBodyVerificationBuilder xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(metadata
-					.getContract(),
-					Optional.of(this.blockBuilder.getLineEnding()));
-			xmlBodyVerificationBuilder.addXmlResponseBodyCheck(this.blockBuilder, convertedResponseBody,
-					bodyMatchers, getResponseAsString(), true);
-		}
-		// TODO: Cut here
-		else {
-			simpleTextResponseBodyCheck(metadata, convertedResponseBody);
-		}
-	}
-
-	private void byteResponseBodyCheck(SingleContractMetadata metadata, FromFileProperty convertedResponseBody) {
-		processText(metadata, "", convertedResponseBody);
-		this.blockBuilder.addEndingIfNotPresent();
-	}
-
-	/**
-	 * Appends to {@link BlockBuilder} processing of the given String value.
-	 */
-	private void processText(SingleContractMetadata metadata, String property, Object value) {
-		if (value instanceof String && ((String) value).startsWith("$")) {
-			String newValue = stripFirstChar((String) value).
-			replaceAll("\\$value", "responseBody" + property);
-			this.blockBuilder.addLineWithEnding(newValue);
-		}
-		else {
-			this.blockBuilder.addLineWithEnding(getResponseBodyPropertyComparisonString(metadata, property, value));
-		}
-	}
-
-	private String stripFirstChar(String s) {
-		return s.substring(1);
-	}
-
-	/**
-	 * Builds the code that for the given {@code property} will compare it to
-	 * the given Object {@code value}
-	 */
-	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata, String property, Object value) {
-		if (value instanceof FromFileProperty) {
-			return getResponseBodyPropertyComparisonString(singleContractMetadata, property, (FromFileProperty) value);
-		} else if (value instanceof Pattern) {
-			return getResponseBodyPropertyComparisonString(property, (Pattern) value);
-		} else if (value instanceof ExecutionProperty) {
-			return getResponseBodyPropertyComparisonString(property, (ExecutionProperty) value);
-		}
-		return getResponseBodyPropertyComparisonString(property, value.toString());
-	}
-
-	/**
-	 * Builds the code that for the given {@code property} will compare it to
-	 * the given byte[] {@code value}
-	 */
-	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata, String property, FromFileProperty value) {
-		if (value.isByte()) {
-			return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
-					this.bodyReader.readBytesFromFileString(singleContractMetadata, value, CommunicationType.RESPONSE) + ")";
-		}
-		return getResponseBodyPropertyComparisonString(property, value.asString());
-	}
-
-	/**
-	 * Builds the code that for the given {@code property} will compare it to
-	 * the given String {@code value}
-	 */
-	private String getResponseBodyPropertyComparisonString(String property, String value) {
-		return "assertThat(responseBody" + property + ").isEqualTo(\"" + value + "\")";
-	}
-
-	/**
-	 * Builds the code that for the given {@code property} will match it to
-	 * the given regular expression {@code value}
-	 */
-	private String getResponseBodyPropertyComparisonString(String property, Pattern value) {
-		return "assertThat(responseBody" + property + ")." + createBodyComparison(value);
-	}
-
-	private String createBodyComparison(Pattern bodyValue) {
-		String patternAsString = bodyValue.pattern();
-		return createMatchesMethod(RegexpBuilders.
-				buildGStringRegexpForTestSide(patternAsString));
-	}
-
-	private String createMatchesMethod(String pattern) {
-		return "matches(\"" + pattern + "\")";
-	}
-
-	/**
-	 * Builds the code that for the given {@code property} will match it to
-	 * the given {@link ExecutionProperty} value
-	 */
-	private String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
-		return value.insertValue("responseBody" + property);
+		addJsonBodyVerification(metadata, convertedResponseBody, bodyMatchers);
+		return this;
 	}
 
 	private void addJsonBodyVerification(SingleContractMetadata contractMetadata, Object responseBody, BodyMatchers bodyMatchers) {
@@ -981,10 +1053,6 @@ class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
 			simpleTextResponseBodyCheck(contractMetadata, convertedResponseBody);
 		}
 		processBodyElement("", "", convertedResponseBody);
-	}
-
-	private String getResponseAsString() {
-		return "response.getBody().asString()";
 	}
 
 	private void processBodyElement(String oldProp, String property, Object value) {
@@ -1059,7 +1127,7 @@ class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
 
 	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata, Object convertedResponseBody) {
 		this.blockBuilder.addLineWithEnding(getSimpleResponseBodyString(getResponseAsString()));
-		processText(metadata, "", convertedResponseBody);
+		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "", convertedResponseBody);
 		this.blockBuilder.addEndingIfNotPresent();
 	}
 
@@ -1069,9 +1137,176 @@ class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		// TODO: Cut this out to different classes
-		// XML, JSON, BINARY, TEXT
-		return metadata.getContract().getResponse().getBody() != null;
+		ContentType outputTestContentType = metadata.getOutputTestContentType();
+		return JSON == outputTestContentType ||
+				DEFINED == outputTestContentType;
 	}
 
+}
+
+class MockMvcXmlBodyThen implements Then, BodyParser {
+
+	private final BlockBuilder blockBuilder;
+
+	MockMvcXmlBodyThen(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		BodyMatchers bodyMatchers = metadata.getContract().getResponse().getBodyMatchers();
+		Object convertedResponseBody = convertBody(metadata);
+		XmlBodyVerificationBuilder xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(metadata
+				.getContract(),
+				Optional.of(this.blockBuilder.getLineEnding()));
+		xmlBodyVerificationBuilder.addXmlResponseBodyCheck(this.blockBuilder, convertedResponseBody,
+				bodyMatchers, getResponseAsString(), true);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		ContentType outputTestContentType = metadata.getOutputTestContentType();
+		return XML == outputTestContentType;
+	}
+
+}
+
+class MockMvcBinaryBodyThen implements Then {
+
+	private final BlockBuilder blockBuilder;
+
+	private final BodyAssertionLineCreator bodyAssertionLineCreator;
+
+	MockMvcBinaryBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder, metaData);
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		Object responseBody = metadata.getContract().getResponse().getBody().getServerValue();
+		byteResponseBodyCheck(metadata, (FromFileProperty) responseBody);
+		return this;
+	}
+
+	private void byteResponseBodyCheck(SingleContractMetadata metadata, FromFileProperty convertedResponseBody) {
+		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "", convertedResponseBody);
+		this.blockBuilder.addEndingIfNotPresent();
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Object responseBody = metadata.getContract().getResponse().getBody().getServerValue();
+		if (!(responseBody instanceof FromFileProperty)) {
+			return false;
+		}
+		return ((FromFileProperty) responseBody).isByte();
+	}
+}
+
+interface BodyParser {
+	default Object convertBody(SingleContractMetadata metadata) {
+		Object responseBody = metadata.getContract().getResponse().getBody();
+		ContentType contentType = metadata.getOutputTestContentType();
+		if (responseBody instanceof FromFileProperty) {
+			responseBody = ((FromFileProperty) responseBody).asString();
+		} else if (responseBody instanceof GString) {
+			responseBody =
+					extractValue((GString) responseBody, contentType, o -> o instanceof DslProperty ? ((DslProperty) o).getServerValue(): o);
+		}
+		return responseBody;
+	}
+
+	default String getResponseAsString() {
+		return "response.getBody().asString()";
+	}
+}
+
+class BodyAssertionLineCreator {
+
+	private final BlockBuilder blockBuilder;
+
+	private final BodyReader bodyReader;
+
+	BodyAssertionLineCreator(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.bodyReader = new BodyReader(metaData);
+	}
+
+	void appendBodyAssertionLine(SingleContractMetadata metadata, String property, Object value) {
+		if (value instanceof String && ((String) value).startsWith("$")) {
+			String newValue = stripFirstChar((String) value).
+					replaceAll("\\$value", "responseBody" + property);
+			this.blockBuilder.addLineWithEnding(newValue);
+		}
+		else {
+			this.blockBuilder.addLineWithEnding(getResponseBodyPropertyComparisonString(metadata, property, value));
+		}
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given Object {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata, String property, Object value) {
+		if (value instanceof FromFileProperty) {
+			return getResponseBodyPropertyComparisonString(singleContractMetadata, property, (FromFileProperty) value);
+		} else if (value instanceof Pattern) {
+			return getResponseBodyPropertyComparisonString(property, (Pattern) value);
+		} else if (value instanceof ExecutionProperty) {
+			return getResponseBodyPropertyComparisonString(property, (ExecutionProperty) value);
+		}
+		return getResponseBodyPropertyComparisonString(property, value.toString());
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given byte[] {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata, String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
+					this.bodyReader.readBytesFromFileString(singleContractMetadata, value, CommunicationType.RESPONSE) + ")";
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString());
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given String {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(String property, String value) {
+		return "assertThat(responseBody" + property + ").isEqualTo(\"" + value + "\")";
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will match it to
+	 * the given regular expression {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(String property, Pattern value) {
+		return "assertThat(responseBody" + property + ")." + createBodyComparison(value);
+	}
+
+	private String createBodyComparison(Pattern bodyValue) {
+		String patternAsString = bodyValue.pattern();
+		return createMatchesMethod(RegexpBuilders.
+				buildGStringRegexpForTestSide(patternAsString));
+	}
+
+	private String createMatchesMethod(String pattern) {
+		return "matches(\"" + pattern + "\")";
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will match it to
+	 * the given {@link ExecutionProperty} value
+	 */
+	private String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
+		return value.insertValue("responseBody" + property);
+	}
+
+	private String stripFirstChar(String s) {
+		return s.substring(1);
+	}
 }

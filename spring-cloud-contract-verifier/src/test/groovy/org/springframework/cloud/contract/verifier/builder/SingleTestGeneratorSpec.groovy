@@ -311,7 +311,7 @@ class SingleTestGeneratorSpec extends Specification {
 			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -339,7 +339,7 @@ class SingleTestGeneratorSpec extends Specification {
 			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -385,7 +385,7 @@ class SingleTestGeneratorSpec extends Specification {
 			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -499,7 +499,7 @@ class SingleTestGeneratorSpec extends Specification {
 			clazz.contains('Response response = given().spec(request)')
 	}
 
-	def "should pick the contract's name as the test method"() {
+	def "should pick the contract's name as the test method for #testFramework"() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -527,7 +527,7 @@ class SingleTestGeneratorSpec extends Specification {
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
 
-	def "should pick the contract's name as the test method when there are multiple contracts"() {
+	def "should pick the contract's name as the test method when there are multiple contracts for #testFramework"() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -560,7 +560,7 @@ class SingleTestGeneratorSpec extends Specification {
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
 
-	def 'should generate the test method when there are multiple contracts without name field'() {
+	def 'should generate the test method when there are multiple contracts without name field for #testFramework'() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -725,7 +725,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 1, convertAsCollection(new File('/'), file))
 			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 		when:
-			testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			thrown(UnsupportedOperationException)
 		where:

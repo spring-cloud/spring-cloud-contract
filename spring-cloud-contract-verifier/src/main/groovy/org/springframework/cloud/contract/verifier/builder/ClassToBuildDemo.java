@@ -354,8 +354,10 @@ class JavaClassMetaData implements ClassMetaData {
 				this.generatedClassMetaData.configProperties.getNameSuffixForTests())
 						? this.generatedClassMetaData.configProperties
 								.getNameSuffixForTests()
-						: "Tests";
-		this.blockBuilder.addAtTheEnd(suffix);
+						: "Test";
+		if (!this.blockBuilder.endsWith(suffix)) {
+			this.blockBuilder.addAtTheEnd(suffix);
+		}
 		return this;
 	}
 

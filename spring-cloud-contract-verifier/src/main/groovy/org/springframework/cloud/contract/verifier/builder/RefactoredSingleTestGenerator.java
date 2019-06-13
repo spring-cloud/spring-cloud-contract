@@ -54,7 +54,7 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 				// JavaMethodMetadata
 				// SpockMethodMetadata
 				.methodMetadata(new JunitMethodMetadata(builder))
-				.given(new MockMvcGiven(builder, metaData))
+				.given(new RestAssuredGiven(builder, metaData))
 				.when(new MockMvcWhen(builder, metaData))
 				.then(new MockMvcThen(builder, metaData));
 
@@ -73,9 +73,11 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new JsonPathImports(builder, metaData),
 						new XmlImports(builder, metaData),
 						new MessagingImports(builder, metaData),
-						new MockMvcRestAssured3Imports(builder, metaData))
+						new MockMvcRestAssured3Imports(builder, metaData),
+						new ExplicitRestAssured3Imports(builder, metaData))
 				.staticImports(new DefaultStaticImports(builder, metaData),
 						new MockMvcRestAssured3StaticImports(builder, metaData),
+						new ExplicitRestAssured3StaticImports(builder, metaData),
 						new CustomStaticImports(builder, metaData),
 						new MessagingStaticImports(builder, metaData))
 				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))

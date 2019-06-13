@@ -236,7 +236,7 @@ class GeneratedTestClassBuilder {
 		// picks a matching class meta data
 		ClassMetaData classMetaData = this.metaData.stream().filter(Acceptor::accept)
 				.findFirst().orElseThrow(() -> new IllegalStateException(
-						"There is no matching meta data"));
+						"There is no matching class meta data"));
 		// package com.example
 		classMetaData.setupLineEnding().packageDefinition();
 		// \n

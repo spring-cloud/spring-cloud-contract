@@ -166,6 +166,10 @@ class BlockBuilder {
 		return this
 	}
 
+	boolean endsWith(String text) {
+		return builder.toString().endsWith(text)
+	}
+
 	/**
 	 * Adds the given text at the end of the line
 	 *
