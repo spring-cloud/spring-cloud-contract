@@ -17,9 +17,12 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -28,8 +31,11 @@ import groovy.lang.Closure;
 import groovy.lang.GString;
 import org.apache.commons.text.StringEscapeUtils;
 
+import org.springframework.cloud.contract.spec.ContractTemplate;
 import org.springframework.cloud.contract.spec.internal.Body;
+import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.Cookie;
+import org.springframework.cloud.contract.spec.internal.Cookies;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
@@ -45,11 +51,19 @@ import org.springframework.cloud.contract.spec.internal.Response;
 import org.springframework.cloud.contract.spec.internal.Url;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor;
+import org.springframework.cloud.contract.verifier.template.TemplateProcessor;
 import org.springframework.cloud.contract.verifier.util.ContentType;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
+import org.springframework.cloud.contract.verifier.util.RegexpBuilders;
+import org.springframework.util.StringUtils;
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava;
+import static org.springframework.cloud.contract.verifier.util.ContentType.DEFINED;
+import static org.springframework.cloud.contract.verifier.util.ContentType.FORM;
 import static org.springframework.cloud.contract.verifier.util.ContentType.JSON;
+import static org.springframework.cloud.contract.verifier.util.ContentType.TEXT;
+import static org.springframework.cloud.contract.verifier.util.ContentType.XML;
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue;
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent;
 
@@ -161,7 +175,7 @@ class MockMvcBodyGiven implements Given {
 
 	@SuppressWarnings("unchecked")
 	private String getBodyAsString(SingleContractMetadata metadata) {
-		ContentType contentType = metadata.getInputContentType();
+		ContentType contentType = metadata.getInputTestContentType();
 		Body body = metadata.getContract().getRequest().getBody();
 		Object bodyValue = extractServerValueFromBody(contentType, body.getServerValue());
 		if (contentType == ContentType.FORM) {
@@ -222,7 +236,7 @@ class MockMvcBodyGiven implements Given {
 
 	private String escapeRequestSpecialChars(SingleContractMetadata metadata,
 			String string) {
-		if (metadata.getInputContentType() == ContentType.JSON) {
+		if (metadata.getInputTestContentType() == ContentType.JSON) {
 			return string.replaceAll("\\\\n", "\\\\\\\\n");
 		}
 		return string;
@@ -546,7 +560,9 @@ class MockMvcThen implements Then, BodyMethodVisitor, MockMvcAcceptor {
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.thens.addAll(Arrays.asList(
 				new MockMvcStatusCodeThen(this.blockBuilder),
-				new MockMvcHeadersThen(this.blockBuilder, generatedClassMetaData)
+				new MockMvcHeadersThen(this.blockBuilder),
+				new MockMvcCookiesThen(this.blockBuilder),
+				new MockMvcBodyThen(this.blockBuilder, generatedClassMetaData)
 				));
 	}
 
@@ -575,7 +591,7 @@ class MockMvcStatusCodeThen implements Then, MockMvcAcceptor {
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
-		this.blockBuilder.addLineWithEnding("assertThat(response.statusCode()).isEqualTo(" + response.getStatus().getServerValue() + ")");
+		this.blockBuilder.addIndented("assertThat(response.statusCode()).isEqualTo(" + response.getStatus().getServerValue() + ")").addEndingIfNotPresent();
 		return this;
 	}
 
@@ -590,39 +606,34 @@ class MockMvcHeadersThen implements Then, MockMvcAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
-	private final GeneratedClassMetaData generatedClassMetaData;
-
-	MockMvcHeadersThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
+	MockMvcHeadersThen(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;;
 	}
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
 		Headers headers = response.getHeaders();
-		headers.executeForEachHeader(header -> {
-			processHeaderElement(header.getName(), header.getServerValue() instanceof NotToEscapePattern ?
-					header.getServerValue() :
-					MapConverter.getTestSideValues(header.getServerValue()));
-		});
+		headers.executeForEachHeader(header -> processHeaderElement(header.getName(), header.getServerValue() instanceof NotToEscapePattern ?
+				header.getServerValue() :
+				MapConverter.getTestSideValues(header.getServerValue())));
+		this.blockBuilder.addEndingIfNotPresent();
 		return this;
 	}
 
 	private void processHeaderElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			this.blockBuilder.addLineWithEnding("assertThat(response.header(\"" + property + "\"))."
+			this.blockBuilder.addIndented("assertThat(response.header(\"" + property + "\"))."
 					+
 					createMatchesMethod(((NotToEscapePattern) value).getServerValue().pattern().replace("\\", "\\\\")));
 		} else if (value instanceof String || value instanceof Pattern) {
 			this.blockBuilder.
-					addLineWithEnding("assertThat(response.header(\"" + property + "\"))." + createHeaderComparison(value));
+					addIndented("assertThat(response.header(\"" + property + "\"))." + createHeaderComparison(value));
 		} else if (value instanceof Number) {
 			this.blockBuilder.
-					addLineWithEnding("assertThat(response.header(\"" + property + "\")).isEqualTo(" + value + ")");
+					addIndented("assertThat(response.header(\"" + property + "\")).isEqualTo(" + value + ")");
 		} else if (value instanceof ExecutionProperty) {
-			this.blockBuilder.addLineWithEnding(((ExecutionProperty) value).insertValue("response.header(\"" + property + "\")"));
+			this.blockBuilder.addIndented(((ExecutionProperty) value).insertValue("response.header(\"" + property + "\")"));
 
 		}
 		else {
@@ -654,10 +665,6 @@ class MockMvcHeadersThen implements Then, MockMvcAcceptor {
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		boolean accept = acceptMockMvc(this.generatedClassMetaData, metadata);
-		if (!accept) {
-			return false;
-		}
 		Response response = metadata.getContract().getResponse();
 		return response.getHeaders() != null;
 	}
@@ -722,6 +729,349 @@ class MockMvcRestAssured3StaticImports implements Imports {
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties
 				.getTestMode() == TestMode.MOCKMVC;
+	}
+
+}
+
+class MockMvcCookiesThen implements Then, MockMvcAcceptor {
+
+	private final BlockBuilder blockBuilder;
+
+	MockMvcCookiesThen(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		Response response = metadata.getContract().getResponse();
+		Cookies cookies = response.getCookies();
+		cookies.executeForEachCookie(cookie -> processCookieElement(cookie.getKey(), cookie.getServerValue() instanceof NotToEscapePattern ?
+				cookie.getServerValue() :
+				MapConverter.getTestSideValues(cookie.getServerValue())));
+		this.blockBuilder.addEndingIfNotPresent();
+		return this;
+	}
+
+	private void processCookieElement(String property, Object value) {
+		if (value instanceof NotToEscapePattern) {
+			verifyCookieNotNull(property);
+			this.blockBuilder.addIndented("assertThat(response.getCookie(\"" + property + "\"))."
+					+
+					createMatchesMethod(((NotToEscapePattern) value).getServerValue().pattern().replace("\\", "\\\\")));
+		} else if (value instanceof String || value instanceof Pattern) {
+			verifyCookieNotNull(property);
+			this.blockBuilder.
+					addIndented("assertThat(response.getCookie(\"" + property + "\"))." + createHeaderComparison(value));
+		} else if (value instanceof Number) {
+			verifyCookieNotNull(property);
+			this.blockBuilder.
+					addIndented("assertThat(response.getCookie(\"" + property + "\")).isEqualTo(" + value + ")");
+		} else if (value instanceof ExecutionProperty) {
+			verifyCookieNotNull(property);
+			this.blockBuilder.addIndented(((ExecutionProperty) value).insertValue("response.getCookie(\"" + property + "\")"));
+
+		}
+		else {
+			// fallback
+			processCookieElement(property, value.toString());
+		}
+	}
+
+	private void verifyCookieNotNull(String key) {
+		blockBuilder.addIndented("assertThat(response.getCookie(\"" + key + "\")).isNotNull()").addEndingIfNotPresent();
+	}
+
+	private String createMatchesMethod(String pattern) {
+		return "matches(\"" + pattern + "\")";
+	}
+
+	private String createHeaderComparison(Object headerValue) {
+		if (headerValue instanceof Pattern) {
+			return createHeaderComparison((Pattern) headerValue);
+		}
+		String escapedHeader = convertUnicodeEscapesIfRequired(headerValue.toString());
+		return "isEqualTo(\"" + escapedHeader + "\")";
+	}
+
+	private String convertUnicodeEscapesIfRequired(String json) {
+		String unescapedJson = StringEscapeUtils.unescapeJson(json);
+		return escapeJava(unescapedJson);
+	}
+
+	private String createHeaderComparison(Pattern headerValue) {
+		return createMatchesMethod(escapeJava(headerValue.pattern()));
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Response response = metadata.getContract().getResponse();
+		return response.getCookies() != null;
+	}
+
+}
+
+class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
+
+	private final BlockBuilder blockBuilder;
+	private final TemplateProcessor templateProcessor;
+	private final ContractTemplate contractTemplate;
+	private final BodyReader bodyReader;
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MockMvcBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.templateProcessor = new HandlebarsTemplateProcessor();
+		this.contractTemplate = new HandlebarsTemplateProcessor();
+		this.bodyReader = new BodyReader(metaData);
+		this.generatedClassMetaData = metaData;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		endBodyBlock(this.blockBuilder);
+		this.blockBuilder.addEmptyLine();
+		startBodyBlock(this.blockBuilder, "// and:");
+		Request request = metadata.getContract().getRequest();
+		// TODO: Cut this out to 3 classes
+		validateResponseBodyBlock(metadata);
+		String newBody = this.templateProcessor.transform(request, this.blockBuilder.toString());
+		this.blockBuilder.updateContents(newBody);
+		return this;
+	}
+
+	/**
+	 * Builds the response body verification part. The code will differ depending on the
+	 * ContentType, type of response etc. The result will be appended to {@link BlockBuilder}
+	 */
+	private void validateResponseBodyBlock(SingleContractMetadata metadata) {
+		BodyMatchers bodyMatchers = metadata.getContract().getResponse().getBodyMatchers();
+		Object responseBody = metadata.getContract().getResponse().getBody();
+		ContentType contentType = metadata.getOutputTestContentType();
+		Object convertedResponseBody = responseBody;
+		// TODO: Cut here
+		if (convertedResponseBody instanceof FromFileProperty) {
+			if (((FromFileProperty) convertedResponseBody).isByte()) {
+				byteResponseBodyCheck(metadata, (FromFileProperty) convertedResponseBody);
+				return;
+			}
+			convertedResponseBody = ((FromFileProperty) convertedResponseBody).asString();
+		}
+		if (convertedResponseBody instanceof GString) {
+			convertedResponseBody =
+					extractValue((GString) convertedResponseBody, contentType, o -> o instanceof DslProperty ? ((DslProperty) o).getServerValue(): o);
+		}
+		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
+			boolean dontParseStrings = contentType == JSON && convertedResponseBody instanceof Map;
+			Function parsingClosure = dontParseStrings ? Function.identity() : MapConverter.JSON_PARSING_FUNCTION;
+			convertedResponseBody = MapConverter.
+					getTestSideValues(convertedResponseBody, parsingClosure);
+		}
+		else {
+			convertedResponseBody = StringEscapeUtils.
+					escapeJava(convertedResponseBody.toString());
+		}
+		// TODO: Cut here
+		if (JSON == contentType) {
+			addJsonBodyVerification(metadata, convertedResponseBody, bodyMatchers);
+		}
+		// TODO: Cut here
+		else if (XML == contentType) {
+			XmlBodyVerificationBuilder xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(metadata
+					.getContract(),
+					Optional.of(this.blockBuilder.getLineEnding()));
+			xmlBodyVerificationBuilder.addXmlResponseBodyCheck(this.blockBuilder, convertedResponseBody,
+					bodyMatchers, getResponseAsString(), true);
+		}
+		// TODO: Cut here
+		else {
+			simpleTextResponseBodyCheck(metadata, convertedResponseBody);
+		}
+	}
+
+	private void byteResponseBodyCheck(SingleContractMetadata metadata, FromFileProperty convertedResponseBody) {
+		processText(metadata, "", convertedResponseBody);
+		this.blockBuilder.addEndingIfNotPresent();
+	}
+
+	/**
+	 * Appends to {@link BlockBuilder} processing of the given String value.
+	 */
+	private void processText(SingleContractMetadata metadata, String property, Object value) {
+		if (value instanceof String && ((String) value).startsWith("$")) {
+			String newValue = stripFirstChar((String) value).
+			replaceAll("\\$value", "responseBody" + property);
+			this.blockBuilder.addLineWithEnding(newValue);
+		}
+		else {
+			this.blockBuilder.addLineWithEnding(getResponseBodyPropertyComparisonString(metadata, property, value));
+		}
+	}
+
+	private String stripFirstChar(String s) {
+		return s.substring(1);
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given Object {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata, String property, Object value) {
+		if (value instanceof FromFileProperty) {
+			return getResponseBodyPropertyComparisonString(singleContractMetadata, property, (FromFileProperty) value);
+		} else if (value instanceof Pattern) {
+			return getResponseBodyPropertyComparisonString(property, (Pattern) value);
+		} else if (value instanceof ExecutionProperty) {
+			return getResponseBodyPropertyComparisonString(property, (ExecutionProperty) value);
+		}
+		return getResponseBodyPropertyComparisonString(property, value.toString());
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given byte[] {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata, String property, FromFileProperty value) {
+		if (value.isByte()) {
+			return "assertThat(response.getBody().asByteArray()).isEqualTo(" +
+					this.bodyReader.readBytesFromFileString(singleContractMetadata, value, CommunicationType.RESPONSE) + ")";
+		}
+		return getResponseBodyPropertyComparisonString(property, value.asString());
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given String {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(String property, String value) {
+		return "assertThat(responseBody" + property + ").isEqualTo(\"" + value + "\")";
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will match it to
+	 * the given regular expression {@code value}
+	 */
+	private String getResponseBodyPropertyComparisonString(String property, Pattern value) {
+		return "assertThat(responseBody" + property + ")." + createBodyComparison(value);
+	}
+
+	private String createBodyComparison(Pattern bodyValue) {
+		String patternAsString = bodyValue.pattern();
+		return createMatchesMethod(RegexpBuilders.
+				buildGStringRegexpForTestSide(patternAsString));
+	}
+
+	private String createMatchesMethod(String pattern) {
+		return "matches(\"" + pattern + "\")";
+	}
+
+	/**
+	 * Builds the code that for the given {@code property} will match it to
+	 * the given {@link ExecutionProperty} value
+	 */
+	private String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
+		return value.insertValue("responseBody" + property);
+	}
+
+	private void addJsonBodyVerification(SingleContractMetadata contractMetadata, Object responseBody, BodyMatchers bodyMatchers) {
+		JsonBodyVerificationBuilder jsonBodyVerificationBuilder = new JsonBodyVerificationBuilder(this.generatedClassMetaData.configProperties, this.templateProcessor, this.contractTemplate, contractMetadata.getContract(), Optional.of(this.blockBuilder.getLineEnding()));
+		Object convertedResponseBody = jsonBodyVerificationBuilder
+				.addJsonResponseBodyCheck(this.blockBuilder, responseBody,
+						bodyMatchers, getResponseAsString(), true);
+		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
+			simpleTextResponseBodyCheck(contractMetadata, convertedResponseBody);
+		}
+		processBodyElement("", "", convertedResponseBody);
+	}
+
+	private String getResponseAsString() {
+		return "response.getBody().asString()";
+	}
+
+	private void processBodyElement(String oldProp, String property, Object value) {
+		String propDiff = subtract(property, oldProp);
+		String prop = wrappedWithBracketsForDottedProp(propDiff);
+		String mergedProp = StringUtils.hasText(property) ? oldProp + "." + prop : "";
+		if (value instanceof ExecutionProperty) {
+			processBodyElement(mergedProp, (ExecutionProperty) value);
+		} else if (value instanceof Map.Entry) {
+			processBodyElement(mergedProp, (Map.Entry) value);
+		} else if (value instanceof Map) {
+			processBodyElement(mergedProp, (Map) value);
+		} else if (value instanceof List) {
+			processBodyElement(mergedProp, (List) value);
+		}
+	}
+
+	private void processBodyElement(String property, ExecutionProperty exec) {
+		this.blockBuilder.addLineWithEnding(exec.insertValue("parsedJson.read(\"$" + property + "\")"));
+	}
+
+	private void processBodyElement(String property, Map.Entry entry) {
+		processBodyElement(property,
+				getMapKeyReferenceString(property, entry), entry.getValue());
+	}
+
+	private void processBodyElement(String property, Map map) {
+		map.entrySet().forEach(o -> processBodyElement(property, (Map.Entry) o));
+	}
+
+	private void processBodyElement(String property, List list) {
+		Iterator iterator = list.iterator();
+		int index = -1;
+		while (iterator.hasNext()) {
+			Object listElement = iterator.next();
+			index = index + 1;
+			String prop = getPropertyInListString(property, index);
+			processBodyElement(property, prop, listElement);
+		}
+	}
+
+	private String getPropertyInListString(String property, Integer listIndex) {
+		return property + "[" + listIndex + "]";
+	}
+
+	private String getMapKeyReferenceString(String property, Map.Entry entry) {
+		return provideProperJsonPathNotation(property) + "." + entry.getKey();
+	}
+
+	private String provideProperJsonPathNotation(String property) {
+		return property.replaceAll("(get\\(\\\\\")(.*)(\\\\\"\\))", "$2");
+	}
+
+	private String wrappedWithBracketsForDottedProp(String key) {
+		String remindingKey = trailingKey(key);
+		if (remindingKey.contains(".")) {
+			return "['" + remindingKey + "']";
+		}
+		return remindingKey;
+	}
+
+	private String trailingKey(String key) {
+		if (key.startsWith(".")) {
+			return key.substring(1);
+		}
+		return key;
+	}
+
+	private String subtract(String one, String two) {
+		return one.replaceAll(two, "");
+	}
+
+	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata, Object convertedResponseBody) {
+		this.blockBuilder.addLineWithEnding(getSimpleResponseBodyString(getResponseAsString()));
+		processText(metadata, "", convertedResponseBody);
+		this.blockBuilder.addEndingIfNotPresent();
+	}
+
+	private String getSimpleResponseBodyString(String responseString) {
+		return "String responseBody = " + responseString + this.blockBuilder.getLineEnding();
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		// TODO: Cut this out to different classes
+		// XML, JSON, BINARY, TEXT
+		return metadata.getContract().getResponse().getBody() != null;
 	}
 
 }

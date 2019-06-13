@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.function.Function
+
 import groovy.json.JsonSlurper
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
@@ -40,6 +42,9 @@ class MapConverter {
 	public static final Closure JSON_PARSING_CLOSURE = { String value ->
 		new JsonSlurper().parseText(value)
 	}
+	public static final Function<String, Object> JSON_PARSING_FUNCTION = { String value ->
+		new JsonSlurper().parseText(value)
+	} as Function
 
 	private final TemplateProcessor templateProcessor
 
@@ -159,6 +164,10 @@ class MapConverter {
 
 	static Object getStubSideValues(json, Closure parsingClosure = JSON_PARSING_CLOSURE) {
 		return getClientOrServerSideValues(json, STUB_SIDE, parsingClosure)
+	}
+
+	static Object getTestSideValues(json, Function function) {
+		return getClientOrServerSideValues(json, TEST_SIDE, { function.apply(it) })
 	}
 
 	static Object getTestSideValues(json, Closure parsingClosure = JSON_PARSING_CLOSURE) {

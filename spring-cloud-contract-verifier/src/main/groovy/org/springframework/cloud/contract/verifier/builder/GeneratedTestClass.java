@@ -268,6 +268,7 @@ class GeneratedTestClassBuilder {
 		List<Visitor> elements = list.stream().filter(Acceptor::accept)
 				.collect(Collectors.toList());
 		elements.forEach(OurCallable::call);
+		this.blockBuilder.addEndingIfNotPresent();
 		if (!elements.isEmpty()) {
 			this.blockBuilder.addEmptyLine();
 		}
@@ -323,6 +324,7 @@ class ClassBodyBuilder {
 	void visit(List<? extends Visitor> list) {
 		list.stream().filter(Acceptor::accept).forEach(visitor -> {
 			visitor.call();
+			this.blockBuilder.addEndingIfNotPresent();
 			this.blockBuilder.addEmptyLine();
 		});
 	}
@@ -432,7 +434,8 @@ class SingleMethodBuilder {
 		this.blockBuilder.addEmptyLine();
 		this.generatedClassMetaData.toSingleContractMetadata().forEach(metaData -> {
 			// @Test
-			visit(this.methodAnnotations, metaData);
+			visit(this.methodAnnotations, metaData, false);
+			this.blockBuilder.addEmptyLine();
 			// @formatter:off
 			// public void validate_foo()
 			this.blockBuilder.append(methodMetadata::modifier)
@@ -450,6 +453,7 @@ class SingleMethodBuilder {
 				// (indent) then
 				visit(this.thens, metaData);
 			});
+			this.blockBuilder.addEmptyLine();
 			// }
 		});
 		// @formatter:on
@@ -458,12 +462,20 @@ class SingleMethodBuilder {
 
 	private void visit(List<? extends MethodVisitor> list,
 			SingleContractMetadata metaData) {
+		visit(list, metaData, true);
+	}
+
+	private void visit(List<? extends MethodVisitor> list,
+			SingleContractMetadata metaData, boolean addLineEnding) {
 		List<? extends MethodVisitor> visitors = list.stream().filter(o -> o.accept(metaData))
 				.collect(Collectors.toList());
 		Iterator<? extends MethodVisitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			MethodVisitor visitor = iterator.next();
 			visitor.apply(metaData);
+			if (addLineEnding) {
+				this.blockBuilder.addEndingIfNotPresent();
+			}
 			if (iterator.hasNext()) {
 				this.blockBuilder.addEmptyLine();
 			}

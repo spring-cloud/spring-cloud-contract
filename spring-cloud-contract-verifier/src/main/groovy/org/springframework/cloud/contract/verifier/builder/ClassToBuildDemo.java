@@ -661,6 +661,8 @@ interface BodyMethodVisitor {
 			when.apply(singleContractMetadata);
 			if (iterator.hasNext()) {
 				blockBuilder.addEmptyLine();
+			} else {
+				blockBuilder.addEndingIfNotPresent();
 			}
 		}
 	}
@@ -705,67 +707,6 @@ final class ContentHelper {
 
 	private static String quotedAndEscaped(String string) {
 		return '"' + StringEscapeUtils.escapeJava(string) + '"';
-	}
-
-}
-
-class RefactoredSingleTestGenerator implements SingleTestGenerator {
-
-	@Override
-	public String buildClass(ContractVerifierConfigProperties properties,
-			Collection<ContractMetadata> listOfFiles, String className,
-			String classPackage, String includedDirectoryRelativePath) {
-		throw new UnsupportedOperationException("Deprecated method");
-	}
-
-	@Override
-	public String buildClass(ContractVerifierConfigProperties properties,
-			Collection<ContractMetadata> listOfFiles,
-			String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		BlockBuilder builder = new BlockBuilder("\t");
-		GeneratedClassMetaData metaData = new GeneratedClassMetaData(properties,
-				listOfFiles, includedDirectoryRelativePath, generatedClassData);
-
-		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(builder)
-				.contractMetaData(metaData)
-				// JUnitMethodAnnotation
-				.methodAnnotation(new JUnit4MethodAnnotation(builder, metaData),
-						new JUnit4IgnoreMethodAnnotation(builder, metaData))
-				// JavaMethodMetadata
-				// SpockMethodMetadata
-				.methodMetadata(new JunitMethodMetadata(builder))
-				.given(new MockMvcGiven(builder, metaData))
-				.when(new MockMvcWhen(builder, metaData))
-				.then(new MockMvcThen(builder, metaData));
-
-		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
-				.field(new MessagingFields(builder, metaData))
-				.methodBuilder(methodBuilder);
-
-		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder.builder(builder)
-				.classBodyBuilder(bodyBuilder)
-				.metaData(new JavaClassMetaData(builder, metaData))
-				.imports(new CustomImports(builder, metaData),
-						new JsonImports(builder, metaData),
-						new JUnit4Imports(builder, metaData),
-						new Junit4IgnoreImports(builder, metaData),
-						new JUnit4OrderImports(builder, metaData),
-						new JsonPathImports(builder, metaData),
-						new XmlImports(builder, metaData),
-						new MessagingImports(builder, metaData),
-						new MockMvcRestAssured3Imports(builder, metaData))
-				.staticImports(new DefaultStaticImports(builder, metaData),
-						new MockMvcRestAssured3StaticImports(builder, metaData),
-						new CustomStaticImports(builder, metaData),
-						new MessagingStaticImports(builder, metaData))
-				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))
-				.build();
-		return generatedTestClass.asClassString();
-	}
-
-	@Override
-	public String fileExtension(ContractVerifierConfigProperties properties) {
-		return properties.getTestFramework().getClassExtension();
 	}
 
 }

@@ -16,11 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.function.Function
+
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
 import groovy.json.JsonOutput
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.commons.beanutils.PropertyUtilsBean
@@ -37,7 +38,6 @@ import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
@@ -73,6 +73,23 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		this.contract = contract
 		this.lineSuffix = lineSuffix
 		this.postProcessJsonPathCall = postProcessJsonPathCall
+	}
+
+	JsonBodyVerificationBuilder(ContractVerifierConfigProperties configProperties,
+			TemplateProcessor templateProcessor,
+			ContractTemplate contractTemplate,
+			Contract contract,
+			Optional<String> lineSuffix,
+			Function<String, String> postProcessJsonPathCall) {
+		this(configProperties, templateProcessor, contractTemplate, contract, lineSuffix, { String value -> postProcessJsonPathCall.apply(value) })
+	}
+
+	JsonBodyVerificationBuilder(ContractVerifierConfigProperties configProperties,
+			TemplateProcessor templateProcessor,
+			ContractTemplate contractTemplate,
+			Contract contract,
+			Optional<String> lineSuffix) {
+		this(configProperties, templateProcessor, contractTemplate, contract, lineSuffix, { String value -> Function.identity().apply(value) })
 	}
 
 	Object addJsonResponseBodyCheck(BlockBuilder bb, Object convertedResponseBody,
@@ -123,7 +140,6 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	// we want to make the type more generic (e.g. not ArrayList but List)
-	@CompileDynamic
 	protected String sizeCheckMethod(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
 		String prefix = sizeCheckPrefix(bodyMatcher, quotedAndEscaptedPath)
 		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher
@@ -249,7 +265,6 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		}
 	}
 
-	@CompileDynamic
 	private Closure<Object> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
 		return { entry ->
 			if (!(entry instanceof String) || !templateModel) {

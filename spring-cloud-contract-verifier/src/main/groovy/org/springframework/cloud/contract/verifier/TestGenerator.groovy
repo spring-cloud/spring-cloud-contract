@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory
 import wiremock.com.google.common.collect.ListMultimap
 
 import org.springframework.cloud.contract.spec.ContractVerifierException
-import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
+import org.springframework.cloud.contract.verifier.builder.RefactoredSingleTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
@@ -42,7 +42,6 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeL
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.convertIllegalPackageChars
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.directoryToPackage
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastDot
-
 /**
  * @author Jakub Kubrynski, codearte.io
  */
@@ -69,7 +68,7 @@ class TestGenerator {
 		List<SingleTestGenerator> factories = SpringFactoriesLoader.
 				loadFactories(SingleTestGenerator, null)
 		if (factories.empty) {
-			return new JavaTestGenerator()
+			return new RefactoredSingleTestGenerator()
 		}
 		return factories.first()
 	}

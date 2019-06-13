@@ -17,10 +17,8 @@
 package org.springframework.cloud.contract.verifier.builder
 
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-
 /**
  * Builds a block of code. Allows to start, end, indent etc. pieces of code.
  *
@@ -50,6 +48,11 @@ class BlockBuilder {
 	BlockBuilder lineEnding(String lineEnding) {
 		this.lineEnding = lineEnding
 		return this
+	}
+
+
+	String getLineEnding() {
+		return this.lineEnding
 	}
 
 	/**
@@ -137,7 +140,6 @@ class BlockBuilder {
 		return this
 	}
 
-	@CompileDynamic
 	void addIndentation() {
 		indents.times {
 			builder << spacer
@@ -173,8 +175,13 @@ class BlockBuilder {
 		String lastChar = builder.charAt(builder.length() - 1) as String
 		String secondLastChar = builder.length() >= 2 ? builder.
 				charAt(builder.length() - 2) as String : ""
-		if (endsWithNewLine(lastChar) && aSpecialSign(secondLastChar, toAdd) ||
-				endsWithNewLine(lastChar) && aSpecialSign(lastChar, toAdd)) {
+		boolean isEndWithNewLine = endsWithNewLine(lastChar)
+		boolean lastCharSpecial = aSpecialSign(lastChar, toAdd)
+		boolean secondLastCharSpecial = aSpecialSign(secondLastChar, toAdd)
+		if (isEndWithNewLine && secondLastCharSpecial || lastCharSpecial) {
+			return this
+		}
+		else if (lastChar == toAdd) {
 			return this
 		}
 		else if (endsWithNewLine(lastChar) && !aSpecialSign(secondLastChar, toAdd)) {

@@ -24,6 +24,7 @@ public class GeneratedTestClassTests {
 
 	// @formatter:off
 	String contract = "org.springframework.cloud.contract.spec.Contract.make {\n"
+			+ " name \"foo\"\n"
 			+ " request {\n"
 			+ "  method 'PUT'\n"
 			+ "  url 'url'\n"
@@ -31,13 +32,66 @@ public class GeneratedTestClassTests {
 			+ "    header('foo', 'bar')\n"
 			+ "  }\n"
 			+ "  body (\n"
-			+ "    [\"foo\":\"bar\"]\n"
+			+ "    [\"foo1\":\"bar1\"]\n"
 			+ "  )\n"
 			+ " }\n"
 			+ " response {\n"
 			+ "  status OK()\n"
+			+ "  headers {\n"
+			+ "    header('foo2', 'bar2')\n"
+			+ "  }\n"
+			+ "  body (\n"
+			+ "    [\"foo3\":\"bar3\"]\n"
+			+ "  )\n"
 			+ " }\n"
 			+ "}";
+	// @formatter:on
+
+	// @formatter:off
+	String expectedTest = "package test;\n"
++ "\n"
++ "import org.junit.FixMethodOrder;\n"
++ "import org.junit.runners.MethodSorters;\n"
++ "import org.junit.Test;\n"
++ "import org.junit.Rule;\n"
++ "import org.junit.Ignore;\n"
++ "import org.junit.FixMethodOrder;\n"
++ "import org.junit.runners.MethodSorters;\n"
++ "import com.jayway.jsonpath.DocumentContext;\n"
++ "import com.jayway.jsonpath.JsonPath;\n"
++ "import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;\n"
++ "import io.restassured.response.ResponseOptions;\n"
++ "\n"
++ "import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;\n"
++ "import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;\n"
++ "import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;\n"
++ "import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;\n"
++ "\n"
++ "@FixMethodOrder(MethodSorters.NAME_ASCENDING);\n"
++ "public class FooBarTests extends BazBar {\n"
++ "\n"
++ "\t@Test\n"
++ "\t@Ignore\n"
++ "\tpublic void validate_foo() throws Exception {\n"
++ "\t\t// given:\n"
++ "\t\t\tMockMvcRequestSpecification request = given()\n"
++ "\t\t\t\t\t.header(\"foo\", \"bar\")\n"
++ "\t\t\t\t\t.body(\"{\\\"foo1\\\":\\\"bar1\\\"}\");\n"
++ "\n"
++ "\t\t// when:\n"
++ "\t\t\tResponseOptions response = given().spec(request)\n"
++ "\t\t\t\t\t.put(\"url\");\n"
++ "\n"
++ "\t\t// then:\n"
++ "\t\t\tassertThat(response.statusCode()).isEqualTo(200);\n"
++ "\t\t\tassertThat(response.header(\"foo2\")).isEqualTo(\"bar2\");\n"
++ "\n"
++ "\t\t// and:\n"
++ "\t\t\tDocumentContext parsedJson = JsonPath.parse(response.getBody().asString());\n"
++ "\t\t\tassertThatJson(parsedJson).field(\"['foo3']\").isEqualTo(\"bar3\");\n"
++ "\t}\n"
++ "\n"
++ "}\n";
 	// @formatter:on
 
 	@Rule
@@ -78,52 +132,7 @@ public class GeneratedTestClassTests {
 
 		// then
 		System.out.println(builtClass);
-		BDDAssertions.then(builtClass).isNotEmpty();
+		BDDAssertions.then(builtClass).isEqualTo(this.expectedTest);
 	}
-
-	/*
-
-	package test;
-
-	import com.jayway.jsonpath.DocumentContext;
-	import com.jayway.jsonpath.JsonPath;
-	import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
-	import io.restassured.response.ResponseOptions;
-	import java.io.StringReader;
-	import javax.xml.parsers.DocumentBuilder;
-	import javax.xml.parsers.DocumentBuilderFactory;
-	import org.junit.FixMethodOrder;
-	import org.junit.Ignore;
-	import org.junit.Test;
-	import org.junit.runners.MethodSorters;
-	import org.w3c.dom.Document;
-	import org.xml.sax.InputSource;
-
-	import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
-	import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
-	import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
-	import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
-
-	@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-	public class Test {
-
-		@Test
-		@Ignore
-		public void validate_junit7345461633712967() throws Exception {
-			// given:
-				MockMvcRequestSpecification request = given();
-
-			// when:
-				ResponseOptions response = given().spec(request)
-						.put("url");
-
-			// then:
-				assertThat(response.statusCode()).isEqualTo(200);
-		}
-
-	}
-
-
-	 */
 
 }

@@ -173,10 +173,10 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { assert clazz.contains(it) }
@@ -230,6 +230,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order,
 					convertAsCollection(new File('/'), file))
 			contract.ignored >> true
+			// TODO: Change it to RefactoredTestGenerator
 			JavaTestGenerator testGenerator = new JavaTestGenerator(checker: new ClassPresenceChecker() {
 				@Override
 				boolean isClassPresent(String className) {
@@ -307,7 +308,7 @@ class SingleTestGeneratorSpec extends Specification {
 					convertAsCollection(new File('/'), file2))
 			contract2.ignored >> false
 		and:
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
 			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
@@ -335,7 +336,7 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, null, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
 			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
@@ -381,7 +382,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, order, convertAsCollection(new File('/'), secondFile))
 			contract2.ignored >> true
 		and:
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
 			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
@@ -423,10 +424,10 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
 			contract2.ignored >> false
 		and:
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -490,9 +491,9 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1,
 					null, convertAsCollection(new File('/'), file))
 		and:
-			SingleTestGenerator testGenerator = new JavaTestGenerator()
+			SingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('RequestSpecification request = given();')
 			clazz.contains('Response response = given().spec(request)')
@@ -517,9 +518,9 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('validate_mySuperMethod()')
 		where:
@@ -534,7 +535,7 @@ class SingleTestGeneratorSpec extends Specification {
 	org.springframework.cloud.contract.spec.Contract.make {
 		name("shouldHaveIndex${index}")
 		request {
-			methodBuilder(PUT())
+			method(PUT())
 			headers {
 				contentType(applicationJson())
 			}
@@ -549,9 +550,9 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('validate_shouldHaveIndex1()')
 			clazz.contains('validate_shouldHaveIndex2()')
@@ -566,7 +567,7 @@ class SingleTestGeneratorSpec extends Specification {
 							(1..2).collect { int index ->
 	org.springframework.cloud.contract.spec.Contract.make {
 		request {
-			methodBuilder(PUT())
+			method(PUT())
 			headers {
 				contentType(applicationJson())
 			}
@@ -581,9 +582,9 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('_0() throws Exception')
 			clazz.contains('_1() throws Exception')
@@ -722,7 +723,7 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testFramework = JUNIT5
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 1, convertAsCollection(new File('/'), file))
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 		when:
 			testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
 		then:

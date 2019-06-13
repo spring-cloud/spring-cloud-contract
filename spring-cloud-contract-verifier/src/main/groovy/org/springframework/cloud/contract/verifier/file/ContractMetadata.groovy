@@ -92,8 +92,10 @@ class SingleContractMetadata {
 	private final File stubsFile
 	final Contract contract
 	private final Collection<Contract> allContracts
-	final ContentType inputContentType
-	final ContentType outputContentType
+	final ContentType inputStubContentType
+	final ContentType outputStubContentType
+	final ContentType inputTestContentType
+	final ContentType outputTestContentType
 	private final boolean http
 
 	SingleContractMetadata(Contract currentContract, ContractMetadata contractMetadata) {
@@ -103,16 +105,20 @@ class SingleContractMetadata {
 		DslProperty inputBody = inputBody(currentContract)
 		Headers outputHeaders = outputHeaders(currentContract)
 		DslProperty outputBody = outputBody(currentContract)
-		this.inputContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody)
-		this.outputContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody)
+		this.inputTestContentType = inputBody != null ? ContentUtils.evaluateContentType(inputHeaders, inputBody.getServerValue()) : ContentType.UNKNOWN
+		this.outputTestContentType = outputBody != null ? ContentUtils.evaluateContentType(outputHeaders, outputBody.getServerValue()) : ContentType.UNKNOWN
+		this.inputStubContentType = inputBody != null ? ContentUtils.evaluateContentType(inputHeaders, inputBody.getClientValue()) : ContentType.UNKNOWN
+		this.outputStubContentType = outputBody != null ? ContentUtils.evaluateContentType(outputHeaders, outputBody.getClientValue()) : ContentType.UNKNOWN
 		this.http = currentContract.request != null
 		this.contractMetadata = contractMetadata
 		this.stubsFile = contractMetadata.getPath().toFile()
 	}
 
 	boolean isJson() {
-		return this.inputContentType == ContentType.JSON ||
-				this.outputContentType == ContentType.JSON
+		return this.inputTestContentType == ContentType.JSON ||
+				this.outputTestContentType == ContentType.JSON ||
+				this.inputStubContentType == ContentType.JSON ||
+				this.outputStubContentType == ContentType.JSON
 	}
 
 	boolean isIgnored() {
@@ -120,8 +126,10 @@ class SingleContractMetadata {
 	}
 
 	boolean isXml() {
-		return this.inputContentType == ContentType.XML ||
-				this.outputContentType == ContentType.XML
+		return this.inputTestContentType == ContentType.XML ||
+				this.outputTestContentType == ContentType.XML ||
+				this.inputStubContentType == ContentType.XML ||
+				this.outputStubContentType == ContentType.XML
 	}
 
 	boolean isHttp() {
@@ -147,7 +155,7 @@ class SingleContractMetadata {
 	private Headers outputHeaders(Contract contract) {
 		return contract.response?.headers ?: contract.outputMessage?.headers
 	}
-	
+
 	String methodName() {
 		if (contract.name) {
 			String name = NamesUtil.

@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.util
 
 import java.util.function.Consumer
 import java.util.function.Function
+import java.util.function.Supplier
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -121,6 +122,10 @@ class ContentUtils {
 				return extractValueForGString(bodyAsValue, valueProvider)
 			}
 		}
+	}
+
+	static Object extractValue(GString bodyAsValue, ContentType contentType, Function valueProvider) {
+		return extractValue(bodyAsValue, contentType, { valueProvider.apply(it) })
 	}
 
 	static ContentType getClientContentType(GString bodyAsValue) {
