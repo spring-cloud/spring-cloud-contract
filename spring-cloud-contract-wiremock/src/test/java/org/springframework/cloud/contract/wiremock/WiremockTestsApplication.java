@@ -87,6 +87,12 @@ class Service {
 		return this.restTemplate.getForEntity(requestUrl, String.class).getBody();
 	}
 
+	public String link() {
+		String requestUrl = this.base + "/link";
+		log.info("Will send a request to [" + requestUrl + "]");
+		return this.restTemplate.getForEntity(requestUrl, String.class).getBody();
+	}
+
 	public String pom() {
 		String requestUrl = this.base + "/pom.xml";
 		log.info("Will send a request to [" + requestUrl + "]");

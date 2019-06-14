@@ -28,6 +28,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -97,6 +98,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 			registerFiles(factory);
 			factory.notifier(new Slf4jNotifier(true));
+			if (this.wireMock.getPlaceholders().isEnabled()) {
+				factory.extensions(new ResponseTemplateTransformer(false));
+			}
 			this.options = factory;
 			if (this.customizer != null) {
 				this.customizer.customize(factory);
@@ -245,6 +249,8 @@ class WireMockProperties {
 
 	private Server server = new Server();
 
+	private Placeholders placeholders = new Placeholders();
+
 	private boolean restTemplateSslEnabled;
 
 	public boolean isRestTemplateSslEnabled() {
@@ -261,6 +267,32 @@ class WireMockProperties {
 
 	public void setServer(Server server) {
 		this.server = server;
+	}
+
+	public Placeholders getPlaceholders() {
+		return this.placeholders;
+	}
+
+	public void setPlaceholders(Placeholders placeholders) {
+		this.placeholders = placeholders;
+	}
+
+	public class Placeholders {
+
+		/**
+		 * Flag to indicate that http URLs in generated wiremock stubs should be filtered
+		 * to add or resolve a placeholder for a dynamic port.
+		 */
+		private boolean enabled = true;
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
 	}
 
 	public static class Server {
