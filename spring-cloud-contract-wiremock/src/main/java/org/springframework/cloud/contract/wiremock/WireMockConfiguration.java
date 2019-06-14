@@ -88,7 +88,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@PostConstruct
 	public void init() throws IOException {
 		if (this.options == null) {
-			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring.options();
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring
+					.options();
 			if (this.wireMock.getServer().getPort() != 8080) {
 				factory.port(this.wireMock.getServer().getPort());
 			}
@@ -107,8 +108,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 		if (this.server == null) {
 			if (log.isDebugEnabled()) {
-				log.debug("Creating a new server at " + "http port [" + this.wireMock.getServer().getPort() + "] and "
-						+ "https port [" + this.wireMock.getServer().getHttpsPort() + "]");
+				log.debug("Creating a new server at " + "http port ["
+						+ this.wireMock.getServer().getPort() + "] and " + "https port ["
+						+ this.wireMock.getServer().getHttpsPort() + "]");
 			}
 			this.server = new WireMockServer(this.options);
 		}
@@ -121,7 +123,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	private void logRegisteredMappings() {
 		if (log.isDebugEnabled()) {
-			log.debug("WireMock server has [" + this.server.getStubMappings().size() + "] stubs registered");
+			log.debug("WireMock server has [" + this.server.getStubMappings().size()
+					+ "] stubs registered");
 		}
 	}
 
@@ -132,7 +135,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	private void registerStubs() throws IOException {
 		if (log.isDebugEnabled()) {
-			log.debug("Will register [" + this.wireMock.getServer().getStubs().length + "] stubs");
+			log.debug("Will register [" + this.wireMock.getServer().getStubs().length
+					+ "] stubs");
 		}
 		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
@@ -148,7 +152,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 				for (Resource resource : resolver.getResources(pattern.toString())) {
 					try (InputStream inputStream = resource.getInputStream()) {
 						StubMapping stubMapping = WireMockStubMapping
-								.buildFrom(StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8));
+								.buildFrom(StreamUtils.copyToString(inputStream,
+										StandardCharsets.UTF_8));
 						this.server.addStubMapping(stubMapping);
 					}
 				}
@@ -156,7 +161,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 	}
 
-	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
+	private void registerFiles(
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory)
+			throws IOException {
 		List<Resource> resources = new ArrayList<>();
 		for (String files : this.wireMock.getServer().getFiles()) {
 			if (StringUtils.hasText(files)) {
@@ -170,7 +177,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (!resources.isEmpty()) {
-			ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
+			ResourcesFileSource fileSource = new ResourcesFileSource(
+					resources.toArray(new Resource[0]));
 			factory.fileSource(fileSource);
 		}
 	}

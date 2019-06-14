@@ -146,9 +146,14 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
-		return aResponse().withHeaders(responseHeaders(operation))
-				.withBody(operation.getResponse().getContentAsString())
-				.withStatus(operation.getResponse().getStatus().value());
+		String content = operation.getResponse().getContentAsString();
+		ResponseDefinitionBuilder response = aResponse()
+				.withHeaders(responseHeaders(operation)).withBody(content);
+		if (content != null
+				&& content.contains("localhost:{{request.requestLine.port}}")) {
+			response = response.withTransformers("response-template");
+		}
+		return response.withStatus(operation.getResponse().getStatus().value());
 	}
 
 	private MappingBuilder request(Operation operation) {

@@ -113,6 +113,8 @@ public class WiremockServerRestDocsApplicationTests {
 		String body = stubMapping.getResponse().getBody();
 		BDDAssertions.then(body)
 				.contains("http://localhost:{{request.requestLine.port}}/link");
+		BDDAssertions.then(stubMapping.getResponse().getTransformers())
+				.contains("response-template");
 	}
 
 	@Configuration
