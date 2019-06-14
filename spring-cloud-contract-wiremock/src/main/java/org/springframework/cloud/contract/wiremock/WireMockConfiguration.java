@@ -28,6 +28,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,8 +88,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@PostConstruct
 	public void init() throws IOException {
 		if (this.options == null) {
-			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring
-					.options();
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring.options();
 			if (this.wireMock.getServer().getPort() != 8080) {
 				factory.port(this.wireMock.getServer().getPort());
 			}
@@ -97,6 +97,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 			registerFiles(factory);
 			factory.notifier(new Slf4jNotifier(true));
+			if (this.wireMock.getPlaceholders().isEnabled()) {
+				factory.extensions(new ResponseTemplateTransformer(false));
+			}
 			this.options = factory;
 			if (this.customizer != null) {
 				this.customizer.customize(factory);
@@ -104,9 +107,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 		if (this.server == null) {
 			if (log.isDebugEnabled()) {
-				log.debug("Creating a new server at " + "http port ["
-						+ this.wireMock.getServer().getPort() + "] and " + "https port ["
-						+ this.wireMock.getServer().getHttpsPort() + "]");
+				log.debug("Creating a new server at " + "http port [" + this.wireMock.getServer().getPort() + "] and "
+						+ "https port [" + this.wireMock.getServer().getHttpsPort() + "]");
 			}
 			this.server = new WireMockServer(this.options);
 		}
@@ -119,8 +121,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	private void logRegisteredMappings() {
 		if (log.isDebugEnabled()) {
-			log.debug("WireMock server has [" + this.server.getStubMappings().size()
-					+ "] stubs registered");
+			log.debug("WireMock server has [" + this.server.getStubMappings().size() + "] stubs registered");
 		}
 	}
 
@@ -131,8 +132,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	private void registerStubs() throws IOException {
 		if (log.isDebugEnabled()) {
-			log.debug("Will register [" + this.wireMock.getServer().getStubs().length
-					+ "] stubs");
+			log.debug("Will register [" + this.wireMock.getServer().getStubs().length + "] stubs");
 		}
 		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
@@ -148,8 +148,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 				for (Resource resource : resolver.getResources(pattern.toString())) {
 					try (InputStream inputStream = resource.getInputStream()) {
 						StubMapping stubMapping = WireMockStubMapping
-								.buildFrom(StreamUtils.copyToString(inputStream,
-										StandardCharsets.UTF_8));
+								.buildFrom(StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8));
 						this.server.addStubMapping(stubMapping);
 					}
 				}
@@ -157,9 +156,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 	}
 
-	private void registerFiles(
-			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory)
-			throws IOException {
+	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
 		List<Resource> resources = new ArrayList<>();
 		for (String files : this.wireMock.getServer().getFiles()) {
 			if (StringUtils.hasText(files)) {
@@ -173,8 +170,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (!resources.isEmpty()) {
-			ResourcesFileSource fileSource = new ResourcesFileSource(
-					resources.toArray(new Resource[0]));
+			ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
 			factory.fileSource(fileSource);
 		}
 	}
@@ -245,6 +241,8 @@ class WireMockProperties {
 
 	private Server server = new Server();
 
+	private Placeholders placeholders = new Placeholders();
+
 	private boolean restTemplateSslEnabled;
 
 	public boolean isRestTemplateSslEnabled() {
@@ -261,6 +259,32 @@ class WireMockProperties {
 
 	public void setServer(Server server) {
 		this.server = server;
+	}
+
+	public Placeholders getPlaceholders() {
+		return this.placeholders;
+	}
+
+	public void setPlaceholders(Placeholders placeholders) {
+		this.placeholders = placeholders;
+	}
+
+	public class Placeholders {
+
+		/**
+		 * Flag to indicate that http URLs in generated wiremock stubs should be filtered
+		 * to add or resolve a placeholder for a dynamic port.
+		 */
+		private boolean enabled = true;
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
 	}
 
 	public static class Server {
