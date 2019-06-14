@@ -19,7 +19,12 @@ package org.springframework.cloud.contract.wiremock.restdocs;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
+import org.springframework.restdocs.operation.OperationRequest;
+import org.springframework.restdocs.operation.OperationResponse;
+import org.springframework.restdocs.operation.OperationResponseFactory;
+import org.springframework.restdocs.operation.preprocess.OperationPreprocessor;
 
 /**
  * Custom configuration for Spring RestDocs that adds a WireMock snippet (for generating
@@ -38,9 +43,42 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
 public class WireMockRestDocsConfiguration
 		implements RestDocsMockMvcConfigurationCustomizer {
 
+	private final Environment environment;
+
+	public WireMockRestDocsConfiguration(Environment environment) {
+		this.environment = environment;
+	}
+
 	@Override
 	public void customize(MockMvcRestDocumentationConfigurer configurer) {
+		if (this.environment.getProperty("wiremock.placeholders.enabled", "true")
+				.equals("true")) {
+			configurer.operationPreprocessors()
+					.withResponseDefaults(new ForwardHeaderPreprocessor());
+		}
 		configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
+	}
+
+	static class ForwardHeaderPreprocessor implements OperationPreprocessor {
+
+		private final OperationResponseFactory responseFactory = new OperationResponseFactory();
+
+		@Override
+		public OperationRequest preprocess(OperationRequest request) {
+			return request;
+		}
+
+		@Override
+		public OperationResponse preprocess(OperationResponse response) {
+			String content = response.getContentAsString();
+			if (content.contains("localhost:8080")) {
+				content = content.replace("localhost:8080",
+						"localhost:{{request.requestLine.port}}");
+				response = this.responseFactory.createFrom(response, content.getBytes());
+			}
+			return response;
+		}
+
 	}
 
 }

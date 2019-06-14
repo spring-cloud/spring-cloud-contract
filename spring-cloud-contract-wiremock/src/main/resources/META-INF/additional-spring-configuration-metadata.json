@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "wiremock.placeholders.enabled",
+      "type": "boolean",
+      "description": "Flag to indicate that http URLs in generated wiremock stubs should be filtered to add a placeholder for a dynamic port.",
+      "defaultValue": "UTF-8"
+    }
+  ]
+}
