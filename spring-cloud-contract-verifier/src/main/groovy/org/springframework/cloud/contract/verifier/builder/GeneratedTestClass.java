@@ -188,6 +188,15 @@ class GeneratedTestClassBuilder {
 		return this;
 	}
 
+	GeneratedTestClassBuilder metaData(ClassMetaData... metaData) {
+		return metaData(Arrays.asList(metaData));
+	}
+
+	GeneratedTestClassBuilder metaData(List<ClassMetaData> metaData) {
+		this.metaData.addAll(metaData);
+		return this;
+	}
+
 	GeneratedTestClassBuilder imports(Imports imports) {
 		this.imports.add(imports);
 		return this;

@@ -122,7 +122,7 @@ class SingleContractMetadata {
 	}
 
 	boolean isIgnored() {
-		return this.contract.ignored
+		return this.contract.ignored || this.contractMetadata.ignored
 	}
 
 	boolean isXml() {

@@ -346,7 +346,42 @@ class JsonPathImports implements Imports {
 
 }
 
-class JavaClassMetaData implements ClassMetaData {
+interface DefaultClassMetadata extends ClassMetaData {
+	@Override
+	default ClassMetaData parentClass() {
+		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
+		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
+		String baseClass = baseClassProvider().retrieveBaseClass(properties,
+				includedDirectoryRelativePath);
+		if (StringUtils.hasText(baseClass)) {
+			blockBuilder().append("extends ").append(baseClass).append(" ");
+		}
+		return this;
+	}
+
+	@Override
+	default ClassMetaData packageDefinition() {
+		blockBuilder().addLineWithEnding(
+				"package " + generatedClassMetaData().generatedClassData.classPackage);
+		return this;
+	}
+
+	GeneratedClassMetaData generatedClassMetaData();
+
+	BaseClassProvider baseClassProvider();
+
+	BlockBuilder blockBuilder();
+
+	@Override
+	default ClassMetaData className() {
+		String className = capitalize(
+				generatedClassMetaData().generatedClassData.className);
+		blockBuilder().addAtTheEnd(className);
+		return this;
+	}
+}
+
+class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	private final BlockBuilder blockBuilder;
 
@@ -358,13 +393,6 @@ class JavaClassMetaData implements ClassMetaData {
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-	}
-
-	@Override
-	public ClassMetaData packageDefinition() {
-		this.blockBuilder.addLineWithEnding(
-				"package " + this.generatedClassMetaData.generatedClassData.classPackage);
-		return this;
 	}
 
 	@Override
@@ -393,23 +421,18 @@ class JavaClassMetaData implements ClassMetaData {
 	}
 
 	@Override
-	public ClassMetaData parentClass() {
-		ContractVerifierConfigProperties properties = this.generatedClassMetaData.configProperties;
-		String includedDirectoryRelativePath = this.generatedClassMetaData.includedDirectoryRelativePath;
-		String baseClass = this.baseClassProvider.retrieveBaseClass(properties,
-				includedDirectoryRelativePath);
-		if (StringUtils.hasText(baseClass)) {
-			this.blockBuilder.append("extends ").append(baseClass).append(" ");
-		}
-		return this;
+	public GeneratedClassMetaData generatedClassMetaData() {
+		return this.generatedClassMetaData;
 	}
 
 	@Override
-	public ClassMetaData className() {
-		String className = capitalize(
-				this.generatedClassMetaData.generatedClassData.className);
-		this.blockBuilder.addAtTheEnd(className);
-		return this;
+	public BaseClassProvider baseClassProvider() {
+		return this.baseClassProvider;
+	}
+
+	@Override
+	public BlockBuilder blockBuilder() {
+		return this.blockBuilder;
 	}
 
 	@Override
@@ -418,6 +441,73 @@ class JavaClassMetaData implements ClassMetaData {
 				.getTestFramework() == TestFramework.JUNIT
 				|| this.generatedClassMetaData.configProperties
 						.getTestFramework() == TestFramework.JUNIT5;
+	}
+
+}
+
+class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
+
+	private final BlockBuilder blockBuilder;
+
+	private final BaseClassProvider baseClassProvider = new BaseClassProvider();
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	GroovyClassMetaData(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public ClassMetaData setupLineEnding() {
+		return this;
+	}
+
+	@Override
+	public ClassMetaData suffix() {
+		String suffix = StringUtils.hasText(
+				this.generatedClassMetaData.configProperties.getNameSuffixForTests())
+				? this.generatedClassMetaData.configProperties
+				.getNameSuffixForTests()
+				: "Spec";
+		if (!this.blockBuilder.endsWith(suffix)) {
+			this.blockBuilder.addAtTheEnd(suffix);
+		}
+		return this;
+	}
+
+	@Override
+	public ClassMetaData modifier() {
+		return this;
+	}
+
+	@Override
+	public ClassMetaData packageDefinition() {
+		this.blockBuilder.addLineWithEnding(
+				"package " + this.generatedClassMetaData.generatedClassData.classPackage);
+		return this;
+	}
+
+	@Override
+	public GeneratedClassMetaData generatedClassMetaData() {
+		return this.generatedClassMetaData;
+	}
+
+	@Override
+	public BaseClassProvider baseClassProvider() {
+		return this.baseClassProvider;
+	}
+
+	@Override
+	public BlockBuilder blockBuilder() {
+		return this.blockBuilder;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK;
 	}
 
 }

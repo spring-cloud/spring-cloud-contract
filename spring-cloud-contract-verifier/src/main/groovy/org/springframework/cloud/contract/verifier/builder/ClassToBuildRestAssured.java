@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 import groovy.json.JsonOutput;
 import groovy.lang.Closure;
 import groovy.lang.GString;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.StringEscapeUtils;
 
 import org.springframework.cloud.contract.spec.ContractTemplate;
@@ -866,17 +868,42 @@ class MockMvcHeadersThen implements Then, MockMvcAcceptor {
 
 }
 
-class MockMvcRestAssured3Imports implements Imports {
+interface RestAssuredVerifier {
+
+	Log log = LogFactory.getLog(RestAssuredVerifier.class);
+
+	// TODO: Remove in next major
+	String REST_ASSURED_2_0_CLASS = "com.jayway.restassured.RestAssured";
+
+	ClassPresenceChecker checker = new ClassPresenceChecker();
+
+	@Deprecated
+	default boolean isRestAssured2Present() {
+		boolean restAssured2Present = checker.isClassPresent(REST_ASSURED_2_0_CLASS);
+		if (restAssured2Present) {
+			log.warn("Rest Assured 2 found on the classpath. Please upgrade to the latest version of Rest Assured");
+		}
+		return restAssured2Present;
+
+	}
+}
+
+class MockMvcRestAssuredImports implements Imports, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = {
+	@Deprecated
+	private static final String[] REST_ASSURED_2_IMPORTS = {
+			"com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification",
+			"com.jayway.restassured.response.ResponseOptions" };
+
+	private static final String[] REST_ASSURED_3_IMPORTS = {
 			"io.restassured.module.mockmvc.specification.MockMvcRequestSpecification",
 			"io.restassured.response.ResponseOptions" };
 
-	MockMvcRestAssured3Imports(BlockBuilder blockBuilder,
+	MockMvcRestAssuredImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -884,7 +911,7 @@ class MockMvcRestAssured3Imports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
+		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
@@ -898,17 +925,21 @@ class MockMvcRestAssured3Imports implements Imports {
 
 }
 
-class ExplicitRestAssured3Imports implements Imports {
+class ExplicitRestAssuredImports implements Imports, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = {
+	private static final String[] REST_ASSURED_2_IMPORTS = {
+			"com.jayway.restassured.specification.RequestSpecification",
+			"com.jayway.restassured.response.Response" };
+
+	private static final String[] REST_ASSURED_3_IMPORTS = {
 			"io.restassured.specification.RequestSpecification",
 			"io.restassured.response.Response" };
 
-	ExplicitRestAssured3Imports(BlockBuilder blockBuilder,
+	ExplicitRestAssuredImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -916,7 +947,7 @@ class ExplicitRestAssured3Imports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
+		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
@@ -930,17 +961,21 @@ class ExplicitRestAssured3Imports implements Imports {
 
 }
 
-class WebTestClientRestAssured3Imports implements Imports {
+class WebTestClientRestAssuredImports implements Imports, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = {
+	private static final String[] REST_ASSURED_2_IMPORTS = {
+			"com.jayway.restassured.module.webtestclient.specification.WebTestClientRequestSpecification",
+			"com.jayway.restassured.module.webtestclient.response.WebTestClientResponse" };
+
+	private static final String[] REST_ASSURED_3_IMPORTS = {
 			"io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification",
 			"io.restassured.module.webtestclient.response.WebTestClientResponse" };
 
-	WebTestClientRestAssured3Imports(BlockBuilder blockBuilder,
+	WebTestClientRestAssuredImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -948,7 +983,7 @@ class WebTestClientRestAssured3Imports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
+		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
@@ -962,16 +997,19 @@ class WebTestClientRestAssured3Imports implements Imports {
 
 }
 
-class MockMvcRestAssured3StaticImports implements Imports {
+class MockMvcRestAssuredStaticImports implements Imports, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = {
+	private static final String[] REST_ASSURED_2_IMPORTS = {
+			"com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*" };
+
+	private static final String[] REST_ASSURED_3_IMPORTS = {
 			"io.restassured.module.mockmvc.RestAssuredMockMvc.*" };
 
-	MockMvcRestAssured3StaticImports(BlockBuilder blockBuilder,
+	MockMvcRestAssuredStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -979,7 +1017,7 @@ class MockMvcRestAssured3StaticImports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
+		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}
@@ -992,15 +1030,17 @@ class MockMvcRestAssured3StaticImports implements Imports {
 
 }
 
-class ExplicitRestAssured3StaticImports implements Imports {
+class ExplicitRestAssuredStaticImports implements Imports, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = { "io.restassured.RestAssured.*" };
+	private static final String[] REST_ASSURED_2_IMPORTS = { "com.jayway.restassured.RestAssured.*" };
 
-	ExplicitRestAssured3StaticImports(BlockBuilder blockBuilder,
+	private static final String[] REST_ASSURED_3_IMPORTS = { "io.restassured.RestAssured.*" };
+
+	ExplicitRestAssuredStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -1008,7 +1048,7 @@ class ExplicitRestAssured3StaticImports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
+		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}

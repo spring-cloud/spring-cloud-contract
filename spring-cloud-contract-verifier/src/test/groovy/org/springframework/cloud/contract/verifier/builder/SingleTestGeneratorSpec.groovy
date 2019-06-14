@@ -173,7 +173,6 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testFramework = testFramework
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
-			contract.ignored >> true
 			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
