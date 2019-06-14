@@ -606,6 +606,54 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(json)
 	}
 
+	def 'should create stub with body from the file'() {
+		given:
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method 'GET'
+				headers {
+					header 'Content-Type': 'application/xml'
+				}
+				url "/users"
+				body file('classpath/request.xml')
+			}
+			response {
+				status OK()
+			}
+		}
+		when:
+		String json = toWireMockClientJsonStub(groovyDsl)
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+					{
+						"request": {
+							"method": "GET",
+							"url": "/users",
+							"bodyPatterns": [
+								  {
+									"matchesXPath": {
+									  "expression": "/foo/name/text()",
+									  "equalTo": "Jozo"
+									}
+								  },
+								  {
+									"matchesXPath": {
+									  "expression": "/foo/jobId/text()",
+									  "equalTo": "123"
+									}
+								  }
+								]
+						},
+						"response": {
+							"status": 200,
+							"transformers" : [ "response-template", "foo-transformer" ]
+						}
+					}
+					'''), json)
+		and:
+		stubMappingIsValidWireMockStub(json)
+	}
+
 	def 'should convert groovy dsl stub with regexp Body as String to wireMock stub for the client side'() {
 		given:
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
