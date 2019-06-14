@@ -26,7 +26,6 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata;
  *
  * @author Olga Maciaszek-Sharma
  * @author Marcin Grzejszczak
- *
  * @since 2.2.0
  */
 public class RefactoredSingleTestGenerator implements SingleTestGenerator {
@@ -55,7 +54,7 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 				// SpockMethodMetadata
 				.methodMetadata(new JunitMethodMetadata(builder))
 				.given(new RestAssuredGiven(builder, metaData))
-				.when(new MockMvcWhen(builder, metaData))
+				.when(new RestAssuredWhen(builder, metaData))
 				.then(new MockMvcThen(builder, metaData));
 
 		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
@@ -74,10 +73,12 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new XmlImports(builder, metaData),
 						new MessagingImports(builder, metaData),
 						new MockMvcRestAssured3Imports(builder, metaData),
-						new ExplicitRestAssured3Imports(builder, metaData))
+						new ExplicitRestAssured3Imports(builder, metaData),
+						new WebTestClientRestAssured3Imports(builder, metaData))
 				.staticImports(new DefaultStaticImports(builder, metaData),
 						new MockMvcRestAssured3StaticImports(builder, metaData),
 						new ExplicitRestAssured3StaticImports(builder, metaData),
+						new WebTestClientRestAssured3StaticImports(builder, metaData),
 						new CustomStaticImports(builder, metaData),
 						new MessagingStaticImports(builder, metaData))
 				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))

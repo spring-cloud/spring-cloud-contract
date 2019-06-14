@@ -403,7 +403,7 @@ class SingleTestGeneratorSpec extends Specification {
 	}
 
 	@Issue('#30')
-	def 'should ignore a test if the contract is ignored in the dsl'() {
+	def 'should ignore a test if the contract is ignored in the dsl with #testFramework and ignore annotation #ignoreAnnotation'() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
