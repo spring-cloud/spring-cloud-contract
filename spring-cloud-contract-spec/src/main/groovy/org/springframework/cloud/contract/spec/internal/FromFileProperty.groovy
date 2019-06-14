@@ -66,4 +66,8 @@ class FromFileProperty implements Serializable {
 		return this.file.bytes
 	}
 
+	@Override
+	String toString() {
+		return asString()
+	}
 }
