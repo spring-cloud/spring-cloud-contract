@@ -347,17 +347,6 @@ class JsonPathImports implements Imports {
 }
 
 interface DefaultClassMetadata extends ClassMetaData {
-	@Override
-	default ClassMetaData parentClass() {
-		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
-		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
-		String baseClass = baseClassProvider().retrieveBaseClass(properties,
-				includedDirectoryRelativePath);
-		if (StringUtils.hasText(baseClass)) {
-			blockBuilder().append("extends ").append(baseClass).append(" ");
-		}
-		return this;
-	}
 
 	@Override
 	default ClassMetaData packageDefinition() {
@@ -416,7 +405,13 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public ClassMetaData setupLineEnding() {
-		this.blockBuilder.lineEnding(";");
+		this.blockBuilder.setupLineEnding(";");
+		return this;
+	}
+
+	@Override
+	public ClassMetaData setupLabelPrefix() {
+		this.blockBuilder.setupLabelPrefix("// ");
 		return this;
 	}
 
@@ -433,6 +428,18 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 	@Override
 	public BlockBuilder blockBuilder() {
 		return this.blockBuilder;
+	}
+
+	@Override
+	public ClassMetaData parentClass() {
+		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
+		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
+		String baseClass = baseClassProvider().retrieveBaseClass(properties,
+				includedDirectoryRelativePath);
+		if (StringUtils.hasText(baseClass)) {
+			blockBuilder().append("extends ").append(baseClass).append(" ");
+		}
+		return this;
 	}
 
 	@Override
@@ -465,6 +472,11 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 	}
 
 	@Override
+	public ClassMetaData setupLabelPrefix() {
+		return this;
+	}
+
+	@Override
 	public ClassMetaData suffix() {
 		String suffix = StringUtils.hasText(
 				this.generatedClassMetaData.configProperties.getNameSuffixForTests())
@@ -486,6 +498,17 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 	public ClassMetaData packageDefinition() {
 		this.blockBuilder.addLineWithEnding(
 				"package " + this.generatedClassMetaData.generatedClassData.classPackage);
+		return this;
+	}
+
+	@Override
+	public ClassMetaData parentClass() {
+		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
+		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
+		String baseClass = baseClassProvider().retrieveBaseClass(properties,
+				includedDirectoryRelativePath);
+		baseClass = StringUtils.hasText(baseClass) ? baseClass : "Specification";
+		blockBuilder().append("extends ").append(baseClass).append(" ");
 		return this;
 	}
 
@@ -568,10 +591,13 @@ class JUnitMethodMetadata implements MethodMetadata {
 
 	private final BlockBuilder blockBuilder;
 
+	private final GeneratedClassMetaData metaData;
+
 	private final NameProvider nameProvider = new NameProvider();
 
-	JUnitMethodMetadata(BlockBuilder blockBuilder) {
+	JUnitMethodMetadata(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
+		this.metaData = metaData;
 	}
 
 	@Override
@@ -588,10 +614,52 @@ class JUnitMethodMetadata implements MethodMetadata {
 
 	@Override
 	public MethodMetadata returnType() {
-		this.blockBuilder.addAtTheEnd("void");
+		this.blockBuilder.append("void");
 		return this;
 	}
 
+
+	@Override
+	public boolean accept() {
+		return this.metaData.configProperties.getTestFramework() != TestFramework.SPOCK;
+	}
+}
+
+class SpockMethodMetadata implements MethodMetadata {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData metaData;
+
+	private final NameProvider nameProvider = new NameProvider();
+
+	SpockMethodMetadata(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.metaData = metaData;
+	}
+
+	@Override
+	public MethodMetadata name(SingleContractMetadata metaData) {
+		this.blockBuilder.addAtTheEnd(this.nameProvider.methodName(metaData));
+		return this;
+	}
+
+	@Override
+	public MethodMetadata modifier() {
+		return this;
+	}
+
+	@Override
+	public MethodMetadata returnType() {
+		this.blockBuilder.append("def");
+		return this;
+	}
+
+
+	@Override
+	public boolean accept() {
+		return this.metaData.configProperties.getTestFramework() == TestFramework.SPOCK;
+	}
 }
 
 class NameProvider {
@@ -712,7 +780,7 @@ interface BodyMethodVisitor {
 	 * @return
 	 */
 	default BlockBuilder startBodyBlock(BlockBuilder blockBuilder, String label) {
-		return blockBuilder.addIndented(label).addEmptyLine().startBlock();
+		return blockBuilder.addIndentation().appendWithLabelPrefix(label).addEmptyLine().startBlock();
 	}
 
 	/**

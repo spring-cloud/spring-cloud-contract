@@ -25,13 +25,13 @@ class ClassToBuildTestFramework {
 
 }
 
-class Junit4IgnoreImports implements Imports {
+class JUnit4IgnoreImports implements Imports {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	Junit4IgnoreImports(BlockBuilder blockBuilder,
+	JUnit4IgnoreImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -381,6 +381,157 @@ class JUnit5OrderImports implements Imports {
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT5
+				&& this.generatedClassMetaData.listOfFiles.stream()
+				.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class SpockImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = { "spock.lang.Specification" };
+
+	SpockImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK;
+	}
+
+}
+
+class SpockIgnoreImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	SpockIgnoreImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		this.blockBuilder.addLineWithEnding("import spock.lang.Ignore");
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(metadata -> metadata.isIgnored()
+								|| metadata.getConvertedContractWithMetadata().stream()
+										.anyMatch(SingleContractMetadata::isIgnored));
+	}
+
+}
+
+class SpockIgnoreMethodAnnotation implements MethodAnnotations {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] ANNOTATIONS = { "@Ignore" };
+
+	SpockIgnoreMethodAnnotation(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<MethodAnnotations> apply(
+			SingleContractMetadata singleContractMetadata) {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK
+				&& this.generatedClassMetaData.isAnyIgnored();
+	}
+
+}
+
+class SpockOrderClassAnnotation implements ClassAnnotation {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] ANNOTATIONS = {
+			"@Stepwise" };
+
+	SpockOrderClassAnnotation(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public ClassAnnotation call() {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class SpockOrderImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = { "spock.lang.Stepwise" };
+
+	SpockOrderImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK
 				&& this.generatedClassMetaData.listOfFiles.stream()
 				.anyMatch(meta -> meta.getOrder() != null);
 	}

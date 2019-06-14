@@ -332,7 +332,7 @@ class RestAssuredGiven implements Given, BodyMethodVisitor {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata singleContractMetadata) {
-		startBodyBlock(this.blockBuilder, "// given:");
+		startBodyBlock(this.blockBuilder, "given:");
 		addRequestGivenLine(singleContractMetadata);
 		indentedBodyBlock(this.blockBuilder, this.bodyGivens, singleContractMetadata);
 		return this;
@@ -641,7 +641,7 @@ class RestAssuredWhen implements When, BodyMethodVisitor {
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
-		startBodyBlock(this.blockBuilder, "// when:");
+		startBodyBlock(this.blockBuilder, "when:");
 		addResponseWhenLine(singleContractMetadata);
 		indentedBodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
 		return this;
@@ -756,14 +756,14 @@ class MockMvcThen implements Then, BodyMethodVisitor, MockMvcAcceptor {
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
-		startBodyBlock(this.blockBuilder, "// then:");
+		startBodyBlock(this.blockBuilder, "then:");
 		bodyBlock(this.blockBuilder, this.thens, singleContractMetadata);
 		return this;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return acceptType(this.generatedClassMetaData, singleContractMetadata);
+		return singleContractMetadata.isHttp();
 	}
 
 }
@@ -1199,7 +1199,7 @@ class MockMvcBodyThen implements Then, MockMvcAcceptor, BodyMethodVisitor {
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		endBodyBlock(this.blockBuilder);
 		this.blockBuilder.addEmptyLine();
-		startBodyBlock(this.blockBuilder, "// and:");
+		startBodyBlock(this.blockBuilder, "and:");
 		Request request = metadata.getContract().getRequest();
 		this.thens.stream().filter(then -> then.accept(metadata))
 				.forEach(then -> then.apply(metadata));

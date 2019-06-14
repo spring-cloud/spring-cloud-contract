@@ -51,10 +51,14 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 				.methodAnnotation(new JUnit4MethodAnnotation(builder, metaData),
 						new JUnit4IgnoreMethodAnnotation(builder, metaData),
 						new JUnit5MethodAnnotation(builder, metaData),
-						new JUnit5IgnoreMethodAnnotation(builder, metaData))
+						new JUnit5IgnoreMethodAnnotation(builder, metaData),
+						new SpockIgnoreMethodAnnotation(builder, metaData))
 				// JavaMethodMetadata
 				// SpockMethodMetadata
-				.methodMetadata(new JUnitMethodMetadata(builder))
+				.methodMetadata(
+						new JUnitMethodMetadata(builder, metaData),
+						new SpockMethodMetadata(builder, metaData)
+				)
 				.given(new RestAssuredGiven(builder, metaData))
 				.when(new RestAssuredWhen(builder, metaData))
 				.then(new MockMvcThen(builder, metaData));
@@ -70,11 +74,14 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 				.imports(new CustomImports(builder, metaData),
 						new JsonImports(builder, metaData),
 						new JUnit4Imports(builder, metaData),
-						new Junit4IgnoreImports(builder, metaData),
+						new JUnit4IgnoreImports(builder, metaData),
 						new JUnit4OrderImports(builder, metaData),
 						new JUnit5Imports(builder, metaData),
 						new JUnit5IgnoreImports(builder, metaData),
 						new JUnit5OrderImports(builder, metaData),
+						new SpockImports(builder, metaData),
+						new SpockIgnoreImports(builder, metaData),
+						new SpockOrderImports(builder, metaData),
 						new JsonPathImports(builder, metaData),
 						new XmlImports(builder, metaData),
 						new MessagingImports(builder, metaData),
@@ -89,7 +96,8 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new CustomStaticImports(builder, metaData),
 						new MessagingStaticImports(builder, metaData))
 				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData),
-						new JUnit5OrderClassAnnotation(builder, metaData))
+						new JUnit5OrderClassAnnotation(builder, metaData),
+						new SpockOrderClassAnnotation(builder, metaData))
 				.build();
 		return generatedTestClass.asClassString();
 	}

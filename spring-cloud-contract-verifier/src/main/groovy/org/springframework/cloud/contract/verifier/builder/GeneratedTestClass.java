@@ -246,8 +246,9 @@ class GeneratedTestClassBuilder {
 		ClassMetaData classMetaData = this.metaData.stream().filter(Acceptor::accept)
 				.findFirst().orElseThrow(() -> new IllegalStateException(
 						"There is no matching class meta data"));
-		// package com.example
-		classMetaData.setupLineEnding().packageDefinition();
+		classMetaData.setupLineEnding().setupLabelPrefix()
+				// package com.example
+				.packageDefinition();
 		// \n
 		this.blockBuilder.addEmptyLine();
 		// import ... \n
@@ -361,6 +362,8 @@ interface ClassMetaData extends Acceptor {
 
 	ClassMetaData setupLineEnding();
 
+	ClassMetaData setupLabelPrefix();
+
 	ClassMetaData packageDefinition();
 
 	ClassMetaData modifier();
@@ -396,7 +399,7 @@ class SingleMethodBuilder {
 
 	private List<MethodAnnotations> methodAnnotations = new LinkedList<>();
 
-	private MethodMetadata methodMetadata;
+	private List<MethodMetadata> methodMetadata = new LinkedList<>();
 
 	private List<Given> givens = new LinkedList<>();
 
@@ -426,8 +429,8 @@ class SingleMethodBuilder {
 		return this;
 	}
 
-	SingleMethodBuilder methodMetadata(MethodMetadata methodMetadata) {
-		this.methodMetadata = methodMetadata;
+	SingleMethodBuilder methodMetadata(MethodMetadata... methodMetadata) {
+		this.methodMetadata.addAll(Arrays.asList(methodMetadata));
 		return this;
 	}
 
@@ -456,23 +459,26 @@ class SingleMethodBuilder {
 	 * @return block builder with contents of a single methodBuilder
 	 */
 	BlockBuilder build() {
+		MethodMetadata methodMetadatum = pickMetadatum();
 		// \n
 		this.blockBuilder.addEmptyLine();
 		this.generatedClassMetaData.toSingleContractMetadata().forEach(metaData -> {
 			// @Test
-			visit(this.methodAnnotations, metaData, false);
-			this.blockBuilder.addEmptyLine();
+			if (visit(this.methodAnnotations, metaData, false)) {
+				this.blockBuilder.addEmptyLine();
+			}
 			// @formatter:off
 			// public void validate_foo()
-			this.blockBuilder.append(methodMetadata::modifier)
-					.appendWithSpace(methodMetadata::returnType)
-					.appendWithSpace(() -> methodMetadata.name(metaData))
+			this.blockBuilder.addIndented(methodMetadatum::modifier)
+					.appendWithSpace(methodMetadatum::returnType)
+					.appendWithSpace(() -> methodMetadatum.name(metaData))
 					.append("() throws Exception ");
 			// (space) {
 			this.blockBuilder.inBraces(() -> {
 				// (indent) given
-				visit(this.givens, metaData);
-				this.blockBuilder.addEmptyLine();
+				if (visit(this.givens, metaData)) {
+					this.blockBuilder.addEmptyLine();
+				}
 				// (indent) when
 				visit(this.whens, metaData);
 				this.blockBuilder.addEmptyLine();
@@ -486,12 +492,21 @@ class SingleMethodBuilder {
 		return this.blockBuilder;
 	}
 
-	private void visit(List<? extends MethodVisitor> list,
-			SingleContractMetadata metaData) {
-		visit(list, metaData, true);
+	private MethodMetadata pickMetadatum() {
+		return this.methodMetadata
+				.stream()
+				.filter(Acceptor::accept)
+				.findFirst()
+				.orElseThrow(() -> new IllegalStateException(
+						"No matching method metadata found"));
 	}
 
-	private void visit(List<? extends MethodVisitor> list,
+	private boolean visit(List<? extends MethodVisitor> list,
+			SingleContractMetadata metaData) {
+		return visit(list, metaData, true);
+	}
+
+	private boolean visit(List<? extends MethodVisitor> list,
 			SingleContractMetadata metaData, boolean addLineEnding) {
 		List<? extends MethodVisitor> visitors = list.stream().filter(o -> o.accept(metaData))
 				.collect(Collectors.toList());
@@ -506,6 +521,7 @@ class SingleMethodBuilder {
 				this.blockBuilder.addEmptyLine();
 			}
 		}
+		return !visitors.isEmpty();
 	}
 
 }
@@ -513,7 +529,7 @@ class SingleMethodBuilder {
 /**
  * Describes metadata of a single method.
  */
-interface MethodMetadata {
+interface MethodMetadata extends Acceptor {
 
 	// validate_foo()
 	MethodMetadata name(SingleContractMetadata metadata);

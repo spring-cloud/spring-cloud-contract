@@ -33,6 +33,7 @@ class BlockBuilder {
 	private final String spacer
 	private int indents
 	private String lineEnding = ""
+	private String labelPrefix = ""
 
 	/**
 	 * @param spacer - char used for spacing
@@ -45,14 +46,29 @@ class BlockBuilder {
 	/**
 	 * Setup line ending
 	 */
-	BlockBuilder lineEnding(String lineEnding) {
+	BlockBuilder setupLineEnding(String lineEnding) {
 		this.lineEnding = lineEnding
+		return this
+	}
+
+	/**
+	 * Setup label prefix
+	 */
+	BlockBuilder setupLabelPrefix(String labelPrefix) {
+		this.labelPrefix = labelPrefix
 		return this
 	}
 
 
 	String getLineEnding() {
 		return this.lineEnding
+	}
+
+	/**
+	 * Adds indents to start a new block
+	 */
+	BlockBuilder appendWithLabelPrefix(String label) {
+		return append(this.labelPrefix).append(label)
 	}
 
 	/**
@@ -92,19 +108,18 @@ class BlockBuilder {
 	}
 
 	BlockBuilder addIndented(String line) {
+		return addIndentation().append(line)
+	}
+
+	BlockBuilder addIndented(Runnable runnable) {
 		addIndentation()
-		builder << line
+		runnable.run()
 		return this
 	}
 
 	BlockBuilder addLineWithEnding(String line) {
 		addIndentation()
 		append(line).addEndingIfNotPresent().addEmptyLine()
-		return this
-	}
-
-	BlockBuilder addEnding() {
-		builder << lineEnding
 		return this
 	}
 
@@ -119,12 +134,11 @@ class BlockBuilder {
 	}
 
 	BlockBuilder appendWithSpace(String text) {
-		builder << " " + text
-		return this
+		return addAtTheEnd(" ").append(text)
 	}
 
 	BlockBuilder appendWithSpace(Runnable runnable) {
-		builder << " "
+		addAtTheEnd(" ")
 		runnable.run()
 		return this
 	}
@@ -140,10 +154,11 @@ class BlockBuilder {
 		return this
 	}
 
-	void addIndentation() {
+	BlockBuilder addIndentation() {
 		indents.times {
 			builder << spacer
 		}
+		return this
 	}
 
 	@PackageScope
@@ -206,7 +221,7 @@ class BlockBuilder {
 		if (!character) {
 			return false
 		}
-		return character == "{" || (character == spacer && toAdd == spacer) || character == toAdd || (endsWithNewLine(character) && toAdd == '\n')
+		return character == "{" || (character == spacer && toAdd == spacer) || character == toAdd || (endsWithNewLine(character) && (toAdd == '\n' || toAdd == " "))
 	}
 
 	/**
