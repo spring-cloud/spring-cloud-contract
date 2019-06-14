@@ -45,7 +45,9 @@ class Junit4IgnoreImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT
+				&& this.generatedClassMetaData.listOfFiles.stream()
 				.anyMatch(metadata -> metadata.isIgnored()
 						|| metadata.getConvertedContractWithMetadata().stream()
 								.anyMatch(SingleContractMetadata::isIgnored));
@@ -68,18 +70,18 @@ class JUnit4IgnoreMethodAnnotation implements MethodAnnotations {
 	}
 
 	@Override
+	public MethodVisitor<MethodAnnotations> apply(
+			SingleContractMetadata singleContractMetadata) {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
+	}
+
+	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT
 				&& this.generatedClassMetaData.listOfFiles.stream()
 						.anyMatch(meta -> meta.getOrder() != null);
-	}
-
-	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
-		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
-		return this;
 	}
 
 }
@@ -197,7 +199,190 @@ class JUnit4OrderImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class JUnit5IgnoreImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	JUnit5IgnoreImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		this.blockBuilder.addLineWithEnding("import org.junit.jupiter.api.Disabled");
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT5
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(metadata -> metadata.isIgnored()
+								|| metadata.getConvertedContractWithMetadata().stream()
+										.anyMatch(SingleContractMetadata::isIgnored));
+	}
+
+}
+
+class JUnit5IgnoreMethodAnnotation implements MethodAnnotations {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] ANNOTATIONS = { "@Disabled" };
+
+	JUnit5IgnoreMethodAnnotation(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<MethodAnnotations> apply(
+			SingleContractMetadata singleContractMetadata) {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT5
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class JUnit5Imports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = { "org.junit.jupiter.api.Test", "org.junit.jupiter.api.extension.ExtendWith" };
+
+	JUnit5Imports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT5;
+	}
+
+}
+
+class JUnit5MethodAnnotation implements MethodAnnotations {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] ANNOTATIONS = { "@Test" };
+
+	JUnit5MethodAnnotation(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<MethodAnnotations> apply(
+			SingleContractMetadata singleContractMetadata) {
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT5;
+	}
+
+}
+
+class JUnit5OrderClassAnnotation implements ClassAnnotation {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] ANNOTATIONS = {
+			"@FixMethodOrder(MethodSorters.NAME_ASCENDING)" };
+
+	JUnit5OrderClassAnnotation(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public ClassAnnotation call() {
+		//Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		throw new UnsupportedOperationException("Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT5
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class JUnit5OrderImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = { "" };
+
+	JUnit5OrderImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+//		Arrays.stream(IMPORTS)
+//				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		throw new UnsupportedOperationException("Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.JUNIT5
+				&& this.generatedClassMetaData.listOfFiles.stream()
 				.anyMatch(meta -> meta.getOrder() != null);
 	}
 

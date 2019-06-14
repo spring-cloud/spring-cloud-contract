@@ -104,14 +104,38 @@ class DefaultStaticImports implements Imports {
 
 	private final BlockBuilder blockBuilder;
 
-	private final GeneratedClassMetaData generatedClassMetaData;
-
 	private static final String[] IMPORTS = {
-			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson",
 			"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat",
 			"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*" };
 
-	DefaultStaticImports(BlockBuilder blockBuilder,
+	DefaultStaticImports(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return true;
+	}
+
+}
+
+class DefaultJsonStaticImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = {
+			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson" };
+
+	DefaultJsonStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -126,8 +150,9 @@ class DefaultStaticImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT;
+		return this.generatedClassMetaData.listOfFiles.stream()
+				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
+						.anyMatch(SingleContractMetadata::isJson));
 	}
 
 }
@@ -449,13 +474,13 @@ class BaseClassProvider {
 
 }
 
-class JunitMethodMetadata implements MethodMetadata {
+class JUnitMethodMetadata implements MethodMetadata {
 
 	private final BlockBuilder blockBuilder;
 
 	private final NameProvider nameProvider = new NameProvider();
 
-	JunitMethodMetadata(BlockBuilder blockBuilder) {
+	JUnitMethodMetadata(BlockBuilder blockBuilder) {
 		this.blockBuilder = blockBuilder;
 	}
 
@@ -609,7 +634,8 @@ interface BodyMethodVisitor {
 	default void indentedBodyBlock(BlockBuilder blockBuilder,
 			List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
-		List<MethodVisitor> visitors = filterVisitors(methodVisitors, singleContractMetadata);
+		List<MethodVisitor> visitors = filterVisitors(methodVisitors,
+				singleContractMetadata);
 		if (visitors.isEmpty()) {
 			blockBuilder.addEndingIfNotPresent().addEmptyLine();
 			blockBuilder.endBlock();
@@ -626,15 +652,17 @@ interface BodyMethodVisitor {
 	 * @param singleContractMetadata
 	 * @return
 	 */
-	default List<MethodVisitor> filterVisitors(List<? extends MethodVisitor> methodVisitors, SingleContractMetadata singleContractMetadata) {
+	default List<MethodVisitor> filterVisitors(
+			List<? extends MethodVisitor> methodVisitors,
+			SingleContractMetadata singleContractMetadata) {
 		return methodVisitors.stream()
 				.filter(given -> given.accept(singleContractMetadata))
 				.collect(Collectors.toList());
 	}
 
 	/**
-	 * Picks matching elements, visits them. Doesn't apply indents.
-	 * Useful for the // then: block where there is no method chaining.
+	 * Picks matching elements, visits them. Doesn't apply indents. Useful for the //
+	 * then: block where there is no method chaining.
 	 * @param blockBuilder
 	 * @param methodVisitors
 	 * @param singleContractMetadata
@@ -642,7 +670,8 @@ interface BodyMethodVisitor {
 	default void bodyBlock(BlockBuilder blockBuilder,
 			List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
-		List<MethodVisitor> visitors = filterVisitors(methodVisitors, singleContractMetadata);
+		List<MethodVisitor> visitors = filterVisitors(methodVisitors,
+				singleContractMetadata);
 		if (visitors.isEmpty()) {
 			blockBuilder.addEndingIfNotPresent().addEmptyLine();
 			return;
@@ -657,19 +686,20 @@ interface BodyMethodVisitor {
 	 * @param singleContractMetadata
 	 * @param visitors
 	 */
-	default void applyVisitors(BlockBuilder blockBuilder, SingleContractMetadata singleContractMetadata, List<MethodVisitor> visitors) {
+	default void applyVisitors(BlockBuilder blockBuilder,
+			SingleContractMetadata singleContractMetadata, List<MethodVisitor> visitors) {
 		Iterator<MethodVisitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			MethodVisitor when = iterator.next();
 			when.apply(singleContractMetadata);
 			if (iterator.hasNext()) {
 				blockBuilder.addEmptyLine();
-			} else {
+			}
+			else {
 				blockBuilder.addEndingIfNotPresent();
 			}
 		}
 	}
-
 
 	default void endIndentedBodyBlock(BlockBuilder blockBuilder) {
 		blockBuilder.addEndingIfNotPresent().unindent().endBlock().addEmptyLine();

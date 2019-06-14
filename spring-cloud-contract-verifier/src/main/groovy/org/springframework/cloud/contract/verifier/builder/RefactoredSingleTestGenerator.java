@@ -48,11 +48,14 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(builder)
 				.contractMetaData(metaData)
 				// JUnitMethodAnnotation
-				.methodAnnotation(new JUnit4MethodAnnotation(builder, metaData),
-						new JUnit4IgnoreMethodAnnotation(builder, metaData))
+				.methodAnnotation(
+						new JUnit4MethodAnnotation(builder, metaData),
+						new JUnit4IgnoreMethodAnnotation(builder, metaData),
+						new JUnit5MethodAnnotation(builder, metaData),
+						new JUnit5IgnoreMethodAnnotation(builder, metaData))
 				// JavaMethodMetadata
 				// SpockMethodMetadata
-				.methodMetadata(new JunitMethodMetadata(builder))
+				.methodMetadata(new JUnitMethodMetadata(builder))
 				.given(new RestAssuredGiven(builder, metaData))
 				.when(new RestAssuredWhen(builder, metaData))
 				.then(new MockMvcThen(builder, metaData));
@@ -69,19 +72,26 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new JUnit4Imports(builder, metaData),
 						new Junit4IgnoreImports(builder, metaData),
 						new JUnit4OrderImports(builder, metaData),
+						new JUnit5Imports(builder, metaData),
+						new JUnit5IgnoreImports(builder, metaData),
+						new JUnit5OrderImports(builder, metaData),
 						new JsonPathImports(builder, metaData),
 						new XmlImports(builder, metaData),
 						new MessagingImports(builder, metaData),
 						new MockMvcRestAssured3Imports(builder, metaData),
 						new ExplicitRestAssured3Imports(builder, metaData),
 						new WebTestClientRestAssured3Imports(builder, metaData))
-				.staticImports(new DefaultStaticImports(builder, metaData),
+				.staticImports(new DefaultStaticImports(builder),
+						new DefaultJsonStaticImports(builder, metaData),
 						new MockMvcRestAssured3StaticImports(builder, metaData),
 						new ExplicitRestAssured3StaticImports(builder, metaData),
 						new WebTestClientRestAssured3StaticImports(builder, metaData),
 						new CustomStaticImports(builder, metaData),
 						new MessagingStaticImports(builder, metaData))
-				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData))
+				.classAnnotations(
+						new JUnit4OrderClassAnnotation(builder, metaData),
+						new JUnit5OrderClassAnnotation(builder, metaData)
+				)
 				.build();
 		return generatedTestClass.asClassString();
 	}
