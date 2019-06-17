@@ -235,7 +235,7 @@ class MockMvcCookiesGiven implements Given {
 			if (ofAbsentType(cookie)) {
 				return;
 			}
-			bb.addIndented(string(cookie));
+			bb.addLine(string(cookie));
 		});
 	}
 
