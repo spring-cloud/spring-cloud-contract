@@ -69,7 +69,8 @@ class CustomImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties.getImports().length > 0;
+		return this.generatedClassMetaData.configProperties.getImports() != null
+				&& this.generatedClassMetaData.configProperties.getImports().length > 0;
 	}
 
 }
@@ -95,7 +96,9 @@ class CustomStaticImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties.getStaticImports().length > 0;
+		return this.generatedClassMetaData.configProperties.getStaticImports() != null
+				&& this.generatedClassMetaData.configProperties
+						.getStaticImports().length > 0;
 	}
 
 }
@@ -368,6 +371,7 @@ interface DefaultClassMetadata extends ClassMetaData {
 		blockBuilder().addAtTheEnd(className);
 		return this;
 	}
+
 }
 
 class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
@@ -480,9 +484,9 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 	public ClassMetaData suffix() {
 		String suffix = StringUtils.hasText(
 				this.generatedClassMetaData.configProperties.getNameSuffixForTests())
-				? this.generatedClassMetaData.configProperties
-				.getNameSuffixForTests()
-				: "Spec";
+						? this.generatedClassMetaData.configProperties
+								.getNameSuffixForTests()
+						: "Spec";
 		if (!this.blockBuilder.endsWith(suffix)) {
 			this.blockBuilder.addAtTheEnd(suffix);
 		}
@@ -618,11 +622,11 @@ class JUnitMethodMetadata implements MethodMetadata {
 		return this;
 	}
 
-
 	@Override
 	public boolean accept() {
 		return this.metaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
+
 }
 
 class SpockMethodMetadata implements MethodMetadata {
@@ -655,11 +659,11 @@ class SpockMethodMetadata implements MethodMetadata {
 		return this;
 	}
 
-
 	@Override
 	public boolean accept() {
 		return this.metaData.configProperties.getTestFramework() == TestFramework.SPOCK;
 	}
+
 }
 
 class NameProvider {
@@ -780,7 +784,8 @@ interface BodyMethodVisitor {
 	 * @return
 	 */
 	default BlockBuilder startBodyBlock(BlockBuilder blockBuilder, String label) {
-		return blockBuilder.addIndentation().appendWithLabelPrefix(label).addEmptyLine().startBlock();
+		return blockBuilder.addIndentation().appendWithLabelPrefix(label).addEmptyLine()
+				.startBlock();
 	}
 
 	/**

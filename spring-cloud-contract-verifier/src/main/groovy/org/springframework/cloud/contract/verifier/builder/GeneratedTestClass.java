@@ -344,7 +344,8 @@ class ClassBodyBuilder {
 	}
 
 	void visit(List<? extends Visitor> list) {
-		List<? extends Visitor> visitors = list.stream().filter(Acceptor::accept).collect(Collectors.toList());
+		List<? extends Visitor> visitors = list.stream().filter(Acceptor::accept)
+				.collect(Collectors.toList());
 		Iterator<? extends Visitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			Visitor visitor = iterator.next();
@@ -493,10 +494,7 @@ class SingleMethodBuilder {
 	}
 
 	private MethodMetadata pickMetadatum() {
-		return this.methodMetadata
-				.stream()
-				.filter(Acceptor::accept)
-				.findFirst()
+		return this.methodMetadata.stream().filter(Acceptor::accept).findFirst()
 				.orElseThrow(() -> new IllegalStateException(
 						"No matching method metadata found"));
 	}
@@ -508,8 +506,8 @@ class SingleMethodBuilder {
 
 	private boolean visit(List<? extends MethodVisitor> list,
 			SingleContractMetadata metaData, boolean addLineEnding) {
-		List<? extends MethodVisitor> visitors = list.stream().filter(o -> o.accept(metaData))
-				.collect(Collectors.toList());
+		List<? extends MethodVisitor> visitors = list.stream()
+				.filter(o -> o.accept(metaData)).collect(Collectors.toList());
 		Iterator<? extends MethodVisitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			MethodVisitor visitor = iterator.next();

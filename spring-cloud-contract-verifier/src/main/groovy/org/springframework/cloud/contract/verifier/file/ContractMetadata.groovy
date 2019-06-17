@@ -111,7 +111,7 @@ class SingleContractMetadata {
 		this.outputStubContentType = outputBody != null ? ContentUtils.evaluateContentType(outputHeaders, outputBody.getClientValue()) : ContentType.UNKNOWN
 		this.http = currentContract.request != null
 		this.contractMetadata = contractMetadata
-		this.stubsFile = contractMetadata.getPath().toFile()
+		this.stubsFile = contractMetadata.getPath() != null ? contractMetadata.getPath().toFile() : null
 	}
 
 	boolean isJson() {

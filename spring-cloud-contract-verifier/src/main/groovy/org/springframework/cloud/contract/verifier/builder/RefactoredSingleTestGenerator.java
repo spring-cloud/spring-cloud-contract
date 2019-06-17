@@ -55,22 +55,14 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new SpockIgnoreMethodAnnotation(builder, metaData))
 				// JavaMethodMetadata
 				// SpockMethodMetadata
-				.methodMetadata(
-						new JUnitMethodMetadata(builder, metaData),
-						new SpockMethodMetadata(builder, metaData)
-				)
-				.given(
-						new RestAssuredGiven(builder, metaData),
-						new JaxRsRequestGiven(metaData)
-				)
-				.when(
-						new RestAssuredWhen(builder, metaData),
-						new JaxRsWhen(builder, metaData)
-				)
-				.then(
-						new RestAssuredThen(builder, metaData),
-						new JaxRsThen(builder, metaData)
-				);
+				.methodMetadata(new JUnitMethodMetadata(builder, metaData),
+						new SpockMethodMetadata(builder, metaData))
+				.given(new RestAssuredGiven(builder, metaData),
+						new JaxRsRequestGiven(metaData))
+				.when(new RestAssuredWhen(builder, metaData),
+						new JaxRsWhen(builder, metaData))
+				.then(new RestAssuredThen(builder, metaData),
+						new JaxRsThen(builder, metaData));
 
 		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
 				.field(new MessagingFields(builder, metaData))

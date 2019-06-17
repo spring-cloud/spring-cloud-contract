@@ -49,9 +49,9 @@ class JUnit4IgnoreImports implements Imports {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT
 				&& this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.isIgnored()
-						|| metadata.getConvertedContractWithMetadata().stream()
-								.anyMatch(SingleContractMetadata::isIgnored));
+						.anyMatch(metadata -> metadata.isIgnored()
+								|| metadata.getConvertedContractWithMetadata().stream()
+										.anyMatch(SingleContractMetadata::isIgnored));
 	}
 
 }
@@ -273,7 +273,8 @@ class JUnit5Imports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = { "org.junit.jupiter.api.Test", "org.junit.jupiter.api.extension.ExtendWith" };
+	private static final String[] IMPORTS = { "org.junit.jupiter.api.Test",
+			"org.junit.jupiter.api.extension.ExtendWith" };
 
 	JUnit5Imports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
@@ -342,8 +343,9 @@ class JUnit5OrderClassAnnotation implements ClassAnnotation {
 
 	@Override
 	public ClassAnnotation call() {
-		//Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
-		throw new UnsupportedOperationException("Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+		// Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		throw new UnsupportedOperationException(
+				"Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
 	}
 
 	@Override
@@ -372,9 +374,10 @@ class JUnit5OrderImports implements Imports {
 
 	@Override
 	public Imports call() {
-//		Arrays.stream(IMPORTS)
-//				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
-		throw new UnsupportedOperationException("Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+		// Arrays.stream(IMPORTS)
+		// .forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		throw new UnsupportedOperationException(
+				"Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
 	}
 
 	@Override
@@ -382,7 +385,7 @@ class JUnit5OrderImports implements Imports {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT5
 				&& this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(meta -> meta.getOrder() != null);
+						.anyMatch(meta -> meta.getOrder() != null);
 	}
 
 }
@@ -482,8 +485,7 @@ class SpockOrderClassAnnotation implements ClassAnnotation {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] ANNOTATIONS = {
-			"@Stepwise" };
+	private static final String[] ANNOTATIONS = { "@Stepwise" };
 
 	SpockOrderClassAnnotation(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
@@ -533,7 +535,7 @@ class SpockOrderImports implements Imports {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.SPOCK
 				&& this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(meta -> meta.getOrder() != null);
+						.anyMatch(meta -> meta.getOrder() != null);
 	}
 
 }
@@ -545,7 +547,7 @@ class JaxRsImports implements Imports {
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity",
-	"javax.ws.rs.core.Response"};
+			"javax.ws.rs.core.Response" };
 
 	JaxRsImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
@@ -574,7 +576,7 @@ class JaxRsStaticImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity.*"};
+	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity.*" };
 
 	JaxRsStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {

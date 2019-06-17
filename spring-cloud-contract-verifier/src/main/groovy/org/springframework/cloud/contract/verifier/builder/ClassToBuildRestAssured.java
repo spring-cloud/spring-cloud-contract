@@ -899,7 +899,8 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 			appendQueryParams(request.getUrl().getQueryParameters());
 		}
 		else if (request.getUrlPath() != null) {
-			this.blockBuilder.addIndented(".path(" + concreteUrl(request.getUrlPath()) + ")");
+			this.blockBuilder
+					.addIndented(".path(" + concreteUrl(request.getUrlPath()) + ")");
 			appendQueryParams(request.getUrlPath().getQueryParameters());
 		}
 	}

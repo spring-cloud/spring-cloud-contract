@@ -89,7 +89,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 			ContractTemplate contractTemplate,
 			Contract contract,
 			Optional<String> lineSuffix) {
-		this(configProperties, templateProcessor, contractTemplate, contract, lineSuffix, { String value -> Function.identity().apply(value) })
+		this(configProperties, templateProcessor, contractTemplate, contract, lineSuffix, Closure.IDENTITY)
 	}
 
 	Object addJsonResponseBodyCheck(BlockBuilder bb, Object convertedResponseBody,
