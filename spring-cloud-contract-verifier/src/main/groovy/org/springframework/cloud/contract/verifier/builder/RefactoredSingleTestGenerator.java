@@ -59,9 +59,18 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new JUnitMethodMetadata(builder, metaData),
 						new SpockMethodMetadata(builder, metaData)
 				)
-				.given(new RestAssuredGiven(builder, metaData))
-				.when(new RestAssuredWhen(builder, metaData))
-				.then(new MockMvcThen(builder, metaData));
+				.given(
+						new RestAssuredGiven(builder, metaData),
+						new JaxRsRequestGiven(metaData)
+				)
+				.when(
+						new RestAssuredWhen(builder, metaData),
+						new JaxRsWhen(builder, metaData)
+				)
+				.then(
+						new RestAssuredThen(builder, metaData),
+						new JaxRsThen(builder, metaData)
+				);
 
 		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
 				.field(new MessagingFields(builder, metaData))
@@ -87,14 +96,16 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 						new MessagingImports(builder, metaData),
 						new MockMvcRestAssuredImports(builder, metaData),
 						new ExplicitRestAssuredImports(builder, metaData),
-						new WebTestClientRestAssuredImports(builder, metaData))
+						new WebTestClientRestAssuredImports(builder, metaData),
+						new JaxRsImports(builder, metaData))
 				.staticImports(new DefaultStaticImports(builder),
 						new DefaultJsonStaticImports(builder, metaData),
 						new MockMvcRestAssuredStaticImports(builder, metaData),
 						new ExplicitRestAssuredStaticImports(builder, metaData),
 						new WebTestClientRestAssured3StaticImports(builder, metaData),
 						new CustomStaticImports(builder, metaData),
-						new MessagingStaticImports(builder, metaData))
+						new MessagingStaticImports(builder, metaData),
+						new JaxRsStaticImports(builder, metaData))
 				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData),
 						new JUnit5OrderClassAnnotation(builder, metaData),
 						new SpockOrderClassAnnotation(builder, metaData))

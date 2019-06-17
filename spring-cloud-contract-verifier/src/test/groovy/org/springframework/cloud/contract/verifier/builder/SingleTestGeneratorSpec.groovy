@@ -325,8 +325,8 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT         | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
 			JUNIT5        | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
 			JUNIT5        | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2 }
-			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2 }
+			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification request') == 2 }
 	}
 
 	def 'should build JaxRs test class for #testFramework'() {
@@ -336,7 +336,7 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, null, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
-			RefactoredSingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
+			SingleTestGenerator testGenerator = new RefactoredSingleTestGenerator()
 
 		when:
 			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))

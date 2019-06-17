@@ -439,18 +439,18 @@ class SingleMethodBuilder {
 		return this;
 	}
 
-	SingleMethodBuilder given(Given given) {
-		this.givens.add(given);
+	SingleMethodBuilder given(Given... given) {
+		this.givens.addAll(Arrays.asList(given));
 		return this;
 	}
 
-	SingleMethodBuilder when(When when) {
-		this.whens.add(when);
+	SingleMethodBuilder when(When... when) {
+		this.whens.addAll(Arrays.asList(when));
 		return this;
 	}
 
-	SingleMethodBuilder then(Then then) {
-		this.thens.add(then);
+	SingleMethodBuilder then(Then... then) {
+		this.thens.addAll(Arrays.asList(then));
 		return this;
 	}
 
@@ -469,7 +469,7 @@ class SingleMethodBuilder {
 			}
 			// @formatter:off
 			// public void validate_foo()
-			this.blockBuilder.addIndented(methodMetadatum::modifier)
+			this.blockBuilder.append(methodMetadatum::modifier)
 					.appendWithSpace(methodMetadatum::returnType)
 					.appendWithSpace(() -> methodMetadatum.name(metaData))
 					.append("() throws Exception ");

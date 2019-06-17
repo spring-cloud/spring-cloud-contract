@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder;
 import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestFramework;
+import org.springframework.cloud.contract.verifier.config.TestMode;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
 class ClassToBuildTestFramework {
@@ -80,8 +81,7 @@ class JUnit4IgnoreMethodAnnotation implements MethodAnnotations {
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT
-				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(meta -> meta.getOrder() != null);
+				&& this.generatedClassMetaData.isAnyIgnored();
 	}
 
 }
@@ -534,6 +534,65 @@ class SpockOrderImports implements Imports {
 				.getTestFramework() == TestFramework.SPOCK
 				&& this.generatedClassMetaData.listOfFiles.stream()
 				.anyMatch(meta -> meta.getOrder() != null);
+	}
+
+}
+
+class JaxRsImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity",
+	"javax.ws.rs.core.Response"};
+
+	JaxRsImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestMode() == TestMode.JAXRSCLIENT;
+	}
+
+}
+
+class JaxRsStaticImports implements Imports {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity.*"};
+
+	JaxRsStaticImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public Imports call() {
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return this.generatedClassMetaData.configProperties
+				.getTestMode() == TestMode.JAXRSCLIENT;
 	}
 
 }
