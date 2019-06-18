@@ -47,22 +47,22 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 
 		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(builder)
 				.contractMetaData(metaData)
-				// JUnitMethodAnnotation
 				.methodAnnotation(new JUnit4MethodAnnotation(builder, metaData),
 						new JUnit4IgnoreMethodAnnotation(builder, metaData),
 						new JUnit5MethodAnnotation(builder, metaData),
 						new JUnit5IgnoreMethodAnnotation(builder, metaData),
 						new SpockIgnoreMethodAnnotation(builder, metaData))
-				// JavaMethodMetadata
-				// SpockMethodMetadata
 				.methodMetadata(new JUnitMethodMetadata(builder, metaData),
 						new SpockMethodMetadata(builder, metaData))
 				.given(new RestAssuredGiven(builder, metaData),
-						new JaxRsRequestGiven(metaData))
+						new JaxRsRequestGiven(metaData),
+						new MessagingGiven(builder, metaData))
 				.when(new RestAssuredWhen(builder, metaData),
-						new JaxRsWhen(builder, metaData))
+						new JaxRsWhen(builder, metaData),
+						new MessagingWhen(builder, metaData))
 				.then(new RestAssuredThen(builder, metaData),
-						new JaxRsThen(builder, metaData));
+						new JaxRsThen(builder, metaData),
+						new MessagingThen(builder, metaData));
 
 		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
 				.field(new MessagingFields(builder, metaData))

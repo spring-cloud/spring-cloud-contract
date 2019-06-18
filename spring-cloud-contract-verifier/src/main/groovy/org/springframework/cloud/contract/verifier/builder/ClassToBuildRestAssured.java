@@ -34,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.StringEscapeUtils;
 
 import org.springframework.cloud.contract.spec.ContractTemplate;
-import org.springframework.cloud.contract.spec.internal.Body;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.Cookie;
 import org.springframework.cloud.contract.spec.internal.Cookies;
@@ -43,15 +42,18 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.Headers;
+import org.springframework.cloud.contract.spec.internal.Input;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.NamedProperty;
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern;
 import org.springframework.cloud.contract.spec.internal.OptionalProperty;
+import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.spec.internal.QueryParameter;
 import org.springframework.cloud.contract.spec.internal.QueryParameters;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Response;
 import org.springframework.cloud.contract.spec.internal.Url;
+import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor;
@@ -700,7 +702,7 @@ class JaxRsThen implements Then, BodyMethodVisitor, JaxRsAcceptor {
 		this.thens.addAll(Arrays.asList(new JaxRsStatusCodeThen(this.blockBuilder),
 				new JaxRsResponseHeadersThen(this.blockBuilder),
 				new JaxRsResponseCookiesThen(this.blockBuilder),
-				new GenericBodyThen(this.blockBuilder, generatedClassMetaData,
+				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
 						JaxRsBodyParser.INSTANCE)));
 	}
 
@@ -1274,7 +1276,7 @@ class RestAssuredThen implements Then, BodyMethodVisitor {
 		this.thens.addAll(Arrays.asList(new RestAssuredStatusCodeThen(this.blockBuilder),
 				new RestAssuredHeadersThen(this.blockBuilder),
 				new RestAssuredCookiesThen(this.blockBuilder),
-				new GenericBodyThen(this.blockBuilder, generatedClassMetaData,
+				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
 						RestAssuredBodyParser.INSTANCE)));
 	}
 
@@ -1664,7 +1666,7 @@ class RestAssuredCookiesThen implements Then, MockMvcAcceptor, CookieElementProc
 
 }
 
-class GenericBodyThen implements Then, BodyMethodVisitor {
+class GenericHttpBodyThen implements Then, BodyMethodVisitor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -1674,7 +1676,7 @@ class GenericBodyThen implements Then, BodyMethodVisitor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	GenericBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
+	GenericHttpBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
 			BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyParser = bodyParser;
@@ -1703,6 +1705,22 @@ class GenericBodyThen implements Then, BodyMethodVisitor {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return metadata.getContract().getResponse().getBody() != null;
+	}
+
+}
+
+interface BodyThen {
+
+	default DslProperty requestBody(SingleContractMetadata metadata) {
+		return metadata.getContract().getRequest().getBody();
+	}
+
+	default DslProperty responseBody(SingleContractMetadata metadata) {
+		return metadata.getContract().getResponse().getBody();
+	}
+
+	default BodyMatchers responseBodyMatchers(SingleContractMetadata metadata) {
+		return metadata.getContract().getResponse().getBodyMatchers();
 	}
 
 }
@@ -1750,8 +1768,8 @@ class GenericTextBodyThen implements Then {
 	public boolean accept(SingleContractMetadata metadata) {
 		ContentType outputTestContentType = metadata.getOutputTestContentType();
 		return outputTestContentType != JSON && outputTestContentType != XML
-				&& metadata.getContract().getResponse().getBody() != null
-				&& !(metadata.getContract().getResponse().getBody()
+				&& this.bodyParser.responseBody(metadata) != null
+				&& !(this.bodyParser.responseBody(metadata)
 						.getServerValue() instanceof FromFileProperty);
 	}
 
@@ -1784,8 +1802,7 @@ class GenericJsonBodyThen implements Then {
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
-		BodyMatchers bodyMatchers = metadata.getContract().getResponse()
-				.getBodyMatchers();
+		BodyMatchers bodyMatchers = this.bodyParser.responseBodyMatchers(metadata);
 		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		ContentType contentType = metadata.getOutputTestContentType();
 		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
@@ -1929,8 +1946,7 @@ class GenericXmlBodyThen implements Then {
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
-		BodyMatchers bodyMatchers = metadata.getContract().getResponse()
-				.getBodyMatchers();
+		BodyMatchers bodyMatchers = this.bodyParser.responseBodyMatchers(metadata);
 		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		XmlBodyVerificationBuilder xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(
 				metadata.getContract(), Optional.of(this.blockBuilder.getLineEnding()));
@@ -1954,17 +1970,19 @@ class GenericBinaryBodyThen implements Then {
 
 	private final BodyAssertionLineCreator bodyAssertionLineCreator;
 
+	private final BodyParser bodyParser;
+
 	GenericBinaryBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
 			BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder,
 				metaData, bodyParser.byteArrayString());
+		this.bodyParser = bodyParser;
 	}
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
-		Object responseBody = metadata.getContract().getResponse().getBody()
-				.getServerValue();
+		Object responseBody = this.bodyParser.responseBody(metadata).getServerValue();
 		byteResponseBodyCheck(metadata, (FromFileProperty) responseBody);
 		return this;
 	}
@@ -1978,8 +1996,7 @@ class GenericBinaryBodyThen implements Then {
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		Object responseBody = metadata.getContract().getResponse().getBody()
-				.getServerValue();
+		Object responseBody = this.bodyParser.responseBody(metadata).getServerValue();
 		if (!(responseBody instanceof FromFileProperty)) {
 			return false;
 		}
@@ -2005,13 +2022,15 @@ interface RestAssuredBodyParser extends BodyParser {
 
 }
 
-interface BodyParser {
+interface BodyParser extends BodyThen {
 
 	String byteArrayString();
 
 	default Object convertResponseBody(SingleContractMetadata metadata) {
-		Object responseBody = metadata.getContract().getResponse().getBody();
 		ContentType contentType = metadata.getOutputTestContentType();
+		DslProperty body = responseBody(metadata);
+		Object responseBody = extractServerValueFromBody(contentType,
+				body.getServerValue());
 		if (responseBody instanceof FromFileProperty) {
 			responseBody = ((FromFileProperty) responseBody).asString();
 		}
@@ -2031,46 +2050,29 @@ interface BodyParser {
 	@SuppressWarnings("unchecked")
 	default String requestBodyAsString(SingleContractMetadata metadata) {
 		ContentType contentType = metadata.getInputTestContentType();
-		Body body = metadata.getContract().getRequest().getBody();
+		DslProperty body = requestBody(metadata);
 		Object bodyValue = extractServerValueFromBody(contentType, body.getServerValue());
 		if (contentType == ContentType.FORM) {
 			if (bodyValue instanceof Map) {
 				// [a:3, b:4] == "a=3&b=4"
 				return ((Map) bodyValue).entrySet().stream().map(o -> {
 					Map.Entry entry = (Map.Entry) o;
-					return convertUnicodeEscapesIfRequired(
+					return BodyGenerationUtils.convertUnicodeEscapesIfRequired(
 							entry.getKey().toString() + "=" + entry.getValue());
 				}).collect(Collectors.joining("&")).toString();
 			}
 			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
 				return ((List) bodyValue).stream()
-						.map(o -> convertUnicodeEscapesIfRequired(o.toString()))
+						.map(o -> BodyGenerationUtils
+								.convertUnicodeEscapesIfRequired(o.toString()))
 						.collect(Collectors.joining("&")).toString();
 			}
 		}
 		else {
-			String json = JsonOutput.toJson(bodyValue);
-			json = convertUnicodeEscapesIfRequired(json);
-			return trimRepeatedQuotes(json);
+			return BodyGenerationUtils.convertToJsonString(bodyValue);
 		}
 		return "";
-	}
-
-	default String convertUnicodeEscapesIfRequired(String json) {
-		String unescapedJson = StringEscapeUtils.unescapeEcmaScript(json);
-		return escapeJava(unescapedJson);
-	}
-
-	default String trimRepeatedQuotes(String toTrim) {
-		if (toTrim.startsWith("\"")) {
-			return toTrim.replaceAll("\"", "");
-			// #261
-		}
-		else if (toTrim.startsWith("\\\"") && toTrim.endsWith("\\\"")) {
-			return toTrim.substring(2, toTrim.length() - 2);
-		}
-		return toTrim;
 	}
 
 	/**
@@ -2087,6 +2089,32 @@ interface BodyParser {
 				: MapConverter.JSON_PARSING_CLOSURE;
 		return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE,
 				parsingClosure);
+	}
+
+}
+
+class BodyGenerationUtils {
+
+	static String convertUnicodeEscapesIfRequired(String json) {
+		String unescapedJson = StringEscapeUtils.unescapeEcmaScript(json);
+		return escapeJava(unescapedJson);
+	}
+
+	static String convertToJsonString(Object bodyValue) {
+		String json = JsonOutput.toJson(bodyValue);
+		json = convertUnicodeEscapesIfRequired(json);
+		return trimRepeatedQuotes(json);
+	}
+
+	static String trimRepeatedQuotes(String toTrim) {
+		if (toTrim.startsWith("\"")) {
+			return toTrim.replaceAll("\"", "");
+			// #261
+		}
+		else if (toTrim.startsWith("\\\"") && toTrim.endsWith("\\\"")) {
+			return toTrim.substring(2, toTrim.length() - 2);
+		}
+		return toTrim;
 	}
 
 }
@@ -2199,6 +2227,493 @@ class BodyAssertionLineCreator {
 
 	private String stripFirstChar(String s) {
 		return s.substring(1);
+	}
+
+}
+
+interface MessagingBodyParser extends BodyParser {
+
+	BodyParser INSTANCE = new MessagingBodyParser() {
+	};
+
+	default String responseAsString() {
+		return "contractVerifierObjectMapper.writeValueAsString(response.getPayload())";
+	}
+
+	default String byteArrayString() {
+		return "response.getPayloadAsByteArray()";
+	}
+
+	@Override
+	default DslProperty responseBody(SingleContractMetadata metadata) {
+		return metadata.getContract().getOutputMessage().getBody();
+	}
+
+	@Override
+	default BodyMatchers responseBodyMatchers(SingleContractMetadata metadata) {
+		return metadata.getContract().getOutputMessage().getBodyMatchers();
+	}
+
+}
+
+class MessagingGiven implements Given, MethodVisitor<Given> {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final List<Given> givens = new LinkedList<>();
+
+	MessagingGiven(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+		this.givens.addAll(Arrays.asList(
+				new MessagingBodyGiven(this.blockBuilder,
+						new BodyReader(this.generatedClassMetaData),
+						MessagingBodyParser.INSTANCE),
+				new MessagingHeadersGiven(this.blockBuilder)));
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addIndented(
+				"ContractVerifierMessage inputMessage = contractVerifierMessaging.create(");
+		this.givens.stream().filter(given -> given.accept(metadata))
+				.forEach(given -> given.apply(metadata));
+		this.blockBuilder.append(")").addEndingIfNotPresent();
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.isMessaging()
+				&& metadata.getContract().getInput().getTriggeredBy() == null;
+	}
+
+}
+
+class MessagingBodyGiven implements Given, MethodVisitor<Given> {
+
+	private final BlockBuilder blockBuilder;
+
+	private final BodyReader bodyReader;
+
+	private final BodyParser bodyParser;
+
+	MessagingBodyGiven(BlockBuilder blockBuilder, BodyReader bodyReader,
+			BodyParser bodyParser) {
+		this.blockBuilder = blockBuilder;
+		this.bodyReader = bodyReader;
+		this.bodyParser = bodyParser;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addIndented(getBodyAsString(metadata));
+		return this;
+	}
+
+	private String getBodyAsString(SingleContractMetadata metadata) {
+		ContentType contentType = metadata.getInputTestContentType();
+		Input inputMessage = metadata.getContract().getInput();
+		Object bodyValue = this.bodyParser.extractServerValueFromBody(contentType,
+				inputMessage.getMessageBody().getServerValue());
+		if (bodyValue instanceof FromFileProperty) {
+			FromFileProperty fileProperty = (FromFileProperty) bodyValue;
+			return fileProperty.isByte()
+					? this.bodyReader.readBytesFromFileString(metadata, fileProperty,
+							CommunicationType.REQUEST)
+					: quote(this.bodyReader.readStringFromFileString(metadata,
+							fileProperty, CommunicationType.REQUEST));
+		}
+		return BodyGenerationUtils.convertToJsonString(bodyValue);
+	}
+
+	private String quote(String text) {
+		return "\"" + escapeJava(text) + "\"";
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.getContract().getInput().getMessageBody() != null;
+	}
+
+}
+
+class MessagingHeadersGiven implements Given, MethodVisitor<Given> {
+
+	private final BlockBuilder blockBuilder;
+
+	MessagingHeadersGiven(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		Input inputMessage = metadata.getContract().getInput();
+		this.blockBuilder.startBlock().append(", headers()");
+		inputMessage.getMessageHeaders().executeForEachHeader(header -> {
+			this.blockBuilder.addEmptyLine().append(getHeaderString(header));
+		});
+		return this;
+	}
+
+	private String getHeaderString(Header header) {
+		return ".header(" + getTestSideValue(header.getName()) + ", "
+				+ getTestSideValue(header.getServerValue()) + ")";
+	}
+
+	private String getTestSideValue(Object object) {
+		return '"' + MapConverter.getTestSideValues(object).toString() + '"';
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.getContract().getInput().getMessageHeaders() != null;
+	}
+
+}
+
+class MessagingWhen implements When, BodyMethodVisitor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final List<When> whens = new LinkedList<>();
+
+	MessagingWhen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+		this.whens.addAll(Arrays.asList(new MessagingTriggeredByWhen(this.blockBuilder),
+				new MessagingBodyWhen(this.blockBuilder),
+				new MessagingAssertThatWhen(this.blockBuilder)));
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
+		startBodyBlock(this.blockBuilder, "when:");
+		indentedBodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.isMessaging();
+	}
+
+}
+
+class MessagingTriggeredByWhen implements When {
+
+	private final BlockBuilder blockBuilder;
+
+	MessagingTriggeredByWhen(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addLineWithEnding(
+				metadata.getContract().getInput().getTriggeredBy().getExecutionCommand());
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.getContract().getInput().getTriggeredBy() != null;
+	}
+
+}
+
+class MessagingBodyWhen implements When {
+
+	private final BlockBuilder blockBuilder;
+
+	MessagingBodyWhen(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addLineWithEnding(
+				"contractVerifierMessaging.send(inputMessage, \"" + metadata.getContract()
+						.getInput().getMessageFrom().getServerValue() + "\")");
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.getContract().getInput().getMessageFrom() != null;
+	}
+
+}
+
+class MessagingAssertThatWhen implements When {
+
+	private final BlockBuilder blockBuilder;
+
+	MessagingAssertThatWhen(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addLineWithEnding(
+				metadata.getContract().getInput().getAssertThat().getExecutionCommand());
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.getContract().getInput().getAssertThat() != null;
+	}
+
+}
+
+class MessagingThen implements Then, BodyMethodVisitor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final List<Then> thens = new LinkedList<>();
+
+	MessagingThen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+		this.thens.addAll(Arrays.asList(
+				new MessagingSpockNoMessageThen(this.blockBuilder,
+						generatedClassMetaData),
+				new MessagingReceiveMessageThen(this.blockBuilder,
+						generatedClassMetaData),
+				new MessagingHeadersThen(this.blockBuilder, generatedClassMetaData),
+				new MessagingBodyThen(this.blockBuilder, generatedClassMetaData),
+				new MessagingAssertThatThen(this.blockBuilder)));
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
+		startBodyBlock(this.blockBuilder, "then:");
+		indentedBodyBlock(this.blockBuilder, this.thens, singleContractMetadata);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.isMessaging()
+				&& singleContractMetadata.getContract().getOutputMessage() != null;
+	}
+
+}
+
+class MessagingSpockNoMessageThen implements Then, BodyMethodVisitor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MessagingSpockNoMessageThen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
+		this.blockBuilder.addLineWithEnding("noExceptionThrown()");
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.isMessaging()
+				&& singleContractMetadata.getContract().getOutputMessage() == null
+				&& this.generatedClassMetaData.configProperties
+						.getTestFramework() == TestFramework.SPOCK;
+	}
+
+}
+
+class MessagingReceiveMessageThen implements Then, BodyMethodVisitor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MessagingReceiveMessageThen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
+		OutputMessage outputMessage = singleContractMetadata.getContract()
+				.getOutputMessage();
+		this.blockBuilder.addLineWithEnding(
+				"ContractVerifierMessage response = contractVerifierMessaging.receive("
+						+ sentToValue(outputMessage.getSentTo().getServerValue()) + ")");
+		this.blockBuilder.addLineWithEnding("assertThat(response).isNotNull()");
+		return this;
+	}
+
+	private String sentToValue(Object sentTo) {
+		if (sentTo instanceof ExecutionProperty) {
+			return ((ExecutionProperty) sentTo).getExecutionCommand();
+		}
+		return '"' + sentTo.toString() + '"';
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.isMessaging() && singleContractMetadata
+				.getContract().getOutputMessage().getSentTo() != null;
+	}
+
+}
+
+class MessagingHeadersThen
+		implements Then, BodyMethodVisitor, HeaderOrCookieComparisonBuilder {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	MessagingHeadersThen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
+		OutputMessage outputMessage = singleContractMetadata.getContract()
+				.getOutputMessage();
+		outputMessage.getHeaders().executeForEachHeader(header -> {
+			processHeaderElement(header.getName(),
+					header.getServerValue() instanceof NotToEscapePattern
+							? header.getServerValue()
+							: MapConverter.getTestSideValues(header.getServerValue()));
+		});
+		return this;
+	}
+
+	private void appendLineWithHeaderNotNull(String property) {
+		this.blockBuilder.addLineWithEnding(
+				"assertThat(response.getHeader(\"" + property + "\")).isNotNull();");
+	}
+
+	private void processHeaderElement(String property, Object value) {
+		if (value instanceof Number) {
+			processHeaderElement(property, (Number) value);
+		}
+		else if (value instanceof Pattern) {
+			processHeaderElement(property, (Pattern) value);
+		}
+		else if (value instanceof ExecutionProperty) {
+			processHeaderElement(property, (ExecutionProperty) value);
+		}
+		else {
+			processHeaderElement(property, value.toString());
+		}
+	}
+
+	private void processHeaderElement(String property, String value) {
+		appendLineWithHeaderNotNull(property);
+		this.blockBuilder.addLineWithEnding("assertThat(response.getHeader(\"" + property
+				+ "\").toString())." + createHeaderComparison(value));
+	}
+
+	private void processHeaderElement(String property, Number value) {
+		appendLineWithHeaderNotNull(property);
+		blockBuilder.addLineWithEnding("assertThat(response.getHeader(\"" + property
+				+ "\")).isEqualTo(" + value + ")");
+	}
+
+	private void processHeaderElement(String property, Pattern pattern) {
+		appendLineWithHeaderNotNull(property);
+		blockBuilder.addLineWithEnding("assertThat(response.getHeader(\"" + property
+				+ "\").toString())." + createHeaderComparison(pattern));
+	}
+
+	private void processHeaderElement(String property, ExecutionProperty exec) {
+		appendLineWithHeaderNotNull(property);
+		blockBuilder.addLineWithEnding(
+				exec.insertValue("response.getHeader(\"" + property + "\").toString()"));
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.isMessaging() && singleContractMetadata
+				.getContract().getOutputMessage().getHeaders() != null;
+	}
+
+}
+
+class MessagingBodyThen implements Then, BodyMethodVisitor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final List<Then> thens = new LinkedList<>();
+
+	private final BodyParser bodyParser = MessagingBodyParser.INSTANCE;
+
+	MessagingBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = metaData;
+		this.thens.addAll(Arrays.asList(
+				new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser),
+				new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser),
+				new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser),
+				new GenericXmlBodyThen(blockBuilder, this.bodyParser)));
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
+		OutputMessage outputMessage = singleContractMetadata.getContract()
+				.getOutputMessage();
+		if (outputMessage.getHeaders() != null) {
+			endBodyBlock(this.blockBuilder);
+			this.blockBuilder.addEmptyLine();
+			startBodyBlock(this.blockBuilder, "and:");
+		}
+		this.thens.stream().filter(then -> then.accept(singleContractMetadata))
+				.forEach(then -> then.apply(singleContractMetadata));
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.isMessaging()
+				&& this.bodyParser.responseBody(singleContractMetadata) != null;
+	}
+
+}
+
+class MessagingAssertThatThen implements Then {
+
+	private final BlockBuilder blockBuilder;
+
+	MessagingAssertThatThen(BlockBuilder blockBuilder) {
+		this.blockBuilder = blockBuilder;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addLineWithEnding(metadata.getContract().getOutputMessage()
+				.getAssertThat().getExecutionCommand());
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return metadata.getContract().getOutputMessage().getAssertThat() != null;
 	}
 
 }
