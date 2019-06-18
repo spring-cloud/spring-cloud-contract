@@ -57,6 +57,7 @@ import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor;
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor;
 import org.springframework.cloud.contract.verifier.util.ContentType;
+import org.springframework.cloud.contract.verifier.util.ContentUtils;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.RegexpBuilders;
 import org.springframework.util.StringUtils;
@@ -175,7 +176,7 @@ class MockMvcBodyGiven implements Given, RestAssuredBodyParser {
 			body = request.getBody().getServerValue();
 		}
 		else {
-			body = getBodyAsString(metadata);
+			body = requestBodyAsString(metadata);
 		}
 		bb.addIndented(getBodyString(metadata, body));
 	}
@@ -1099,7 +1100,7 @@ interface JaxRsBodyParser extends BodyParser {
 	BodyParser INSTANCE = new JaxRsBodyParser() {
 	};
 
-	default String getResponseAsString() {
+	default String responseAsString() {
 		return "responseAsString";
 	}
 
@@ -1146,7 +1147,7 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 								CommunicationType.REQUEST);
 			}
 			else {
-				value = "\"" + getBodyAsString(metadata) + "\"";
+				value = "\"" + requestBodyAsString(metadata) + "\"";
 			}
 			this.blockBuilder.addIndented(".build(\"" + method.toUpperCase()
 					+ "\", entity(" + value + ", \"" + contentType + "\"))");
@@ -1724,7 +1725,7 @@ class GenericTextBodyThen implements Then {
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
-		Object convertedResponseBody = this.bodyParser.convertBody(metadata);
+		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		convertedResponseBody = StringEscapeUtils
 				.escapeJava(convertedResponseBody.toString());
 		simpleTextResponseBodyCheck(metadata, convertedResponseBody);
@@ -1734,7 +1735,7 @@ class GenericTextBodyThen implements Then {
 	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata,
 			Object convertedResponseBody) {
 		this.blockBuilder.addLineWithEnding(
-				getSimpleResponseBodyString(this.bodyParser.getResponseAsString()));
+				getSimpleResponseBodyString(this.bodyParser.responseAsString()));
 		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "",
 				convertedResponseBody);
 		this.blockBuilder.addEndingIfNotPresent();
@@ -1748,7 +1749,10 @@ class GenericTextBodyThen implements Then {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		ContentType outputTestContentType = metadata.getOutputTestContentType();
-		return outputTestContentType != JSON && outputTestContentType != XML;
+		return outputTestContentType != JSON && outputTestContentType != XML
+				&& metadata.getContract().getResponse().getBody() != null
+				&& !(metadata.getContract().getResponse().getBody()
+						.getServerValue() instanceof FromFileProperty);
 	}
 
 }
@@ -1782,7 +1786,7 @@ class GenericJsonBodyThen implements Then {
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		BodyMatchers bodyMatchers = metadata.getContract().getResponse()
 				.getBodyMatchers();
-		Object convertedResponseBody = this.bodyParser.convertBody(metadata);
+		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		ContentType contentType = metadata.getOutputTestContentType();
 		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
 			boolean dontParseStrings = contentType == JSON
@@ -1808,7 +1812,7 @@ class GenericJsonBodyThen implements Then {
 				Optional.of(this.blockBuilder.getLineEnding()));
 		Object convertedResponseBody = jsonBodyVerificationBuilder
 				.addJsonResponseBodyCheck(this.blockBuilder, responseBody, bodyMatchers,
-						this.bodyParser.getResponseAsString(), true);
+						this.bodyParser.responseAsString(), true);
 		if (!(convertedResponseBody instanceof Map
 				|| convertedResponseBody instanceof List)) {
 			simpleTextResponseBodyCheck(contractMetadata, convertedResponseBody);
@@ -1893,7 +1897,7 @@ class GenericJsonBodyThen implements Then {
 	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata,
 			Object convertedResponseBody) {
 		this.blockBuilder.addLineWithEnding(
-				getSimpleResponseBodyString(this.bodyParser.getResponseAsString()));
+				getSimpleResponseBodyString(this.bodyParser.responseAsString()));
 		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "",
 				convertedResponseBody);
 		this.blockBuilder.addEndingIfNotPresent();
@@ -1927,12 +1931,12 @@ class GenericXmlBodyThen implements Then {
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		BodyMatchers bodyMatchers = metadata.getContract().getResponse()
 				.getBodyMatchers();
-		Object convertedResponseBody = this.bodyParser.convertBody(metadata);
+		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		XmlBodyVerificationBuilder xmlBodyVerificationBuilder = new XmlBodyVerificationBuilder(
 				metadata.getContract(), Optional.of(this.blockBuilder.getLineEnding()));
 		xmlBodyVerificationBuilder.addXmlResponseBodyCheck(this.blockBuilder,
-				convertedResponseBody, bodyMatchers,
-				this.bodyParser.getResponseAsString(), true);
+				convertedResponseBody, bodyMatchers, this.bodyParser.responseAsString(),
+				true);
 		return this;
 	}
 
@@ -1990,7 +1994,7 @@ interface RestAssuredBodyParser extends BodyParser {
 	};
 
 	@Override
-	default String getResponseAsString() {
+	default String responseAsString() {
 		return "response.getBody().asString()";
 	}
 
@@ -2005,7 +2009,7 @@ interface BodyParser {
 
 	String byteArrayString();
 
-	default Object convertBody(SingleContractMetadata metadata) {
+	default Object convertResponseBody(SingleContractMetadata metadata) {
 		Object responseBody = metadata.getContract().getResponse().getBody();
 		ContentType contentType = metadata.getOutputTestContentType();
 		if (responseBody instanceof FromFileProperty) {
@@ -2016,13 +2020,16 @@ interface BodyParser {
 					o -> o instanceof DslProperty ? ((DslProperty) o).getServerValue()
 							: o);
 		}
+		else if (responseBody instanceof DslProperty) {
+			responseBody = MapConverter.getTestSideValues(responseBody);
+		}
 		return responseBody;
 	}
 
-	String getResponseAsString();
+	String responseAsString();
 
 	@SuppressWarnings("unchecked")
-	default String getBodyAsString(SingleContractMetadata metadata) {
+	default String requestBodyAsString(SingleContractMetadata metadata) {
 		ContentType contentType = metadata.getInputTestContentType();
 		Body body = metadata.getContract().getRequest().getBody();
 		Object bodyValue = extractServerValueFromBody(contentType, body.getServerValue());
@@ -2073,12 +2080,12 @@ interface BodyParser {
 	default Object extractServerValueFromBody(ContentType contentType, Object bodyValue) {
 		if (bodyValue instanceof GString) {
 			return extractValue((GString) bodyValue, contentType,
-					MapConverterUtils.GET_SERVER_VALUE);
+					ContentUtils.GET_TEST_SIDE);
 		}
 		boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
 		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
 				: MapConverter.JSON_PARSING_CLOSURE;
-		return MapConverter.transformValues(bodyValue, MapConverterUtils.GET_SERVER_VALUE,
+		return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE,
 				parsingClosure);
 	}
 
@@ -2129,6 +2136,10 @@ class BodyAssertionLineCreator {
 		else if (value instanceof ExecutionProperty) {
 			return getResponseBodyPropertyComparisonString(property,
 					(ExecutionProperty) value);
+		}
+		else if (value instanceof DslProperty) {
+			return getResponseBodyPropertyComparisonString(singleContractMetadata,
+					property, ((DslProperty) value).getServerValue());
 		}
 		return getResponseBodyPropertyComparisonString(property, value.toString());
 	}

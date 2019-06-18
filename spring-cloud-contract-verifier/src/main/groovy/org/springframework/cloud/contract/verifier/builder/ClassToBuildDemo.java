@@ -103,6 +103,47 @@ class CustomStaticImports implements Imports {
 
 }
 
+class DefaultImports implements Imports, DefaultBaseClassProvider {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final BaseClassProvider baseClassProvider;
+
+	DefaultImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
+		this.baseClassProvider = new BaseClassProvider();
+	}
+
+	@Override
+	public Imports call() {
+		String fqnBaseClass = fqnBaseClass();
+		if (StringUtils.hasText(fqnBaseClass)) {
+			this.blockBuilder.addLineWithEnding("import " + fqnBaseClass);
+		}
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return true;
+	}
+
+	@Override
+	public GeneratedClassMetaData generatedClassMetaData() {
+		return this.generatedClassMetaData;
+	}
+
+	@Override
+	public BaseClassProvider baseClassProvider() {
+		return this.baseClassProvider;
+	}
+
+}
+
 class DefaultStaticImports implements Imports {
 
 	private final BlockBuilder blockBuilder;
@@ -349,7 +390,22 @@ class JsonPathImports implements Imports {
 
 }
 
-interface DefaultClassMetadata extends ClassMetaData {
+interface DefaultBaseClassProvider {
+
+	GeneratedClassMetaData generatedClassMetaData();
+
+	BaseClassProvider baseClassProvider();
+
+	default String fqnBaseClass() {
+		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
+		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
+		return baseClassProvider().retrieveBaseClass(properties,
+				includedDirectoryRelativePath);
+	}
+
+}
+
+interface DefaultClassMetadata extends ClassMetaData, DefaultBaseClassProvider {
 
 	@Override
 	default ClassMetaData packageDefinition() {
@@ -436,11 +492,12 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public ClassMetaData parentClass() {
-		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
-		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
-		String baseClass = baseClassProvider().retrieveBaseClass(properties,
-				includedDirectoryRelativePath);
+		String baseClass = fqnBaseClass();
 		if (StringUtils.hasText(baseClass)) {
+			int lastIndexOf = baseClass.lastIndexOf(".");
+			if (lastIndexOf > 0) {
+				baseClass = baseClass.substring(lastIndexOf + 1);
+			}
 			blockBuilder().append("extends ").append(baseClass).append(" ");
 		}
 		return this;

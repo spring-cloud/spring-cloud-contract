@@ -72,7 +72,8 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 				.classBodyBuilder(bodyBuilder)
 				.metaData(new JavaClassMetaData(builder, metaData),
 						new GroovyClassMetaData(builder, metaData))
-				.imports(new CustomImports(builder, metaData),
+				.imports(new DefaultImports(builder, metaData),
+						new CustomImports(builder, metaData),
 						new JsonImports(builder, metaData),
 						new JUnit4Imports(builder, metaData),
 						new JUnit4IgnoreImports(builder, metaData),
