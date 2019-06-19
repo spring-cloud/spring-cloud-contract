@@ -712,7 +712,7 @@ class SpockMethodMetadata implements MethodMetadata {
 
 	@Override
 	public MethodMetadata returnType() {
-		this.blockBuilder.append("def");
+		this.blockBuilder.addIndented("def");
 		return this;
 	}
 

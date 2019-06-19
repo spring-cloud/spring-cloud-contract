@@ -229,7 +229,12 @@ class BlockBuilder {
 		if (!character) {
 			return false
 		}
-		return character == "{" || (character == spacer && toAdd == spacer) || character == toAdd || (endsWithNewLine(character) && (toAdd == '\n' || toAdd == " " || toAdd == lineEnding))
+		return character == "{" ||
+				(character == spacer && toAdd == spacer) ||
+				(character == spacer && toAdd == " ") ||
+				character == toAdd ||
+				(endsWithNewLine(character) &&
+						(toAdd == '\n' || toAdd == " " || toAdd == lineEnding))
 	}
 
 	/**

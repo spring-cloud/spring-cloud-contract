@@ -44,66 +44,37 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 		BlockBuilder builder = new BlockBuilder("\t");
 		GeneratedClassMetaData metaData = new GeneratedClassMetaData(properties,
 				listOfFiles, includedDirectoryRelativePath, generatedClassData);
+		return classAsString(builder, metaData);
+	}
 
-		SingleMethodBuilder methodBuilder = SingleMethodBuilder.builder(builder)
-				.contractMetaData(metaData)
-				.methodAnnotation(new JUnit4MethodAnnotation(builder, metaData),
-						new JUnit4IgnoreMethodAnnotation(builder, metaData),
-						new JUnit5MethodAnnotation(builder, metaData),
-						new JUnit5IgnoreMethodAnnotation(builder, metaData),
-						new SpockIgnoreMethodAnnotation(builder, metaData))
-				.methodMetadata(new JUnitMethodMetadata(builder, metaData),
-						new SpockMethodMetadata(builder, metaData))
-				.given(new RestAssuredGiven(builder, metaData),
-						new JaxRsRequestGiven(metaData),
-						new MessagingGiven(builder, metaData))
-				.when(new RestAssuredWhen(builder, metaData),
-						new JaxRsWhen(builder, metaData),
-						new MessagingWhen(builder, metaData))
-				.then(new RestAssuredThen(builder, metaData),
-						new JaxRsThen(builder, metaData),
-						new MessagingThen(builder, metaData));
-
-		ClassBodyBuilder bodyBuilder = ClassBodyBuilder.builder(builder)
-				.field(new MessagingFields(builder, metaData))
-				.methodBuilder(methodBuilder);
-
-		GeneratedTestClass generatedTestClass = GeneratedTestClassBuilder.builder(builder)
-				.classBodyBuilder(bodyBuilder)
-				.metaData(new JavaClassMetaData(builder, metaData),
-						new GroovyClassMetaData(builder, metaData))
-				.imports(new DefaultImports(builder, metaData),
-						new CustomImports(builder, metaData),
-						new JsonImports(builder, metaData),
-						new JUnit4Imports(builder, metaData),
-						new JUnit4IgnoreImports(builder, metaData),
-						new JUnit4OrderImports(builder, metaData),
-						new JUnit5Imports(builder, metaData),
-						new JUnit5IgnoreImports(builder, metaData),
-						new JUnit5OrderImports(builder, metaData),
-						new SpockImports(builder, metaData),
-						new SpockIgnoreImports(builder, metaData),
-						new SpockOrderImports(builder, metaData),
-						new JsonPathImports(builder, metaData),
-						new XmlImports(builder, metaData),
-						new MessagingImports(builder, metaData),
-						new MockMvcRestAssuredImports(builder, metaData),
-						new ExplicitRestAssuredImports(builder, metaData),
-						new WebTestClientRestAssuredImports(builder, metaData),
-						new JaxRsImports(builder, metaData))
-				.staticImports(new DefaultStaticImports(builder),
-						new DefaultJsonStaticImports(builder, metaData),
-						new MockMvcRestAssuredStaticImports(builder, metaData),
-						new ExplicitRestAssuredStaticImports(builder, metaData),
-						new WebTestClientRestAssured3StaticImports(builder, metaData),
-						new CustomStaticImports(builder, metaData),
-						new MessagingStaticImports(builder, metaData),
-						new JaxRsStaticImports(builder, metaData))
-				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData),
-						new JUnit5OrderClassAnnotation(builder, metaData),
-						new SpockOrderClassAnnotation(builder, metaData))
-				.build();
+	private String classAsString(BlockBuilder builder, GeneratedClassMetaData metaData) {
+		SingleMethodBuilder methodBuilder = singleMethodBuilder(builder, metaData);
+		ClassBodyBuilder bodyBuilder = classBodyBuilder(builder, metaData, methodBuilder);
+		GeneratedTestClass generatedTestClass = generatedTestClass(builder, metaData,
+				bodyBuilder);
 		return generatedTestClass.asClassString();
+	}
+
+	GeneratedTestClass generatedTestClass(BlockBuilder builder,
+			GeneratedClassMetaData metaData, ClassBodyBuilder bodyBuilder) {
+		return GeneratedTestClassBuilder.builder(builder, metaData)
+				.classBodyBuilder(bodyBuilder).metaData().java().groovy().build()
+				.imports().defaultImports().custom().json().jUnit4().jUnit5().spock()
+				.xml().messaging().restAssured().jaxRs().build().classAnnotations()
+				.jUnit4().jUnit5().spock().build().build();
+	}
+
+	ClassBodyBuilder classBodyBuilder(BlockBuilder builder,
+			GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
+		return ClassBodyBuilder.builder(builder, metaData).field().messaging().build()
+				.methodBuilder(methodBuilder);
+	}
+
+	SingleMethodBuilder singleMethodBuilder(BlockBuilder builder,
+			GeneratedClassMetaData metaData) {
+		return SingleMethodBuilder.builder(builder, metaData).methodAnnotation().jUnit4()
+				.jUnit5().build().methodMetadata().jUnit().spock().build().restAssured()
+				.jaxRs().messaging();
 	}
 
 	@Override

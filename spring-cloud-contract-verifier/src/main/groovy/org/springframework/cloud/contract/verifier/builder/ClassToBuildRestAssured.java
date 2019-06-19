@@ -277,6 +277,7 @@ class RestAssuredGiven implements Given, BodyMethodVisitor {
 		this.blockBuilder = blockBuilder;
 		this.requestGivens.addAll(Arrays.asList(
 				new MockMvcRequestGiven(blockBuilder, generatedClassMetaData),
+				new SpockMockMvcRequestGiven(blockBuilder, generatedClassMetaData),
 				new ExplicitRequestGiven(blockBuilder, generatedClassMetaData),
 				new WebTestClientRequestGiven(blockBuilder, generatedClassMetaData)));
 		this.bodyGivens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
@@ -335,11 +336,37 @@ class MockMvcRequestGiven implements Given, MockMvcAcceptor {
 
 }
 
-class JaxRsRequestGiven implements Given, JaxRsAcceptor {
+class SpockMockMvcRequestGiven implements Given, MockMvcAcceptor {
+
+	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JaxRsRequestGiven(GeneratedClassMetaData metaData) {
+	SpockMockMvcRequestGiven(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = metaData;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addIndented("def request = given()");
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return acceptType(this.generatedClassMetaData, metadata)
+				&& this.generatedClassMetaData.configProperties
+						.getTestFramework() == TestFramework.SPOCK;
+	}
+
+}
+
+class JaxRsGiven implements Given, JaxRsAcceptor {
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	JaxRsGiven(GeneratedClassMetaData metaData) {
 		this.generatedClassMetaData = metaData;
 	}
 
@@ -609,11 +636,13 @@ class RestAssuredWhen implements When, BodyMethodVisitor {
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.responseWhens.addAll(Arrays.asList(
 				new MockMvcResponseWhen(blockBuilder, this.generatedClassMetaData),
+				new SpockMockMvcResponseWhen(blockBuilder, this.generatedClassMetaData),
 				new ExplicitResponseWhen(blockBuilder, this.generatedClassMetaData),
 				new WebTestClientResponseWhen(blockBuilder,
 						this.generatedClassMetaData)));
-		this.whens.addAll(Arrays.asList(new MockMvcUrlWhen(this.blockBuilder),
-				new MockMvcAsyncWhen(this.blockBuilder, this.generatedClassMetaData)));
+		this.whens.addAll(Arrays.asList(
+				new MockMvcAsyncWhen(this.blockBuilder, this.generatedClassMetaData),
+				new MockMvcUrlWhen(this.blockBuilder)));
 	}
 
 	@Override
@@ -1212,6 +1241,32 @@ class MockMvcResponseWhen implements When, MockMvcAcceptor {
 
 }
 
+class SpockMockMvcResponseWhen implements When, MockMvcAcceptor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	SpockMockMvcResponseWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = metaData;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addIndented("def response = given().spec(request)");
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return acceptType(this.generatedClassMetaData, metadata)
+				&& this.generatedClassMetaData.configProperties
+						.getTestFramework() == TestFramework.SPOCK;
+	}
+
+}
+
 class ExplicitResponseWhen implements When, ExplicitAcceptor {
 
 	private final BlockBuilder blockBuilder;
@@ -1276,9 +1331,16 @@ class RestAssuredThen implements Then, BodyMethodVisitor {
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.thens.addAll(Arrays.asList(new RestAssuredStatusCodeThen(this.blockBuilder),
 				new RestAssuredHeadersThen(this.blockBuilder),
-				new RestAssuredCookiesThen(this.blockBuilder),
-				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
-						RestAssuredBodyParser.INSTANCE)));
+				new RestAssuredCookiesThen(this.blockBuilder), new GenericHttpBodyThen(
+						this.blockBuilder, generatedClassMetaData, bodyParser())));
+	}
+
+	private BodyParser bodyParser() {
+		if (this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK) {
+			return (SpockRestAssuredBodyParser) HandlebarsTemplateProcessor::new;
+		}
+		return RestAssuredBodyParser.INSTANCE;
 	}
 
 	@Override
@@ -1827,7 +1889,8 @@ class GenericJsonBodyThen implements Then {
 		JsonBodyVerificationBuilder jsonBodyVerificationBuilder = new JsonBodyVerificationBuilder(
 				this.generatedClassMetaData.configProperties, this.templateProcessor,
 				this.contractTemplate, contractMetadata.getContract(),
-				Optional.of(this.blockBuilder.getLineEnding()));
+				Optional.of(this.blockBuilder.getLineEnding()),
+				bodyParser::postProcessJsonPath);
 		Object convertedResponseBody = jsonBodyVerificationBuilder
 				.addJsonResponseBodyCheck(this.blockBuilder, responseBody, bodyMatchers,
 						this.bodyParser.responseAsString(), true);
@@ -1857,8 +1920,8 @@ class GenericJsonBodyThen implements Then {
 	}
 
 	private void processBodyElement(String property, ExecutionProperty exec) {
-		this.blockBuilder.addLineWithEnding(
-				exec.insertValue("parsedJson.read(\"$" + property + "\")"));
+		this.blockBuilder.addLineWithEnding(exec.insertValue(this.bodyParser
+				.postProcessJsonPath("parsedJson.read(\"$" + property + "\")")));
 	}
 
 	private void processBodyElement(String property, Map.Entry entry) {
@@ -1908,8 +1971,16 @@ class GenericJsonBodyThen implements Then {
 		return key;
 	}
 
-	private String subtract(String one, String two) {
-		return one.replaceAll(two, "");
+	private String subtract(String self, String text) {
+		int index = self.indexOf(text);
+		if (index == -1) {
+			return self;
+		}
+		int end = index + text.length();
+		if (self.length() > end) {
+			return self.substring(0, index) + self.substring(end);
+		}
+		return self.substring(0, index);
 	}
 
 	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata,
@@ -2006,6 +2077,34 @@ class GenericBinaryBodyThen implements Then {
 
 }
 
+interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
+
+	@Override
+	default String postProcessJsonPath(String jsonPath) {
+		if (templateProcessor().containsTemplateEntry(jsonPath)) {
+			return jsonPath;
+		}
+		return jsonPath.replace("$", "\\$");
+	}
+
+	TemplateProcessor templateProcessor();
+
+	@Override
+	default String responseAsString() {
+		return "response.body.asString()";
+	}
+
+	@Override
+	default String byteArrayString() {
+		return "response.body.asByteArray()";
+	}
+
+	@Override
+	default String quoted(String text) {
+		return "'''" + text + "'''";
+	}
+}
+
 interface RestAssuredBodyParser extends BodyParser {
 
 	BodyParser INSTANCE = new RestAssuredBodyParser() {
@@ -2090,6 +2189,14 @@ interface BodyParser extends BodyThen {
 				: MapConverter.JSON_PARSING_CLOSURE;
 		return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE,
 				parsingClosure);
+	}
+
+	default String postProcessJsonPath(String jsonPath) {
+		return jsonPath;
+	}
+
+	default String quoted(String text) {
+		return "\"" + text + "\"";
 	}
 
 }

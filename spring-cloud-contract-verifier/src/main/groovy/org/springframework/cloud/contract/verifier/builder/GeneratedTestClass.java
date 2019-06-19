@@ -28,50 +28,6 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-// JSON
-// HTTP
-// MOCK MVC [standalone, mockmvc, webclient]
-// Scenario
-// Custom rule
-
-// JUNIT4
-
-// ClassMetaData -> new JavaClassMetaData()
-
-// Imports -> new JUnit4JsonMockMvcImports()
-// Imports -> new Junit4Imports()
-// Imports -> new JsonImports()
-// Imports -> new MockMvcImports()
-
-// ClassAnnotation -> new JUnit4OrderClassAnnotation()
-
-// Field -> new
-
-// MockMvcJsonMethodBuilder
-// MockMvcBinaryMethodBuilder
-// MockMvcFromFileMethodBuilder
-
-/*
-
-Variants:
-- Content Type (Json, Xml, Binary)
--
-
-
- */
-
-/*
-Pojos:
-- GeneratedClassMetaData
-- GeneratedTestClass
-
-Builders
-- GeneratedTestClassBuilder (package, imports, class annotation, delegates to class body)
-- ClassBodyBuilder (class body, fields, delegates to method)
-- SingleMethodBuilder (a single method)
-
- */
-
 /**
  * Contents of the generated test.
  *
@@ -173,19 +129,28 @@ class GeneratedTestClassBuilder {
 
 	private ClassBodyBuilder classBodyBuilder;
 
-	private final BlockBuilder blockBuilder;
+	final BlockBuilder blockBuilder;
 
-	private GeneratedTestClassBuilder(BlockBuilder blockBuilder) {
+	final GeneratedClassMetaData generatedClassMetaData;
+
+	private GeneratedTestClassBuilder(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
-	static GeneratedTestClassBuilder builder(BlockBuilder blockBuilder) {
-		return new GeneratedTestClassBuilder(blockBuilder);
+	static GeneratedTestClassBuilder builder(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		return new GeneratedTestClassBuilder(blockBuilder, generatedClassMetaData);
 	}
 
 	GeneratedTestClassBuilder metaData(ClassMetaData metaData) {
 		this.metaData.add(metaData);
 		return this;
+	}
+
+	MetaDataBuilder metaData() {
+		return new MetaDataBuilder(this);
 	}
 
 	GeneratedTestClassBuilder metaData(ClassMetaData... metaData) {
@@ -195,6 +160,10 @@ class GeneratedTestClassBuilder {
 	GeneratedTestClassBuilder metaData(List<ClassMetaData> metaData) {
 		this.metaData.addAll(metaData);
 		return this;
+	}
+
+	ImportsBuilder imports() {
+		return new ImportsBuilder(this);
 	}
 
 	GeneratedTestClassBuilder imports(Imports imports) {
@@ -223,6 +192,10 @@ class GeneratedTestClassBuilder {
 	GeneratedTestClassBuilder staticImports(List<Imports> imports) {
 		this.staticImports.addAll(imports);
 		return this;
+	}
+
+	ClassAnnotationsBuilder classAnnotations() {
+		return new ClassAnnotationsBuilder(this);
 	}
 
 	GeneratedTestClassBuilder classAnnotations(ClassAnnotation... annotations) {
@@ -296,6 +269,162 @@ class GeneratedTestClassBuilder {
 
 }
 
+class MetaDataBuilder {
+
+	private final GeneratedTestClassBuilder parentBuilder;
+
+	private final BlockBuilder builder;
+
+	private final GeneratedClassMetaData metaData;
+
+	MetaDataBuilder(GeneratedTestClassBuilder generatedTestClassBuilder) {
+		this.parentBuilder = generatedTestClassBuilder;
+		this.builder = generatedTestClassBuilder.blockBuilder;
+		this.metaData = generatedTestClassBuilder.generatedClassMetaData;
+	}
+
+	MetaDataBuilder java() {
+		this.parentBuilder.metaData(new JavaClassMetaData(this.builder, this.metaData));
+		return this;
+	}
+
+	MetaDataBuilder groovy() {
+		this.parentBuilder.metaData(new GroovyClassMetaData(this.builder, this.metaData));
+		return this;
+	}
+
+	GeneratedTestClassBuilder build() {
+		return this.parentBuilder;
+	}
+
+}
+
+class ClassAnnotationsBuilder {
+
+	private final GeneratedTestClassBuilder parentBuilder;
+
+	private final BlockBuilder builder;
+
+	private final GeneratedClassMetaData metaData;
+
+	ClassAnnotationsBuilder(GeneratedTestClassBuilder generatedTestClassBuilder) {
+		this.parentBuilder = generatedTestClassBuilder;
+		this.builder = generatedTestClassBuilder.blockBuilder;
+		this.metaData = generatedTestClassBuilder.generatedClassMetaData;
+	}
+
+	ClassAnnotationsBuilder jUnit4() {
+		this.parentBuilder
+				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData));
+		return this;
+	}
+
+	ClassAnnotationsBuilder jUnit5() {
+		this.parentBuilder
+				.classAnnotations(new JUnit5OrderClassAnnotation(builder, metaData));
+		return this;
+	}
+
+	ClassAnnotationsBuilder spock() {
+		this.parentBuilder
+				.classAnnotations(new SpockOrderClassAnnotation(builder, metaData));
+		return this;
+	}
+
+	GeneratedTestClassBuilder build() {
+		return this.parentBuilder;
+	}
+
+}
+
+class ImportsBuilder {
+
+	private final GeneratedTestClassBuilder parentBuilder;
+
+	private final BlockBuilder builder;
+
+	private final GeneratedClassMetaData metaData;
+
+	ImportsBuilder(GeneratedTestClassBuilder generatedTestClassBuilder) {
+		this.parentBuilder = generatedTestClassBuilder;
+		this.builder = generatedTestClassBuilder.blockBuilder;
+		this.metaData = generatedTestClassBuilder.generatedClassMetaData;
+	}
+
+	ImportsBuilder defaultImports() {
+		this.parentBuilder.imports(new DefaultImports(builder, metaData));
+		this.parentBuilder.staticImports(new DefaultStaticImports(builder));
+		return this;
+	}
+
+	ImportsBuilder custom() {
+		this.parentBuilder.imports(new CustomImports(builder, metaData));
+		this.parentBuilder.staticImports(new CustomStaticImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder json() {
+		this.parentBuilder.imports(new JsonImports(builder, metaData),
+				new JsonPathImports(builder, metaData));
+		this.parentBuilder.staticImports(new DefaultJsonStaticImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder xml() {
+		this.parentBuilder.imports(new XmlImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder jUnit4() {
+		this.parentBuilder.imports(new JUnit4Imports(builder, metaData),
+				new JUnit4IgnoreImports(builder, metaData),
+				new JUnit4OrderImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder jUnit5() {
+		this.parentBuilder.imports(new JUnit5Imports(builder, metaData),
+				new JUnit5IgnoreImports(builder, metaData),
+				new JUnit5OrderImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder spock() {
+		this.parentBuilder.imports(new SpockImports(builder, metaData),
+				new SpockIgnoreImports(builder, metaData),
+				new SpockOrderImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder messaging() {
+		this.parentBuilder.imports(new MessagingImports(builder, metaData));
+		this.parentBuilder.staticImports(new MessagingStaticImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder restAssured() {
+		this.parentBuilder.imports(new MockMvcRestAssuredImports(builder, metaData),
+				new ExplicitRestAssuredImports(builder, metaData),
+				new WebTestClientRestAssuredImports(builder, metaData));
+		this.parentBuilder.staticImports(
+				new MockMvcRestAssuredStaticImports(builder, metaData),
+				new ExplicitRestAssuredStaticImports(builder, metaData),
+				new WebTestClientRestAssured3StaticImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder jaxRs() {
+		this.parentBuilder.imports(new JaxRsImports(builder, metaData));
+		this.parentBuilder.staticImports(new JaxRsStaticImports(builder, metaData));
+		return this;
+	}
+
+	GeneratedTestClassBuilder build() {
+		return this.parentBuilder;
+	}
+
+}
+
 /**
  * Builds the body of the class. Sets fields, methods.
  *
@@ -309,14 +438,23 @@ class ClassBodyBuilder {
 
 	private SingleMethodBuilder methodBuilder;
 
-	private final BlockBuilder blockBuilder;
+	final BlockBuilder blockBuilder;
 
-	private ClassBodyBuilder(BlockBuilder blockBuilder) {
+	final GeneratedClassMetaData generatedClassMetaData;
+
+	private ClassBodyBuilder(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
-	static ClassBodyBuilder builder(BlockBuilder blockBuilder) {
-		return new ClassBodyBuilder(blockBuilder);
+	static ClassBodyBuilder builder(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		return new ClassBodyBuilder(blockBuilder, generatedClassMetaData);
+	}
+
+	FieldBuilder field() {
+		return new FieldBuilder(this);
 	}
 
 	ClassBodyBuilder field(Field field) {
@@ -355,6 +493,31 @@ class ClassBodyBuilder {
 				this.blockBuilder.addEmptyLine();
 			}
 		}
+	}
+
+}
+
+class FieldBuilder {
+
+	private final ClassBodyBuilder parentBuilder;
+
+	private final BlockBuilder builder;
+
+	private final GeneratedClassMetaData metaData;
+
+	FieldBuilder(ClassBodyBuilder parentBuilder) {
+		this.parentBuilder = parentBuilder;
+		this.builder = parentBuilder.blockBuilder;
+		this.metaData = parentBuilder.generatedClassMetaData;
+	}
+
+	FieldBuilder messaging() {
+		this.parentBuilder.field(new MessagingFields(this.builder, this.metaData));
+		return this;
+	}
+
+	ClassBodyBuilder build() {
+		return this.parentBuilder;
 	}
 
 }
@@ -408,16 +571,19 @@ class SingleMethodBuilder {
 
 	private List<Then> thens = new LinkedList<>();
 
-	private GeneratedClassMetaData generatedClassMetaData;
+	final GeneratedClassMetaData generatedClassMetaData;
 
-	private final BlockBuilder blockBuilder;
+	final BlockBuilder blockBuilder;
 
-	private SingleMethodBuilder(BlockBuilder blockBuilder) {
+	private SingleMethodBuilder(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
-	static SingleMethodBuilder builder(BlockBuilder blockBuilder) {
-		return new SingleMethodBuilder(blockBuilder);
+	static SingleMethodBuilder builder(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		return new SingleMethodBuilder(blockBuilder, generatedClassMetaData);
 	}
 
 	SingleMethodBuilder methodAnnotation(MethodAnnotations methodAnnotations) {
@@ -425,9 +591,17 @@ class SingleMethodBuilder {
 		return this;
 	}
 
+	MethodAnnotationBuilder methodAnnotation() {
+		return new MethodAnnotationBuilder(this);
+	}
+
 	SingleMethodBuilder methodAnnotation(MethodAnnotations... methodAnnotations) {
 		this.methodAnnotations.addAll(Arrays.asList(methodAnnotations));
 		return this;
+	}
+
+	MethodMetadataBuilder methodMetadata() {
+		return new MethodMetadataBuilder(this);
 	}
 
 	SingleMethodBuilder methodMetadata(MethodMetadata... methodMetadata) {
@@ -435,9 +609,23 @@ class SingleMethodBuilder {
 		return this;
 	}
 
-	SingleMethodBuilder contractMetaData(GeneratedClassMetaData generatedClassMetaData) {
-		this.generatedClassMetaData = generatedClassMetaData;
-		return this;
+	SingleMethodBuilder restAssured() {
+		return given(new RestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
+				.when(new RestAssuredWhen(this.blockBuilder, this.generatedClassMetaData))
+				.then(new RestAssuredThen(this.blockBuilder,
+						this.generatedClassMetaData));
+	}
+
+	SingleMethodBuilder jaxRs() {
+		return given(new JaxRsGiven(this.generatedClassMetaData))
+				.when(new JaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
+				.then(new JaxRsThen(this.blockBuilder, this.generatedClassMetaData));
+	}
+
+	SingleMethodBuilder messaging() {
+		return given(new MessagingGiven(this.blockBuilder, this.generatedClassMetaData))
+				.when(new MessagingWhen(this.blockBuilder, this.generatedClassMetaData))
+				.then(new MessagingThen(this.blockBuilder, this.generatedClassMetaData));
 	}
 
 	SingleMethodBuilder given(Given... given) {
@@ -520,6 +708,78 @@ class SingleMethodBuilder {
 			}
 		}
 		return !visitors.isEmpty();
+	}
+
+}
+
+class MethodAnnotationBuilder {
+
+	private final SingleMethodBuilder singleMethodBuilder;
+
+	private final BlockBuilder builder;
+
+	private final GeneratedClassMetaData metaData;
+
+	MethodAnnotationBuilder(SingleMethodBuilder singleMethodBuilder) {
+		this.singleMethodBuilder = singleMethodBuilder;
+		this.builder = singleMethodBuilder.blockBuilder;
+		this.metaData = singleMethodBuilder.generatedClassMetaData;
+	}
+
+	MethodAnnotationBuilder jUnit4() {
+		this.singleMethodBuilder.methodAnnotation(
+				new JUnit4MethodAnnotation(this.builder, this.metaData),
+				new JUnit4IgnoreMethodAnnotation(this.builder, this.metaData));
+		return this;
+	}
+
+	MethodAnnotationBuilder jUnit5() {
+		this.singleMethodBuilder.methodAnnotation(
+				new JUnit5MethodAnnotation(this.builder, this.metaData),
+				new JUnit5IgnoreMethodAnnotation(this.builder, this.metaData));
+		return this;
+	}
+
+	MethodAnnotationBuilder spock() {
+		this.singleMethodBuilder.methodAnnotation(
+				new SpockIgnoreMethodAnnotation(this.builder, this.metaData));
+		return this;
+	}
+
+	SingleMethodBuilder build() {
+		return this.singleMethodBuilder;
+	}
+
+}
+
+class MethodMetadataBuilder {
+
+	private final SingleMethodBuilder singleMethodBuilder;
+
+	private final BlockBuilder builder;
+
+	private final GeneratedClassMetaData metaData;
+
+	MethodMetadataBuilder(SingleMethodBuilder singleMethodBuilder) {
+		this.singleMethodBuilder = singleMethodBuilder;
+		this.builder = singleMethodBuilder.blockBuilder;
+		this.metaData = singleMethodBuilder.generatedClassMetaData;
+	}
+
+	MethodMetadataBuilder jUnit() {
+		this.singleMethodBuilder
+				.methodMetadata(new JUnitMethodMetadata(this.builder, this.metaData));
+		return this;
+	}
+
+	MethodMetadataBuilder spock() {
+		this.singleMethodBuilder
+				.methodMetadata(new SpockMethodMetadata(this.builder, this.metaData));
+		return this;
+	}
+
+	SingleMethodBuilder build() {
+		return this.singleMethodBuilder;
 	}
 
 }
