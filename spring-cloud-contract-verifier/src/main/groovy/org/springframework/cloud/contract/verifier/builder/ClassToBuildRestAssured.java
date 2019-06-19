@@ -621,6 +621,7 @@ class RestAssuredWhen implements When, BodyMethodVisitor {
 		startBodyBlock(this.blockBuilder, "when:");
 		addResponseWhenLine(singleContractMetadata);
 		indentedBodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
+		this.blockBuilder.addEmptyLine();
 		return this;
 	}
 
@@ -2256,7 +2257,7 @@ interface MessagingBodyParser extends BodyParser {
 
 }
 
-class MessagingGiven implements Given, MethodVisitor<Given> {
+class MessagingGiven implements Given, MethodVisitor<Given>, BodyMethodVisitor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -2277,11 +2278,16 @@ class MessagingGiven implements Given, MethodVisitor<Given> {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		startBodyBlock(this.blockBuilder, "given:");
 		this.blockBuilder.addIndented(
-				"ContractVerifierMessage inputMessage = contractVerifierMessaging.create(");
-		this.givens.stream().filter(given -> given.accept(metadata))
-				.forEach(given -> given.apply(metadata));
-		this.blockBuilder.append(")").addEndingIfNotPresent();
+				"ContractVerifierMessage inputMessage = contractVerifierMessaging.create(")
+				.addEmptyLine().indent();
+		this.givens.stream().filter(given -> given.accept(metadata)).forEach(given -> {
+			given.apply(metadata);
+			this.blockBuilder.addEmptyLine();
+		});
+		this.blockBuilder.unindent().unindent().startBlock().addIndented(")")
+				.addEndingIfNotPresent().addEmptyLine().endBlock();
 		return this;
 	}
 
@@ -2352,10 +2358,11 @@ class MessagingHeadersGiven implements Given, MethodVisitor<Given> {
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
 		Input inputMessage = metadata.getContract().getInput();
-		this.blockBuilder.startBlock().append(", headers()");
+		this.blockBuilder.startBlock().addIndented(", headers()").startBlock();
 		inputMessage.getMessageHeaders().executeForEachHeader(header -> {
-			this.blockBuilder.addEmptyLine().append(getHeaderString(header));
+			this.blockBuilder.addEmptyLine().addIndented(getHeaderString(header));
 		});
+		this.blockBuilder.endBlock();
 		return this;
 	}
 
@@ -2395,7 +2402,8 @@ class MessagingWhen implements When, BodyMethodVisitor {
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
 		startBodyBlock(this.blockBuilder, "when:");
-		indentedBodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
+		bodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
+		this.blockBuilder.addEmptyLine();
 		return this;
 	}
 
@@ -2416,8 +2424,9 @@ class MessagingTriggeredByWhen implements When {
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		this.blockBuilder.addLineWithEnding(
-				metadata.getContract().getInput().getTriggeredBy().getExecutionCommand());
+		this.blockBuilder.addIndented(
+				metadata.getContract().getInput().getTriggeredBy().getExecutionCommand())
+				.addEndingIfNotPresent();
 		return this;
 	}
 
@@ -2438,9 +2447,9 @@ class MessagingBodyWhen implements When {
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		this.blockBuilder.addLineWithEnding(
-				"contractVerifierMessaging.send(inputMessage, \"" + metadata.getContract()
-						.getInput().getMessageFrom().getServerValue() + "\")");
+		this.blockBuilder.addIndented("contractVerifierMessaging.send(inputMessage, \""
+				+ metadata.getContract().getInput().getMessageFrom().getServerValue()
+				+ "\")").addEndingIfNotPresent();
 		return this;
 	}
 
@@ -2498,7 +2507,7 @@ class MessagingThen implements Then, BodyMethodVisitor {
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
 		startBodyBlock(this.blockBuilder, "then:");
-		indentedBodyBlock(this.blockBuilder, this.thens, singleContractMetadata);
+		bodyBlock(this.blockBuilder, this.thens, singleContractMetadata);
 		return this;
 	}
 
@@ -2591,6 +2600,8 @@ class MessagingHeadersThen
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
+		endBodyBlock(this.blockBuilder);
+		startBodyBlock(this.blockBuilder, "and:");
 		OutputMessage outputMessage = singleContractMetadata.getContract()
 				.getOutputMessage();
 		outputMessage.getHeaders().executeForEachHeader(header -> {
@@ -2680,7 +2691,6 @@ class MessagingBodyThen implements Then, BodyMethodVisitor {
 				.getOutputMessage();
 		if (outputMessage.getHeaders() != null) {
 			endBodyBlock(this.blockBuilder);
-			this.blockBuilder.addEmptyLine();
 			startBodyBlock(this.blockBuilder, "and:");
 		}
 		this.thens.stream().filter(then -> then.accept(singleContractMetadata))

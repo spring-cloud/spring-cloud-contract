@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
 /**
  * Builds a block of code. Allows to start, end, indent etc. pieces of code.
  *
@@ -197,13 +198,20 @@ class BlockBuilder {
 		boolean isEndWithNewLine = endsWithNewLine(lastChar)
 		boolean lastCharSpecial = aSpecialSign(lastChar, toAdd)
 		boolean secondLastCharSpecial = aSpecialSign(secondLastChar, toAdd)
-		if (isEndWithNewLine && secondLastCharSpecial || lastCharSpecial) {
+		boolean lineEndingToAdd = toAdd == lineEnding
+		// lastChar = [;] , toAdd = [;]
+		if (lastChar == toAdd) {
 			return this
 		}
-		else if (lastChar == toAdd) {
+		// secondLastChar = [ ], lastChar = [{] , toAdd = [;]
+		else if ((!isEndWithNewLine && lastCharSpecial) && lineEndingToAdd) {
 			return this
 		}
-		else if (endsWithNewLine(lastChar) && !aSpecialSign(secondLastChar, toAdd)) {
+		// secondLastChar = [{], lastChar = [\n] , toAdd = [;]
+		else if (isEndWithNewLine && secondLastCharSpecial) {
+			return this
+		}
+		else if (isEndWithNewLine && !secondLastCharSpecial) {
 			builder.replace(builder.length() - 1, builder.length(), toAdd)
 			builder << '\n'
 		}
@@ -221,7 +229,7 @@ class BlockBuilder {
 		if (!character) {
 			return false
 		}
-		return character == "{" || (character == spacer && toAdd == spacer) || character == toAdd || (endsWithNewLine(character) && (toAdd == '\n' || toAdd == " "))
+		return character == "{" || (character == spacer && toAdd == spacer) || character == toAdd || (endsWithNewLine(character) && (toAdd == '\n' || toAdd == " " || toAdd == lineEnding))
 	}
 
 	/**
