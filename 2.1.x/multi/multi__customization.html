@@ -7,7 +7,7 @@ maintain the static compatibility. Later in this document, you can see examples 
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.regex.Pattern;
 
-<strong class="hl-tag" style="color: blue">/**
+<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
  * If you want to use {@link Pattern} directly in your tests
  * then you can create a class resembling this one. It can
  * contain all the {@link Pattern} you want to use in the DSL.
@@ -25,7 +25,7 @@ maintain the static compatibility. Later in this document, you can see examples 
  * and {@code c()} for the consumer side.
  *
  * @author Marcin Grzejszczak
- */</strong>
+ */</xslthl:doccomment>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> PatternUtils {
 
@@ -41,9 +41,9 @@ maintain the static compatibility. Later in this document, you can see examples 
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
 	}
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Makes little sense but it's just an example ;)
-	 */</strong>
+	 */</xslthl:doccomment>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern ok() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"OK"</span>);
@@ -54,7 +54,7 @@ maintain the static compatibility. Later in this document, you can see examples 
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.ClientDslProperty;
 
-<strong class="hl-tag" style="color: blue">/**
+<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
  * DSL Properties passed to the DSL from the consumer's perspective.
  * That means that on the input side {@code Request} for HTTP
  * or {@code Input} for messaging you can have a regular expression.
@@ -62,10 +62,10 @@ maintain the static compatibility. Later in this document, you can see examples 
  * you have to have a concrete value.
  *
  * @author Marcin Grzejszczak
- */</strong>
+ */</xslthl:doccomment>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ConsumerUtils {
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Consumer side property. By using the {@link ClientDslProperty}
 	 * you can omit most of boilerplate code from the perspective
 	 * of dynamic values. Example
@@ -83,13 +83,13 @@ maintain the static compatibility. Later in this document, you can see examples 
 	 * and which one to the producer.
 	 *
 	 * @author Marcin Grzejszczak
-	 */</strong>
+	 */</xslthl:doccomment>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> ClientDslProperty oldEnough() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// this example is not the best one and</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// theoretically you could just pass the regex instead of `ServerDslProperty` but</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// it's just to show some new tricks :)</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ClientDslProperty(PatternUtils.oldEnough(), <span class="hl-number">40</span>);
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ClientDslProperty(PatternUtils.oldEnough(), <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">40</xslthl:number>);
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
 	}
 
@@ -98,7 +98,7 @@ maintain the static compatibility. Later in this document, you can see examples 
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.ServerDslProperty;
 
-<strong class="hl-tag" style="color: blue">/**
+<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
  * DSL Properties passed to the DSL from the producer's perspective.
  * That means that on the input side {@code Request} for HTTP
  * or {@code Input} for messaging you have to have a concrete value.
@@ -106,11 +106,11 @@ maintain the static compatibility. Later in this document, you can see examples 
  * you can have a regular expression.
  *
  * @author Marcin Grzejszczak
- */</strong>
+ */</xslthl:doccomment>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ProducerUtils {
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Producer side property. By using the {@link ProducerUtils}
 	 * you can omit most of boilerplate code from the perspective
 	 * of dynamic values. Example
@@ -126,7 +126,7 @@ maintain the static compatibility. Later in this document, you can see examples 
 	 *
 	 * That way it's in the implementation that we decide what value we will pass to the consumer
 	 * and which one to the producer.
-	 */</strong>
+	 */</xslthl:doccomment>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> ServerDslProperty ok() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// this example is not the best one and</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// theoretically you could just pass the regex instead of `ServerDslProperty` but</span>
@@ -204,7 +204,7 @@ then:
 		}
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
 </span>			{
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${value(ProducerUtils.ok())}"</span>

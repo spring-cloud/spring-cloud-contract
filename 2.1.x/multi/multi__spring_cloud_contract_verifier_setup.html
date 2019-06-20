@@ -153,7 +153,7 @@ endpoint, which should be verified.</p><pre class="programlisting"><span xmlns:d
 	}
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> isProperCorrelationId(Integer correlationId) {
-		assert correlationId == <span class="hl-number">123456</span>
+		assert correlationId == <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123456</xslthl:number>
 	}
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> isEmpty(String value) {
@@ -192,20 +192,20 @@ via <code class="literal">contractsProperties</code> method e.g. <code class="li
 a system property or an environment variable.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="gradle-consumer" href="#gradle-consumer"></a>4.1.14&nbsp;Spring Cloud Contract Verifier on the Consumer Side</h3></div></div></div><p>In a consuming service, you need to configure the Spring Cloud Contract Verifier plugin
 in exactly the same way as in case of provider. If you do not want to use Stub Runner
 then you need to copy contracts stored in <code class="literal">src/test/resources/contracts</code> and generate
-WireMock JSON stubs using:</p><pre class="programlisting">./gradlew generateClientStubs</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The <code class="literal">stubsOutputDir</code> option has to be set for stub generation to work.</p></td></tr></table></div><p>When present, JSON stubs can be used in automated tests of consuming a service.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)</span></em>
+WireMock JSON stubs using:</p><pre class="programlisting">./gradlew generateClientStubs</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The <code class="literal">stubsOutputDir</code> option has to be set for stub generation to work.</p></td></tr></table></div><p>When present, JSON stubs can be used in automated tests of consuming a service.</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 
- <em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
- <em><span class="hl-annotation" style="color: gray">@Shared</span></em>
+ <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@ClassRule</xslthl:annotation>
+ <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Shared</xslthl:annotation>
  WireMockClassRule wireMockRule == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule()
 
- <em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+ <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Autowired</xslthl:annotation>
  LoanApplicationService sut
 
  def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should successfully apply for loan'</span>() {
    given:
  	LoanApplication application =
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> LoanApplication(client: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Client(clientPesel: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'12345678901'</span>), amount: <span class="hl-number">123.123</span>)
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> LoanApplication(client: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Client(clientPesel: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'12345678901'</span>), amount: <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123.123</xslthl:number>)
    when:
 	LoanApplicationResult loanApplication == sut.loanApplication(application)
    then:
@@ -253,13 +253,13 @@ Assured 2.x by adding it to the plugins classpath, as shown here:</p><pre class=
         &lt;dependency&gt;
            &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
            &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
-           &lt;version&gt;<span class="hl-number">2.5</span>.<span class="hl-number">0</span>&lt;/version&gt;
+           &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
            &lt;scope&gt;compile&lt;/scope&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
            &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
            &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
-           &lt;version&gt;<span class="hl-number">2.5</span>.<span class="hl-number">0</span>&lt;/version&gt;
+           &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
            &lt;scope&gt;compile&lt;/scope&gt;
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
@@ -271,13 +271,13 @@ Assured 2.x by adding it to the plugins classpath, as shown here:</p><pre class=
     &lt;dependency&gt;
        &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
        &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
-       &lt;version&gt;<span class="hl-number">2.5</span>.<span class="hl-number">0</span>&lt;/version&gt;
+       &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
        &lt;scope&gt;test&lt;/scope&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
        &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
        &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
-       &lt;version&gt;<span class="hl-number">2.5</span>.<span class="hl-number">0</span>&lt;/version&gt;
+       &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
        &lt;scope&gt;test&lt;/scope&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre><p>That way, the plugin automatically sees that Rest Assured 3.x is present on the classpath
@@ -409,14 +409,14 @@ endpoint, which should be verified.</p><pre class="programlisting"><span xmlns:d
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.context.junit4.SpringRunner;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.web.context.WebApplicationContext;
 
-<em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</span></em>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RunWith(SpringRunner.class)</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseTestClass {
 
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Autowired</xslthl:annotation>
 	WebApplicationContext context;
 
-	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssuredMockMvc.webAppContextSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.context);
 	}
@@ -430,14 +430,14 @@ similarly, as you might find in regular integration tests.</p><pre class="progra
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.context.junit4.SpringRunner;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.web.context.WebApplicationContext;
 
-<em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</span></em>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RunWith(SpringRunner.class)</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseTestClass {
 
-	<em><span class="hl-annotation" style="color: gray">@LocalServerPort</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@LocalServerPort</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port;
 
-	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssured.baseURI = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port;
 	}
@@ -544,13 +544,13 @@ goal. Example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>Under <a class="xref" href="multi__using_the_pluggable_architecture.html#scm-stub-downloader" title="10.6&nbsp;Using the SCM Stub Downloader">Section&nbsp;10.6, &#8220;Using the SCM Stub Downloader&#8221;</a> you can find all possible
 configuration options that you can pass either via
 the <code class="literal">&lt;configuration&gt;&lt;contractProperties&gt;</code> map, a system property
-or an environment variable.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-sts" href="#maven-sts"></a>4.2.12&nbsp;Maven Plugin and STS</h3></div></div></div><p>If you see the following exception while using STS:</p><div class="informalfigure"><div class="mediaobject"><img src="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.1.x/docs/src/main/asciidoc/images/sts_exception.png" alt="STS Exception"></div></div><p>When you click on the error marker you should see something like this:</p><pre class="programlisting"> plugin:<span class="hl-number">1.1</span>.<span class="hl-number">0.</span>M1:convert:default-convert:process-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span>-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
- cloud-contract-maven-plugin:<span class="hl-number">1.1</span>.<span class="hl-number">0.</span>M1:convert failed. at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:<span class="hl-number">145</span>) at
- org.eclipse.m2e.core.internal.embedder.MavenImpl.execute(MavenImpl.java:<span class="hl-number">331</span>) at org.eclipse.m2e.core.internal.embedder.MavenImpl$<span class="hl-number">11.</span>call(MavenImpl.java:<span class="hl-number">1362</span>) at
+or an environment variable.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-sts" href="#maven-sts"></a>4.2.12&nbsp;Maven Plugin and STS</h3></div></div></div><p>If you see the following exception while using STS:</p><div class="informalfigure"><div class="mediaobject"><img src="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.1.x/docs/src/main/asciidoc/images/sts_exception.png" alt="STS Exception"></div></div><p>When you click on the error marker you should see something like this:</p><pre class="programlisting"> plugin:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.1</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.</xslthl:number>M1:convert:default-convert:process-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span>-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
+ cloud-contract-maven-plugin:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.1</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.</xslthl:number>M1:convert failed. at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">145</xslthl:number>) at
+ org.eclipse.m2e.core.internal.embedder.MavenImpl.execute(MavenImpl.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">331</xslthl:number>) at org.eclipse.m2e.core.internal.embedder.MavenImpl$<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">11.</xslthl:number>call(MavenImpl.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1362</xslthl:number>) at
 ...
- org.eclipse.core.internal.jobs.Worker.run(Worker.java:<span class="hl-number">55</span>) Caused by: java.lang.NullPointerException at
- org.eclipse.m2e.core.internal.builder.plexusbuildapi.EclipseIncrementalBuildContext.hasDelta(EclipseIncrementalBuildContext.java:<span class="hl-number">53</span>) at
- org.sonatype.plexus.build.incremental.ThreadBuildContext.hasDelta(ThreadBuildContext.java:<span class="hl-number">59</span>) at</pre><p>In order to fix this issue, provide the following section in your <code class="literal">pom.xml</code>:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;build&gt;</span>
+ org.eclipse.core.internal.jobs.Worker.run(Worker.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">55</xslthl:number>) Caused by: java.lang.NullPointerException at
+ org.eclipse.m2e.core.internal.builder.plexusbuildapi.EclipseIncrementalBuildContext.hasDelta(EclipseIncrementalBuildContext.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">53</xslthl:number>) at
+ org.sonatype.plexus.build.incremental.ThreadBuildContext.hasDelta(ThreadBuildContext.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">59</xslthl:number>) at</pre><p>In order to fix this issue, provide the following section in your <code class="literal">pom.xml</code>:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;build&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginManagement&gt;</span>
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugins&gt;</span>
             <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!--This plugin's configuration is used to store Eclipse m2e settings
@@ -590,13 +590,13 @@ Please refer to the example below:</p><pre class="programlisting"></pre><p>If yo
 Surefire plugin setup, like in the following example:</p><pre class="programlisting"></pre></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stubs_and_transitive_dependencies" href="#_stubs_and_transitive_dependencies"></a>4.3&nbsp;Stubs and Transitive Dependencies</h2></div></div></div><p>The Maven and Gradle plugin that add the tasks that create the stubs jar for you. One
 problem that arises is that, when reusing the stubs, you can mistakenly import all of
 that stub&#8217;s dependencies. When building a Maven artifact, even though you have a couple
-of different jars, all of them share one pom:</p><pre class="programlisting">&#9500;&#9472;&#9472; github-webhook-<span class="hl-number">0.0</span>.<span class="hl-number">1.</span>BUILD-<span class="hl-number">20160903.075506</span>-<span class="hl-number">1</span>-stubs.jar
-&#9500;&#9472;&#9472; github-webhook-<span class="hl-number">0.0</span>.<span class="hl-number">1.</span>BUILD-<span class="hl-number">20160903.075506</span>-<span class="hl-number">1</span>-stubs.jar.sha1
-&#9500;&#9472;&#9472; github-webhook-<span class="hl-number">0.0</span>.<span class="hl-number">1.</span>BUILD-<span class="hl-number">20160903.075655</span>-<span class="hl-number">2</span>-stubs.jar
-&#9500;&#9472;&#9472; github-webhook-<span class="hl-number">0.0</span>.<span class="hl-number">1.</span>BUILD-<span class="hl-number">20160903.075655</span>-<span class="hl-number">2</span>-stubs.jar.sha1
-&#9500;&#9472;&#9472; github-webhook-<span class="hl-number">0.0</span>.<span class="hl-number">1.</span>BUILD-SNAPSHOT.jar
-&#9500;&#9472;&#9472; github-webhook-<span class="hl-number">0.0</span>.<span class="hl-number">1.</span>BUILD-SNAPSHOT.pom
-&#9500;&#9472;&#9472; github-webhook-<span class="hl-number">0.0</span>.<span class="hl-number">1.</span>BUILD-SNAPSHOT-stubs.jar
+of different jars, all of them share one pom:</p><pre class="programlisting">&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075506</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>-stubs.jar
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075506</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>-stubs.jar.sha1
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075655</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>-stubs.jar
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075655</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>-stubs.jar.sha1
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-SNAPSHOT.jar
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-SNAPSHOT.pom
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-SNAPSHOT-stubs.jar
 &#9500;&#9472;&#9472; ...
 &#9492;&#9472;&#9472; ...</pre><p>There are three possibilities of working with those dependencies so as not to have any
 issues with transitive dependencies:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Mark all application dependencies as optional</li><li class="listitem">Create a separate artifactid for the stubs</li><li class="listitem">Exclude dependencies on the consumer side</li></ul></div><p><span class="strong"><strong>Mark all application dependencies as optional</strong></span></p><p>If, in the <code class="literal">github-webhook</code> application, you mark all of your dependencies as optional,

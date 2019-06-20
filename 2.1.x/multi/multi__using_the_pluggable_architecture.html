@@ -8,7 +8,7 @@ can generate tests for other languages) and the way stubs are generated (for exa
 can generate stubs for other HTTP server implementations).</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_custom_contract_converter" href="#_custom_contract_converter"></a>10.1&nbsp;Custom Contract Converter</h2></div></div></div><p>The <code class="literal">ContractConverter</code> interface lets you register your own implementation of a contract
 structure converter. The following code listing shows the <code class="literal">ContractConverter</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.spec
 
-<strong class="hl-tag" style="color: blue">/**
+<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
  * Converter to be used to convert FROM {@link File} TO {@link Contract}
  * and from {@link Contract} to {@code T}
  *
@@ -16,32 +16,32 @@ structure converter. The following code listing shows the <code class="literal">
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
- */</strong>
+ */</xslthl:doccomment>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> ContractConverter&lt;T&gt; <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> ContractStorer&lt;T&gt; {
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Should this file be accepted by the converter. Can use the file extension
 	 * to check if the conversion is possible.
 	 *
 	 * @param file - file to be considered for conversion
 	 * @return - {@code true} if the given implementation can convert the file
-	 */</strong>
+	 */</xslthl:doccomment>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isAccepted(File file)
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Converts the given {@link File} to its {@link Contract} representation
 	 *
 	 * @param file - file to convert
 	 * @return - {@link Contract} representation of the file
-	 */</strong>
+	 */</xslthl:doccomment>
 	Collection&lt;Contract&gt; convertFrom(File file)
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Converts the given {@link Contract} to a {@link T} representation
 	 *
 	 * @param contract - the parsed contract
 	 * @return - {@link T} the type to which we do the conversion
-	 */</strong>
+	 */</xslthl:doccomment>
 	T convertTo(Collection&lt;Contract&gt; contract)
 }</pre><p>Your implementation must define the condition on which it should start the
 conversion. Also, you must define how to perform that conversion in both directions.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Once you create your implementation, you must create a
@@ -76,7 +76,7 @@ set a <code class="literal">metaData</code> entry in the Pact file, with key <co
         },
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"clientId"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"1234567890"</span>,
-          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanAmount"</span>: <span class="hl-number">99999</span>
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanAmount"</span>: <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">99999</xslthl:number>
         },
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"generators"</span>: {
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
@@ -112,7 +112,7 @@ set a <code class="literal">metaData</code> entry in the Pact file, with key <co
         }
       },
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span>: {
-        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span class="hl-number">200</span>,
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>,
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span>: {
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>
         },
@@ -177,7 +177,7 @@ the current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"</span></pre><p class="secondary">
 </p><p>When you execute the build of your application, a test will be generated. The generated
-test might be as follows:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
+test might be as follows:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Test</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_shouldMarkClientAsFraud() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
 		MockMvcRequestSpecification request = given()
@@ -189,7 +189,7 @@ test might be as follows:</p><pre class="programlisting"><em><span class="hl-ann
 				.put(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>);
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
-		assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+		assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);
 		assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>);
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
 		DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
@@ -214,7 +214,7 @@ test might be as follows:</p><pre class="programlisting"><em><span class="hl-ann
     } ]
   },
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : {
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span>,
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}"</span>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>
@@ -239,14 +239,14 @@ following code listing shows the <code class="literal">SingleTestGenerator</code
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
 
-<strong class="hl-tag" style="color: blue">/**
+<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
  * Builds a single test.
  *
  * @since 1.1.0
- */</strong>
+ */</xslthl:doccomment>
 trait SingleTestGenerator {
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Creates contents of a single test class in which all test scenarios from
 	 * the contract metadata should be placed.
 	 *
@@ -257,12 +257,12 @@ trait SingleTestGenerator {
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 * @deprecated use{@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
-	 */</strong>
-	<em><span class="hl-annotation" style="color: gray">@Deprecated</span></em>
+	 */</xslthl:doccomment>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Deprecated</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> String buildClass(ContractVerifierConfigProperties properties,
 			Collection&lt;ContractMetadata&gt; listOfFiles, String className, String classPackage, String includedDirectoryRelativePath)
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Creates contents of a single test class in which all test scenarios from
 	 * the contract metadata should be placed.
 	 *
@@ -271,7 +271,7 @@ trait SingleTestGenerator {
 	 * @param generatedClassData - information about the generated class
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
-	 */</strong>
+	 */</xslthl:doccomment>
 	String buildClass(ContractVerifierConfigProperties properties,
 			Collection&lt;ContractMetadata&gt; listOfFiles, String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
 		String className = generatedClassData.className
@@ -280,11 +280,11 @@ trait SingleTestGenerator {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> buildClass(properties, listOfFiles, className, classPackage, path)
 	}
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * Extension that should be appended to the generated test class. E.g. {@code .java} or {@code .php}
 	 *
 	 * @param properties - properties passed to the plugin
-	 */</strong>
+	 */</xslthl:doccomment>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> String fileExtension(ContractVerifierConfigProperties properties)
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> GeneratedClassData {
@@ -310,26 +310,26 @@ own implementation of the <code class="literal">StubGenerator</code> interface. 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
 
-<strong class="hl-tag" style="color: blue">/**
+<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
  * Converts contracts into their stub representation.
  *
  * @since 1.1.0
- */</strong>
-<em><span class="hl-annotation" style="color: gray">@CompileStatic</span></em>
+ */</xslthl:doccomment>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@CompileStatic</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubGenerator {
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * @return {@code true} if the converter can handle the file to convert it into a stub.
-	 */</strong>
+	 */</xslthl:doccomment>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> canHandleFileName(String fileName)
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * @return the collection of converted contracts into stubs. One contract can
 	 * result in multiple stubs.
-	 */</strong>
+	 */</xslthl:doccomment>
 	Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content)
 
-	<strong class="hl-tag" style="color: blue">/**
+	<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
 	 * @return the name of the converted stub file. If you have multiple contracts
 	 * in a single file then a prefix will be added to the generated file. If you
 	 * provide the {@link Contract#name} field then that field will override the
@@ -338,7 +338,7 @@ own implementation of the <code class="literal">StubGenerator</code> interface. 
 	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be
 	 * converted by the implementation to {@code foo.json}. The recursive file
 	 * converter will create two files {@code 0_foo.json} and {@code 1_foo.json}
-	 */</strong>
+	 */</xslthl:doccomment>
 	String generateOutputFileNameForInput(String inputFileName)
 }</pre><p>Again, you must provide a <code class="literal">spring.factories</code> file, such as the one shown in the following
 example:</p><pre class="screen"># Stub converters
@@ -357,38 +357,38 @@ HTTP Stub server implementation, which might resemble the following example:</p>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.stubrunner.HttpServerStub
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.util.SocketUtils
 
-<em><span class="hl-annotation" style="color: gray">@Commons</span></em>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Commons</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> MocoHttpServerStub <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> HttpServerStub {
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> started
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> JsonRunner runner
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (!isRunning()) {
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> -<span class="hl-number">1</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> -<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>
 		}
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> port
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isRunning() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> started
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	HttpServerStub start() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> start(SocketUtils.findAvailableTcpPort())
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	HttpServerStub start(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port) {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port = port
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	HttpServerStub stop() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (!isRunning()) {
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
@@ -397,7 +397,7 @@ HTTP Stub server implementation, which might resemble the following example:</p>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	HttpServerStub registerMappings(Collection&lt;File&gt; stubFiles) {
 		List&lt;RunnerSetting&gt; settings = stubFiles.findAll { it.name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"json"</span>) }
 			.collect {
@@ -418,12 +418,12 @@ HTTP Stub server implementation, which might resemble the following example:</p>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	String registeredMappings() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span>
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isAccepted(File file) {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> file.name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".json"</span>)
 	}
@@ -435,10 +435,10 @@ implementation is used. If you provide more than one, the first one on the list 
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> CustomStubDownloaderBuilder <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> StubDownloaderBuilder {
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> StubDownloader build(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> StubRunnerOptions stubRunnerOptions) {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubDownloader() {
-			<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+			<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> Map.Entry&lt;StubConfiguration, File&gt; downloadAndUnpackStubJar(
 					StubConfiguration config) {
 				File unpackedStubs = retrieveStubs();

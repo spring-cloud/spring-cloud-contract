@@ -19,12 +19,12 @@ work.</p></td></tr></table></div><div class="important" style="margin-left: 0.5i
 It defines how to send and receive messages. You can create your own implementation to
 achieve the same goal.</p><p>In a test, you can inject a <code class="literal">ContractVerifierMessageExchange</code> to send and receive
 messages that follow the contract. Then add <code class="literal">@AutoConfigureMessageVerifier</code> to your test.
-Here&#8217;s an example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringTestRunner.class)</span></em>
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureMessageVerifier</span></em>
+Here&#8217;s an example:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RunWith(SpringTestRunner.class)</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@AutoConfigureMessageVerifier</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> MessagingContractTests {
 
-  <em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+  <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Autowired</xslthl:annotation>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> MessageVerifier verifier;
   ...
 }</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>If your tests require stubs as well, then <code class="literal">@AutoConfigureStubRunner</code> includes the

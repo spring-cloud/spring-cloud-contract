@@ -215,7 +215,7 @@ Contract.make {
 		body(fileAsBytes(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request.pdf"</span>))
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 		body(fileAsBytes(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response.pdf"</span>))
 		headers {
 			contentType(applicationOctetStream())
@@ -251,13 +251,13 @@ response:
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// with following response after receiving request</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// specified in "request" part above).</span>
 	response {
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
 	}
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Contract priority, which can be used for overriding</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// contracts (1 is highest). Priority is optional.</span>
-	priority <span class="hl-number">1</span>
+	priority <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">priority: 8
@@ -280,7 +280,7 @@ same information is mandatory in request definition of the Contract.</p><p><b>Gr
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -298,7 +298,7 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -321,7 +321,7 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
 
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// If a simple literal is used as value</span>
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// default matcher function is used (equalTo)</span>
-				parameter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'limit'</span>: <span class="hl-number">100</span>
+				parameter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'limit'</span>: <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">100</xslthl:number>
 
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// `equalTo` function simply compares passed value</span>
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// using identity operator (==).</span>
@@ -333,11 +333,11 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
 
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// `matching` function tests parameter</span>
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// against passed regular expression.</span>
-				parameter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'offset'</span>: value(consumer(matching(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]+"</span>)), producer(<span class="hl-number">123</span>))
+				parameter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'offset'</span>: value(consumer(matching(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]+"</span>)), producer(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>))
 
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// `notMatching` functions tests if parameter</span>
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// does not match passed regular expression.</span>
-				parameter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loginStartsWith'</span>: value(consumer(notMatching(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".{0,2}"</span>)), producer(<span class="hl-number">3</span>))
+				parameter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loginStartsWith'</span>: value(consumer(notMatching(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".{0,2}"</span>)), producer(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>))
 			}
 		}
 
@@ -346,7 +346,7 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -422,7 +422,7 @@ response:
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -450,7 +450,7 @@ headers:
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -473,7 +473,7 @@ cookies:
 
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
-		status <span class="hl-number">200</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -537,7 +537,7 @@ parametrization of either <code class="literal">fileName</code> or <code class="
    .put(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/multipart"</span>);
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
- assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);</pre><p>The WireMock stub is as follows:</p><pre class="programlisting">			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+ assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);</pre><p>The WireMock stub is as follows:</p><pre class="programlisting">			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/multipart"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
@@ -556,7 +556,7 @@ parametrization of either <code class="literal">fileName</code> or <code class="
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"transformers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">[</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response-template"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo-transformer"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
@@ -603,7 +603,7 @@ for requests that follow a given pattern. Also, you can use regular expressions 
 need to use patterns and not exact values both for your test and your server side tests.</p><p>The following example shows how to use regular expressions to write a request:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>)
-		url $(consumer(~/\/[<span class="hl-number">0</span>-<span class="hl-number">9</span>]{<span class="hl-number">2</span>}/), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/12'</span>))
+		url $(consumer(~/\/[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>]{<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>}/), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/12'</span>))
 	}
 	response {
 		status OK()
@@ -674,7 +674,7 @@ use in your contracts, as shown in the following example:</p><pre class="program
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NON_EMPTY = Pattern.compile(/[\S\s]+/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NON_BLANK = Pattern.compile(/^\s*\S[\S\s]*/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ISO8601_WITH_OFFSET = Pattern.
-		compile(/([<span class="hl-number">0</span>-<span class="hl-number">9</span>]{<span class="hl-number">4</span>})-(<span class="hl-number">1</span>[<span class="hl-number">0</span>-<span class="hl-number">2</span>]|<span class="hl-number">0</span>[<span class="hl-number">1</span>-<span class="hl-number">9</span>])-(<span class="hl-number">3</span>[<span class="hl-number">01</span>]|<span class="hl-number">0</span>[<span class="hl-number">1</span>-<span class="hl-number">9</span>]|[<span class="hl-number">12</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>])T(<span class="hl-number">2</span>[<span class="hl-number">0</span>-<span class="hl-number">3</span>]|[<span class="hl-number">01</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>]):([<span class="hl-number">0</span>-<span class="hl-number">5</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>]):([<span class="hl-number">0</span>-<span class="hl-number">5</span>][<span class="hl-number">0</span>-<span class="hl-number">9</span>])(\.\d{<span class="hl-number">3</span>})?(Z|[+-][<span class="hl-number">01</span>]\d:[<span class="hl-number">0</span>-<span class="hl-number">5</span>]\d)/)
+		compile(/([<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>]{<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">4</xslthl:number>})-(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>]|<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>])-(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>]|<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>]|[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">12</xslthl:number>][<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>])T(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>]|[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>][<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>]):([<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">5</xslthl:number>][<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>]):([<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">5</xslthl:number>][<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">9</xslthl:number>])(\.\d{<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>})?(Z|[+-][<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>]\d:[<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">5</xslthl:number>]\d)/)
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern anyOf(String... values) {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(values.collect({ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"^$it\$"</span> }).join(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"|"</span>))
@@ -755,7 +755,7 @@ RegexProperty nonEmpty() {
 RegexProperty nonBlank() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> RegexProperty(NON_BLANK).asString()
 }</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting">Contract dslWithOptionalsInString = Contract.make {
-	priority <span class="hl-number">1</span>
+	priority <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>
 	request {
 		method POST()
 		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/password'</span>
@@ -768,7 +768,7 @@ RegexProperty nonBlank() {
 		)
 	}
 	response {
-		status <span class="hl-number">404</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">404</xslthl:number>
 		headers {
 			contentType(applicationJson())
 		}
@@ -850,7 +850,7 @@ T anyOf(String... values)</pre><p>and this is an example of how you can referenc
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_passing_optional_parameters" href="#_passing_optional_parameters"></a>8.5.3&nbsp;Passing Optional Parameters</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
 <a class="xref" href="multi_contract-dsl.html#contract-matchers" title="8.5.7&nbsp;Dynamic Properties in the Matchers Sections">Section&nbsp;8.5.7, &#8220;Dynamic Properties in the Matchers Sections&#8221;</a> section for YAML examples of a similar feature.</p></td></tr></table></div><p>It is possible to provide optional parameters in your contract. However, you can provide
 optional parameters only for the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="emphasis"><em>STUB</em></span> side of the Request</li><li class="listitem"><span class="emphasis"><em>TEST</em></span> side of the Response</li></ul></div><p>The following example shows how to provide optional parameters:</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
-	priority <span class="hl-number">1</span>
+	priority <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>
 	request {
 		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
 		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/password'</span>
@@ -863,7 +863,7 @@ optional parameters only for the following:</p><div class="itemizedlist"><ul cla
 		)
 	}
 	response {
-		status <span class="hl-number">404</span>
+		status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">404</xslthl:number>
 		headers {
 			header <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>
 		}
@@ -883,7 +883,7 @@ expression that must be present 0 or more times.</p><p>If you use Spock for, the
     .post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/users/password"</span>)
 
  then:
-  response.statusCode == <span class="hl-number">404</span>
+  response.statusCode == <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">404</xslthl:number>
   response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span>)  == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>
  and:
   DocumentContext parsedJson = JsonPath.parse(response.body.asString())
@@ -905,13 +905,13 @@ expression that must be present 0 or more times.</p><p>If you use Spock for, the
 	}
   },
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">404</span>,
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>code\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">123123</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>message\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>User not found by email == [not.existing<em><span class="hl-annotation" style="color: gray">@user.com]\\"}",</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">404</xslthl:number>,
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>code\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123123</xslthl:number>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>message\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>User not found by email == [not.existing<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@user.com]\\"}",</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
 	  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>
 	}
   },
-  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"priority"</span> : <span class="hl-number">1</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"priority"</span> : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>
 }
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_executing_custom_methods_on_the_server_side" href="#_executing_custom_methods_on_the_server_side"></a>8.5.4&nbsp;Executing Custom Methods on the Server Side</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
 <a class="xref" href="multi_contract-dsl.html#contract-matchers" title="8.5.7&nbsp;Dynamic Properties in the Matchers Sections">Section&nbsp;8.5.7, &#8220;Dynamic Properties in the Matchers Sections&#8221;</a> section for YAML examples of a similar feature.</p></td></tr></table></div><p>You can define a method call that executes on the server side during the test. Such a
@@ -943,7 +943,7 @@ following code shows an example of the contract portion of the test case:</p><pr
 	}
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> isProperCorrelationId(Integer correlationId) {
-		assert correlationId == <span class="hl-number">123456</span>
+		assert correlationId == <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123456</xslthl:number>
 	}
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> isEmpty(String value) {
@@ -977,7 +977,7 @@ It should resemble the following code:</p><pre class="programlisting"><span xmln
    .get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/something"</span>);
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
- assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_the_request_from_the_response" href="#_referencing_the_request_from_the_response"></a>8.5.5&nbsp;Referencing the Request from the Response</h3></div></div></div><p>The best situation is to provide fixed values, but sometimes you need to reference a
+ assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_the_request_from_the_response" href="#_referencing_the_request_from_the_response"></a>8.5.5&nbsp;Referencing the Request from the Response</h3></div></div></div><p>The best situation is to provide fixed values, but sometimes you need to reference a
 request in your response.</p><p>If you&#8217;re writing contracts using Groovy DSL, you can use the <code class="literal">fromRequest()</code> method, which lets
 you reference a bunch of elements from the HTTP request. You can use the following
 options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">fromRequest().url()</code>: Returns the request URL and query parameters.</li><li class="listitem"><code class="literal">fromRequest().query(String key)</code>: Returns the first query parameter with a given name.</li><li class="listitem"><code class="literal">fromRequest().query(String key, int index)</code>: Returns the nth query parameter with a
@@ -1033,7 +1033,7 @@ response:
    .get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/api/v1/xxxx"</span>);
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
- assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+ assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);
  assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo secret bar"</span>);
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
@@ -1044,7 +1044,7 @@ response:
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['param']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>);
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['paramIndex']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar2"</span>);
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['pathIndex']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"v1"</span>);
- assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['responseBaz']"</span>).isEqualTo(<span class="hl-number">5</span>);
+ assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['responseBaz']"</span>).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">5</xslthl:number>);
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['responseFoo']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>);
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['url']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/api/v1/xxxx?foo=bar&amp;foo=bar2"</span>);
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['responseBaz2']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla bar bla bla"</span>);</pre><p>As you can see, elements from the request have been properly referenced in the response.</p><p>The generated WireMock stub should resemble the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
@@ -1068,7 +1068,7 @@ response:
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"path\":\"{{{request.path}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"param\":\"{{{request.query.foo.[0]}}}\",\"pathIndex\":\"{{{request.path.[1]}}}\",\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"url\":\"{{{request.url}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\"}"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{{{request.headers.Authorization.[0]}}};foo"</span>
@@ -1086,7 +1086,7 @@ in sending the following response body:</p><pre class="programlisting"><span xml
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"authorization2"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"secret2"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fullBody"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\":\"bar\",\"baz\":5}"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseFoo"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
-  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseBaz"</span> : <span class="hl-number">5</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseBaz"</span> : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">5</xslthl:number><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseBaz2"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla bar bla bla"</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This feature works only with WireMock having a version greater than or equal
 to 2.5.1. The Spring Cloud Contract Verifier uses WireMock&#8217;s
@@ -1120,11 +1120,11 @@ org.springframework.cloud.contract.stubrunner.TestCustomYamlContractConverter</p
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.tomakehurst.wiremock.extension.Extension
 
-<strong class="hl-tag" style="color: blue">/**
+<xslthl:doccomment xmlns:xslthl="http://xslthl.sourceforge.net/">/**
  * Extension that registers the default transformer and the custom one
- */</strong>
+ */</xslthl:doccomment>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> TestWireMockExtensions <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> WireMockExtensions {
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	List&lt;Extension&gt; extensions() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> [
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> DefaultResponseTransformer(),
@@ -1135,7 +1135,7 @@ org.springframework.cloud.contract.stubrunner.TestCustomYamlContractConverter</p
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> CustomExtension <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> Extension {
 
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Override</xslthl:annotation>
 	String getName() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo-transformer"</span>
 	}
@@ -1179,9 +1179,9 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
 		urlPath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
 		body([
-				duck                : <span class="hl-number">123</span>,
+				duck                : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>,
 				alpha               : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
-				number              : <span class="hl-number">123</span>,
+				number              : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>,
 				aBoolean            : true,
 				date                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
 				dateTime            : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
@@ -1211,13 +1211,13 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 	response {
 		status OK()
 		body([
-				duck                 : <span class="hl-number">123</span>,
+				duck                 : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>,
 				alpha                : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'abc'</span>,
-				number               : <span class="hl-number">123</span>,
-				positiveInteger      : <span class="hl-number">1234567890</span>,
-				negativeInteger      : -<span class="hl-number">1234567890</span>,
-				positiveDecimalNumber: <span class="hl-number">123.4567890</span>,
-				negativeDecimalNumber: -<span class="hl-number">123.4567890</span>,
+				number               : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>,
+				positiveInteger      : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1234567890</xslthl:number>,
+				negativeInteger      : -<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1234567890</xslthl:number>,
+				positiveDecimalNumber: <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123.4567890</xslthl:number>,
+				negativeDecimalNumber: -<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123.4567890</xslthl:number>,
 				aBoolean             : true,
 				date                 : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01'</span>,
 				dateTime             : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'2017-01-01T01:23:45'</span>,
@@ -1225,13 +1225,13 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 				valueWithoutAMatcher : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>,
 				valueWithTypeMatch   : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'string'</span>,
 				valueWithMin         : [
-						<span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+						<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>, <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>, <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>
 				],
 				valueWithMax         : [
-						<span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+						<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>, <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>, <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>
 				],
 				valueWithMinMax      : [
-						<span class="hl-number">1</span>, <span class="hl-number">2</span>, <span class="hl-number">3</span>
+						<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>, <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>, <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>
 				],
 				valueWithMinEmpty    : [],
 				valueWithMaxEmpty    : [],
@@ -1262,24 +1262,24 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithTypeMatch'</span>, byType())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMin'</span>, byType {
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1)</span>
-				minOccurrence(<span class="hl-number">1</span>)
+				minOccurrence(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>)
 			})
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMax'</span>, byType {
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 3)</span>
-				maxOccurrence(<span class="hl-number">3</span>)
+				maxOccurrence(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>)
 			})
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinMax'</span>, byType {
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 1 &amp; max 3)</span>
-				minOccurrence(<span class="hl-number">1</span>)
-				maxOccurrence(<span class="hl-number">3</span>)
+				minOccurrence(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>)
+				maxOccurrence(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>)
 			})
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMinEmpty'</span>, byType {
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (min 0)</span>
-				minOccurrence(<span class="hl-number">0</span>)
+				minOccurrence(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>)
 			})
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.valueWithMaxEmpty'</span>, byType {
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// results in verification of size of array (max 0)</span>
-				maxOccurrence(<span class="hl-number">0</span>)
+				maxOccurrence(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>)
 			})
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// will execute a method `assertThatValueIsANumber`</span>
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'assertThatValueIsANumber($it)'</span>))
@@ -1522,14 +1522,14 @@ separates the autogenerated assertions and the assertion from matchers):</p><pre
    .get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/get"</span>);
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
- assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+ assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);
  assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json.*"</span>);
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
  assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['valueWithoutAMatcher']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>);
- assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>, Integer.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).isEqualTo(<span class="hl-number">123</span>);
+ assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>, Integer.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.alpha"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[\\p{L}]*"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.alpha"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"abc"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.number"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"-?(\\d*\\.\\d+|\\d+)"</span>);
@@ -1539,15 +1539,15 @@ separates the autogenerated assertions and the assertion from matchers):</p><pre
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.time"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithTypeMatch"</span>)).isInstanceOf(java.lang.String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>).hasSizeGreaterThanOrEqualTo(<span class="hl-number">1</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>).hasSizeGreaterThanOrEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>).hasSizeLessThanOrEqualTo(<span class="hl-number">3</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>).hasSizeLessThanOrEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>).hasSizeBetween(<span class="hl-number">1</span>, <span class="hl-number">3</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>).hasSizeBetween(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>, <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">3</xslthl:number>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>).hasSizeGreaterThanOrEqualTo(<span class="hl-number">0</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>).hasSizeGreaterThanOrEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>).hasSizeLessThanOrEqualTo(<span class="hl-number">0</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>).hasSizeLessThanOrEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>);
  assertThatValueIsANumber(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>));
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['key'].['complex.key']"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);</pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Notice that, for the <code class="literal">byCommand</code> method, the example calls the
 <code class="literal">assertThatValueIsANumber</code>. This method must be defined in the test base class or be
@@ -1604,8 +1604,8 @@ the method name and passed the proper JSON path as a parameter to it.</p></td></
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>date\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>dateTime\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>T01:<span class="hl-number">23</span>:<span class="hl-number">45</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>aBoolean\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":true,\\"</span>valueWithMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithOccurrence\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3,4],\\"</span>number\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>duck\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>alpha\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>abc\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMin\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>time\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><span class="hl-number">01</span>:<span class="hl-number">02</span>:<span class="hl-number">34</span>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithTypeMatch\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>string\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMinMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithoutAMatcher\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\\"</span>date\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2017</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>dateTime\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2017</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>T01:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">23</xslthl:number>:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">45</xslthl:number>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>aBoolean\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":true,\\"</span>valueWithMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithOccurrence\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3,4],\\"</span>number\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>duck\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":123,\\"</span>alpha\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>abc\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMin\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>time\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span><xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">02</xslthl:number>:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">34</xslthl:number>\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithTypeMatch\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>string\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",\\"</span>valueWithMinMax\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":[1,2,3],\\"</span>valueWithoutAMatcher\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">":\\"</span>foo\\<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"}"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
@@ -1672,7 +1672,7 @@ content type set. Otherwise, the default of <code class="literal">application/oc
   String responseAsString = response.readEntity(String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
 
  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
-  assertThat(response.getStatus()).isEqualTo(<span class="hl-number">200</span>);
+  assertThat(response.getStatus()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);
  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
   DocumentContext parsedJson = JsonPath.parse(responseAsString);
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['property1']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"a"</span>);
@@ -1700,9 +1700,9 @@ provide an <code class="literal">async()</code> method in the <code class="liter
         url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
     }
     response {
-        status <span class="hl-number">200</span>
+        status <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>
         body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Passed'</span>
-        fixedDelayMilliseconds <span class="hl-number">1000</span>
+        fixedDelayMilliseconds <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1000</xslthl:number>
     }
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -1740,12 +1740,12 @@ socket.</p><p>Consider the following contract:</p><pre class="programlisting">or
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.web.server.LocalServerPort;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;
 
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest(classes = ContextPathTestingBaseClass.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></em>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest(classes = ContextPathTestingBaseClass.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ContextPathTestingBaseClass {
 
-	<em><span class="hl-annotation" style="color: gray">@LocalServerPort</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port;
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@LocalServerPort</xslthl:annotation> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port;
 
-	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssured.baseURI = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost"</span>;
 		RestAssured.port = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port;
@@ -1772,10 +1772,10 @@ for WebFlux:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BeerRestBase {
 
-	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssuredWebTestClient.standaloneSetup(
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ProducerController(personToCheck -&gt; personToCheck.age &gt;= <span class="hl-number">20</span>));
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ProducerController(personToCheck -&gt; personToCheck.age &gt;= <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20</xslthl:number>));
 	}
 }
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_webflux_with_explicit_mode" href="#_webflux_with_explicit_mode"></a>8.9.2&nbsp;WebFlux with Explicit mode</h3></div></div></div><p>Another way is with the <code class="literal">EXPLICIT</code> mode in your generated tests
@@ -1793,25 +1793,25 @@ to work with WebFlux.</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting">contracts {
 		testMode = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'EXPLICIT'</span>
 }</pre><p class="secondary">
-</p><p>The following example shows how to set up a base class and Rest Assured for Web Flux:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest(classes = BeerRestBase.Config.class,
+</p><p>The following example shows how to set up a base class and Rest Assured for Web Flux:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RunWith(SpringRunner.class)</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest(classes = BeerRestBase.Config.class,
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = "server.port=0")</span></em>
+		properties = "server.port=0")</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BeerRestBase {
 
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// your tests go here</span>
 
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// in this config class you define all controllers and mocked services</span>
-<em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
-<em><span class="hl-annotation" style="color: gray">@EnableAutoConfiguration</span></em>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Configuration</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@EnableAutoConfiguration</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> Config {
 
-	<em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Bean</xslthl:annotation>
 	PersonCheckingService personCheckingService()  {
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> personToCheck -&gt; personToCheck.age &gt;= <span class="hl-number">20</span>;
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> personToCheck -&gt; personToCheck.age &gt;= <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20</xslthl:number>;
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Bean</xslthl:annotation>
 	ProducerController producerController() {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ProducerController(personCheckingService());
 	}
@@ -1837,18 +1837,18 @@ and the appropriate <code class="literal">MatchingType</code> as second. All the
 							}
 							body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
 </span>&lt;test&gt;
-&lt;duck type=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'xtype'</span>&gt;<span class="hl-number">123</span>&lt;/duck&gt;
+&lt;duck type=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'xtype'</span>&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>&lt;/duck&gt;
 &lt;alpha&gt;abc&lt;/alpha&gt;
 &lt;list&gt;
 &lt;elem&gt;abc&lt;/elem&gt;
 &lt;elem&gt;def&lt;/elem&gt;
 &lt;elem&gt;ghi&lt;/elem&gt;
 &lt;/list&gt;
-&lt;number&gt;<span class="hl-number">123</span>&lt;/number&gt;
+&lt;number&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123</xslthl:number>&lt;/number&gt;
 &lt;aBoolean&gt;true&lt;/aBoolean&gt;
-&lt;date&gt;<span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>&lt;/date&gt;
-&lt;dateTime&gt;<span class="hl-number">2017</span>-<span class="hl-number">01</span>-<span class="hl-number">01</span>T01:<span class="hl-number">23</span>:<span class="hl-number">45</span>&lt;/dateTime&gt;
-&lt;time&gt;<span class="hl-number">01</span>:<span class="hl-number">02</span>:<span class="hl-number">34</span>&lt;/time&gt;
+&lt;date&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2017</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>&lt;/date&gt;
+&lt;dateTime&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2017</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>T01:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">23</xslthl:number>:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">45</xslthl:number>&lt;/dateTime&gt;
+&lt;time&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">01</xslthl:number>:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">02</xslthl:number>:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">34</xslthl:number>&lt;/time&gt;
 &lt;valueWithoutAMatcher&gt;foo&lt;/valueWithoutAMatcher&gt;
 &lt;key&gt;&lt;complex&gt;foo&lt;/complex&gt;&lt;/key&gt;
 &lt;/test&gt;<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
@@ -1867,7 +1867,7 @@ and the appropriate <code class="literal">MatchingType</code> as second. All the
 								xPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/test/duck/@type'</span>, byEquality())
 							}
 						}
-					}</pre><p>And below is an example of a YAML contract with XML request and response bodies:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">include</span>::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml</pre><p>Here is an example of an automatically generated test for XML response body:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
+					}</pre><p>And below is an example of a YAML contract with XML request and response bodies:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">include</span>::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml</pre><p>Here is an example of an automatically generated test for XML response body:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Test</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_xmlMatches() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
 	MockMvcRequestSpecification request = given()
@@ -1877,7 +1877,7 @@ and the appropriate <code class="literal">MatchingType</code> as second. All the
 	ResponseOptions response = given().spec(request).get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/get"</span>);
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
-	assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+	assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
 	DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
@@ -2078,7 +2078,7 @@ leads to generation of two tests that look more or less like this:</p><pre class
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> V1Test <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> TestBase {
 
-	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Test</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_should_post_a_user() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
 			MockMvcRequestSpecification request = given();
@@ -2088,11 +2088,11 @@ leads to generation of two tests that look more or less like this:</p><pre class
 					.post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/users/1"</span>);
 
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
-			assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+			assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);
 	}
 
-	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_withList_<span class="hl-number">1</span>() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Test</xslthl:annotation>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_withList_<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
 			MockMvcRequestSpecification request = given();
 
@@ -2101,7 +2101,7 @@ leads to generation of two tests that look more or less like this:</p><pre class
 					.post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/users/2"</span>);
 
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
-			assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+			assertThat(response.statusCode()).isEqualTo(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">200</xslthl:number>);
 	}
 
 }</pre><p>Notice that, for the contract that has the <code class="literal">name</code> field, the generated test method is named
@@ -2145,22 +2145,22 @@ testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
-<em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest(classes = Application.class)</span></em>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RunWith(SpringRunner.class)</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest(classes = Application.class)</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> FraudBaseWithWebAppSetup {
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> String OUTPUT = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/generated-snippets"</span>;
 
-	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Rule</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> JUnitRestDocumentation restDocumentation = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JUnitRestDocumentation(OUTPUT);
 
-	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Rule</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
 
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Autowired</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> WebApplicationContext context;
 
-	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.context)
 				.apply(documentationConfiguration(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.restDocumentation))
@@ -2190,13 +2190,13 @@ testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> String OUTPUT = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/generated-snippets"</span>;
 
-	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Rule</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> JUnitRestDocumentation restDocumentation = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JUnitRestDocumentation(OUTPUT);
 
-	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Rule</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
 
-	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
 		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders
 				.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> FraudDetectionController())
