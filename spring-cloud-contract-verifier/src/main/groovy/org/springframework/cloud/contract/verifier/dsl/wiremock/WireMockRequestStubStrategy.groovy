@@ -95,21 +95,25 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		MatchingStrategy matchingStrategy = getMatchingStrategyFromBody(request.body)
 		if (contentType == ContentType.JSON) {
 			def originalBody = matchingStrategy?.clientValue
-			def body = JsonToJsonPathsConverter.
-					removeMatchingJsonPaths(originalBody, request.bodyMatchers)
-			JsonPaths values = JsonToJsonPathsConverter.
-					transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
-			if ((values.empty && !request.bodyMatchers?.hasMatchers())
-					||
-					onlySizeAssertionsArePresent(values)) {
-				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
-						getMatchingStrategy(request.body.clientValue).clientValue),
-						false, false))
-			}
-			else {
-				values.findAll { !it.assertsSize() }.each {
-					requestPattern.withRequestBody(WireMock.
-							matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+			if (bodyHasMatchingStrategy) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(matchingStrategy))
+			} else {
+				def body = JsonToJsonPathsConverter.
+						removeMatchingJsonPaths(originalBody, request.bodyMatchers)
+				JsonPaths values = JsonToJsonPathsConverter.
+						transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
+				if ((values.empty && !request.bodyMatchers?.hasMatchers())
+						||
+						onlySizeAssertionsArePresent(values)) {
+					requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
+							getMatchingStrategy(request.body.clientValue).clientValue),
+							false, false))
+				} else {
+					values.findAll { !it.assertsSize() }.each {
+						requestPattern.withRequestBody(WireMock.
+								matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+					}
 				}
 			}
 			request.bodyMatchers?.matchers()?.each {
