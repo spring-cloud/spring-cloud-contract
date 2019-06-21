@@ -10,7 +10,7 @@
 <title></title>
 <simpara><emphasis>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant</emphasis></simpara>
-<simpara>2.1.2.BUILD-SNAPSHOT</simpara>
+<simpara>2.1.3.BUILD-SNAPSHOT</simpara>
 </preface>
 <chapter xml:id="_spring_cloud_contract">
 <title>Spring Cloud Contract</title>
