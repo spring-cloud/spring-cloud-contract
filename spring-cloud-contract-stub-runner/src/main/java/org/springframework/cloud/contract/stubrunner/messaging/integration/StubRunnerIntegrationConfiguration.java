@@ -33,10 +33,8 @@ import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.dsl.FilterEndpointSpec;
-import org.springframework.integration.dsl.GenericEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.transformer.MessageTransformingHandler;
 import org.springframework.messaging.Message;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -96,19 +94,11 @@ public class StubRunnerIntegrationConfiguration {
 									}
 								})
 						.transform(
-								new StubRunnerIntegrationTransformer(entries.getValue()),
-								new Consumer<GenericEndpointSpec<MessageTransformingHandler>>() {
-									@Override
-									public void accept(
-											GenericEndpointSpec<MessageTransformingHandler> e) {
-										e.id(flowName + ".transformer");
-									}
-								})
+								new StubRunnerIntegrationTransformer(entries.getValue()))
 						.route(new StubRunnerIntegrationRouter(entries.getValue(),
 								beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
-				beanFactory.getBean(flowName + ".transformer", Lifecycle.class).start();
 			}
 
 		}

@@ -43,10 +43,8 @@ import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.dsl.FilterEndpointSpec;
-import org.springframework.integration.dsl.GenericEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.transformer.MessageTransformingHandler;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -59,8 +57,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass({ IntegrationFlows.class, EnableBinding.class })
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
 
@@ -124,19 +121,11 @@ public class StubRunnerStreamConfiguration {
 										e.id(flowName + ".filter");
 									}
 								})
-						.transform(new StubRunnerStreamTransformer(entries.getValue()),
-								new Consumer<GenericEndpointSpec<MessageTransformingHandler>>() {
-									@Override
-									public void accept(
-											GenericEndpointSpec<MessageTransformingHandler> e) {
-										e.id(flowName + ".transformer");
-									}
-								})
+						.transform(new StubRunnerStreamTransformer(entries.getValue()))
 						.route(new StubRunnerMessageRouter(entries.getValue(),
 								beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
-				beanFactory.getBean(flowName + ".transformer", Lifecycle.class).start();
 			}
 
 		}
