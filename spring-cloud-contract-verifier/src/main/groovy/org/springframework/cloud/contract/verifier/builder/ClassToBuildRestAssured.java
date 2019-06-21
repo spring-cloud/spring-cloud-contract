@@ -151,16 +151,19 @@ class MockMvcAsyncWhen implements When, MockMvcAcceptor {
 
 }
 
-class MockMvcBodyGiven implements Given, RestAssuredBodyParser {
+class MockMvcBodyGiven implements Given {
 
 	private final BlockBuilder blockBuilder;
 
 	private final BodyReader bodyReader;
 
+	private final BodyParser bodyParser;
+
 	MockMvcBodyGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyReader = new BodyReader(generatedClassMetaData);
+		this.bodyParser = bodyParser;
 	}
 
 	@Override
@@ -178,7 +181,7 @@ class MockMvcBodyGiven implements Given, RestAssuredBodyParser {
 			body = request.getBody().getServerValue();
 		}
 		else {
-			body = requestBodyAsString(metadata);
+			body = this.bodyParser.requestBodyAsString(metadata);
 		}
 		bb.addIndented(getBodyString(metadata, body));
 	}
@@ -198,7 +201,7 @@ class MockMvcBodyGiven implements Given, RestAssuredBodyParser {
 		}
 		else {
 			String escaped = escapeRequestSpecialChars(metadata, body.toString());
-			value = "\"" + escaped + "\"";
+			value = this.bodyParser.quoted(escaped);
 		}
 		return ".body(" + value + ")";
 	}
@@ -275,6 +278,7 @@ class RestAssuredGiven implements Given, BodyMethodVisitor {
 	RestAssuredGiven(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
 		this.requestGivens.addAll(Arrays.asList(
 				new MockMvcRequestGiven(blockBuilder, generatedClassMetaData),
 				new SpockMockMvcRequestGiven(blockBuilder, generatedClassMetaData),
@@ -282,9 +286,16 @@ class RestAssuredGiven implements Given, BodyMethodVisitor {
 				new WebTestClientRequestGiven(blockBuilder, generatedClassMetaData)));
 		this.bodyGivens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
 				new MockMvcCookiesGiven(blockBuilder),
-				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData),
+				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData, bodyParser()),
 				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData)));
-		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	private BodyParser bodyParser() {
+		if (this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK) {
+			return (SpockRestAssuredBodyParser) HandlebarsTemplateProcessor::new;
+		}
+		return RestAssuredBodyParser.INSTANCE;
 	}
 
 	@Override
@@ -531,14 +542,15 @@ class MockMvcMultipartGiven implements Given {
 
 class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 
-	private static final String DOUBLE_QUOTE = "\"";
-
 	private static final String QUERY_PARAM_METHOD = "queryParam";
 
 	private final BlockBuilder blockBuilder;
 
-	MockMvcUrlWhen(BlockBuilder blockBuilder) {
+	private final BodyParser bodyParser;
+
+	MockMvcUrlWhen(BlockBuilder blockBuilder, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
+		this.bodyParser = bodyParser;
 	}
 
 	@Override
@@ -578,9 +590,9 @@ class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 	}
 
 	private void addQueryParameter(QueryParameter queryParam) {
-		this.blockBuilder.addLine("." + QUERY_PARAM_METHOD + "(" + DOUBLE_QUOTE
-				+ queryParam.getName() + DOUBLE_QUOTE + "," + DOUBLE_QUOTE
-				+ resolveParamValue(queryParam) + DOUBLE_QUOTE + ")");
+		this.blockBuilder.addLine("." + QUERY_PARAM_METHOD + "("
+				+ this.bodyParser.quoted(queryParam.getName()) + ","
+				+ this.bodyParser.quoted(resolveParamValue(queryParam)) + ")");
 	}
 
 	private void addUrl(Url buildUrl, Request request) {
@@ -588,7 +600,7 @@ class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 		String method = request.getMethod().getServerValue().toString().toLowerCase();
 		String url = testSideUrl.toString();
 		if (!(testSideUrl instanceof ExecutionProperty)) {
-			url = DOUBLE_QUOTE + testSideUrl.toString() + DOUBLE_QUOTE;
+			url = this.bodyParser.quoted(testSideUrl.toString());
 		}
 		this.blockBuilder.addIndented("." + method + "(" + url + ")");
 	}
@@ -642,7 +654,15 @@ class RestAssuredWhen implements When, BodyMethodVisitor {
 						this.generatedClassMetaData)));
 		this.whens.addAll(Arrays.asList(
 				new MockMvcAsyncWhen(this.blockBuilder, this.generatedClassMetaData),
-				new MockMvcUrlWhen(this.blockBuilder)));
+				new MockMvcUrlWhen(this.blockBuilder, bodyParser())));
+	}
+
+	private BodyParser bodyParser() {
+		if (this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK) {
+			return (SpockRestAssuredBodyParser) HandlebarsTemplateProcessor::new;
+		}
+		return RestAssuredBodyParser.INSTANCE;
 	}
 
 	@Override
@@ -685,11 +705,19 @@ class JaxRsWhen implements When, BodyMethodVisitor, JaxRsAcceptor {
 		this.whens.addAll(Arrays.asList(
 				new JaxRsUrlPathWhen(this.blockBuilder, this.generatedClassMetaData),
 				new JaxRsRequestWhen(this.blockBuilder, this.generatedClassMetaData),
-				new JaxRsRequestHeadersWhen(this.blockBuilder),
-				new JaxRsRequestCookiesWhen(this.blockBuilder),
+				new JaxRsRequestHeadersWhen(this.blockBuilder, bodyParser()),
+				new JaxRsRequestCookiesWhen(this.blockBuilder, bodyParser()),
 				new JaxRsRequestMethodWhen(this.blockBuilder,
 						this.generatedClassMetaData),
 				new JaxRsRequestInvokerWhen(this.blockBuilder)));
+	}
+
+	private BodyParser bodyParser() {
+		if (this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK) {
+			return (SpockJaxRsBodyParser) HandlebarsTemplateProcessor::new;
+		}
+		return JaxRsBodyParser.INSTANCE;
 	}
 
 	@Override
@@ -731,9 +759,16 @@ class JaxRsThen implements Then, BodyMethodVisitor, JaxRsAcceptor {
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.thens.addAll(Arrays.asList(new JaxRsStatusCodeThen(this.blockBuilder),
 				new JaxRsResponseHeadersThen(this.blockBuilder),
-				new JaxRsResponseCookiesThen(this.blockBuilder),
-				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
-						JaxRsBodyParser.INSTANCE)));
+				new JaxRsResponseCookiesThen(this.blockBuilder), new GenericHttpBodyThen(
+						this.blockBuilder, generatedClassMetaData, bodyParser())));
+	}
+
+	private BodyParser bodyParser() {
+		if (this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK) {
+			return (SpockJaxRsBodyParser) HandlebarsTemplateProcessor::new;
+		}
+		return JaxRsBodyParser.INSTANCE;
 	}
 
 	@Override
@@ -1039,8 +1074,11 @@ class JaxRsRequestHeadersWhen implements When {
 
 	private final BlockBuilder blockBuilder;
 
-	JaxRsRequestHeadersWhen(BlockBuilder blockBuilder) {
+	private final BodyParser bodyParser;
+
+	JaxRsRequestHeadersWhen(BlockBuilder blockBuilder, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
+		this.bodyParser = bodyParser;
 	}
 
 	@Override
@@ -1062,7 +1100,7 @@ class JaxRsRequestHeadersWhen implements When {
 				return;
 			}
 			this.blockBuilder.addIndented(".header(\"" + header.getName() + "\", "
-					+ quotedAndEscaped(header.getServerValue()) + ")");
+					+ this.bodyParser.quoted(header.getServerValue()) + ")");
 		});
 	}
 
@@ -1070,10 +1108,6 @@ class JaxRsRequestHeadersWhen implements When {
 		return header.getServerValue() instanceof MatchingStrategy
 				&& ((MatchingStrategy) header.getServerValue())
 						.getType() == MatchingStrategy.Type.ABSENT;
-	}
-
-	private String quotedAndEscaped(Object string) {
-		return '"' + StringEscapeUtils.escapeJava(String.valueOf(string)) + '"';
 	}
 
 	@Override
@@ -1087,8 +1121,11 @@ class JaxRsRequestCookiesWhen implements When {
 
 	private final BlockBuilder blockBuilder;
 
-	JaxRsRequestCookiesWhen(BlockBuilder blockBuilder) {
+	private final BodyParser bodyParser;
+
+	JaxRsRequestCookiesWhen(BlockBuilder blockBuilder, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
+		this.bodyParser = bodyParser;
 	}
 
 	@Override
@@ -1106,7 +1143,7 @@ class JaxRsRequestCookiesWhen implements When {
 				return;
 			}
 			this.blockBuilder.addIndented(".cookie(\"" + cookie.getKey() + "\", "
-					+ quotedAndEscaped(cookie.getServerValue()) + ")");
+					+ this.bodyParser.quoted(cookie.getServerValue()) + ")");
 		});
 	}
 
@@ -1116,13 +1153,38 @@ class JaxRsRequestCookiesWhen implements When {
 						.getType() == MatchingStrategy.Type.ABSENT;
 	}
 
-	private String quotedAndEscaped(Object string) {
-		return '"' + StringEscapeUtils.escapeJava(String.valueOf(string)) + '"';
-	}
-
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return metadata.getContract().getRequest().getCookies() != null;
+	}
+
+}
+
+interface SpockJaxRsBodyParser extends JaxRsBodyParser {
+
+	@Override
+	default String convertUnicodeEscapesIfRequired(String json) {
+		return StringEscapeUtils.unescapeEcmaScript(json);
+	}
+
+	@Override
+	default String postProcessJsonPath(String jsonPath) {
+		if (templateProcessor().containsTemplateEntry(jsonPath)) {
+			return jsonPath;
+		}
+		return jsonPath.replace("$", "\\$");
+	}
+
+	TemplateProcessor templateProcessor();
+
+	@Override
+	default String byteArrayString() {
+		return "response.readEntity(byte[])";
+	}
+
+	@Override
+	default String quoted(Object text) {
+		return "'''" + text.toString() + "'''";
 	}
 
 }
@@ -2080,6 +2142,11 @@ class GenericBinaryBodyThen implements Then {
 interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
 
 	@Override
+	default String convertUnicodeEscapesIfRequired(String json) {
+		return StringEscapeUtils.unescapeEcmaScript(json);
+	}
+
+	@Override
 	default String postProcessJsonPath(String jsonPath) {
 		if (templateProcessor().containsTemplateEntry(jsonPath)) {
 			return jsonPath;
@@ -2100,9 +2167,10 @@ interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
 	}
 
 	@Override
-	default String quoted(String text) {
-		return "'''" + text + "'''";
+	default String quoted(Object text) {
+		return "'''" + text.toString() + "'''";
 	}
+
 }
 
 interface RestAssuredBodyParser extends BodyParser {
@@ -2125,6 +2193,28 @@ interface RestAssuredBodyParser extends BodyParser {
 interface BodyParser extends BodyThen {
 
 	String byteArrayString();
+
+	default String convertUnicodeEscapesIfRequired(String json) {
+		String unescapedJson = StringEscapeUtils.unescapeEcmaScript(json);
+		return escapeJava(unescapedJson);
+	}
+
+	default String convertToJsonString(Object bodyValue) {
+		String json = JsonOutput.toJson(bodyValue);
+		json = convertUnicodeEscapesIfRequired(json);
+		return trimRepeatedQuotes(json);
+	}
+
+	default String trimRepeatedQuotes(String toTrim) {
+		if (toTrim.startsWith("\"")) {
+			return toTrim.replaceAll("\"", "");
+			// #261
+		}
+		else if (toTrim.startsWith("\\\"") && toTrim.endsWith("\\\"")) {
+			return toTrim.substring(2, toTrim.length() - 2);
+		}
+		return toTrim;
+	}
 
 	default Object convertResponseBody(SingleContractMetadata metadata) {
 		ContentType contentType = metadata.getOutputTestContentType();
@@ -2157,20 +2247,19 @@ interface BodyParser extends BodyThen {
 				// [a:3, b:4] == "a=3&b=4"
 				return ((Map) bodyValue).entrySet().stream().map(o -> {
 					Map.Entry entry = (Map.Entry) o;
-					return BodyGenerationUtils.convertUnicodeEscapesIfRequired(
+					return convertUnicodeEscapesIfRequired(
 							entry.getKey().toString() + "=" + entry.getValue());
 				}).collect(Collectors.joining("&")).toString();
 			}
 			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
 				return ((List) bodyValue).stream()
-						.map(o -> BodyGenerationUtils
-								.convertUnicodeEscapesIfRequired(o.toString()))
+						.map(o -> convertUnicodeEscapesIfRequired(o.toString()))
 						.collect(Collectors.joining("&")).toString();
 			}
 		}
 		else {
-			return BodyGenerationUtils.convertToJsonString(bodyValue);
+			return convertToJsonString(bodyValue);
 		}
 		return "";
 	}
@@ -2195,34 +2284,8 @@ interface BodyParser extends BodyThen {
 		return jsonPath;
 	}
 
-	default String quoted(String text) {
-		return "\"" + text + "\"";
-	}
-
-}
-
-class BodyGenerationUtils {
-
-	static String convertUnicodeEscapesIfRequired(String json) {
-		String unescapedJson = StringEscapeUtils.unescapeEcmaScript(json);
-		return escapeJava(unescapedJson);
-	}
-
-	static String convertToJsonString(Object bodyValue) {
-		String json = JsonOutput.toJson(bodyValue);
-		json = convertUnicodeEscapesIfRequired(json);
-		return trimRepeatedQuotes(json);
-	}
-
-	static String trimRepeatedQuotes(String toTrim) {
-		if (toTrim.startsWith("\"")) {
-			return toTrim.replaceAll("\"", "");
-			// #261
-		}
-		else if (toTrim.startsWith("\\\"") && toTrim.endsWith("\\\"")) {
-			return toTrim.substring(2, toTrim.length() - 2);
-		}
-		return toTrim;
+	default String quoted(Object text) {
+		return "\"" + StringEscapeUtils.escapeJava(text.toString()) + "\"";
 	}
 
 }
@@ -2437,14 +2500,10 @@ class MessagingBodyGiven implements Given, MethodVisitor<Given> {
 			return fileProperty.isByte()
 					? this.bodyReader.readBytesFromFileString(metadata, fileProperty,
 							CommunicationType.REQUEST)
-					: quote(this.bodyReader.readStringFromFileString(metadata,
-							fileProperty, CommunicationType.REQUEST));
+					: this.bodyParser.quoted(this.bodyReader.readStringFromFileString(
+							metadata, fileProperty, CommunicationType.REQUEST));
 		}
-		return BodyGenerationUtils.convertToJsonString(bodyValue);
-	}
-
-	private String quote(String text) {
-		return "\"" + escapeJava(text) + "\"";
+		return this.bodyParser.convertToJsonString(bodyValue);
 	}
 
 	@Override
