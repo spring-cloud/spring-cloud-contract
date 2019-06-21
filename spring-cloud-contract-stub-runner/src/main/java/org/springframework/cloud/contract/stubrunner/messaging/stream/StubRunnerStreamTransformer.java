@@ -23,7 +23,6 @@ import java.util.Map;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
-import org.springframework.integration.transformer.GenericTransformer;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
@@ -33,7 +32,7 @@ import org.springframework.messaging.support.MessageBuilder;
  *
  * @author Marcin Grzejszczak
  */
-class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Message<?>> {
+class StubRunnerStreamTransformer {
 
 	private final StubRunnerStreamMessageSelector selector;
 
@@ -45,7 +44,6 @@ class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Mess
 		this.selector = new StubRunnerStreamMessageSelector(groovyDsls);
 	}
 
-	@Override
 	public Message<?> transform(Message<?> source) {
 		Contract groovyDsl = matchingContract(source);
 		if (groovyDsl == null || groovyDsl.getOutputMessage() == null) {

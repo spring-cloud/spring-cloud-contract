@@ -37,17 +37,14 @@ import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.dsl.FilterEndpointSpec;
-import org.springframework.integration.dsl.GenericEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.transformer.MessageTransformingHandler;
 import org.springframework.messaging.Message;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -130,19 +127,11 @@ public class StubRunnerStreamConfiguration {
 										e.id(flowName + ".filter");
 									}
 								})
-						.transform(new StubRunnerStreamTransformer(entries.getValue()),
-								new Consumer<GenericEndpointSpec<MessageTransformingHandler>>() {
-									@Override
-									public void accept(
-											GenericEndpointSpec<MessageTransformingHandler> e) {
-										e.id(flowName + ".transformer");
-									}
-								})
+						.transform(new StubRunnerStreamTransformer(entries.getValue()))
 						.route(new StubRunnerMessageRouter(entries.getValue(),
 								beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
-				beanFactory.getBean(flowName + ".transformer", Lifecycle.class).start();
 			}
 
 		}
