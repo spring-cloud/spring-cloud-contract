@@ -1460,6 +1460,17 @@ interface SpockJaxRsBodyParser extends JaxRsBodyParser {
 		return "response.readEntity(byte[])";
 	}
 
+
+	@Override
+	default String escape(String text) {
+		return text.replaceAll("\\n", "\\\\n");
+	}
+
+	@Override
+	default String escapeForSimpleTextAssertion(String text) {
+		return escape(text);
+	}
+
 	@Override
 	default String quotedShortText(Object text) {
 		String string = text.toString();
@@ -1879,6 +1890,16 @@ interface ComparisonBuilder {
 		return isEqualTo(escapedHeader);
 	}
 
+	default String createUnescapedComparison(Object headerValue) {
+		if (headerValue instanceof Pattern) {
+			return createComparison((Pattern) headerValue);
+		}
+		else if (headerValue instanceof Number) {
+			return isEqualTo((Number) headerValue);
+		}
+		return isEqualTo(headerValue.toString());
+	}
+
 	default String assertThat(String object) {
 		return "assertThat(" + object + ")";
 	}
@@ -1889,6 +1910,10 @@ interface ComparisonBuilder {
 
 	default String assertThat(String object, Object valueToCompareAgainst) {
 		return assertThat(object) + createComparison(valueToCompareAgainst);
+	}
+
+	default String assertThatUnescaped(String object, Object valueToCompareAgainst) {
+		return assertThat(object) + createUnescapedComparison(valueToCompareAgainst);
 	}
 
 	default String isEqualTo(String escapedHeaderValue) {
@@ -2283,8 +2308,7 @@ class GenericTextBodyThen implements Then {
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		if (convertedResponseBody instanceof String) {
-			convertedResponseBody = StringEscapeUtils
-					.escapeJava(convertedResponseBody.toString());
+			convertedResponseBody = this.bodyParser.escapeForSimpleTextAssertion(convertedResponseBody.toString());
 		}
 		simpleTextResponseBodyCheck(metadata, convertedResponseBody);
 		return this;
@@ -2577,6 +2601,16 @@ interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
 		return jsonPath.replace("$", "\\$");
 	}
 
+	@Override
+	default String escape(String text) {
+		return text.replaceAll("\\n", "\\\\n");
+	}
+
+	@Override
+	default String escapeForSimpleTextAssertion(String text) {
+		return escape(text);
+	}
+
 	TemplateProcessor templateProcessor();
 
 	@Override
@@ -2713,11 +2747,22 @@ interface BodyParser extends BodyThen {
 			return extractValue((GString) bodyValue, contentType,
 					ContentUtils.GET_TEST_SIDE);
 		}
-		boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
-		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
-				: MapConverter.JSON_PARSING_CLOSURE;
-		return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE,
-				parsingClosure);
+		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
+			boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
+			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
+					: MapConverter.JSON_PARSING_CLOSURE;
+			return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE,
+					parsingClosure);
+		}
+		return bodyValue;
+	}
+
+	default String escape(String text) {
+		return StringEscapeUtils.escapeJava(text);
+	}
+
+	default String escapeForSimpleTextAssertion(String text) {
+		return text;
 	}
 
 	default String postProcessJsonPath(String jsonPath) {
@@ -2725,7 +2770,7 @@ interface BodyParser extends BodyThen {
 	}
 
 	default String quotedLongText(Object text) {
-		return quotedEscapedLongText(StringEscapeUtils.escapeJava(text.toString()));
+		return quotedEscapedLongText(escape(text.toString()));
 	}
 
 	default String quotedEscapedLongText(Object text) {
@@ -2815,7 +2860,7 @@ class BodyAssertionLineCreator {
 	 */
 	private String getResponseBodyPropertyComparisonString(String property,
 			String value) {
-		return this.comparisonBuilder.assertThat("responseBody" + property, value);
+		return this.comparisonBuilder.assertThatUnescaped("responseBody" + property, value);
 	}
 
 	/**
