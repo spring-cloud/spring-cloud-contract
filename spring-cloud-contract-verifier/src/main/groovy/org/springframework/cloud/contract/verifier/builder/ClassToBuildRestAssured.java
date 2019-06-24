@@ -503,7 +503,8 @@ class MockMvcHeadersGiven implements Given {
 			}
 			if (iterator.hasNext()) {
 				bb.addLine(string(header));
-			} else {
+			}
+			else {
 				bb.addIndented(string(header));
 			}
 		}
@@ -584,8 +585,9 @@ class MockMvcMultipartGiven implements Given {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
-		return request != null && request.getMultipart() != null &&
-				this.generatedClassMetaData.configProperties.getTestFramework() != TestFramework.SPOCK;
+		return request != null && request.getMultipart() != null
+				&& this.generatedClassMetaData.configProperties
+						.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }
@@ -632,7 +634,8 @@ class SpockMockMvcMultipartGiven implements Given {
 
 	private String getMultipartFileParameterContent(SingleContractMetadata metadata,
 			String propertyName, NamedProperty propertyValue) {
-		return ContentUtils.getGroovyMultipartFileParameterContent(propertyName, propertyValue,
+		return ContentUtils.getGroovyMultipartFileParameterContent(propertyName,
+				propertyValue,
 				fileProp -> this.bodyReader.readBytesFromFileString(metadata, fileProp,
 						CommunicationType.REQUEST));
 	}
@@ -645,9 +648,11 @@ class SpockMockMvcMultipartGiven implements Given {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
-		return request != null && request.getMultipart() != null &&
-				this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK;
+		return request != null && request.getMultipart() != null
+				&& this.generatedClassMetaData.configProperties
+						.getTestFramework() == TestFramework.SPOCK;
 	}
+
 }
 
 class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolver {
@@ -1417,7 +1422,8 @@ class JaxRsRequestCookiesWhen implements When {
 					+ this.bodyParser.quotedLongText(cookie.getServerValue()) + ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(value);
-			} else {
+			}
+			else {
 				this.blockBuilder.addIndented(value);
 			}
 		}
@@ -1460,7 +1466,6 @@ interface SpockJaxRsBodyParser extends JaxRsBodyParser {
 		return "response.readEntity(byte[])";
 	}
 
-
 	@Override
 	default String escape(String text) {
 		return text.replaceAll("\\n", "\\\\n");
@@ -1474,7 +1479,9 @@ interface SpockJaxRsBodyParser extends JaxRsBodyParser {
 	@Override
 	default String quotedShortText(Object text) {
 		String string = text.toString();
-		if (string.contains("'") || string.contains("\"")) {
+		String escaped = escapeJava(text.toString());
+		boolean stringsDiffer = !string.equals(escaped);
+		if (string.contains("'") || stringsDiffer) {
 			return quotedLongText(text);
 		}
 		return "'" + string + "'";
@@ -1792,7 +1799,8 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	RestAssuredHeadersThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
+	RestAssuredHeadersThen(BlockBuilder blockBuilder,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
 	}
@@ -1801,38 +1809,41 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
 		Headers headers = response.getHeaders();
-		headers.executeForEachHeader(header -> processHeaderElement(header.getName(),
-				header.getServerValue() instanceof NotToEscapePattern
-						? header.getServerValue()
-						: MapConverter.getTestSideValues(header.getServerValue())));
+		Iterator<Header> iterator = headers.getEntries().iterator();
+		while (iterator.hasNext()) {
+			Header header = iterator.next();
+			String text = processHeaderElement(header.getName(),
+					header.getServerValue() instanceof NotToEscapePattern
+							? header.getServerValue()
+							: MapConverter.getTestSideValues(header.getServerValue()));
+			if (iterator.hasNext()) {
+				this.blockBuilder.addLine(text);
+			} else {
+				this.blockBuilder.addIndented(text);
+			}
+		}
 		this.blockBuilder.addEndingIfNotPresent();
 		return this;
 	}
 
-	private void processHeaderElement(String property, Object value) {
+	private String processHeaderElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			this.blockBuilder.addIndented(
-					this.comparisonBuilder.assertThat("response.header(\"" + property + "\")")
-							+ this.comparisonBuilder.matches(((NotToEscapePattern) value)
-									.getServerValue().pattern().replace("\\", "\\\\")));
-		}
-		else if (value instanceof String || value instanceof Pattern) {
-			this.blockBuilder.addIndented(this.comparisonBuilder
-					.assertThat("response.header(\"" + property + "\")", value));
-		}
-		else if (value instanceof Number) {
-			this.blockBuilder.addIndented(this.comparisonBuilder
-					.assertThat("response.header(\"" + property + "\")", value));
+			return this.comparisonBuilder
+					.assertThat("response.header(\"" + property + "\")")
+					+ matchesManuallyEscapedPattern((NotToEscapePattern) value);
 		}
 		else if (value instanceof ExecutionProperty) {
-			this.blockBuilder.addIndented(((ExecutionProperty) value)
-					.insertValue("response.header(\"" + property + "\")"));
+			return ((ExecutionProperty) value)
+					.insertValue("response.header(\"" + property + "\")");
 
 		}
-		else {
-			// fallback
-			processHeaderElement(property, value.toString());
-		}
+		return this.comparisonBuilder
+				.assertThat("response.header(\"" + property + "\")", value);
+	}
+
+	private String matchesManuallyEscapedPattern(NotToEscapePattern value) {
+		return this.comparisonBuilder.matches(value
+				.getServerValue().pattern().replace("\\", "\\\\"));
 	}
 
 	@Override
@@ -1938,7 +1949,7 @@ interface ComparisonBuilder {
 	}
 
 	default String createComparison(Pattern value) {
-		return matches(escapeJava(value.pattern()));
+		return matches(value.pattern());
 	}
 
 	BodyParser bodyParser();
@@ -2308,7 +2319,8 @@ class GenericTextBodyThen implements Then {
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		if (convertedResponseBody instanceof String) {
-			convertedResponseBody = this.bodyParser.escapeForSimpleTextAssertion(convertedResponseBody.toString());
+			convertedResponseBody = this.bodyParser
+					.escapeForSimpleTextAssertion(convertedResponseBody.toString());
 		}
 		simpleTextResponseBodyCheck(metadata, convertedResponseBody);
 		return this;
@@ -2860,7 +2872,8 @@ class BodyAssertionLineCreator {
 	 */
 	private String getResponseBodyPropertyComparisonString(String property,
 			String value) {
-		return this.comparisonBuilder.assertThatUnescaped("responseBody" + property, value);
+		return this.comparisonBuilder.assertThatUnescaped("responseBody" + property,
+				value);
 	}
 
 	/**
