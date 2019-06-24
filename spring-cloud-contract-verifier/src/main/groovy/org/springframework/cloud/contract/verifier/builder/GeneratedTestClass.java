@@ -610,22 +610,33 @@ class SingleMethodBuilder {
 	}
 
 	SingleMethodBuilder restAssured() {
-		return given(new RestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
-				.when(new RestAssuredWhen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new RestAssuredThen(this.blockBuilder,
-						this.generatedClassMetaData));
+		return given(
+				new JavaRestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
+						.given(new SpockRestAssuredGiven(this.blockBuilder,
+								this.generatedClassMetaData))
+						.when(new JavaRestAssuredWhen(this.blockBuilder,
+								this.generatedClassMetaData))
+						.when(new SpockRestAssuredWhen(this.blockBuilder,
+								this.generatedClassMetaData))
+						.then(new JavaRestAssuredThen(this.blockBuilder,
+								this.generatedClassMetaData))
+						.then(new SpockRestAssuredThen(this.blockBuilder,
+								this.generatedClassMetaData));
 	}
 
 	SingleMethodBuilder jaxRs() {
 		return given(new JaxRsGiven(this.generatedClassMetaData))
-				.when(new JaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new JaxRsThen(this.blockBuilder, this.generatedClassMetaData));
+				.when(new JavaJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
+				.when(new SpockJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
+				.then(new JavaJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
+				.then(new SpockJaxRsThen(this.blockBuilder, this.generatedClassMetaData));
 	}
 
 	SingleMethodBuilder messaging() {
 		return given(new MessagingGiven(this.blockBuilder, this.generatedClassMetaData))
 				.when(new MessagingWhen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new MessagingThen(this.blockBuilder, this.generatedClassMetaData));
+				.then(new JavaMessagingThen(this.blockBuilder, this.generatedClassMetaData))
+				.then(new SpockMessagingThen(this.blockBuilder, this.generatedClassMetaData));
 	}
 
 	SingleMethodBuilder given(Given... given) {

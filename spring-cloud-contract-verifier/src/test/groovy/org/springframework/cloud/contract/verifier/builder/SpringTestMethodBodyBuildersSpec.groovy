@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.builder
 
 import java.util.regex.Pattern
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Rule
 import spock.lang.Issue
 import spock.lang.Shared
@@ -33,7 +32,6 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
-
 /**
  * @author Jakub Kubrynski, codearte.io
  * @author Tim Ysewyn
@@ -2023,7 +2021,7 @@ World.'''"""
 			strippedTest.matches(""".*header\\("header", "application\\/vnd\\.fraud\\.v1\\+json;.*"\\).*""")
 			strippedTest.matches(""".*body\\('''\\{"requestElement":"[0-9]{5}"\\}'''\\).*""")
 			strippedTest.matches(""".*put\\("/foo/[0-9]{5}"\\).*""")
-			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd\\\\.fraud\\\\.v1\\\\+json.*')""")
+			strippedTest.contains("""response.header("Content-Type") ==~ java.util.regex.Pattern.compile('application/vnd\\\\.fraud\\\\.v1\\\\+json.*')""")
 			"application/vnd.fraud.v1+json;charset=UTF-8".matches('application/vnd\\.fraud\\.v1\\+json.*')
 			strippedTest.contains("""assertThatJson(parsedJson).field("['responseElement']").matches("[0-9]{7}")""")
 		and:
@@ -2052,12 +2050,9 @@ World.'''"""
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason.title\'\'\'))')
-		when:
+			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("\\$.rejectionReason.title"))')
+		and:
 			SyntaxChecker.tryToCompileGroovy("spock", test)
-		then:
-			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching methodBuilder Script1#assertThatRejectionReasonIsNull")
 	}
 
 	@Issue('#85')
@@ -2143,11 +2138,8 @@ World.'''"""
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('.header("authorization", getOAuthTokenHeader())')
-		when:
+		and:
 			SyntaxChecker.tryToCompileGroovy("spock", test)
-		then:
-			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching methodBuilder Script1#getOAuthTokenHeader")
 	}
 
 	@Issue('#150')
@@ -2192,11 +2184,8 @@ World.'''"""
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains("foo(responseBody)")
-		when:
+		and:
 			SyntaxChecker.tryToCompileGroovy("spock", test)
-		then:
-			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching methodBuilder Script1#foo")
 	}
 
 	@Issue('#149')
@@ -2225,11 +2214,8 @@ World.'''"""
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('.header("authorization", getOAuthTokenHeader())')
-		when:
+		and:
 			SyntaxChecker.tryToCompileGroovy("spock", test)
-		then:
-			def e = thrown(MultipleCompilationErrorsException)
-			e.message.contains("Cannot find matching methodBuilder Script1#getOAuthTokenHeader()")
 	}
 
 	@Issue('#149')
@@ -2853,8 +2839,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			String test = singleTestGenerator(contractDslWithCookiesValue)
 		then:
 			test.contains('''.cookie("cookie-key", "cookie-value")''')
-			test.contains('''response.cookie('cookie-key') != null''')
-			test.contains('''response.cookie('cookie-key') == 'new-cookie-value''')
+			test.contains('''response.cookie("cookie-key") != null''')
+			test.contains('''response.cookie("cookie-key") == 'new-cookie-value''')
 		and:
 			SyntaxChecker.tryToCompile("spock", test)
 	}
@@ -2863,12 +2849,12 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		given:
 			properties.testFramework = TestFramework.SPOCK
 		when:
-			String test = singleTestGenerator(contractDslWithCookiesValue)
+			String test = singleTestGenerator(contractDslWithCookiesPattern)
 		then:
 			!test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
 			test.contains('''.cookie("cookie-key", "''')
-			test.contains('''response.cookie('cookie-key') != null''')
-			test.contains('''response.cookie('cookie-key') ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+			test.contains('''response.cookie("cookie-key") != null''')
+			test.contains('''response.cookie("cookie-key") ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
 		and:
 			SyntaxChecker.tryToCompile("spock", test)
 	}
