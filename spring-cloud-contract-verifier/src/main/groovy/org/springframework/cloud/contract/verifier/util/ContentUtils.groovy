@@ -553,6 +553,13 @@ class ContentUtils {
 				namedContentTypeNameIfPresent(propertyValue, "'")
 	}
 
+	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Function<FromFileProperty, String> bytesFromFile) {
+		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
+				"${groovyNamedPropertyValue(propertyValue, "'", { FromFileProperty property -> bytesFromFile.apply(property) })}" +
+				namedContentTypeNameIfPresent(propertyValue, "'")
+	}
+
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
 			Function<FromFileProperty, String> bytesFromFile) {
 		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty property -> bytesFromFile.apply(property) })

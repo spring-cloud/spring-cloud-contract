@@ -32,6 +32,7 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
+
 /**
  * @author Jakub Kubrynski, codearte.io
  * @author Tim Ysewyn
@@ -834,7 +835,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			methodBuilderName | methodBuilder | bodyDefinitionString                                   | bodyEvaluationString
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
-			}                                 | 'def responseBody = (response.body.asString())'        | 'responseBody == "test"'
+			}                                 | 'String responseBody = response.body.asString()'       | "responseBody == 'test'"
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                 | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
@@ -878,7 +879,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | headerEvaluationString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''response.header("Location") ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                                                      | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
@@ -922,7 +923,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | headerEvaluationString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''response.header("Location") ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                                                      | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
@@ -1131,7 +1132,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			methodBuilderName | methodBuilder | assertionStrings
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
-			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason\'\'\'))''', '''assertThatLocationIsNull(response.header('Location'))''']
+			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("\\$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
@@ -1234,23 +1235,6 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			String test = singleTestGenerator(contractDsl)
 		then:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
-		and:
-			String jsonSample = '''\
-String json = "{\\"code\\":null}";
-com.jayway.jsonpath.DocumentContext parsedJson = com.jayway.jsonpath.JsonPath.parse(json);
-'''
-		and:
-			LinkedList<String> lines = [] as LinkedList<String>
-			test.eachLine {
-				if (it.contains("assertThatJson")) {
-					lines << it
-				}
-				else {
-					it
-				}
-			}
-			lines.addFirst(jsonSample)
-			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
 			methodBuilderName | methodBuilder                                      | bodyString
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '"street":"Light Street"'
@@ -1372,7 +1356,7 @@ World.'''"""
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-												 """.param('formParameter', '"formParameterValue"'""",
+												 """.param('formParameter', '''"formParameterValue"'''""",
 												 """.param('someBooleanParameter', 'true')""",
 												 """.multiPart('file', 'filename.csv', 'file content'.bytes, 'application/json')"""]
 			"mockmvc"         | {
@@ -1431,7 +1415,7 @@ World.'''"""
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-												 """.param('formParameter', '"formParameterValue"'""",
+												 """.param('formParameter', '''"formParameterValue"'''""",
 												 """.param('someBooleanParameter', 'true')""",
 												 """.multiPart('file', 'filename.csv', 'file content'.bytes)"""]
 			"mockmvc"         | {
@@ -1533,7 +1517,7 @@ World.'''"""
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-												 """.param('formParameter', '"formParameterValue"'""",
+												 """.param('formParameter', '''"formParameterValue"'''""",
 												 """.param('someBooleanParameter', 'true')""",
 												 """.multiPart('file', toString(), 'file content'.bytes)"""]
 			"mockmvc"         | {
@@ -1869,7 +1853,7 @@ World.'''"""
 			methodBuilder()
 		when:
 			String test = singleTestGenerator(contractDsl)
-			def strippedTest = test.replace('\n', '').replace(' ', '').stripIndent().stripMargin()
+			def strippedTest = test.replace('\n', '').replace(' ', '').replaceAll("\t", "").stripIndent().stripMargin()
 		then:
 			strippedTest.contains('.queryParam("param","value").when().async().get("/test")')
 		and:
@@ -2311,18 +2295,6 @@ World.'''"""
 String json = "{\\"duck\\":\\"8\\",\\"alpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"anInteger\\":1780305902,\\"positiveInt\\":345,\\"aDouble\\":42.345,\\"aBoolean\\":true,\\"ip\\":\\"129.168.99.100\\",\\"hostname\\":\\"https://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"https://foo-597104692.com\\",\\"httpsUrl\\":\\"https://baz-486093581.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
 DocumentContext parsedJson = JsonPath.parse(json);
 '''
-		and:
-			LinkedList<String> lines = [] as LinkedList<String>
-			test.eachLine {
-				if (it.contains("assertThatJson")) {
-					lines << it
-				}
-				else {
-					it
-				}
-			}
-			lines.addFirst(jsonSample)
-			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
 			methodBuilderName | methodBuilder                                      | endOfLineRegExSymbol
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
@@ -2526,29 +2498,27 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			String test = singleTestGenerator(contractDsl)
 		then:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
-			def e = thrown(Throwable)
-			missingMethodAssertion(e, capture)
 		and:
 			test.contains("toString()")
 			!test.contains("\"toString()\"")
 			!test.contains("'toString()'")
 		where:
-			methodBuilderName | methodBuilder | missingMethodAssertion
+			methodBuilderName | methodBuilder
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
-			}                                 | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching methodBuilder Script1#toString()") }
+			}
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
-			}                                 | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(toString())") }
+			}
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { Throwable t, OutputCapture capture -> t.message.contains("Cannot find matching methodBuilder Script1#toString()") }
+			}
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("path(toString())") }
+			}
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
-			}                                 | { Throwable t, OutputCapture capture -> t.message.contains("Truncated class file") && capture.toString().contains("post(toString())") }
+			}
 	}
 
 	@Issue('#203')
@@ -2613,16 +2583,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			methodBuilderName | methodBuilder | requestAssertion                                                                             | responseAssertion
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
-			}                                 | { String body -> body.contains("body('''12000''')") }                                        | { String body -> body.contains('responseBody == "12000"') }
+			}                                 | { String body -> body.contains("body('''12000''')") }                                        | { String body -> body.contains("responseBody == '12000'") }
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String body -> body.contains(""".methodBuilder('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
+			}                                 | { String body -> body.contains(""".methodBuilder("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains("responseBody == '12000'") }
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String body -> body.contains(""".methodBuilder("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
+			}                                 | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
@@ -2789,8 +2759,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			String test = singleTestGenerator(contractDslWithCookiesValue)
 		then:
 			test.contains('''.cookie("cookie-key", "cookie-value")''')
-			test.contains('''assertThat(response.getCookie("cookie-key")).isNotNull();''')
-			test.contains('''assertThat(response.getCookie("cookie-key")).isEqualTo("new-cookie-value");''')
+			test.contains('''assertThat(response.cookie("cookie-key")).isNotNull();''')
+			test.contains('''assertThat(response.cookie("cookie-key")).isEqualTo("new-cookie-value");''')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
@@ -2807,8 +2777,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		then:
 			!test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
 			test.contains('''.cookie("cookie-key", "''')
-			test.contains('''assertThat(response.getCookie("cookie-key")).isNotNull();''')
-			test.contains('''assertThat(response.getCookie("cookie-key")).matches("[A-Za-z]+");''')
+			test.contains('''assertThat(response.cookie("cookie-key")).isNotNull();''')
+			test.contains('''assertThat(response.cookie("cookie-key")).matches("[A-Za-z]+");''')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:

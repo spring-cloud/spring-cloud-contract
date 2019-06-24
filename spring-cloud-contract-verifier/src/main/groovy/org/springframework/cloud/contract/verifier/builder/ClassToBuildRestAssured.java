@@ -236,12 +236,19 @@ class MockMvcCookiesGiven implements Given {
 	}
 
 	private void processInput(BlockBuilder bb, Request request) {
-		request.getCookies().executeForEachCookie(cookie -> {
+		Iterator<Cookie> iterator = request.getCookies().getEntries().iterator();
+		while (iterator.hasNext()) {
+			Cookie cookie = iterator.next();
 			if (ofAbsentType(cookie)) {
 				return;
 			}
-			bb.addLine(string(cookie));
-		});
+			if (iterator.hasNext()) {
+				this.blockBuilder.addLine(string(cookie));
+			}
+			else {
+				this.blockBuilder.addIndented(string(cookie));
+			}
+		}
 	}
 
 	private String string(Cookie cookie) {
@@ -322,7 +329,10 @@ class RestAssuredGiven implements Given, BodyMethodVisitor {
 		this.bodyGivens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
 				new MockMvcCookiesGiven(blockBuilder),
 				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData, bodyParser),
-				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData)));
+				new MockMvcMultipartGiven(blockBuilder, generatedClassMetaData,
+						bodyParser),
+				new SpockMockMvcMultipartGiven(blockBuilder, generatedClassMetaData,
+						bodyParser)));
 	}
 
 	@Override
@@ -485,12 +495,18 @@ class MockMvcHeadersGiven implements Given {
 	}
 
 	private void processInput(BlockBuilder bb, Headers headers) {
-		headers.executeForEachHeader(header -> {
+		Iterator<Header> iterator = headers.getEntries().iterator();
+		while (iterator.hasNext()) {
+			Header header = iterator.next();
 			if (ofAbsentType(header)) {
 				return;
 			}
-			bb.addIndented(string(header));
-		});
+			if (iterator.hasNext()) {
+				bb.addLine(string(header));
+			} else {
+				bb.addIndented(string(header));
+			}
+		}
 	}
 
 	private String string(Header header) {
@@ -517,18 +533,24 @@ class MockMvcMultipartGiven implements Given {
 
 	private final BlockBuilder blockBuilder;
 
+	private final GeneratedClassMetaData generatedClassMetaData;
+
 	private final BodyReader bodyReader;
 
+	private final BodyParser bodyParser;
+
 	MockMvcMultipartGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyReader = new BodyReader(generatedClassMetaData);
+		this.bodyParser = bodyParser;
+		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
 		getMultipartParameters(metadata).entrySet().forEach(entry -> this.blockBuilder
-				.addIndented(getMultipartParameterLine(metadata, entry)));
+				.addLine(getMultipartParameterLine(metadata, entry)));
 		return this;
 	}
 
@@ -555,19 +577,80 @@ class MockMvcMultipartGiven implements Given {
 	}
 
 	private String getParameterString(Map.Entry<String, Object> parameter) {
-		return ".param(\"" + escapeJava(parameter.getKey()) + "\", \""
-				+ escapeJava((String) parameter.getValue()) + "\")";
+		return ".param(" + this.bodyParser.quotedShortText(parameter.getKey()) + ", "
+				+ this.bodyParser.quotedShortText(parameter.getValue()) + ")";
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
-		return request != null && request.getMultipart() != null;
+		return request != null && request.getMultipart() != null &&
+				this.generatedClassMetaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }
 
-class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
+class SpockMockMvcMultipartGiven implements Given {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	private final BodyReader bodyReader;
+
+	private final BodyParser bodyParser;
+
+	SpockMockMvcMultipartGiven(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
+		this.blockBuilder = blockBuilder;
+		this.bodyReader = new BodyReader(generatedClassMetaData);
+		this.bodyParser = bodyParser;
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		getMultipartParameters(metadata).entrySet().forEach(entry -> this.blockBuilder
+				.addLine(getMultipartParameterLine(metadata, entry)));
+		return this;
+	}
+
+	private String getMultipartParameterLine(SingleContractMetadata metadata,
+			Map.Entry<String, Object> parameter) {
+		if (parameter.getValue() instanceof NamedProperty) {
+			return ".multiPart(" + getMultipartFileParameterContent(metadata,
+					parameter.getKey(), (NamedProperty) parameter.getValue()) + ")";
+		}
+		return getParameterString(parameter);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getMultipartParameters(SingleContractMetadata metadata) {
+		return (Map<String, Object>) metadata.getContract().getRequest().getMultipart()
+				.getServerValue();
+	}
+
+	private String getMultipartFileParameterContent(SingleContractMetadata metadata,
+			String propertyName, NamedProperty propertyValue) {
+		return ContentUtils.getGroovyMultipartFileParameterContent(propertyName, propertyValue,
+				fileProp -> this.bodyReader.readBytesFromFileString(metadata, fileProp,
+						CommunicationType.REQUEST));
+	}
+
+	private String getParameterString(Map.Entry<String, Object> parameter) {
+		return ".param(" + this.bodyParser.quotedShortText(parameter.getKey()) + ", "
+				+ this.bodyParser.quotedShortText(parameter.getValue()) + ")";
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		return request != null && request.getMultipart() != null &&
+				this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK;
+	}
+}
+
+class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 
 	private static final String QUERY_PARAM_METHOD = "queryParam";
 
@@ -575,7 +658,7 @@ class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 
 	private final BodyParser bodyParser;
 
-	MockMvcUrlWhen(BlockBuilder blockBuilder, BodyParser bodyParser) {
+	MockMvcQueryParamsWhen(BlockBuilder blockBuilder, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyParser = bodyParser;
 	}
@@ -585,7 +668,6 @@ class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 		Request request = metadata.getContract().getRequest();
 		Url url = getUrl(request);
 		addQueryParameters(url);
-		addUrl(url, request);
 		return this;
 	}
 
@@ -600,10 +682,8 @@ class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 	}
 
 	private void addQueryParameters(Url buildUrl) {
-		if (buildUrl.getQueryParameters() != null) {
-			buildUrl.getQueryParameters().getParameters().stream()
-					.filter(this::allowedQueryParameter).forEach(this::addQueryParameter);
-		}
+		buildUrl.getQueryParameters().getParameters().stream()
+				.filter(this::allowedQueryParameter).forEach(this::addQueryParameter);
 	}
 
 	private boolean allowedQueryParameter(Object o) {
@@ -620,6 +700,44 @@ class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 		this.blockBuilder.addLine("." + QUERY_PARAM_METHOD + "("
 				+ this.bodyParser.quotedLongText(queryParam.getName()) + ","
 				+ this.bodyParser.quotedLongText(resolveParamValue(queryParam)) + ")");
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		Url url = getUrl(request);
+		return url.getQueryParameters() != null;
+	}
+
+}
+
+class MockMvcUrlWhen implements When, MockMvcAcceptor, QueryParamsResolver {
+
+	private final BlockBuilder blockBuilder;
+
+	private final BodyParser bodyParser;
+
+	MockMvcUrlWhen(BlockBuilder blockBuilder, BodyParser bodyParser) {
+		this.blockBuilder = blockBuilder;
+		this.bodyParser = bodyParser;
+	}
+
+	@Override
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		Url url = getUrl(request);
+		addUrl(url, request);
+		return this;
+	}
+
+	private Url getUrl(Request request) {
+		if (request.getUrl() != null) {
+			return request.getUrl();
+		}
+		if (request.getUrlPath() != null) {
+			return request.getUrlPath();
+		}
+		throw new IllegalStateException("URL is not set!");
 	}
 
 	private void addUrl(Url buildUrl, Request request) {
@@ -715,9 +833,11 @@ class RestAssuredWhen implements When, BodyMethodVisitor {
 				new ExplicitResponseWhen(blockBuilder, this.generatedClassMetaData),
 				new WebTestClientResponseWhen(blockBuilder,
 						this.generatedClassMetaData)));
-		this.whens.addAll(Arrays.asList(
-				new MockMvcAsyncWhen(this.blockBuilder, this.generatedClassMetaData),
-				new MockMvcUrlWhen(this.blockBuilder, bodyParser)));
+		this.whens.addAll(
+				Arrays.asList(new MockMvcQueryParamsWhen(this.blockBuilder, bodyParser),
+						new MockMvcAsyncWhen(this.blockBuilder,
+								this.generatedClassMetaData),
+						new MockMvcUrlWhen(this.blockBuilder, bodyParser)));
 	}
 
 	@Override
@@ -885,7 +1005,8 @@ class JaxRsThen implements Then, BodyMethodVisitor, JaxRsAcceptor {
 		this.comparisonBuilder = comparisonBuilder;
 		this.thens.addAll(Arrays.asList(new JaxRsStatusCodeThen(this.blockBuilder),
 				new JaxRsResponseHeadersThen(this.blockBuilder, generatedClassMetaData),
-				new JaxRsResponseCookiesThen(this.blockBuilder, generatedClassMetaData, comparisonBuilder),
+				new JaxRsResponseCookiesThen(this.blockBuilder, generatedClassMetaData,
+						comparisonBuilder),
 				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
 						bodyParser, comparisonBuilder)));
 	}
@@ -1002,7 +1123,8 @@ class JaxRsResponseCookiesThen implements Then, MockMvcAcceptor, CookieElementPr
 	private final ComparisonBuilder comparisonBuilder;
 
 	JaxRsResponseCookiesThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData, ComparisonBuilder comparisonBuilder) {
+			GeneratedClassMetaData generatedClassMetaData,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.comparisonBuilder = comparisonBuilder;
@@ -1056,8 +1178,8 @@ interface CookieElementProcessor {
 	default void processCookieElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
 			verifyCookieNotNull(property);
-			blockBuilder().addIndented(
-					comparisonBuilder().assertThat(cookieKey(property)) + comparisonBuilder().matches(((NotToEscapePattern) value)
+			blockBuilder().addIndented(comparisonBuilder().assertThat(cookieKey(property))
+					+ comparisonBuilder().matches(((NotToEscapePattern) value)
 							.getServerValue().pattern().replace("\\", "\\\\")));
 		}
 		else if (value instanceof String || value instanceof Pattern) {
@@ -1083,7 +1205,8 @@ interface CookieElementProcessor {
 	}
 
 	default void verifyCookieNotNull(String key) {
-		blockBuilder().addLineWithEnding(comparisonBuilder().assertThatIsNotNull(cookieKey(key)));
+		blockBuilder().addLineWithEnding(
+				comparisonBuilder().assertThatIsNotNull(cookieKey(key)));
 	}
 
 	String cookieKey(String key);
@@ -1284,13 +1407,20 @@ class JaxRsRequestCookiesWhen implements When {
 		if (request.getCookies() == null) {
 			return;
 		}
-		request.getCookies().executeForEachCookie(cookie -> {
+		Iterator<Cookie> iterator = request.getCookies().getEntries().iterator();
+		while (iterator.hasNext()) {
+			Cookie cookie = iterator.next();
 			if (cookieOfAbsentType(cookie)) {
 				return;
 			}
-			this.blockBuilder.addIndented(".cookie(\"" + cookie.getKey() + "\", "
-					+ this.bodyParser.quotedLongText(cookie.getServerValue()) + ")");
-		});
+			String value = ".cookie(\"" + cookie.getKey() + "\", "
+					+ this.bodyParser.quotedLongText(cookie.getServerValue()) + ")";
+			if (iterator.hasNext()) {
+				this.blockBuilder.addLine(value);
+			} else {
+				this.blockBuilder.addIndented(value);
+			}
+		}
 	}
 
 	private boolean cookieOfAbsentType(Cookie cookie) {
@@ -1649,11 +1779,11 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
-	private final ComparisonBuilder builder;
+	private final ComparisonBuilder comparisonBuilder;
 
-	RestAssuredHeadersThen(BlockBuilder blockBuilder, ComparisonBuilder builder) {
+	RestAssuredHeadersThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
-		this.builder = builder;
+		this.comparisonBuilder = comparisonBuilder;
 	}
 
 	@Override
@@ -1671,16 +1801,16 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 	private void processHeaderElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
 			this.blockBuilder.addIndented(
-					this.builder.assertThat("response.header(\"" + property + "\")")
-							+ this.builder.matches(((NotToEscapePattern) value)
+					this.comparisonBuilder.assertThat("response.header(\"" + property + "\")")
+							+ this.comparisonBuilder.matches(((NotToEscapePattern) value)
 									.getServerValue().pattern().replace("\\", "\\\\")));
 		}
 		else if (value instanceof String || value instanceof Pattern) {
-			this.blockBuilder.addIndented(this.builder
+			this.blockBuilder.addIndented(this.comparisonBuilder
 					.assertThat("response.header(\"" + property + "\")", value));
 		}
 		else if (value instanceof Number) {
-			this.blockBuilder.addIndented(this.builder
+			this.blockBuilder.addIndented(this.comparisonBuilder
 					.assertThat("response.header(\"" + property + "\")", value));
 		}
 		else if (value instanceof ExecutionProperty) {
@@ -1731,6 +1861,7 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 	default String isNotNull() {
 		return " != null";
 	}
+
 }
 
 interface ComparisonBuilder {
@@ -1740,7 +1871,8 @@ interface ComparisonBuilder {
 	default String createComparison(Object headerValue) {
 		if (headerValue instanceof Pattern) {
 			return createComparison((Pattern) headerValue);
-		} else if (headerValue instanceof Number) {
+		}
+		else if (headerValue instanceof Number) {
 			return isEqualTo((Number) headerValue);
 		}
 		String escapedHeader = convertUnicodeEscapesIfRequired(headerValue.toString());
@@ -2028,7 +2160,8 @@ class RestAssuredCookiesThen implements Then, MockMvcAcceptor, CookieElementProc
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	RestAssuredCookiesThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
+	RestAssuredCookiesThen(BlockBuilder blockBuilder,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
 	}
