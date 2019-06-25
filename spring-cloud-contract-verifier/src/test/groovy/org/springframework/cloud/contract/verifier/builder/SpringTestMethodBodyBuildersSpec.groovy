@@ -2589,10 +2589,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String body -> body.contains(""".methodBuilder("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains("responseBody == '12000'") }
+			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains("responseBody == '12000'") }
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
+			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
