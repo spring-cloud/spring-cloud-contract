@@ -2437,7 +2437,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
+			}                                 | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile("true|false")""") }
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
@@ -2589,7 +2589,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains("responseBody == '12000'") }
+			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('responseBody == "12000"') }
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
@@ -2681,19 +2681,19 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			methodBuilderName | methodBuilder | responseAssertion
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
-			}                                 | { String body -> body.contains("response.header('Authorization')  == 'foo secret bar'") }
+			}                                 | { String body -> body.contains("""response.header("Authorization") == 'foo secret bar'""") }
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                 | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
+			}                                 | { String body -> body.contains('''response.getHeaderString("Authorization") == "foo secret bar"''') }
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
-			}                                 | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
+			}                                 | { String body -> body.contains('''assertThat(response.header("Authorization")).isEqualTo("foo secret bar");''') }
 	}
 
 	@Issue('#230')

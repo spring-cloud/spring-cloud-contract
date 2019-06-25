@@ -291,7 +291,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 							.getProperty(templateModel, justEntry)
 					// Path from the Test model is an object and we'd like to return its String representation
 					if (justEntry == FROM_REQUEST_PATH) {
-						return result.toString()
+						return ((Path) result).toString()
 					}
 					return result
 				}

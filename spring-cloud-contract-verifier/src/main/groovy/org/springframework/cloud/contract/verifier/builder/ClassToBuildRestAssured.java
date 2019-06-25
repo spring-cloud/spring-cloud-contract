@@ -962,7 +962,7 @@ class JavaJaxRsThen extends JaxRsThen {
 	JavaJaxRsThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, JaxRsBodyParser.INSTANCE,
-				ComparisonBuilder.INSTANCE);
+				ComparisonBuilder.JAVA_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -981,7 +981,7 @@ class SpockJaxRsThen extends JaxRsThen {
 	SpockJaxRsThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, JaxRsBodyParser.INSTANCE,
-				GroovyComparisonBuilder.INSTANCE);
+				GroovyComparisonBuilder.JAXRS_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -999,17 +999,16 @@ class JaxRsThen implements Then, BodyMethodVisitor, JaxRsAcceptor {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private final ComparisonBuilder comparisonBuilder;
-
 	private final List<Then> thens = new LinkedList<>();
 
 	JaxRsThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData,
 			BodyParser bodyParser, ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-		this.comparisonBuilder = comparisonBuilder;
-		this.thens.addAll(Arrays.asList(new JaxRsStatusCodeThen(this.blockBuilder),
-				new JaxRsResponseHeadersThen(this.blockBuilder, generatedClassMetaData),
+		this.thens.addAll(Arrays.asList(
+				new JaxRsStatusCodeThen(this.blockBuilder, comparisonBuilder),
+				new JaxRsResponseHeadersThen(this.blockBuilder, generatedClassMetaData,
+						comparisonBuilder),
 				new JaxRsResponseCookiesThen(this.blockBuilder, generatedClassMetaData,
 						comparisonBuilder),
 				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
@@ -1034,16 +1033,19 @@ class JaxRsStatusCodeThen implements Then {
 
 	private final BlockBuilder blockBuilder;
 
-	JaxRsStatusCodeThen(BlockBuilder blockBuilder) {
+	private final ComparisonBuilder comparisonBuilder;
+
+	JaxRsStatusCodeThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
+		this.comparisonBuilder = comparisonBuilder;
 	}
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
 		this.blockBuilder
-				.addIndented("assertThat(response.getStatus()).isEqualTo("
-						+ response.getStatus().getServerValue() + ")")
+				.addIndented(this.comparisonBuilder.assertThat("response.getStatus()",
+						response.getStatus().getServerValue()))
 				.addEndingIfNotPresent();
 		return this;
 	}
@@ -1055,15 +1057,19 @@ class JaxRsStatusCodeThen implements Then {
 
 }
 
-class JaxRsResponseHeadersThen implements Then, ComparisonBuilder {
+class JaxRsResponseHeadersThen implements Then {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JaxRsResponseHeadersThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+	private final ComparisonBuilder comparisonBuilder;
+
+	JaxRsResponseHeadersThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = metaData;
+		this.comparisonBuilder = comparisonBuilder;
 	}
 
 	@Override
@@ -1083,38 +1089,29 @@ class JaxRsResponseHeadersThen implements Then, ComparisonBuilder {
 
 	private void processHeaderElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			this.blockBuilder.addLineWithEnding(assertThat(
-					"response.getHeaderString(\"" + property + "\")")
-					+ createComparison(((NotToEscapePattern) value).getServerValue()));
+			this.blockBuilder.addLineWithEnding(this.comparisonBuilder
+					.assertThat("response.getHeaderString(\"" + property + "\")")
+					+ this.comparisonBuilder.createComparison(
+							((NotToEscapePattern) value).getServerValue()));
 		}
 		else if (value instanceof Number) {
-			this.blockBuilder.addLineWithEnding(
-					assertThat("response.getHeaderString(\"" + property + "\")")
-							+ ".isEqualTo(" + value + ")");
+			this.blockBuilder.addLineWithEnding(this.comparisonBuilder
+					.assertThat("response.getHeaderString(\"" + property + "\")", value));
 		}
 		else if (value instanceof ExecutionProperty) {
 			this.blockBuilder.addLineWithEnding(((ExecutionProperty) value)
 					.insertValue("response.getHeaderString(\"" + property + "\")"));
 		}
 		else {
-			this.blockBuilder
-					.addLine(assertThat("response.getHeaderString(\"" + property + "\")")
-							+ createComparison(value));
+			this.blockBuilder.addLine(this.comparisonBuilder
+					.assertThat("response.getHeaderString(\"" + property + "\")")
+					+ this.comparisonBuilder.createComparison(value));
 		}
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return metadata.getContract().getResponse().getHeaders() != null;
-	}
-
-	@Override
-	public BodyParser bodyParser() {
-		if (this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK) {
-			return (SpockJaxRsBodyParser) HandlebarsTemplateProcessor::new;
-		}
-		return JaxRsBodyParser.INSTANCE;
 	}
 
 }
@@ -1696,7 +1693,7 @@ class JavaRestAssuredThen extends RestAssuredThen {
 	JavaRestAssuredThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, RestAssuredBodyParser.INSTANCE,
-				ComparisonBuilder.INSTANCE);
+				ComparisonBuilder.JAVA_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -1715,7 +1712,7 @@ class SpockRestAssuredThen extends RestAssuredThen {
 	SpockRestAssuredThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, SpockRestAssuredBodyParser.INSTANCE,
-				GroovyComparisonBuilder.INSTANCE);
+				GroovyComparisonBuilder.SPOCK_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -1818,7 +1815,8 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 							: MapConverter.getTestSideValues(header.getServerValue()));
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
-			} else {
+			}
+			else {
 				this.blockBuilder.addIndented(text);
 			}
 		}
@@ -1837,13 +1835,13 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 					.insertValue("response.header(\"" + property + "\")");
 
 		}
-		return this.comparisonBuilder
-				.assertThat("response.header(\"" + property + "\")", value);
+		return this.comparisonBuilder.assertThat("response.header(\"" + property + "\")",
+				value);
 	}
 
 	private String matchesManuallyEscapedPattern(NotToEscapePattern value) {
-		return this.comparisonBuilder.matchesEscaped(value
-				.getServerValue().pattern().replace("\\", "\\\\"));
+		return this.comparisonBuilder
+				.matchesEscaped(value.getServerValue().pattern().replace("\\", "\\\\"));
 	}
 
 	@Override
@@ -1856,7 +1854,9 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 
 interface GroovyComparisonBuilder extends ComparisonBuilder {
 
-	ComparisonBuilder INSTANCE = (GroovyComparisonBuilder) () -> SpockRestAssuredBodyParser.INSTANCE;
+	ComparisonBuilder SPOCK_INSTANCE = (GroovyComparisonBuilder) () -> SpockRestAssuredBodyParser.INSTANCE;
+
+	ComparisonBuilder JAXRS_INSTANCE = (GroovyComparisonBuilder) () -> JaxRsBodyParser.INSTANCE;
 
 	@Override
 	default String assertThat(String object) {
@@ -1881,7 +1881,8 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 
 	@Override
 	default String matchesEscaped(String pattern) {
-		return " ==~ java.util.regex.Pattern.compile(" + bodyParser().quotedEscapedShortText(pattern) + ")";
+		return " ==~ java.util.regex.Pattern.compile("
+				+ bodyParser().quotedEscapedShortText(pattern) + ")";
 	}
 
 	@Override
@@ -1893,7 +1894,7 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 
 interface ComparisonBuilder {
 
-	ComparisonBuilder INSTANCE = () -> RestAssuredBodyParser.INSTANCE;
+	ComparisonBuilder JAVA_INSTANCE = () -> RestAssuredBodyParser.INSTANCE;
 
 	default String createComparison(Object headerValue) {
 		if (headerValue instanceof Pattern) {
@@ -2657,8 +2658,7 @@ interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
 	}
 
 	default String groovyEscapedString(Object text) {
-		return escape(text.toString())
-				.replaceAll("\\\\\"", "\"");
+		return escape(text.toString()).replaceAll("\\\\\"", "\"");
 	}
 
 }
@@ -3161,7 +3161,7 @@ class JavaMessagingThen extends MessagingThen {
 
 	JavaMessagingThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
-		super(blockBuilder, generatedClassMetaData, ComparisonBuilder.INSTANCE);
+		super(blockBuilder, generatedClassMetaData, ComparisonBuilder.JAVA_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -3179,7 +3179,8 @@ class SpockMessagingThen extends MessagingThen {
 
 	SpockMessagingThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
-		super(blockBuilder, generatedClassMetaData, GroovyComparisonBuilder.INSTANCE);
+		super(blockBuilder, generatedClassMetaData,
+				GroovyComparisonBuilder.SPOCK_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
