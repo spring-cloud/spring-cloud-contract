@@ -1103,7 +1103,7 @@ class JaxRsResponseHeadersThen implements Then {
 					.insertValue("response.getHeaderString(\"" + property + "\")"));
 		}
 		else {
-			this.blockBuilder.addLine(this.comparisonBuilder
+			this.blockBuilder.addLineWithEnding(this.comparisonBuilder
 					.assertThat("response.getHeaderString(\"" + property + "\")")
 					+ this.comparisonBuilder.createComparison(value));
 		}

@@ -91,7 +91,7 @@ public class GeneratedTestClassTests {
 + "\t\t\tassertThatJson(parsedJson).field(\"['foo3']\").isEqualTo(\"bar3\");\n"
 + "\t}\n"
 + "\n"
-+ "}";
++ "}\n";
 	// @formatter:on
 
 	@Rule
