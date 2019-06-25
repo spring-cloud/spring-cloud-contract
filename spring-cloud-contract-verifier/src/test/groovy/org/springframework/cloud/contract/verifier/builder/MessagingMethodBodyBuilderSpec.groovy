@@ -22,6 +22,9 @@ import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestMode
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 
 /**
@@ -31,11 +34,43 @@ import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 class MessagingMethodBodyBuilderSpec extends Specification {
 
 	@Shared
-	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true, generatedTestSourcesDir: new File("."),
-			generatedTestResourcesDir: new File("."))
+	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+			assertJsonSize: true
+	)
+
 	@Shared
-	GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
-			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File("target/test.java").toPath()), "method")
+	SingleTestGenerator.GeneratedClassData generatedClassData =
+			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File(".").toPath())
+
+	def setup() {
+		properties = new ContractVerifierConfigProperties(
+				assertJsonSize: true
+		)
+	}
+
+	private String singleTestGenerator(Contract contractDsl) {
+		return new RefactoredSingleTestGenerator() {
+			@Override
+			ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
+				return super.classBodyBuilder(builder, metaData, methodBuilder).field(new Field() {
+					@Override
+					boolean accept() {
+						return metaData.configProperties.testMode == TestMode.JAXRSCLIENT
+					}
+
+					@Override
+					Field call() {
+						builder.addLine("WebTarget webTarget")
+						return this
+					}
+				})
+			}
+		}.buildClass(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+	}
+
+	private ContractMetadata contractMetadata(Contract contractDsl) {
+		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsl)
+	}
 
 	def "should work for triggered based messaging with Spock"() {
 		given:
@@ -55,11 +90,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 				}
 			}
 // end::trigger_method_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			properties.testFramework = TestFramework.SPOCK
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
 // tag::trigger_method_test[]
@@ -97,11 +130,10 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
 // tag::trigger_method_junit_test[]
@@ -149,11 +181,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 				}
 			}
 			// end::trigger_message_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			properties.testFramework = TestFramework.SPOCK
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
 // tag::trigger_message_spock[]
@@ -202,11 +232,10 @@ and:
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
 // tag::trigger_message_junit[]
@@ -250,11 +279,9 @@ and:
 				}
 			}
 			// end::trigger_no_output_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			properties.testFramework = TestFramework.SPOCK
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 // tag::trigger_no_output_spock[]
@@ -291,11 +318,10 @@ then:
 					assertThat('bookWasDeleted()')
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 // tag::trigger_no_output_junit[]
@@ -336,11 +362,10 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					'''
@@ -385,11 +410,9 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			properties.testFramework = TestFramework.SPOCK
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					"""
@@ -438,11 +461,10 @@ then:
 						}
 					}
 			// end::consumer_producer[]
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					'''
@@ -485,11 +507,10 @@ then:
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					'''
@@ -529,11 +550,10 @@ then:
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('assertThat(response.getHeader("processId").toString()).matches("\\\\d+");')
 	}
@@ -574,11 +594,9 @@ then:
 				}
 			}
 			//end::regex_creating_props[]
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('assertThatJson(parsedJson).field("[\'aBoolean\']").matches("(true|false)")')
 			test.contains('assertThatJson(parsedJson).field("[\'alpha\']").matches("[\\\\p{L}]*")')
@@ -602,34 +620,11 @@ then:
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
 		and:
-			String jsonSample = '''\
-	String json = "{\\"shouldFail\\":123,\\"duck\\":\\"8\\",\\"alpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"anInteger\\":1780305902,\\"positiveInt\\":345,\\"aDouble\\":42.345,\\"aBoolean\\":true,\\"ip\\":\\"129.168.99.100\\",\\"hostname\\":\\"https://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"https://foo-597104692.com\\",\\"httpsUrl\\":\\"https://baz-486093581.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
-	DocumentContext parsedJson = JsonPath.parse(json);
-	'''
-		and:
-			LinkedList<String> lines = [] as LinkedList<String>
-			test.eachLine {
-				if (it.contains("assertThatJson")) {
-					lines << it
-				}
-				else {
-					it
-				}
-			}
-			lines.addFirst(jsonSample)
-			lines.addLast('''assertThatJson(parsedJson).field("['shouldFail']").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");''')
-			String assertionsOnly = lines.join("\n")
-		and:
-			SyntaxChecker.tryToCompile(methodBuilderName, assertionsOnly)
-		when:
-			SyntaxChecker.tryToRun(methodBuilderName, assertionsOnly)
-		then:
-			Exception error = thrown(Exception)
-			(error.message ? error.message : error.cause.message).contains('''doesn't match the JSON path [$[?(@.['shouldFail'] =~ ''')
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
-			methodBuilderName                 | methodBuilder                                                                                         | endOfLineRegExSymbol
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '$'
+			methodBuilderName | methodBuilder                                      | endOfLineRegExSymbol
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | '$'
 	}
 
 	@Issue("587")
@@ -653,11 +648,10 @@ then:
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")')
 			test.contains('assertThat(response).isNotNull()')
@@ -688,11 +682,9 @@ then:
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			properties.testFramework = TestFramework.SPOCK
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					'''
@@ -731,11 +723,9 @@ then:
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			properties.testFramework = TestFramework.SPOCK
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					'''
@@ -774,11 +764,9 @@ then:
 							])
 						}
 					}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			properties.testFramework = TestFramework.SPOCK
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					'''
@@ -817,11 +805,10 @@ then:
 							])
 						}
 					}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties, generatedClassDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+
+			properties.testFramework = TestFramework.JUNIT
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
 					'''
@@ -863,18 +850,16 @@ then:
 					}
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
 			test == expectedTest
 		where:
-			methodBuilderName                 | methodBuilder                                                                                         | expectedTest
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' when:
+			methodBuilderName | methodBuilder                                      | expectedTest
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ''' when:
   foo()
 
  then:
@@ -885,7 +870,7 @@ then:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("['field']").isEqualTo("value")
 '''
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // when:
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | ''' // when:
   foo();
 
  // then:
@@ -919,18 +904,16 @@ then:
 					}
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
 			test == expectedTest
 		where:
-			methodBuilderName                 | methodBuilder                                                                                         | expectedTest
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' given:
+			methodBuilderName | methodBuilder                                      | expectedTest
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ''' given:
   ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
       fileToBytes(this, "method_request_request.pdf")
 
@@ -948,7 +931,7 @@ then:
  and:
   response.payloadAsByteArray == fileToBytes(this, "method_response_response.pdf")
 '''
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // given:
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | ''' // given:
   ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 \t\t\t\tfileToBytes(this, "method_request_request.pdf")
 \t\t\t\t, headers()
@@ -999,18 +982,16 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
 			test == expectedTest
 		where:
-			methodBuilderName                 | methodBuilder                                                                                         | expectedTest
-			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' when:
+			methodBuilderName | methodBuilder                                      | expectedTest
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ''' when:
   createNewPerson()
 
  then:
@@ -1031,7 +1012,7 @@ then:
   assertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
   assertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+")
 '''
-			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) } | ''' // when:
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | ''' // when:
   createNewPerson();
 
  // then:
