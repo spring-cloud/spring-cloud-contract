@@ -57,11 +57,32 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 
 	GeneratedTestClass generatedTestClass(BlockBuilder builder,
 			GeneratedClassMetaData metaData, ClassBodyBuilder bodyBuilder) {
+		// @formatter:off
 		return GeneratedTestClassBuilder.builder(builder, metaData)
-				.classBodyBuilder(bodyBuilder).metaData().java().groovy().build()
-				.imports().defaultImports().custom().json().jUnit4().jUnit5().spock()
-				.xml().messaging().restAssured().jaxRs().build().classAnnotations()
-				.jUnit4().jUnit5().spock().build().build();
+				.classBodyBuilder(bodyBuilder)
+					.metaData()
+						.java()
+						.groovy()
+						.build()
+					.imports()
+						.defaultImports()
+						.custom()
+						.json()
+						.jUnit4()
+						.jUnit5()
+						.spock()
+					.xml()
+					.messaging()
+					.restAssured()
+					.jaxRs()
+					.build()
+				.classAnnotations()
+					.jUnit4()
+					.jUnit5()
+					.spock()
+					.build()
+				.build();
+		// @formatter:on
 	}
 
 	ClassBodyBuilder classBodyBuilder(BlockBuilder builder,
@@ -72,9 +93,21 @@ public class RefactoredSingleTestGenerator implements SingleTestGenerator {
 
 	SingleMethodBuilder singleMethodBuilder(BlockBuilder builder,
 			GeneratedClassMetaData metaData) {
-		return SingleMethodBuilder.builder(builder, metaData).methodAnnotation().jUnit4()
-				.jUnit5().build().methodMetadata().jUnit().spock().build().restAssured()
-				.jaxRs().messaging();
+		// @formatter:off
+		return SingleMethodBuilder.builder(builder, metaData)
+				.methodAnnotation()
+					.jUnit4()
+					.jUnit5()
+					.spock()
+					.build()
+				.methodMetadata()
+					.jUnit()
+					.spock()
+					.build()
+				.restAssured()
+				.jaxRs()
+				.messaging();
+		// @formatter:on
 	}
 
 	@Override

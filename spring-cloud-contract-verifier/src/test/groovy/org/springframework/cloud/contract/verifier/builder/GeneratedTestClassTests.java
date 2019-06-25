@@ -50,25 +50,26 @@ public class GeneratedTestClassTests {
 	// @formatter:off
 	String expectedTest = "package test;\n"
 + "\n"
++ "import BazBar;\n"
 + "import org.junit.FixMethodOrder;\n"
 + "import org.junit.runners.MethodSorters;\n"
++ "import com.jayway.jsonpath.DocumentContext;\n"
++ "import com.jayway.jsonpath.JsonPath;\n"
 + "import org.junit.Test;\n"
 + "import org.junit.Rule;\n"
 + "import org.junit.Ignore;\n"
 + "import org.junit.FixMethodOrder;\n"
 + "import org.junit.runners.MethodSorters;\n"
-+ "import com.jayway.jsonpath.DocumentContext;\n"
-+ "import com.jayway.jsonpath.JsonPath;\n"
 + "import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;\n"
 + "import io.restassured.response.ResponseOptions;\n"
 + "\n"
-+ "import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;\n"
 + "import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;\n"
 + "import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;\n"
++ "import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;\n"
 + "import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;\n"
 + "\n"
-+ "@FixMethodOrder(MethodSorters.NAME_ASCENDING);\n"
-+ "public class FooBarTests extends BazBar {\n"
++ "@FixMethodOrder(MethodSorters.NAME_ASCENDING)\n"
++ "public class FooBarTest extends BazBar {\n"
 + "\n"
 + "\t@Test\n"
 + "\t@Ignore\n"
@@ -77,7 +78,6 @@ public class GeneratedTestClassTests {
 + "\t\t\tMockMvcRequestSpecification request = given()\n"
 + "\t\t\t\t\t.header(\"foo\", \"bar\")\n"
 + "\t\t\t\t\t.body(\"{\\\"foo1\\\":\\\"bar1\\\"}\");\n"
-+ "\n"
 + "\t\t// when:\n"
 + "\t\t\tResponseOptions response = given().spec(request)\n"
 + "\t\t\t\t\t.put(\"url\");\n"
@@ -91,7 +91,7 @@ public class GeneratedTestClassTests {
 + "\t\t\tassertThatJson(parsedJson).field(\"['foo3']\").isEqualTo(\"bar3\");\n"
 + "\t}\n"
 + "\n"
-+ "}\n";
++ "}";
 	// @formatter:on
 
 	@Rule

@@ -2992,7 +2992,8 @@ class MessagingBodyGiven implements Given, MethodVisitor<Given> {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		this.blockBuilder.addIndented(getBodyAsString(metadata));
+		String bodyString = getBodyAsString(metadata);
+		this.blockBuilder.addIndented(this.bodyParser.quotedLongText(bodyString));
 		return this;
 	}
 
@@ -3155,11 +3156,11 @@ class MessagingAssertThatWhen implements When {
 
 }
 
-class JavaMessagingThen extends MessagingThen {
+class JavaMessagingWithBodyThen extends MessagingWithBodyThen {
 
 	private final GeneratedClassMetaData metaData;
 
-	JavaMessagingThen(BlockBuilder blockBuilder,
+	JavaMessagingWithBodyThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, ComparisonBuilder.JAVA_INSTANCE);
 		this.metaData = generatedClassMetaData;
@@ -3173,11 +3174,11 @@ class JavaMessagingThen extends MessagingThen {
 
 }
 
-class SpockMessagingThen extends MessagingThen {
+class SpockMessagingWithBodyThen extends MessagingWithBodyThen {
 
 	private final GeneratedClassMetaData metaData;
 
-	SpockMessagingThen(BlockBuilder blockBuilder,
+	SpockMessagingWithBodyThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData,
 				GroovyComparisonBuilder.SPOCK_INSTANCE);
@@ -3192,7 +3193,7 @@ class SpockMessagingThen extends MessagingThen {
 
 }
 
-class MessagingThen implements Then, BodyMethodVisitor {
+class MessagingWithBodyThen implements Then, BodyMethodVisitor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -3202,7 +3203,7 @@ class MessagingThen implements Then, BodyMethodVisitor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	MessagingThen(BlockBuilder blockBuilder,
+	MessagingWithBodyThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
@@ -3455,6 +3456,34 @@ class MessagingAssertThatThen implements Then {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return metadata.getContract().getOutputMessage().getAssertThat() != null;
+	}
+
+}
+
+class SpockMessagingEmptyThen implements Then, BodyMethodVisitor {
+
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	SpockMessagingEmptyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = metaData;
+	}
+
+	@Override
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		startBodyBlock(this.blockBuilder, "then:");
+		this.blockBuilder.addLineWithEnding("noExceptionThrown()");
+		endBodyBlock(this.blockBuilder);
+		return this;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK
+				&& metadata.getContract().getOutputMessage() == null;
 	}
 
 }

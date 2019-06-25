@@ -203,7 +203,12 @@ private void test(String test) {
 	}
 
 	static boolean tryToCompileGroovyWithoutImports(String test) {
-		new GroovyShell(SyntaxChecker.classLoader).parse(test)
+		try {
+			new GroovyShell(SyntaxChecker.classLoader).parse(test)
+		} catch (Throwable t) {
+			log.error("Exception occurred while trying to parse [\n${test}\n]", t)
+			throw t
+		}
 		return true
 	}
 
