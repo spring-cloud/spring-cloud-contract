@@ -980,7 +980,7 @@ class SpockJaxRsThen extends JaxRsThen {
 
 	SpockJaxRsThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
-		super(blockBuilder, generatedClassMetaData, JaxRsBodyParser.INSTANCE,
+		super(blockBuilder, generatedClassMetaData, SpockJaxRsBodyParser.INSTANCE,
 				GroovyComparisonBuilder.JAXRS_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
@@ -1080,32 +1080,42 @@ class JaxRsResponseHeadersThen implements Then {
 
 	private void validateResponseHeadersBlock(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
-		response.getHeaders().executeForEachHeader(header -> processHeaderElement(
-				header.getName(),
-				header.getServerValue() instanceof NotToEscapePattern
-						? header.getServerValue()
-						: MapConverter.getTestSideValues(header.getServerValue())));
+		Headers headers = response.getHeaders();
+		Iterator<Header> iterator = headers.getEntries().iterator();
+		while (iterator.hasNext()) {
+			Header header = iterator.next();
+			String text = processHeaderElement(header.getName(),
+					header.getServerValue() instanceof NotToEscapePattern
+							? header.getServerValue()
+							: MapConverter.getTestSideValues(header.getServerValue()));
+			if (iterator.hasNext()) {
+				this.blockBuilder.addLineWithEnding(text);
+			}
+			else {
+				this.blockBuilder.addIndented(text);
+			}
+		}
 	}
 
-	private void processHeaderElement(String property, Object value) {
+	private String processHeaderElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			this.blockBuilder.addLineWithEnding(this.comparisonBuilder
+			return this.comparisonBuilder
 					.assertThat("response.getHeaderString(\"" + property + "\")")
 					+ this.comparisonBuilder.createComparison(
-							((NotToEscapePattern) value).getServerValue()));
+							((NotToEscapePattern) value).getServerValue());
 		}
 		else if (value instanceof Number) {
-			this.blockBuilder.addLineWithEnding(this.comparisonBuilder
-					.assertThat("response.getHeaderString(\"" + property + "\")", value));
+			return this.comparisonBuilder
+					.assertThat("response.getHeaderString(\"" + property + "\")", value);
 		}
 		else if (value instanceof ExecutionProperty) {
-			this.blockBuilder.addLineWithEnding(((ExecutionProperty) value)
-					.insertValue("response.getHeaderString(\"" + property + "\")"));
+			return ((ExecutionProperty) value)
+					.insertValue("response.getHeaderString(\"" + property + "\")");
 		}
 		else {
-			this.blockBuilder.addLineWithEnding(this.comparisonBuilder
+			return this.comparisonBuilder
 					.assertThat("response.getHeaderString(\"" + property + "\")")
-					+ this.comparisonBuilder.createComparison(value));
+					+ this.comparisonBuilder.createComparison(value);
 		}
 	}
 
@@ -1359,9 +1369,6 @@ class JaxRsRequestHeadersWhen implements When {
 	}
 
 	private void appendHeaders(Request request) {
-		if (request.getHeaders() == null) {
-			return;
-		}
 		request.getHeaders().executeForEachHeader(header -> {
 			if (headerOfAbsentType(header)) {
 				return;
@@ -1383,7 +1390,8 @@ class JaxRsRequestHeadersWhen implements When {
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		return metadata.getContract().getRequest().getHeaders() != null;
+		return metadata.getContract().getRequest().getHeaders() != null && !metadata
+				.getContract().getRequest().getHeaders().getEntries().isEmpty();
 	}
 
 }
@@ -1434,7 +1442,8 @@ class JaxRsRequestCookiesWhen implements When {
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		return metadata.getContract().getRequest().getCookies() != null;
+		return metadata.getContract().getRequest().getCookies() != null && !metadata
+				.getContract().getRequest().getCookies().getEntries().isEmpty();
 	}
 
 }
@@ -1814,7 +1823,7 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 							? header.getServerValue()
 							: MapConverter.getTestSideValues(header.getServerValue()));
 			if (iterator.hasNext()) {
-				this.blockBuilder.addLine(text);
+				this.blockBuilder.addLineWithEnding(text);
 			}
 			else {
 				this.blockBuilder.addIndented(text);
@@ -2417,9 +2426,12 @@ class GenericJsonBodyThen implements Then {
 				this.contractTemplate, contractMetadata.getContract(),
 				Optional.of(this.blockBuilder.getLineEnding()),
 				bodyParser::postProcessJsonPath);
+		// TODO: Refactor spock from should comment out bdd blocks
 		Object convertedResponseBody = jsonBodyVerificationBuilder
 				.addJsonResponseBodyCheck(this.blockBuilder, responseBody, bodyMatchers,
-						this.bodyParser.responseAsString(), true);
+						this.bodyParser.responseAsString(),
+						this.generatedClassMetaData.configProperties
+								.getTestFramework() != TestFramework.SPOCK);
 		if (!(convertedResponseBody instanceof Map
 				|| convertedResponseBody instanceof List)) {
 			simpleTextResponseBodyCheck(contractMetadata, convertedResponseBody);

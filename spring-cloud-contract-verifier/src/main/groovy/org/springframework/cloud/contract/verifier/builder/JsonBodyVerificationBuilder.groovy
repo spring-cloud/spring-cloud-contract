@@ -328,6 +328,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb,
 			Object responseBody, boolean shouldCommentOutBDDBlocks) {
 		if (bodyMatchers?.hasMatchers()) {
+			bb.addEmptyLine()
 			addBodyMatchingBlock(bodyMatchers.
 					matchers(), bb, responseBody, shouldCommentOutBDDBlocks)
 		}
