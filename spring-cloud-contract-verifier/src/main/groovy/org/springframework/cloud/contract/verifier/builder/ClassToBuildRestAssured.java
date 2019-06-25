@@ -1842,7 +1842,7 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 	}
 
 	private String matchesManuallyEscapedPattern(NotToEscapePattern value) {
-		return this.comparisonBuilder.matches(value
+		return this.comparisonBuilder.matchesEscaped(value
 				.getServerValue().pattern().replace("\\", "\\\\"));
 	}
 
@@ -1877,6 +1877,11 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 	default String matches(String pattern) {
 		return " ==~ java.util.regex.Pattern.compile("
 				+ bodyParser().quotedShortText(pattern) + ")";
+	}
+
+	@Override
+	default String matchesEscaped(String pattern) {
+		return " ==~ java.util.regex.Pattern.compile(" + bodyParser().quotedEscapedShortText(pattern) + ")";
 	}
 
 	@Override
@@ -1941,6 +1946,10 @@ interface ComparisonBuilder {
 
 	default String matches(String pattern) {
 		return ".matches(" + bodyParser().quotedShortText(pattern) + ")";
+	}
+
+	default String matchesEscaped(String pattern) {
+		return ".matches(" + bodyParser().quotedEscapedShortText(pattern) + ")";
 	}
 
 	default String convertUnicodeEscapesIfRequired(String json) {
@@ -2613,16 +2622,6 @@ interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
 		return jsonPath.replace("$", "\\$");
 	}
 
-	@Override
-	default String escape(String text) {
-		return text.replaceAll("\\n", "\\\\n");
-	}
-
-	@Override
-	default String escapeForSimpleTextAssertion(String text) {
-		return escape(text);
-	}
-
 	TemplateProcessor templateProcessor();
 
 	@Override
@@ -2644,17 +2643,22 @@ interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
 		else if (string.contains("'") || string.contains("\"")) {
 			return quotedLongText(text);
 		}
-		return "'" + string + "'";
+		return "'" + groovyEscapedString(text.toString()) + "'";
 	}
 
 	@Override
 	default String quotedEscapedLongText(Object text) {
-		return quotedLongText(text);
+		return "'''" + text.toString() + "'''";
 	}
 
 	@Override
 	default String quotedLongText(Object text) {
-		return "'''" + text.toString() + "'''";
+		return "'''" + groovyEscapedString(text) + "'''";
+	}
+
+	default String groovyEscapedString(Object text) {
+		return escape(text.toString())
+				.replaceAll("\\\\\"", "\"");
 	}
 
 }
@@ -2791,6 +2795,10 @@ interface BodyParser extends BodyThen {
 
 	default String quotedShortText(Object text) {
 		return quotedLongText(text);
+	}
+
+	default String quotedEscapedShortText(Object text) {
+		return quotedEscapedLongText(text);
 	}
 
 }
