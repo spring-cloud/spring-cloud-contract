@@ -1488,6 +1488,18 @@ interface GroovyBodyParser extends BodyParser {
 	}
 
 	@Override
+	default String quotedEscapedShortText(Object text) {
+		String string = text.toString();
+		if (text instanceof Number) {
+			return string;
+		}
+		else if (string.contains("'") || string.contains("\"")) {
+			return quotedEscapedLongText(text);
+		}
+		return "'" + text.toString() + "'";
+	}
+
+	@Override
 	default String quotedEscapedLongText(Object text) {
 		return "'''" + text.toString() + "'''";
 	}
@@ -1895,8 +1907,13 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 
 	@Override
 	default String matches(String pattern) {
-		return " ==~ java.util.regex.Pattern.compile("
-				+ bodyParser().quotedShortText(pattern) + ")";
+		return matchesEscaped(bodyParser().quotedShortText(pattern));
+	}
+
+	@Override
+	default String matches(Pattern pattern) {
+		String escapedPattern = StringEscapeUtils.escapeJava(pattern.pattern());
+		return matchesEscaped(escapedPattern);
 	}
 
 	@Override
@@ -1920,7 +1937,7 @@ interface ComparisonBuilder {
 
 	default String createComparison(Object headerValue) {
 		if (headerValue instanceof Pattern) {
-			return createComparison((Pattern) headerValue);
+			return matches((Pattern) headerValue);
 		}
 		else if (headerValue instanceof Number) {
 			return isEqualTo((Number) headerValue);
@@ -1971,6 +1988,11 @@ interface ComparisonBuilder {
 		return ".isNotNull()";
 	}
 
+	default String matches(Pattern pattern) {
+		String escapedPattern = StringEscapeUtils.escapeJava(pattern.pattern());
+		return ".matches(" + bodyParser().quotedEscapedShortText(escapedPattern) + ")";
+	}
+
 	default String matches(String pattern) {
 		return ".matches(" + bodyParser().quotedShortText(pattern) + ")";
 	}
@@ -1982,10 +2004,6 @@ interface ComparisonBuilder {
 	default String convertUnicodeEscapesIfRequired(String json) {
 		String unescapedJson = StringEscapeUtils.unescapeJson(json);
 		return escapeJava(unescapedJson);
-	}
-
-	default String createComparison(Pattern value) {
-		return matches(value.pattern());
 	}
 
 	BodyParser bodyParser();

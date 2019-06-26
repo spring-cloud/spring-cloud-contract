@@ -110,15 +110,24 @@ class RegexProperty extends DslProperty implements CanBeDynamic {
 	}
 
 	Object generate() {
-		String generatedValue = new Xeger(this.pattern.pattern()).generate()
-		switch (this.clazz) {
-		case Integer: return Integer.parseInt(generatedValue)
-		case Double: return Double.parseDouble(generatedValue)
-		case Float: return Float.parseFloat(generatedValue)
-		case Long: return Long.parseLong(generatedValue)
-		case Short: return Short.parseShort(generatedValue)
-		case Boolean: return Boolean.parseBoolean(generatedValue)
-		default: return generatedValue
+		int retries = 3;
+		try {
+			String generatedValue = new Xeger(this.pattern.pattern()).generate()
+			switch (this.clazz) {
+				case Integer: return Integer.parseInt(generatedValue)
+				case Double: return Double.parseDouble(generatedValue)
+				case Float: return Float.parseFloat(generatedValue)
+				case Long: return Long.parseLong(generatedValue)
+				case Short: return Short.parseShort(generatedValue)
+				case Boolean: return Boolean.parseBoolean(generatedValue)
+				default: return generatedValue
+			}
+		} catch(NumberFormatException ex) {
+			if (retries > 0) {
+				retries = retries - 1
+				return generate()
+			}
+			throw ex
 		}
 	}
 
