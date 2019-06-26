@@ -1112,7 +1112,7 @@ class FooSpec extends Specification {
 
 \t\tand:
 \t\t\tresponse.getHeader("processId") != null
-\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[\\S\\s]+')
+\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[\\\\S\\\\s]+')
 
 \t\tand:
 \t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
@@ -1337,7 +1337,7 @@ class FooSpec extends Specification {
 
 \t\tand:
 \t\t\tresponse.getHeader("Authorization") != null
-\t\t\tresponse.getHeader("Authorization").toString() ==~ java.util.regex.Pattern.compile('Bearer [A-Za-z0-9\\-\\._~\\+\\/]+=*')
+\t\t\tresponse.getHeader("Authorization").toString() ==~ java.util.regex.Pattern.compile('Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*')
 
 \t\tand:
 \t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
