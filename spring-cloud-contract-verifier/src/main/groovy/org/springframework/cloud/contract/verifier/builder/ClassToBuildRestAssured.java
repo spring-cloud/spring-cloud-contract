@@ -1160,7 +1160,7 @@ class JaxRsResponseCookiesThen implements Then, MockMvcAcceptor, CookieElementPr
 
 	@Override
 	public String cookieKey(String key) {
-		return "response.getCookies().get((\"" + key + "\")";
+		return "response.getCookies().get(\"" + key + "\")";
 	}
 
 	@Override
@@ -1266,9 +1266,18 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 		if (queryParameters == null || queryParameters.getParameters().isEmpty()) {
 			return;
 		}
-		queryParameters.getParameters().stream().filter(this::allowedQueryParameter)
-				.forEach(param -> this.blockBuilder.addIndented(".queryParam(\""
-						+ param.getName() + "\", \"" + resolveParamValue(param) + "\")"));
+		this.blockBuilder.addEmptyLine();
+		Iterator<QueryParameter> iterator = queryParameters.getParameters().stream().filter(this::allowedQueryParameter).iterator();
+		while (iterator.hasNext()) {
+			QueryParameter param = iterator.next();
+			String text = ".queryParam(\""
+					+ param.getName() + "\", \"" + resolveParamValue(param) + "\")";
+			if (iterator.hasNext()) {
+				this.blockBuilder.addLine(text);
+			} else {
+				this.blockBuilder.addIndented(text);
+			}
+		}
 	}
 
 	/**
