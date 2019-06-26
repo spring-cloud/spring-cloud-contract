@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -913,12 +914,15 @@ class JaxRsWhen implements When, BodyMethodVisitor, JaxRsAcceptor {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
+	private final JaxRsBodyParser bodyParser;
+
 	private final List<When> whens = new LinkedList<>();
 
 	JaxRsWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData,
-			BodyParser bodyParser) {
+			JaxRsBodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
+		this.bodyParser = bodyParser;
 		this.whens.addAll(Arrays.asList(
 				new JaxRsUrlPathWhen(this.blockBuilder, this.generatedClassMetaData),
 				new JaxRsRequestWhen(this.blockBuilder, this.generatedClassMetaData),
@@ -938,7 +942,7 @@ class JaxRsWhen implements When, BodyMethodVisitor, JaxRsAcceptor {
 		this.blockBuilder.addEmptyLine().endBlock();
 		if (expectsResponseBody(singleContractMetadata)) {
 			this.blockBuilder.addLineWithEnding(
-					"String responseAsString = response.readEntity(String.class)");
+					"String responseAsString = " + this.bodyParser.readEntity());
 		}
 		this.blockBuilder.endBlock();
 		return this;
@@ -1134,12 +1138,15 @@ class JaxRsResponseCookiesThen implements Then, MockMvcAcceptor, CookieElementPr
 
 	private final ComparisonBuilder comparisonBuilder;
 
+	private final BodyParser bodyParser;
+
 	JaxRsResponseCookiesThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.comparisonBuilder = comparisonBuilder;
+		this.bodyParser = comparisonBuilder.bodyParser();
 	}
 
 	@Override
@@ -1160,7 +1167,12 @@ class JaxRsResponseCookiesThen implements Then, MockMvcAcceptor, CookieElementPr
 
 	@Override
 	public String cookieKey(String key) {
-		return "response.getCookies().get(\"" + key + "\")";
+		return "response.getCookies().get(" + this.bodyParser.quotedShortText(key) + ")";
+	}
+
+	@Override
+	public String cookieValue(String key) {
+		return cookieKey(key) + ".getValue()";
 	}
 
 	@Override
@@ -1190,24 +1202,25 @@ interface CookieElementProcessor {
 	default void processCookieElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
 			verifyCookieNotNull(property);
-			blockBuilder().addIndented(comparisonBuilder().assertThat(cookieKey(property))
-					+ comparisonBuilder().matches(((NotToEscapePattern) value)
-							.getServerValue().pattern().replace("\\", "\\\\")));
+			blockBuilder()
+					.addIndented(comparisonBuilder().assertThat(cookieValue(property))
+							+ comparisonBuilder().matches(((NotToEscapePattern) value)
+									.getServerValue().pattern().replace("\\", "\\\\")));
 		}
 		else if (value instanceof String || value instanceof Pattern) {
 			verifyCookieNotNull(property);
 			blockBuilder().addIndented(
-					comparisonBuilder().assertThat(cookieKey(property), value));
+					comparisonBuilder().assertThat(cookieValue(property), value));
 		}
 		else if (value instanceof Number) {
 			verifyCookieNotNull(property);
 			blockBuilder().addIndented(
-					comparisonBuilder().assertThat(cookieKey(property), value));
+					comparisonBuilder().assertThat(cookieValue(property), value));
 		}
 		else if (value instanceof ExecutionProperty) {
 			verifyCookieNotNull(property);
 			blockBuilder().addIndented(
-					((ExecutionProperty) value).insertValue(cookieKey(property)));
+					((ExecutionProperty) value).insertValue(cookieValue(property)));
 
 		}
 		else {
@@ -1222,6 +1235,10 @@ interface CookieElementProcessor {
 	}
 
 	String cookieKey(String key);
+
+	default String cookieValue(String key) {
+		return cookieKey(key);
+	}
 
 }
 
@@ -1267,14 +1284,16 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 			return;
 		}
 		this.blockBuilder.addEmptyLine();
-		Iterator<QueryParameter> iterator = queryParameters.getParameters().stream().filter(this::allowedQueryParameter).iterator();
+		Iterator<QueryParameter> iterator = queryParameters.getParameters().stream()
+				.filter(this::allowedQueryParameter).iterator();
 		while (iterator.hasNext()) {
 			QueryParameter param = iterator.next();
-			String text = ".queryParam(\""
-					+ param.getName() + "\", \"" + resolveParamValue(param) + "\")";
+			String text = ".queryParam(\"" + param.getName() + "\", \""
+					+ resolveParamValue(param) + "\")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
-			} else {
+			}
+			else {
 				this.blockBuilder.addIndented(text);
 			}
 		}
@@ -1378,17 +1397,27 @@ class JaxRsRequestHeadersWhen implements When {
 	}
 
 	private void appendHeaders(Request request) {
-		request.getHeaders().executeForEachHeader(header -> {
-			if (headerOfAbsentType(header)) {
-				return;
+		Iterator<Header> iterator = request.getHeaders().getEntries().stream().filter(header -> !headerToIgnore(header)).iterator();
+		while (iterator.hasNext()) {
+			Header header = iterator.next();
+			String text = ".header(\"" + header.getName() + "\", "
+					+ this.bodyParser.quotedLongText(header.getServerValue()) + ")";
+			if (iterator.hasNext()) {
+				this.blockBuilder.addLine(text);
 			}
-			if ("Content-Type".equals(header.getName())
-					|| "Accept".equals(header.getName())) {
-				return;
+			else {
+				this.blockBuilder.addIndented(text);
 			}
-			this.blockBuilder.addIndented(".header(\"" + header.getName() + "\", "
-					+ this.bodyParser.quotedLongText(header.getServerValue()) + ")");
-		});
+		}
+	}
+
+	private boolean headerToIgnore(Header header) {
+		return contentTypeOrAccept(header) || headerOfAbsentType(header);
+	}
+
+	private boolean contentTypeOrAccept(Header header) {
+		return "Content-Type".equalsIgnoreCase(header.getName())
+				|| "Accept".equalsIgnoreCase(header.getName());
 	}
 
 	private boolean headerOfAbsentType(Header header) {
@@ -1400,7 +1429,15 @@ class JaxRsRequestHeadersWhen implements When {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return metadata.getContract().getRequest().getHeaders() != null && !metadata
-				.getContract().getRequest().getHeaders().getEntries().isEmpty();
+				.getContract().getRequest().getHeaders().getEntries().isEmpty()
+				&& !hasHeaderOnlyContentTypeOrAccept(metadata);
+	}
+
+	private boolean hasHeaderOnlyContentTypeOrAccept(SingleContractMetadata metadata) {
+		Set<Header> entries = metadata.getContract().getRequest().getHeaders()
+				.getEntries();
+		long filteredOut = entries.stream().filter(this::headerToIgnore).count();
+		return filteredOut == entries.size();
 	}
 
 }
@@ -1423,17 +1460,12 @@ class JaxRsRequestCookiesWhen implements When {
 	}
 
 	private void appendCookies(Request request) {
-		if (request.getCookies() == null) {
-			return;
-		}
-		Iterator<Cookie> iterator = request.getCookies().getEntries().iterator();
+		Iterator<Cookie> iterator = request.getCookies().getEntries().stream().filter(cookie -> !cookieOfAbsentType(cookie)).iterator();
 		while (iterator.hasNext()) {
 			Cookie cookie = iterator.next();
-			if (cookieOfAbsentType(cookie)) {
-				return;
-			}
-			String value = ".cookie(\"" + cookie.getKey() + "\", "
-					+ this.bodyParser.quotedLongText(cookie.getServerValue()) + ")";
+			String value = ".cookie(" + this.bodyParser.quotedShortText(cookie.getKey())
+					+ ", " + this.bodyParser.quotedShortText(cookie.getServerValue())
+					+ ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(value);
 			}
@@ -1452,7 +1484,15 @@ class JaxRsRequestCookiesWhen implements When {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return metadata.getContract().getRequest().getCookies() != null && !metadata
-				.getContract().getRequest().getCookies().getEntries().isEmpty();
+				.getContract().getRequest().getCookies().getEntries().isEmpty()
+				&& !hasOnlyAbsentCookies(metadata);
+	}
+
+	private boolean hasOnlyAbsentCookies(SingleContractMetadata metadata) {
+		Set<Cookie> entries = metadata.getContract().getRequest().getCookies()
+				.getEntries();
+		long filteredOut = entries.stream().filter(this::cookieOfAbsentType).count();
+		return filteredOut == entries.size();
 	}
 
 }
@@ -1526,7 +1566,17 @@ interface GroovyBodyParser extends BodyParser {
 
 interface SpockJaxRsBodyParser extends JaxRsBodyParser, GroovyBodyParser {
 
-	SpockRestAssuredBodyParser INSTANCE = HandlebarsTemplateProcessor::new;
+	SpockJaxRsBodyParser INSTANCE = HandlebarsTemplateProcessor::new;
+
+	@Override
+	default String readEntity() {
+		return "response.readEntity(String)";
+	}
+
+	@Override
+	default String responseAsString() {
+		return "responseAsString";
+	}
 
 	@Override
 	default String byteArrayString() {
@@ -1537,8 +1587,12 @@ interface SpockJaxRsBodyParser extends JaxRsBodyParser, GroovyBodyParser {
 
 interface JaxRsBodyParser extends BodyParser {
 
-	BodyParser INSTANCE = new JaxRsBodyParser() {
+	JaxRsBodyParser INSTANCE = new JaxRsBodyParser() {
 	};
+
+	default String readEntity() {
+		return "response.readEntity(String.class)";
+	}
 
 	default String responseAsString() {
 		return "responseAsString";
@@ -1573,6 +1627,7 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 		String method = request.getMethod().getServerValue().toString().toLowerCase();
 		if (request.getBody() != null) {
 			String contentType = type.getMimeType();
+			contentType = StringUtils.hasText(contentType) ? contentType : getContentType(request);
 			Object body = request.getBody().getServerValue();
 			String value;
 			if (body instanceof ExecutionProperty) {
@@ -1595,6 +1650,12 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 		else {
 			this.blockBuilder.addIndented(".build(\"" + method.toUpperCase() + "\")");
 		}
+	}
+
+	private String getContentType(Request request) {
+		Header contentType = request.getHeaders().getEntries().stream()
+				.filter(header -> "Content-Type".equalsIgnoreCase(header.getName())).findFirst().orElse(null);
+		return contentType != null ? contentType.getServerValue().toString() : "";
 	}
 
 	@Override

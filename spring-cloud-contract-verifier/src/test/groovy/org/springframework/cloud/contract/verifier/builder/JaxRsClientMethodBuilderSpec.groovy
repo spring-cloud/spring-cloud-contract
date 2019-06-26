@@ -332,7 +332,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			methodBuilderName | methodBuilder | bodyString
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | """entity('{\"items\":[\"HOP\"]}', 'application/json')"""
+			}                                 | """entity("{\\"items\\":[\\"HOP\\"]}", "application/json")"""
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | 'entity("{\\"items\\":[\\"HOP\\"]}", "application/json")'
@@ -366,7 +366,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			methodBuilderName | methodBuilder | bodyString
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | """entity('property1=VAL1', 'application/octet-stream')"""
+			}                                 | """entity("property1=VAL1", "application/octet-stream")"""
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | 'entity("property1=VAL1", "application/octet-stream")'
@@ -588,7 +588,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			methodBuilderName | methodBuilder | requestString
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | "request('text/plain')"
+			}                                 | 'request("text/plain")'
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | 'request("text/plain")'
@@ -666,14 +666,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains(modifyStringIfRequired.call("queryParam('limit', '10'"))
-			test.contains(modifyStringIfRequired.call("queryParam('offset', '20'"))
-			test.contains(modifyStringIfRequired.call("queryParam('filter', 'email'"))
-			test.contains(modifyStringIfRequired.call("queryParam('sort', 'name'"))
-			test.contains(modifyStringIfRequired.call("queryParam('search', '55'"))
-			test.contains(modifyStringIfRequired.call("queryParam('age', '99'"))
-			test.contains(modifyStringIfRequired.call("queryParam('name', 'Denis.Stepanov'"))
-			test.contains(modifyStringIfRequired.call("queryParam('email', 'bob@email.com'"))
+			test.contains(modifyStringIfRequired.call('''queryParam("limit", "10"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("offset", "20"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("filter", "email"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("sort", "name"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("search", "55"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("age", "99"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("name", "Denis.Stepanov"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("email", "bob@email.com"'''))
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 			test.contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:
@@ -725,14 +725,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains(modifyStringIfRequired.call("queryParam('limit', '10'"))
-			test.contains(modifyStringIfRequired.call("queryParam('offset', '20'"))
-			test.contains(modifyStringIfRequired.call("queryParam('filter', 'email'"))
-			test.contains(modifyStringIfRequired.call("queryParam('sort', 'name'"))
-			test.contains(modifyStringIfRequired.call("queryParam('search', '55'"))
-			test.contains(modifyStringIfRequired.call("queryParam('age', '99'"))
-			test.contains(modifyStringIfRequired.call("queryParam('name', 'Denis.Stepanov'"))
-			test.contains(modifyStringIfRequired.call("queryParam('email', 'bob@email.com'"))
+			test.contains(modifyStringIfRequired.call('''queryParam("limit", "10"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("offset", "20"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("filter", "email"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("sort", "name"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("search", "55"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("age", "99"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("name", "Denis.Stepanov"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("email", "bob@email.com"'''))
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 			test.contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:
@@ -775,10 +775,10 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			methodBuilderName | methodBuilder | bodyString
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | "entity('', 'application/octet-stream')"
+			}                                 | """entity("", "application/octet-stream")"""
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | 'entity("", "application/octet-stream"'
+			}                                 | """entity("", "application/octet-stream")"""
 	}
 
 	def "should not parse the response body if there is no response body specified in the contract"() {
@@ -811,7 +811,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			}                                 | "String responseAsString = response.readEntity(String.class);"
 	}
 
-	def "should generate test for String in response body with #methodBodyName"() {
+	def "should generate test for String in response body with #methodBuilderName"() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -874,10 +874,10 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			methodBuilderName | methodBuilder | methodString
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | ".methodBuilder('GET')"
+			}                                 | '.build("GET")'
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | 'methodBuilder("GET")'
+			}                                 | 'build("GET")'
 	}
 
 	def "should generate a call with an url path and query parameters with JUnit - we'll put it into docs"() {
@@ -1407,7 +1407,7 @@ DATA
 			String test = singleTestGenerator(contractDsl)
 		then:
 			!test.contains('entity("\\"\\n')
-			test.contains('''.methodBuilder("POST", entity("{\\"foo\\":\\"bar\\"}", "application/json"))''')
+			test.contains('''.build("POST", entity("{\\"foo\\":\\"bar\\"}", "application/json"))''')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
@@ -1462,8 +1462,8 @@ DATA
 			String test = singleTestGenerator(contractDslWithCookiesValue)
 		then:
 			test.contains('''.cookie('cookie-key', 'cookie-value')''')
-			test.contains('''response.getCookies().get('cookie-key') != null''')
-			test.contains("response.getCookies().get('cookie-key').getValue() == 'new-cookie-value'")
+			test.contains('''response.getCookies().get("cookie-key") != null''')
+			test.contains('response.getCookies().get("cookie-key").getValue() == "new-cookie-value"')
 		and:
 			SyntaxChecker.tryToCompile("jaxrs-spock", test)
 	}
@@ -1476,8 +1476,8 @@ DATA
 		then:
 			!test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
 			test.contains('''.cookie('cookie-key', ''')
-			test.contains('''response.getCookies().get('cookie-key') != null''')
-			test.contains('''response.getCookies().get('cookie-key').getValue() ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+			test.contains('''response.getCookies().get("cookie-key") != null''')
+			test.contains('''response.getCookies().get("cookie-key").getValue() ==~ java.util.regex.Pattern.compile("[A-Za-z]+")''')
 		and:
 			SyntaxChecker.tryToCompile("jaxrs-spock", test)
 	}
