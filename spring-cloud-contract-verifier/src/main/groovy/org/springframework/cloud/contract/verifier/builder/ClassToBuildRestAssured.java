@@ -962,7 +962,7 @@ class JavaJaxRsThen extends JaxRsThen {
 	JavaJaxRsThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, JaxRsBodyParser.INSTANCE,
-				ComparisonBuilder.JAVA_INSTANCE);
+				ComparisonBuilder.JAVA_HTTP_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -981,7 +981,7 @@ class SpockJaxRsThen extends JaxRsThen {
 	SpockJaxRsThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, SpockJaxRsBodyParser.INSTANCE,
-				GroovyComparisonBuilder.JAXRS_INSTANCE);
+				GroovyComparisonBuilder.JAXRS_HTTP_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -1448,9 +1448,7 @@ class JaxRsRequestCookiesWhen implements When {
 
 }
 
-interface SpockJaxRsBodyParser extends JaxRsBodyParser {
-
-	SpockRestAssuredBodyParser INSTANCE = HandlebarsTemplateProcessor::new;
+interface GroovyBodyParser extends BodyParser {
 
 	@Override
 	default String convertUnicodeEscapesIfRequired(String json) {
@@ -1468,11 +1466,6 @@ interface SpockJaxRsBodyParser extends JaxRsBodyParser {
 	TemplateProcessor templateProcessor();
 
 	@Override
-	default String byteArrayString() {
-		return "response.readEntity(byte[])";
-	}
-
-	@Override
 	default String escape(String text) {
 		return text.replaceAll("\\n", "\\\\n");
 	}
@@ -1485,22 +1478,38 @@ interface SpockJaxRsBodyParser extends JaxRsBodyParser {
 	@Override
 	default String quotedShortText(Object text) {
 		String string = text.toString();
-		String escaped = escapeJava(text.toString());
-		boolean stringsDiffer = !string.equals(escaped);
-		if (string.contains("'") || stringsDiffer) {
+		if (text instanceof Number) {
+			return string;
+		}
+		else if (string.contains("'") || string.contains("\"")) {
 			return quotedLongText(text);
 		}
-		return "'" + string + "'";
+		return "'" + groovyEscapedString(text.toString()) + "'";
 	}
 
 	@Override
 	default String quotedEscapedLongText(Object text) {
-		return quotedLongText(text);
+		return "'''" + text.toString() + "'''";
 	}
 
 	@Override
 	default String quotedLongText(Object text) {
-		return "'''" + text.toString() + "'''";
+		return "'''" + groovyEscapedString(text) + "'''";
+	}
+
+	default String groovyEscapedString(Object text) {
+		return escape(text.toString()).replaceAll("\\\\\"", "\"");
+	}
+
+}
+
+interface SpockJaxRsBodyParser extends JaxRsBodyParser, GroovyBodyParser {
+
+	SpockRestAssuredBodyParser INSTANCE = HandlebarsTemplateProcessor::new;
+
+	@Override
+	default String byteArrayString() {
+		return "response.readEntity(byte[])";
 	}
 
 }
@@ -1702,7 +1711,7 @@ class JavaRestAssuredThen extends RestAssuredThen {
 	JavaRestAssuredThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, RestAssuredBodyParser.INSTANCE,
-				ComparisonBuilder.JAVA_INSTANCE);
+				ComparisonBuilder.JAVA_HTTP_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -1721,7 +1730,7 @@ class SpockRestAssuredThen extends RestAssuredThen {
 	SpockRestAssuredThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, SpockRestAssuredBodyParser.INSTANCE,
-				GroovyComparisonBuilder.SPOCK_INSTANCE);
+				GroovyComparisonBuilder.SPOCK_HTTP_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -1863,9 +1872,11 @@ class RestAssuredHeadersThen implements Then, MockMvcAcceptor {
 
 interface GroovyComparisonBuilder extends ComparisonBuilder {
 
-	ComparisonBuilder SPOCK_INSTANCE = (GroovyComparisonBuilder) () -> SpockRestAssuredBodyParser.INSTANCE;
+	ComparisonBuilder SPOCK_HTTP_INSTANCE = (GroovyComparisonBuilder) () -> SpockRestAssuredBodyParser.INSTANCE;
 
-	ComparisonBuilder JAXRS_INSTANCE = (GroovyComparisonBuilder) () -> JaxRsBodyParser.INSTANCE;
+	ComparisonBuilder JAXRS_HTTP_INSTANCE = (GroovyComparisonBuilder) () -> JaxRsBodyParser.INSTANCE;
+
+	ComparisonBuilder SPOCK_MESSAGING_INSTANCE = (GroovyComparisonBuilder) () -> SpockMessagingBodyParser.INSTANCE;
 
 	@Override
 	default String assertThat(String object) {
@@ -1873,8 +1884,8 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 	}
 
 	@Override
-	default String isEqualTo(String escapedHeaderValue) {
-		return " == " + bodyParser().quotedShortText(escapedHeaderValue);
+	default String isEqualToUnquoted(String unquoted) {
+		return " == " + unquoted;
 	}
 
 	@Override
@@ -1903,7 +1914,9 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 
 interface ComparisonBuilder {
 
-	ComparisonBuilder JAVA_INSTANCE = () -> RestAssuredBodyParser.INSTANCE;
+	ComparisonBuilder JAVA_HTTP_INSTANCE = () -> RestAssuredBodyParser.INSTANCE;
+
+	ComparisonBuilder JAVA_MESSAGING_INSTANCE = () -> JavaMessagingBodyParser.INSTANCE;
 
 	default String createComparison(Object headerValue) {
 		if (headerValue instanceof Pattern) {
@@ -1943,7 +1956,11 @@ interface ComparisonBuilder {
 	}
 
 	default String isEqualTo(String escapedHeaderValue) {
-		return ".isEqualTo(" + bodyParser().quotedShortText(escapedHeaderValue) + ")";
+		return isEqualToUnquoted(bodyParser().quotedShortText(escapedHeaderValue));
+	}
+
+	default String isEqualToUnquoted(String unquoted) {
+		return ".isEqualTo(" + unquoted + ")";
 	}
 
 	default String isEqualTo(Number number) {
@@ -2138,7 +2155,8 @@ class MockMvcRestAssuredStaticImports implements Imports, RestAssuredVerifier {
 	@Override
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.MOCKMVC;
+				.getTestMode() == TestMode.MOCKMVC
+				&& this.generatedClassMetaData.isAnyHttp();
 	}
 
 }
@@ -2618,24 +2636,9 @@ class GenericBinaryBodyThen implements Then {
 
 }
 
-interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
+interface SpockRestAssuredBodyParser extends RestAssuredBodyParser, GroovyBodyParser {
 
 	BodyParser INSTANCE = (SpockRestAssuredBodyParser) HandlebarsTemplateProcessor::new;
-
-	@Override
-	default String convertUnicodeEscapesIfRequired(String json) {
-		return StringEscapeUtils.unescapeEcmaScript(json);
-	}
-
-	@Override
-	default String postProcessJsonPath(String jsonPath) {
-		if (templateProcessor().containsTemplateEntry(jsonPath)) {
-			return jsonPath;
-		}
-		return jsonPath.replace("$", "\\$");
-	}
-
-	TemplateProcessor templateProcessor();
 
 	@Override
 	default String responseAsString() {
@@ -2645,32 +2648,6 @@ interface SpockRestAssuredBodyParser extends RestAssuredBodyParser {
 	@Override
 	default String byteArrayString() {
 		return "response.body.asByteArray()";
-	}
-
-	@Override
-	default String quotedShortText(Object text) {
-		String string = text.toString();
-		if (text instanceof Number) {
-			return string;
-		}
-		else if (string.contains("'") || string.contains("\"")) {
-			return quotedLongText(text);
-		}
-		return "'" + groovyEscapedString(text.toString()) + "'";
-	}
-
-	@Override
-	default String quotedEscapedLongText(Object text) {
-		return "'''" + text.toString() + "'''";
-	}
-
-	@Override
-	default String quotedLongText(Object text) {
-		return "'''" + groovyEscapedString(text) + "'''";
-	}
-
-	default String groovyEscapedString(Object text) {
-		return escape(text.toString()).replaceAll("\\\\\"", "\"");
 	}
 
 }
@@ -2879,9 +2856,10 @@ class BodyAssertionLineCreator {
 			SingleContractMetadata singleContractMetadata, String property,
 			FromFileProperty value) {
 		if (value.isByte()) {
-			return this.comparisonBuilder.assertThat(this.byteArrayString,
-					this.bodyReader.readBytesFromFileString(singleContractMetadata, value,
-							CommunicationType.RESPONSE));
+			return this.comparisonBuilder.assertThat(this.byteArrayString)
+					+ this.comparisonBuilder.isEqualToUnquoted(this.bodyReader
+							.readBytesFromFileString(singleContractMetadata, value,
+									CommunicationType.RESPONSE));
 		}
 		return getResponseBodyPropertyComparisonString(property, value.asString());
 	}
@@ -2920,10 +2898,20 @@ class BodyAssertionLineCreator {
 
 }
 
-interface MessagingBodyParser extends BodyParser {
+interface SpockMessagingBodyParser extends MessagingBodyParser, GroovyBodyParser {
 
-	BodyParser INSTANCE = new MessagingBodyParser() {
+	BodyParser INSTANCE = (SpockMessagingBodyParser) HandlebarsTemplateProcessor::new;
+
+}
+
+interface JavaMessagingBodyParser extends MessagingBodyParser {
+
+	BodyParser INSTANCE = new JavaMessagingBodyParser() {
 	};
+
+}
+
+interface MessagingBodyParser extends BodyParser {
 
 	default String responseAsString() {
 		return "contractVerifierObjectMapper.writeValueAsString(response.getPayload())";
@@ -2945,6 +2933,42 @@ interface MessagingBodyParser extends BodyParser {
 
 }
 
+class SpockMessagingGiven extends MessagingGiven {
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	SpockMessagingGiven(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		super(blockBuilder, generatedClassMetaData, SpockMessagingBodyParser.INSTANCE);
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return super.accept(metadata) && this.generatedClassMetaData.configProperties
+				.getTestFramework() == TestFramework.SPOCK;
+	}
+
+}
+
+class JavaMessagingGiven extends MessagingGiven {
+
+	private final GeneratedClassMetaData generatedClassMetaData;
+
+	JavaMessagingGiven(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		super(blockBuilder, generatedClassMetaData, JavaMessagingBodyParser.INSTANCE);
+		this.generatedClassMetaData = generatedClassMetaData;
+	}
+
+	@Override
+	public boolean accept(SingleContractMetadata metadata) {
+		return super.accept(metadata) && this.generatedClassMetaData.configProperties
+				.getTestFramework() != TestFramework.SPOCK;
+	}
+
+}
+
 class MessagingGiven implements Given, MethodVisitor<Given>, BodyMethodVisitor {
 
 	private final BlockBuilder blockBuilder;
@@ -2954,13 +2978,12 @@ class MessagingGiven implements Given, MethodVisitor<Given>, BodyMethodVisitor {
 	private final List<Given> givens = new LinkedList<>();
 
 	MessagingGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.givens.addAll(Arrays.asList(
 				new MessagingBodyGiven(this.blockBuilder,
-						new BodyReader(this.generatedClassMetaData),
-						MessagingBodyParser.INSTANCE),
+						new BodyReader(this.generatedClassMetaData), bodyParser),
 				new MessagingHeadersGiven(this.blockBuilder)));
 	}
 
@@ -3004,26 +3027,29 @@ class MessagingBodyGiven implements Given, MethodVisitor<Given> {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		String bodyString = getBodyAsString(metadata);
-		this.blockBuilder.addIndented(this.bodyParser.quotedLongText(bodyString));
+		appendBodyGiven(metadata);
 		return this;
 	}
 
-	private String getBodyAsString(SingleContractMetadata metadata) {
+	private void appendBodyGiven(SingleContractMetadata metadata) {
 		ContentType contentType = metadata.getInputTestContentType();
 		Input inputMessage = metadata.getContract().getInput();
 		Object bodyValue = this.bodyParser.extractServerValueFromBody(contentType,
 				inputMessage.getMessageBody().getServerValue());
 		if (bodyValue instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) bodyValue;
-			return fileProperty.isByte()
+			String byteText = fileProperty.isByte()
 					? this.bodyReader.readBytesFromFileString(metadata, fileProperty,
 							CommunicationType.REQUEST)
 					: this.bodyParser.quotedLongText(
 							this.bodyReader.readStringFromFileString(metadata,
 									fileProperty, CommunicationType.REQUEST));
+			this.blockBuilder.addIndented(byteText);
 		}
-		return this.bodyParser.convertToJsonString(bodyValue);
+		else {
+			String text = this.bodyParser.convertToJsonString(bodyValue);
+			this.blockBuilder.addIndented(this.bodyParser.quotedEscapedLongText(text));
+		}
 	}
 
 	@Override
@@ -3156,7 +3182,7 @@ class MessagingAssertThatWhen implements When {
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		this.blockBuilder.addLineWithEnding(
+		this.blockBuilder.addIndented(
 				metadata.getContract().getInput().getAssertThat().getExecutionCommand());
 		return this;
 	}
@@ -3174,7 +3200,8 @@ class JavaMessagingWithBodyThen extends MessagingWithBodyThen {
 
 	JavaMessagingWithBodyThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
-		super(blockBuilder, generatedClassMetaData, ComparisonBuilder.JAVA_INSTANCE);
+		super(blockBuilder, generatedClassMetaData,
+				ComparisonBuilder.JAVA_MESSAGING_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -3193,7 +3220,7 @@ class SpockMessagingWithBodyThen extends MessagingWithBodyThen {
 	SpockMessagingWithBodyThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData,
-				GroovyComparisonBuilder.SPOCK_INSTANCE);
+				GroovyComparisonBuilder.SPOCK_MESSAGING_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
@@ -3412,13 +3439,14 @@ class MessagingBodyThen implements Then, BodyMethodVisitor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	private final BodyParser bodyParser = MessagingBodyParser.INSTANCE;
+	private final BodyParser bodyParser;
 
 	MessagingBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = metaData;
 		this.comparisonBuilder = comparisonBuilder;
+		this.bodyParser = comparisonBuilder.bodyParser();
 		this.thens.addAll(Arrays.asList(
 				new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser,
 						this.comparisonBuilder),
@@ -3431,12 +3459,8 @@ class MessagingBodyThen implements Then, BodyMethodVisitor {
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
-		OutputMessage outputMessage = singleContractMetadata.getContract()
-				.getOutputMessage();
-		if (outputMessage.getHeaders() != null) {
-			endBodyBlock(this.blockBuilder);
-			startBodyBlock(this.blockBuilder, "and:");
-		}
+		endBodyBlock(this.blockBuilder);
+		startBodyBlock(this.blockBuilder, "and:");
 		this.thens.stream().filter(then -> then.accept(singleContractMetadata))
 				.forEach(then -> then.apply(singleContractMetadata));
 		return this;

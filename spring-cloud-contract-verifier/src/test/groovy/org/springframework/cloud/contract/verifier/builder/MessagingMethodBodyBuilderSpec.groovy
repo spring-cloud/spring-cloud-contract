@@ -40,11 +40,13 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 
 	@Shared
 	SingleTestGenerator.GeneratedClassData generatedClassData =
-			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File(".").toPath())
+			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File(MessagingMethodBodyBuilderSpec.getResource(".").toURI()).toPath())
 
 	def setup() {
 		properties = new ContractVerifierConfigProperties(
-				assertJsonSize: true
+				assertJsonSize: true,
+				generatedTestSourcesDir: new File(MessagingMethodBodyBuilderSpec.getResource(".").toURI()),
+				generatedTestResourcesDir: new File(MessagingMethodBodyBuilderSpec.getResource(".").toURI())
 		)
 	}
 
@@ -76,6 +78,7 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 		given:
 // tag::trigger_method_dsl[]
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					triggeredBy('bookReturnedTriggered()')
@@ -96,27 +99,59 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 		then:
 			String expectedMessage =
 // tag::trigger_method_test[]
-					'''
- when:
-  bookReturnedTriggered()
+					'''\
+package com.example
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive('activemq:output')
-  assert response != null
-  response.getHeader('BOOK-NAME')?.toString()  == 'foo'
-  response.getHeader('contentType')?.toString()  == 'application/json'
- and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-  assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\twhen:
+\t\t\tbookReturnedTriggered()
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("BOOK-NAME") != null
+\t\t\tresponse.getHeader("BOOK-NAME").toString() == 'foo'
+\t\t\tresponse.getHeader("contentType") != null
+\t\t\tresponse.getHeader("contentType").toString() == 'application/json'
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
+\t}
+
+}
 
 '''
 // end::trigger_method_test[]
-			stripped(test) == stripped(expectedMessage)
+			test.trim() == expectedMessage.trim()
 	}
 
 	def "should work for triggered based messaging with JUnit"() {
 		given:
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					triggeredBy('bookReturnedTriggered()')
@@ -137,29 +172,62 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 		then:
 			String expectedMessage =
 // tag::trigger_method_junit_test[]
-					'''
- // when:
-  bookReturnedTriggered();
+					'''\
+package com.example;
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output");
-  assertThat(response).isNotNull();
-  assertThat(response.getHeader("BOOK-NAME")).isNotNull();
-  assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
-  assertThat(response.getHeader("contentType")).isNotNull();
-  assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
- // and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// when:
+\t\t\tbookReturnedTriggered();
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tassertThat(response.getHeader("BOOK-NAME")).isNotNull();
+\t\t\tassertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
+\t\t\tassertThat(response.getHeader("contentType")).isNotNull();
+\t\t\tassertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+\t}
+
+}
+
 '''
 // end::trigger_method_junit_test[]
-			stripped(test) == stripped(expectedMessage)
+			test.trim() == expectedMessage.trim()
 	}
 
 	def "should generate tests triggered by a message for Spock"() {
 		given:
 			// tag::trigger_message_dsl[]
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					messageFrom('jms:input')
@@ -188,30 +256,63 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 			String expectedMessage =
 // tag::trigger_message_spock[]
 					"""\
-given:
-   ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-    '''{"bookName":"foo"}''',
-    ['sample': 'header']
-  )
+package com.example
 
-when:
-   contractVerifierMessaging.send(inputMessage, 'jms:input')
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-then:
-   ContractVerifierMessage response = contractVerifierMessaging.receive('jms:output')
-   assert response !- null
-   response.getHeader('BOOK-NAME')?.toString()  == 'foo'
-and:
-   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-   assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\tgiven:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\t'''{"bookName":"foo"}'''
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("sample", "header")
+\t\t\t)
+
+\t\twhen:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input")
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("BOOK-NAME") != null
+\t\t\tresponse.getHeader("BOOK-NAME").toString() == 'foo'
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
+\t}
+
+}
+
 """
 // end::trigger_message_spock[]
-			stripped(test) == stripped(expectedMessage)
+			test.trim() == expectedMessage.trim()
 	}
 
 	def "should generate tests triggered by a message for JUnit"() {
 		given:
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					messageFrom('jms:input')
@@ -239,33 +340,67 @@ and:
 		then:
 			String expectedMessage =
 // tag::trigger_message_junit[]
-					'''
-// given:
- ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-  "{\\"bookName\\":\\"foo\\"}"
-, headers()
-  .header("sample", "header"));
+					'''\
+package com.example;
 
-// when:
- contractVerifierMessaging.send(inputMessage, "jms:input");
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 
-// then:
- ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
- assertThat(response).isNotNull();
- assertThat(response.getHeader("BOOK-NAME")).isNotNull();
- assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
-// and:
- DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
- assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// given:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("sample", "header")
+\t\t\t);
+
+\t\t// when:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input");
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tassertThat(response.getHeader("BOOK-NAME")).isNotNull();
+\t\t\tassertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+\t}
+
+}
+
 '''
 // end::trigger_message_junit[]
-			stripped(test) == stripped(expectedMessage)
+			test.trim() == expectedMessage.trim()
 	}
 
 	def "should generate tests without destination, triggered by a message"() {
 		given:
 			// tag::trigger_no_output_dsl[]
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					messageFrom('jms:delete')
@@ -285,27 +420,55 @@ and:
 		then:
 			String expectedMsg =
 // tag::trigger_no_output_spock[]
-					'''
-given:
-	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-		\'\'\'{"bookName":"foo"}\'\'\',
-		['sample': 'header']
-	)
+					"""\
+package com.example
 
-when:
-	 contractVerifierMessaging.send(inputMessage, 'jms:delete')
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-then:
-	 noExceptionThrown()
-	 bookWasDeleted()
-'''
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\tgiven:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\t'''{"bookName":"foo"}'''
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("sample", "header")
+\t\t\t)
+
+\t\twhen:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete")
+\t\t\tbookWasDeleted()
+
+\t\tthen:
+\t\t\tnoExceptionThrown()
+\t}
+
+}
+"""
 // end::trigger_no_output_spock[]
-			stripped(test) == stripped(expectedMsg)
+			test.trim() == expectedMsg.trim()
 	}
 
 	def "should generate tests without destination, triggered by a message for JUnit"() {
 		given:
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					messageFrom('jms:delete')
@@ -325,26 +488,56 @@ then:
 		then:
 			String expectedMsg =
 // tag::trigger_no_output_junit[]
-					'''
-// given:
- ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-	"{\\"bookName\\":\\"foo\\"}"
-, headers()
-	.header("sample", "header"));
+					"""\
+package com.example;
 
-// when:
- contractVerifierMessaging.send(inputMessage, "jms:delete");
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 
-// then:
- bookWasDeleted();
-'''
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// given:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("sample", "header")
+\t\t\t);
+
+\t\t// when:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete");
+\t\t\tbookWasDeleted();
+
+\t}
+
+}
+
+"""
 // end::trigger_no_output_junit[]
-			stripped(test) == stripped(expectedMsg)
+			test.trim() == expectedMsg.trim()
 	}
 
 	def "should generate tests without headers for JUnit"() {
 		given:
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					messageFrom('jms:input')
@@ -362,37 +555,65 @@ then:
 					])
 				}
 			}
-
 			properties.testFramework = TestFramework.JUNIT
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
-					'''
- // given:
-  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-      "{\\"bookName\\":\\"foo\\"}"
-    , headers()
-      .header("sample", "header"));
+					"""\
+package com.example;
 
- // when:
-  contractVerifierMessaging.send(inputMessage, "jms:input");
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
-  assertThat(response).isNotNull();
- DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
- assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
-'''
-			stripped(test) == stripped(expectedMsg)
-		and: 'indents are maintained'
-			test.contains("  ContractVerifierMessage response")
-			test.contains("  DocumentContext parsedJson")
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// given:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("sample", "header")
+\t\t\t);
+
+\t\t// when:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input");
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+\t}
+
+}
+"""
+			test.trim() == expectedMsg.trim()
 	}
 
 	def "should generate tests without headers for Spock"() {
 		given:
 			def contractDsl = Contract.make {
+				name "foo"
 				label 'some_label'
 				input {
 					messageFrom('jms:input')
@@ -415,23 +636,53 @@ then:
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
-					"""
- given:
-  ContractVerifierMessage inputMessage = contractVerifierMessaging.create('''{"bookName":"foo"}'''
-		,[
-			'sample': 'header'
-		])
+					"""\
+package com.example
 
- when:
-  contractVerifierMessaging.send(inputMessage, 'jms:input')
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive('jms:output')
-  assert response != null
- DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
- assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\tgiven:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\t'''{"bookName":"foo"}'''
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("sample", "header")
+\t\t\t)
+
+\t\twhen:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input")
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
+\t}
+
+}
+
 """
-			stripped(test) == stripped(expectedMsg)
+			test.trim() == expectedMsg.trim()
 	}
 
 	private String stripped(String text) {
@@ -443,6 +694,7 @@ then:
 			def contractDsl =
 					// tag::consumer_producer[]
 					Contract.make {
+				name "foo"
 						label 'some_label'
 						input {
 							messageFrom value(consumer('jms:output'), producer('jms:input'))
@@ -468,22 +720,53 @@ then:
 		then:
 			String expectedMsg =
 					'''
- // given:
-  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-      "{\\"bookName\\":\\"foo\\"}"
-    , headers()
-      .header("sample", "header"));
+package com.example;
 
- // when:
-  contractVerifierMessaging.send(inputMessage, "jms:input");
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
-  assertThat(response).isNotNull();
- DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
- assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// given:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("sample", "header")
+\t\t\t);
+
+\t\t// when:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input");
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+\t}
+
+}
 '''
-			stripped(test) == stripped(expectedMsg)
+			test.trim() == expectedMsg.trim()
 	}
 
 	@Issue("336")
@@ -491,6 +774,7 @@ then:
 		given:
 			def contractDsl =
 					org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 						label 'trigger_event'
 
 						input {
@@ -513,20 +797,52 @@ then:
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
-					'''
-  // when:
-  requestIsCalled();
+					"""\
+package com.example;
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote");
-  assertThat(response).isNotNull();
-  assertThat(response.getHeader("processId")).isNotNull();
-  assertThat(response.getHeader("processId").toString()).matches("[0-9]+");
- // and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
-'''
-			stripped(test) == stripped(expectedMsg)
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// when:
+\t\t\trequestIsCalled();
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tassertThat(response.getHeader("processId")).isNotNull();
+\t\t\tassertThat(response.getHeader("processId").toString()).matches("[0-9]+");
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
+\t}
+
+}
+
+"""
+			test.trim() == expectedMsg.trim()
 	}
 
 	@Issue("567")
@@ -534,6 +850,7 @@ then:
 		given:
 			def contractDsl =
 					org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 						label 'trigger_event'
 
 						input {
@@ -564,6 +881,7 @@ then:
 		given:
 			//tag::regex_creating_props[]
 			Contract contractDsl = Contract.make {
+				name "foo"
 				label 'trigger_event'
 				input {
 					triggeredBy('toString()')
@@ -632,6 +950,7 @@ then:
 		given:
 			def contractDsl =
 					org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 						label 'trigger_event'
 
 						input {
@@ -666,6 +985,7 @@ then:
 		given:
 			def contractDsl =
 					org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 						label 'trigger_event'
 
 						input {
@@ -687,19 +1007,49 @@ then:
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
-					'''
-  when:
-  requestIsCalled()
+					"""\
+package com.example
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive('topic.rateablequote')
-  assert response != null
-  response.getHeader('processId')?.toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
- and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
-'''
-			stripped(test) == stripped(expectedMsg)
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\twhen:
+\t\t\trequestIsCalled()
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("processId") != null
+\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
+\t}
+
+}
+"""
+			test.trim() == expectedMsg.trim()
 	}
 
 	@Issue("587")
@@ -707,6 +1057,7 @@ then:
 		given:
 			def contractDsl =
 					org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 						label 'trigger_event'
 
 						input {
@@ -728,19 +1079,49 @@ then:
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
-					'''
-  when:
-  requestIsCalled()
+					"""\
+package com.example
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive('topic.rateablequote')
-  assert response != null
-  response.getHeader('processId')?.toString() ==~ java.util.regex.Pattern.compile('[\\S\\s]+')
- and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-  assertThatJson(parsedJson).field("['eventId']").matches("[\\S\\s]+")
-'''
-			stripped(test) == stripped(expectedMsg)
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\twhen:
+\t\t\trequestIsCalled()
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("processId") != null
+\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[\\S\\s]+')
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[\\\\S\\\\s]+")
+\t}
+
+}
+"""
+			test.trim() == expectedMsg.trim()
 	}
 
 	@Issue("440")
@@ -748,6 +1129,7 @@ then:
 		given:
 			def contractDsl =
 					org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 						label 'trigger_event'
 
 						input {
@@ -769,19 +1151,49 @@ then:
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
-					'''
-  when:
-  requestIsCalled()
+					"""\
+package com.example
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive(toString())
-  assert response != null
-  response.getHeader('processId')?.toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
- and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
-'''
-			stripped(test) == stripped(expectedMsg)
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\twhen:
+\t\t\trequestIsCalled()
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString())
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("processId") != null
+\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
+\t}
+
+}
+"""
+			test.trim() == expectedMsg.trim()
 	}
 
 	@Issue("440")
@@ -789,6 +1201,7 @@ then:
 		given:
 			def contractDsl =
 					org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 						label 'trigger_event'
 
 						input {
@@ -811,26 +1224,58 @@ then:
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMsg =
-					'''
-  // when:
-  requestIsCalled();
+					"""\
+package com.example;
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive(toString());
-  assertThat(response).isNotNull();
-  assertThat(response.getHeader("processId")).isNotNull();
-  assertThat(response.getHeader("processId").toString()).matches("[0-9]+");
- // and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
-'''
-			stripped(test) == stripped(expectedMsg)
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// when:
+\t\t\trequestIsCalled();
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString());
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tassertThat(response.getHeader("processId")).isNotNull();
+\t\t\tassertThat(response.getHeader("processId").toString()).matches("[0-9]+");
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
+\t}
+
+}
+"""
+			test.trim() == expectedMsg.trim()
 	}
 
 	@Issue('#620')
 	def "should generate tests with message headers containing regular expression which compile for [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = Contract.make {
+				name "foo"
 				label 'shouldPublishMessage'
 				// input to the contract
 				input {
@@ -856,38 +1301,102 @@ then:
 		then:
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
-			test == expectedTest
+			test.trim() == expectedTest.trim()
 		where:
 			methodBuilderName | methodBuilder                                      | expectedTest
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ''' when:
-  foo()
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """\
+package com.example
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive('messageExchange')
-  assert response != null
-  response.getHeader('Authorization')?.toString() ==~ java.util.regex.Pattern.compile('Bearer [A-Za-z0-9-._~+/]+=*')
- and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-  assertThatJson(parsedJson).field("['field']").isEqualTo("value")
-'''
-			"junit"           | { properties.testFramework = TestFramework.JUNIT } | ''' // when:
-  foo();
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
-  assertThat(response).isNotNull();
-  assertThat(response.getHeader("Authorization")).isNotNull();
-  assertThat(response.getHeader("Authorization").toString()).matches("Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*");
- // and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-  assertThatJson(parsedJson).field("['field']").isEqualTo("value");
-'''
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\twhen:
+\t\t\tfoo()
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("Authorization") != null
+\t\t\tresponse.getHeader("Authorization").toString() ==~ java.util.regex.Pattern.compile('Bearer [A-Za-z0-9\\-\\._~\\+\\/]+=*')
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['field']").isEqualTo("value")
+\t}
+
+}
+"""
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | """\
+package com.example;
+
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// when:
+\t\t\tfoo();
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tassertThat(response.getHeader("Authorization")).isNotNull();
+\t\t\tassertThat(response.getHeader("Authorization").toString()).matches("Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*");
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['field']").isEqualTo("value");
+\t}
+
+}
+"""
 	}
 
 	@Issue('#664')
 	def "should generate tests for messages having binary payloads [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = Contract.make {
+				name "foo"
 				label 'shouldPublishMessage'
 				input {
 					messageFrom("foo")
@@ -910,51 +1419,104 @@ then:
 		then:
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
-			test == expectedTest
+			test.trim() == expectedTest.trim()
 		where:
 			methodBuilderName | methodBuilder                                      | expectedTest
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ''' given:
-  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-      fileToBytes(this, "method_request_request.pdf")
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """\
+package com.example
 
-    ,[
-      "contentType": "application/octet-stream"
-    ])
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
- when:
-  contractVerifierMessaging.send(inputMessage, 'foo')
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive('messageExchange')
-  assert response != null
-  response.getHeader('contentType')?.toString()  == 'application/octet-stream\'
- and:
-  response.payloadAsByteArray == fileToBytes(this, "method_response_response.pdf")
-'''
-			"junit"           | { properties.testFramework = TestFramework.JUNIT } | ''' // given:
-  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\tfileToBytes(this, "method_request_request.pdf")
-\t\t\t\t, headers()
-\t\t\t\t\t\t.header("contentType", "application/octet-stream")
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\tgiven:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\tfileToBytes(this, "foo_request_request.pdf")
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("contentType", "application/octet-stream")
+\t\t\t)
+
+\t\twhen:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "foo")
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("contentType") != null
+\t\t\tresponse.getHeader("contentType").toString() == 'application/octet-stream'
+
+\t\tand:
+\t\t\tresponse.getPayloadAsByteArray() == fileToBytes(this, "foo_response_response.pdf")
+\t}
+
+}
+"""
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | """\
+package com.example;
+
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// given:
+\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+\t\t\t\t\tfileToBytes(this, "foo_request_request.pdf")
+\t\t\t\t\t\t, headers()
+\t\t\t\t\t\t\t.header("contentType", "application/octet-stream")
 \t\t\t);
 
- // when:
-  contractVerifierMessaging.send(inputMessage, "foo");
+\t\t// when:
+\t\t\tcontractVerifierMessaging.send(inputMessage, "foo");
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
-  assertThat(response).isNotNull();
-  assertThat(response.getHeader("contentType")).isNotNull();
-  assertThat(response.getHeader("contentType").toString()).isEqualTo("application/octet-stream");
- // and:
-  assertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "method_response_response.pdf"));
-'''
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tassertThat(response.getHeader("contentType")).isNotNull();
+\t\t\tassertThat(response.getHeader("contentType").toString()).isEqualTo("application/octet-stream");
+
+\t\t// and:
+\t\t\tassertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "foo_response_response.pdf"));
+\t}
+
+}
+"""
 	}
 
 	@Issue('#650')
 	def "should generate output for message [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
 				description 'issue #650'
 				label 'trigger'
 				input {
@@ -988,54 +1550,121 @@ then:
 		then:
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
-			test == expectedTest
+			test.trim() == expectedTest.trim()
 		where:
 			methodBuilderName | methodBuilder                                      | expectedTest
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ''' when:
-  createNewPerson()
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """\
+package com.example
 
- then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive('personEventsTopic')
-  assert response != null
-  response.getHeader('contentType')?.toString()  == 'application/json'
-  response.getHeader('type')?.toString()  == 'person'
-  response.getHeader('eventType')?.toString()  == 'PersonChangedEvent'
-  response.getHeader('customerId')?.toString() ==~ java.util.regex.Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
- and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-  assertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+")
-  assertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?")
-  assertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?")
-  assertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")
-  assertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
-  assertThatJson(parsedJson).field("['type']").isEqualTo("CREATED")
-  assertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
-  assertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+")
-'''
-			"junit"           | { properties.testFramework = TestFramework.JUNIT } | ''' // when:
-  createNewPerson();
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic");
-  assertThat(response).isNotNull();
-  assertThat(response.getHeader("contentType")).isNotNull();
-  assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
-  assertThat(response.getHeader("type")).isNotNull();
-  assertThat(response.getHeader("type").toString()).isEqualTo("person");
-  assertThat(response.getHeader("eventType")).isNotNull();
-  assertThat(response.getHeader("eventType").toString()).isEqualTo("PersonChangedEvent");
-  assertThat(response.getHeader("customerId")).isNotNull();
-  assertThat(response.getHeader("customerId").toString()).matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
- // and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-  assertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+");
-  assertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?");
-  assertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?");
-  assertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)");
-  assertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
-  assertThatJson(parsedJson).field("['type']").isEqualTo("CREATED");
-  assertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
-  assertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+");
-'''
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+class FooSpec extends Specification {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+\tdef validate_foo() throws Exception {
+\t\twhen:
+\t\t\tcreateNewPerson()
+
+\t\tthen:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic")
+\t\t\tresponse != null
+
+\t\tand:
+\t\t\tresponse.getHeader("contentType") != null
+\t\t\tresponse.getHeader("contentType").toString() == 'application/json'
+\t\t\tresponse.getHeader("type") != null
+\t\t\tresponse.getHeader("type").toString() == 'person'
+\t\t\tresponse.getHeader("eventType") != null
+\t\t\tresponse.getHeader("eventType").toString() == 'PersonChangedEvent'
+\t\t\tresponse.getHeader("customerId") != null
+\t\t\tresponse.getHeader("customerId").toString() ==~ java.util.regex.Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+")
+\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?")
+\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?")
+\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")
+\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
+\t\t\tassertThatJson(parsedJson).field("['type']").isEqualTo("CREATED")
+\t\t\tassertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
+\t\t\tassertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+")
+\t}
+
+}
+"""
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | """\
+package com.example;
+
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+public class FooTest {
+\t@Inject ContractVerifierMessaging contractVerifierMessaging;
+\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+\t@Test
+\tpublic void validate_foo() throws Exception {
+\t\t// when:
+\t\t\tcreateNewPerson();
+
+\t\t// then:
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic");
+\t\t\tassertThat(response).isNotNull();
+
+\t\t// and:
+\t\t\tassertThat(response.getHeader("contentType")).isNotNull();
+\t\t\tassertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
+\t\t\tassertThat(response.getHeader("type")).isNotNull();
+\t\t\tassertThat(response.getHeader("type").toString()).isEqualTo("person");
+\t\t\tassertThat(response.getHeader("eventType")).isNotNull();
+\t\t\tassertThat(response.getHeader("eventType").toString()).isEqualTo("PersonChangedEvent");
+\t\t\tassertThat(response.getHeader("customerId")).isNotNull();
+\t\t\tassertThat(response.getHeader("customerId").toString()).matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+
+\t\t// and:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+");
+\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?");
+\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?");
+\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)");
+\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+\t\t\tassertThatJson(parsedJson).field("['type']").isEqualTo("CREATED");
+\t\t\tassertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+\t\t\tassertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+");
+\t}
+
+}
+
+"""
 	}
 }

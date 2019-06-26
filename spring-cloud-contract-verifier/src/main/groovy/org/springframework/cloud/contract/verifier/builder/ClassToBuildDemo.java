@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -801,8 +802,11 @@ class BodyReader {
 				this.generatedClassMetaData.generatedClassData, metadata.methodName());
 		String newFileName = classDataForMethod.getMethodName() + "_"
 				+ side.name().toLowerCase() + "_" + property.fileName();
-		File newFile = new File(classDataForMethod.testClassPath().getParent().toFile(),
-				newFileName);
+		Path parent = classDataForMethod.testClassPath().getParent();
+		if (parent == null) {
+			parent = classDataForMethod.testClassPath();
+		}
+		File newFile = new File(parent.toFile(), newFileName);
 		// for IDE
 		try {
 			Files.write(newFile.toPath(), property.asBytes());
@@ -817,8 +821,9 @@ class BodyReader {
 
 	private void generatedTestResourcesFileBytes(FromFileProperty property, File newFile)
 			throws IOException {
-		java.nio.file.Path relativePath = this.generatedClassMetaData.configProperties
-				.getGeneratedTestSourcesDir().toPath().relativize(newFile.toPath());
+		Path path = this.generatedClassMetaData.configProperties
+				.getGeneratedTestSourcesDir().toPath();
+		java.nio.file.Path relativePath = path.relativize(newFile.toPath());
 		File newFileInGeneratedTestSources = new File(
 				this.generatedClassMetaData.configProperties
 						.getGeneratedTestResourcesDir(),
