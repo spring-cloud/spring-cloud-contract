@@ -2649,7 +2649,8 @@ class GenericJsonBodyThen implements Then {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		ContentType outputTestContentType = metadata.getOutputTestContentType();
-		return JSON == outputTestContentType || mostLikelyJson(outputTestContentType, metadata);
+		return JSON == outputTestContentType
+				|| mostLikelyJson(outputTestContentType, metadata);
 	}
 
 	private boolean mostLikelyJson(ContentType outputTestContentType,

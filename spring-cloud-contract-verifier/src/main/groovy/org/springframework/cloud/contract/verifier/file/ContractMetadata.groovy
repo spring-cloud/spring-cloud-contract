@@ -30,6 +30,7 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.NamesUtil
+import org.springframework.util.Assert
 
 /**
  * Contains metadata for a particular file with a DSL
@@ -105,6 +106,7 @@ class SingleContractMetadata {
 	SingleContractMetadata(Contract currentContract, ContractMetadata contractMetadata) {
 		this.allContracts = contractMetadata.convertedContract
 		this.contract = currentContract
+		Assert.notNull(currentContract, "Contract must not be null")
 		Headers inputHeaders = inputHeaders(currentContract)
 		DslProperty inputBody = inputBody(currentContract)
 		Headers outputHeaders = outputHeaders(currentContract)

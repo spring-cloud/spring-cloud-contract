@@ -822,10 +822,13 @@ class BodyReader {
 
 	private void generatedTestResourcesFileBytes(FromFileProperty property, File newFile)
 			throws IOException {
-		Assert.notNull(this.generatedClassMetaData.configProperties
-				.getGeneratedTestSourcesDir(), "No generated test sources directory set");
-		Assert.notNull(this.generatedClassMetaData.configProperties
-				.getGeneratedTestResourcesDir(), "No generated test resources directory set");
+		Assert.notNull(
+				this.generatedClassMetaData.configProperties.getGeneratedTestSourcesDir(),
+				"No generated test sources directory set");
+		Assert.notNull(
+				this.generatedClassMetaData.configProperties
+						.getGeneratedTestResourcesDir(),
+				"No generated test resources directory set");
 		Path path = this.generatedClassMetaData.configProperties
 				.getGeneratedTestSourcesDir().toPath();
 		java.nio.file.Path relativePath = path.relativize(newFile.toPath());
