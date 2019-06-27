@@ -90,8 +90,13 @@ public class JavaTestGenerator implements SingleTestGenerator {
 
 	ClassBodyBuilder classBodyBuilder(BlockBuilder builder,
 			GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
-		return ClassBodyBuilder.builder(builder, metaData).field().messaging().build()
+		// @formatter:off
+		return ClassBodyBuilder.builder(builder, metaData)
+				.field()
+					.messaging()
+					.build()
 				.methodBuilder(methodBuilder);
+		// @formatter:on
 	}
 
 	SingleMethodBuilder singleMethodBuilder(BlockBuilder builder,
