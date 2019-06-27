@@ -14,7 +14,7 @@ class ClassBuilderSpec extends Specification {
 		given:
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(baseClassForTests: 'a.b.Class')
 		expect:
-			'a.b.Class' == ClassBuilder.retrieveBaseClass(props, 'com/example/foo')
+			'a.b.Class' == new BaseClassProvider().retrieveBaseClass(props, 'com/example/foo')
 	}
 
 	def "should return a class from the generated path by taking two last folders when package with base classes is provided"() {
@@ -22,7 +22,7 @@ class ClassBuilderSpec extends Specification {
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: 'com.example.base')
 			String contractRelativeFolder = ['com', 'example', 'some', 'superpackage'].join(File.separator)
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SomeSuperpackageBase'
+			new BaseClassProvider().retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SomeSuperpackageBase'
 	}
 
 	def "should return a class from the generated path by taking two last folders when package with base classes is provided and contains invalid chars"() {
@@ -30,7 +30,7 @@ class ClassBuilderSpec extends Specification {
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: 'com.example.base')
 			String contractRelativeFolder = ['com', 'example', 'beer-api-producer-external', 'beer-api-consumer'].join(File.separator)
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.Beer_api_producer_externalBeer_api_consumerBase'
+			new BaseClassProvider().retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.Beer_api_producer_externalBeer_api_consumerBase'
 	}
 
 	def "should return a class from the generated path by taking a single folder when package with base classes is provided and there are not enough package elements"() {
@@ -38,7 +38,7 @@ class ClassBuilderSpec extends Specification {
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: 'com.example.base')
 			String contractRelativeFolder = 'superpackage'
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperpackageBase'
+			new BaseClassProvider().retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperpackageBase'
 	}
 
 	def "should return a class from mappings regardless of other entries if mapping exists"() {
@@ -48,7 +48,7 @@ class ClassBuilderSpec extends Specification {
 					baseClassMappings: ['.*': 'com.example.base.SuperClass'])
 			String contractRelativeFolder = 'superpackage'
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperClass'
+			new BaseClassProvider().retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperClass'
 	}
 
 	@Issue("701")
@@ -58,7 +58,7 @@ class ClassBuilderSpec extends Specification {
 					baseClassMappings: ['.*bar.baz.some.*': 'com.example.base.SuperClass'])
 			String contractRelativeFolder = 'foo/bar/baz/some/package'.split("/").join(File.separator)
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperClass'
+			new BaseClassProvider().retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperClass'
 	}
 
 	def "should return the first matching base class when provided mapping doesn't match"() {
@@ -69,7 +69,7 @@ class ClassBuilderSpec extends Specification {
 					baseClassMappings: ['patternNotMatchingAnything': 'com.example.base.SuperClass'])
 			String contractRelativeFolder = 'superpackage'
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperpackageBase'
+			new BaseClassProvider().retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperpackageBase'
 	}
 
 	def "should return a class from the generated path by when external contracts are picked"() {
@@ -77,7 +77,7 @@ class ClassBuilderSpec extends Specification {
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: "foo.Bar")
 			String contractRelativeFolder = ["org", "springframework", "cloud", "contract", "verifier", "tests", "META_INF", "com.example", "hello_world", "0.1.0_dev.1.uncommitted+d1174dd"].join(File.separator)
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'foo.Bar.Hello_world0_1_0_dev_1_uncommitted_d1174ddBase'
+			new BaseClassProvider().retrieveBaseClass(props, contractRelativeFolder) == 'foo.Bar.Hello_world0_1_0_dev_1_uncommitted_d1174ddBase'
 	}
 
 }

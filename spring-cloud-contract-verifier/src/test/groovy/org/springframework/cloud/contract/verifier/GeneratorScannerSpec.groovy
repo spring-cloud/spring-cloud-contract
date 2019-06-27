@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier
 
 import spock.lang.Specification
 
-import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
@@ -26,7 +25,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.S
 
 class GeneratorScannerSpec extends Specification {
 
-	private JavaTestGenerator classGenerator = Mock(JavaTestGenerator)
+	private SingleTestGenerator classGenerator = Mock(SingleTestGenerator)
 
 	def "should find all json files and generate 6 classes for them"() {
 		given:

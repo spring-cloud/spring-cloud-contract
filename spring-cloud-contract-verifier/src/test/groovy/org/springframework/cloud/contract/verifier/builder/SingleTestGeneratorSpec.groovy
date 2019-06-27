@@ -161,22 +161,22 @@ class SingleTestGeneratorSpec extends Specification {
 					}
 					response {
 						status OK()
+						body(["foo" : "bar"])
 					}
 				}
 ''')
 	}
 
-	def 'should build test class for #testFramework'() {
+	def 'should build test class for #testFramework and mode #mode'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
-			contract.ignored >> true
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { assert clazz.contains(it) }
@@ -220,39 +220,6 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT5        | EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
 			SPOCK         | MOCKMVC  | GROOVY_ASSERTER | 'ContractsSpec.groovy'
 			SPOCK         | EXPLICIT | GROOVY_ASSERTER | 'ContractsSpec.groovy'
-	}
-
-	def "should build test class for #testFramework with Rest Assured 2x"() {
-		given:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testFramework = testFramework
-			properties.testMode = mode
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order,
-					convertAsCollection(new File('/'), file))
-			contract.ignored >> true
-			JavaTestGenerator testGenerator = new JavaTestGenerator(checker: new ClassPresenceChecker() {
-				@Override
-				boolean isClassPresent(String className) {
-					return true
-				}
-			})
-
-		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
-
-		then:
-			classStrings.each { assert clazz.contains(it) }
-			clazz.contains('com.jayway.restassured')
-			!clazz.contains('io.restassured')
-
-		where:
-			testFramework | order | mode     | classStrings
-			JUNIT         | 2     | MOCKMVC  | mockMvcJUnitRestAssured2ClassStrings
-			JUNIT         | 2     | EXPLICIT | explicitJUnitRestAssured2ClassStrings
-			JUNIT5        | null  | MOCKMVC  | mockMvcJUnit5RestAssured2ClassStrings
-			JUNIT5        | null  | EXPLICIT | explicitJUnit5RestAssured2ClassStrings
-			SPOCK         | 2     | MOCKMVC  | spockClassRestAssured2Strings
-			SPOCK         | 2     | EXPLICIT | explicitSpockRestAssured2ClassStrings
 	}
 
 	def 'should build test class for #testFramework and mode #mode with two files'() {
@@ -310,7 +277,7 @@ class SingleTestGeneratorSpec extends Specification {
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -324,8 +291,8 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT         | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
 			JUNIT5        | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
 			JUNIT5        | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2 }
-			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2 }
+			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification request') == 2 }
 	}
 
 	def 'should build JaxRs test class for #testFramework'() {
@@ -335,10 +302,10 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, null, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			SingleTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -384,7 +351,7 @@ class SingleTestGeneratorSpec extends Specification {
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -401,7 +368,7 @@ class SingleTestGeneratorSpec extends Specification {
 	}
 
 	@Issue('#30')
-	def 'should ignore a test if the contract is ignored in the dsl'() {
+	def 'should ignore a test if the contract is ignored in the dsl with #testFramework and ignore annotation #ignoreAnnotation'() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -426,7 +393,7 @@ class SingleTestGeneratorSpec extends Specification {
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -492,13 +459,13 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			SingleTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('RequestSpecification request = given();')
 			clazz.contains('Response response = given().spec(request)')
 	}
 
-	def "should pick the contract's name as the test method"() {
+	def "should pick the contract's name as the test method for #testFramework"() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -519,14 +486,14 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('validate_mySuperMethod()')
 		where:
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
 
-	def "should pick the contract's name as the test method when there are multiple contracts"() {
+	def "should pick the contract's name as the test method when there are multiple contracts for #testFramework"() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -551,7 +518,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('validate_shouldHaveIndex1()')
 			clazz.contains('validate_shouldHaveIndex2()')
@@ -559,7 +526,7 @@ class SingleTestGeneratorSpec extends Specification {
 			testFramework << [JUNIT, JUNIT5, SPOCK]
 	}
 
-	def 'should generate the test method when there are multiple contracts without name field'() {
+	def 'should generate the test method when there are multiple contracts without name field for #testFramework'() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -583,7 +550,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('_0() throws Exception')
 			clazz.contains('_1() throws Exception')
@@ -724,7 +691,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 1, convertAsCollection(new File('/'), file))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			thrown(UnsupportedOperationException)
 		where:

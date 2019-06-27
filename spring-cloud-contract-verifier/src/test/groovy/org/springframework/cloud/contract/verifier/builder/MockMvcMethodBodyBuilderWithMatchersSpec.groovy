@@ -24,7 +24,10 @@ import spock.lang.Specification
 import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 
 class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements WireMockStubVerifier {
@@ -40,6 +43,40 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 	@Shared
 	GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
 			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
+
+	@Shared
+	SingleTestGenerator.GeneratedClassData generatedClassData =
+			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File(".").toPath())
+
+	private String singleTestGenerator(Contract contractDsl) {
+		return new JavaTestGenerator() {
+			@Override
+			ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
+				return super.classBodyBuilder(builder, metaData, methodBuilder).field(new Field() {
+					@Override
+					boolean accept() {
+						return metaData.configProperties.testMode == TestMode.JAXRSCLIENT
+					}
+
+					@Override
+					Field call() {
+						builder.addLine("WebTarget webTarget")
+						return this
+					}
+				})
+			}
+		}.buildClass(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+	}
+
+	private ContractMetadata contractMetadata(Contract contractDsl) {
+		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsl)
+	}
+
+	def setup() {
+		properties = new ContractVerifierConfigProperties(
+				assertJsonSize: true
+		)
+	}
 
 	@Issue('#185')
 	def 'should allow to set dynamic values via stub / test matchers for [#methodBuilderName]'() {
@@ -164,11 +201,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 				}
 			}
 			//end::matchers[]
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.duck", String.class)).matches("[0-9]{3}")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.duck", Integer.class)).isEqualTo(123)')
@@ -200,7 +235,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			!test.contains('cursor')
 		and:
 			try {
-				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 			}
 			catch (ClassFormatError classFormatError) {
 				String output = outputCapture.toString()
@@ -208,12 +243,18 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 				assert output.contains('assertThatValueIsANumber(parsedJson.read("$.duck"));')
 			}
 		where:
-			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | '$'
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | '$'
+			methodBuilderName | methodBuilder                                      | rootElement
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '\\$'
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '$'
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                                                      | '$'
 	}
 
 	@Issue('#217')
@@ -262,29 +303,33 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("' + rootElement + '.phoneNumbers[*].number").allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
 			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '..number", java.util.Collection.class)).as("' + rootElement + '..number").allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
 			!test.contains('cursor')
 		and:
 			try {
-				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 			}
 			catch (NoClassDefFoundError error) {
 				// that's actually expected since we're creating an anonymous class
 			}
 		where:
-			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | '$'
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | '$'
+			methodBuilderName | methodBuilder                                      | rootElement
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '\\$'
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '$'
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                                                      | '$'
 	}
 
 
@@ -317,11 +362,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("' + rootElement + '.phoneNumbers[*].number").hasFlattenedSizeBetween(0, 4)')
 			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("' + rootElement + '.phoneNumbers[*].number").hasFlattenedSizeGreaterThanOrEqualTo(0)')
@@ -329,18 +372,24 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			!test.contains('cursor')
 		and:
 			try {
-				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 			}
 			catch (NoClassDefFoundError error) {
 				// that's actually expected since we're creating an anonymous class
 			}
 		where:
-			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | '$'
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | '$'
+			methodBuilderName | methodBuilder                                      | rootElement
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '\\$'
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '$'
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                                                      | '$'
 	}
 
 	@Issue('#217')
@@ -363,20 +412,24 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('foo(parsedJson.read("' + rootElement + '.phoneNumbers[*].number")')
 		where:
-			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | '$'
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | '$'
+			methodBuilderName | methodBuilder                                      | rootElement
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '\\$'
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '$'
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                                                      | '$'
 	}
 
 	@Issue('#217')
@@ -399,20 +452,25 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
+			singleTestGenerator(contractDsl)
 		then:
 			IllegalStateException e = thrown(IllegalStateException)
 			e.message.contains('Entry for the provided JSON path <$.nonExistingPhoneNumbers[*].number> doesn\'t exist in the body')
 		where:
-			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | '$'
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | '$'
+			methodBuilderName | methodBuilder                                      | rootElement
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '\\$'
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '$'
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                                                      | '$'
 	}
 
 	@Issue('#229')
@@ -437,22 +495,25 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-		and:
-			builder.appendTo(blockBuilder)
-			String test = blockBuilder.toString()
+			methodBuilder()
 		when:
+			String test = singleTestGenerator(contractDsl)
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		then:
 			test.contains('assertThat(parsedJson.read("' + rootElement + '[0][0].access_token", String.class)).isEqualTo("123")')
 		where:
-			methodBuilderName                                             | methodBuilder                                                                                                            | rootElement
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }        | '\\$'
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                      | '$'
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) } | '\\$'
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                  | '$'
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }                | '$'
+			methodBuilderName | methodBuilder                                      | rootElement
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '\\$'
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                                                      | '$'
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                                                      | '$'
 	}
 
 	@Issue('#391')
@@ -485,22 +546,25 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					headers { header 'content-type', 'application/...json;charset=UTF-8' }
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-		and:
-			builder.appendTo(blockBuilder)
-			String test = blockBuilder.toString()
+			methodBuilder()
 		when:
+			String test = singleTestGenerator(contractDsl)
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		then:
 			!test.contains('''assertThatJson(parsedJson).array("['items']").isEmpty()''')
 		where:
-			methodBuilderName                                             | methodBuilder
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}
 	}
 
 	@Issue('#391')
@@ -529,22 +593,25 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					headers { header 'content-type', 'application/...json;charset=UTF-8' }
 				}
 			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-		and:
-			builder.appendTo(blockBuilder)
-			String test = blockBuilder.toString()
+			methodBuilder()
 		when:
+			String test = singleTestGenerator(contractDsl)
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		then:
 			!test.contains('''assertThatJson(parsedJson).array("['items']").isEmpty()''')
 		where:
-			methodBuilderName                                             | methodBuilder
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}
 	}
 
 }

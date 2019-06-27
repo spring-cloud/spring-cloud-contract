@@ -1,3 +1,5 @@
+import org.springframework.cloud.contract.spec.Contract
+
 /*
  * Copyright 2013-2019 the original author or authors.
  *
@@ -13,5 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
+Contract.make {
+	request {
+		method(GET())
+		url("/foo0")
+	}
+	response {
+		status(200)
+	}
+}

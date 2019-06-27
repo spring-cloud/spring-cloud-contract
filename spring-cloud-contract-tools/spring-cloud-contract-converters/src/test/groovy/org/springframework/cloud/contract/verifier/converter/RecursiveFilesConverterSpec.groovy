@@ -101,6 +101,16 @@ class RecursiveFilesConverterSpec extends Specification {
 	def "on failure should break processing and throw meaningful exception"() {
 		given:
 			def sourceFile = tmpFolder.newFile("test.groovy")
+			sourceFile.text = """\
+org.springframework.cloud.contract.spec.Contract.make { 
+		request { 
+			method GET()
+			url '/foo' 
+		} 
+		response { 
+			status OK() 
+		} 
+	}"""
 		and:
 			def stubGenerator = Stub(StubGenerator)
 			stubGenerator.canHandleFileName(_) >> { true }

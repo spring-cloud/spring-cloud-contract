@@ -92,8 +92,8 @@ class JsonToJsonPathsConverter {
 					}
 				}
 				catch (RuntimeException e) {
-					if (log.isDebugEnabled()) {
-						log.debug("Exception occurred while trying to delete path [${matcher.path()}]", e)
+					if (log.isTraceEnabled()) {
+						log.trace("Exception occurred while trying to delete path [${matcher.path()}]", e)
 					}
 				}
 			}
@@ -106,8 +106,8 @@ class JsonToJsonPathsConverter {
 			return context.read(path)
 		}
 		catch (Exception ex) {
-			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while trying to retrieve element via path [${path}]", ex)
+			if (log.isTraceEnabled()) {
+				log.trace("Exception occurred while trying to retrieve element via path [${path}]", ex)
 			}
 			return null
 		}

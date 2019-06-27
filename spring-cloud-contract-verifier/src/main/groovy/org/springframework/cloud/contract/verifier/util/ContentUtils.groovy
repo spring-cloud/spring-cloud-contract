@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.function.Consumer
+import java.util.function.Function
+import java.util.function.Supplier
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -119,6 +122,10 @@ class ContentUtils {
 				return extractValueForGString(bodyAsValue, valueProvider)
 			}
 		}
+	}
+
+	static Object extractValue(GString bodyAsValue, ContentType contentType, Function valueProvider) {
+		return extractValue(bodyAsValue, contentType, { valueProvider.apply(it) })
 	}
 
 	static ContentType getClientContentType(GString bodyAsValue) {
@@ -544,6 +551,18 @@ class ContentUtils {
 		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
 				"${groovyNamedPropertyValue(propertyValue, "'", bytesFromFile)}" +
 				namedContentTypeNameIfPresent(propertyValue, "'")
+	}
+
+	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Function<FromFileProperty, String> bytesFromFile) {
+		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
+				"${groovyNamedPropertyValue(propertyValue, "'", { FromFileProperty property -> bytesFromFile.apply(property) })}" +
+				namedContentTypeNameIfPresent(propertyValue, "'")
+	}
+
+	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Function<FromFileProperty, String> bytesFromFile) {
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty property -> bytesFromFile.apply(property) })
 	}
 
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,

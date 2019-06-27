@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.function.Consumer
+
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
@@ -45,6 +47,12 @@ class Cookies {
 	void executeForEachCookie(Closure closure) {
 		entries?.each {
 			cookie -> closure(cookie)
+		}
+	}
+
+	void executeForEachCookie(Consumer<Cookie> consumer) {
+		entries?.each {
+			cookie -> consumer.accept(cookie)
 		}
 	}
 
