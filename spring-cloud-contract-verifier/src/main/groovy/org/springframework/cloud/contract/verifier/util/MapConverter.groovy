@@ -65,6 +65,12 @@ class MapConverter {
 		}
 	}
 
+	static Closure fromFunction(Function function) {
+		return {
+			function.apply(it)
+		}
+	}
+
 	/**
 	 * Iterates over the structure of the object and executes the closure
 	 * on each element of that structure.

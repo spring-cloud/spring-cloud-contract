@@ -35,6 +35,7 @@ import static org.springframework.cloud.contract.verifier.config.TestMode.WEBTES
  *
  * @since 2.1.0
  */
+@Deprecated
 class HttpImportProvider {
 
 	private final Map<TestMode, ImportDefinitions> TEST_MODE_SPECIFIC_IMPORTS = [

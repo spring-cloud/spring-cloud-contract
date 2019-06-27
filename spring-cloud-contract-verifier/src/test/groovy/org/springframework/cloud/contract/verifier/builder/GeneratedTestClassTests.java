@@ -115,7 +115,7 @@ public class GeneratedTestClassTests {
 	@Test
 	public void should_work_for_junit4_mockmvc_json_non_binary() {
 		// given
-		RefactoredSingleTestGenerator generator = new RefactoredSingleTestGenerator();
+		JavaTestGenerator generator = new JavaTestGenerator();
 		ContractVerifierConfigProperties configProperties = new ContractVerifierConfigProperties();
 		Collection<ContractMetadata> contracts = Collections
 				.singletonList(new ContractMetadata(this.file.toPath(), true, 1, 2,

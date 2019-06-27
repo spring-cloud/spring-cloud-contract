@@ -17,22 +17,6 @@
 	<name>Spring Cloud Contract Tests</name>
 	<description>Spring Cloud Contract Tests</description>
 
-	<modules>
-		<module>samples-messaging-camel</module>
-		<module>samples-messaging-stream</module>
-		<module>samples-messaging-integration</module>
-		<module>samples-messaging-amqp</module>
-		<module>spring-cloud-contract-stub-runner-camel</module>
-		<module>spring-cloud-contract-stub-runner-boot-eureka</module>
-		<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
-		<module>spring-cloud-contract-stub-runner-context-path</module>
-		<module>spring-cloud-contract-stub-runner-moco-contract-jar</module>
-		<module>spring-cloud-contract-stub-runner-moco</module>
-		<module>spring-cloud-contract-stub-runner-integration</module>
-		<module>spring-cloud-contract-stub-runner-stream</module>
-		<module>spring-cloud-contract-stub-runner-amqp</module>
-	</modules>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -51,5 +35,52 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>CI</id>
+			<activation>
+				<property>
+					<name>env.CI</name>
+				</property>
+			</activation>
+			<modules>
+				<module>samples-messaging-camel</module>
+				<module>samples-messaging-stream</module>
+				<module>samples-messaging-integration</module>
+				<module>samples-messaging-amqp</module>
+				<module>spring-cloud-contract-stub-runner-camel</module>
+				<module>spring-cloud-contract-stub-runner-boot-eureka</module>
+				<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
+				<module>spring-cloud-contract-stub-runner-context-path</module>
+				<module>spring-cloud-contract-stub-runner-integration</module>
+				<module>spring-cloud-contract-stub-runner-stream</module>
+				<module>spring-cloud-contract-stub-runner-amqp</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>default</id>
+			<activation>
+				<property>
+					<name>!env.CI</name>
+				</property>
+			</activation>
+			<modules>
+				<module>samples-messaging-camel</module>
+				<module>samples-messaging-stream</module>
+				<module>samples-messaging-integration</module>
+				<module>samples-messaging-amqp</module>
+				<module>spring-cloud-contract-stub-runner-camel</module>
+				<module>spring-cloud-contract-stub-runner-boot-eureka</module>
+				<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
+				<module>spring-cloud-contract-stub-runner-context-path</module>
+				<module>spring-cloud-contract-stub-runner-moco-contract-jar</module>
+				<module>spring-cloud-contract-stub-runner-moco</module>
+				<module>spring-cloud-contract-stub-runner-integration</module>
+				<module>spring-cloud-contract-stub-runner-stream</module>
+				<module>spring-cloud-contract-stub-runner-amqp</module>
+			</modules>
+		</profile>
+	</profiles>
 
 </project>

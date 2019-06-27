@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory
 import wiremock.com.google.common.collect.ListMultimap
 
 import org.springframework.cloud.contract.spec.ContractVerifierException
-import org.springframework.cloud.contract.verifier.builder.RefactoredSingleTestGenerator
+import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
@@ -68,7 +68,7 @@ class TestGenerator {
 		List<SingleTestGenerator> factories = SpringFactoriesLoader.
 				loadFactories(SingleTestGenerator, null)
 		if (factories.empty) {
-			return new RefactoredSingleTestGenerator()
+			return new JavaTestGenerator()
 		}
 		return factories.first()
 	}

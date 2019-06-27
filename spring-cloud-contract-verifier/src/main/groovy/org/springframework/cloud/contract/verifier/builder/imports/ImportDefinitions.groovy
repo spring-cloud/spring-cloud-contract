@@ -26,6 +26,7 @@ import groovy.transform.PackageScope
  */
 @CompileStatic
 @PackageScope
+@Deprecated
 class ImportDefinitions {
 
 	final List<String> imports

@@ -31,8 +31,10 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.S
  * @author Olga Maciaszek-Sharma
  *
  * @since 2.1.0
+ * @deprecated
  */
 @CompileStatic
+@Deprecated
 class BaseImportProvider {
 
 	private static final ImportDefinitions GENERAL_IMPORTS = new ImportDefinitions([], [

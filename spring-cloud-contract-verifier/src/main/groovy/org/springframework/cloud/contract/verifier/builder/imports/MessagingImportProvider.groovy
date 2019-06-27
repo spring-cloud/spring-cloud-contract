@@ -26,6 +26,7 @@ import groovy.transform.CompileStatic
  * @since 2.1.0
  */
 @CompileStatic
+@Deprecated
 class MessagingImportProvider {
 
 	/**

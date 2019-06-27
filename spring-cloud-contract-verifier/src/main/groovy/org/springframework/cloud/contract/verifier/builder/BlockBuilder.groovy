@@ -163,15 +163,6 @@ class BlockBuilder {
 	}
 
 	@PackageScope
-	BlockBuilder addBlock(MethodBuilder methodBuilder) {
-		startBlock()
-		methodBuilder.appendTo(this)
-		endBlock()
-		addEmptyLine()
-		return this
-	}
-
-	@PackageScope
 	BlockBuilder inBraces(Runnable runnable) {
 		builder.append("{\n")
 		startBlock()

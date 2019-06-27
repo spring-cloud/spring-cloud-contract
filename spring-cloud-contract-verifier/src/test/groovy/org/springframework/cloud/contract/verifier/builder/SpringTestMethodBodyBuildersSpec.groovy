@@ -219,7 +219,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 	}
 
 	private String singleTestGenerator(Contract contractDsl) {
-		return new RefactoredSingleTestGenerator() {
+		return new JavaTestGenerator() {
 			@Override
 			ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
 				return super.classBodyBuilder(builder, metaData, methodBuilder).field(new Field() {
