@@ -115,24 +115,31 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (!request.body) {
 			return
 		}
+		boolean bodyHasMatchingStrategy = request.body.clientValue instanceof MatchingStrategy
 		MatchingStrategy matchingStrategy = getMatchingStrategyFromBody(request.body)
 		if (contentType == ContentType.JSON) {
 			def originalBody = matchingStrategy?.clientValue
-			def body = JsonToJsonPathsConverter.
-					removeMatchingJsonPaths(originalBody, request.bodyMatchers)
-			JsonPaths values = JsonToJsonPathsConverter.
-					transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
-			if ((values.empty && !request.bodyMatchers?.hasMatchers())
-					||
-					onlySizeAssertionsArePresent(values)) {
-				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
-						getMatchingStrategy(request.body.clientValue).clientValue),
-						false, false))
+			if (bodyHasMatchingStrategy) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(matchingStrategy))
 			}
 			else {
-				values.findAll { !it.assertsSize() }.each {
-					requestPattern.withRequestBody(WireMock.
-							matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+				def body = JsonToJsonPathsConverter.
+						removeMatchingJsonPaths(originalBody, request.bodyMatchers)
+				JsonPaths values = JsonToJsonPathsConverter.
+						transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
+				if ((values.empty && !request.bodyMatchers?.hasMatchers())
+						||
+						onlySizeAssertionsArePresent(values)) {
+					requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
+							getMatchingStrategy(request.body.clientValue).clientValue),
+							false, false))
+				}
+				else {
+					values.findAll { !it.assertsSize() }.each {
+						requestPattern.withRequestBody(WireMock.
+								matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+					}
 				}
 			}
 			request.bodyMatchers?.matchers()?.each {
@@ -144,12 +151,18 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		else if (contentType == ContentType.XML) {
 			Object originalBody = matchingStrategy?.clientValue
-			Object body = XmlToXPathsConverter
-					.removeMatchingXPaths(originalBody, request.bodyMatchers)
-			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
-					.mapToMatchers(body)
-			byEqualityMatchersFromXml.each {
-				addWireMockStubMatchingSection(it, requestPattern, originalBody)
+			if (bodyHasMatchingStrategy) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(matchingStrategy))
+			}
+			else {
+				Object body = XmlToXPathsConverter
+						.removeMatchingXPaths(originalBody, request.bodyMatchers)
+				List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
+						.mapToMatchers(body)
+				byEqualityMatchersFromXml.each {
+					addWireMockStubMatchingSection(it, requestPattern, originalBody)
+				}
 			}
 			request.bodyMatchers?.matchers()?.each {
 				addWireMockStubMatchingSection(it, requestPattern, originalBody)
@@ -191,7 +204,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		requestPattern.withRequestBody(WireMock.matchingXPath(pathMatcher.path(),
 				XPathBodyMatcherToWireMockValuePatternConverter
 						.mapToPattern(pathMatcher.matchingType(),
-						String.valueOf(retrievedValue))))
+								String.valueOf(retrievedValue))))
 	}
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {
@@ -301,31 +314,31 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	@TypeChecked(TypeCheckingMode.SKIP)
 	private ContentPattern convertToValuePattern(Object object) {
 		switch (object) {
-		case Pattern:
-		case RegexProperty:
-			return WireMock.matching(new RegexProperty(object).pattern())
-		case OptionalProperty:
-			OptionalProperty value = object as OptionalProperty
-			return WireMock.matching(value.optionalPattern())
-		case MatchingStrategy:
-			MatchingStrategy value = object as MatchingStrategy
-			switch (value.type) {
-			case MatchingStrategy.Type.NOT_MATCHING:
-				return WireMock.notMatching(value.clientValue.toString())
-			case MatchingStrategy.Type.ABSENT:
-				return WireMock.absent()
+			case Pattern:
+			case RegexProperty:
+				return WireMock.matching(new RegexProperty(object).pattern())
+			case OptionalProperty:
+				OptionalProperty value = object as OptionalProperty
+				return WireMock.matching(value.optionalPattern())
+			case MatchingStrategy:
+				MatchingStrategy value = object as MatchingStrategy
+				switch (value.type) {
+					case MatchingStrategy.Type.NOT_MATCHING:
+						return WireMock.notMatching(value.clientValue.toString())
+					case MatchingStrategy.Type.ABSENT:
+						return WireMock.absent()
+					default:
+						try {
+							return WireMock."${value.type.name}"(
+									clientBody(value.clientValue, contentType))
+						}
+						catch (Throwable t) {
+							log.error("Exception occurred while trying to call WireMock.${value.type.name}(${value.clientValue})", t)
+							throw t
+						}
+				}
 			default:
-				try {
-					return WireMock."${value.type.name}"(
-							clientBody(value.clientValue, contentType))
-				}
-				catch (Throwable t) {
-					log.error("Exception occurred while trying to call WireMock.${value.type.name}(${value.clientValue})", t)
-					throw t
-				}
-			}
-		default:
-			return WireMock.equalTo(object.toString())
+				return WireMock.equalTo(object.toString())
 		}
 	}
 
@@ -404,14 +417,14 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private MatchingStrategy appendBodyRegexpMatchPattern(Object value, ContentType contentType) {
 		switch (contentType) {
-		case ContentType.JSON:
-			return new MatchingStrategy(
-					buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
-		case ContentType.UNKNOWN:
-			return new MatchingStrategy(
-					buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
-		case ContentType.XML:
-			throw new IllegalStateException("XML pattern matching is not implemented yet")
+			case ContentType.JSON:
+				return new MatchingStrategy(
+						buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
+			case ContentType.UNKNOWN:
+				return new MatchingStrategy(
+						buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
+			case ContentType.XML:
+				throw new IllegalStateException("XML pattern matching is not implemented yet")
 		}
 	}
 
