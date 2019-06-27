@@ -78,6 +78,7 @@ public class GeneratedTestClassTests {
 + "\t\t\tMockMvcRequestSpecification request = given()\n"
 + "\t\t\t\t\t.header(\"foo\", \"bar\")\n"
 + "\t\t\t\t\t.body(\"{\\\"foo1\\\":\\\"bar1\\\"}\");\n"
++ "\n"
 + "\t\t// when:\n"
 + "\t\t\tResponseOptions response = given().spec(request)\n"
 + "\t\t\t\t\t.put(\"url\");\n"
@@ -131,7 +132,6 @@ public class GeneratedTestClassTests {
 						convertedClassName, packageName, classPath));
 
 		// then
-		System.out.println(builtClass);
 		BDDAssertions.then(builtClass).isEqualTo(this.expectedTest);
 	}
 

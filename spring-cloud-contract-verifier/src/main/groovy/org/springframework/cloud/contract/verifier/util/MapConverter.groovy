@@ -174,6 +174,10 @@ class MapConverter {
 		return getClientOrServerSideValues(json, TEST_SIDE, parsingClosure)
 	}
 
+	static Object getTestSideValuesForText(json) {
+		return getClientOrServerSideValues(json, TEST_SIDE, Closure.IDENTITY)
+	}
+
 	static Object getStubSideValuesForNonBody(object) {
 		return getClientOrServerSideValues(object, STUB_SIDE, Closure.IDENTITY)
 	}

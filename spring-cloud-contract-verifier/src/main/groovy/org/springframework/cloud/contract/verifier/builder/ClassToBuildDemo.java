@@ -41,6 +41,7 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize;
@@ -821,6 +822,10 @@ class BodyReader {
 
 	private void generatedTestResourcesFileBytes(FromFileProperty property, File newFile)
 			throws IOException {
+		Assert.notNull(this.generatedClassMetaData.configProperties
+				.getGeneratedTestSourcesDir(), "No generated test sources directory set");
+		Assert.notNull(this.generatedClassMetaData.configProperties
+				.getGeneratedTestResourcesDir(), "No generated test resources directory set");
 		Path path = this.generatedClassMetaData.configProperties
 				.getGeneratedTestSourcesDir().toPath();
 		java.nio.file.Path relativePath = path.relativize(newFile.toPath());

@@ -169,6 +169,7 @@ class MockMvcBodyGiven implements Given {
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
 		processInput(this.blockBuilder, metadata);
+		this.blockBuilder.addEmptyLine();
 		return this;
 	}
 
@@ -2815,13 +2816,13 @@ interface BodyParser extends BodyThen {
 				return ((Map) bodyValue).entrySet().stream().map(o -> {
 					Map.Entry entry = (Map.Entry) o;
 					return convertUnicodeEscapesIfRequired(
-							entry.getKey().toString() + "=" + entry.getValue());
+							entry.getKey().toString() + "=" + MapConverter.getTestSideValuesForText(entry.getValue()));
 				}).collect(Collectors.joining("&")).toString();
 			}
 			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
 				return ((List) bodyValue).stream()
-						.map(o -> convertUnicodeEscapesIfRequired(o.toString()))
+						.map(o -> convertUnicodeEscapesIfRequired(MapConverter.getTestSideValuesForText(o).toString()))
 						.collect(Collectors.joining("&")).toString();
 			}
 		}
