@@ -78,6 +78,7 @@ class ContractMetadata {
 		this.convertedContract.addAll(convertedContract)
 		this.convertedContractWithMetadata.addAll(
 				this.convertedContract
+						.findAll { it != null }
 						.collect { new SingleContractMetadata(it, this) })
 	}
 }

@@ -223,8 +223,8 @@ class ClassPresenceChecker {
 			return true
 		}
 		catch (ClassNotFoundException ex) {
-			if (log.isDebugEnabled()) {
-				log.debug("[${className}] is not present on classpath. Will not add a static import.")
+			if (log.isTraceEnabled()) {
+				log.trace("[${className}] is not present on classpath. Will not add a static import.")
 			}
 			return false
 		}

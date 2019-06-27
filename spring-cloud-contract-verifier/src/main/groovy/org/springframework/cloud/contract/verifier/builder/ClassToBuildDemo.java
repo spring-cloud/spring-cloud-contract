@@ -571,6 +571,10 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 		String baseClass = baseClassProvider().retrieveBaseClass(properties,
 				includedDirectoryRelativePath);
 		baseClass = StringUtils.hasText(baseClass) ? baseClass : "Specification";
+		int lastIndexOf = baseClass.lastIndexOf(".");
+		if (lastIndexOf > 0) {
+			baseClass = baseClass.substring(lastIndexOf + 1);
+		}
 		blockBuilder().append("extends ").append(baseClass).append(" ");
 		return this;
 	}
@@ -754,7 +758,7 @@ class NameProvider {
 			return name;
 		}
 		String name = camelCasedMethodFromFileName(stubsFile);
-		if (log.isDebugEnabled()) {
+		if (StringUtils.hasText(name) && log.isDebugEnabled()) {
 			log.debug("The method name will be [" + name + "]");
 		}
 		return name;
