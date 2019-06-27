@@ -16,48 +16,24 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
-import java.util.regex.Pattern
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.http.RequestMethod
-import com.github.tomakehurst.wiremock.matching.ContentPattern
-import com.github.tomakehurst.wiremock.matching.RequestPattern
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
-import com.github.tomakehurst.wiremock.matching.UrlPattern
+import com.github.tomakehurst.wiremock.matching.*
 import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Commons
-
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.internal.Body
-import org.springframework.cloud.contract.spec.internal.BodyMatcher
-import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.FromFileProperty
-import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.MatchingType
-import org.springframework.cloud.contract.spec.internal.NamedProperty
-import org.springframework.cloud.contract.spec.internal.OptionalProperty
-import org.springframework.cloud.contract.spec.internal.PathBodyMatcher
-import org.springframework.cloud.contract.spec.internal.QueryParameters
-import org.springframework.cloud.contract.spec.internal.RegexPatterns
-import org.springframework.cloud.contract.spec.internal.RegexProperty
-import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.verifier.util.ContentType
-import org.springframework.cloud.contract.verifier.util.ContentUtils
-import org.springframework.cloud.contract.verifier.util.JsonPaths
-import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-import org.springframework.cloud.contract.verifier.util.MapConverter
+import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.verifier.util.*
 import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter
 
+import java.util.regex.Pattern
+
 import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO
-import static org.springframework.cloud.contract.spec.internal.MatchingType.COMMAND
-import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY
-import static org.springframework.cloud.contract.spec.internal.MatchingType.NULL
-import static org.springframework.cloud.contract.spec.internal.MatchingType.TYPE
+import static org.springframework.cloud.contract.spec.internal.MatchingType.*
 import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
@@ -115,24 +91,29 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (!request.body) {
 			return
 		}
+		boolean bodyHasMatchingStrategy = request.body.clientValue instanceof MatchingStrategy
 		MatchingStrategy matchingStrategy = getMatchingStrategyFromBody(request.body)
 		if (contentType == ContentType.JSON) {
 			def originalBody = matchingStrategy?.clientValue
-			def body = JsonToJsonPathsConverter.
-					removeMatchingJsonPaths(originalBody, request.bodyMatchers)
-			JsonPaths values = JsonToJsonPathsConverter.
-					transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
-			if ((values.empty && !request.bodyMatchers?.hasMatchers())
-					||
-					onlySizeAssertionsArePresent(values)) {
-				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
-						getMatchingStrategy(request.body.clientValue).clientValue),
-						false, false))
-			}
-			else {
-				values.findAll { !it.assertsSize() }.each {
-					requestPattern.withRequestBody(WireMock.
-							matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+			if (bodyHasMatchingStrategy) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(matchingStrategy))
+			} else {
+				def body = JsonToJsonPathsConverter.
+						removeMatchingJsonPaths(originalBody, request.bodyMatchers)
+				JsonPaths values = JsonToJsonPathsConverter.
+						transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
+				if ((values.empty && !request.bodyMatchers?.hasMatchers())
+						||
+						onlySizeAssertionsArePresent(values)) {
+					requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
+							getMatchingStrategy(request.body.clientValue).clientValue),
+							false, false))
+				} else {
+					values.findAll { !it.assertsSize() }.each {
+						requestPattern.withRequestBody(WireMock.
+								matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+					}
 				}
 			}
 			request.bodyMatchers?.matchers()?.each {
@@ -144,12 +125,17 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		else if (contentType == ContentType.XML) {
 			Object originalBody = matchingStrategy?.clientValue
-			Object body = XmlToXPathsConverter
-					.removeMatchingXPaths(originalBody, request.bodyMatchers)
-			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
-					.mapToMatchers(body)
-			byEqualityMatchersFromXml.each {
-				addWireMockStubMatchingSection(it, requestPattern, originalBody)
+			if (bodyHasMatchingStrategy) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(matchingStrategy))
+			} else {
+				Object body = XmlToXPathsConverter
+						.removeMatchingXPaths(originalBody, request.bodyMatchers)
+				List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
+						.mapToMatchers(body)
+				byEqualityMatchersFromXml.each {
+					addWireMockStubMatchingSection(it, requestPattern, originalBody)
+				}
 			}
 			request.bodyMatchers?.matchers()?.each {
 				addWireMockStubMatchingSection(it, requestPattern, originalBody)

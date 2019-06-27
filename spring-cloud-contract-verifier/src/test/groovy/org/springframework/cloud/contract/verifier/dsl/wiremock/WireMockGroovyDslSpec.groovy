@@ -568,6 +568,51 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(json)
 	}
 
+	def 'should use equalToJson and bodyMatchers with json content type'() {
+		given:
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method 'GET'
+				url "/users"
+				headers {
+					header 'Content-Type': 'application/json'
+				}
+				body equalToJson('''{"name":"Jan"}''')
+				bodyMatchers {
+					jsonPath('$.name', byRegex('[A-Z]{3}'))
+				}
+			}
+			response {
+				status OK()
+			}
+		}
+		when:
+		String json = toWireMockClientJsonStub(groovyDsl)
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+				{
+					"request": {
+						"method": "GET",
+						"url": "/users",
+						"bodyPatterns": [
+							{
+								"equalToJson":"{\\"name\\":\\"Jan\\"}"
+							},
+							{
+								"matchesJsonPath" : "$[?(@.name =~ /([A-Z]{3})/)]"
+							}
+						]
+					},
+					"response": {
+						"status": 200,
+						"transformers" : [ "response-template", "foo-transformer" ]
+					}
+				}
+				'''), json)
+		and:
+		stubMappingIsValidWireMockStub(json)
+	}
+
 	def 'should use equalToXml'() {
 		given:
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
@@ -604,6 +649,54 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
+	}
+
+	def 'should use equalToXml and bodyMatchers with xml content type'() {
+		given:
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method 'GET'
+				url "/users"
+				headers {
+					header "Content-Type", "customtype/xml"
+				}
+				body equalToXml(
+						"""<foo><name>${value(consumer('Jozo'),
+								producer('Denis'))}</name><jobId>1234567890</jobId></foo>"""
+				)
+				bodyMatchers {
+					xPath('/foo/jobId/text()', byRegex('[0-9]{10}'))
+				}
+			}
+			response {
+				status OK()
+			}
+		}
+		when:
+		String json = toWireMockClientJsonStub(groovyDsl)
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+					{
+						"request": {
+							"method": "GET",
+							"url": "/users",
+							"bodyPatterns" : [ {
+							    "equalToXml" : "<foo><name>Jozo</name><jobId>1234567890</jobId></foo>"
+							  }, {
+							    "matchesXPath" : {
+							      "expression" : "/foo/jobId/text()",
+							      "matches" : "[0-9]{10}"
+							    }
+							  } ]
+						},
+						"response": {
+							"status": 200,
+							"transformers" : [ "response-template", "foo-transformer" ]
+						}
+					}
+					'''), json)
+		and:
+		stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should create stub with body from the file'() {
