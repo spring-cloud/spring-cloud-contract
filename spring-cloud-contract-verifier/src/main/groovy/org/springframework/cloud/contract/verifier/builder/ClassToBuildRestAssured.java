@@ -1398,7 +1398,8 @@ class JaxRsRequestHeadersWhen implements When {
 	}
 
 	private void appendHeaders(Request request) {
-		Iterator<Header> iterator = request.getHeaders().getEntries().stream().filter(header -> !headerToIgnore(header)).iterator();
+		Iterator<Header> iterator = request.getHeaders().getEntries().stream()
+				.filter(header -> !headerToIgnore(header)).iterator();
 		while (iterator.hasNext()) {
 			Header header = iterator.next();
 			String text = ".header(\"" + header.getName() + "\", "
@@ -1461,7 +1462,8 @@ class JaxRsRequestCookiesWhen implements When {
 	}
 
 	private void appendCookies(Request request) {
-		Iterator<Cookie> iterator = request.getCookies().getEntries().stream().filter(cookie -> !cookieOfAbsentType(cookie)).iterator();
+		Iterator<Cookie> iterator = request.getCookies().getEntries().stream()
+				.filter(cookie -> !cookieOfAbsentType(cookie)).iterator();
 		while (iterator.hasNext()) {
 			Cookie cookie = iterator.next();
 			String value = ".cookie(" + this.bodyParser.quotedShortText(cookie.getKey())
@@ -1628,7 +1630,8 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 		String method = request.getMethod().getServerValue().toString().toLowerCase();
 		if (request.getBody() != null) {
 			String contentType = type.getMimeType();
-			contentType = StringUtils.hasText(contentType) ? contentType : getContentType(request);
+			contentType = StringUtils.hasText(contentType) ? contentType
+					: getContentType(request);
 			Object body = request.getBody().getServerValue();
 			String value;
 			if (body instanceof ExecutionProperty) {
@@ -1655,7 +1658,8 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 
 	private String getContentType(Request request) {
 		Header contentType = request.getHeaders().getEntries().stream()
-				.filter(header -> "Content-Type".equalsIgnoreCase(header.getName())).findFirst().orElse(null);
+				.filter(header -> "Content-Type".equalsIgnoreCase(header.getName()))
+				.findFirst().orElse(null);
 		return contentType != null ? contentType.getServerValue().toString() : "";
 	}
 
@@ -2645,7 +2649,12 @@ class GenericJsonBodyThen implements Then {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		ContentType outputTestContentType = metadata.getOutputTestContentType();
-		return JSON == outputTestContentType || DEFINED == outputTestContentType;
+		return JSON == outputTestContentType || mostLikelyJson(outputTestContentType, metadata);
+	}
+
+	private boolean mostLikelyJson(ContentType outputTestContentType,
+			SingleContractMetadata metadata) {
+		return DEFINED == outputTestContentType && metadata.evaluatesToJson();
 	}
 
 }
@@ -2815,14 +2824,15 @@ interface BodyParser extends BodyThen {
 				// [a:3, b:4] == "a=3&b=4"
 				return ((Map) bodyValue).entrySet().stream().map(o -> {
 					Map.Entry entry = (Map.Entry) o;
-					return convertUnicodeEscapesIfRequired(
-							entry.getKey().toString() + "=" + MapConverter.getTestSideValuesForText(entry.getValue()));
+					return convertUnicodeEscapesIfRequired(entry.getKey().toString() + "="
+							+ MapConverter.getTestSideValuesForText(entry.getValue()));
 				}).collect(Collectors.joining("&")).toString();
 			}
 			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
 				return ((List) bodyValue).stream()
-						.map(o -> convertUnicodeEscapesIfRequired(MapConverter.getTestSideValuesForText(o).toString()))
+						.map(o -> convertUnicodeEscapesIfRequired(
+								MapConverter.getTestSideValuesForText(o).toString()))
 						.collect(Collectors.joining("&")).toString();
 			}
 		}

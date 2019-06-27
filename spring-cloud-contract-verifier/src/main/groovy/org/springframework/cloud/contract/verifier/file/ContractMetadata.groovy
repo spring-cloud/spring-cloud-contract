@@ -93,9 +93,13 @@ class SingleContractMetadata {
 	final Contract contract
 	private final Collection<Contract> allContracts
 	final ContentType inputStubContentType
+	final ContentType evaluatedInputStubContentType
 	final ContentType outputStubContentType
+	final ContentType evaluatedOutputStubContentType
 	final ContentType inputTestContentType
+	final ContentType evaluatedInputTestContentType
 	final ContentType outputTestContentType
+	final ContentType evaluatedOutputTestContentType
 	private final boolean http
 
 	SingleContractMetadata(Contract currentContract, ContractMetadata contractMetadata) {
@@ -105,10 +109,14 @@ class SingleContractMetadata {
 		DslProperty inputBody = inputBody(currentContract)
 		Headers outputHeaders = outputHeaders(currentContract)
 		DslProperty outputBody = outputBody(currentContract)
-		this.inputTestContentType = inputBody != null ? ContentUtils.evaluateContentType(inputHeaders, inputBody.getServerValue()) : ContentType.UNKNOWN
-		this.outputTestContentType = outputBody != null ? ContentUtils.evaluateContentType(outputHeaders, outputBody.getServerValue()) : ContentType.UNKNOWN
-		this.inputStubContentType = inputBody != null ? ContentUtils.evaluateContentType(inputHeaders, inputBody.getClientValue()) : ContentType.UNKNOWN
-		this.outputStubContentType = outputBody != null ? ContentUtils.evaluateContentType(outputHeaders, outputBody.getClientValue()) : ContentType.UNKNOWN
+		this.evaluatedInputTestContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody?.getServerValue())
+		this.inputTestContentType = inputBody != null ? this.evaluatedInputTestContentType : ContentType.UNKNOWN
+		this.evaluatedOutputTestContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody?.getServerValue())
+		this.outputTestContentType = outputBody != null ? this.evaluatedOutputTestContentType : ContentType.UNKNOWN
+		this.evaluatedInputStubContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody?.getClientValue())
+		this.inputStubContentType = inputBody != null ? this.evaluatedInputStubContentType : ContentType.UNKNOWN
+		this.evaluatedOutputStubContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody?.getClientValue())
+		this.outputStubContentType = outputBody != null ? this.evaluatedOutputStubContentType : ContentType.UNKNOWN
 		this.http = currentContract.request != null
 		this.contractMetadata = contractMetadata
 		this.stubsFile = contractMetadata.getPath() != null ? contractMetadata.getPath().toFile() : null
@@ -119,6 +127,13 @@ class SingleContractMetadata {
 				this.outputTestContentType == ContentType.JSON ||
 				this.inputStubContentType == ContentType.JSON ||
 				this.outputStubContentType == ContentType.JSON
+	}
+
+	boolean evaluatesToJson() {
+		return isJson() || this.evaluatedInputTestContentType == ContentType.JSON ||
+				this.evaluatedOutputTestContentType == ContentType.JSON ||
+				this.evaluatedInputStubContentType == ContentType.JSON ||
+				this.evaluatedOutputStubContentType == ContentType.JSON
 	}
 
 	boolean isIgnored() {
