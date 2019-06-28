@@ -263,7 +263,7 @@ class WireMockHttpRequestAdapter implements Request {
 				.request(this.result.getMethod(), this.result.getUriTemplate())
 				.contentType(this.result.getRequestHeaders().getContentType())
 				.content(this.result.getRequestBodyContent())
-				.buildRequest(new ContextHandler.NoContext());
+				.buildRequest(new ContextHandler.StaticContext());
 		try {
 			return new StandardMultipartHttpServletRequest(request).getParts().stream()
 					.map(part -> partFromServletPart(part)).collect(Collectors.toList());
