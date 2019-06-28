@@ -221,6 +221,8 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
+										<argument>-Pcentral</argument>
+										<argument>publishPlugins</argument>
 									</arguments>
 								</configuration>
 								<goals>
