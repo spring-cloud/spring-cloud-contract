@@ -195,7 +195,7 @@ class BodyConverter {
 
 	private static def parseBody(OptionalBody optionalBody) {
 		if (optionalBody.present) {
-			return new JsonSlurper().parseText(optionalBody.value)
+			return new JsonSlurper().parse(optionalBody.value)
 		}
 		else {
 			return optionalBody.value

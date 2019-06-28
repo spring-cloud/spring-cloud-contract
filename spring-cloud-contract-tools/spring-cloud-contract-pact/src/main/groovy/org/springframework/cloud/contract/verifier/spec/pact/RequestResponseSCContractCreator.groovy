@@ -86,7 +86,7 @@ class RequestResponseSCContractCreator {
 						Category headerRules = request.matchingRules.
 								rulesForCategory('header')
 						headers {
-							request.headers.each { k, v ->
+							request.headers.each { String k, List<String> v ->
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -95,15 +95,19 @@ class RequestResponseSCContractCreator {
 									}
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
-										header(k, new DslProperty((Object) Pattern.
-												compile(rule.getRegex()), (Object) v))
+										v.each({
+											header(k, new DslProperty((Object) Pattern.
+													compile(((RegexMatcher) rule).getRegex()), it))
+										})
 									}
 									else {
 										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
 									}
 								}
 								else {
-									header(k, v)
+									v.each({
+										header(k, it)
+									})
 								}
 							}
 						}
@@ -191,7 +195,7 @@ class RequestResponseSCContractCreator {
 
 										if (FULL_BODY == key) {
 											JsonPaths jsonPaths = JsonToJsonPathsConverter.
-													transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value)
+													transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value instanceof byte[] ? new String(response.body.value) : response.body.value)
 											jsonPaths.each {
 												jsonPath(it.keyBeforeChecking(), byType())
 											}
@@ -262,7 +266,7 @@ class RequestResponseSCContractCreator {
 						Category headerRules = response.matchingRules.
 								rulesForCategory('header')
 						headers {
-							response.headers.forEach({ String k, String v ->
+							response.headers.forEach({ String k, List<String> v ->
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -271,15 +275,20 @@ class RequestResponseSCContractCreator {
 									}
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
-										header(k, new DslProperty(new DslProperty(v), new NotToEscapePattern(Pattern.
-												compile(rule.getRegex()))))
+										v.each({
+											header(k, new DslProperty(new DslProperty(it), new NotToEscapePattern(Pattern.
+													compile(((RegexMatcher) rule).getRegex()))))
+										})
+
 									}
 									else {
 										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
 									}
 								}
 								else {
-									header(k, v)
+									v.each({
+										header(k, it)
+									})
 								}
 							})
 						}

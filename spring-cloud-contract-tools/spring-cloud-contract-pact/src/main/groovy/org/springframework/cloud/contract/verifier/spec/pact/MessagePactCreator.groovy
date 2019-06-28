@@ -98,7 +98,7 @@ class MessagePactCreator {
 
 	private Map<String, String> getMetadata(Headers headers) {
 		return headers.entries.collectEntries({ Header header ->
-			return ["$header.name": extractValue(header)]
+			return [(header.name): extractValue(header)]
 		})
 	}
 

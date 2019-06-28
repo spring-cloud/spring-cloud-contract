@@ -43,8 +43,7 @@ class ImportsBuilder {
 	}
 
 	ImportsBuilder json() {
-		this.parentBuilder.imports(
-				new JsonPathImports(builder, metaData));
+		this.parentBuilder.imports(new JsonPathImports(builder, metaData));
 		this.parentBuilder.staticImports(new DefaultJsonStaticImports(builder, metaData));
 		return this;
 	}

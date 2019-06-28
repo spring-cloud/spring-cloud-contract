@@ -103,7 +103,7 @@ class ValueGeneratorConverter {
 			throw new UnsupportedOperationException("We currently don't support a generator of type " + generator.class.simpleName)
 		}
 		else {
-			Object generatedValue = generator.generate(null)
+			Object generatedValue = generator.generate([:])
 			return dslPropertyProvider(pattern, generatedValue)
 		}
 	}

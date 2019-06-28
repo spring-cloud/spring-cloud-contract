@@ -10,6 +10,7 @@
 		<guice.version>4.2.2</guice.version>
 		<guava.version>27.1-jre</guava.version>
 		<asm.version>7.1</asm.version>
+		<checker.version>2.8.2</checker.version>
 
 		<maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
 		<maven-dependency-plugin.version>3.0.0</maven-dependency-plugin.version>
@@ -119,12 +120,6 @@
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
 			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>failureaccess</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -142,6 +137,13 @@
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>checker</artifactId>
+			<version>${checker.version}</version>
 			<optional>true</optional>
 			<scope>provided</scope>
 		</dependency>

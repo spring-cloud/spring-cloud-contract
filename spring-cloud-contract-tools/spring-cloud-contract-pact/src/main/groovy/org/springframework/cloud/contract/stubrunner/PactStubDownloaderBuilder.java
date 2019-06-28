@@ -37,8 +37,8 @@ import au.com.dius.pact.provider.junit.loader.PactBroker;
 import au.com.dius.pact.provider.junit.loader.PactBrokerAuth;
 import au.com.dius.pact.provider.junit.loader.PactBrokerLoader;
 import au.com.dius.pact.provider.junit.loader.PactLoader;
-import au.com.dius.pact.provider.junit.sysprops.SystemPropertyResolver;
-import au.com.dius.pact.provider.junit.sysprops.ValueResolver;
+import au.com.dius.pact.support.expressions.SystemPropertyResolver;
+import au.com.dius.pact.support.expressions.ValueResolver;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
@@ -288,6 +288,11 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String protocol() {
+				return scheme();
+			}
+
+			@Override
+			public String scheme() {
 				return resolver
 						.resolveValue("pactbroker.protocol:" + pactBrokerUrl.getScheme());
 			}
@@ -295,6 +300,11 @@ class PactStubDownloader implements StubDownloader {
 			@Override
 			public String[] tags() {
 				return tags.toArray(new String[0]);
+			}
+
+			@Override
+			public String[] consumers() {
+				return new String[] { resolver.resolveValue("pactbroker.consumers:") };
 			}
 
 			@Override

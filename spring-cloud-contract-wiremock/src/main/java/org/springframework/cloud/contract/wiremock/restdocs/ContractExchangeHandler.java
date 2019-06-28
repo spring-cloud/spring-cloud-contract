@@ -36,8 +36,8 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import org.apache.commons.codec.binary.Base64;
 import wiremock.com.google.common.base.Optional;
-import wiremock.org.apache.commons.codec.binary.Base64;
 import wiremock.org.eclipse.jetty.server.handler.ContextHandler;
 
 import org.springframework.http.HttpHeaders;
@@ -263,7 +263,7 @@ class WireMockHttpRequestAdapter implements Request {
 				.request(this.result.getMethod(), this.result.getUriTemplate())
 				.contentType(this.result.getRequestHeaders().getContentType())
 				.content(this.result.getRequestBodyContent())
-				.buildRequest(new ContextHandler.StaticContext());
+				.buildRequest(new ContextHandler.NoContext());
 		try {
 			return new StandardMultipartHttpServletRequest(request).getParts().stream()
 					.map(part -> partFromServletPart(part)).collect(Collectors.toList());
