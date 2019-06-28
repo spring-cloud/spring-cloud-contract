@@ -51,8 +51,6 @@ public class GeneratedTestClassTests {
 	String expectedTest = "package test;\n"
 + "\n"
 + "import BazBar;\n"
-+ "import org.junit.FixMethodOrder;\n"
-+ "import org.junit.runners.MethodSorters;\n"
 + "import com.jayway.jsonpath.DocumentContext;\n"
 + "import com.jayway.jsonpath.JsonPath;\n"
 + "import org.junit.Test;\n"

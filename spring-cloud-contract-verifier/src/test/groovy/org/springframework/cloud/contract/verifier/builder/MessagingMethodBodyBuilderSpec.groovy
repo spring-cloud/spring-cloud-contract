@@ -102,8 +102,6 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 					'''\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -175,8 +173,6 @@ class FooSpec extends Specification {
 					'''\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -258,8 +254,6 @@ public class FooTest {
 					"""\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -343,8 +337,6 @@ class FooSpec extends Specification {
 					'''\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -423,8 +415,6 @@ public class FooTest {
 					"""\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -491,8 +481,6 @@ class FooSpec extends Specification {
 					"""\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -563,8 +551,6 @@ public class FooTest {
 					"""\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -639,8 +625,6 @@ public class FooTest {
 					"""\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -722,8 +706,6 @@ class FooSpec extends Specification {
 					'''
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -800,8 +782,6 @@ public class FooTest {
 					"""\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -1010,8 +990,6 @@ public class FooTest {
 					"""\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -1082,8 +1060,6 @@ class FooSpec extends Specification {
 					"""\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -1154,8 +1130,6 @@ class FooSpec extends Specification {
 					"""\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -1227,8 +1201,6 @@ class FooSpec extends Specification {
 					"""\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -1307,8 +1279,6 @@ public class FooTest {
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -1349,8 +1319,6 @@ class FooSpec extends Specification {
 			"junit"           | { properties.testFramework = TestFramework.JUNIT } | """\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
@@ -1556,8 +1524,6 @@ public class FooTest {
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
@@ -1611,8 +1577,6 @@ class FooSpec extends Specification {
 			"junit"           | { properties.testFramework = TestFramework.JUNIT } | """\
 package com.example;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;

@@ -356,8 +356,6 @@ class ContractHttpDocsSpec extends Specification {
 					"""\
 package com.example
 
-import org.junit.FixMethodOrder
-import org.junit.runners.MethodSorters
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification

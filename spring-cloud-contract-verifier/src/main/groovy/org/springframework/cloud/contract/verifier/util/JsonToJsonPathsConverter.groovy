@@ -408,8 +408,8 @@ class JsonToJsonPathsConverter {
 			addArraySizeCheck(key, value, closure)
 		}
 		else {
-			if (log.isDebugEnabled()) {
-				log.debug("Turning off the incubating feature of JSON array check. "
+			if (log.isTraceEnabled()) {
+				log.trace("Turning off the incubating feature of JSON array check. "
 						+
 						"System property [$systemPropValue]. Config property [$configPropValue]")
 			}
