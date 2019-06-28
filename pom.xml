@@ -52,8 +52,8 @@
 		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
 		<gmavenplus-plugin.version>1.6.3</gmavenplus-plugin.version>
 
-		<!-- We need to have compatibility with Gradle 4.10.3 -->
-		<groovy.version>2.4.15</groovy.version>
+		<!-- We need to have compatibility with Gradle -->
+		<groovy.version>2.4.17</groovy.version>
 		<!-- For Takari plugin -->
 		<maven.version>3.3.9</maven.version>
 		<aether.version>1.1.0</aether.version>
