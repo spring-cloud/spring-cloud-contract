@@ -91,10 +91,6 @@ contracts {
 	}
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.9'
-}
-
 task cleanOutput(type: Delete) {
 	def dirName = "/spring-cloud-contract-output"
 	file(dirName).list().each {
