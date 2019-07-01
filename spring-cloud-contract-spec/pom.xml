@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>dk.brics.automaton</groupId>
 			<artifactId>automaton</artifactId>
-			<version>1.11-8</version>
+			<version>1.11.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
