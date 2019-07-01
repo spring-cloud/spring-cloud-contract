@@ -30,6 +30,11 @@ class ClassAnnotationsBuilder {
 		this.metaData = generatedTestClassBuilder.generatedClassMetaData;
 	}
 
+	ClassAnnotationsBuilder defaultAnnotations() {
+		this.parentBuilder.classAnnotations(new SuppressWarningsClassAnnotation(builder));
+		return this;
+	}
+
 	ClassAnnotationsBuilder jUnit4() {
 		this.parentBuilder
 				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData));

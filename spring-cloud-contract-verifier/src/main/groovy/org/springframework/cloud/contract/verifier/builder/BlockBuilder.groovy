@@ -177,6 +177,14 @@ class BlockBuilder {
 		return builder.toString().endsWith(text)
 	}
 
+	BlockBuilder addAtTheEndIfEndsWithAChar(String toAdd) {
+		char lastChar = builder.charAt(builder.length() - 1)
+		if (Character.isLetter(lastChar)) {
+			builder.append(toAdd)
+		}
+		return this
+	}
+
 	/**
 	 * Adds the given text at the end of the line
 	 *

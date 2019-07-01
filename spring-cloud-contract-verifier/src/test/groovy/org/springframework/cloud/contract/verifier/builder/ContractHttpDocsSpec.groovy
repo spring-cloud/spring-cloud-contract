@@ -367,6 +367,7 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*
 
+@SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
 
 \tdef validate_optionals() throws Exception {

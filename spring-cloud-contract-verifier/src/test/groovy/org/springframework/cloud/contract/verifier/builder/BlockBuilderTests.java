@@ -3,8 +3,6 @@ package org.springframework.cloud.contract.verifier.builder;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class BlockBuilderTests {
 
 	@Test
@@ -50,6 +48,22 @@ public class BlockBuilderTests {
 
 		blockBuilder.append("foo;\n").addEndingIfNotPresent();
 		BDDAssertions.then(blockBuilder.toString()).isEqualTo("foo;\n");
+	}
+
+	@Test
+	public void should_add_space_if_ends_with_a_text() {
+		BlockBuilder blockBuilder = blockBuilder();
+
+		blockBuilder.append("foo").addAtTheEndIfEndsWithAChar(" ");
+		BDDAssertions.then(blockBuilder.toString()).isEqualTo("foo ");
+	}
+
+	@Test
+	public void should_not_add_space_if_does_not_end_with_a_text() {
+		BlockBuilder blockBuilder = blockBuilder();
+
+		blockBuilder.append("foo\n").addAtTheEndIfEndsWithAChar(" ");
+		BDDAssertions.then(blockBuilder.toString()).isEqualTo("foo\n");
 	}
 
 	private BlockBuilder blockBuilder() {

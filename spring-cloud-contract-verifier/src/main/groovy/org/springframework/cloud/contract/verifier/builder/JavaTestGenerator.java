@@ -80,6 +80,7 @@ public class JavaTestGenerator implements SingleTestGenerator {
 					.jaxRs()
 					.build()
 				.classAnnotations()
+					.defaultAnnotations()
 					.jUnit4()
 					.jUnit5()
 					.spock()

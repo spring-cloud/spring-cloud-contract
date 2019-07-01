@@ -137,16 +137,17 @@ class GeneratedTestClassBuilder {
 		// \n
 		this.blockBuilder.addEmptyLine();
 		// import ... \n
-		visit(this.imports);
+		visitSeparated(this.imports);
 		// import static ... \n
-		visit(this.staticImports);
+		visitSeparated(this.staticImports);
 		// @Test ... \n
 		visitWithNoEnding(this.annotations);
 		// @formatter:off
 		// public
 		this.blockBuilder.append(classMetaData::modifier)
+				.addAtTheEndIfEndsWithAChar(" ")
 				// class
-				.appendWithSpace("class")
+				.append("class")
 				// Foo
 				.appendWithSpace(classMetaData::className)
 				// Spec
@@ -159,22 +160,23 @@ class GeneratedTestClassBuilder {
 		return new GeneratedTestClass(this.blockBuilder);
 	}
 
-	void visit(List<? extends Visitor> list) {
-		visit(list, true);
+	void visitSeparated(List<? extends Visitor> list) {
+		visit(list, true, true);
 	}
 
 	void visitWithNoEnding(List<? extends Visitor> list) {
-		visit(list, false);
+		visit(list, false, false);
 	}
 
-	private void visit(List<? extends Visitor> list, boolean addEnding) {
+	private void visit(List<? extends Visitor> list, boolean addEnding,
+			boolean separated) {
 		List<Visitor> elements = list.stream().filter(Acceptor::accept)
 				.collect(Collectors.toList());
 		elements.forEach(OurCallable::call);
 		if (addEnding) {
 			this.blockBuilder.addEndingIfNotPresent();
 		}
-		if (!elements.isEmpty()) {
+		if (!elements.isEmpty() && separated) {
 			this.blockBuilder.addEmptyLine();
 		}
 	}

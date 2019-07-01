@@ -18,21 +18,14 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
 
-import org.springframework.cloud.contract.verifier.config.TestFramework;
-
-class JUnit4OrderClassAnnotation implements ClassAnnotation {
+class SuppressWarningsClassAnnotation implements ClassAnnotation {
 
 	private final BlockBuilder blockBuilder;
 
-	private final GeneratedClassMetaData generatedClassMetaData;
+	private static final String[] ANNOTATIONS = { "@SuppressWarnings(\"rawtypes\")" };
 
-	private static final String[] ANNOTATIONS = {
-			"@FixMethodOrder(MethodSorters.NAME_ASCENDING)" };
-
-	JUnit4OrderClassAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	SuppressWarningsClassAnnotation(BlockBuilder blockBuilder) {
 		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
@@ -43,10 +36,7 @@ class JUnit4OrderClassAnnotation implements ClassAnnotation {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
-				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(meta -> meta.getOrder() != null);
+		return true;
 	}
 
 }

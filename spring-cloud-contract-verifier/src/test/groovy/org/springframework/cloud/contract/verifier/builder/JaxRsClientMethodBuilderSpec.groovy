@@ -930,6 +930,7 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
 import static javax.ws.rs.client.Entity.*;
 
+@SuppressWarnings("rawtypes")
 public class FooTest {
 \tWebTarget webTarget;
 

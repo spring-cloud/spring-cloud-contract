@@ -66,6 +66,7 @@ public class GeneratedTestClassTests {
 + "import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;\n"
 + "import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;\n"
 + "\n"
++ "@SuppressWarnings(\"rawtypes\")\n"
 + "@FixMethodOrder(MethodSorters.NAME_ASCENDING)\n"
 + "public class FooBarTest extends BazBar {\n"
 + "\n"
