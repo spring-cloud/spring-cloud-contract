@@ -3,6 +3,9 @@
 		 xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<automaton.version>1.11.2</automaton.version>
+	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
@@ -33,7 +36,7 @@
 		<dependency>
 			<groupId>dk.brics.automaton</groupId>
 			<artifactId>automaton</artifactId>
-			<version>1.11-8</version>
+			<version>${automaton.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
