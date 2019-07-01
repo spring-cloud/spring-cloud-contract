@@ -1084,6 +1084,7 @@ your running application, to the Artifact manager instance etc.
 - `PROJECT_GROUP` - your project's group id. Defaults to `com.example`
 - `PROJECT_VERSION` - your project's version. Defaults to `0.0.1-SNAPSHOT`
 - `PROJECT_NAME` - artifact id. Defaults to `example`
+- `PRODUCER_STUBS_CLASSIFIER` - archive classifier used for generated producer stubs, defaults to `stubs`.
 - `REPO_WITH_BINARIES_URL` - URL of your Artifact Manager. Defaults to `http://localhost:8081/artifactory/libs-release-local`
 which is the default URL of https://jfrog.com/artifactory/[Artifactory] running locally
 - `REPO_WITH_BINARIES_USERNAME` - (optional) username when the Artifact Manager is secured, defaults to `admin`.
