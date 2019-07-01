@@ -40,4 +40,5 @@
 	<suppress files=".*StubRunnerJUnit5ExtensionExceptionThrowingTests.*" checks="RegexpSinglelineJavaCheck"/>
 	<suppress files=".*StubRunnerSliceTests.*" checks="LineLengthCheck"/>
 	<suppress files=".*WiremockServerApplicationTests.*" checks="LineLengthCheck"/>
+	<suppress files=".*ContractVerifierConfigProperties.*" checks="JavadocStyle"/>
 </suppressions>

@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.config
+package org.springframework.cloud.contract.verifier.config;
 
 /**
- * Provides different testing modes
+ * Provides different testing modes.
  *
  * @author Jakub Kubrynski, codearte.io
  *
  * @since 1.0.0
  */
-enum TestMode {
+public enum TestMode {
+
 	/**
-	 * Uses Spring's MockMvc with Rest Assured 2.x
+	 * Uses Spring's MockMvc mode.
 	 */
 	MOCKMVC,
-
 	/**
-	 * Uses direct HTTP invocations with Rest Assured 2.x
+	 * Uses direct HTTP invocations with Rest Assured.
 	 */
 	EXPLICIT,
-
 	/**
-	 * Uses JAX-RS client
+	 * Uses JAX-RS client.
 	 */
 	JAXRSCLIENT,
-
 	/**
-	 * Uses Spring's reactive WebTestClient
+	 * Uses Spring's reactive WebTestClient.
 	 */
-	WEBTESTCLIENT
+	WEBTESTCLIENT;
+
 }

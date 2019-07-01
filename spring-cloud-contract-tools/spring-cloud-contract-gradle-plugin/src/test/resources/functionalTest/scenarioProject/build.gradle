@@ -156,7 +156,3 @@ configure(project(':loanApplicationService')) {
 
 	generateContractTests.dependsOn('copyCollaboratorStubs')
 }
-
-wrapper {
-	gradleVersion '4.10.2'
-}

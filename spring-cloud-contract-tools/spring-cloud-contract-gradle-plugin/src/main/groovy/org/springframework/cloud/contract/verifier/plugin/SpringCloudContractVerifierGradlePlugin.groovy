@@ -24,9 +24,6 @@ import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.jvm.tasks.Jar
-
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -150,12 +147,11 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			return task
 		}
 		else {
-			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(extension)
 			task = project.tasks.create(type: Jar, name: VERIFIER_STUBS_JAR_TASK_NAME,
 					dependsOn: DSL_TO_CLIENT_TASK_NAME) {
 				baseName = project.name
-				classifier = props.stubsSuffix
-				from { props.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
+				classifier = extension.stubsSuffix
+				from { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
 			}
 			task.description = "Creates the stubs JAR task"
 			task.group = GROUP_NAME

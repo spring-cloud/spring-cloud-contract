@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.util
+package org.springframework.cloud.contract.verifier.util;
 
-import org.skyscreamer.jsonassert.JSONAssert
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
-class AssertionUtil {
+public final class AssertionUtil {
 
-	private static boolean NON_STRICT = false
+	private static boolean NON_STRICT = false;
 
-	static void assertThatJsonsAreEqual(String expected, String actual) {
-		JSONAssert.assertEquals(expected, actual, NON_STRICT)
+	private AssertionUtil() {
+		throw new IllegalStateException("You shouldn't instantiate the utility class");
 	}
+
+	public static void assertThatJsonsAreEqual(String expected, String actual) {
+		try {
+			JSONAssert.assertEquals(expected, actual, NON_STRICT);
+		}
+		catch (JSONException ex) {
+			throw new IllegalStateException(ex);
+		}
+	}
+
 }

@@ -58,8 +58,8 @@ class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolv
 	}
 
 	private void addQueryParameters(Url buildUrl) {
-		List<QueryParameter> queryParameters = buildUrl.getQueryParameters().getParameters().stream()
-				.filter(this::allowedQueryParameter)
+		List<QueryParameter> queryParameters = buildUrl.getQueryParameters()
+				.getParameters().stream().filter(this::allowedQueryParameter)
 				.collect(Collectors.toList());
 		Iterator<QueryParameter> iterator = queryParameters.iterator();
 		while (iterator.hasNext()) {
@@ -67,7 +67,8 @@ class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolv
 			String text = addQueryParameter(parameter);
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
-			} else {
+			}
+			else {
 				this.blockBuilder.addIndented(text);
 			}
 		}

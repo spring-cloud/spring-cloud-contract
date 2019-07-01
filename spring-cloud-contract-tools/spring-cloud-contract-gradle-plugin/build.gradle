@@ -1,5 +1,3 @@
-import org.gradle.api.JavaVersion
-
 buildscript {
 	repositories {
 		mavenCentral()
@@ -157,8 +155,4 @@ task resolveDependencies {
 			}
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.10.2'
 }

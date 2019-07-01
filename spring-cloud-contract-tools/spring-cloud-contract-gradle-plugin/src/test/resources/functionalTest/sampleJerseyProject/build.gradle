@@ -123,6 +123,12 @@ configure(project(':fraudDetectionService')) {
 		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 	}
 
+	tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
+		baseName = project.name
+		classifier = contracts.stubsSuffix
+		from ext.stubsOutputDir
+	}
+
 	contracts {
 		contractsMode = "REMOTE"
 		testFramework = 'Spock'
@@ -151,8 +157,4 @@ configure(project(':loanApplicationService')) {
 	}
 
 	test.dependsOn('copyCollaboratorStubs')
-}
-
-wrapper {
-	gradleVersion '4.10.2'
 }
