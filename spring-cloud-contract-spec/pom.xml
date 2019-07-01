@@ -4,7 +4,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<automaton.version>1.11.2</automaton.version>
+		<automaton.version>1.12-1</automaton.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
