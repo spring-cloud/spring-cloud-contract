@@ -16,6 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.QueryParameter;
 import org.springframework.cloud.contract.spec.internal.Request;
@@ -54,8 +58,19 @@ class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolv
 	}
 
 	private void addQueryParameters(Url buildUrl) {
-		buildUrl.getQueryParameters().getParameters().stream()
-				.filter(this::allowedQueryParameter).forEach(this::addQueryParameter);
+		List<QueryParameter> queryParameters = buildUrl.getQueryParameters().getParameters().stream()
+				.filter(this::allowedQueryParameter)
+				.collect(Collectors.toList());
+		Iterator<QueryParameter> iterator = queryParameters.iterator();
+		while (iterator.hasNext()) {
+			QueryParameter parameter = iterator.next();
+			String text = addQueryParameter(parameter);
+			if (iterator.hasNext()) {
+				this.blockBuilder.addLine(text);
+			} else {
+				this.blockBuilder.addIndented(text);
+			}
+		}
 	}
 
 	private boolean allowedQueryParameter(Object o) {
@@ -68,10 +83,10 @@ class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolv
 		return true;
 	}
 
-	private void addQueryParameter(QueryParameter queryParam) {
-		this.blockBuilder.addLine("." + QUERY_PARAM_METHOD + "("
+	private String addQueryParameter(QueryParameter queryParam) {
+		return "." + QUERY_PARAM_METHOD + "("
 				+ this.bodyParser.quotedLongText(queryParam.getName()) + ","
-				+ this.bodyParser.quotedLongText(resolveParamValue(queryParam)) + ")");
+				+ this.bodyParser.quotedLongText(resolveParamValue(queryParam)) + ")";
 	}
 
 	@Override

@@ -71,6 +71,20 @@ class ContentUtils {
 		it instanceof DslProperty ? it.serverValue : it
 	}
 
+	public static final Function GET_STUB_SIDE_FUNCTION = new Function() {
+		@Override
+		Object apply(Object it) {
+			return it instanceof DslProperty ? it.clientValue : it
+		}
+	}
+
+	public static final Function GET_TEST_SIDE_FUNCTION = new Function() {
+		@Override
+		Object apply(Object it) {
+			return it instanceof DslProperty ? it.serverValue : it
+		}
+	}
+
 	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.
 			compile('.*REGEXP>>(.*)<<.*')
 	private static final Pattern TEMPORARY_EXECUTION_PATTERN_HOLDER = Pattern.
@@ -236,6 +250,10 @@ class ContentUtils {
 				} as String[],
 				bodyAsValue.strings.clone() as String[]
 		)
+	}
+
+	static Object extractValue(GString bodyAsValue, Function valueProvider) {
+		return extractValue(bodyAsValue, UNKNOWN, { valueProvider.apply(it) })
 	}
 
 	static Object extractValue(GString bodyAsValue, Closure valueProvider) {
