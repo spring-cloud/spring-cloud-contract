@@ -17,7 +17,7 @@
 	<properties>
 		<wiremock.version>2.23.2</wiremock.version>
 		<jsonassert.version>0.4.13</jsonassert.version>
-		<rest-assured.version>3.2.0</rest-assured.version>
+		<rest-assured.version>4.0.0</rest-assured.version>
 		<maven.version>3.3.9</maven.version>
 	</properties>
 	<dependencyManagement>
@@ -134,6 +134,26 @@
 			<dependency>
 				<groupId>io.rest-assured</groupId>
 				<artifactId>rest-assured</artifactId>
+				<version>${rest-assured.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-xml</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>json-path</artifactId>
+				<version>${rest-assured.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>xml-path</artifactId>
 				<version>${rest-assured.version}</version>
 			</dependency>
 			<dependency>

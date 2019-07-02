@@ -21,7 +21,6 @@ import java.nio.charset.Charset
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
 /**
  * Represents a property that will become a File content
  *
@@ -51,7 +50,9 @@ class FromFileProperty implements Serializable {
 	}
 
 	boolean isByte() {
-		return this.type == byte[]
+		// need to take class from a Groovy file, otherwise
+		// boolean#getAt(List) static compilation issue is thrown
+		return this.type == GroovyClass.BYTE_CLASS
 	}
 
 	String asString() {

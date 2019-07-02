@@ -30,12 +30,6 @@ import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
-import io.restassured.RestAssured
-import io.restassured.module.mockmvc.RestAssuredMockMvc
-import io.restassured.module.webtestclient.RestAssuredWebTestClient
-import io.restassured.module.webtestclient.response.WebTestClientResponse
-import io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification
-import io.restassured.response.ResponseOptions
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 import org.codehaus.groovy.control.customizers.ImportCustomizer
@@ -63,7 +57,7 @@ class SyntaxChecker {
 
 	private static final String[] DEFAULT_IMPORTS = [
 			Contract.name,
-			ResponseOptions.name,
+			"io.restassured.response.ResponseOptions",
 			'io.restassured.module.mockmvc.specification.*',
 			'io.restassured.module.mockmvc.*',
 			Test.name,
@@ -76,8 +70,8 @@ class SyntaxChecker {
 			ContractVerifierMessaging.name,
 			WebTarget.name,
 			Response.name,
-			WebTestClientRequestSpecification.name,
-			WebTestClientResponse.name,
+			"io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification",
+			"io.restassured.module.webtestclient.response.WebTestClientResponse",
 			DocumentBuilder.name,
 			DocumentBuilderFactory.name,
 			Document.name,
@@ -90,9 +84,9 @@ class SyntaxChecker {
 	}.join("\n")
 
 	private static final String STATIC_IMPORTS = [
-			"${RestAssuredMockMvc.name}.given",
-			"${RestAssuredMockMvc.name}.when",
-			"${RestAssured.name}.*",
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.given",
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.when",
+			"io.restassured.RestAssured.*",
 			"${Entity.name}.*",
 			"${ContractVerifierUtil.name}.*",
 			"${ContractVerifierMessagingUtil.name}.headers",
@@ -101,7 +95,7 @@ class SyntaxChecker {
 	].collect { "import static ${it};" }.join("\n")
 
 	private static final String WEB_TEST_CLIENT_STATIC_IMPORTS = [
-			"${RestAssuredWebTestClient.name}.*",
+			"io.restassured.module.webtestclient.RestAssuredWebTestClient.*",
 			"${Entity.name}.*",
 			"${ContractVerifierUtil.name}.*",
 			"${ContractVerifierMessagingUtil.name}.headers",
