@@ -41,4 +41,5 @@
 	<suppress files=".*StubRunnerSliceTests.*" checks="LineLengthCheck"/>
 	<suppress files=".*WiremockServerApplicationTests.*" checks="LineLengthCheck"/>
 	<suppress files=".*ContractVerifierConfigProperties.*" checks="JavadocStyle"/>
+	<suppress files=".*YamlContract.*" checks="JavadocVariable"/>
 </suppressions>

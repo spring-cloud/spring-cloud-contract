@@ -145,7 +145,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.cookies.entries.find {
 				it.key == "fooPredefinedRegex" && ((Pattern) it.serverValue).pattern == "(true|false)" && it.clientValue == true
 			}
-			contract.response.body.clientValue == ["status": "OK"]
+			MapConverter.getStubSideValues(contract.response.body) == ["status": "OK"]
 	}
 
 	def "should convert YAML with REST to DSL for [#yamlFile]"() {
@@ -176,7 +176,7 @@ class YamlContractConverterSpec extends Specification {
 				it.name == "fooReq" &&
 						it.serverValue == "baz"
 			}
-			contract.request.body.clientValue == [foo: "bar"]
+			MapConverter.getStubSideValues(contract.request.body) == [foo: "bar"]
 			contract.request.bodyMatchers.matchers[0].path() == '$.foo'
 			contract.request.bodyMatchers.matchers[0].matchingType() == REGEX
 			contract.request.bodyMatchers.matchers[0].value().pattern() == 'bar'
@@ -200,7 +200,7 @@ class YamlContractConverterSpec extends Specification {
 				it.name == "fooRes" &&
 						it.clientValue == "baz"
 			}
-			contract.response.body.clientValue == [foo2: "bar", foo3: "baz", nullValue: null]
+			MapConverter.getStubSideValues(contract.response.body) == [foo2: "bar", foo3: "baz", nullValue: null]
 			contract.response.bodyMatchers.matchers[0].path() == '$.foo2'
 			contract.response.bodyMatchers.matchers[0].matchingType() == REGEX
 			contract.response.bodyMatchers.matchers[0].value().pattern() == 'bar'
@@ -230,8 +230,8 @@ class YamlContractConverterSpec extends Specification {
 			url.queryParameters.parameters[1].serverValue == "bar2"
 			contract.request.method.clientValue == "GET"
 			contract.request.headers.entries.findAll { it.name == "Authorization" }
-					.collect { it.clientValue }.flatten() == ["secret", "secret2"]
-			contract.request.body.clientValue == [foo: "bar", baz: 5]
+											.collect { it.clientValue }.flatten() == ["secret", "secret2"]
+			MapConverter.getStubSideValues(contract.request.body) == [foo: "bar", baz: 5]
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.headers.entries
@@ -1113,7 +1113,7 @@ ignored: false
 			]
 			yamlContract.input.matchers.headers == [
 					new YamlContract.KeyValueMatcher(
-							key: "sample", regex: "foo.*")
+							key: "sample", regex: "foo.*", regexType: YamlContract.RegexType.as_string)
 			]
 			yamlContract.input.matchers.body == [
 					new YamlContract.BodyStubMatcher(
@@ -1126,27 +1126,30 @@ ignored: false
 					new YamlContract.BodyStubMatcher(
 							path: '$.alpha',
 							type: YamlContract.StubMatcherType.by_regex,
-							predefined: YamlContract.PredefinedRegex.only_alpha_unicode),
+							value: "[\\p{L}]*"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.alpha',
 							type: YamlContract.StubMatcherType.by_equality),
 					new YamlContract.BodyStubMatcher(
 							path: '$.number',
 							type: YamlContract.StubMatcherType.by_regex,
-							predefined: YamlContract.PredefinedRegex.number),
+							value: "-?(\\d*\\.\\d+|\\d+)"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.aBoolean',
 							type: YamlContract.StubMatcherType.by_regex,
-							predefined: YamlContract.PredefinedRegex.any_boolean),
+							value: "(true|false)"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.date',
-							type: YamlContract.StubMatcherType.by_date),
+							type: YamlContract.StubMatcherType.by_date,
+							value: "(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.dateTime',
-							type: YamlContract.StubMatcherType.by_timestamp),
+							type: YamlContract.StubMatcherType.by_timestamp,
+							value: "([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.time',
-							type: YamlContract.StubMatcherType.by_time),
+							type: YamlContract.StubMatcherType.by_time,
+							value: "(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
 					new YamlContract.BodyStubMatcher(
 							path: "\$.['key'].['complex.key']",
 							type: YamlContract.StubMatcherType.by_equality),
@@ -1175,7 +1178,7 @@ ignored: false
 			]
 			yamlContract.outputMessage.matchers.headers == [
 					new YamlContract.TestHeaderMatcher(
-							key: "Content-Type", regex: "application/json.*")
+							key: "Some-Header", regex: "[a-zA-Z]{9}", regexType: YamlContract.RegexType.as_string)
 			]
 			yamlContract.outputMessage.matchers.body == [
 					new YamlContract.BodyTestMatcher(
@@ -1214,15 +1217,15 @@ ignored: false
 							value: '(true|false)'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.date',
-							type: YamlContract.TestMatcherType.by_regex,
+							type: YamlContract.TestMatcherType.by_date,
 							value: '(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.dateTime',
-							type: YamlContract.TestMatcherType.by_regex,
+							type: YamlContract.TestMatcherType.by_timestamp,
 							value: '([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.time',
-							type: YamlContract.TestMatcherType.by_regex,
+							type: YamlContract.TestMatcherType.by_time,
 							value: '(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.valueWithTypeMatch',
@@ -1317,26 +1320,26 @@ ignored: false
 			contract.response.bodyMatchers.matchers[4]
 					.value().pattern() == patterns.isoTime().pattern()
 			contract.response.body.clientValue.replaceAll("\n", "")
-					.replaceAll(' ', '') == xmlContractBody
+											  .replaceAll(' ', '') == xmlContractBody
 					.replaceAll("\n", "").replaceAll(' ', '')
 			contract.response.body.serverValue.replaceAll("\n", "")
-					.replaceAll(' ', '') == xmlContractBody
+											  .replaceAll(' ', '') == xmlContractBody
 					.replaceAll("\n", "").replaceAll(' ', '')
 	}
 
-	def "should accept a yaml file that is a proper scc YAML contract"(){
+	def "should accept a yaml file that is a proper scc YAML contract"() {
 		when:
-		def accepted = converter.isAccepted(ymlWithRest3)
+			def accepted = converter.isAccepted(ymlWithRest3)
 
 		then:
-		accepted
+			accepted
 	}
 
-	def "should not accept a YAML file that is not a scc YAML contract"(){
+	def "should not accept a YAML file that is not a scc YAML contract"() {
 		when:
-		def accepted = converter.isAccepted(oa3File)
+			def accepted = converter.isAccepted(oa3File)
 
 		then:
-		!accepted
+			!accepted
 	}
 }

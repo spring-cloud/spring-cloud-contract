@@ -21,7 +21,6 @@ import java.util.regex.Pattern
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.yaml.snakeyaml.Yaml
 
@@ -41,12 +40,10 @@ import org.springframework.util.StringUtils
 import static java.util.stream.Collectors.toSet
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
-
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
  */
-@CompileStatic
 @PackageScope
 class YamlToContracts {
 
@@ -192,7 +189,7 @@ class YamlToContracts {
 							body(fileAsBytes(yamlContract.request.bodyFromFileAsBytes))
 						}
 						if (yamlContract.request.multipart) {
-							Map multipartMap = [:]
+							Map multipartMap = [:] as Map
 							Map<String, DslProperty> multiPartParams = yamlContract.request
 								.multipart.params.
 								collectEntries { String paramKey, String paramValue ->
@@ -685,19 +682,19 @@ class YamlToContracts {
 		}
 		switch (matcher.type) {
 		case YamlContract.MatchingType.equal_to:
-			return new DslProperty(request.equalTo(matcher.value), value)
+			return new DslProperty(request.equalTo(matcher.value) as Object, value)
 		case YamlContract.MatchingType.containing:
-			return new DslProperty(request.containing(matcher.value), value)
+			return new DslProperty(request.containing(matcher.value) as Object, value)
 		case YamlContract.MatchingType.matching:
-			return new DslProperty(request.matching(matcher.value), value)
+			return new DslProperty(request.matching(matcher.value) as Object, value)
 		case YamlContract.MatchingType.not_matching:
-			return new DslProperty(request.notMatching(matcher.value), value)
+			return new DslProperty(request.notMatching(matcher.value) as Object, value)
 		case YamlContract.MatchingType.equal_to_json:
-			return new DslProperty(request.equalToJson(matcher.value), value)
+			return new DslProperty(request.equalToJson(matcher.value) as Object, value)
 		case YamlContract.MatchingType.equal_to_xml:
-			return new DslProperty(request.equalToXml(matcher.value), value)
+			return new DslProperty(request.equalToXml(matcher.value) as Object, value)
 		case YamlContract.MatchingType.absent:
-			return new DslProperty(request.absent(), null)
+			return new DslProperty(request.absent() as Object, null)
 		default:
 			throw new UnsupportedOperationException("The provided matching type [" + matcher + "] is unsupported. Use on of "
 				+ YamlContract.MatchingType.

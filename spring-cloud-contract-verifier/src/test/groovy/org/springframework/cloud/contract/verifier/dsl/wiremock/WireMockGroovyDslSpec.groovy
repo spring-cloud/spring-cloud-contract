@@ -2400,11 +2400,11 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server.start()
 			server.addStubMapping(WireMockStubMapping.buildFrom(json))
 		then:
-			String entity = callApiCategories(port)
+			ResponseEntity<String> entity = callApiCategories(port)
 		and:
 			AssertionUtil.assertThatJsonsAreEqual(('''
 				["[\\"Programming\\",\\"Java\\"]","[\\"Programming\\",\\"Java\\",\\"Spring\\",\\"Boot\\"]"]
-				'''), entity)
+				'''), entity.getBody())
 		cleanup:
 			server?.shutdown()
 	}
@@ -2820,12 +2820,12 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						.body(request.bytes), byte[].class)
 	}
 
-	String callApiCategories(int port) {
+	ResponseEntity<String> callApiCategories(int port) {
 		return new TestRestTemplate().exchange(
 				RequestEntity.
 						post(URI.create("http://localhost:" + port + "/api/categories"))
-						.header("Content-Type", "application/json;charset=UTF-8")
-						.body(JsonOutput.
-								toJson([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])), String.class).body
+							 .header("Content-Type", "application/json;charset=UTF-8")
+							 .body(JsonOutput.
+									 toJson([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])), String.class)
 	}
 }

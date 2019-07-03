@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.converter
 
 import java.util.regex.Pattern
 
-import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
 import org.springframework.cloud.contract.spec.Contract
@@ -41,13 +40,11 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
-
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
  */
 @PackageScope
-@CompileStatic
 class ContractsToYaml {
 
 	List<YamlContract> convertTo(Collection<Contract> contracts) {
@@ -169,7 +166,7 @@ class ContractsToYaml {
 						request.multipart.named << new YamlContract.Named(paramName: key,
 								fileName: fileName instanceof String ? value.name?.serverValue as String : null,
 								fileContent: fileContent instanceof String ? fileContent as String : null,
-								fileContentAsBytes: fileContent instanceof String ? fileContent as String : null,
+								fileContentAsBytes: fileContent instanceof FromFileProperty ? fileContent.asBytes().toString() : null,
 								fileContentFromFileAsBytes: resolveFileNameAsBytes(fileContent),
 								contentType: contentType instanceof String ? contentType as String : null,
 								fileNameCommand: fileName instanceof ExecutionProperty ? fileName.toString() : null,
@@ -413,6 +410,8 @@ class ContractsToYaml {
 			return YamlContract.TestMatcherType.by_timestamp
 		case MatchingType.REGEX:
 			return YamlContract.TestMatcherType.by_regex
+		case MatchingType.NULL:
+			return YamlContract.TestMatcherType.by_null
 		}
 		return null
 	}

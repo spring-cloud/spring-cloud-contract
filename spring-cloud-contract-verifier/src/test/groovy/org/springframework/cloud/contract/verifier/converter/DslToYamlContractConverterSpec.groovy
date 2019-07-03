@@ -195,7 +195,7 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.request.matchers.headers == [
 					new YamlContract.KeyValueMatcher(
-							key: "sample", regex: "foo.*")
+							key: "sample", regex: "foo.*", regexType: YamlContract.RegexType.as_string)
 			]
 			yamlContract.request.matchers.body == [
 					new YamlContract.BodyStubMatcher(
@@ -208,27 +208,30 @@ class DslToYamlContractConverterSpec extends Specification {
 					new YamlContract.BodyStubMatcher(
 							path: '$.alpha',
 							type: YamlContract.StubMatcherType.by_regex,
-							predefined: YamlContract.PredefinedRegex.only_alpha_unicode),
+							value: "[\\p{L}]*"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.alpha',
 							type: YamlContract.StubMatcherType.by_equality),
 					new YamlContract.BodyStubMatcher(
 							path: '$.number',
 							type: YamlContract.StubMatcherType.by_regex,
-							predefined: YamlContract.PredefinedRegex.number),
+							value: "-?(\\d*\\.\\d+|\\d+)"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.aBoolean',
 							type: YamlContract.StubMatcherType.by_regex,
-							predefined: YamlContract.PredefinedRegex.any_boolean),
+							value: "(true|false)"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.date',
-							type: YamlContract.StubMatcherType.by_date),
+							type: YamlContract.StubMatcherType.by_date,
+							value: "(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.dateTime',
-							type: YamlContract.StubMatcherType.by_timestamp),
+							type: YamlContract.StubMatcherType.by_timestamp,
+							value: "([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.time',
-							type: YamlContract.StubMatcherType.by_time),
+							type: YamlContract.StubMatcherType.by_time,
+							value: "(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
 					new YamlContract.BodyStubMatcher(
 							path: "\$.['key'].['complex.key']",
 							type: YamlContract.StubMatcherType.by_equality),
@@ -261,9 +264,9 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.response.matchers.headers == [
 					new YamlContract.TestHeaderMatcher(
-							key: "Some-Header", regex: "[a-zA-Z]{9}"),
+							key: "Content-Type", regex: "application/json.*"),
 					new YamlContract.TestHeaderMatcher(
-							key: "Content-Type", regex: "application/json.*")
+							key: "Some-Header", regex: "[a-zA-Z]{9}", regexType: YamlContract.RegexType.as_string)
 			]
 			yamlContract.response.matchers.body == [
 					new YamlContract.BodyTestMatcher(
@@ -302,15 +305,15 @@ class DslToYamlContractConverterSpec extends Specification {
 							value: '(true|false)'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.date',
-							type: YamlContract.TestMatcherType.by_regex,
+							type: YamlContract.TestMatcherType.by_date,
 							value: '(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.dateTime',
-							type: YamlContract.TestMatcherType.by_regex,
+							type: YamlContract.TestMatcherType.by_timestamp,
 							value: '([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.time',
-							type: YamlContract.TestMatcherType.by_regex,
+							type: YamlContract.TestMatcherType.by_time,
 							value: '(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.valueWithTypeMatch',
@@ -388,13 +391,14 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.request.matchers.headers == [
 					new YamlContract.KeyValueMatcher(
-							key: "Content-Type", regex: "application/json.*")
+							key: "Content-Type", regex: "application/json.*", regexType: YamlContract.RegexType.as_string)
 			]
 			yamlContract.request.matchers.body == [
 					new YamlContract.BodyStubMatcher(
-							path: '$.duck',
+							path: "\$.['client.id']",
 							type: YamlContract.StubMatcherType.by_regex,
-							value: "[0-9]{3}"),
+							value: "[0-9]{10}",
+							regexType: YamlContract.RegexType.as_string),
 			]
 			yamlContract.response.status == 200
 			yamlContract.response.body == [fraudCheckStatus  : "FRAUD",
@@ -408,9 +412,10 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.response.matchers.body == [
 					new YamlContract.BodyTestMatcher(
-							path: '$.fraudCheckStatus',
+							path: "\$.['fraudCheckStatus']",
 							type: YamlContract.TestMatcherType.by_regex,
-							value: "FRAUD"),
+							value: "FRAUD",
+							regexType: YamlContract.RegexType.as_string),
 			]
 	}
 
@@ -465,11 +470,13 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContract.request.matchers.multipart.params == [
 					new YamlContract.KeyValueMatcher(
 							key: "formParameter",
-							regex: '".+"'
+							regex: '".+"',
+							regexType: YamlContract.RegexType.as_string
 					),
 					new YamlContract.KeyValueMatcher(
 							key: "someBooleanParameter",
-							regex: '(true|false)'
+							regex: '(true|false)',
+							regexType: YamlContract.RegexType.as_string
 					)
 			]
 			yamlContract.request.matchers.multipart.named == [
@@ -553,8 +560,8 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContract.request.method == 'GET'
 			yamlContract.request.url == '/get'
 			yamlContract.request.body.replaceAll("\n", "")
-						.replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
-															   .replaceAll(' ', '')
+									 .replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
+																			.replaceAll(' ', '')
 			yamlContract.request.headers == [
 					"Content-Type": "application/xml"
 			]
@@ -566,8 +573,8 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.response.status == 200
 			yamlContract.response.body.replaceAll("\n", "")
-						.replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
-															   .replaceAll(' ', '')
+									  .replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
+																			 .replaceAll(' ', '')
 			yamlContract.response.matchers.body == [
 					new YamlContract.BodyTestMatcher(
 							path: '/test/duck/xxx',

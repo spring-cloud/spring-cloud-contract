@@ -16,9 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.util
 
-import java.util.function.Consumer
+
 import java.util.function.Function
-import java.util.function.Supplier
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -248,7 +247,7 @@ class ContentUtils {
 				bodyAsValue.values.collect {
 					it instanceof DslProperty ? valueProvider(it) : it
 				} as String[],
-				bodyAsValue.strings.clone() as String[]
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
 	}
 
@@ -263,7 +262,7 @@ class ContentUtils {
 	private static String extractValueForText(GString bodyAsValue, Closure valueProvider) {
 		GString transformedString = new GStringImpl(
 				bodyAsValue.values.collect { valueProvider(it) } as String[],
-				bodyAsValue.strings.clone() as String[]
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
 		return transformedString.toString()
 	}
@@ -274,7 +273,7 @@ class ContentUtils {
 						collect {
 							transformJSONStringValue(it, valueProvider)
 						} as String[],
-				bodyAsValue.strings.clone() as String[]
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
 		def parsedJson = new JsonSlurper().
 				parseText(transformedString.toString().replace('\\', '\\\\'))
@@ -287,7 +286,7 @@ class ContentUtils {
 						collect {
 							transformXMLStringValue(it, valueProvider)
 						} as String[],
-				bodyAsValue.strings.clone() as String[]
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
 		// try to convert it to XML
 		getXmlSlurperWithDefaultErrorHandler()
@@ -523,7 +522,7 @@ class ContentUtils {
 					it instanceof String || it instanceof GString ? it.toString() :
 							escapeJson(it.toString())
 				}) as Object[],
-				gstring.strings.clone() as String[]
+				CloneUtils.clone(gstring.strings) as String[]
 		)
 		try {
 			new JsonSlurper().parseText(stringWithoutValues.toString())
@@ -541,7 +540,7 @@ class ContentUtils {
 					it instanceof String || it instanceof GString ? it.toString() :
 							escapeXml11(it.toString())
 				}) as Object[],
-				gString.strings.clone() as String[]
+				CloneUtils.clone(gString.strings) as String[]
 		)
 		try {
 			getXmlSlurperWithDefaultErrorHandler()

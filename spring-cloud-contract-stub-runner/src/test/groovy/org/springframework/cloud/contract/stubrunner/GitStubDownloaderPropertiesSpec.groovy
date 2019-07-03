@@ -44,7 +44,7 @@ class GitStubDownloaderPropertiesSpec extends Specification {
 			props.url == URI.create("git:git@foo.com/foo")
 	}
 
-	Resource resource(String uri) {
+	Resource resource(String resourceUri) {
 		return new AbstractResource() {
 			@Override
 			String getDescription() {
@@ -58,7 +58,8 @@ class GitStubDownloaderPropertiesSpec extends Specification {
 
 			@Override
 			URI getURI() throws IOException {
-				return URI.create(uri)
+				// Groovy resolves URI to getURI() and StackOverFlow is thrown
+				return java.net.URI.create(resourceUri)
 			}
 		}
 	}
