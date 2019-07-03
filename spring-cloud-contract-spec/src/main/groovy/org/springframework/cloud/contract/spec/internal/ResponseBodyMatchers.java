@@ -17,17 +17,31 @@
 package org.springframework.cloud.contract.spec.internal;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
+ * Body matchers for the response side (output message, REST response).
  *
  * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @author Tim Ysewyn
+ * @since 1.0.3
  */
-public interface CanBeDynamic {
+public class ResponseBodyMatchers extends BodyMatchers {
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+	public MatchingTypeValue byType() {
+		MatchingTypeValue value = new MatchingTypeValue();
+		value.setType(MatchingType.TYPE);
+		return value;
+	}
+
+	public MatchingTypeValue byCommand(String execute) {
+		MatchingTypeValue value = new MatchingTypeValue();
+		value.setType(MatchingType.COMMAND);
+		value.setValue(new ExecutionProperty(execute));
+		return value;
+	}
+
+	public MatchingTypeValue byNull() {
+		MatchingTypeValue value = new MatchingTypeValue();
+		value.setType(MatchingType.NULL);
+		return value;
+	}
 
 }

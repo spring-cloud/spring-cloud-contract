@@ -17,17 +17,18 @@
 package org.springframework.cloud.contract.spec.internal;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
+ * Represents a server side {@link DslProperty}.
  *
- * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @since 1.0.0
  */
-public interface CanBeDynamic {
+public class ServerDslProperty extends DslProperty {
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+	public ServerDslProperty(Object singleValue) {
+		super(singleValue);
+	}
+
+	public ServerDslProperty(Object server, Object client) {
+		super(client, server);
+	}
 
 }

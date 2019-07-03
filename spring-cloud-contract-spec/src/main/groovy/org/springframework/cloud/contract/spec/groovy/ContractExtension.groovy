@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.spec.internal;
+package org.springframework.cloud.contract.spec.groovy
 
-/**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
- *
- * @author Marcin Grzejszczak
- * @since 2.1.0
- */
-public interface CanBeDynamic {
+import groovy.transform.CompileStatic
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
-
+@CompileStatic
+class ContractExtension {
+	static String make(final String self) {
+		"Arr, me hearty,"
+	}
 }

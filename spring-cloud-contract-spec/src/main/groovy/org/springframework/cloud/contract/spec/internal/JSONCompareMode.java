@@ -17,17 +17,10 @@
 package org.springframework.cloud.contract.spec.internal;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
+ * Represents JSON comparison modes.
  *
- * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @since 1.0.0
  */
-public interface CanBeDynamic {
-
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
-
+public enum JSONCompareMode {
+	STRICT, LENIENT, NON_EXTENSIBLE, STRICT_ORDER;
 }

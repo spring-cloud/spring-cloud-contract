@@ -16,18 +16,8 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
-/**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
- *
- * @author Marcin Grzejszczak
- * @since 2.1.0
- */
-public interface CanBeDynamic {
-
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
-
+class ClientOutputMessage extends OutputMessage {
+	public ClientOutputMessage(OutputMessage request) {
+		super(request);
+	}
 }

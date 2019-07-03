@@ -17,17 +17,49 @@
 package org.springframework.cloud.contract.spec.internal;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
+ * Contains Http Methods.
  *
  * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @since 1.0.2
  */
-public interface CanBeDynamic {
+public class HttpMethods {
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+	public HttpMethod GET() {
+		return HttpMethod.GET;
+	}
+
+	public HttpMethod HEAD() {
+		return HttpMethod.HEAD;
+	}
+
+	public HttpMethod POST() {
+		return HttpMethod.POST;
+	}
+
+	public HttpMethod PUT() {
+		return HttpMethod.PUT;
+	}
+
+	public HttpMethod PATCH() {
+		return HttpMethod.PATCH;
+	}
+
+	public HttpMethod DELETE() {
+		return HttpMethod.DELETE;
+	}
+
+	public HttpMethod OPTIONS() {
+		return HttpMethod.OPTIONS;
+	}
+
+	public HttpMethod TRACE() {
+		return HttpMethod.TRACE;
+	}
+
+	public enum HttpMethod {
+
+		GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
+
+	}
 
 }

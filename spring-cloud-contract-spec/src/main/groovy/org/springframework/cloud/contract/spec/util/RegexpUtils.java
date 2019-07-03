@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.spec.internal;
+package org.springframework.cloud.contract.spec.util;
+
+import java.util.regex.Pattern;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
+ * Useful utility methods to work with regular expressions
  *
- * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @since 1.0.2
  */
-public interface CanBeDynamic {
+public class RegexpUtils {
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+	public static String escapeSpecialRegexChars(String str) {
+		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll("\\\\\\\\$0");
+	}
+
+	public static String escapeSpecialRegexWithSingleEscape(String str) {
+		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
+	}
+
+	private static final Pattern SPECIAL_REGEX_CHARS = Pattern
+			.compile("[{}()\\[\\].+*?^$\\\\|]");
 
 }

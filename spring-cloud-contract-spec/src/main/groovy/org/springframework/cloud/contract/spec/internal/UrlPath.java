@@ -16,18 +16,26 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
-/**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
- *
- * @author Marcin Grzejszczak
- * @since 2.1.0
- */
-public interface CanBeDynamic {
+import groovy.lang.GString;
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+/**
+ * Represents a url path. Syntactic sugar when working with {@link QueryParameters}. It's
+ * logically equal to {@link Url}.
+ *
+ * @since 1.0.0
+ */
+public class UrlPath extends Url {
+
+	public UrlPath(String path) {
+		super(path);
+	}
+
+	public UrlPath(GString path) {
+		super(path);
+	}
+
+	public UrlPath(DslProperty path) {
+		super(path);
+	}
 
 }

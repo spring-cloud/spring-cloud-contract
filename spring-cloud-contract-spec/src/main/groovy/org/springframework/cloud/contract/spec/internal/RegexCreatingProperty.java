@@ -17,17 +17,48 @@
 package org.springframework.cloud.contract.spec.internal;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
- *
  * @author Marcin Grzejszczak
- * @since 2.1.0
  */
-public interface CanBeDynamic {
+interface RegexCreatingProperty<T extends DslProperty> {
+	T anyAlphaUnicode();
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+	T anyAlphaNumeric();
 
+	T anyNumber();
+
+	T anyInteger();
+
+	T anyPositiveInt();
+
+	T anyDouble();
+
+	T anyHex();
+
+	T aBoolean();
+
+	T anyIpAddress();
+
+	T anyHostname();
+
+	T anyEmail();
+
+	T anyUrl();
+
+	T anyHttpsUrl();
+
+	T anyUuid();
+
+	T anyDate();
+
+	T anyDateTime();
+
+	T anyTime();
+
+	T anyIso8601WithOffset();
+
+	T anyNonBlankString();
+
+	T anyNonEmptyString();
+
+	T anyOf(String... values);
 }

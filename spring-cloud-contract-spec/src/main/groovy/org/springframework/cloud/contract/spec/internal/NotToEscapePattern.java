@@ -16,18 +16,22 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import java.util.regex.Pattern;
+
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
+ * Special case of Patterns that we don't want to escape.
  *
  * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @since 1.0.3
  */
-public interface CanBeDynamic {
+public class NotToEscapePattern extends DslProperty<Pattern> {
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+	public NotToEscapePattern(Pattern clientValue, Pattern serverValue) {
+		super(clientValue, serverValue);
+	}
+
+	public NotToEscapePattern(Pattern singleValue) {
+		super(singleValue);
+	}
 
 }

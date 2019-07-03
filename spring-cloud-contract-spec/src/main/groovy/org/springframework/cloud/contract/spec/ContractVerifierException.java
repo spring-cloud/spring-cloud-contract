@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.spec.internal;
+package org.springframework.cloud.contract.spec;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
- *
- * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @author Jakub Kubrynski, codearte.io
  */
-public interface CanBeDynamic {
+public class ContractVerifierException extends RuntimeException {
 
-	/**
-	 * @return a generated, concrete value.
-	 */
-	Object generateConcreteValue();
+	public ContractVerifierException(String message) {
+		super(message);
+	}
+
+	public ContractVerifierException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 }

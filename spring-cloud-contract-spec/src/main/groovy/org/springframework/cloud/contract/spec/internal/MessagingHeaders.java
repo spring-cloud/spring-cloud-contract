@@ -17,17 +17,19 @@
 package org.springframework.cloud.contract.spec.internal;
 
 /**
- * Some properties can contain dynamic values. If that's the case we need to know how to
- * generate a concrete value for them.
+ * Contains most commonly used messaging headers.
  *
  * @author Marcin Grzejszczak
- * @since 2.1.0
+ * @since 1.1.2
  */
-public interface CanBeDynamic {
+public class MessagingHeaders {
 
 	/**
-	 * @return a generated, concrete value.
+	 * The Content Type of a message.
+	 * @return messaging content type
 	 */
-	Object generateConcreteValue();
+	public String messagingContentType() {
+		return "contentType";
+	}
 
 }
