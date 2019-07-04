@@ -1,5 +1,3 @@
-import org.springframework.cloud.contract.spec.Contract
-
 /*
  * Copyright 2013-2019 the original author or authors.
  *
@@ -15,6 +13,9 @@ import org.springframework.cloud.contract.spec.Contract
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.springframework.cloud.contract.spec.Contract
+
 Contract.make {
 	request {
 		method(GET())
