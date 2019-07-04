@@ -31,13 +31,13 @@ public class QueryParameters {
 		if (iterator.hasNext()) {
 			Map.Entry<String, Object> first = iterator.next();
 			if (first != null) {
-				parameters.add(new QueryParameter(first.getKey(), first.getValue()));
+				parameters.add(QueryParameter.build(first.getKey(), first.getValue()));
 			}
 		}
 	}
 
 	public void parameter(String parameterName, Object parameterValue) {
-		parameters.add(new QueryParameter(parameterName, parameterValue));
+		parameters.add(QueryParameter.build(parameterName, parameterValue));
 	}
 
 	public List<QueryParameter> getParameters() {

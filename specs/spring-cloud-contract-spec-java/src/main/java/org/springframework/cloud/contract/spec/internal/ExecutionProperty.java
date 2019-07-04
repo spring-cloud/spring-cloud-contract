@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.spec.internal;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents a property that will become an executable method in the generated tests.
@@ -50,6 +51,23 @@ public class ExecutionProperty implements Serializable {
 
 	public final String getExecutionCommand() {
 		return executionCommand;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		ExecutionProperty that = (ExecutionProperty) o;
+		return Objects.equals(executionCommand, that.executionCommand);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(executionCommand);
 	}
 
 }

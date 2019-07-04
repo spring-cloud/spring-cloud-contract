@@ -39,8 +39,16 @@ public class Cookie extends DslProperty {
 	}
 
 	public Cookie(String key, Object value) {
-		super(value);
+		super(ContractUtils.CLIENT_VALUE.apply(value),
+				ContractUtils.SERVER_VALUE.apply(value));
 		this.key = key;
+	}
+
+	public static Cookie build(String key, Object value) {
+		if (value instanceof MatchingStrategy) {
+			return new Cookie(key, (MatchingStrategy) value);
+		}
+		return new Cookie(key, value);
 	}
 
 	public String getKey() {
@@ -73,7 +81,7 @@ public class Cookie extends DslProperty {
 
 	@Override
 	public String toString() {
-		return "Cookie{" + "key='" + key + '\'' + '}';
+		return "Cookie{" + "key='" + key + '\'' + "}, value=" + super.toString();
 	}
 
 }

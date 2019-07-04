@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @author Tim Ysewyn
  * @since 1.0.0
  */
-class RegexPatterns {
+public class RegexPatterns {
 
 	// tag::regexps[]
 	protected static final Pattern TRUE_OR_FALSE = Pattern.compile("(true|false)");

@@ -46,6 +46,7 @@ import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
@@ -80,11 +81,14 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private final Request request
 	private final ContentType contentType
 
-	WireMockRequestStubStrategy(Contract groovyDsl) {
+	WireMockRequestStubStrategy(Contract groovyDsl, SingleContractMetadata singleContractMetadata) {
 		super(groovyDsl)
 		this.request = groovyDsl.request
-		this.contentType =
-				tryToGetContentType(request?.body?.clientValue, request?.headers)
+		this.contentType = contentType(singleContractMetadata)
+	}
+
+	protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.evaluatedInputStubContentType
 	}
 
 	@PackageScope
@@ -225,7 +229,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 										(it.value as NamedProperty).value.clientValue,
 										(it.value as NamedProperty).contentType?.clientValue))
 								: WireMock.
-								matching(RegexPatterns.multipartParam(it.key, it.value)))
+								matching(RegexPatterns.multipartParam(it.key, MapConverter.getStubSideValuesForNonBody(it.value))))
 					}
 			multipartPatterns.each {
 				requestPattern.withRequestBody(it)
@@ -312,7 +316,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)
-	private ContentPattern convertToValuePattern(Object object) {
+	protected ContentPattern convertToValuePattern(Object object) {
 		switch (object) {
 			case Pattern:
 			case RegexProperty:

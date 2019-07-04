@@ -40,13 +40,13 @@ public class Cookies {
 		if (iterator.hasNext()) {
 			Map.Entry<String, Object> first = iterator.next();
 			if (first != null) {
-				entries.add(new Cookie(first.getKey(), first.getValue()));
+				entries.add(Cookie.build(first.getKey(), first.getValue()));
 			}
 		}
 	}
 
 	public void cookie(String cookieKey, Object cookieValue) {
-		entries.add(new Cookie(cookieKey, cookieValue));
+		entries.add(Cookie.build(cookieKey, cookieValue));
 	}
 
 	public void executeForEachCookie(final Consumer<Cookie> consumer) {

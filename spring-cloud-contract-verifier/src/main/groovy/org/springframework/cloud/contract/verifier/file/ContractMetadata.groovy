@@ -81,6 +81,11 @@ class ContractMetadata {
 						.findAll { it != null }
 						.collect { new SingleContractMetadata(it, this) })
 	}
+
+	SingleContractMetadata forContract(Contract contract) {
+		return this.convertedContractWithMetadata
+				.find { it.contract == contract }
+	}
 }
 
 @CompileStatic

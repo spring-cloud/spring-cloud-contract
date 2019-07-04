@@ -33,11 +33,11 @@ import java.util.regex.Pattern;
  */
 public class Headers {
 
-	private static final BiFunction<String, Header, String> CLIENT_SIDE = (s,
-			header) -> header.getClientValue().toString();
+	private static final BiFunction<String, Header, Object> CLIENT_SIDE = (s,
+			header) -> ContractUtils.convertStubSideRecursively(header);
 
-	private static final BiFunction<String, Header, String> SERVER_SIDE = (s,
-			header) -> header.getServerValue().toString();
+	private static final BiFunction<String, Header, Object> SERVER_SIDE = (s,
+			header) -> ContractUtils.convertTestSideRecursively(header);
 
 	private MediaTypes mediaTypes = new MediaTypes();
 
@@ -52,13 +52,13 @@ public class Headers {
 		if (iterator.hasNext()) {
 			Map.Entry<String, Object> first = iterator.next();
 			if (first != null) {
-				entries.add(new Header(first.getKey(), first.getValue()));
+				entries.add(Header.build(first.getKey(), first.getValue()));
 			}
 		}
 	}
 
 	public void header(String headerKey, Object headerValue) {
-		entries.add(new Header(headerKey, headerValue));
+		entries.add(Header.build(headerKey, headerValue));
 	}
 
 	public void executeForEachHeader(final Consumer<Header> consumer) {
@@ -96,8 +96,8 @@ public class Headers {
 		return new NotToEscapePattern(pattern);
 	}
 
-	public Map<String, Object> asMap(final BiFunction<String, Header, String> consumer) {
-		final Map<String, Object> map = new LinkedHashMap<String, Object>();
+	public Map<String, Object> asMap(final BiFunction<String, Header, Object> consumer) {
+		final Map<String, Object> map = new LinkedHashMap<>();
 		entries.forEach(header -> map.put(header.getName(),
 				consumer.apply(header.getName(), header)));
 		return map;

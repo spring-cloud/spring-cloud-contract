@@ -66,6 +66,15 @@ class RegexpBuilders {
 	 * Converts the {@link Object} passed values into their stub side String representations
 	 */
 	static String buildGStringRegexpForStubSide(Object o) {
+		if (o instanceof DslProperty) {
+			return buildGStringRegexpForStubSide((DslProperty) o)
+		}
+		else if (o instanceof Pattern) {
+			return buildGStringRegexpForStubSide((Pattern) o)
+		}
+		else if (o instanceof GString) {
+			return buildGStringRegexpForStubSide((GString) o)
+		}
 		return escapeSpecialRegexChars(o.toString())
 	}
 

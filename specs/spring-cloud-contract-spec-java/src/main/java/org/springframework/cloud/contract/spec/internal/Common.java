@@ -21,8 +21,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,7 +42,14 @@ public class Common {
 			Map<String, Object> body) {
 		return body.entrySet().stream().collect(Collectors.toMap(
 				(Function<Map.Entry, String>) t -> t.getKey().toString(),
-				(Function<Map.Entry, DslProperty>) t -> toDslProperty(t.getValue())));
+				(Function<Map.Entry, DslProperty>) t -> toDslProperty(t.getValue()),
+				throwingMerger(), LinkedHashMap::new));
+	}
+
+	private static <T> BinaryOperator<T> throwingMerger() {
+		return (u, v) -> {
+			throw new IllegalStateException(String.format("Duplicate key %s", u));
+		};
 	}
 
 	public Collection convertObjectsToDslProperties(List<Object> body) {
@@ -212,7 +221,7 @@ public class Common {
 	 * @return String file contents
 	 */
 	public FromFileProperty fileAsBytes(String relativePath) {
-		return new FromFileProperty(fileLocation(relativePath), Byte[].class);
+		return new FromFileProperty(fileLocation(relativePath), byte[].class);
 	}
 
 	/**
@@ -261,7 +270,6 @@ public class Common {
 		if (!condition) {
 			throw new IllegalStateException(msg);
 		}
-
 	}
 
 	public void assertThatSidesMatch(Object firstSide, Object secondSide) {
@@ -269,15 +277,24 @@ public class Common {
 			assertThat(
 					secondSide.toString()
 							.matches(((OptionalProperty) firstSide).optionalPattern()),
-					"Pattern is not matched");
+					"Pattern [" + ((OptionalProperty) firstSide).optionalPattern()
+							+ "] is not matched by [" + secondSide.toString() + "]");
 		}
-		else if (firstSide instanceof Pattern && secondSide instanceof String) {
-			assertThat(((String) secondSide).toString()
-					.matches(((Pattern) firstSide).pattern()), "Pattern is not matched");
+		else if ((firstSide instanceof Pattern || firstSide instanceof RegexProperty)
+				&& secondSide instanceof String) {
+			Pattern pattern = firstSide instanceof Pattern ? (Pattern) firstSide
+					: ((RegexProperty) firstSide).getPattern();
+			assertThat(((String) secondSide).toString().matches(pattern.pattern()),
+					"Pattern [" + pattern.pattern() + "] is not matched by ["
+							+ secondSide.toString() + "]");
 		}
-		else if (secondSide instanceof Pattern && firstSide instanceof String) {
-			assertThat(((String) firstSide).toString()
-					.matches(((Pattern) secondSide).pattern()), "Pattern is not matched");
+		else if ((secondSide instanceof Pattern || secondSide instanceof RegexProperty)
+				&& firstSide instanceof String) {
+			Pattern pattern = secondSide instanceof Pattern ? (Pattern) secondSide
+					: ((RegexProperty) secondSide).getPattern();
+			assertThat(((String) firstSide).matches(pattern.pattern()),
+					"Pattern [" + pattern.pattern() + "] is not matched by ["
+							+ firstSide.toString() + "]");
 		}
 		else if (firstSide instanceof MatchingStrategy
 				&& secondSide instanceof MatchingStrategy) {

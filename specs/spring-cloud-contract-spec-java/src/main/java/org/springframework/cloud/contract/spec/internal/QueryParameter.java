@@ -44,10 +44,18 @@ public class QueryParameter extends DslProperty {
 	}
 
 	public QueryParameter(String name, Object value) {
-		super(value);
+		super(ContractUtils.CLIENT_VALUE.apply(value),
+				ContractUtils.SERVER_VALUE.apply(value));
 		ValidateUtils.validateServerValueIsAvailable(value,
 				"Query parameter \'" + name + "\'");
 		this.name = name;
+	}
+
+	public static QueryParameter build(String key, Object value) {
+		if (value instanceof MatchingStrategy) {
+			return new QueryParameter(key, (MatchingStrategy) value);
+		}
+		return new QueryParameter(key, value);
 	}
 
 	public String getName() {
@@ -80,7 +88,8 @@ public class QueryParameter extends DslProperty {
 
 	@Override
 	public String toString() {
-		return "QueryParameter{" + "name='" + name + '\'' + '}';
+		return "QueryParameter{" + "name='" + name + '\'' + ", value=" + super.toString()
+				+ '}';
 	}
 
 }

@@ -108,6 +108,9 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 		else if (o instanceof MatchingStrategy) {
 			return allowedQueryParameter((MatchingStrategy) o);
 		}
+		else if (o instanceof DslProperty) {
+			return allowedQueryParameter(((DslProperty) o).getServerValue());
+		}
 		return true;
 	}
 

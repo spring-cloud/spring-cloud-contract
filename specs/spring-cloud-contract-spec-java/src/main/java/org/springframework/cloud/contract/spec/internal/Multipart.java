@@ -36,8 +36,9 @@ public class Multipart extends DslProperty {
 						.collect(Collectors.toList()));
 	}
 
-	public Multipart(Object multipartAsValue) {
-		super(multipartAsValue);
+	public Multipart(Object value) {
+		super(ContractUtils.CLIENT_VALUE.apply(value),
+				ContractUtils.SERVER_VALUE.apply(value));
 	}
 
 	public Multipart(DslProperty multipartAsValue) {
@@ -45,7 +46,14 @@ public class Multipart extends DslProperty {
 	}
 
 	public Multipart(MatchingStrategy matchingStrategy) {
-		super(matchingStrategy, matchingStrategy);
+		super(matchingStrategy);
+	}
+
+	public static Multipart build(Object value) {
+		if (value instanceof MatchingStrategy) {
+			return new Multipart((MatchingStrategy) value);
+		}
+		return new Multipart(value);
 	}
 
 	private static Map<String, Object> extractValue(Map<String, DslProperty> multipart,

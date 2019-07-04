@@ -25,6 +25,7 @@ import org.springframework.cloud.contract.spec.internal.QueryParameter;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Url;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 
 class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolver {
 
@@ -87,7 +88,9 @@ class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolv
 	private String addQueryParameter(QueryParameter queryParam) {
 		return "." + QUERY_PARAM_METHOD + "("
 				+ this.bodyParser.quotedLongText(queryParam.getName()) + ","
-				+ this.bodyParser.quotedLongText(resolveParamValue(queryParam)) + ")";
+				+ this.bodyParser.quotedLongText(resolveParamValue(
+						MapConverter.getTestSideValuesForNonBody(queryParam)))
+				+ ")";
 	}
 
 	@Override

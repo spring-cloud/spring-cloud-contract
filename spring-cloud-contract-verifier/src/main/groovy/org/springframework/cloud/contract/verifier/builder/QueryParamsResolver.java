@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.OptionalProperty;
 import org.springframework.cloud.contract.spec.internal.QueryParameter;
@@ -34,6 +35,9 @@ interface QueryParamsResolver {
 		}
 		else if (value instanceof MatchingStrategy) {
 			return ((MatchingStrategy) value).getServerValue().toString();
+		}
+		else if (value instanceof DslProperty) {
+			return resolveParamValue(((DslProperty) value).getServerValue());
 		}
 		return value.toString();
 	}

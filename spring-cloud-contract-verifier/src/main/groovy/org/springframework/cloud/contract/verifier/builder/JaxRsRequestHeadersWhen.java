@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 
 class JaxRsRequestHeadersWhen implements When {
 
@@ -47,7 +48,9 @@ class JaxRsRequestHeadersWhen implements When {
 		while (iterator.hasNext()) {
 			Header header = iterator.next();
 			String text = ".header(\"" + header.getName() + "\", "
-					+ this.bodyParser.quotedLongText(header.getServerValue()) + ")";
+					+ this.bodyParser.quotedLongText(MapConverter
+							.getTestSideValuesForNonBody(header.getServerValue()))
+					+ ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
 			}

@@ -42,8 +42,9 @@ public class Body extends DslProperty {
 						.collect(Collectors.toList()));
 	}
 
-	public Body(Object bodyAsValue) {
-		super(bodyAsValue);
+	public Body(Object value) {
+		super(ContractUtils.CLIENT_VALUE.apply(value),
+				ContractUtils.SERVER_VALUE.apply(value));
 	}
 
 	public Body(Byte[] bodyAsValue) {

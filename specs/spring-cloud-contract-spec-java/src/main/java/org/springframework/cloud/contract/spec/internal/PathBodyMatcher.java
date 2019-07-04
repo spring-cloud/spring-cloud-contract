@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * @author Marcin Grzejszczak
  */
-class PathBodyMatcher implements BodyMatcher {
+public class PathBodyMatcher implements BodyMatcher {
 
 	private String path;
 

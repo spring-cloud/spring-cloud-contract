@@ -142,6 +142,14 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 
 	/**
 	 * Allows set an HTTP body.
+	 * @param matchingStrategy body to set
+	 */
+	public void body(MatchingStrategy matchingStrategy) {
+		this.body = new Body(matchingStrategy);
+	}
+
+	/**
+	 * Allows set an HTTP body.
 	 * @param dslProperty body to set
 	 */
 	public void body(DslProperty dslProperty) {
@@ -177,7 +185,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	 * @param multipartAsList multipart in a list notation
 	 */
 	public void multipart(List multipartAsList) {
-		this.multipart = new Multipart(convertObjectsToDslProperties(multipartAsList));
+		this.multipart = Multipart.build(convertObjectsToDslProperties(multipartAsList));
 	}
 
 	/**
@@ -193,7 +201,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	 * @param multipartAsValue multipart
 	 */
 	public void multipart(Object multipartAsValue) {
-		this.multipart = new Multipart(multipartAsValue);
+		this.multipart = Multipart.build(multipartAsValue);
 	}
 
 	/**
@@ -251,7 +259,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	}
 
 	/**
-	 * Sets absence scheck to the given query parameter.
+	 * Sets absence check to the given query parameter.
 	 * @return matching strategy
 	 */
 	public MatchingStrategy absent() {

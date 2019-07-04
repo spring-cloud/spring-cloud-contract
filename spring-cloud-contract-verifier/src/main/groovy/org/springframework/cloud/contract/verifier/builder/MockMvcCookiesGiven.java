@@ -33,11 +33,11 @@ class MockMvcCookiesGiven implements Given {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		processInput(this.blockBuilder, metadata.getContract().getRequest());
+		processInput(metadata.getContract().getRequest());
 		return this;
 	}
 
-	private void processInput(BlockBuilder bb, Request request) {
+	private void processInput(Request request) {
 		Iterator<Cookie> iterator = request.getCookies().getEntries().iterator();
 		while (iterator.hasNext()) {
 			Cookie cookie = iterator.next();

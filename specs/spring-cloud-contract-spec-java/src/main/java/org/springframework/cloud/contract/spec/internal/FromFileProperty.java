@@ -51,7 +51,7 @@ public class FromFileProperty implements Serializable {
 	}
 
 	public boolean isByte() {
-		return byte[].class.equals(this.type);
+		return byte[].class.equals(this.type) || Byte[].class.equals(this.type);
 	}
 
 	public String asString() {

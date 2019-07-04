@@ -941,13 +941,13 @@ response:
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
-												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
+												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json")']
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
-												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
+												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json")']
 
 	}
 
@@ -1014,11 +1014,11 @@ response:
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
+												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json")']
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
+												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json")']
 
 	}
 
@@ -1091,13 +1091,13 @@ response:
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
-												 '.multiPart("file", toString(), "file content".getBytes(), "application/json");']
+												 '.multiPart("file", toString(), "file content".getBytes(), "application/json")']
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
-												 '.multiPart("file", toString(), "file content".getBytes(), "application/json");']
+												 '.multiPart("file", toString(), "file content".getBytes(), "application/json")']
 
 	}
 

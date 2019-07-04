@@ -40,7 +40,7 @@ public class OptionalProperty implements Serializable, CanBeDynamic {
 	 * @return pattern wrapped in optional regular expresion
 	 */
 	public String optionalPattern() {
-		return "(" + value() + "})?";
+		return "(" + value() + ")?";
 	}
 
 	public String value() {

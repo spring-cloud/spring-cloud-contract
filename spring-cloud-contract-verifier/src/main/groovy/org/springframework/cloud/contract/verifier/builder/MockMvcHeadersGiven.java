@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 
 class MockMvcHeadersGiven implements Given {
 
@@ -56,7 +57,9 @@ class MockMvcHeadersGiven implements Given {
 
 	private String string(Header header) {
 		return ".header(" + ContentHelper.getTestSideForNonBodyValue(header.getName())
-				+ ", " + ContentHelper.getTestSideForNonBodyValue(header.getServerValue())
+				+ ", "
+				+ ContentHelper.getTestSideForNonBodyValue(
+						MapConverter.getTestSideValuesForNonBody(header.getServerValue()))
 				+ ")";
 	}
 

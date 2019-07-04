@@ -38,8 +38,16 @@ public class Header extends DslProperty {
 	}
 
 	public Header(String name, Object value) {
-		super(value);
+		super(ContractUtils.CLIENT_VALUE.apply(value),
+				ContractUtils.SERVER_VALUE.apply(value));
 		this.name = name;
+	}
+
+	public static Header build(String key, Object value) {
+		if (value instanceof MatchingStrategy) {
+			return new Header(key, (MatchingStrategy) value);
+		}
+		return new Header(key, value);
 	}
 
 	public String getName() {
