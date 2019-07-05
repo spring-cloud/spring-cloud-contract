@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
+import org.springframework.cloud.contract.spec.internal.RegexProperty;
 
 /**
  * Checks the validity of DSL entries.
@@ -50,6 +51,10 @@ public final class ValidateUtils {
 	public static Object validateServerValueIsAvailable(Object value, String msg) {
 		if (value instanceof Pattern) {
 			validateServerValue((Pattern) value, msg);
+		}
+		else if (value instanceof RegexProperty) {
+			RegexProperty property = (RegexProperty) value;
+			validateServerValue(property.getPattern(), msg);
 		}
 		else if (value instanceof MatchingStrategy) {
 			validateServerValue((MatchingStrategy) value, msg);

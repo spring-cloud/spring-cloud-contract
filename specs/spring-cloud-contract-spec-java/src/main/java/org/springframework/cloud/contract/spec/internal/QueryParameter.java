@@ -55,6 +55,10 @@ public class QueryParameter extends DslProperty {
 		if (value instanceof MatchingStrategy) {
 			return new QueryParameter(key, (MatchingStrategy) value);
 		}
+		else if (value instanceof RegexProperty) {
+			return new QueryParameter(key,
+					((RegexProperty) value).dynamicClientEscapedConcreteProducer());
+		}
 		return new QueryParameter(key, value);
 	}
 

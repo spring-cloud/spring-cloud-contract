@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import groovy.lang.Closure;
-
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 
@@ -50,7 +48,7 @@ public class TestCustomYamlContractConverter implements ContractConverter {
 
 	@Override
 	public Collection<Contract> convertFrom(File file) {
-		return Collections.singleton(Contract.make(Closure.IDENTITY));
+		return Collections.singleton(new Contract());
 	}
 
 	@Override

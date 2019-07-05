@@ -78,4 +78,9 @@ public class Header extends DslProperty {
 		return Objects.hash(super.hashCode(), name);
 	}
 
+	@Override
+	public String toString() {
+		return "Header{" + "name='" + name + '\'' + "} " + super.toString();
+	}
+
 }
