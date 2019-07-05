@@ -76,8 +76,8 @@ public class DslProperty<T> implements Serializable {
 
 	@Override
 	public String toString() {
-		return "DslProperty{" + "clientValue=" + clientValue + ", serverValue="
-				+ serverValue + '}';
+		return getClass().getSimpleName() + "{" + "\nclientValue=" + clientValue
+				+ ", \n\tserverValue=" + serverValue + '}';
 	}
 
 	public final T getClientValue() {

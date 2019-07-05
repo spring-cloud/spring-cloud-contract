@@ -140,7 +140,7 @@ public class Headers {
 
 	@Override
 	public String toString() {
-		return "Headers{" + "entries=" + entries + '}';
+		return "Headers{" + "\nentries=" + entries + '}';
 	}
 
 	public MediaTypes getMediaTypes() {

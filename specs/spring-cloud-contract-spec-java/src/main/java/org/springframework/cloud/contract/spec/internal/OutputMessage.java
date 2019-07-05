@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -279,6 +280,34 @@ public class OutputMessage extends Common
 	@Override
 	public ServerDslProperty anyOf(String... values) {
 		return property.anyOf(values);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		OutputMessage that = (OutputMessage) o;
+		return Objects.equals(sentTo, that.sentTo)
+				&& Objects.equals(headers, that.headers)
+				&& Objects.equals(body, that.body)
+				&& Objects.equals(assertThat, that.assertThat)
+				&& Objects.equals(bodyMatchers, that.bodyMatchers);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(sentTo, headers, body, assertThat, bodyMatchers);
+	}
+
+	@Override
+	public String toString() {
+		return "OutputMessage{" + "\n\tsentTo=" + sentTo + ", \n\theaders=" + headers
+				+ ", \n\tbody=" + body + ", \n\tassertThat=" + assertThat
+				+ ", \n\tbodyMatchers=" + bodyMatchers + "} \n\t" + super.toString();
 	}
 
 	private class ServerPatternValueDslProperty

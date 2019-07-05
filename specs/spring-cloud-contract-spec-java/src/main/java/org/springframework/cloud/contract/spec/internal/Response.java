@@ -715,9 +715,10 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 	@Override
 	public String toString() {
-		return "Response{" + "status=" + status + ", delay=" + delay + ", headers="
-				+ headers + ", cookies=" + cookies + ", body=" + body + ", async=" + async
-				+ ", bodyMatchers=" + bodyMatchers + '}';
+		return "Response{" + "\nstatus=" + status + ", \n\tdelay=" + delay
+				+ ", \n\theaders=" + headers + ", \n\tcookies=" + cookies + ", \n\tbody="
+				+ body + ", \n\tasync=" + async + ", \n\tbodyMatchers=" + bodyMatchers
+				+ '}';
 	}
 
 	static class ResponseHeaders extends Headers {

@@ -80,7 +80,7 @@ public class Header extends DslProperty {
 
 	@Override
 	public String toString() {
-		return "Header{" + "name='" + name + '\'' + "} " + super.toString();
+		return "Header{" + "\nname='" + name + '\'' + "} \n" + super.toString();
 	}
 
 }

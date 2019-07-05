@@ -268,11 +268,11 @@ public class Contract {
 
 	@Override
 	public String toString() {
-		return "Contract{" + "priority=" + priority + ", request=" + request
-				+ ", response=" + response + ", label='" + label + '\''
-				+ ", description='" + description + '\'' + ", name='" + name + '\''
-				+ ", input=" + input + ", outputMessage=" + outputMessage + ", ignored="
-				+ ignored + '}';
+		return "Contract{" + "\npriority=" + priority + ", \n\trequest=" + request
+				+ ", \n\tresponse=" + response + ", \n\tlabel='" + label + '\''
+				+ ", \n\tdescription='" + description + '\'' + ", \n\tname='" + name
+				+ '\'' + ", \n\tinput=" + input + ", \n\toutputMessage=" + outputMessage
+				+ ", \n\tignored=" + ignored + '}';
 	}
 
 }

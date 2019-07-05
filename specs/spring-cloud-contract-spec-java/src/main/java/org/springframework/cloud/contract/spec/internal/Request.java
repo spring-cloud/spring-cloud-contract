@@ -609,9 +609,10 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 
 	@Override
 	public String toString() {
-		return "Request{" + "method=" + method + ", url=" + url + ", urlPath=" + urlPath
-				+ ", headers=" + headers + ", cookies=" + cookies + ", body=" + body
-				+ ", multipart=" + multipart + ", bodyMatchers=" + bodyMatchers + '}';
+		return "Request{" + "\nmethod=" + method + ", \n\turl=" + url + ", \n\turlPath="
+				+ urlPath + ", \n\theaders=" + headers + ", \n\tcookies=" + cookies
+				+ ", \n\tbody=" + body + ", \n\tmultipart=" + multipart
+				+ ", \n\tbodyMatchers=" + bodyMatchers + '}';
 	}
 
 	static class RequestHeaders extends Headers {
