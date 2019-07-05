@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.spec;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.springframework.cloud.contract.spec.internal.Input;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
@@ -85,6 +86,7 @@ public class Contract {
 	private boolean ignored;
 
 	public Contract() {
+
 	}
 
 	/**
@@ -143,6 +145,17 @@ public class Contract {
 			}
 		}
 		// Can't assert messaging part cause Pact doesn't require destinations it seems
+	}
+
+	/**
+	 * Point of entry to build a contract.
+	 * @param consumer function to manipulate the contract
+	 * @return manipulated contract
+	 */
+	public static Contract make(Consumer<Contract> consumer) {
+		Contract contract = new Contract();
+		consumer.accept(contract);
+		return contract;
 	}
 
 	/**
