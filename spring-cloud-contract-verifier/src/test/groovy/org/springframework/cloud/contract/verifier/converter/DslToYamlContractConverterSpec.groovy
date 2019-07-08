@@ -357,7 +357,12 @@ class DslToYamlContractConverterSpec extends Specification {
 			List<Contract> contracts = [Contract.make {
 				request { // (1)
 					method 'PUT' // (2)
-					url '/fraudcheck' // (3)
+					urlPath('/fraudcheck') {
+						queryParameters {
+							parameter("foo", "bar")
+							parameter("foo2", $(c(equalToJson('''{"foo":"bar"}''')), p("foo3")))
+						}
+					}
 					body([ // (4)
 						   "client.id": $(regex('[0-9]{10}')),
 						   loanAmount : 99999
@@ -384,11 +389,15 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContracts.size() == 1
 			YamlContract yamlContract = yamlContracts.first()
 			yamlContract.request.method == "PUT"
-			yamlContract.request.url == "/fraudcheck"
+			yamlContract.request.urlPath == "/fraudcheck"
+			yamlContract.request.queryParameters == [
+					foo2: "foo3",
+					foo : "bar"
+			]
 			yamlContract.request.body["client.id"] =~ /[0-9]{10}/
 			yamlContract.request.body["loanAmount"] == 99999
 			yamlContract.request.headers == [
-					"Content-Type": "application/json",
+					"Content-Type" : "application/json",
 					"Authorization": 'Bearer SOMETOKEN'
 			]
 			yamlContract.request.matchers.headers == [
@@ -401,6 +410,9 @@ class DslToYamlContractConverterSpec extends Specification {
 							type: YamlContract.StubMatcherType.by_regex,
 							value: "[0-9]{10}",
 							regexType: YamlContract.RegexType.as_string),
+			]
+			yamlContract.request.matchers.queryParameters == [
+					new YamlContract.QueryParameterMatcher(key: "foo2", type: YamlContract.MatchingType.equal_to_json, value: '''{"foo":"bar"}'''),
 			]
 			yamlContract.response.status == 200
 			yamlContract.response.body == [fraudCheckStatus  : "FRAUD",

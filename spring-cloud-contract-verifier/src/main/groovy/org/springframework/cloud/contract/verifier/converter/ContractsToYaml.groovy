@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
-
 import java.util.regex.Pattern
 
 import groovy.transform.PackageScope
@@ -28,11 +27,13 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.Multipart
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.RegexProperty
+import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.converter.YamlContract.RegexType
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
@@ -41,6 +42,7 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
+
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
@@ -137,6 +139,22 @@ class ContractsToYaml {
 			request.method = contract.request?.method?.serverValue
 			request.url = contract.request?.url?.serverValue
 			request.urlPath = contract.request?.urlPath?.serverValue
+			request.matchers = new YamlContract.StubMatchers()
+			Url requestUrl = contract.request.url ?: contract.request.urlPath
+			if (requestUrl.queryParameters != null) {
+				request.queryParameters = requestUrl.queryParameters
+						.parameters.collectEntries {
+					def testSide = MapConverter.getTestSideValuesForNonBody(it)
+					def stubSide = it.clientValue
+					if (stubSide instanceof RegexProperty || stubSide instanceof Pattern) {
+						request.matchers.queryParameters.add(new YamlContract.QueryParameterMatcher(key: it.name, type: YamlContract.MatchingType.matching, value: new RegexProperty(stubSide).pattern()))
+					}
+					else if (stubSide instanceof MatchingStrategy) {
+						request.matchers.queryParameters.add(new YamlContract.QueryParameterMatcher(key: it.name, type: YamlContract.MatchingType.from(stubSide.getType().name), value: MapConverter.getStubSideValuesForNonBody(stubSide)))
+					}
+					return [(it.name): testSide]
+						}
+			}
 			request.headers = (contract.request?.headers as Headers)?.asMap {
 				String headerName, DslProperty prop ->
 					def testSideValue = MapConverter.getTestSideValues(prop)
@@ -183,7 +201,6 @@ class ContractsToYaml {
 					}
 				}
 			}
-			request.matchers = new YamlContract.StubMatchers()
 			contract.request?.bodyMatchers?.matchers()?.each { BodyMatcher matcher ->
 				request.matchers.body << new YamlContract.BodyStubMatcher(
 						path: matcher.path(),

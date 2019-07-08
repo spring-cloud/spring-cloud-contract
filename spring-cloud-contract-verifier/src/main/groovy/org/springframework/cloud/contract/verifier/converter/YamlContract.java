@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -254,7 +255,14 @@ public class YamlContract {
 
 	public enum MatchingType {
 
-		equal_to, containing, matching, not_matching, equal_to_json, equal_to_xml, absent;
+		equal_to, containing, matching, not_matching, equal_to_json, equal_to_xml, absent, binary_equal_to;
+
+		static MatchingType from(String string) {
+			return Arrays.stream(values())
+					.filter(matchingType -> matchingType.name().replace("_", "")
+							.equalsIgnoreCase(string.toLowerCase().replace("_", "")))
+					.findFirst().orElse(null);
+		}
 
 	}
 
