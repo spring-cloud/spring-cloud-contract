@@ -22,6 +22,7 @@ import org.springframework.cloud.contract.spec.internal.NamedProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent;
 
@@ -74,7 +75,9 @@ class MockMvcMultipartGiven implements Given {
 
 	private String getParameterString(Map.Entry<String, Object> parameter) {
 		return ".param(" + this.bodyParser.quotedShortText(parameter.getKey()) + ", "
-				+ this.bodyParser.quotedShortText(parameter.getValue()) + ")";
+				+ this.bodyParser.quotedShortText(
+						MapConverter.getTestSideValuesForNonBody(parameter.getValue()))
+				+ ")";
 	}
 
 	@Override

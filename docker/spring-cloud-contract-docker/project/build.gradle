@@ -144,3 +144,17 @@ String getProp(String propName) {
 			(getProperty(propName) ?: System.properties[propName]) : System.properties[propName] ?:
 			System.getenv(propName)
 }
+
+task resolveDependencies {
+	description "Pre-downloads *most* dependencies"
+	doLast {
+		configurations.getAsMap().each { name, config ->
+			println "Retrieving dependencies for $name"
+			try {
+				config.files
+			} catch (e) {
+				project.logger.info e.message // some cannot be resolved, silentlyish skip them
+			}
+		}
+	}
+}

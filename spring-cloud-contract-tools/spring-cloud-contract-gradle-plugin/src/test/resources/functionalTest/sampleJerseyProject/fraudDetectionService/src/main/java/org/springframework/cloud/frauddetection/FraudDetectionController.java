@@ -23,10 +23,6 @@ import org.springframework.cloud.frauddetection.model.FraudCheckResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.math.BigDecimal;
-
 import static org.springframework.cloud.frauddetection.model.FraudCheckStatus.FRAUD;
 import static org.springframework.cloud.frauddetection.model.FraudCheckStatus.OK;
 

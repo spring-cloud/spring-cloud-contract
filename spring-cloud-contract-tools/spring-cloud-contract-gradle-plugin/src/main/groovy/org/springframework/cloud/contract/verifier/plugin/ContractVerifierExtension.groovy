@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -28,6 +29,7 @@ import org.springframework.cloud.contract.verifier.config.TestMode
  * @author Marcin Grzejszczak
  */
 @ToString
+@CompileStatic
 class ContractVerifierExtension {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierExtension)
@@ -251,8 +253,8 @@ class ContractVerifierExtension {
 				excludedFiles: new ArrayList<String>(this.excludedFiles),
 				includedFiles: new ArrayList<String>(this.includedFiles),
 				ignoredFiles: new ArrayList<String>(this.ignoredFiles),
-				imports: Arrays.asList(this.imports).toArray(),
-				staticImports: Arrays.asList(this.staticImports).toArray(),
+				imports: Arrays.asList(this.imports).toArray() as String[],
+				staticImports: Arrays.asList(this.staticImports).toArray() as String[],
 				contractsDslDir: this.contractsDslDir,
 				generatedTestSourcesDir: this.generatedTestSourcesDir,
 				generatedTestResourcesDir: this.generatedTestResourcesDir,

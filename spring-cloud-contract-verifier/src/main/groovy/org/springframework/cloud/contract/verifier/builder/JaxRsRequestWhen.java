@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.util.StringUtils;
 
 class JaxRsRequestWhen implements When, JaxRsAcceptor, QueryParamsResolver {
@@ -57,7 +58,8 @@ class JaxRsRequestWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 		if (foundHeader == null) {
 			return "";
 		}
-		return foundHeader.getServerValue().toString();
+		return MapConverter.getTestSideValuesForNonBody(foundHeader.getServerValue())
+				.toString();
 	}
 
 	@Override

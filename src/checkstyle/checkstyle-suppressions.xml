@@ -42,4 +42,7 @@
 	<suppress files=".*WiremockServerApplicationTests.*" checks="LineLengthCheck"/>
 	<suppress files=".*ContractVerifierConfigProperties.*" checks="JavadocStyle"/>
 	<suppress files=".*YamlContract.*" checks="JavadocVariable"/>
+	<suppress files=".*HttpHeaders.*" checks=".*"/>
+	<suppress files=".*HttpMethods.*" checks=".*"/>
+	<suppress files=".*HttpStatus.*" checks=".*"/>
 </suppressions>

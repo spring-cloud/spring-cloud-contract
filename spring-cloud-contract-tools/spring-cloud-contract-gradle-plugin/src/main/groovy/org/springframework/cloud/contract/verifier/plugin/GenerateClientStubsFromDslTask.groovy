@@ -16,14 +16,14 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.Task
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.TaskAction
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter
-
-import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
 
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
@@ -32,6 +32,7 @@ import static org.springframework.cloud.contract.verifier.plugin.SpringCloudCont
  *
  * @since 2.0.0
  */
+@CompileStatic
 class GenerateClientStubsFromDslTask extends ConventionTask {
 
 	File stubsOutputDir
@@ -42,7 +43,7 @@ class GenerateClientStubsFromDslTask extends ConventionTask {
 	@TaskAction
 	void generate() {
 		logger.info("Stubs output dir [${getStubsOutputDir()}")
-		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
+		Task copyContractsTask = project.getTasksByName(SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME, false).first()
 		ContractVerifierConfigProperties props = props(copyContractsTask)
 		File contractsDslDir = contractsDslDir(copyContractsTask, props)
 		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion")
@@ -54,6 +55,7 @@ class GenerateClientStubsFromDslTask extends ConventionTask {
 		converter.processFiles()
 	}
 
+	@CompileDynamic
 	private ContractVerifierConfigProperties props(Task task) {
 		try {
 			return task.ext.contractVerifierConfigProperties
@@ -66,6 +68,7 @@ class GenerateClientStubsFromDslTask extends ConventionTask {
 		}
 	}
 
+	@CompileDynamic
 	private File contractsDslDir(Task task, ContractVerifierConfigProperties props) {
 		try {
 			return task.ext.contractsDslDir

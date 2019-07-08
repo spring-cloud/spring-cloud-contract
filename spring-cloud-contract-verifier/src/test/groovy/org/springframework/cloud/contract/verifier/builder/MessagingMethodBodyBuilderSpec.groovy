@@ -1581,14 +1581,14 @@ class FooSpec extends Specification {
 
 \t\tand:
 \t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+")
-\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?")
-\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?")
-\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")
-\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
 \t\t\tassertThatJson(parsedJson).field("['type']").isEqualTo("CREATED")
 \t\t\tassertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
+\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?")
 \t\t\tassertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+")
+\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?")
+\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+")
+\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")
+\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
 \t}
 
 }
@@ -1637,18 +1637,17 @@ public class FooTest {
 
 \t\t// and:
 \t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+");
-\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?");
-\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?");
-\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)");
-\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
 \t\t\tassertThatJson(parsedJson).field("['type']").isEqualTo("CREATED");
 \t\t\tassertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?");
 \t\t\tassertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+");
+\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?");
+\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+");
+\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)");
+\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
 \t}
 
 }
-
 """
 	}
 }

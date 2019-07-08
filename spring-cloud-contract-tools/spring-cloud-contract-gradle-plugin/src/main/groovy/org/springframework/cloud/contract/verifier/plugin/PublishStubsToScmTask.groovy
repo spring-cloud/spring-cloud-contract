@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-
+import groovy.transform.CompileStatic
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.TaskAction
 
@@ -32,6 +32,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
+@CompileStatic
 class PublishStubsToScmTask extends ConventionTask {
 	File stubsOutputDir
 	ContractVerifierExtension configProperties

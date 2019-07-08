@@ -35,11 +35,11 @@ class WireMockToDslConverterSpec extends Specification {
 		"method": "GET",
 		"url": "/path",
 		"headers" : {
-			"Accept": {
-				"matches": "text/.*"
-			},
 			"X-Custom-Header": {
 				"contains": "2134"
+			},
+			"Accept": {
+				"matches": "text/.*"
 			}
 		}
 	},
@@ -60,15 +60,14 @@ class WireMockToDslConverterSpec extends Specification {
 					method 'GET'
 					url '/path'
 					headers {
-						header('Accept': $(
-								consumer(regex('text/.*')),
-								producer('text/plain')
-						))
 						header('X-Custom-Header': $(
 								consumer(regex('^.*2134.*$')),
 								producer('121345')
 						))
-
+						header('Accept': $(
+								consumer(regex('text/.*')),
+								producer('text/plain')
+						))
 					}
 				}
 				response {
@@ -83,19 +82,25 @@ class WireMockToDslConverterSpec extends Specification {
 }""")
 					headers {
 						header 'Content-Type': 'text/plain'
-
 					}
 				}
 			}
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			def a = ContractVerifierDslConverter.convertAsCollection(new File("/"),
+			def contracts = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""")
 			def b = expectedGroovyDsl
-			a.first() == b
+			def a = contracts.first()
+			a.request.method == b.request.method
+			a.request.url == b.request.url
+			a.request.headers.entries.find { it.name == 'X-Custom-Header'}.clientValue.pattern() ==
+			b.request.headers.entries.find { it.name == 'X-Custom-Header'}.clientValue.pattern()
+			a.request.headers.entries.find { it.name == 'Accept'}.clientValue.pattern() ==
+			b.request.headers.entries.find { it.name == 'Accept'}.clientValue.pattern()
+			a.response == b.response
 	}
 
 

@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.spec.internal.Cookie;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 
 class JaxRsRequestCookiesWhen implements When {
 
@@ -47,7 +48,8 @@ class JaxRsRequestCookiesWhen implements When {
 		while (iterator.hasNext()) {
 			Cookie cookie = iterator.next();
 			String value = ".cookie(" + this.bodyParser.quotedShortText(cookie.getKey())
-					+ ", " + this.bodyParser.quotedShortText(cookie.getServerValue())
+					+ ", " + this.bodyParser.quotedShortText(MapConverter
+							.getTestSideValuesForNonBody(cookie.getServerValue()))
 					+ ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(value);

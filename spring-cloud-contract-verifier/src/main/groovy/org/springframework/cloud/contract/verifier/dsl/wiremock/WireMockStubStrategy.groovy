@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 
 /**
  * Converts a {@link ContractMetadata} into a WireMock stub
@@ -42,8 +43,9 @@ class WireMockStubStrategy {
 	WireMockStubStrategy(String rootName, ContractMetadata contract, Contract groovyDsl) {
 		this.rootName = rootName
 		this.contract = contract
-		this.wireMockRequestStubStrategy = new WireMockRequestStubStrategy(groovyDsl)
-		this.wireMockResponseStubStrategy = new WireMockResponseStubStrategy(groovyDsl)
+		SingleContractMetadata singleContractMetadata = contract.forContract(groovyDsl)
+		this.wireMockRequestStubStrategy = new WireMockRequestStubStrategy(groovyDsl, singleContractMetadata)
+		this.wireMockResponseStubStrategy = new WireMockResponseStubStrategy(groovyDsl, singleContractMetadata)
 		this.priority = groovyDsl.priority
 		this.groovyDsl = groovyDsl
 	}
@@ -53,7 +55,6 @@ class WireMockStubStrategy {
 	 */
 	String toWireMockClientStub() {
 		StubMapping stubMapping = new StubMapping()
-
 		RequestPattern request = wireMockRequestStubStrategy.buildClientRequestContent()
 		ResponseDefinition response = wireMockResponseStubStrategy.
 				buildClientResponseContent()

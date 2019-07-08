@@ -264,7 +264,7 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.response.matchers.headers == [
 					new YamlContract.TestHeaderMatcher(
-							key: "Content-Type", regex: "application/json.*"),
+							key: "Content-Type", regex: "application/json.*", regexType: YamlContract.RegexType.as_string),
 					new YamlContract.TestHeaderMatcher(
 							key: "Some-Header", regex: "[a-zA-Z]{9}", regexType: YamlContract.RegexType.as_string)
 			]
@@ -408,7 +408,7 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.response.matchers.headers == [
 					new YamlContract.TestHeaderMatcher(
-							key: "Content-Type", regex: "application/json.*")
+							key: "Content-Type", regex: "application/json.*", regexType: YamlContract.RegexType.as_string)
 			]
 			yamlContract.response.matchers.body == [
 					new YamlContract.BodyTestMatcher(

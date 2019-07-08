@@ -42,12 +42,9 @@ import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-
 /**
  * Creator of {@link Contract} instances
  *
@@ -96,8 +93,8 @@ class RequestResponseSCContractCreator {
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
 										v.each({
-											header(k, new DslProperty((Object) Pattern.
-													compile(((RegexMatcher) rule).getRegex()), it))
+											header(k, $(c(regex(((RegexMatcher) rule).getRegex())),
+													p(it)))
 										})
 									}
 									else {
@@ -276,8 +273,9 @@ class RequestResponseSCContractCreator {
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
 										v.each({
-											header(k, new DslProperty(new DslProperty(it), new NotToEscapePattern(Pattern.
-													compile(((RegexMatcher) rule).getRegex()))))
+											header(k, $(p(regex(Pattern.compile(
+													((RegexMatcher) rule).getRegex()))),
+													c(it)))
 										})
 
 									}

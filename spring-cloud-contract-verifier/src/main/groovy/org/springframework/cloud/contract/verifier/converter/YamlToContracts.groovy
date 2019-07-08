@@ -591,7 +591,7 @@ class YamlToContracts {
 
 	private Headers yamlHeadersToContractHeaders(Map<String, Object> headers) {
 		Set<Header> convertedHeaders = headers.keySet().stream()
-			.map({ new Header(it, headers.get(it)) })
+			.map({ Header.build(it, headers.get(it)) })
 			.collect(toSet())
 		Headers contractHeaders = new Headers()
 		contractHeaders.headers(convertedHeaders)

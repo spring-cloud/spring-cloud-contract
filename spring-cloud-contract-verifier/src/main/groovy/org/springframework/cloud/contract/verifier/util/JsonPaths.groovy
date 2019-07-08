@@ -24,6 +24,6 @@ import groovy.transform.CompileStatic
  * @since 1.0.0
  */
 @CompileStatic
-class JsonPaths extends HashSet<MethodBufferingJsonVerifiable> {
+class JsonPaths extends LinkedHashSet<MethodBufferingJsonVerifiable> {
 }
 
