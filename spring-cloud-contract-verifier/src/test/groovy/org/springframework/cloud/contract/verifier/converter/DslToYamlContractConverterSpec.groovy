@@ -361,6 +361,7 @@ class DslToYamlContractConverterSpec extends Specification {
 					])
 					headers { // (5)
 						contentType('application/json')
+						header(authorization(), $(c('Bearer SOMETOKEN'), p(execute('authToken()'))))
 					}
 				}
 				response { // (6)
@@ -384,7 +385,8 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContract.request.body["client.id"] =~ /[0-9]{10}/
 			yamlContract.request.body["loanAmount"] == 99999
 			yamlContract.request.headers == [
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+					"Authorization": 'Bearer SOMETOKEN'
 			]
 			yamlContract.request.matchers.headers == [
 					new YamlContract.KeyValueMatcher(
@@ -553,8 +555,8 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContract.request.method == 'GET'
 			yamlContract.request.url == '/get'
 			yamlContract.request.body.replaceAll("\n", "")
-						.replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
-															   .replaceAll(' ', '')
+									 .replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
+																			.replaceAll(' ', '')
 			yamlContract.request.headers == [
 					"Content-Type": "application/xml"
 			]
@@ -566,8 +568,8 @@ class DslToYamlContractConverterSpec extends Specification {
 			]
 			yamlContract.response.status == 200
 			yamlContract.response.body.replaceAll("\n", "")
-						.replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
-															   .replaceAll(' ', '')
+									  .replaceAll(' ', '') == xmlContractBody.replaceAll("\n", "")
+																			 .replaceAll(' ', '')
 			yamlContract.response.matchers.body == [
 					new YamlContract.BodyTestMatcher(
 							path: '/test/duck/xxx',
