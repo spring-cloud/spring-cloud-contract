@@ -93,7 +93,12 @@ class YamlContract {
 	@CompileStatic
 	enum MatchingType {
 		equal_to, containing, matching, not_matching, equal_to_json,
-		equal_to_xml, absent
+		equal_to_xml, absent, binary_equal_to
+
+		static MatchingType from(String string) {
+			return values()
+					.find { MatchingType type -> (type.name().replace("_", "") == string.toLowerCase().replace("_", "")) }
+		}
 	}
 
 	@CompileStatic
