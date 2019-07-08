@@ -1644,6 +1644,7 @@ $ touch .springformat
 ==== Intellij IDEA
 
 In order to setup Intellij you should import our coding conventions, inspection profiles and set up the checkstyle plugin.
+The following files can be found in the https://github.com/spring-cloud/spring-cloud-build/tree/master/spring-cloud-build-tools[Spring Cloud Build] project.
 
 .spring-cloud-build-tools/
 ----
@@ -1711,10 +1712,12 @@ Here you can find the Spring Cloud Contract folder structure
 ├── docker
 ├── samples
 ├── scripts
+├── specs
 ├── spring-cloud-contract-dependencies
-├── spring-cloud-contract-spec
+├── spring-cloud-contract-shade
 ├── spring-cloud-contract-starters
 ├── spring-cloud-contract-stub-runner
+├── spring-cloud-contract-stub-runner-boot
 ├── spring-cloud-contract-tools
 ├── spring-cloud-contract-verifier
 ├── spring-cloud-contract-wiremock
@@ -1725,7 +1728,9 @@ Here you can find the Spring Cloud Contract folder structure
  - `docker` - folder contains docker images
  - `samples` - folder contains test samples together with standalone ones used also to build documentation
  - `scripts` - contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle and standalone projects
+ - `specs` - contains specifications for the Contract DSL.
  - `spring-cloud-contract-dependencies` - contains Spring Cloud Contract BOM
+ - `spring-cloud-contract-shade` - shaded dependencies used by the plugins
  - `spring-cloud-contract-starters` - contains Spring Cloud Contract Starters
  - `spring-cloud-contract-spec` - contains specification modules (contains concept of a Contract)
  - `spring-cloud-contract-stub-runner` - contains Stub Runner related modules

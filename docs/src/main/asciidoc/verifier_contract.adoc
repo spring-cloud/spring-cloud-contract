@@ -67,7 +67,7 @@ following code shows an example:
 .Groovy DSL
 [source,groovy,indent=0]
 ----
-include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=description,indent=0]
+include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=description,indent=0]
 ----
 
 .YAML
@@ -92,7 +92,7 @@ override each other.
 .Groovy DSL
 [source,groovy,indent=0]
 ----
-include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=name,indent=0]
+include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=name,indent=0]
 ----
 
 .YAML
@@ -110,7 +110,7 @@ plugin configuration or set the `ignored` property on the contract itself:
 .Groovy DSL
 [source,groovy,indent=0]
 ----
-include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=ignored,indent=0]
+include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=ignored,indent=0]
 ----
 
 .YAML
@@ -480,9 +480,9 @@ generated for request and response.
 Spring Cloud Contract comes with a series of predefined regular expressions that you can
 use in your contracts, as shown in the following example:
 
-[source,groovy,indent=0]
+[source,java,indent=0]
 ----
-include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/internal/RegexPatterns.groovy[tags=regexps,indent=0]
+include::{contract_spec_path}/src/main/java/org/springframework/cloud/contract/spec/internal/RegexPatterns.java[tags=regexps,indent=0]
 ----
 
 In your contract, you can use it as shown in the following example:
@@ -495,9 +495,9 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 To make matters even simpler you can use a set of predefined objects that will automatically assume that you want a regular expression to be passed.
 All of those methods start with `any` prefix:
 
-[source,groovy,indent=0]
+[source,java,indent=0]
 ----
-include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/internal/RegexCreatingProperty.groovy[tags=regex_creating_props,indent=0]
+include::{contract_spec_path}/src/main/java/org/springframework/cloud/contract/spec/internal/RegexCreatingProperty.java[tags=regex_creating_props,indent=0]
 ----
 
 and this is an example of how you can reference those methods:
@@ -1644,9 +1644,9 @@ can generate stubs for other HTTP server implementations).
 The `ContractConverter` interface lets you register your own implementation of a contract
 structure converter. The following code listing shows the `ContractConverter` interface:
 
-[source,groovy]
+[source,java]
 ----
-include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/ContractConverter.groovy[indent=0,lines=17..-1]
+include::{contract_spec_path}/src/main/java/org/springframework/cloud/contract/spec/ContractConverter.java[indent=0,lines=17..-1]
 ----
 
 Your implementation must define the condition on which it should start the
