@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
+
 import java.util.regex.Pattern
 
 import groovy.transform.PackageScope
@@ -138,7 +139,11 @@ class ContractsToYaml {
 			request.urlPath = contract.request?.urlPath?.serverValue
 			request.headers = (contract.request?.headers as Headers)?.asMap {
 				String headerName, DslProperty prop ->
-					MapConverter.getTestSideValues(prop).toString()
+					def testSideValue = MapConverter.getTestSideValues(prop)
+					if (testSideValue instanceof ExecutionProperty) {
+						return MapConverter.getStubSideValuesForNonBody(prop).toString()
+					}
+					return testSideValue.toString()
 			}
 			request.cookies = (contract.request?.cookies as Cookies)?.asTestSideMap()
 			Object body = contract.request?.body?.serverValue

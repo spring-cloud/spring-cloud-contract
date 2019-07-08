@@ -25,7 +25,8 @@ import org.springframework.cloud.contract.spec.ContractConverter
 /**
  * Simple converter from and to a {@link YamlContract} to a collection of {@link Contract}
  *
- * @since 1.2.1* @author Marcin Grzejszczak
+ * @since 1.2.1
+ * @author Marcin Grzejszczak
  * @author Tim Ysewyn
  */
 @Slf4j

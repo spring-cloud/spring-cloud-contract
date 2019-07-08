@@ -364,6 +364,7 @@ class DslToYamlContractConverterSpec extends Specification {
 					])
 					headers { // (5)
 						contentType('application/json')
+						header(authorization(), $(c('Bearer SOMETOKEN'), p(execute('authToken()'))))
 					}
 				}
 				response { // (6)
@@ -387,7 +388,8 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContract.request.body["client.id"] =~ /[0-9]{10}/
 			yamlContract.request.body["loanAmount"] == 99999
 			yamlContract.request.headers == [
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+					"Authorization": 'Bearer SOMETOKEN'
 			]
 			yamlContract.request.matchers.headers == [
 					new YamlContract.KeyValueMatcher(
