@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.util
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
 import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.util.StringUtils
@@ -70,6 +71,16 @@ class ContractVerifierDslConverter {
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
+		}
+	}
+
+	// To load additional Groovy modules (required by Gradle)
+	private static boolean isGradle() {
+		try {
+			Class.forName("org.gradle.api.Project")
+			return true
+		} catch (ClassNotFoundException ex) {
+			return false
 		}
 	}
 

@@ -17,7 +17,11 @@
 package org.springframework.cloud.contract.spec.internal;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an input for messaging. The input can be a message or some action inside the
@@ -28,6 +32,8 @@ import java.util.regex.Pattern;
  * @since 1.0.0
  */
 public class Input extends Common implements RegexCreatingProperty<ClientDslProperty> {
+
+	private static final Log log = LogFactory.getLog(Input.class);
 
 	private ClientPatternValueDslProperty property = new ClientPatternValueDslProperty();
 
@@ -272,6 +278,38 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 	@Override
 	public ClientDslProperty anyOf(String... values) {
 		return property.anyOf(values);
+	}
+
+	/**
+	 * The message headers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 */
+	public void messageHeaders(Consumer<Headers> consumer) {
+		this.messageHeaders = new Headers();
+		consumer.accept(this.messageHeaders);
+	}
+
+	/**
+	 * The stub matchers part of the contract.
+	 * @param consumer function to manipulate the body headers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void stubMatchers(Consumer<BodyMatchers> consumer) {
+		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * The stub matchers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	public void bodyMatchers(Consumer<BodyMatchers> consumer) {
+		this.bodyMatchers = new BodyMatchers();
+		consumer.accept(this.bodyMatchers);
 	}
 
 	@Override

@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.spec.internal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -46,7 +47,7 @@ public class BodyMatchers {
 	 * @param matchingTypeValue to match the element found by the xPath against
 	 */
 	public void xPath(String xPath, MatchingTypeValue matchingTypeValue) {
-		matchers.add(new PathBodyMatcher(xPath, matchingTypeValue));
+		this.matchers.add(new PathBodyMatcher(xPath, matchingTypeValue));
 	}
 
 	/**
@@ -122,7 +123,18 @@ public class BodyMatchers {
 
 	@Override
 	public String toString() {
-		return "BodyMatchers{" + "matchers=" + matchers + '}';
+		return "BodyMatchers{" + "\nmatchers=" + matchers + '}';
+	}
+
+	/**
+	 * The output part of the contract.
+	 * @param consumer function to manipulate the output message
+	 * @return matching type
+	 */
+	public MatchingTypeValue byType(Consumer<MatchingTypeValueHolder> consumer) {
+		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder();
+		consumer.accept(matchingTypeValue);
+		return matchingTypeValue.matchingTypeValue;
 	}
 
 }

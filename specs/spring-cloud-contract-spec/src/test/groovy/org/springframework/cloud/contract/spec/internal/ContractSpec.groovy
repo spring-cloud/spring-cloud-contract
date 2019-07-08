@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
 
 import static org.assertj.core.api.Assertions.assertThat
-
 /**
  * @author Marcin Grzejszczak
  */

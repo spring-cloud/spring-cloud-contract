@@ -19,7 +19,11 @@ package org.springframework.cloud.contract.spec.internal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.spec.util.RegexpUtils;
 
@@ -31,6 +35,8 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils;
  * @since 1.0.0
  */
 public class Response extends Common implements RegexCreatingProperty<ServerDslProperty> {
+
+	private static final Log log = LogFactory.getLog(Response.class);
 
 	private DslProperty status;
 
@@ -719,6 +725,44 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 				+ ", \n\theaders=" + headers + ", \n\tcookies=" + cookies + ", \n\tbody="
 				+ body + ", \n\tasync=" + async + ", \n\tbodyMatchers=" + bodyMatchers
 				+ '}';
+	}
+
+	/**
+	 * Allows to configure HTTP headers.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void headers(Consumer<ResponseHeaders> consumer) {
+		this.headers = new Response.ResponseHeaders();
+		consumer.accept((ResponseHeaders) this.headers);
+	}
+
+	/**
+	 * Allows to configure HTTP cookies.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void cookies(Consumer<Response.ResponseCookies> consumer) {
+		this.cookies = new Response.ResponseCookies();
+		consumer.accept((ResponseCookies) this.cookies);
+	}
+
+	/**
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 * @param consumer function to manipulate the URL
+	 */
+	@Deprecated
+	public void testMatchers(Consumer<ResponseBodyMatchers> consumer) {
+		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * Allows to set matchers for the body.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void bodyMatchers(Consumer<ResponseBodyMatchers> consumer) {
+		this.bodyMatchers = new ResponseBodyMatchers();
+		consumer.accept(this.bodyMatchers);
 	}
 
 	static class ResponseHeaders extends Headers {

@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 /**
- * Describes the type of communication
+ * Describes the type of communication.
  *
  * @author Marcin Grzejszczak
  * @since 2.1.0

@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 import org.springframework.cloud.contract.spec.util.ValidateUtils;
 
 /**
@@ -48,6 +51,41 @@ public class Url extends DslProperty {
 
 	public void setQueryParameters(QueryParameters queryParameters) {
 		this.queryParameters = queryParameters;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		if (!super.equals(o)) {
+			return false;
+		}
+		Url url = (Url) o;
+		return Objects.equals(queryParameters, url.queryParameters);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), queryParameters);
+	}
+
+	@Override
+	public String toString() {
+		return "Url{" + "\nqueryParameters=" + queryParameters + "} \n"
+				+ super.toString();
+	}
+
+	/**
+	 * The query parameters part of the contract.
+	 * @param consumer function to manipulate the query parameters
+	 */
+	public void queryParameters(Consumer<QueryParameters> consumer) {
+		this.queryParameters = new QueryParameters();
+		consumer.accept(this.queryParameters);
 	}
 
 }

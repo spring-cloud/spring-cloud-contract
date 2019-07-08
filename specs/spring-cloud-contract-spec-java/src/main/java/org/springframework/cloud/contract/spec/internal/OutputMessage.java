@@ -17,7 +17,11 @@
 package org.springframework.cloud.contract.spec.internal;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an output for messaging. Used for verifying the body and headers that are
@@ -29,6 +33,8 @@ import java.util.regex.Pattern;
  */
 public class OutputMessage extends Common
 		implements RegexCreatingProperty<ServerDslProperty> {
+
+	private static final Log log = LogFactory.getLog(OutputMessage.class);
 
 	private DslProperty<String> sentTo;
 
@@ -280,6 +286,39 @@ public class OutputMessage extends Common
 	@Override
 	public ServerDslProperty anyOf(String... values) {
 		return property.anyOf(values);
+	}
+
+	/**
+	 * The message headers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 */
+	public void headers(Consumer<Headers> consumer) {
+		this.headers = new Headers();
+		consumer.accept(this.headers);
+	}
+
+	/**
+	 * The message headers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void testMatchers(Consumer<ResponseBodyMatchers> consumer) {
+		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * The stub matchers part of the contract.
+	 * @param consumer function to manipulate the body matchers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void bodyMatchers(Consumer<ResponseBodyMatchers> consumer) {
+		this.bodyMatchers = new ResponseBodyMatchers();
+		consumer.accept(this.bodyMatchers);
 	}
 
 	@Override

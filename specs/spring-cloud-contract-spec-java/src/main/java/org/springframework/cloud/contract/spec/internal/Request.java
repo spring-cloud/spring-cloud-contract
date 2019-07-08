@@ -19,7 +19,11 @@ package org.springframework.cloud.contract.spec.internal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.spec.util.RegexpUtils;
 
@@ -31,6 +35,8 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils;
  * @since 1.0.0
  */
 public class Request extends Common implements RegexCreatingProperty<ClientDslProperty> {
+
+	private static final Log log = LogFactory.getLog(Request.class);
 
 	private ClientPatternValueDslProperty property = new ClientPatternValueDslProperty();
 
@@ -613,6 +619,87 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 				+ urlPath + ", \n\theaders=" + headers + ", \n\tcookies=" + cookies
 				+ ", \n\tbody=" + body + ", \n\tmultipart=" + multipart
 				+ ", \n\tbodyMatchers=" + bodyMatchers + '}';
+	}
+
+	/**
+	 * The URL of the contract.
+	 * @param url url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void url(Object url, Consumer<Url> consumer) {
+		this.url = new Url(url);
+		consumer.accept(this.url);
+	}
+
+	/**
+	 * URL to which the request will be sent. Allows to customize additional query
+	 * parameters if needed
+	 * @param url url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void url(DslProperty url, Consumer<Url> consumer) {
+		this.url = new Url(url);
+		consumer.accept(this.url);
+	}
+
+	/**
+	 * URL to which the request will be sent. Allows to customize additional query.
+	 * parameters if needed
+	 * @param path url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void urlPath(String path, Consumer<UrlPath> consumer) {
+		this.urlPath = new UrlPath(path);
+		consumer.accept(this.urlPath);
+	}
+
+	/**
+	 * URL to which the request will be sent. Allows to customize additional query.
+	 * parameters if needed
+	 * @param path url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void urlPath(DslProperty path, Consumer<UrlPath> consumer) {
+		this.urlPath = new UrlPath(path);
+		consumer.accept(this.urlPath);
+	}
+
+	/**
+	 * Allows to configure HTTP headers.
+	 * @param consumer function to manipulate the headers
+	 */
+	public void headers(Consumer<Request.RequestHeaders> consumer) {
+		this.headers = new Request.RequestHeaders();
+		consumer.accept((RequestHeaders) this.headers);
+	}
+
+	/**
+	 * Allows to configure HTTP cookies.
+	 * @param consumer function to manipulate the cookies
+	 */
+	public void cookies(Consumer<Request.RequestCookies> consumer) {
+		this.cookies = new Request.RequestCookies();
+		consumer.accept((RequestCookies) this.cookies);
+	}
+
+	/**
+	 * @param consumer function to manipulate the body matchers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void stubMatchers(Consumer<BodyMatchers> consumer) {
+		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * Allows to set matchers for the body.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void bodyMatchers(Consumer<BodyMatchers> consumer) {
+		this.bodyMatchers = new BodyMatchers();
+		consumer.accept(this.bodyMatchers);
 	}
 
 	static class RequestHeaders extends Headers {

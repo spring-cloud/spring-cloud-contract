@@ -16,10 +16,7 @@
 
 package org.springframework.cloud.contract.spec.internal
 
-import java.util.stream.Collectors
-
 import groovy.transform.CompileStatic
-import org.codehaus.groovy.runtime.GStringImpl
 
 import org.springframework.cloud.contract.spec.Contract
 
@@ -28,43 +25,10 @@ class ContractStaticExtension {
 
 	@CompileStatic
 	static Contract make(final Contract type, @DelegatesTo(Contract) Closure closure) {
-		return doMake(closure)
-	}
-
-	/**
-	 * Factory method to create the DSL
-	 */
-	@CompileStatic
-	private static Contract doMake(@DelegatesTo(Contract) Closure closure) {
 		Contract dsl = new Contract()
 		closure.delegate = dsl
 		closure()
 		Contract.assertContract(dsl)
 		return dsl
-	}
-
-	/**
-	 * Factory method to create the DSL
-	 */
-	@CompileStatic
-	static Object testUrl(final Url type, Object url) {
-		if (url instanceof GString) {
-			boolean anyPattern = Arrays.stream(((GString) url).getValues())
-									   .anyMatch({ it -> it instanceof RegexProperty });
-			if (!anyPattern) {
-				return url;
-			}
-			List<Object> generatedValues = Arrays.stream(((GString) url).getValues())
-												 .map({ it -> it instanceof RegexProperty
-														 ? ((RegexProperty) it).generate() : it })
-												 .collect(Collectors.toList());
-			Object[] arrayOfObjects = generatedValues.toArray();
-			String[] strings = Arrays.copyOf(((GString) url).getStrings(),
-					((GString) url).getStrings().length, String[].class);
-			String newUrl = new GStringImpl(arrayOfObjects, strings).toString();
-			return new Url(newUrl);
-		}
-
-		return url;
 	}
 }

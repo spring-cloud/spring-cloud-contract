@@ -133,7 +133,8 @@ public class Contract {
 	public static void assertContract(Contract dsl) {
 		if (dsl.getRequest() != null) {
 			if (dsl.request.getUrl() == null && dsl.request.getUrlPath() == null) {
-				throw new IllegalStateException("URL is missing for HTTP contract");
+				throw new IllegalStateException(
+						"URL is missing for HTTP contract(exclude = { TraceWebClientAutoConfiguration.class })");
 			}
 			if (dsl.request.getMethod() == null) {
 				throw new IllegalStateException("Method is missing for HTTP contract");
@@ -156,6 +157,42 @@ public class Contract {
 		Contract contract = new Contract();
 		consumer.accept(contract);
 		return contract;
+	}
+
+	/**
+	 * The HTTP request part of the contract.
+	 * @param consumer function to manipulate the request
+	 */
+	public void request(Consumer<Request> consumer) {
+		this.request = new Request();
+		consumer.accept(this.request);
+	}
+
+	/**
+	 * The HTTP response part of the contract.
+	 * @param consumer function to manipulate the response
+	 */
+	public void response(Consumer<Response> consumer) {
+		this.response = new Response();
+		consumer.accept(this.response);
+	}
+
+	/**
+	 * The input part of the contract.
+	 * @param consumer function to manipulate the input
+	 */
+	public void input(Consumer<Input> consumer) {
+		this.input = new Input();
+		consumer.accept(this.input);
+	}
+
+	/**
+	 * The output part of the contract.
+	 * @param consumer function to manipulate the output message
+	 */
+	public void outputMessage(Consumer<OutputMessage> consumer) {
+		this.outputMessage = new OutputMessage();
+		consumer.accept(this.outputMessage);
 	}
 
 	/**
