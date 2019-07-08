@@ -382,7 +382,11 @@ class FileWalker extends SimpleFileVisitor<Path> {
 
 	private String withoutClassifier(DefaultArtifactVersionWrapper versionWrapper) {
 		String version = versionWrapper.version.toString();
-		return version.substring(0, version.lastIndexOf("."));
+		int lastIndexOf = version.lastIndexOf(".");
+		if (lastIndexOf != -1) {
+			return version.substring(0, lastIndexOf);
+		}
+		return version;
 	}
 
 	private File folderWithPredefinedName(File[] files) {
