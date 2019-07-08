@@ -34,8 +34,6 @@ import org.springframework.util.StringUtils
 @Commons
 class ContractVerifierDslConverter {
 
-	private static final String SCENARIO_MATCHER = '^[0-9].*$'
-
 	/**
 	 * @deprecated - use {@link ContractVerifierDslConverter#convertAsCollection(java.io.File, java.lang.String)}
 	 */
@@ -136,7 +134,7 @@ class ContractVerifierDslConverter {
 	private static Collection<Contract> withName(File file, Collection<Contract> contracts) {
 		int counter = 0
 		return contracts.collect {
-			if (contractNameEmpty(it) && !relatedToScenarios(file, it)) {
+			if (contractNameEmpty(it)) {
 				it.name(NamesUtil.defaultContractName(file, contracts, counter))
 			}
 			counter++
@@ -146,9 +144,5 @@ class ContractVerifierDslConverter {
 
 	private static boolean contractNameEmpty(Contract it) {
 		return it != null && StringUtils.isEmpty(it.name)
-	}
-
-	private static boolean relatedToScenarios(File file, Contract contract) {
-		return contract.name?.matches(SCENARIO_MATCHER) || file.name.matches(SCENARIO_MATCHER)
 	}
 }
