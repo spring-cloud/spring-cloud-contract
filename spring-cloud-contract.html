@@ -10411,113 +10411,146 @@ use in your contracts, as shown in the following example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
-protected static final Pattern ALPHA_NUMERIC = Pattern.compile('[a-zA-Z0-9]+')
-protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
-protected static final Pattern NUMBER = Pattern.compile('-?(\\d*\\.\\d+|\\d+)')
-protected static final Pattern INTEGER = Pattern.compile('-?(\\d+)')
-protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d*)')
-protected static final Pattern DOUBLE = Pattern.compile('-?(\\d*\\.\\d+)')
-protected static final Pattern HEX = Pattern.compile('[a-fA-F0-9]+')
-protected static final Pattern IP_ADDRESS = Pattern.
-		compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
-protected static final Pattern HOSTNAME_PATTERN = Pattern.
-		compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
-protected static final Pattern EMAIL = Pattern.
-		compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
-protected static final Pattern URL = UrlHelper.URL
-protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL
-protected static final Pattern UUID = Pattern.
-		compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
-protected static final Pattern ANY_DATE = Pattern.
-		compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
-protected static final Pattern ANY_DATE_TIME = Pattern.
-		compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
-protected static final Pattern ANY_TIME = Pattern.
-		compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
-protected static final Pattern NON_EMPTY = Pattern.compile(/[\S\s]+/)
-protected static final Pattern NON_BLANK = Pattern.compile(/^\s*\S[\S\s]*/)
-protected static final Pattern ISO8601_WITH_OFFSET = Pattern.
-		compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected static final Pattern TRUE_OR_FALSE = Pattern.compile("(true|false)");
+
+protected static final Pattern ALPHA_NUMERIC = Pattern.compile("[a-zA-Z0-9]+");
+
+protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile("[\\p{L}]*");
+
+protected static final Pattern NUMBER = Pattern.compile("-?(\\d*\\.\\d+|\\d+)");
+
+protected static final Pattern INTEGER = Pattern.compile("-?(\\d+)");
+
+protected static final Pattern POSITIVE_INT = Pattern.compile("([1-9]\\d*)");
+
+protected static final Pattern DOUBLE = Pattern.compile("-?(\\d*\\.\\d+)");
+
+protected static final Pattern HEX = Pattern.compile("[a-fA-F0-9]+");
+
+protected static final Pattern IP_ADDRESS = Pattern.compile(
+		"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
+
+protected static final Pattern HOSTNAME_PATTERN = Pattern
+		.compile("((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?");
+
+protected static final Pattern EMAIL = Pattern
+		.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}");
+
+protected static final Pattern URL = UrlHelper.URL;
+
+protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL;
+
+protected static final Pattern UUID = Pattern
+		.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+
+protected static final Pattern ANY_DATE = Pattern
+		.compile("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
+
+protected static final Pattern ANY_DATE_TIME = Pattern.compile(
+		"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+
+protected static final Pattern ANY_TIME = Pattern
+		.compile("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+
+protected static final Pattern NON_EMPTY = Pattern.compile("[\\S\\s]+");
+
+protected static final Pattern NON_BLANK = Pattern.compile("^\\s*\\S[\\S\\s]*");
+
+protected static final Pattern ISO8601_WITH_OFFSET = Pattern.compile(
+		"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.\\d{3})?(Z|[+-][01]\\d:[0-5]\\d)");
 
 protected static Pattern anyOf(String... values) {
-	return Pattern.compile(values.collect({ "^$it\$" }).join("|"))
+	return Pattern.compile(Arrays.stream(values).map(it -&gt; '^' + it + '$')
+			.collect(Collectors.joining("|")));
 }
 
-RegexProperty onlyAlphaUnicode() {
-	return new RegexProperty(ONLY_ALPHA_UNICODE).asString()
+public static String multipartParam(Object name, Object value) {
+	return ".*--(.*)\r\nContent-Disposition: form-data; name=\"" + name
+			+ "\"\r\n(Content-Type: .*\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n"
+			+ value + "\r\n--\\1.*";
 }
 
-RegexProperty alphaNumeric() {
-	return new RegexProperty(ALPHA_NUMERIC).asString()
+public static String multipartFile(Object name, Object filename, Object content,
+		Object contentType) {
+	return ".*--(.*)\r\nContent-Disposition: form-data; name=\"" + name
+			+ "\"; filename=\"" + filename + "\"\r\n(Content-Type: "
+			+ toContentType(contentType)
+			+ "\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n"
+			+ content + "\r\n--\\1.*";
 }
 
-RegexProperty number() {
-	return new RegexProperty(NUMBER).asDouble()
+private static String toContentType(Object contentType) {
+	if (contentType == null) {
+		return ".*";
+	}
+	if (contentType instanceof RegexProperty) {
+		return ((RegexProperty) contentType).pattern();
+	}
+	return contentType.toString();
 }
 
-RegexProperty positiveInt() {
-	return new RegexProperty(POSITIVE_INT).asInteger()
+public RegexProperty onlyAlphaUnicode() {
+	return new RegexProperty(ONLY_ALPHA_UNICODE).asString();
 }
 
-RegexProperty anyBoolean() {
-	return new RegexProperty(TRUE_OR_FALSE).asBooleanType()
+public RegexProperty alphaNumeric() {
+	return new RegexProperty(ALPHA_NUMERIC).asString();
 }
 
-RegexProperty anInteger() {
-	return new RegexProperty(INTEGER).asInteger()
+public RegexProperty number() {
+	return new RegexProperty(NUMBER).asDouble();
 }
 
-RegexProperty aDouble() {
-	return new RegexProperty(DOUBLE).asDouble()
+public RegexProperty positiveInt() {
+	return new RegexProperty(POSITIVE_INT).asInteger();
 }
 
-RegexProperty ipAddress() {
-	return new RegexProperty(IP_ADDRESS).asString()
+public RegexProperty anyBoolean() {
+	return new RegexProperty(TRUE_OR_FALSE).asBooleanType();
 }
 
-RegexProperty hostname() {
-	return new RegexProperty(HOSTNAME_PATTERN).asString()
+public RegexProperty anInteger() {
+	return new RegexProperty(INTEGER).asInteger();
 }
 
-RegexProperty email() {
-	return new RegexProperty(EMAIL).asString()
+public RegexProperty aDouble() {
+	return new RegexProperty(DOUBLE).asDouble();
 }
 
-RegexProperty url() {
-	return new RegexProperty(URL).asString()
+public RegexProperty ipAddress() {
+	return new RegexProperty(IP_ADDRESS).asString();
 }
 
-RegexProperty httpsUrl() {
-	return new RegexProperty(HTTPS_URL).asString()
+public RegexProperty hostname() {
+	return new RegexProperty(HOSTNAME_PATTERN).asString();
 }
 
-RegexProperty uuid() {
-	return new RegexProperty(UUID).asString()
+public RegexProperty email() {
+	return new RegexProperty(EMAIL).asString();
 }
 
-RegexProperty isoDate() {
-	return new RegexProperty(ANY_DATE).asString()
+public RegexProperty url() {
+	return new RegexProperty(URL).asString();
 }
 
-RegexProperty isoDateTime() {
-	return new RegexProperty(ANY_DATE_TIME).asString()
+public RegexProperty httpsUrl() {
+	return new RegexProperty(HTTPS_URL).asString();
 }
 
-RegexProperty isoTime() {
-	return new RegexProperty(ANY_TIME).asString()
+public RegexProperty uuid() {
+	return new RegexProperty(UUID).asString();
 }
 
-RegexProperty iso8601WithOffset() {
-	return new RegexProperty(ISO8601_WITH_OFFSET).asString()
+public RegexProperty isoDate() {
+	return new RegexProperty(ANY_DATE).asString();
 }
 
-RegexProperty nonEmpty() {
-	return new RegexProperty(NON_EMPTY).asString()
+public RegexProperty isoDateTime() {
+	return new RegexProperty(ANY_DATE_TIME).asString();
 }
 
-RegexProperty nonBlank() {
-	return new RegexProperty(NON_BLANK).asString()
+public RegexProperty isoTime() {
+	return new RegexProperty(ANY_TIME).asString();
 }</code></pre>
 </div>
 </div>
@@ -10558,47 +10591,7 @@ All of those methods start with <code>any</code> prefix:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">T anyAlphaUnicode()
-
-T anyAlphaNumeric()
-
-T anyNumber()
-
-T anyInteger()
-
-T anyPositiveInt()
-
-T anyDouble()
-
-T anyHex()
-
-T aBoolean()
-
-T anyIpAddress()
-
-T anyHostname()
-
-T anyEmail()
-
-T anyUrl()
-
-T anyHttpsUrl()
-
-T anyUuid()
-
-T anyDate()
-
-T anyDateTime()
-
-T anyTime()
-
-T anyIso8601WithOffset()
-
-T anyNonBlankString()
-
-T anyNonEmptyString()
-
-T anyOf(String... values)</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -13408,43 +13401,43 @@ structure converter. The following code listing shows the <code>ContractConverte
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package org.springframework.cloud.contract.spec
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package org.springframework.cloud.contract.spec;
+
+import java.io.File;
+import java.util.Collection;
 
 /**
- * Converter to be used to convert FROM {@link File} TO {@link Contract}
- * and from {@link Contract} to {@code T}
+ * Converter to be used to convert FROM {@link File} TO {@link Contract} and from
+ * {@link Contract} to {@code T}.
  *
- * @param &lt;T &gt;     - type to which we want to convert the contract
- *
+ * @param &lt;T&gt; - type to which we want to convert the contract
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-interface ContractConverter&lt;T&gt; extends ContractStorer&lt;T&gt; {
+public interface ContractConverter&lt;T&gt; extends ContractStorer&lt;T&gt; {
 
 	/**
-	 * Should this file be accepted by the converter. Can use the file extension
-	 * to check if the conversion is possible.
-	 *
+	 * Should this file be accepted by the converter. Can use the file extension to check
+	 * if the conversion is possible.
 	 * @param file - file to be considered for conversion
 	 * @return - {@code true} if the given implementation can convert the file
 	 */
-	boolean isAccepted(File file)
+	boolean isAccepted(File file);
 
 	/**
-	 * Converts the given {@link File} to its {@link Contract} representation
-	 *
+	 * Converts the given {@link File} to its {@link Contract} representation.
 	 * @param file - file to convert
 	 * @return - {@link Contract} representation of the file
 	 */
-	Collection&lt;Contract&gt; convertFrom(File file)
+	Collection&lt;Contract&gt; convertFrom(File file);
 
 	/**
-	 * Converts the given {@link Contract} to a {@link T} representation
-	 *
+	 * Converts the given {@link Contract} to a {@link T} representation.
 	 * @param contract - the parsed contract
 	 * @return - {@link T} the type to which we do the conversion
 	 */
-	T convertTo(Collection&lt;Contract&gt; contract)
+	T convertTo(Collection&lt;Contract&gt; contract);
+
 }</code></pre>
 </div>
 </div>
