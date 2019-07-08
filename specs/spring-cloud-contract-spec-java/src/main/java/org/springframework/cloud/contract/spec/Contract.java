@@ -19,13 +19,17 @@ package org.springframework.cloud.contract.spec;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+
 import org.springframework.cloud.contract.spec.internal.Input;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Response;
 
 /**
- * The point of entry to the DSL.
+ * The definition of a Contract. Contains helper methods in Groovy left for backward
+ * compatibility reasons.
  *
  * @since 1.0.0
  */
@@ -160,6 +164,19 @@ public class Contract {
 	}
 
 	/**
+	 * Groovy point of entry to build a contract. Left for backward compatibility reasons.
+	 * @param closure function to manipulate the contract
+	 * @return manipulated contract
+	 */
+	public static Contract make(@DelegatesTo(Contract.class) Closure closure) {
+		Contract dsl = new Contract();
+		closure.setDelegate(dsl);
+		closure.call();
+		Contract.assertContract(dsl);
+		return dsl;
+	}
+
+	/**
 	 * The HTTP request part of the contract.
 	 * @param consumer function to manipulate the request
 	 */
@@ -193,6 +210,46 @@ public class Contract {
 	public void outputMessage(Consumer<OutputMessage> consumer) {
 		this.outputMessage = new OutputMessage();
 		consumer.accept(this.outputMessage);
+	}
+
+	/**
+	 * The HTTP request part of the contract.
+	 * @param consumer function to manipulate the request
+	 */
+	public void request(@DelegatesTo(Request.class) Closure consumer) {
+		this.request = new Request();
+		consumer.setDelegate(this.request);
+		consumer.call();
+	}
+
+	/**
+	 * The HTTP response part of the contract.
+	 * @param consumer function to manipulate the response
+	 */
+	public void response(@DelegatesTo(Response.class) Closure consumer) {
+		this.response = new Response();
+		consumer.setDelegate(this.response);
+		consumer.call();
+	}
+
+	/**
+	 * The input part of the contract.
+	 * @param consumer function to manipulate the input
+	 */
+	public void input(@DelegatesTo(Input.class) Closure consumer) {
+		this.input = new Input();
+		consumer.setDelegate(this.input);
+		consumer.call();
+	}
+
+	/**
+	 * The output part of the contract.
+	 * @param consumer function to manipulate the output message
+	 */
+	public void outputMessage(@DelegatesTo(OutputMessage.class) Closure consumer) {
+		this.outputMessage = new OutputMessage();
+		consumer.setDelegate(this.outputMessage);
+		consumer.call();
 	}
 
 	/**

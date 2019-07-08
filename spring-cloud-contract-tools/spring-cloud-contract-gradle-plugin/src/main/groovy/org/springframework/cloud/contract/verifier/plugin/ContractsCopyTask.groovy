@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.internal.ConventionTask
@@ -35,6 +36,7 @@ import org.springframework.cloud.contract.verifier.converter.ToYamlConverter
  * @since 1.0.2
  */
 @PackageScope
+@CompileStatic
 class ContractsCopyTask extends ConventionTask {
 	private static final String ORIGINAL_PATH = "original"
 
@@ -49,10 +51,8 @@ class ContractsCopyTask extends ConventionTask {
 		String antPattern = "${props.includedRootFolderAntPattern}*.*"
 		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
-		String root = OutputFolderBuilder.buildRootPath(project)
-		ext.contractVerifierConfigProperties = props
-		File outputContractsFolder = outputFolder(root, "contracts")
-		ext.contractsDslDir = outputContractsFolder
+		String root = root(props)
+		File outputContractsFolder = outputContractsFolder(root)
 		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		copy(file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
 		if (getExtension().isConvertToYaml()) {
@@ -61,6 +61,21 @@ class ContractsCopyTask extends ConventionTask {
 
 	}
 
+	@CompileDynamic
+	private File outputContractsFolder(String root) {
+		File outputContractsFolder = outputFolder(root, "contracts")
+		ext.contractsDslDir = outputContractsFolder
+		return outputContractsFolder
+	}
+
+	@CompileDynamic
+	private String root(ContractVerifierConfigProperties props) {
+		String root = OutputFolderBuilder.buildRootPath(project)
+		ext.contractVerifierConfigProperties = props
+		return root
+	}
+
+	@CompileDynamic
 	private void convertBackedUpDslsToYaml(String root, File file, String antPattern, String slashSeparatedAntPattern, ContractVerifierConfigProperties props, File outputContractsFolder) {
 		File originalContracts = outputFolder(root, ORIGINAL_PATH)
 		copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
@@ -69,6 +84,7 @@ class ContractsCopyTask extends ConventionTask {
 				info("Replaced DSL files with their YAML representation at [" + ext.contractsDslDir + "]")
 	}
 
+	@CompileDynamic
 	protected WorkResult copy(File file, String antPattern, String slashSeparatedAntPattern, props, File outputContractsFolder) {
 		return project.copy {
 			from(file)

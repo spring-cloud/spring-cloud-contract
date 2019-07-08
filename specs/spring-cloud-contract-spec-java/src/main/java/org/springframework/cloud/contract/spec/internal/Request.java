@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -700,6 +702,94 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	public void bodyMatchers(Consumer<BodyMatchers> consumer) {
 		this.bodyMatchers = new BodyMatchers();
 		consumer.accept(this.bodyMatchers);
+	}
+
+	/**
+	 * The URL of the contract.
+	 * @param url url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void url(Object url, @DelegatesTo(Url.class) Closure consumer) {
+		this.url = new Url(url);
+		consumer.setDelegate(this.url);
+		consumer.call();
+	}
+
+	/**
+	 * URL to which the request will be sent. Allows to customize additional query
+	 * parameters if needed
+	 * @param url url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void url(DslProperty url, @DelegatesTo(Url.class) Closure consumer) {
+		this.url = new Url(url);
+		consumer.setDelegate(this.url);
+		consumer.call();
+	}
+
+	/**
+	 * URL to which the request will be sent. Allows to customize additional query.
+	 * parameters if needed
+	 * @param path url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void urlPath(String path, @DelegatesTo(UrlPath.class) Closure consumer) {
+		this.urlPath = new UrlPath(path);
+		consumer.setDelegate(this.urlPath);
+		consumer.call();
+	}
+
+	/**
+	 * URL to which the request will be sent. Allows to customize additional query.
+	 * parameters if needed
+	 * @param path url value
+	 * @param consumer function to manipulate the URL
+	 */
+	public void urlPath(DslProperty path, @DelegatesTo(UrlPath.class) Closure consumer) {
+		this.urlPath = new UrlPath(path);
+		consumer.setDelegate(this.urlPath);
+		consumer.call();
+	}
+
+	/**
+	 * Allows to configure HTTP headers.
+	 * @param consumer function to manipulate the headers
+	 */
+	public void headers(@DelegatesTo(Request.RequestHeaders.class) Closure consumer) {
+		this.headers = new Request.RequestHeaders();
+		consumer.setDelegate(this.headers);
+		consumer.call();
+	}
+
+	/**
+	 * Allows to configure HTTP cookies.
+	 * @param consumer function to manipulate the cookies
+	 */
+	public void cookies(@DelegatesTo(Request.RequestCookies.class) Closure consumer) {
+		this.cookies = new Request.RequestCookies();
+		consumer.setDelegate(this.cookies);
+		consumer.call();
+	}
+
+	/**
+	 * @param consumer function to manipulate the body matchers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void stubMatchers(@DelegatesTo(BodyMatchers.class) Closure consumer) {
+		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * Allows to set matchers for the body.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void bodyMatchers(@DelegatesTo(BodyMatchers.class) Closure consumer) {
+		this.bodyMatchers = new BodyMatchers();
+		consumer.setDelegate(this.bodyMatchers);
+		consumer.call();
 	}
 
 	static class RequestHeaders extends Headers {

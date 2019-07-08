@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class QueryParameters {
 
@@ -46,6 +47,28 @@ public class QueryParameters {
 
 	public void setParameters(List<QueryParameter> parameters) {
 		this.parameters = parameters;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		QueryParameters that = (QueryParameters) o;
+		return Objects.equals(parameters, that.parameters);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(parameters);
+	}
+
+	@Override
+	public String toString() {
+		return "QueryParameters{" + "\nparameters=" + parameters + '}';
 	}
 
 }

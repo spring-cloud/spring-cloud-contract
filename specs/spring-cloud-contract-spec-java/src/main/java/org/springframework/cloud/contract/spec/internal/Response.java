@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -763,6 +765,47 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	public void bodyMatchers(Consumer<ResponseBodyMatchers> consumer) {
 		this.bodyMatchers = new ResponseBodyMatchers();
 		consumer.accept(this.bodyMatchers);
+	}
+
+	/**
+	 * Allows to configure HTTP headers.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void headers(@DelegatesTo(ResponseHeaders.class) Closure consumer) {
+		this.headers = new Response.ResponseHeaders();
+		consumer.setDelegate(this.headers);
+		consumer.call();
+	}
+
+	/**
+	 * Allows to configure HTTP cookies.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void cookies(@DelegatesTo(Response.ResponseCookies.class) Closure consumer) {
+		this.cookies = new Response.ResponseCookies();
+		consumer.setDelegate(this.cookies);
+		consumer.call();
+	}
+
+	/**
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 * @param consumer function to manipulate the URL
+	 */
+	@Deprecated
+	public void testMatchers(@DelegatesTo(ResponseBodyMatchers.class) Closure consumer) {
+		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * Allows to set matchers for the body.
+	 * @param consumer function to manipulate the URL
+	 */
+	public void bodyMatchers(@DelegatesTo(ResponseBodyMatchers.class) Closure consumer) {
+		this.bodyMatchers = new ResponseBodyMatchers();
+		consumer.setDelegate(this.bodyMatchers);
+		consumer.call();
 	}
 
 	static class ResponseHeaders extends Headers {

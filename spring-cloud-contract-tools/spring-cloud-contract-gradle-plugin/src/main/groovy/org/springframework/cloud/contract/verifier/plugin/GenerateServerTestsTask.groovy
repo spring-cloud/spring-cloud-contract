@@ -16,11 +16,14 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.TaskAction
 
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
@@ -33,6 +36,7 @@ import static org.springframework.cloud.contract.verifier.plugin.SpringCloudCont
  *
  * @since 1.0.0
  */
+@CompileStatic
 class GenerateServerTestsTask extends ConventionTask {
 
 	File generatedTestSourcesDir
@@ -55,21 +59,9 @@ class GenerateServerTestsTask extends ConventionTask {
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${props.includedContracts}]")
-
 		def sourceSetType = getConfigProperties().getTestFramework() == TestFramework.SPOCK ?
 				"groovy" : "java"
-
-		project.sourceSets.test."${sourceSetType}" {
-			project.logger.
-					info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
-			srcDir getConfigProperties().getGeneratedTestSourcesDir()
-		}
-		project.sourceSets.test.resources {
-			project.logger.
-					info("Registering ${getConfigProperties().generatedTestResourcesDir} as test resource directory")
-			srcDir getConfigProperties().getGeneratedTestResourcesDir()
-		}
-
+		applySourceSets(sourceSetType)
 		try {
 			props = props ?: ExtensionToProperties.fromExtension(getConfigProperties())
 			props.contractsDslDir = contractsDslDir
@@ -82,6 +74,21 @@ class GenerateServerTestsTask extends ConventionTask {
 		}
 	}
 
+	@CompileDynamic
+	private void applySourceSets(sourceSetType) {
+		project.sourceSets.test."${sourceSetType}" {
+			project.logger.
+					info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
+			srcDir getConfigProperties().getGeneratedTestSourcesDir()
+		}
+		project.sourceSets.test.resources {
+			project.logger.
+					info("Registering ${getConfigProperties().generatedTestResourcesDir} as test resource directory")
+			srcDir getConfigProperties().getGeneratedTestResourcesDir()
+		}
+	}
+
+	@CompileDynamic
 	private ContractVerifierConfigProperties props(Task task) {
 		try {
 			return task.ext.contractVerifierConfigProperties
@@ -94,6 +101,7 @@ class GenerateServerTestsTask extends ConventionTask {
 		}
 	}
 
+	@CompileDynamic
 	private File contractsDslDir(Task task, ContractVerifierConfigProperties props) {
 		try {
 			return task.ext.contractsDslDir

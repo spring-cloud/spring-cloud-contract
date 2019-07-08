@@ -22,6 +22,9 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+
 /**
  * Matching strategy of dynamic parts of the body.
  *
@@ -134,6 +137,19 @@ public class BodyMatchers {
 	public MatchingTypeValue byType(Consumer<MatchingTypeValueHolder> consumer) {
 		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder();
 		consumer.accept(matchingTypeValue);
+		return matchingTypeValue.matchingTypeValue;
+	}
+
+	/**
+	 * The output part of the contract.
+	 * @param consumer function to manipulate the output message
+	 * @return matching type
+	 */
+	public MatchingTypeValue byType(
+			@DelegatesTo(MatchingTypeValueHolder.class) Closure consumer) {
+		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder();
+		consumer.setDelegate(matchingTypeValue);
+		consumer.call();
 		return matchingTypeValue.matchingTypeValue;
 	}
 

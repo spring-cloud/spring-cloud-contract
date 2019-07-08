@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -319,6 +321,41 @@ public class OutputMessage extends Common
 	public void bodyMatchers(Consumer<ResponseBodyMatchers> consumer) {
 		this.bodyMatchers = new ResponseBodyMatchers();
 		consumer.accept(this.bodyMatchers);
+	}
+
+	/**
+	 * The message headers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 */
+	public void headers(@DelegatesTo(Headers.class) Closure consumer) {
+		this.headers = new Headers();
+		consumer.setDelegate(this.headers);
+		consumer.call();
+	}
+
+	/**
+	 * The message headers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void testMatchers(@DelegatesTo(ResponseBodyMatchers.class) Closure consumer) {
+		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * The stub matchers part of the contract.
+	 * @param consumer function to manipulate the body matchers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void bodyMatchers(@DelegatesTo(ResponseBodyMatchers.class) Closure consumer) {
+		this.bodyMatchers = new ResponseBodyMatchers();
+		consumer.setDelegate(this.bodyMatchers);
+		consumer.call();
 	}
 
 	@Override

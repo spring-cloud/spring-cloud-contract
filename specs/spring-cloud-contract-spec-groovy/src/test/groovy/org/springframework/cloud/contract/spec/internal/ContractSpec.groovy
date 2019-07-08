@@ -29,7 +29,7 @@ class ContractSpec extends Specification {
 		when:
 			Contract.make {
 				request {
-					url('/foo')
+					url("/foo/${regex('[0]')}")
 					method('PUT')
 					headers {
 						header([

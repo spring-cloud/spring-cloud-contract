@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -310,6 +312,40 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 	public void bodyMatchers(Consumer<BodyMatchers> consumer) {
 		this.bodyMatchers = new BodyMatchers();
 		consumer.accept(this.bodyMatchers);
+	}
+
+	/**
+	 * The message headers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 */
+	public void messageHeaders(@DelegatesTo(Headers.class) Closure consumer) {
+		this.messageHeaders = new Headers();
+		consumer.setDelegate(this.messageHeaders);
+		consumer.call();
+	}
+
+	/**
+	 * The stub matchers part of the contract.
+	 * @param consumer function to manipulate the body headers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	@Deprecated
+	public void stubMatchers(@DelegatesTo(BodyMatchers.class) Closure consumer) {
+		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
+		bodyMatchers(consumer);
+	}
+
+	/**
+	 * The stub matchers part of the contract.
+	 * @param consumer function to manipulate the message headers
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future
+	 * bodyMatchers too
+	 */
+	public void bodyMatchers(@DelegatesTo(BodyMatchers.class) Closure consumer) {
+		this.bodyMatchers = new BodyMatchers();
+		consumer.setDelegate(this.bodyMatchers);
+		consumer.call();
 	}
 
 	@Override

@@ -1,4 +1,0 @@
-moduleName=spring-cloud-contract-module
-moduleVersion=2.2.0.BUILD-SNAPSHOT
-extensionClasses=org.springframework.cloud.contract.spec.internal.ContractExtension
-staticExtensionClasses=org.springframework.cloud.contract.spec.internal.ContractStaticExtension

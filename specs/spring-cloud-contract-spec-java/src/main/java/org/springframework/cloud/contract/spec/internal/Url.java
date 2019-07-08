@@ -19,6 +19,9 @@ package org.springframework.cloud.contract.spec.internal;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+
 import org.springframework.cloud.contract.spec.util.ValidateUtils;
 
 /**
@@ -86,6 +89,16 @@ public class Url extends DslProperty {
 	public void queryParameters(Consumer<QueryParameters> consumer) {
 		this.queryParameters = new QueryParameters();
 		consumer.accept(this.queryParameters);
+	}
+
+	/**
+	 * The query parameters part of the contract.
+	 * @param consumer function to manipulate the query parameters
+	 */
+	public void queryParameters(@DelegatesTo(QueryParameters.class) Closure consumer) {
+		this.queryParameters = new QueryParameters();
+		consumer.setDelegate(this.queryParameters);
+		consumer.call();
 	}
 
 }
