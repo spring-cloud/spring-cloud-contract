@@ -17,46 +17,46 @@
 package org.springframework.cloud.contract.verifier.messaging.stream;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
+import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class StreamStubMessages implements MessageVerifier<Message<?>> {
+class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 
-	private final MessageVerifierSender<Message<?>> sender;
+	private static final Log log = LogFactory.getLog(StreamStubMessageSender.class);
 
-	private final MessageVerifierReceiver<Message<?>> receiver;
+	private final BinderAwareChannelResolver resolver;
 
-	public StreamStubMessages(MessageVerifierSender<Message<?>> sender,
-			MessageVerifierReceiver<Message<?>> receiver) {
-		this.sender = sender;
-		this.receiver = receiver;
+	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
+
+	StreamStubMessageSender(BinderAwareChannelResolver resolver) {
+		this.resolver = resolver;
 	}
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		this.sender.send(payload, headers, destination);
+		send(this.builder.create(payload, headers), destination);
 	}
 
 	@Override
 	public void send(Message<?> message, String destination) {
-		this.sender.send(message, destination);
-	}
-
-	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
-		return this.receiver.receive(destination, timeout, timeUnit);
-	}
-
-	@Override
-	public Message<?> receive(String destination) {
-		return this.receiver.receive(destination);
+		try {
+			MessageChannel messageChannel = this.resolver.resolveDestination(destination);
+			messageChannel.send(message);
+		}
+		catch (Exception e) {
+			log.error("Exception occurred while trying to send a message [" + message
+					+ "] " + "to a channel with name [" + destination + "]", e);
+			throw e;
+		}
 	}
 
 }

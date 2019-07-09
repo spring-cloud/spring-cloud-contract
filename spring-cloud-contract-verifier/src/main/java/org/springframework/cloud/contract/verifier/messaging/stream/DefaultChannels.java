@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging;
+package org.springframework.cloud.contract.verifier.messaging.stream;
 
-/**
- * Core interface that allows you to build, send and receive messages.
- *
- * Destination is relevant to the underlying implementation. Might be a channel, queue,
- * topic etc.
- *
- * @param <M> message type
- * @author Marcin Grzejszczak
- * @since 1.0.0
- */
-public interface MessageVerifier<M>
-		extends MessageVerifierSender<M>, MessageVerifierReceiver<M> {
+enum DefaultChannels {
+
+	INPUT, OUTPUT
 
 }

@@ -16,17 +16,34 @@
 
 package org.springframework.cloud.contract.verifier.messaging;
 
+import java.util.Map;
+
 /**
- * Core interface that allows you to build, send and receive messages.
+ * Core interface that allows you to send messages.
  *
  * Destination is relevant to the underlying implementation. Might be a channel, queue,
  * topic etc.
  *
  * @param <M> message type
  * @author Marcin Grzejszczak
- * @since 1.0.0
+ * @since 2.2.0
  */
-public interface MessageVerifier<M>
-		extends MessageVerifierSender<M>, MessageVerifierReceiver<M> {
+public interface MessageVerifierSender<M> {
+
+	/**
+	 * Sends the message to the given destination.
+	 * @param message to send
+	 * @param destination destination to which the message will be sent
+	 */
+	void send(M message, String destination);
+
+	/**
+	 * Sends the given payload with headers, to the given destination.
+	 * @param <T> payload type
+	 * @param payload payload to send
+	 * @param headers headers to send
+	 * @param destination destination to which the message will be sent
+	 */
+	<T> void send(T payload, Map<String, Object> headers, String destination);
 
 }

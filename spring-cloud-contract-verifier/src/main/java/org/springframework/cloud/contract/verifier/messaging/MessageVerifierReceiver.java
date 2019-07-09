@@ -16,17 +16,35 @@
 
 package org.springframework.cloud.contract.verifier.messaging;
 
+import java.util.concurrent.TimeUnit;
+
 /**
- * Core interface that allows you to build, send and receive messages.
+ * Core interface that allows you to receive messages.
  *
  * Destination is relevant to the underlying implementation. Might be a channel, queue,
  * topic etc.
  *
  * @param <M> message type
  * @author Marcin Grzejszczak
- * @since 1.0.0
+ * @since 2.2.0
  */
-public interface MessageVerifier<M>
-		extends MessageVerifierSender<M>, MessageVerifierReceiver<M> {
+public interface MessageVerifierReceiver<M> {
+
+	/**
+	 * Receives the message from the given destination. You can provide the timeout for
+	 * receiving that message.
+	 * @param destination destination from which the message will be received
+	 * @param timeout timeout to wait for the message
+	 * @param timeUnit param to define the unit of timeout
+	 * @return received message
+	 */
+	M receive(String destination, long timeout, TimeUnit timeUnit);
+
+	/**
+	 * Receives the message from the given destination. A default timeout will be applied.
+	 * @param destination destination from which the message will be received
+	 * @return received message
+	 */
+	M receive(String destination);
 
 }

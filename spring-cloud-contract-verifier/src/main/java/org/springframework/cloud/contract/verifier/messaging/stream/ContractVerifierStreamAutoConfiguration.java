@@ -19,12 +19,14 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +38,7 @@ import org.springframework.util.Assert;
  * @author Marcin Grzejszczak
  */
 @Configuration
-@ConditionalOnClass({ EnableBinding.class, MessageCollector.class })
+@ConditionalOnClass(EnableBinding.class)
 @ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
 		matchIfMissing = true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
@@ -44,16 +46,40 @@ public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	MessageVerifier<Message<?>> contractVerifierMessageExchange(
-			ApplicationContext applicationContext) {
-		return new StreamStubMessages(applicationContext);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
 	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(
 			MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
+	}
+
+	@Configuration
+	@ConditionalOnClass(MessageCollector.class)
+	static class MessageCollectorConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithMessageCollector(
+				ApplicationContext context) {
+			DestinationResolver resolver = new DestinationResolver(context);
+			return new StreamStubMessages(
+					new StreamFromBinderMappingMessageSender(context, resolver),
+					new StreamMessageCollectorMessageReceiver(resolver, context));
+		}
+
+	}
+
+	@Configuration
+	@ConditionalOnMissingClass("org.springframework.cloud.stream.test.binder.MessageCollector")
+	static class NoMessageCollectorClassConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithNoMessageCollector(
+				ApplicationContext applicationContext,
+				BinderAwareChannelResolver resolver) {
+			return new StreamStubMessages(new StreamStubMessageSender(resolver),
+					new StreamPollableChannelMessageReceiver(applicationContext));
+		}
+
 	}
 
 }
