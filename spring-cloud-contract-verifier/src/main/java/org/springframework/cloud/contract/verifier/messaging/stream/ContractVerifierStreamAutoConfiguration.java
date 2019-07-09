@@ -38,7 +38,8 @@ import org.springframework.util.Assert;
  */
 @Configuration
 @ConditionalOnClass(EnableBinding.class)
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
+		matchIfMissing = true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 public class ContractVerifierStreamAutoConfiguration {
 
