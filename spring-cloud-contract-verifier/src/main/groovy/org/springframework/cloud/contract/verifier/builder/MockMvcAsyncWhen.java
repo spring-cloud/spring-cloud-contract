@@ -38,8 +38,13 @@ class MockMvcAsyncWhen implements When, MockMvcAcceptor {
 			this.blockBuilder.addIndented(".when().async()");
 		}
 		if (response.getDelay() != null) {
-			this.blockBuilder.addIndented(
-					".timeout(" + response.getDelay().getServerValue() + ")");
+			String delay = ".timeout(" + response.getDelay().getServerValue() + ")";
+			if (response.getAsync()) {
+				this.blockBuilder.append(delay);
+			}
+			else {
+				this.blockBuilder.addIndented(delay);
+			}
 		}
 		return this;
 	}

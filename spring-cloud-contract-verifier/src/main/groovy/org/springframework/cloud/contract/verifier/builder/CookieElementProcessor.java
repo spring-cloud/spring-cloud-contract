@@ -16,8 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import org.springframework.cloud.contract.spec.internal.Cookie;
 import org.springframework.cloud.contract.spec.internal.Cookies;
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern;
@@ -32,42 +34,47 @@ interface CookieElementProcessor {
 	default void processCookies(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
 		Cookies cookies = response.getCookies();
-		cookies.executeForEachCookie(cookie -> processCookieElement(cookie.getKey(),
-				cookie.getServerValue() instanceof NotToEscapePattern
-						? cookie.getServerValue()
-						: MapConverter.getTestSideValues(cookie.getServerValue())));
-		blockBuilder().addEndingIfNotPresent();
+		Iterator<Cookie> iterator = cookies.getEntries().iterator();
+		while (iterator.hasNext()) {
+			Cookie cookie = iterator.next();
+			String text = processCookieElement(cookie.getKey(),
+					cookie.getServerValue() instanceof NotToEscapePattern
+							? cookie.getServerValue()
+							: MapConverter.getTestSideValues(cookie.getServerValue()));
+			if (iterator.hasNext()) {
+				blockBuilder().addLine(text).addEndingIfNotPresent();
+			}
+			else {
+				blockBuilder().addIndented(text).addEndingIfNotPresent();
+			}
+		}
 	}
 
 	BlockBuilder blockBuilder();
 
-	default void processCookieElement(String property, Object value) {
+	default String processCookieElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
 			verifyCookieNotNull(property);
-			blockBuilder()
-					.addIndented(comparisonBuilder().assertThat(cookieValue(property))
-							+ comparisonBuilder().matches(((NotToEscapePattern) value)
-									.getServerValue().pattern().replace("\\", "\\\\")));
+			return comparisonBuilder().assertThat(cookieValue(property))
+					+ comparisonBuilder().matches(((NotToEscapePattern) value)
+							.getServerValue().pattern().replace("\\", "\\\\"));
 		}
 		else if (value instanceof String || value instanceof Pattern) {
 			verifyCookieNotNull(property);
-			blockBuilder().addIndented(
-					comparisonBuilder().assertThat(cookieValue(property), value));
+			return comparisonBuilder().assertThat(cookieValue(property), value);
 		}
 		else if (value instanceof Number) {
 			verifyCookieNotNull(property);
-			blockBuilder().addIndented(
-					comparisonBuilder().assertThat(cookieValue(property), value));
+			return comparisonBuilder().assertThat(cookieValue(property), value);
 		}
 		else if (value instanceof ExecutionProperty) {
 			verifyCookieNotNull(property);
-			blockBuilder().addIndented(
-					((ExecutionProperty) value).insertValue(cookieValue(property)));
+			return ((ExecutionProperty) value).insertValue(cookieValue(property));
 
 		}
 		else {
 			// fallback
-			processCookieElement(property, value.toString());
+			return processCookieElement(property, value.toString());
 		}
 	}
 

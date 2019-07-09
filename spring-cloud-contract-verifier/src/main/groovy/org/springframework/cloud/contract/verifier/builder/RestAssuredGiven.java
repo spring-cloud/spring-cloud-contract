@@ -56,6 +56,7 @@ class RestAssuredGiven implements Given, BodyMethodVisitor {
 		startBodyBlock(this.blockBuilder, "given:");
 		addRequestGivenLine(singleContractMetadata);
 		indentedBodyBlock(this.blockBuilder, this.bodyGivens, singleContractMetadata);
+		this.blockBuilder.addEmptyLine();
 		return this;
 	}
 
