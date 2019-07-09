@@ -26,7 +26,6 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -39,8 +38,7 @@ import org.springframework.util.Assert;
  */
 @Configuration
 @ConditionalOnClass(EnableBinding.class)
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 public class ContractVerifierStreamAutoConfiguration {
 
@@ -74,9 +72,8 @@ public class ContractVerifierStreamAutoConfiguration {
 		@Bean
 		@ConditionalOnMissingBean
 		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithNoMessageCollector(
-				ApplicationContext applicationContext,
-				BinderAwareChannelResolver resolver) {
-			return new StreamStubMessages(new StreamStubMessageSender(resolver),
+				ApplicationContext applicationContext) {
+			return new StreamStubMessages(new StreamStubMessageSender(applicationContext),
 					new StreamPollableChannelMessageReceiver(applicationContext));
 		}
 

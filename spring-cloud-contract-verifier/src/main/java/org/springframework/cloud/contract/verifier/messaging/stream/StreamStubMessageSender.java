@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
+import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 
@@ -33,12 +34,14 @@ class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 
 	private static final Log log = LogFactory.getLog(StreamStubMessageSender.class);
 
-	private final BinderAwareChannelResolver resolver;
+	private final ApplicationContext context;
 
 	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
 
-	StreamStubMessageSender(BinderAwareChannelResolver resolver) {
-		this.resolver = resolver;
+	private BinderAwareChannelResolver resolver;
+
+	StreamStubMessageSender(ApplicationContext context) {
+		this.context = context;
 	}
 
 	@Override
@@ -49,7 +52,7 @@ class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 	@Override
 	public void send(Message<?> message, String destination) {
 		try {
-			MessageChannel messageChannel = this.resolver.resolveDestination(destination);
+			MessageChannel messageChannel = resolver().resolveDestination(destination);
 			messageChannel.send(message);
 		}
 		catch (Exception e) {
@@ -57,6 +60,13 @@ class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 					+ "] " + "to a channel with name [" + destination + "]", e);
 			throw e;
 		}
+	}
+
+	private BinderAwareChannelResolver resolver() {
+		if (this.resolver == null) {
+			this.resolver = context.getBean(BinderAwareChannelResolver.class);
+		}
+		return this.resolver;
 	}
 
 }
