@@ -29,7 +29,6 @@ import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.spec.Contract
@@ -60,6 +59,7 @@ import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUA
 import static org.springframework.cloud.contract.spec.internal.MatchingType.NULL
 import static org.springframework.cloud.contract.spec.internal.MatchingType.TYPE
 import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
+import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
@@ -315,38 +315,42 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	@TypeChecked(TypeCheckingMode.SKIP)
 	protected ContentPattern convertToValuePattern(Object object) {
 		switch (object) {
-			case Pattern:
-			case RegexProperty:
-				return WireMock.matching(new RegexProperty(object).pattern())
-			case OptionalProperty:
-				OptionalProperty value = object as OptionalProperty
-				return WireMock.matching(value.optionalPattern())
-			case MatchingStrategy:
-				MatchingStrategy value = object as MatchingStrategy
-				switch (value.type) {
-					case MatchingStrategy.Type.NOT_MATCHING:
-						return WireMock.notMatching(value.clientValue.toString())
-					case MatchingStrategy.Type.ABSENT:
-						return WireMock.absent()
-					default:
-						try {
-							return WireMock."${value.type.name}"(
-									clientBody(value.clientValue, contentType))
-						}
-						catch (Throwable t) {
-							log.error("Exception occurred while trying to call WireMock.${value.type.name}(${value.clientValue})", t)
-							throw t
-						}
-				}
+		case Pattern:
+		case RegexProperty:
+			return WireMock.matching(new RegexProperty(object).pattern())
+		case OptionalProperty:
+			OptionalProperty value = object as OptionalProperty
+			return WireMock.matching(value.optionalPattern())
+		case MatchingStrategy:
+			MatchingStrategy value = object as MatchingStrategy
+			switch (value.type) {
+			case MatchingStrategy.Type.NOT_MATCHING:
+				return WireMock.notMatching(value.clientValue.toString())
+			case MatchingStrategy.Type.ABSENT:
+				return WireMock.absent()
+			case MatchingStrategy.Type.EQUAL_TO:
+				return WireMock.equalTo(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.CONTAINS:
+				return WireMock.containing(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.MATCHING:
+				return WireMock.matching(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.EQUAL_TO_JSON:
+				return WireMock.equalToJson(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.EQUAL_TO_XML:
+				return WireMock.equalToXml(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.BINARY_EQUAL_TO:
+				return WireMock.binaryEqualTo(clientBody(value.clientValue, contentType) as byte[])
 			default:
-				return WireMock.equalTo(object.toString())
+				throw new UnsupportedOperationException("Unknown matching strategy " + value.type)
+			}
+		default:
+			return WireMock.equalTo(clientBody(object, contentType).toString())
 		}
 	}
 
-	protected static Object clientBody(Object bodyValue, ContentType contentType) {
+	protected Object clientBody(Object bodyValue, ContentType contentType) {
 		if (FORM == contentType) {
 			if (bodyValue instanceof Map) {
 				// [a:3, b:4] == "a=3&b=4"
@@ -364,6 +368,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		else if (bodyValue instanceof FromFileProperty) {
 			return bodyValue.isByte() ? bodyValue.asBytes() : bodyValue.asString()
+		}
+		else if (JSON == contentType) {
+			return parseBody(bodyValue, contentType)
 		}
 		return bodyValue
 	}
@@ -421,14 +428,14 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private MatchingStrategy appendBodyRegexpMatchPattern(Object value, ContentType contentType) {
 		switch (contentType) {
-			case ContentType.JSON:
-				return new MatchingStrategy(
-						buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
-			case ContentType.UNKNOWN:
-				return new MatchingStrategy(
-						buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
-			case ContentType.XML:
-				throw new IllegalStateException("XML pattern matching is not implemented yet")
+		case ContentType.JSON:
+			return new MatchingStrategy(
+					buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
+		case ContentType.UNKNOWN:
+			return new MatchingStrategy(
+					buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
+		case ContentType.XML:
+			throw new IllegalStateException("XML pattern matching is not implemented yet")
 		}
 	}
 

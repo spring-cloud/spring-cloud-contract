@@ -650,8 +650,16 @@ class ContentUtils {
 				escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}
 
-	static ContentType evaluateContentType(Headers contractHeaders, Object body) {
+	static ContentType evaluateClientSideContentType(Headers contractHeaders, Object body) {
 		ContentType contentType = recognizeContentTypeFromHeader(contractHeaders)
+		if (UNKNOWN == contentType) {
+			contentType = recognizeContentTypeFromContent(body)
+		}
+		return contentType
+	}
+
+	static ContentType evaluateServerSideContentType(Headers contractHeaders, Object body) {
+		ContentType contentType = recognizeContentTypeFromTestHeader(contractHeaders)
 		if (UNKNOWN == contentType) {
 			contentType = recognizeContentTypeFromContent(body)
 		}

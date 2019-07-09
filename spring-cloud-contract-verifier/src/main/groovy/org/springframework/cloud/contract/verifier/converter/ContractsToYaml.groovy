@@ -41,7 +41,7 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateClientSideContentType
 
 /**
  * @author Marcin Grzejszczak
@@ -72,7 +72,7 @@ class ContractsToYaml {
 		if (!contract.outputMessage) {
 			return
 		}
-		ContentType contentType = evaluateContentType(contract.response?.headers,
+		ContentType contentType = evaluateClientSideContentType(contract.response?.headers,
 				contract.response?.body)
 		yamlContract.outputMessage = new YamlContract.OutputMessage()
 		yamlContract.outputMessage.sentTo = MapConverter.
@@ -102,7 +102,7 @@ class ContractsToYaml {
 		if (!contract.input) {
 			return
 		}
-		ContentType contentType = evaluateContentType(contract.input?.messageHeaders,
+		ContentType contentType = evaluateClientSideContentType(contract.input?.messageHeaders,
 				contract.input?.messageBody)
 		yamlContract.input = new YamlContract.Input()
 		yamlContract.input.assertThat = MapConverter.
@@ -132,7 +132,7 @@ class ContractsToYaml {
 		if (!contract.request) {
 			return
 		}
-		ContentType requestContentType = evaluateContentType(contract.request.headers,
+		ContentType requestContentType = evaluateClientSideContentType(contract.request.headers,
 				contract.request.body)
 		yamlContract.request = new YamlContract.Request()
 		yamlContract.request.with { YamlContract.Request request ->
@@ -336,7 +336,7 @@ class ContractsToYaml {
 		if (!contract.response) {
 			return
 		}
-		ContentType contentType = evaluateContentType(contract.response?.headers,
+		ContentType contentType = evaluateClientSideContentType(contract.response?.headers,
 				contract.response?.body)
 		yamlContract.response = new YamlContract.Response()
 		yamlContract.response.with { YamlContract.Response response ->

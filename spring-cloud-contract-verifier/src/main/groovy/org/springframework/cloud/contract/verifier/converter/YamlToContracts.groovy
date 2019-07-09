@@ -39,7 +39,7 @@ import org.springframework.util.StringUtils
 
 import static java.util.stream.Collectors.toSet
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateClientSideContentType
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
@@ -250,7 +250,7 @@ class YamlToContracts {
 							yamlContract.request.matchers?.body?.
 								each { YamlContract.BodyStubMatcher matcher ->
 									ContentType contentType =
-										evaluateContentType(
+										evaluateClientSideContentType(
 											yamlHeadersToContractHeaders(yamlContract.request?.headers),
 											yamlContract.request?.body)
 									MatchingTypeValue value = null
@@ -367,7 +367,7 @@ class YamlToContracts {
 							yamlContract.response?.matchers?.body?.
 								each { YamlContract.BodyTestMatcher testMatcher ->
 									ContentType contentType =
-										evaluateContentType(
+										evaluateClientSideContentType(
 											yamlHeadersToContractHeaders(yamlContract.response?.headers),
 											yamlContract.response?.body)
 									MatchingTypeValue value = null
@@ -457,7 +457,7 @@ class YamlToContracts {
 							yamlContract.input.matchers.body?.
 								each { YamlContract.BodyStubMatcher matcher ->
 									ContentType contentType =
-										evaluateContentType(
+										evaluateClientSideContentType(
 											yamlHeadersToContractHeaders(yamlContract.input?.messageHeaders),
 											yamlContract.input?.messageBody)
 									MatchingTypeValue value = null
@@ -527,7 +527,7 @@ class YamlToContracts {
 								yamlContract.outputMessage?.matchers?.body?.
 									each { YamlContract.BodyTestMatcher testMatcher ->
 										ContentType contentType =
-											evaluateContentType(
+											evaluateClientSideContentType(
 												yamlHeadersToContractHeaders(yamlContract.outputMessage?.headers),
 												yamlContract.outputMessage?.body)
 										MatchingTypeValue value = null

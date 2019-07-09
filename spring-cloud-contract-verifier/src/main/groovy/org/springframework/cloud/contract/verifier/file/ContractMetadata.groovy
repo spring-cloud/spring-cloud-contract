@@ -117,17 +117,35 @@ class SingleContractMetadata {
 		DslProperty inputBody = inputBody(currentContract)
 		Headers outputHeaders = outputHeaders(currentContract)
 		DslProperty outputBody = outputBody(currentContract)
-		this.evaluatedInputTestContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody?.getServerValue())
+		this.evaluatedInputTestContentType = tryToEvaluateTestContentType(inputHeaders, inputBody)
 		this.inputTestContentType = inputBody != null ? this.evaluatedInputTestContentType : ContentType.UNKNOWN
-		this.evaluatedOutputTestContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody?.getServerValue())
+		this.evaluatedOutputTestContentType = tryToEvaluateTestContentType(outputHeaders, outputBody)
 		this.outputTestContentType = outputBody != null ? this.evaluatedOutputTestContentType : ContentType.UNKNOWN
-		this.evaluatedInputStubContentType = ContentUtils.evaluateContentType(inputHeaders, inputBody?.getClientValue())
+		this.evaluatedInputStubContentType = tryToEvaluateStubContentType(inputHeaders, inputBody)
 		this.inputStubContentType = inputBody != null ? this.evaluatedInputStubContentType : ContentType.UNKNOWN
-		this.evaluatedOutputStubContentType = ContentUtils.evaluateContentType(outputHeaders, outputBody?.getClientValue())
+		this.evaluatedOutputStubContentType = tryToEvaluateStubContentType(outputHeaders, outputBody)
 		this.outputStubContentType = outputBody != null ? this.evaluatedOutputStubContentType : ContentType.UNKNOWN
 		this.http = currentContract.request != null
 		this.contractMetadata = contractMetadata
 		this.stubsFile = contractMetadata.getPath() != null ? contractMetadata.getPath().toFile() : null
+	}
+
+	private ContentType tryToEvaluateStubContentType(Headers mainHeaders, DslProperty body) {
+		ContentType contentType = ContentUtils.evaluateClientSideContentType(mainHeaders, body?.getClientValue())
+		if (contentType == ContentType.DEFINED || contentType == ContentType.UNKNOWN) {
+			// try to retrieve from the other side (e.g. stub side was a regex, but test side is concrete)
+			return ContentUtils.evaluateServerSideContentType(mainHeaders, body?.getServerValue())
+		}
+		return contentType
+	}
+
+	private ContentType tryToEvaluateTestContentType(Headers mainHeaders, DslProperty body) {
+		ContentType contentType = ContentUtils.evaluateClientSideContentType(mainHeaders, body?.getServerValue())
+		if (contentType == ContentType.DEFINED || contentType == ContentType.UNKNOWN) {
+			// try to retrieve from the other side (e.g. stub side was a regex, but test side is concrete)
+			return ContentUtils.evaluateServerSideContentType(mainHeaders, body?.getClientValue())
+		}
+		return contentType
 	}
 
 	boolean isJson() {
