@@ -1739,6 +1739,9 @@ response:
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
+			"mockmvc-testng"  | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
+			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile("true|false")""") }
@@ -1814,6 +1817,9 @@ response:
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
 			}
+			"mockmvc-testng"  | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
+			}
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
 			}
@@ -1851,6 +1857,9 @@ response:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"mockmvc-testng"  | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
+			}
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
 			}
@@ -1888,6 +1897,9 @@ response:
 			}                                 | { String body -> body.contains("body('''12000''')") }                                        | { String body -> body.contains("responseBody == '12000'") }
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
+			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
+			"mockmvc-testng"  | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
