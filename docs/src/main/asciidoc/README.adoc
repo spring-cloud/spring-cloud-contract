@@ -2,8 +2,24 @@
 image::https://badges.gitter.im/Join%20Chat.svg[Gitter, link="https://gitter.im/spring-cloud/spring-cloud-contract?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
 image::https://codecov.io/gh/spring-cloud/spring-cloud-contract/branch/{branch}/graph/badge.svg["codecov", link="https://codecov.io/gh/spring-cloud/spring-cloud-contract"]
 image::https://circleci.com/gh/spring-cloud/spring-cloud-contract.svg?style=svg["CircleCI", link="https://circleci.com/gh/spring-cloud/spring-cloud-contract"]
-:introduction_url: ../../../..
-:verifier_core_path: {introduction_url}/spring-cloud-contract-verifier
+:branch: master
+:core_path: ../../..
+:plugins_path: ../../../spring-cloud-contract-tools
+:converters_path: {plugins_path}/spring-cloud-contract-converters
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:contract_spec_path: {core_path}/specs/spring-cloud-contract-spec-java
+:contract_spec_tests_path: {core_path}/specs/spring-cloud-contract-spec
+:samples_path: {core_path}/samples
+:verifier_core_path: {verifier_root_path}
+:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
+:standalone_samples_path: {samples_path}/standalone/dsl
+:standalone_messaging_samples_path: {samples_path}/standalone/messaging
+:standalone_pact_path: {samples_path}/standalone/pact
+:standalone_restdocs_path: {samples_path}/standalone/restdocs
+:tests_path: {core_path}/tests
+:samples_branch: 2.2.x
+:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/{samples_branch}
+:introduction_url: ${core_path}/../../
 
 == Spring Cloud Contract
 
@@ -21,13 +37,13 @@ https://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[thi
 
 === Spring Cloud Contract Verifier
 
-include::verifier_introduction.adoc[]
+include::_verifier_introduction.adoc[]
 
-include::links.adoc[]
+include::_links.adoc[]
 
 === Spring Cloud Contract WireMock
 
-include::spring-cloud-wiremock.adoc[]
+include::_spring-cloud-wiremock.adoc[]
 
 == Documentation
 
@@ -38,4 +54,4 @@ You can read more about Spring Cloud Contract Verifier by reading the
 
 include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]
 
-include::building.adoc[]
+include::_building.adoc[]

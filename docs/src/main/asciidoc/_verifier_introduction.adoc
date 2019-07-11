@@ -1,0 +1,120 @@
+== Spring Cloud Contract Introduction
+
+Spring Cloud Contract moves TDD to the level of software architecture. It allows to perform consumer, consumer-driven and producer-driven contract testing.
+
+=== History
+
+Before becoming Spring Cloud Contract, this project was called https://github.com/Codearte/accurest[Accurest].
+It was created by https://twitter.com/mgrzejszczak[Marcin Grzejszczak] and https://twitter.com/jkubrynski[Jakub Kubrynski]
+from (https://github.com/Codearte[Codearte].
+
+The `0.1.0` release took place on 26 Jan 2015 and it became stable with `1.0.0` release on 29 Feb 2016.
+
+=== Why a Contract Verifier?
+
+Assume that we have a system consisting of multiple microservices:
+
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
+
+==== Testing issues
+
+If we wanted to test the application in top left corner to determine whether it can
+communicate with other services, we could do one of two things:
+
+- Deploy all microservices and perform end-to-end tests.
+- Mock other microservices in unit/integration tests.
+
+Both have their advantages but also a lot of disadvantages.
+
+*Deploy all microservices and perform end to end tests*
+
+
+Advantages:
+
+- Simulates production.
+- Tests real communication between services.
+
+Disadvantages:
+
+- To test one microservice, we have to deploy 6 microservices, a couple of databases,
+etc.
+- The environment where the tests run is locked for a single suite of tests (nobody else
+would be able to run the tests in the meantime).
+- They take a long time to run.
+- The feedback comes very late in the process.
+- They are extremely hard to debug.
+
+*Mock other microservices in unit/integration tests*
+
+Advantages:
+
+- They provide very fast feedback.
+- They have no infrastructure requirements.
+
+Disadvantages:
+
+- The implementor of the service creates stubs that might have nothing to do with
+reality.
+- You can go to production with passing tests and failing production.
+
+To solve the aforementioned issues, Spring Cloud Contract was created. The main idea is to give you very fast feedback, without the need to set up the
+whole world of microservices. If you work on stubs, then the only applications you need
+are those that your application directly uses.
+
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
+
+Spring Cloud Contract gives you the certainty that the stubs that you use were
+created by the service that you're calling. Also, if you can use them, it means that they
+were tested against the producer's side. In short, you can trust those stubs.
+
+=== Purposes
+
+The main purposes of Spring Cloud Contract are:
+
+- To ensure that Http / Messaging stubs (used when developing the client) do exactly
+what the actual server-side implementation does.
+- To promote ATDD (acceptance test driven developement) method and Microservices architectural style.
+- To provide a way to publish changes in contracts that are immediately visible on both
+sides.
+- To generate boilerplate test code to be used on the server side.
+
+By default Spring Cloud Contract integrates with http://wiremock.org[Wiremock] as the HTTP server stub.
+
+IMPORTANT: Spring Cloud Contract's purpose is NOT to start writing business
+features in the contracts. Assume that we have a business use case of fraud check. If a
+user can be a fraud for 100 different reasons, we would assume that you would create 2
+contracts, one for the positive case and one for the negative case. Contract tests are
+used to test contracts between applications and not to simulate full behavior.
+
+include::_verifier_how_it_works.adoc[]
+
+=== Dependencies
+
+The best way to add dependencies is to use the proper `starter` dependency.
+
+For `stub-runner`, use `spring-cloud-starter-stub-runner`. When you use a plugin, add
+`spring-cloud-starter-contract-verifier`.
+
+=== Additional Links
+
+Here are some resources related to Spring Cloud Contract Verifier and Stub Runner. Note
+that some may be outdated, because the Spring Cloud Contract Verifier project is under
+constant development.
+
+==== Spring Cloud Contract video
+
+You can check out the video from the Warsaw JUG about Spring Cloud Contract:
+
+video::sAAklvxmPmk[youtube,start=538,width=640,height=480]
+
+==== Readings
+
+- https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
+- https://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
+- https://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
+- https://groovy-lang.org/json.html[Groovy docs regarding JSON]
+
+=== Samples
+
+You can find some samples at
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples[samples].

@@ -191,7 +191,30 @@ documentation (for example in Asciidoctor format) for an HTTP API with Spring Mo
 or `WebTestClient` or Rest Assured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use `@AutoConfigureRestDocs` to have stubs be
-automatically generated in the REST Docs output directory. The following code shows an
+automatically generated in the REST Docs output directory.
+
+[plantuml, rest-docs, png]
+----
+"API Producer"->"API Producer": add Spring Cloud Contract (SCC) \nStub Runner dependency
+"API Producer"->"API Producer": setup stub jar assembly
+"API Producer"->"API Producer": write and setup REST Docs tests
+"API Producer"->"Build": run build
+"Build"->"REST Docs": generate API \ndocumentation
+"REST Docs"->"SCC": generate stubs from the \nREST Docs tests
+"REST Docs"->"SCC": generate contracts from the \nREST Docs tests
+"Build"->"Build": assemble stubs jar with \nstubs and contracts
+"Build"->"Nexus / Artifactory": upload contracts \nand stubs and the project arifact
+"Build"->"API Producer": Build successful
+"API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
+"API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
+"SCC Stub Runner"->"Nexus / Artifactory": test asks for [API Producer] stubs
+"Nexus / Artifactory"->"SCC Stub Runner": fetch the [API Producer] stubs
+"SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
+"API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
+"SCC Stub Runner"->"API Consumer": communication is correct
+----
+
+The following code shows an
 example using `MockMvc`:
 
 [source,java,indent=0]

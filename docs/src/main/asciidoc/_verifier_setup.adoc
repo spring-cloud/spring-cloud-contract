@@ -1,0 +1,7 @@
+== Spring Cloud Contract Verifier Setup
+
+You can set up Spring Cloud Contract Verifier in the following ways:
+
+* link:gradle-project.html[As a Gradle project]
+* link:maven-project.html[As a Maven project]
+* link:docker-project.html[As a Docker project]
