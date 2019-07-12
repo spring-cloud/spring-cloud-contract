@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.verifier.config.framework.JUnit5Defini
 import org.springframework.cloud.contract.verifier.config.framework.JUnitDefinition;
 import org.springframework.cloud.contract.verifier.config.framework.SpockDefinition;
 import org.springframework.cloud.contract.verifier.config.framework.TestFrameworkDefinition;
+import org.springframework.cloud.contract.verifier.config.framework.TestNGDefinition;
 
 /**
  * Contains main building blocks for a test class for the given framework.
@@ -46,6 +47,10 @@ public enum TestFramework {
 	 * JUnit5 test framework.
 	 */
 	JUNIT5(new JUnit5Definition()),
+	/**
+	 * TestNG test framework.
+	 */
+	TESTNG(new TestNGDefinition()),
 	/**
 	 * Custom test framework.
 	 */

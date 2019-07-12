@@ -245,6 +245,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder                                      | rootElement
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '$'
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
@@ -320,6 +321,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder                                      | rootElement
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '$'
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
@@ -380,6 +382,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder                                      | rootElement
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '$'
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
@@ -420,6 +423,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder                                      | rootElement
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '$'
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
@@ -461,6 +465,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder                                      | rootElement
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '$'
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
@@ -504,6 +509,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder                                      | rootElement
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '$'
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
@@ -555,6 +561,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
@@ -602,6 +609,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		where:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
 				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT

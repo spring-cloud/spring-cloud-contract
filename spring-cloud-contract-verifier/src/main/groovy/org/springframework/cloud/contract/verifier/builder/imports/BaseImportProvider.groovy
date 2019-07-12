@@ -24,6 +24,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.C
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.config.TestFramework.TESTNG
 
 /**
  * Provides imports based on test framework.
@@ -47,12 +48,14 @@ class BaseImportProvider {
 			(JUNIT) : new ImportDefinitions(['org.junit.Test']),
 			(JUNIT5): new ImportDefinitions(['org.junit.jupiter.api.Test']),
 			(SPOCK) : new ImportDefinitions([]),
+			(TESTNG): new ImportDefinitions(['org.testng.annotations.Test']),
 			(CUSTOM): new ImportDefinitions([])]
 
 	private static final Map<TestFramework, String> RULE_IMPORT = [
 			(JUNIT) : 'org.junit.Rule',
 			(JUNIT5): 'org.junit.jupiter.api.extension.ExtendWith',
 			(SPOCK) : 'org.junit.Rule',
+			(TESTNG): 'org.junit.Rule',
 			(CUSTOM): 'org.junit.Rule'
 	]
 

@@ -67,6 +67,11 @@ class ImportsBuilder {
 		return this;
 	}
 
+	ImportsBuilder testNG() {
+		this.parentBuilder.imports(new TestNGImports(builder, metaData));
+		return this;
+	}
+
 	ImportsBuilder spock() {
 		this.parentBuilder.imports(new SpockImports(builder, metaData),
 				new SpockIgnoreImports(builder, metaData),

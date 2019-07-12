@@ -249,7 +249,7 @@ from the Groovy DSL should be placed. By default its value is
 `$buildDir/generated-test-resources/contracts`.
 * *stubsOutputDir*: Specifies the directory where the generated WireMock stubs from
 the Groovy DSL should be placed.
-* *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`) and
+* *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`), TestNG and
 JUnit 5 are supported with JUnit 4 being the default framework.
 * *contractsProperties*: a map containing properties to be passed to Spring Cloud Contract
 components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.

@@ -162,6 +162,9 @@ class XmlMethodBodyBuilderSpec extends Specification {
 			"spock"           | {
 				properties.testFramework = TestFramework.SPOCK
 			}
+			"testng"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 			"junit"           | {
 				properties.testMode = TestMode.MOCKMVC
 			}

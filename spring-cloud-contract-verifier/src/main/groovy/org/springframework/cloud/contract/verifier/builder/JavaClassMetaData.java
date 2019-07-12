@@ -97,7 +97,9 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT
 				|| this.generatedClassMetaData.configProperties
-						.getTestFramework() == TestFramework.JUNIT5;
+						.getTestFramework() == TestFramework.JUNIT5
+				|| this.generatedClassMetaData.configProperties
+						.getTestFramework() == TestFramework.TESTNG;
 	}
 
 }
