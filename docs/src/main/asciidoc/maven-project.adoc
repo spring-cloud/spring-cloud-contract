@@ -543,7 +543,7 @@ Surefire plugin setup, like in the following example:
 
 [source,xml,indent=0]
 ----
-include::{samples_url}/producer_with_spock/pom.xml[tags=pock-surefire-setup,indent=0]
+include::{samples_url}/producer_with_spock/pom.xml[tags=spock-surefire-setup,indent=0]
 ----
 
 = Stubs and Transitive Dependencies

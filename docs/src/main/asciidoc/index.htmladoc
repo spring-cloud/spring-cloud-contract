@@ -1,0 +1,17 @@
+[[spring-cloud-contract-reference-documentation]]
+= Spring Cloud Contract Reference Documentation
+Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant
+:docinfo: shared
+
+The reference documentation consists of the following sections:
+
+[horizontal]
+<<legal.adoc#legal-information,Legal>> :: Legal information.
+<<documentation-overview.adoc#contract-documentation,Documentation Overview>> :: About the Documentation, Getting Help, First Steps, and more.
+<<getting-started.adoc#getting-started,Getting Started>> :: Introducing Spring Cloud Contract, System Requirements, Developing Your First Spring Cloud Contract based Application
+<<using-spring-cloud-contract.adoc#using-contract,Using Spring Cloud Contract>> :: Build Systems, Structuring Your Code, Configuration, Spring Beans and Dependency Injection, and more.
+<<spring-cloud-contract-features.adoc#contract-features,Spring Cloud Contract Features>> :: Profiles, Logging, Security, Caching, Spring Integration, Testing, and more.
+<<production-ready-features.adoc#production-ready,Spring Boot Actuator>> :: Monitoring, Metrics, Auditing, and more.
+<<build-tool-plugins.adoc#build-tool-plugins,Build Tool Plugins>> :: Maven Plugin, Gradle Plugin.
+<<howto.adoc#howto,"`How-to`" Guides>> :: Application Development, Configuration, Embedded Servers, Data Access, and many more.
+<<appendix.adoc#appendix,Appendices>> :: Properties, Metadata, Configuration, Dependencies, and more.
