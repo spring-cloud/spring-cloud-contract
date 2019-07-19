@@ -2,820 +2,1046 @@
 = Getting Started
 include::_attributes.adoc[]
 
-If you are getting started with Spring Boot, or "`Spring`" in general, start by reading
+If you are getting started with {project-full-name}, or "`Spring`" in general, start by reading
 this section. It answers the basic "`what?`", "`how?`" and "`why?`" questions. It
-includes an introduction to Spring Boot, along with installation instructions. We then
-walk you through building your first Spring Boot application, discussing some core
+includes an introduction to {project-full-name}, along with installation instructions. We then
+walk you through building your first {project-full-name} application, discussing some core
 principles as we go.
 
+[[getting-started-introducing-spring-cloud-contract]]
+== Introducing Spring Cloud Contract
 
+Spring Cloud Contract moves TDD to the level of software architecture. It allows to perform consumer, consumer-driven and producer-driven contract testing.
 
-[[getting-started-introducing-spring-boot]]
-== Introducing Spring Boot
-Spring Boot makes it easy to create stand-alone, production-grade Spring-based
-Applications that you can run. We take an opinionated view of the Spring platform and
-third-party libraries, so that you can get started with minimum fuss. Most Spring Boot
-applications need very little Spring configuration.
+[[getting-started-introducing-spring-cloud-contract-history]]
+=== History
 
-You can use Spring Boot to create Java applications that can be started by using
-`java -jar` or more traditional war deployments. We also provide a command line tool that
-runs "`spring scripts`".
+Before becoming Spring Cloud Contract, this project was called https://github.com/Codearte/accurest[Accurest].
+It was created by https://twitter.com/mgrzejszczak[Marcin Grzejszczak] and https://twitter.com/jkubrynski[Jakub Kubrynski]
+from (https://github.com/Codearte[Codearte].
 
-Our primary goals are:
+The `0.1.0` release took place on 26 Jan 2015 and it became stable with `1.0.0` release on 29 Feb 2016.
 
-* Provide a radically faster and widely accessible getting-started experience for all
-Spring development.
-* Be opinionated out of the box but get out of the way quickly as requirements start to
-diverge from the defaults.
-* Provide a range of non-functional features that are common to large classes of projects
-(such as embedded servers, security, metrics, health checks, and externalized
-configuration).
-* Absolutely no code generation and no requirement for XML configuration.
+[[getting-started-introducing-spring-cloud-contract-why]]
+==== Why would you need it?
 
+Assume that we have a system consisting of multiple microservices:
 
+image::images/Deps.png[Microservices Architecture]
 
-[[getting-started-system-requirements]]
-== System Requirements
-Spring Boot {spring-boot-version} requires https://www.java.com[Java 8] and is compatible
-up to Java 12 (included). {spring-reference}[Spring Framework {spring-framework-version}]
-or above is also required.
+[[getting-started-introducing-spring-cloud-contract-testing-issues]]
+==== Testing issues
 
-Explicit build support is provided for the following build tools:
+If we wanted to test the application in top left corner to determine whether it can
+communicate with other services, we could do one of two things:
 
-|===
-|Build Tool |Version
+- Deploy all microservices and perform end-to-end tests.
+- Mock other microservices in unit/integration tests.
 
-|Maven
-|3.3+
+Both have their advantages but also a lot of disadvantages.
 
-|Gradle
-|5.x (4.10 is also supported but in a deprecated form)
-|===
+*Deploy all microservices and perform end to end tests*
 
+Advantages:
 
+- Simulates production.
+- Tests real communication between services.
 
-[[getting-started-system-requirements-servlet-containers]]
-=== Servlet Containers
-Spring Boot supports the following embedded servlet containers:
+Disadvantages:
 
-|===
-|Name |Servlet Version
+- To test one microservice, we have to deploy 6 microservices, a couple of databases,
+etc.
+- The environment where the tests run is locked for a single suite of tests (nobody else
+would be able to run the tests in the meantime).
+- They take a long time to run.
+- The feedback comes very late in the process.
+- They are extremely hard to debug.
 
-|Tomcat 9.0
-|4.0
+*Mock other microservices in unit/integration tests*
 
-|Jetty 9.4
-|3.1
+Advantages:
 
-|Undertow 2.0
-|4.0
-|===
+- They provide very fast feedback.
+- They have no infrastructure requirements.
 
-You can also deploy Spring Boot applications to any Servlet 3.1+ compatible container.
+Disadvantages:
 
+- The implementor of the service creates stubs that might have nothing to do with
+reality.
+- You can go to production with passing tests and failing production.
 
+To solve the aforementioned issues, Spring Cloud Contract was created. The main idea is to give you very fast feedback, without the need to set up the
+whole world of microservices. If you work on stubs, then the only applications you need
+are those that your application directly uses.
 
-[[getting-started-installing-spring-boot]]
-== Installing Spring Boot
-Spring Boot can be used with "`classic`" Java development tools or installed as a command
-line tool. Either way, you need https://www.java.com[Java SDK v1.8] or higher. Before you
-begin, you should check your current Java installation by using the following command:
+image::images/Stubs2.png[Stubbed Services]
 
-[indent=0]
+Spring Cloud Contract gives you the certainty that the stubs that you use were
+created by the service that you're calling. Also, if you can use them, it means that they
+were tested against the producer's side. In short, you can trust those stubs.
+
+[[getting-started-introducing-spring-cloud-contract-purposes]]
+=== Purposes
+
+The main purposes of Spring Cloud Contract are:
+
+- To ensure that HTTP / Messaging stubs (used when developing the client) do exactly
+what the actual server-side implementation does.
+- To promote ATDD (acceptance test driven developement) method and Microservices architectural style.
+- To provide a way to publish changes in contracts that are immediately visible on both sides.
+- To generate boilerplate test code to be used on the server side.
+
+By default Spring Cloud Contract integrates with http://wiremock.org[Wiremock] as the HTTP server stub.
+
+IMPORTANT: Spring Cloud Contract's purpose is NOT to start writing business
+features in the contracts. Assume that we have a business use case of fraud check. If a
+user can be a fraud for 100 different reasons, we would assume that you would create 2
+contracts, one for the positive case and one for the negative case. Contract tests are
+used to test contracts between applications and not to simulate full behavior.
+
+[[getting-started-what-is-a-contract]]
+=== What is a contract?
+
+As consumers of services, we need to define what exactly we want to achieve. We need to
+formulate our expectations. That is why we write contracts. In other words a contract is an agreement on how the API / message communication should look like. Let's look at the following example
+
+Assume that you want to send a request containing the ID of a client company and the
+amount it wants to borrow from us. You also want to send it to the /fraudcheck url via
+the PUT method.
+
+====
+[source,groovy,indent=0,role="primary"]
+.groovy
 ----
-	$ java -version
-----
-
-If you are new to Java development or if you want to experiment with Spring Boot, you
-might want to try the <<getting-started-installing-the-cli, Spring Boot CLI>> (Command
-Line Interface) first. Otherwise, read on for "`classic`" installation instructions.
-
-
-
-[[getting-started-installation-instructions-for-java]]
-=== Installation Instructions for the Java Developer
-You can use Spring Boot in the same way as any standard Java library. To do so, include
-the appropriate `+spring-boot-*.jar+` files on your classpath. Spring Boot does not
-require any special tools integration, so you can use any IDE or text editor. Also, there
-is nothing special about a Spring Boot application, so you can run and debug a Spring
-Boot application as you would any other Java program.
-
-Although you _could_ copy Spring Boot jars, we generally recommend that you use a build
-tool that supports dependency management (such as Maven or Gradle).
-
-
-
-[[getting-started-maven-installation]]
-==== Maven Installation
-Spring Boot is compatible with Apache Maven 3.3 or above. If you do not already have
-Maven installed, you can follow the instructions at https://maven.apache.org.
-
-TIP: On many operating systems, Maven can be installed with a package manager. If you use
-OSX Homebrew, try `brew install maven`. Ubuntu users can run
-`sudo apt-get install maven`. Windows users with https://chocolatey.org/[Chocolatey] can
-run `choco install maven` from an elevated (administrator) prompt.
-
-Spring Boot dependencies use the `org.springframework.boot` `groupId`. Typically, your
-Maven POM file inherits from the `spring-boot-starter-parent` project and declares
-dependencies to one or more <<using-spring-boot.adoc#using-boot-starter,"`Starters`">>.
-Spring Boot also provides an optional
-<<build-tool-plugins.adoc#build-tool-plugins-maven-plugin, Maven plugin>> to create
-executable jars.
-
-The following listing shows a typical `pom.xml` file:
-
-[source,xml,indent=0,subs="verbatim,quotes,attributes"]
-----
-	<?xml version="1.0" encoding="UTF-8"?>
-	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-		<modelVersion>4.0.0</modelVersion>
-
-		<groupId>com.example</groupId>
-		<artifactId>myproject</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-
-		<!-- Inherit defaults from Spring Boot -->
-		<parent>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-parent</artifactId>
-			<version>{spring-boot-version}</version>
-		</parent>
-
-		<!-- Add typical dependencies for a web application -->
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-			</dependency>
-		</dependencies>
-
-		<!-- Package as an executable jar -->
-		<build>
-			<plugins>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-				</plugin>
-			</plugins>
-		</build>
-
-ifeval::["{spring-boot-repo}" != "release"]
-		<!-- Add Spring repositories -->
-		<!-- (you don't need this if you are using a .RELEASE version) -->
-		<repositories>
-			<repository>
-				<id>spring-snapshots</id>
-				<url>https://repo.spring.io/snapshot</url>
-				<snapshots><enabled>true</enabled></snapshots>
-			</repository>
-			<repository>
-				<id>spring-milestones</id>
-				<url>https://repo.spring.io/milestone</url>
-			</repository>
-		</repositories>
-		<pluginRepositories>
-			<pluginRepository>
-				<id>spring-snapshots</id>
-				<url>https://repo.spring.io/snapshot</url>
-			</pluginRepository>
-			<pluginRepository>
-				<id>spring-milestones</id>
-				<url>https://repo.spring.io/milestone</url>
-			</pluginRepository>
-		</pluginRepositories>
-endif::[]
-	</project>
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 ----
 
-TIP: The `spring-boot-starter-parent` is a great way to use Spring Boot, but it might not
-be suitable all of the time. Sometimes you may need to inherit from a different parent
-POM, or you might not like our default settings. In those cases, see
-<<using-boot-maven-without-a-parent>> for an alternative solution that uses an `import`
-scope.
-
-
-
-[[getting-started-gradle-installation]]
-==== Gradle Installation
-Spring Boot is compatible with 5.x. 4.10 is also supported but this support is deprecated
-and will be removed in a future release. If you do not already have Gradle installed, you
-can follow the instructions at https://gradle.org.
-
-Spring Boot dependencies can be declared by using the `org.springframework.boot` `group`.
-Typically, your project declares dependencies to one or more
-<<using-spring-boot.adoc#using-boot-starter, "`Starters`">>. Spring Boot
-provides a useful <<build-tool-plugins.adoc#build-tool-plugins-gradle-plugin, Gradle
-plugin>> that can be used to simplify dependency declarations and to create executable
-jars.
-
-.Gradle Wrapper
-****
-The Gradle Wrapper provides a nice way of "`obtaining`" Gradle when you need to build a
-project. It is a small script and library that you commit alongside your code to
-bootstrap the build process. See {gradle-user-guide}/gradle_wrapper.html for details.
-****
-
-More details on getting started with Spring Boot and Gradle can be found in the
-{spring-boot-gradle-plugin-reference}/#getting-started[Getting Started section] of the
-Gradle plugin's reference guide.
-
-
-
-[[getting-started-installing-the-cli]]
-=== Installing the Spring Boot CLI
-The Spring Boot CLI (Command Line Interface) is a command line tool that you can use to
-quickly prototype with Spring. It lets you run http://groovy-lang.org/[Groovy] scripts,
-which means that you have a familiar Java-like syntax without so much boilerplate code.
-
-You do not need to use the CLI to work with Spring Boot, but it is definitely the
-quickest way to get a Spring application off the ground.
-
-
-
-[[getting-started-manual-cli-installation]]
-==== Manual Installation
-You can download the Spring CLI distribution from the Spring software repository:
-
-* https://repo.spring.io/{spring-boot-repo}/org/springframework/boot/spring-boot-cli/{spring-boot-version}/spring-boot-cli-{spring-boot-version}-bin.zip[spring-boot-cli-{spring-boot-version}-bin.zip]
-* https://repo.spring.io/{spring-boot-repo}/org/springframework/boot/spring-boot-cli/{spring-boot-version}/spring-boot-cli-{spring-boot-version}-bin.tar.gz[spring-boot-cli-{spring-boot-version}-bin.tar.gz]
-
-Cutting edge
-https://repo.spring.io/snapshot/org/springframework/boot/spring-boot-cli/[snapshot
-distributions] are also available.
-
-Once downloaded, follow the
-{github-raw}/spring-boot-project/spring-boot-cli/src/main/content/INSTALL.txt[INSTALL.txt]
-instructions from the unpacked archive. In summary, there is a `spring` script
-(`spring.bat` for Windows) in a `bin/` directory in the `.zip` file. Alternatively, you
-can use `java -jar` with the `.jar` file (the script helps you to be sure that the
-classpath is set correctly).
-
-
-
-[[getting-started-sdkman-cli-installation]]
-==== Installation with SDKMAN!
-SDKMAN! (The Software Development Kit Manager) can be used for managing multiple versions
-of various binary SDKs, including Groovy and the Spring Boot CLI.
-Get SDKMAN! from https://sdkman.io and install Spring Boot by using the following
-commands:
-
-[indent=0,subs="verbatim,quotes,attributes"]
+[source,yaml,indent=0,role="secondary"]
+.yaml
 ----
-	$ sdk install springboot
-	$ spring --version
-	Spring Boot v{spring-boot-version}
+include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
+----
+====
+
+[[getting-started-three-second-tour]]
+== A Three-second Tour
+
+This very brief tour walks through using Spring Cloud Contract:
+
+* <<getting-started-three-second-tour-producer>>
+* <<getting-started-three-second-tour-consumer>>
+
+You can find a somewhat longer tour
+<<getting-started-first-application,here>>.
+
+[plantuml, three-second, png]
+----
+"API Producer"->"API Producer": add Spring Cloud \nContract (SCC) plugin
+"API Producer"->"API Producer": add SCC Verifier dependency
+"API Producer"->"API Producer": define contracts
+"API Producer"->"Build": run build
+"Build"->"SCC Plugin": generate \ntests, stubs and stubs \nartifact (e.g. stubs-jar)
+"Build"->"Nexus / Artifactory": upload contracts \nand stubs and the project arifact
+"Build"->"API Producer": Build successful
+"API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
+"API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
+"SCC Stub Runner"->"Nexus / Artifactory": test asks for [API Producer] stubs
+"Nexus / Artifactory"->"SCC Stub Runner": fetch the [API Producer] stubs
+"SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
+"API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
+"SCC Stub Runner"->"API Consumer": communication is correct
 ----
 
-If you develop features for the CLI and want easy access to the version you built,
-use the following commands:
+[[getting-started-three-second-tour-producer]]
+=== On the Producer Side
 
-[indent=0,subs="verbatim,quotes,attributes"]
-----
-	$ sdk install springboot dev /path/to/spring-boot/spring-boot-cli/target/spring-boot-cli-{spring-boot-version}-bin/spring-{spring-boot-version}/
-	$ sdk default springboot dev
-	$ spring --version
-	Spring CLI v{spring-boot-version}
-----
+To start working with Spring Cloud Contract, add files with `REST`/messaging contracts
+expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
+`contractsDslDir` property. By default, it is `$rootDir/src/test/resources/contracts`.
 
-The preceding instructions install a local instance of `spring` called the `dev`
-instance. It points at your target build location, so every time you rebuild Spring Boot,
-`spring` is up-to-date.
-
-You can see it by running the following command:
-
-[indent=0,subs="verbatim,quotes,attributes"]
-----
-	$ sdk ls springboot
-
-	================================================================================
-	Available Springboot Versions
-	================================================================================
-	> + dev
-	* {spring-boot-version}
-
-	================================================================================
-	+ - local version
-	* - installed
-	> - currently in use
-	================================================================================
-----
-
-
-
-[[getting-started-homebrew-cli-installation]]
-==== OSX Homebrew Installation
-If you are on a Mac and use https://brew.sh/[Homebrew], you can install the Spring Boot
-CLI by using the following commands:
-
-[indent=0]
-----
-	$ brew tap pivotal/tap
-	$ brew install springboot
-----
-
-Homebrew installs `spring` to `/usr/local/bin`.
-
-NOTE: If you do not see the formula, your installation of brew might be out-of-date. In
-that case, run `brew update` and try again.
-
-
-
-[[getting-started-macports-cli-installation]]
-==== MacPorts Installation
-If you are on a Mac and use https://www.macports.org/[MacPorts], you can install the
-Spring Boot CLI by using the following command:
-
-[indent=0]
-----
-	$ sudo port install spring-boot-cli
-----
-
-
-
-[[getting-started-cli-command-line-completion]]
-==== Command-line Completion
-The Spring Boot CLI includes scripts that provide command completion for the
-https://en.wikipedia.org/wiki/Bash_%28Unix_shell%29[BASH] and
-https://en.wikipedia.org/wiki/Z_shell[zsh] shells. You can `source` the script (also named
-`spring`) in any shell or put it in your personal or system-wide bash completion
-initialization. On a Debian system, the system-wide scripts are in
-`/shell-completion/bash` and all scripts in that directory are executed when a new shell
-starts. For example, to run the script manually if you have installed by using SDKMAN!,
-use the following commands:
-
-[indent=0]
-----
-	$ . ~/.sdkman/candidates/springboot/current/shell-completion/bash/spring
-	$ spring <HIT TAB HERE>
-	  grab  help  jar  run  test  version
-----
-
-NOTE: If you install the Spring Boot CLI by using Homebrew or MacPorts, the command-line
-completion scripts are automatically registered with your shell.
-
-
-
-[[getting-started-scoop-cli-installation]]
-==== Windows Scoop Installation
-If you are on a Windows and use https://scoop.sh/[Scoop], you can install the Spring Boot
-CLI by using the following commands:
-
-[indent=0]
-----
-	> scoop bucket add extras
-	> scoop install springboot
-----
-
-Scoop installs `spring` to `~/scoop/apps/springboot/current/bin`.
-
-NOTE: If you do not see the app manifest, your installation of scoop might be out-of-date.
-In that case, run `scoop update` and try again.
-
-
-
-[[getting-started-cli-example]]
-==== Quick-start Spring CLI Example
-You can use the following web application to test your installation. To start, create a
-file called `app.groovy`, as follows:
-
-[source,groovy,indent=0,subs="verbatim,quotes,attributes"]
-----
-	@RestController
-	class ThisWillActuallyRun {
-
-		@RequestMapping("/")
-		String home() {
-			"Hello World!"
-		}
-
-	}
-----
-
-Then run it from a shell, as follows:
-
-[indent=0]
-----
-	$ spring run app.groovy
-----
-
-NOTE: The first run of your application is slow, as dependencies are downloaded.
-Subsequent runs are much quicker.
-
-Open `http://localhost:8080` in your favorite web browser. You should see the following
-output:
-
-[indent=0]
-----
-	Hello World!
-----
-
-
-
-[[getting-started-upgrading-from-an-earlier-version]]
-=== Upgrading from an Earlier Version of Spring Boot
-If you are upgrading from an earlier release of Spring Boot, check the
-{github-wiki}/Spring-Boot-2.0-Migration-Guide["`migration guide`" on the project wiki]
-that provides detailed upgrade instructions. Check also the
-{github-wiki}["`release notes`"] for a list of "`new and noteworthy`" features for each
-release.
-
-When upgrading to a new feature release, some properties may have been renamed or removed.
-Spring Boot provides a way to analyze your application's environment and print diagnostics
-at startup, but also temporarily migrate properties at runtime for you. To enable that
-feature, add the following dependency to your project:
+Then add the Spring Cloud Contract Verifier dependency and plugin to your build file, as
+shown in the following example:
 
 [source,xml,indent=0]
 ----
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-properties-migrator</artifactId>
-		<scope>runtime</scope>
-	</dependency>
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
-WARNING: Properties that are added late to the environment, such as when using
-`@PropertySource`, will not be taken into account.
+The following listing shows how to add the plugin, which should go in the build/plugins
+portion of the file:
 
-NOTE: Once you're done with the migration, please make sure to remove this module from
-your project's dependencies.
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
+----
 
-To upgrade an existing CLI installation, use the appropriate package manager command (for
-example, `brew upgrade`) or, if you manually installed the CLI, follow the
-<<getting-started-manual-cli-installation, standard instructions>>, remembering to update
-your `PATH` environment variable to remove any older references.
+Running `./mvnw clean install` automatically generates tests that verify the application
+compliance with the added contracts. By default, the tests get generated under
+`org.springframework.cloud.contract.verifier.tests.`.
 
+As the implementation of the functionalities described by the contracts is not yet
+present, the tests fail.
 
+To make them pass, you must add the correct implementation of either handling HTTP
+requests or messages. Also, you must add a correct base test class for auto-generated
+tests to the project. This class is extended by all the auto-generated tests, and it
+should contain all the setup necessary to run them (for example `RestAssuredMockMvc`
+controller setup or messaging test setup).
+
+Once the implementation and the test base class are in place, the tests pass, and both the
+application and the stub artifacts are built and installed in the local Maven repository.
+The changes can now be merged, and both the application and the stub artifacts may be
+published in an online repository.
+
+[[getting-started-three-second-tour-consumer]]
+=== On the Consumer Side
+
+`Spring Cloud Contract Stub Runner` can be used in the integration tests to get a running
+WireMock instance or messaging route that simulates the actual service.
+
+To do so, add the dependency to `Spring Cloud Contract Stub Runner`, as shown in the
+following example:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
+----
+
+You can get the Producer-side stubs installed in your Maven repository in either of two
+ways:
+
+* By checking out the Producer side repository and adding contracts and generating the stubs
+by running the following commands:
++
+[source,bash,indent=0]
+----
+$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests
+----
+TIP: The tests are being skipped because the Producer-side contract implementation is not
+in place yet, so the automatically-generated contract tests fail.
+* By getting already-existing producer service stubs from a remote repository. To do so,
+pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract
+Stub Runner` properties, as shown in the following example:
++
+[source,yaml,indent=0]
+----
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+----
+
+Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
+provide the `group-id` and `artifact-id` values for `Spring Cloud Contract Stub Runner` to
+run the collaborators' stubs for you, as shown in the following example:
+
+[source,java, indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+public class LoanApplicationServiceTests {
+----
+
+TIP: Use the `REMOTE` `stubsMode` when downloading stubs from an online repository and
+`LOCAL` for offline work.
+
+Now, in your integration test, you can receive stubbed versions of HTTP responses or
+messages that are expected to be emitted by the collaborator service.
 
 [[getting-started-first-application]]
-== Developing Your First Spring Boot Application
-This section describes how to develop a simple "`Hello World!`" web application that
-highlights some of Spring Boot's key features. We use Maven to build this project, since
-most IDEs support it.
+== Developing Your First Spring Cloud Contract based application
 
-[TIP]
+This brief tour walks through using Spring Cloud Contract:
+
+* <<getting-started-first-application-producer>>
+* <<getting-started-first-application-consumer>>
+
+You can find an even more brief tour
+<<getting-started-three-second-tour,here>>.
+
+[[getting-started-first-application-producer]]
+=== On the Producer Side
+
+To start working with `Spring Cloud Contract`, add files with `REST/` messaging contracts
+expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
+`contractsDslDir` property. By default, it is `$rootDir/src/test/resources/contracts`.
+
+For the HTTP stubs, a contract defines what kind of response should be returned for a
+given request (taking into account the HTTP methods, URLs, headers, status codes, and so
+on). The following example shows how an HTTP stub contract:
+
 ====
-The https://spring.io[spring.io] web site contains many "`Getting Started`"
-https://spring.io/guides[guides] that use Spring Boot. If you need to solve a specific
-problem, check there first.
+[source,groovy,indent=0,role="primary"]
+.groovy
+----
+package contracts
 
-You can shortcut the steps below by going to https://start.spring.io and choosing the
-"Web" starter from the dependencies searcher. Doing so generates a new project structure
-so that you can <<getting-started-first-application-code,start coding right away>>. Check
-the {spring-initializr-reference}/#user-guide[Spring Initializr documentation] for more
-details.
+org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method 'PUT'
+		url '/fraudcheck'
+		body([
+			   "client.id": $(regex('[0-9]{10}')),
+			   loanAmount: 99999
+		])
+		headers {
+			contentType('application/json')
+		}
+	}
+	response {
+		status OK()
+		body([
+			   fraudCheckStatus: "FRAUD",
+			   "rejection.reason": "Amount too high"
+		])
+		headers {
+			contentType('application/json')
+		}
+	}
+}
+----
+
+[source,yaml,indent=0,role="secondary"]
+.yaml
+----
+request:
+  method: PUT
+  url: /fraudcheck
+  body:
+    "client.id": 1234567890
+    loanAmount: 99999
+  headers:
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $.['client.id']
+        type: by_regex
+        value: "[0-9]{10}"
+response:
+  status: 200
+  body:
+    fraudCheckStatus: "FRAUD"
+    "rejection.reason": "Amount too high"
+  headers:
+    Content-Type: application/json;charset=UTF-8
+----
 ====
 
-Before we begin, open a terminal and run the following commands to ensure that you have
-valid versions of Java and Maven installed:
+In the case of messaging, you can define:
 
-[indent=0]
-----
-	$ java -version
-	java version "1.8.0_102"
-	Java(TM) SE Runtime Environment (build 1.8.0_102-b14)
-	Java HotSpot(TM) 64-Bit Server VM (build 25.102-b14, mixed mode)
-----
+* The input and the output messages can be defined (taking into account from and where it
+was sent, the message body, and the header).
+* The methods that should be called after the message is received.
+* The methods that, when called, should trigger a message.
 
-[indent=0]
+The following example shows a Camel messaging contract:
+
+====
+[source,groovy,indent=0,role="primary"]
+.groovy
 ----
-	$ mvn -v
-	Apache Maven 3.5.4 (1edded0938998edf8bf061f1ceb3cfdeccf443fe; 2018-06-17T14:33:14-04:00)
-	Maven home: /usr/local/Cellar/maven/3.3.9/libexec
-	Java version: 1.8.0_102, vendor: Oracle Corporation
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
 ----
 
-NOTE: This sample needs to be created in its own folder. Subsequent instructions assume
-that you have created a suitable folder and that it is your current directory.
-
-
-
-[[getting-started-first-application-pom]]
-=== Creating the POM
-We need to start by creating a Maven `pom.xml` file. The `pom.xml` is the recipe that is
-used to build your project. Open your favorite text editor and add the following:
-
-[source,xml,indent=0,subs="verbatim,quotes,attributes"]
+[source,yaml,indent=0,role="secondary"]
+.yaml
 ----
-	<?xml version="1.0" encoding="UTF-8"?>
-	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-		<modelVersion>4.0.0</modelVersion>
+include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
+----
+====
 
-		<groupId>com.example</groupId>
-		<artifactId>myproject</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 
-		<parent>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-parent</artifactId>
-			<version>{spring-boot-version}</version>
-		</parent>
+Then you can add Spring Cloud Contract Verifier dependency and plugin to your build file,
+as shown in the following example:
 
-		<!-- Additional lines to be added here... -->
-
-ifeval::["{spring-boot-repo}" != "release"]
-		<!-- (you don't need this if you are using a .RELEASE version) -->
-		<repositories>
-			<repository>
-				<id>spring-snapshots</id>
-				<url>https://repo.spring.io/snapshot</url>
-				<snapshots><enabled>true</enabled></snapshots>
-			</repository>
-			<repository>
-				<id>spring-milestones</id>
-				<url>https://repo.spring.io/milestone</url>
-			</repository>
-		</repositories>
-		<pluginRepositories>
-			<pluginRepository>
-				<id>spring-snapshots</id>
-				<url>https://repo.spring.io/snapshot</url>
-			</pluginRepository>
-			<pluginRepository>
-				<id>spring-milestones</id>
-				<url>https://repo.spring.io/milestone</url>
-			</pluginRepository>
-		</pluginRepositories>
-endif::[]
-	</project>
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
-The preceding listing should give you a working build. You can test it by running `mvn
-package` (for now, you can ignore the "`jar will be empty - no content was marked for
-inclusion!`" warning).
+The following listing shows how to add the plugin, which should go in the build/plugins
+portion of the file:
 
-NOTE: At this point, you could import the project into an IDE (most modern Java IDEs
-include built-in support for Maven). For simplicity, we continue to use a plain text
-editor for this example.
-
-
-
-[[getting-started-first-application-dependencies]]
-=== Adding Classpath Dependencies
-Spring Boot provides a number of "`Starters`" that let you add jars to your classpath.
-Our applications for smoke tests use the `spring-boot-starter-parent` in the `parent`
-section of the POM. The `spring-boot-starter-parent` is a special starter that provides
-useful Maven defaults. It also provides a
-<<using-spring-boot.adoc#using-boot-dependency-management,`dependency-management`>>
-section so that you can omit `version` tags for "`blessed`" dependencies.
-
-Other "`Starters`" provide dependencies that you are likely to need when developing a
-specific type of application. Since we are developing a web application, we add a
-`spring-boot-starter-web` dependency. Before that, we can look at what we currently have
-by running the following command:
-
-[indent=0]
+[source,xml,indent=0]
 ----
-	$ mvn dependency:tree
-
-	[INFO] com.example:myproject:jar:0.0.1-SNAPSHOT
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
 ----
 
-The `mvn dependency:tree` command prints a tree representation of your project
-dependencies. You can see that `spring-boot-starter-parent` provides no dependencies by
-itself. To add the necessary dependencies, edit your `pom.xml` and add the
-`spring-boot-starter-web` dependency immediately below the `parent` section:
+Running `./mvnw clean install` automatically generates tests that verify the application
+compliance with the added contracts. By default, the generated tests are under
+`org.springframework.cloud.contract.verifier.tests.`.
 
-[source,xml,indent=0,subs="verbatim,quotes,attributes"]
-----
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-	</dependencies>
-----
-
-If you run `mvn dependency:tree` again, you see that there are now a number of additional
-dependencies, including the Tomcat web server and Spring Boot itself.
-
-
-
-[[getting-started-first-application-code]]
-=== Writing the Code
-To finish our application, we need to create a single Java file. By default, Maven
-compiles sources from `src/main/java`, so you need to create that folder structure and
-then add a file named `src/main/java/Example.java` to contain the following code:
+The following example shows a sample auto-generated test for an HTTP contract:
 
 [source,java,indent=0]
 ----
-	import org.springframework.boot.*;
-	import org.springframework.boot.autoconfigure.*;
-	import org.springframework.web.bind.annotation.*;
+@Test
+public void validate_shouldMarkClientAsFraud() throws Exception {
+    // given:
+        MockMvcRequestSpecification request = given()
+                .header("Content-Type", "application/vnd.fraud.v1+json")
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
 
-	@RestController
-	@EnableAutoConfiguration
-	public class Example {
+    // when:
+        ResponseOptions response = given().spec(request)
+                .put("/fraudcheck");
 
-		@RequestMapping("/")
-		String home() {
-			return "Hello World!";
-		}
+    // then:
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
+    // and:
+        DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
+}
+----
 
-		public static void main(String[] args) {
-			SpringApplication.run(Example.class, args);
-		}
+The preceding example uses Spring's `MockMvc` to run the tests. This is the default test
+mode for HTTP contracts. However, JAX-RS client and explicit HTTP invocations can also be
+used. (To do so, change the `testMode` property of the plugin to `JAX-RS` or `EXPLICIT`,
+respectively.)
 
+Since 2.1.0, it is also possible to use `RestAssuredWebTestClient`with Spring's reactive `WebTestClient`
+run under the hood. This is particularly recommended while working with Reactive, `Web-Flux`-based applications.
+In order to use `WebTestClient` set `testMode` to `WEBTESTCLIENT`.
+
+Here is an example of a test generated in `WEBTESTCLIENT` test mode:
+
+[source,java,indent=0]
+----
+@Test
+	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
+		// given:
+			WebTestClientRequestSpecification request = given()
+					.header("Content-Type", "application/json")
+					.body("{\"age\":10}");
+
+		// when:
+			WebTestClientResponse response = given().spec(request)
+					.post("/check");
+
+		// then:
+			assertThat(response.statusCode()).isEqualTo(200);
+			assertThat(response.header("Content-Type")).matches("application/json.*");
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
 	}
 ----
 
-Although there is not much code here, quite a lot is going on. We step through the
-important parts in the next few sections.
+Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
+`testFramework` property to either `JUNIT5` or `Spock`.
 
+TIP: You can now also generate WireMock scenarios based on the contracts, by including an
+order number followed by an underscore at the beginning of the contract file names.
 
+The following example shows an auto-generated test in Spock for a messaging stub contract:
 
-[[getting-started-first-application-annotations]]
-==== The `@RestController` and `@RequestMapping` Annotations
-The first annotation on our `Example` class is `@RestController`. This is known as a
-_stereotype_ annotation. It provides hints for people reading the code and for Spring
-that the class plays a specific role. In this case, our class is a web `@Controller`, so
-Spring considers it when handling incoming web requests.
-
-The `@RequestMapping` annotation provides "`routing`" information. It tells Spring that
-any HTTP request with the `/` path should be mapped to the `home` method. The
-`@RestController` annotation tells Spring to render the resulting string directly back to
-the caller.
-
-TIP: The `@RestController` and `@RequestMapping` annotations are Spring MVC annotations.
-(They are not specific to Spring Boot.) See the {spring-reference}web.html#mvc[MVC
-section] in the Spring Reference Documentation for more details.
-
-
-
-[[getting-started-first-application-auto-configuration]]
-==== The @EnableAutoConfiguration Annotation
-The second class-level annotation is `@EnableAutoConfiguration`. This annotation tells
-Spring Boot to "`guess`" how you want to configure Spring, based on the jar dependencies
-that you have added. Since `spring-boot-starter-web` added Tomcat and Spring MVC, the
-auto-configuration assumes that you are developing a web application and sets up Spring
-accordingly.
-
-.Starters and Auto-configuration
-****
-Auto-configuration is designed to work well with "`Starters`", but the two concepts are
-not directly tied. You are free to pick and choose jar dependencies outside of the
-starters. Spring Boot still does its best to auto-configure your application.
-****
-
-
-
-[[getting-started-first-application-main-method]]
-==== The "`main`" Method
-The final part of our application is the `main` method. This is just a standard method
-that follows the Java convention for an application entry point. Our main method
-delegates to Spring Boot's `SpringApplication` class by calling `run`.
-`SpringApplication` bootstraps our application, starting Spring, which, in turn, starts
-the auto-configured Tomcat web server. We need to pass `Example.class` as an argument to
-the `run` method to tell `SpringApplication` which is the primary Spring component. The
-`args` array is also passed through to expose any command-line arguments.
-
-
-
-[[getting-started-first-application-run]]
-=== Running the Example
-At this point, your application should work. Since you used the
-`spring-boot-starter-parent` POM, you have a useful `run` goal that you can use to start
-the application. Type `mvn spring-boot:run` from the root project directory to start the
-application. You should see output similar to the following:
-
-[indent=0,subs="attributes"]
+[source,groovy,indent=0]
 ----
-	$ mvn spring-boot:run
+given:
+	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+		\'\'\'{"bookName":"foo"}\'\'\',
+		['sample': 'header']
+	)
 
-	  .   ____          _            __ _ _
-	 /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-	( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
-	 \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-	  '  |____| .__|_| |_|_| |_\__, | / / / /
-	 =========|_|==============|___/=/_/_/_/
-	 :: Spring Boot ::  (v{spring-boot-version})
-	....... . . .
-	....... . . . (log output here)
-	....... . . .
-	........ Started Example in 2.222 seconds (JVM running for 6.514)
+when:
+	 contractVerifierMessaging.send(inputMessage, 'jms:delete')
+
+then:
+	 noExceptionThrown()
+	 bookWasDeleted()
 ----
 
-If you open a web browser to `http://localhost:8080`, you should see the following output:
+As the implementation of the functionalities described by the contracts is not yet
+present, the tests fail.
 
-[indent=0]
+To make them pass, you must add the correct implementation of handling either HTTP
+requests or messages. Also, you must add a correct base test class for auto-generated
+tests to the project. This class is extended by all the auto-generated tests and should
+contain all the setup necessary to run them (for example, `RestAssuredMockMvc` controller
+setup or messaging test setup).
+
+Once the implementation and the test base class are in place, the tests pass, and both the
+application and the stub artifacts are built and installed in the local Maven repository.
+Information about installing the stubs jar to the local repository appears in the logs, as
+shown in the following example:
+
+[source,bash,indent=0]
 ----
-	Hello World!
-----
-
-To gracefully exit the application, press `ctrl-c`.
-
-
-
-[[getting-started-first-application-executable-jar]]
-=== Creating an Executable Jar
-We finish our example by creating a completely self-contained executable jar file that
-we could run in production. Executable jars (sometimes called "`fat jars`") are archives
-containing your compiled classes along with all of the jar dependencies that your code
-needs to run.
-
-.Executable jars and Java
-****
-Java does not provide a standard way to load nested jar files (jar files that are
-themselves contained within a jar). This can be problematic if you are looking to
-distribute a self-contained application.
-
-To solve this problem, many developers use "`uber`" jars. An uber jar packages all the
-classes from all the application's dependencies into a single archive. The problem with
-this approach is that it becomes hard to see which libraries are in your application. It
-can also be problematic if the same filename is used (but with different content) in
-multiple jars.
-
-Spring Boot takes a <<appendix.adoc#executable-jar, different approach>> and lets you
-actually nest jars directly.
-****
-
-To create an executable jar, we need to add the `spring-boot-maven-plugin` to our
-`pom.xml`. To do so, insert the following lines just below the `dependencies` section:
-
-[source,xml,indent=0,subs="verbatim,quotes,attributes"]
-----
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+ [INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
+ [INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar
+ [INFO]
+ [INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
+ [INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar
+ [INFO]
+ [INFO] --- spring-boot-maven-plugin:1.5.5.BUILD-SNAPSHOT:repackage (default) @ http-server ---
+ [INFO]
+ [INFO] --- maven-install-plugin:2.5.2:install (default-install) @ http-server ---
+ [INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.jar
+ [INFO] Installing /some/path/http-server/pom.xml to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.pom
+ [INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
 ----
 
-NOTE: The `spring-boot-starter-parent` POM includes `<executions>` configuration to bind
-the `repackage` goal. If you do not use the parent POM, you need to declare this
-configuration yourself. See the {spring-boot-maven-plugin-site}/usage.html[plugin
-documentation] for details.
+You can now merge the changes and publish both the application and the stub artifacts
+in an online repository.
 
-Save your `pom.xml` and run `mvn package` from the command line, as follows:
+// TODO: Consider moving this section somewhere else
+*Docker Project*
 
-[indent=0,subs="attributes"]
+In order to enable working with contracts while creating applications in non-JVM
+technologies, the `springcloud/spring-cloud-contract` Docker image has been created. It
+contains a project that automatically generates tests for HTTP contracts and executes them
+in  `EXPLICIT` test mode. Then, if the tests pass, it generates Wiremock stubs and,
+optionally, publishes them to an artifact manager. In order to use the image, you can
+mount the contracts into the `/contracts` directory and set a few environment variables.
+// TODO: We should answer the obvious question: Which environment variables?
+
+[[getting-started-first-application-consumer]]
+=== On the Consumer Side
+
+`Spring Cloud Contract Stub Runner` can be used in the integration tests to get a running
+WireMock instance or messaging route that simulates the actual service.
+
+To get started, add the dependency to `Spring Cloud Contract Stub Runner`:
+
+[source,xml,indent=0]
 ----
-	$ mvn package
-
-	[INFO] Scanning for projects...
-	[INFO]
-	[INFO] ------------------------------------------------------------------------
-	[INFO] Building myproject 0.0.1-SNAPSHOT
-	[INFO] ------------------------------------------------------------------------
-	[INFO] .... ..
-	[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ myproject ---
-	[INFO] Building jar: /Users/developer/example/spring-boot-example/target/myproject-0.0.1-SNAPSHOT.jar
-	[INFO]
-	[INFO] --- spring-boot-maven-plugin:{spring-boot-version}:repackage (default) @ myproject ---
-	[INFO] ------------------------------------------------------------------------
-	[INFO] BUILD SUCCESS
-	[INFO] ------------------------------------------------------------------------
-----
-
-If you look in the `target` directory, you should see `myproject-0.0.1-SNAPSHOT.jar`. The
-file should be around 10 MB in size. If you want to peek inside, you can use `jar tvf`,
-as follows:
-
-[indent=0]
-----
-	$ jar tvf target/myproject-0.0.1-SNAPSHOT.jar
+include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
 
-You should also see a much smaller file named `myproject-0.0.1-SNAPSHOT.jar.original` in
-the `target` directory. This is the original jar file that Maven created before it was
-repackaged by Spring Boot.
+You can get the Producer-side stubs installed in your Maven repository in either of two
+ways:
 
-To run that application, use the `java -jar` command, as follows:
-
-[indent=0,subs="attributes"]
+* By checking out the Producer side repository and adding contracts and generating the
+stubs by running the following commands:
++
+[source,bash,indent=0]
 ----
-	$ java -jar target/myproject-0.0.1-SNAPSHOT.jar
-
-	  .   ____          _            __ _ _
-	 /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-	( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
-	 \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-	  '  |____| .__|_| |_|_| |_\__, | / / / /
-	 =========|_|==============|___/=/_/_/_/
-	 :: Spring Boot ::  (v{spring-boot-version})
-	....... . . .
-	....... . . . (log output here)
-	....... . . .
-	........ Started Example in 2.536 seconds (JVM running for 2.864)
+$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests
+----
+NOTE: The tests are skipped because the Producer-side contract implementation is not yet
+in place, so the automatically-generated contract tests fail.
+* Getting already existing producer service stubs from a remote repository. To do so,
+pass the stub artifact IDs and artifact repository URl as `Spring Cloud Contract Stub
+Runner` properties, as shown in the following example:
++
+[source,yaml,indent=0]
+----
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
-As before, to exit the application, press `ctrl-c`.
+Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
+provide the `group-id` and `artifact-id` for `Spring Cloud Contract Stub Runner` to run
+the collaborators' stubs for you, as shown in the following example:
 
+[source,java, indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+public class LoanApplicationServiceTests {
+----
 
+TIP: Use the `REMOTE` `stubsMode` when downloading stubs from an online repository and
+`LOCAL` for offline work.
+
+In your integration test, you can receive stubbed versions of HTTP responses or messages
+that are expected to be emitted by the collaborator service. You can see entries similar
+to the following in the build logs:
+
+[source,bash,indent=0]
+----
+2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
+2016-07-19 14:22:25.438  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is 0.0.1-SNAPSHOT
+2016-07-19 14:22:25.439  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT using remote repositories []
+2016-07-19 14:22:25.451  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+2016-07-19 14:22:25.465  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacking stub from JAR [URI: file:/path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar]
+2016-07-19 14:22:25.475  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacked file to [/var/folders/0p/xwq47sq106x1_g3dtv6qfm940000gq/T/contracts100276532569594265]
+2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]
+----
+
+[[getting-started-cdc]]
+== Step-by-step Guide to Consumer Driven Contracts (CDC)
+
+Consider an example of Fraud Detection and the Loan Issuance process. The business
+scenario is such that we want to issue loans to people but do not want them to steal from
+us. The current implementation of our system grants loans to everybody.
+
+Assume that `Loan Issuance` is a client to the `Fraud Detection` server. In the current
+sprint, we must develop a new feature: if a client wants to borrow too much money, then
+we mark the client as a fraud.
+
+Technical remark - Fraud Detection has an `artifact-id` of `http-server`, while Loan
+Issuance has an artifact-id of `http-client`, and both have a `group-id` of `com.example`.
+
+Social remark - both client and server development teams need to communicate directly and
+discuss changes while going through the process. CDC is all about communication.
+
+The https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-server[server
+side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-client[the
+client code here].
+
+TIP: In this case, the producer owns the contracts. Physically, all the contract are
+in the producer's repository.
+
+[[getting-started-cdc-technical-note]]
+=== Technical note
+
+If using the *SNAPSHOT* / *Milestone* / *Release Candidate* versions please add the
+following section to your build:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
+----
+
+=== Consumer side (Loan Issuance)
+
+As a developer of the Loan Issuance service (a consumer of the Fraud Detection server), you might do the following steps:
+
+. Start doing TDD by writing a test for your feature.
+. Write the missing implementation.
+. Clone the Fraud Detection service repository locally.
+. Define the contract locally in the repo of Fraud Detection service.
+. Add the Spring Cloud Contract (SCC) plugin.
+. Run the integration tests.
+. File a pull request.
+. Create an initial implementation.
+. Take over the pull request.
+. Write the missing implementation.
+. Deploy your app.
+. Work online.
+
+[plantuml, cdc, png]
+----
+"Loan Issuance"->"Loan Issuance": start doing TDD\nby writing a test\nfor your feature
+"Loan Issuance"->"Loan Issuance": write the \nmissing implementation
+"Loan Issuance"->"Fraud Detection": clone the repository
+"Loan Issuance"->"Fraud Detection Clone": start working on the clone
+"Fraud Detection Clone"->"Fraud Detection Clone": add missing dependencies\ndefine contracts
+"Fraud Detection Clone"->"Fraud Detection Clone": add the Spring Cloud \nContract plugin
+"Fraud Detection Clone"->"Fraud Detection \nClone Build": install the stubs locally
+"Fraud Detection \nClone Build"->"SCC Plugin": generate stubs \nand stubs \nartifact (e.g. stubs-jar)
+"Fraud Detection \nClone Build"->"Local storage": install the stubs locally
+"Local storage"->"Fraud Detection Build": stub sucessfully installed
+"Fraud Detection Build"->"API Producer": Build successful
+"API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
+"API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
+"SCC Stub Runner"->"Nexus / Artifactory": test asks for [API Producer] stubs
+"Nexus / Artifactory"->"SCC Stub Runner": fetch the [API Producer] stubs
+"SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
+"API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
+"SCC Stub Runner"->"API Consumer": communication is correct
+----
+
+*Start doing TDD by writing a test for your feature.*
+
+[source,groovy,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
+----
+
+Assume that you have written a test of your new feature. If a loan application for a big
+amount is received, the system should reject that loan application with some description.
+
+*Write the missing implementation.*
+
+At some point in time, you need to send a request to the Fraud Detection service. Assume
+that you need to send the request containing the ID of the client and the amount the
+client wants to borrow. You want to send it to the `/fraudcheck` url via the `PUT` method.
+
+[source,groovy,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
+----
+
+For simplicity, the port of the Fraud Detection service is set to `8080`, and the
+application runs on `8090`.
+
+If you start the test at this point, it breaks, because no service currently runs on port
+`8080`.
+
+*Clone the Fraud Detection service repository locally.*
+
+You can start by playing around with the server side contract. To do so, you must first
+clone it.
+
+[source,bash,indent=0]
+----
+$ git clone https://your-git-server.com/server-side.git local-http-server-repo
+----
+
+*Define the contract locally in the repo of Fraud Detection service.*
+
+As a consumer, you need to define what exactly you want to achieve. You need to formulate
+your expectations. To do so, write the following contract:
+
+IMPORTANT: Place the contract under `src/test/resources/contracts/fraud` folder. The `fraud` folder
+is important because the producer's test base class name references that folder.
+
+====
+[source,groovy,indent=0,role="primary"]
+.groovy
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.yaml
+----
+include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
+----
+====
+
+The YML contract is quite straight-forward. However when you take a look at the Contract
+written using a statically typed Groovy DSL - you might wonder what the
+`value(client(...), server(...))` parts are. By using this notation, Spring Cloud
+Contract lets you define parts of a JSON block, a URL, etc., which are dynamic. In case
+of an identifier or a timestamp, you need not hardcode a value. You want to allow some
+different ranges of values. To enable ranges of values, you can set regular expressions
+matching those values for the consumer side. You can provide the body by means of either
+a map notation or String with interpolations.
+Consult the <<contract-dsl>> section for more information. We highly recommend using the map notation!
+
+TIP: You must understand the map notation in order to set up contracts. Please read the
+https://groovy-lang.org/json.html[Groovy docs regarding JSON].
+
+The previously shown contract is an agreement between two sides that:
+
+- if an HTTP request is sent with all of
+** a `PUT` method on the `/fraudcheck` endpoint,
+** a JSON body with a `client.id` that matches the regular expression `[0-9]{10}` and
+`loanAmount` equal to `99999`,
+** and a `Content-Type` header with a value of `application/vnd.fraud.v1+json`,
+- then an HTTP response is sent to the consumer that
+** has status `200`,
+** contains a JSON body with the `fraudCheckStatus` field containing a value `FRAUD` and
+the `rejectionReason` field having value `Amount too high`,
+** and a `Content-Type` header with a value of `application/vnd.fraud.v1+json`.
+
+Once you are ready to check the API in practice in the integration tests, you need to
+install the stubs locally.
+
+*Add the Spring Cloud Contract Verifier plugin.*
+
+We can add either a Maven or a Gradle plugin. In this example, you see how to add Maven.
+First, add the `Spring Cloud Contract` BOM.
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_bom,indent=0]
+----
+
+Next, add the `Spring Cloud Contract Verifier` Maven plugin
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
+----
+
+Since the plugin was added, you get the `Spring Cloud Contract Verifier` features which,
+from the provided contracts:
+
+- generate and run tests
+- produce and install stubs
+
+You do not want to generate tests since you, as the consumer, want only to play with the
+stubs. You need to skip the test generation and execution. When you execute:
+
+[source,bash,indent=0]
+----
+$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests
+----
+
+In the logs, you see something like this:
+
+[source,bash,indent=0]
+----
+[INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar
+[INFO]
+[INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar
+[INFO]
+[INFO] --- spring-boot-maven-plugin:1.5.5.BUILD-SNAPSHOT:repackage (default) @ http-server ---
+[INFO]
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ http-server ---
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.jar
+[INFO] Installing /some/path/http-server/pom.xml to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.pom
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+----
+
+The following line is extremely important:
+
+[source,bash,indent=0]
+----
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+----
+
+It confirms that the stubs of the `http-server` have been installed in the local
+repository.
+
+*Run the integration tests.*
+
+In order to profit from the Spring Cloud Contract Stub Runner functionality of automatic
+stub downloading, you must do the following in your consumer side project (`Loan
+Application service`):
+
+Add the `Spring Cloud Contract` BOM:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=contract_bom,indent=0]
+----
+
+Add the dependency to `Spring Cloud Contract Stub Runner`:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
+----
+
+Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
+`group-id` and `artifact-id` for the Stub Runner to download the stubs of your
+collaborators. (Optional step) Because you're playing with the collaborators offline, you
+can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`).
+
+[source,groovy,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
+----
+
+Now, when you run your tests, you see something like this:
+
+[source,bash,indent=0]
+----
+2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
+2016-07-19 14:22:25.438  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is 0.0.1-SNAPSHOT
+2016-07-19 14:22:25.439  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT using remote repositories []
+2016-07-19 14:22:25.451  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+2016-07-19 14:22:25.465  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacking stub from JAR [URI: file:/path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar]
+2016-07-19 14:22:25.475  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacked file to [/var/folders/0p/xwq47sq106x1_g3dtv6qfm940000gq/T/contracts100276532569594265]
+2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]
+----
+
+This output means that Stub Runner has found your stubs and started a server for your app
+with group id `com.example`, artifact id `http-server` with version `0.0.1-SNAPSHOT` of
+the stubs and with `stubs` classifier on port `8080`.
+
+*File a pull request.*
+
+What you have done until now is an iterative process. You can play around with the
+contract, install it locally, and work on the consumer side until the contract works as
+you wish.
+
+Once you are satisfied with the results and the test passes, publish a pull request to
+the server side. Currently, the consumer side work is done.
+
+=== Producer side (Fraud Detection server)
+
+As a developer of the Fraud Detection server (a server to the Loan Issuance service):
+
+*Create an initial implementation.*
+
+As a reminder, you can see the initial implementation here:
+
+[source,java,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+}
+----
+
+*Take over the pull request.*
+
+[source,bash,indent=0]
+----
+$ git checkout -b contract-change-pr master
+$ git pull https://your-git-server.com/server-side-fork.git contract-change-pr
+----
+
+You must add the dependencies needed by the autogenerated tests:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
+----
+
+In the configuration of the Maven plugin, pass the `packageWithBaseClasses` property
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
+----
+
+IMPORTANT: This example uses "convention based" naming by setting the
+`packageWithBaseClasses` property. Doing so means that the two last packages combine to
+make the name of the base test class. In our case, the contracts were placed under
+`src/test/resources/contracts/fraud`. Since you do not have two packages starting from
+the `contracts` folder, pick only one, which should be `fraud`. Add the `Base` suffix and
+capitalize `fraud`. That gives you the `FraudBase` test class name.
+
+All the generated tests extend that class. Over there, you can set up your Spring Context
+or whatever is necessary. In this case, use https://github.com/rest-assured/rest-assured[Rest Assured MVC] to
+start the server side `FraudDetectionController`.
+
+[source,java,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBase.java[]
+----
+
+Now, if you run the `./mvnw clean install`, you get something like this:
+
+[source,bash,indent=0]
+----
+Results :
+
+Tests in error:
+  ContractVerifierTest.validate_shouldMarkClientAsFraud:32 » IllegalState Parsed...
+----
+
+This error occurs because you have a new contract from which a test was generated and it
+failed since you have not implemented the feature. The auto-generated test would look
+like this:
+
+[source,java,indent=0]
+----
+@Test
+public void validate_shouldMarkClientAsFraud() throws Exception {
+    // given:
+        MockMvcRequestSpecification request = given()
+                .header("Content-Type", "application/vnd.fraud.v1+json")
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
+
+    // when:
+        ResponseOptions response = given().spec(request)
+                .put("/fraudcheck");
+
+    // then:
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
+    // and:
+        DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
+}
+----
+
+If you used the Groovy DSL, you can see, all the `producer()` parts of the Contract that were present in the
+`value(consumer(...), producer(...))` blocks got injected into the test.
+In case of using YAML, the same applied for the `matchers` sections of the `response`.
+
+Note that, on the producer side, you are also doing TDD. The expectations are expressed
+in the form of a test. This test sends a request to our own application with the URL,
+headers, and body defined in the contract. It also is expecting precisely defined values
+in the response. In other words, you have the `red` part of `red`, `green`, and
+`refactor`. It is time to convert the `red` into the `green`.
+
+*Write the missing implementation.*
+
+Because you know the expected input and expected output, you can write the missing
+implementation:
+
+[source,java,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+}
+----
+
+When you execute `./mvnw clean install` again, the tests pass. Since the `Spring Cloud
+Contract Verifier` plugin adds the tests to the `generated-test-sources`, you can
+actually run those tests from your IDE.
+
+*Deploy your app.*
+
+Once you finish your work, you can deploy your change. First, merge the branch:
+
+[source,bash,indent=0]
+----
+$ git checkout master
+$ git merge --no-ff contract-change-pr
+$ git push origin master
+----
+
+Your CI might run something like `./mvnw clean deploy`, which would publish both the
+application and the stub artifacts.
+
+=== Consumer Side (Loan Issuance) Final Step
+
+As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
+
+*Merge branch to master.*
+
+[source,bash,indent=0]
+----
+$ git checkout master
+$ git merge --no-ff contract-change-pr
+----
+
+*Work online.*
+
+Now you can disable the offline work for Spring Cloud Contract Stub Runner and indicate
+where the repository with your stubs is located. At this moment the stubs of the server
+side are automatically downloaded from Nexus/Artifactory. You can set the value of
+`stubsMode` to `REMOTE`. The following code shows an example of
+achieving the same thing by changing the properties.
+
+[source,yaml,indent=0]
+----
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+----
+
+That's it!
 
 [[getting-started-whats-next]]
 == What to Read Next
-Hopefully, this section provided some of the Spring Boot basics and got you on your way
+Hopefully, this section provided some of the {project-full-name} basics and got you on your way
 to writing your own applications. If you are a task-oriented type of developer, you might
 want to jump over to https://spring.io and check out some of the
 https://spring.io/guides/[getting started] guides that solve specific "`How do I do that
-with Spring?`" problems. We also have Spring Boot-specific
+with Spring?`" problems. We also have {project-full-name}-specific
 "`<<howto.adoc#howto, How-to>>`" reference documentation.
 
-Otherwise, the next logical step is to read _<<using-spring-boot.adoc#using-boot>>_. If
+Otherwise, the next logical step is to read _<<using-{project-name}.adoc#using>>_. If
 you are really impatient, you could also jump ahead and read about
-_<<spring-boot-features.adoc#boot-features, Spring Boot features>>_.
+_<<project-features.adoc#project-features, {project-full-name} features>>_.
+
+// TODO: Update the video
+// TODO: Check if we can link courses
+In addition to that you can check out the video from the Warsaw JUG about Spring Cloud Contract:
+
+video::sAAklvxmPmk[youtube,start=538,width=640,height=480]
+
+You can read the following articles / presentations:
+
+// TODO: Update the readings
+- https://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
+- https://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
+- https://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
+- https://groovy-lang.org/json.html[Groovy docs regarding JSON]
+
+You can find the default project samples at
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples[samples].
