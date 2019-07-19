@@ -1,12 +1,23 @@
-:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}
-:samples_branch: 2.2.x
+[[howto]]
+= "`How-to`" Guides
+include::_attributes.adoc[]
 
-== Spring Cloud Contract FAQ
+This section provides answers to some common '`how do I do that...`' questions
+that often arise when using {project-full-name}. Its coverage is not exhaustive, but it
+does cover quite a lot.
 
-=== Why use Spring Cloud Contract Verifier and not X ?
+If you have a specific problem that we do not cover here, you might want to check out
+https://stackoverflow.com/tags/{project-name}[stackoverflow.com] to see if someone has
+already provided an answer. This is also a great place to ask new questions (please use
+the `{project-name}` tag).
 
-For the time being Spring Cloud Contract is a JVM based tool. So it could be your first pick when you're already creating
-software for the JVM. This project has a lot of really interesting features but especially quite a few of them definitely make
+We are also more than happy to extend this section. If you want to add a '`how-to`',
+send us a {github-code}[pull request].
+
+[[why-spring-cloud-contract]]
+== Why use Spring Cloud Contract and not X ?
+
+Spring Cloud Contract works great in a polyglot environment. This project has a lot of really interesting features but especially quite a few of them definitely make
 Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Contract (CDC) tooling. Out of many the most interesting are:
 
 - Possibility to do CDC with messaging
@@ -18,11 +29,16 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 - Spring Cloud Contract integrates with Pact out of the box and provides easy hooks to extend its functionality
 - Via Docker adds support for any language & framework used
 
-=== I don't want to write a contract in Groovy!
+[[how-to-not-write-contracts-in-groovy]]
+== I don't want to write a contract in Groovy!
 
-No problem. You can write a contract in YAML!
+// TODO: Add a link
+No problem. You can write a contract in YAML! Check this section for more information
 
-=== What is this value(consumer(), producer()) ?
+We are working on allowing more ways of describing the contracts. You can check the {github-issues}[github-issues] for more information.
+
+[[how-to-provide-dynamic-values]]
+== What is this value(consumer(), producer()) ?
 
 One of the biggest challenges related to stubs is their reusability. Only if they can be vastly used, will they serve their purpose.
 What typically makes that difficult are the hard-coded values of request / response elements. For example dates or ids.
@@ -107,69 +123,19 @@ what you might want is the following response:
 
 How can you then provide one time a matcher for the consumer and a concrete value for the producer and vice versa?
 In Spring Cloud Contract we're allowing you to provide a *dynamic value*. That means that it can differ for both
-sides of the communication. You can pass the values:
+sides of the communication.
 
-Either via the `value` method
-
-[source,groovy,indent=0]
-----
-value(consumer(...), producer(...))
-value(stub(...), test(...))
-value(client(...), server(...))
-----
-
-or using the `$()` method
-
-[source,groovy,indent=0]
-----
-$(consumer(...), producer(...))
-$(stub(...), test(...))
-$(client(...), server(...))
-----
-
+// TODO: Ensure that the link is correct
 You can read more about this in the <<contract-dsl>> section.
-
-Calling `value()` or `$()` tells Spring Cloud Contract that you will be passing a dynamic value.
-Inside the `consumer()` method you pass the value that should be used on the consumer side (in the generated stub).
-Inside the `producer()` method you pass the value that should be used on the producer side (in the generated test).
-
-TIP: If on one side you have passed the regular expression and you haven't passed the other, then the
-other side will get auto-generated.
-
-Most often you will use that method together with the `regex` helper method. E.g. `consumer(regex('[0-9]{10}'))`.
-
-To sum it up the contract for the aforementioned scenario would look more or less like this (the regular expression
-for time and UUID are simplified and most likely invalid but we want to keep things very simple in this example):
-
-[source,groovy,indent=0]
-----
-org.springframework.cloud.contract.spec.Contract.make {
-				request {
-					method 'GET'
-					url '/someUrl'
-					body([
-					    time : value(consumer(regex('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-2][0-9]-[0-5][0-9]-[0-5][0-9]')),
-					    id: value(consumer(regex('[0-9a-zA-z]{8}-[0-9a-zA-z]{4}-[0-9a-zA-z]{4}-[0-9a-zA-z]{12}'))
-					    body: "foo"
-					])
-				}
-			response {
-				status OK()
-				body([
-					    time : value(producer(regex('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-2][0-9]-[0-5][0-9]-[0-5][0-9]')),
-					    id: value([producer(regex('[0-9a-zA-z]{8}-[0-9a-zA-z]{4}-[0-9a-zA-z]{4}-[0-9a-zA-z]{12}'))
-					    body: "bar"
-					])
-			}
-}
-----
 
 IMPORTANT: Please read the https://groovy-lang.org/json.html[Groovy docs related to JSON] to understand how to
 properly structure the request / response bodies.
 
-=== How to do Stubs versioning?
+[[how-to-do-stubs-versioning]]
+== How to do Stubs versioning?
 
-==== API Versioning
+[[how-to-api-versioning]]
+=== API Versioning
 
 Let's try to answer a question what versioning really means. If you're referring to the API version then there are
 different approaches.
@@ -177,13 +143,14 @@ different approaches.
 - use Hypermedia, links and do not version your API by any means
 - pass versions through headers / urls
 
-I will not try to answer a question which approach is better. Whatever suits your needs and allows you to generate
+We will not try to answer a question which approach is better. Whatever suits your needs and allows you to generate
 business value should be picked.
 
 Let's assume that you do version your API. In that case you should provide as many contracts as many versions you support.
 You can create a subfolder for every version or append it to the contract name - whatever suits you more.
 
-==== JAR versioning
+[[how-to-jar-versioning]]
+=== JAR versioning
 
 If by versioning you mean the version of the JAR that contains the stubs then there are essentially two main approaches.
 
@@ -219,7 +186,8 @@ version. Example for 2.1.1.
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:2.1.1:stubs:8080"})
 ----
 
-==== Dev or prod stubs
+[[how-to-dev-or-prod-stubs]]
+=== Dev or prod stubs
 
 You can manipulate the classifier to run the tests against current development version of the stubs of other services
  or the ones that were deployed to production. If you alter your build to deploy the stubs with the `prod-stubs` classifier
@@ -241,14 +209,16 @@ Example of tests using production version of stubs
 
 You can pass those values also via properties from your deployment pipeline.
 
-=== Common repo with contracts
+[[how-to-common-repo-with-contracts]]
+== Common repo with contracts
 
 Another way of storing contracts other than having them with the producer is keeping them in a common place.
 It can be related to security issues where the consumers can't clone the producer's code. Also if you keep
 contracts in a single place then you, as a producer, will know how many consumers you have and which
 consumer you will break with your local changes.
 
-==== Repo structure
+[[how-to-repo-structure]]
+=== Repo structure
 
 Let's assume that we have a producer with coordinates `com.example:server` and 3 consumers: `client1`,
 `client2`, `client3`. Then in the repository with common contracts you would have the following setup
@@ -304,13 +274,47 @@ It's using the assembly plugin in order to build the JAR with all the contracts.
 include::{introduction_url}/samples/standalone/contracts/src/assembly/contracts.xml[indent=0]
 ----
 
-==== Workflow
+[[how-to-workflow]]
+=== Workflow
 
-The workflow would look similar to the one presented in the `Step by step guide to CDC`. The only difference
- is that the producer doesn't own the contracts anymore. So the consumer and the producer have to work on
- common contracts in a common repository.
+The workflow assumes that Spring Cloud Contract is setup both on the consumer and the producer side. There is also the proper plugin setup in the common repo with contracts. The CI jobs are set for common repo to build an artifact of all contracts and upload it to Nexus / Artifactory.
 
-==== Consumer
+[plantuml, three-second, png]
+----
+"API Consumer"->"Common repo": create a folder \nfor producer [API Producer]
+"API Consumer"->"Common repo": under [API Producer] create a folder \nfor consumer \n[API Consumer]
+"API Consumer"->"Common repo": define contracts under \n[API Consumer] folder
+"API Consumer"->"Common repo": install stubs of [API Producer]\nin local storage
+"Common repo"->"Common Repo\nSCC Plugin": install stubs \nin local storage. \nDon't generate tests.
+"Common Repo\nSCC Plugin"->"Local storage": install stubs
+"Local storage"->"Common Repo\nSCC Plugin": stubs installed
+"API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
+"API Consumer"->"API Consumer\nSCC Stub Runner": fetch the stubs\n of [API Producer] \nfrom local storage
+"API Consumer\nSCC Stub Runner"->"Local storage": test asks for [API Producer] stubs
+"Local storage"->"API Consumer\nSCC Stub Runner": [API Producer] stubs found
+"API Consumer\nSCC Stub Runner"->"API Consumer\nSCC Stub Runner": run in memory\n HTTP server stubs
+"API Consumer\nSCC Stub Runner"->"API Consumer": HTTP server stubs running,\n ready for tests
+"API Consumer"->"API Consumer\nSCC Stub Runner": send a request \nto the HTTP server stub
+"API Consumer\nSCC Stub Runner"->"API Consumer": communication is correct. \nTests are passing
+"API Consumer"->"Common repo": file pull request \nwith contracts
+"API Producer"->"Common repo": take over \nthe pull request
+"API Producer"->"Common repo": install the JAR \nwith all contracts\n in local storage
+"Common repo"->"Local storage": install the JAR
+"Local storage"->"Common repo": contracts JAR installed
+"API Producer"->"Producer Build": run the build \nand fetch contracts from \nlocal storage
+"Producer Build"->"Producer\nSCC Plugin": generate \ntests, stubs and stubs \nartifact (e.g. stubs-jar)
+"Producer\nSCC Plugin"->"Local storage": fetch contract definitions for [API Prodcer]
+"Local storage"->"Producer\nSCC Plugin": contracts fetched
+"Producer\nSCC Plugin"->"Producer Build": tests and stubs created
+"Producer Build"->"Nexus / Artifactory": upload contracts \nand stubs and the project arifact
+"Producer Build"->"API Producer": Build successful
+"API Producer"->"Common repo": merge the pull request
+"Common repo"->"Nexus / Artifactory": upload the fresh JAR \nwith contract definitions
+"API Producer"->"API Producer": start fetching contract definitions \nfrom Nexus / Artifactory
+----
+
+[[how-to-workflow-consumer]]
+=== Consumer
 
 When the *consumer* wants to work on the contracts offline, instead of cloning the producer code, the
 consumer team clones the common repository, goes to the required producer's folder (e.g. `com/example/server`)
@@ -318,7 +322,8 @@ and runs `mvn clean install -DskipTests` to install locally the stubs converted 
 
 TIP: You need to have https://maven.apache.org/download.cgi[Maven installed locally]
 
-==== Producer
+[[how-to-workflow-producer]]
+=== Producer
 
 As a *producer* it's enough to alter the Spring Cloud Contract Verifier to provide the URL and the dependency
 of the JAR containing the contracts:
@@ -336,13 +341,15 @@ when some incompatible changes are done.
 
 The rest of the flow looks the same.
 
-==== How can I define messaging contracts per topic not per producer?
+[[how-to-define-messaging-contracts-per-topic]]
+=== How can I define messaging contracts per topic not per producer?
 
 To avoid messaging contracts duplication in the common repo, when few producers writing messages to one topic,
 we could create the structure when the rest contracts would be placed in a folder per producer and messaging
 contracts in the folder per topic.
 
-===== For Maven Project
+[[how-to-define-messaging-contracts-per-topic-maven]]
+==== For Maven Project
 
 To make it possible to work on the producer side we should specify an inclusion pattern for
 filtering common repository jar by messaging topics we are interested in. ```includedFiles``` property of ```Maven Spring Cloud Contract plugin```
@@ -383,7 +390,8 @@ allows us to do that. Also ```contractsPath``` need to be specified since the de
 </plugin>
 ----
 
-===== For Gradle Project
+[[how-to-define-messaging-contracts-per-topic-gradle]]
+==== For Gradle Project
 
 - Add a custom configuration for the common-repo dependency:
 
@@ -467,7 +475,8 @@ contracts {
 }
 ----
 
-=== Do I need a Binary Storage? Can't I use Git?
+[[how-to-use-git-as-storage]]
+== Do I need a Binary Storage? Can't I use Git?
 
 In the polyglot world, there are languages that don't use binary storages like
 Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provide
@@ -520,7 +529,8 @@ the stub server mappings. On the consumer side, Stub Runner will scan this folde
 to start stub servers with stub definitions. The folder structure will be a copy
 of the one created in the `contracts` subfolder.
 
-==== Protocol convention
+[[how-to-protocol-convention]]
+=== Protocol convention
 
 In order to control the type and location of the source of contracts (whether it's
 a binary storage or an SCM repository), you can use the protocol in the URL of
@@ -538,11 +548,12 @@ git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contr
 git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git
 ----
 
-==== Producer
+[[how-to-protocol-convention-producer]]
+=== Producer
 
 For the producer, to use the SCM approach, we can reuse the
 same mechanism we use for external contracts. We route Spring Cloud Contract
-to use the SCM implementation via the URL that contains
+to use the SCM implementation via the URL that starts with
 the `git://` protocol.
 
 IMPORTANT: You have to manually add the `pushStubsToScm`
@@ -550,8 +561,9 @@ goal in Maven or execute (bind) the `pushStubsToScm` task in
 Gradle. We don't push stubs to `origin` of your git
 repository out of the box.
 
-.Maven
-[source,xml,indent=0]
+====
+[source,xml,indent=0,role="primary"]
+.maven
 ----
 <plugin>
     <groupId>org.springframework.cloud</groupId>
@@ -589,8 +601,8 @@ repository out of the box.
 </plugin>
 ----
 
-.Gradle
-[source,gradle,indent=0]
+[source,groovy,indent=0,role="secondary"]
+.gradle
 ----
 contracts {
 	// We want to pick contracts from a Git repository
@@ -616,6 +628,7 @@ the `publish` task is executed
 */
 publish.dependsOn("publishStubsToScm")
 ----
+====
 
 With such a setup:
 
@@ -628,21 +641,24 @@ to find contracts. E.g. for `com.example:foo:1.0.0` the path would be
 * Once the tests pass, the stubs will be committed in the cloned repository
 * Finally, a push will be done to that repo's `origin`
 
-==== Producer with contracts stored locally
+[[how-to-protocol-convention-producer-with-contracts-stored-locally]]
+=== Producer with contracts stored locally
 
 Another option to use the SCM as the destination for stubs and contracts is to store the contracts locally, with the producer, and only push the contracts and the stubs to SCM. Below, you can find the setup required to achieve this using Maven and Gradle.
 
-.Maven
-[source,xml,indent=0]
+====
+[source,xml,indent=0,role="primary"]
+.maven
 ----
 include::{samples_url}/producer_with_empty_git/pom.xml[tags=plugin,indent=0]
 ----
 
-.Gradle
-[source,xml,indent=0]
+[source,groovy,indent=0,role="secondary"]
+.gradle
 ----
 include::{samples_url}/producer_with_empty_git/build.gradle[tags=plugin,indent=0]
 ----
+====
 
 With such a setup:
 
@@ -654,7 +670,8 @@ With such a setup:
 ** The stubs and contracts will be committed in the cloned repository
 * Finally, a push will be done to that repo's `origin`
 
-===== Keeping contracts with the producer and stubs in an external repository
+[[how-to-protocol-convention-contracts-producer-stubs-external]]
+=== Keeping contracts with the producer and stubs in an external repository
 
 It is also possible to keep the contracts in the producer repository, but keep the stubs in an external git repo.
 This is most useful when you want to use the base consumer-producer collaboration flow, but do not have a possibility to
@@ -663,7 +680,8 @@ use an artifact repository for storing the stubs.
 In order to do that, use the usual producer setup, and then add the `pushStubsToScm` goal and set
 `contractsRepositoryUrl` to the repository where you want to keep the stubs.
 
-==== Consumer
+[[how-to-protocol-convention-contracts-producer-stubs-external-consumer]]
+=== Consumer
 
 On the consumer side when passing the `repositoryRoot` parameter,
 either from the `@AutoConfigureStubRunner` annotation, the
@@ -688,7 +706,8 @@ to find stub definitions and contracts. E.g. for `com.example:foo:1.0.0` the pat
 * Stub servers will be started and fed with mappings
 * Messaging definitions will be read and used in the messaging tests
 
-=== Can I use the Pact Broker?
+[[how-to-use-pact-broker]]
+== Can I use the Pact Broker?
 
 When using https://pact.io/[Pact] you can use the https://github.com/pact-foundation/pact_broker[Pact Broker]
 to store and share Pact definitions. Starting from Spring Cloud Contract
@@ -705,13 +724,15 @@ shares the files with the Producer. Those expectations are generated
 from the Consumer's code and can break the Producer if the expectations
 are not met.
 
-==== Pact Consumer
+[[how-to-pact-consumer]]
+=== Pact Consumer
 
 The consumer uses Pact framework to generate Pact files. The
 Pact files are sent to the Pact Broker. An example of such
 setup can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_pact[here].
 
-==== Producer
+[[how-to-pact-producer]]
+=== Producer
 
 For the producer, to use the Pact files from the Pact Broker, we can reuse the
 same mechanism we use for external contracts. We route Spring Cloud Contract
@@ -719,8 +740,9 @@ to use the Pact implementation via the URL that contains
 the `pact://` protocol. It's enough to pass the URL to the
 Pact Broker. An example of such setup can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer_pact[here].
 
-.Maven
-[source,xml,indent=0]
+====
+[source,xml,indent=0,role="primary"]
+.maven
 ----
 <plugin>
     <groupId>org.springframework.cloud</groupId>
@@ -757,8 +779,8 @@ Pact Broker. An example of such setup can be found https://github.com/spring-clo
 </plugin>
 ----
 
-.Gradle
-[source,gradle,indent=0]
+[source,groovy,indent=0,role="secondary"]
+.gradle
 ----
 buildscript {
 	repositories {
@@ -785,6 +807,7 @@ contracts {
 	// Base class mappings etc.
 }
 ----
+====
 
 With such a setup:
 
@@ -792,7 +815,8 @@ With such a setup:
 * Spring Cloud Contract will convert the Pact files into tests and stubs
 * The JAR with the stubs gets automatically created as usual
 
-==== Pact Consumer (Producer Contract approach)
+[[how-to-pact-consumer-producer-contract]]
+=== Pact Consumer (Producer Contract approach)
 
 In the scenario where you don't want to do Consumer Contract approach
 (for every single consumer define the expectations) but you'd prefer
@@ -803,8 +827,9 @@ Stub Runner option. An example of such setup can be found https://github.com/spr
 First, remember to add Stub Runner and Spring Cloud Contract Pact module
 as test dependencies.
 
-.Maven
-[source,xml,indent=0]
+====
+[source,xml,indent=0,role="primary"]
+.maven
 ----
 <dependencyManagement>
     <dependencies>
@@ -834,8 +859,8 @@ as test dependencies.
 </dependencies>
 ----
 
-.Gradle
-[source,gradle,indent=0]
+[source,groovy,indent=0,role="secondary"]
+.gradle
 ----
 dependencyManagement {
     imports {
@@ -850,6 +875,7 @@ dependencies {
     testCompile("org.springframework.cloud:spring-cloud-contract-pact")
 }
 ----
+====
 
 Next, just pass the URL of the Pact Broker to `repositoryRoot`, prefixed
 with `pact://` protocol. E.g. `pact://http://localhost:8085`
@@ -877,7 +903,8 @@ With such a setup:
 For more information about Pact support you can go to
 the <<pact-stub-downloader>> section.
 
-=== How can I debug the request/response being sent by the generated tests client?
+[[how-to-debug]]
+== How can I debug the request/response being sent by the generated tests client?
 
 The generated tests all boil down to RestAssured in some form or fashion which relies on https://hc.apache.org/httpcomponents-client-ga/[Apache HttpClient].  HttpClient has a facility called https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging[wire logging] which logs the entire request and response to HttpClient.  Spring Boot has a logging https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html[common application property] for doing this sort of thing, just add this to your application properties
 [source,properties,indent=0]
@@ -885,7 +912,8 @@ The generated tests all boil down to RestAssured in some form or fashion which r
 logging.level.org.apache.http.wire=DEBUG
 ----
 
-==== How can I debug the mapping/request/response being sent by WireMock?
+[[how-to-debug-wiremock]]
+== How can I debug the mapping/request/response being sent by WireMock?
 
 Starting from version `1.2.0` we turn on WireMock logging to
 info and the WireMock notifier to being verbose. Now you will
@@ -899,13 +927,15 @@ To turn off this feature just bump WireMock logging to `ERROR`
 logging.level.com.github.tomakehurst.wiremock=ERROR
 ----
 
-==== How can I see what got registered in the HTTP server stub?
+[[how-to-see-registered-stubs]]
+== How can I see what got registered in the HTTP server stub?
 
 You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner`, `StubRunnerRule` or
 `StubRunnerExtension`to dump all mappings per artifact id. Also the port at which the given stub server
 was started will be attached.
 
-==== Can I reference text from file?
+[[how-to-reference-text-from-file]]
+== Can I reference text from file?
 
 Yes! With version 1.2.0 we've added such a possibility. It's enough to call `file(...)` method in the
 DSL and provide a path relative to where the contract lays.
