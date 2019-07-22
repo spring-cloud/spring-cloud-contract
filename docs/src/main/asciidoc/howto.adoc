@@ -30,7 +30,7 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 - Via Docker adds support for any language & framework used
 
 [[how-to-not-write-contracts-in-groovy]]
-== I don't want to write a contract in Groovy!
+== How can I write contracts in a language different than Groovy?
 
 // TODO: Add a link
 No problem. You can write a contract in YAML! Check this section for more information
@@ -38,7 +38,7 @@ No problem. You can write a contract in YAML! Check this section for more inform
 We are working on allowing more ways of describing the contracts. You can check the {github-issues}[github-issues] for more information.
 
 [[how-to-provide-dynamic-values]]
-== What is this value(consumer(), producer()) ?
+== How can I provide dynamic values for a contract?
 
 One of the biggest challenges related to stubs is their reusability. Only if they can be vastly used, will they serve their purpose.
 What typically makes that difficult are the hard-coded values of request / response elements. For example dates or ids.
@@ -210,7 +210,7 @@ Example of tests using production version of stubs
 You can pass those values also via properties from your deployment pipeline.
 
 [[how-to-common-repo-with-contracts]]
-== Common repo with contracts
+== How can I use a common repo with contracts instead of storing them with the producer?
 
 Another way of storing contracts other than having them with the producer is keeping them in a common place.
 It can be related to security issues where the consumers can't clone the producer's code. Also if you keep
@@ -279,7 +279,7 @@ include::{introduction_url}/samples/standalone/contracts/src/assembly/contracts.
 
 The workflow assumes that Spring Cloud Contract is setup both on the consumer and the producer side. There is also the proper plugin setup in the common repo with contracts. The CI jobs are set for common repo to build an artifact of all contracts and upload it to Nexus / Artifactory.
 
-[plantuml, three-second, png]
+[plantuml, how-to-common-repo, png]
 ----
 "API Consumer"->"Common repo": create a folder \nfor producer [API Producer]
 "API Consumer"->"Common repo": under [API Producer] create a folder \nfor consumer \n[API Consumer]
@@ -476,7 +476,7 @@ contracts {
 ----
 
 [[how-to-use-git-as-storage]]
-== Do I need a Binary Storage? Can't I use Git?
+== How can I use Git as the storage for contracts and stubs?
 
 In the polyglot world, there are languages that don't use binary storages like
 Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provide
@@ -707,7 +707,7 @@ to find stub definitions and contracts. E.g. for `com.example:foo:1.0.0` the pat
 * Messaging definitions will be read and used in the messaging tests
 
 [[how-to-use-pact-broker]]
-== Can I use the Pact Broker?
+== How can I use the Pact Broker?
 
 When using https://pact.io/[Pact] you can use the https://github.com/pact-foundation/pact_broker[Pact Broker]
 to store and share Pact definitions. Starting from Spring Cloud Contract
@@ -935,8 +935,70 @@ You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner`, `
 was started will be attached.
 
 [[how-to-reference-text-from-file]]
-== Can I reference text from file?
+== How can I reference text from file?
 
 Yes! With version 1.2.0 we've added such a possibility. It's enough to call `file(...)` method in the
 DSL and provide a path relative to where the contract lays.
 If you're using YAML just use the `bodyFromFile` property.
+
+[[how-to-generate-pact-from-scc]]
+== How can I generate Pact / YAML / X files from Spring Cloud Contract Contracts?
+
+Spring Cloud Contract comes with a `ToFileContractsTransformer` class that allows you to dump contracts as files for the given `ContractConverter`. It contains a `static void main` method, that allows you to execute the transformer as an executable. It takes the following arguments:
+
+- argument 1 : *FQN* - fully qualified name of the `ContractConverter` (e.g. the `PactContractConverter`) *REQUIRED*
+- argument 2 : *path* - path where the dumped files should be stored *OPTIONAL* - defaults to `target/converted-contracts`
+- argument 3 : *path* - path were the contracts should be searched for *OPTIONAL* - defaults to `src/test/resources/contracts`
+
+After executing the transformer, the Spring Cloud Contract files will be processed and depending on the provided FQN of the `ContractTransformer`, the contracts will be transformed to the required format and dumped to the provided folder.
+
+Below you can find an example for Pact integration:
+
+====
+[source,xml,indent=0,role="primary"]
+.maven
+----
+<plugin>
+	<groupId>org.codehaus.mojo</groupId>
+	<artifactId>exec-maven-plugin</artifactId>
+	<version>1.6.0</version>
+	<executions>
+		<execution>
+			<id>convert-dsl-to-pact</id>
+			<phase>process-test-classes</phase>
+			<configuration>
+				<classpathScope>test</classpathScope>
+				<mainClass>
+					org.springframework.cloud.contract.verifier.util.ToFileContractsTransformer
+				</mainClass>
+				<arguments>
+					<argument>
+						org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter
+					</argument>
+					<argument>${project.basedir}/target/pacts</argument>
+					<argument>
+						${project.basedir}/src/test/resources/contracts
+					</argument>
+				</arguments>
+			</configuration>
+			<goals>
+				<goal>java</goal>
+			</goals>
+		</execution>
+	</executions>
+</plugin>
+----
+
+[source,groovy,indent=0,role="secondary"]
+.gradle
+----
+task convertContracts(type: JavaExec) {
+    main = "org.springframework.cloud.contract.verifier.util.ToFileContractsTransformer"
+    classpath = sourceSets.test.compileClasspath
+    args("org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter",
+            "${project.rootDir}/build/pacts", "${project.rootDir}/src/test/resources/contracts")
+}
+
+test.dependsOn("convertContracts")
+----
+====

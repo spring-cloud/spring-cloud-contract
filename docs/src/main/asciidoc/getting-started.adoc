@@ -134,7 +134,7 @@ This very brief tour walks through using Spring Cloud Contract:
 You can find a somewhat longer tour
 <<getting-started-first-application,here>>.
 
-[plantuml, three-second, png]
+[plantuml, getting-started-three-second, png]
 ----
 "API Producer"->"API Producer": add Spring Cloud \nContract (SCC) plugin
 "API Producer"->"API Producer": add SCC Verifier dependency
@@ -574,7 +574,7 @@ to the following in the build logs:
 ----
 
 [[getting-started-cdc]]
-== Step-by-step Guide to Consumer Driven Contracts (CDC)
+== Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side
 
 Consider an example of Fraud Detection and the Loan Issuance process. The business
 scenario is such that we want to issue loans to people but do not want them to steal from
@@ -615,6 +615,12 @@ include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=repo
 include::{introduction_url}/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
 ----
 
+For simplicity we will use the following acronyms:
+
+- Loan Issuance - LI - the http client
+- Fraud Detection - FD - the http server
+- Spring Cloud Contract - SCC
+
 === Consumer side (Loan Issuance)
 
 As a developer of the Loan Issuance service (a consumer of the Fraud Detection server), you might do the following steps:
@@ -632,26 +638,34 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 . Deploy your app.
 . Work online.
 
-[plantuml, cdc, png]
+Let's start with the Loan Issuance flow:
+
+[plantuml, getting-started-cdc-client, png]
 ----
-"Loan Issuance"->"Loan Issuance": start doing TDD\nby writing a test\nfor your feature
-"Loan Issuance"->"Loan Issuance": write the \nmissing implementation
-"Loan Issuance"->"Fraud Detection": clone the repository
-"Loan Issuance"->"Fraud Detection Clone": start working on the clone
-"Fraud Detection Clone"->"Fraud Detection Clone": add missing dependencies\ndefine contracts
-"Fraud Detection Clone"->"Fraud Detection Clone": add the Spring Cloud \nContract plugin
-"Fraud Detection Clone"->"Fraud Detection \nClone Build": install the stubs locally
-"Fraud Detection \nClone Build"->"SCC Plugin": generate stubs \nand stubs \nartifact (e.g. stubs-jar)
-"Fraud Detection \nClone Build"->"Local storage": install the stubs locally
-"Local storage"->"Fraud Detection Build": stub sucessfully installed
-"Fraud Detection Build"->"API Producer": Build successful
-"API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
-"API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
-"SCC Stub Runner"->"Nexus / Artifactory": test asks for [API Producer] stubs
-"Nexus / Artifactory"->"SCC Stub Runner": fetch the [API Producer] stubs
-"SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
-"API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
-"SCC Stub Runner"->"API Consumer": communication is correct
+"Loan\nIssuance"->"Loan\nIssuance": start doing TDD\nby writing a test\nfor your feature
+"Loan\nIssuance"->"Loan\nIssuance": write the \nmissing implementation
+"Loan\nIssuance"->"Loan\nIssuance": run a test - it fails\ndue to no server running
+"Loan\nIssuance"->"Fraud\nDetection\nClone": clone the repository
+"Fraud\nDetection\nClone"->"Fraud\nDetection\nClone": add missing dependencies\n& define contracts
+"Fraud\nDetection\nClone"->"Fraud\nDetection\nClone": add the SCC plugin
+"Fraud\nDetection\nClone"->"FD \nClone Build": install the stubs locally
+"FD \nClone Build"->"SCC Plugin \nin FD Clone": generate stubs \nand stubs \nartifact (e.g. stubs-jar)
+"SCC Plugin \nin FD Clone"->"FD \nClone Build": stubs and artifacts\ngenerated
+"FD \nClone Build"->"Local storage": install the stubs locally
+"Local storage"->"FD \nClone Build": stub sucessfully installed
+"FD \nClone Build"->"Fraud\nDetection\nClone": build successful
+"Loan\nIssuance"->"Loan\nIssuance": add a SCC\nStub Runner\ndependency\nand setup
+"Loan\nIssuance"->"LI\nSCC\nStub Runner": start stubs\nof FD from\nlocal storage
+"LI\nSCC\nStub Runner"->"Local storage": find stubs of [FD]
+"Local storage"->"LI\nSCC\nStub Runner": stubs of [FD] found
+"LI\nSCC\nStub Runner"->"FD stub": run stubs of [FD]
+"FD stub"->"LI\nSCC\nStub Runner": [FD] stub is running
+"LI\nSCC\nStub Runner"->"Loan\nIssuance": stubs running and ready for the test
+"Loan\nIssuance"->"Loan\nIssuance": run a test
+"Loan\nIssuance"->"FD stub": the test\nsends a request\nto the running stub
+"FD stub"->"Loan\nIssuance": stub responds successfuly
+"Loan\nIssuance"->"Loan\nIssuance": the test passes successfully
+"Loan\nIssuance"->"Fraud\nDetection": send a pull request\nwith the\nsuggested contracts
 ----
 
 *Start doing TDD by writing a test for your feature.*
@@ -721,6 +735,7 @@ of an identifier or a timestamp, you need not hardcode a value. You want to allo
 different ranges of values. To enable ranges of values, you can set regular expressions
 matching those values for the consumer side. You can provide the body by means of either
 a map notation or String with interpolations.
+//TODO: Ensure that the links are correct
 Consult the <<contract-dsl>> section for more information. We highly recommend using the map notation!
 
 TIP: You must understand the map notation in order to set up contracts. Please read the
@@ -860,9 +875,35 @@ the server side. Currently, the consumer side work is done.
 
 === Producer side (Fraud Detection server)
 
-As a developer of the Fraud Detection server (a server to the Loan Issuance service):
+As a developer of the Fraud Detection server (a server to the Loan Issuance service) we would like to:
 
-*Create an initial implementation.*
+- take over the pull request
+- write the missing implementation
+- deploy the application
+
+Let's look at the Fraud Detection flow:
+
+[plantuml, getting-started-cdc-server, png]
+----
+"Fraud\nDetection"->"Fraud\nDetection": take over the\n pull request
+"Fraud\nDetection"->"Fraud\nDetection": setup\nSpring Cloud\nContract plugin
+"Fraud\nDetection"->"Fraud\nDetection\nBuild": run the build
+"Fraud\nDetection\nBuild"->"SCC Plugin": generate tests\nstubs \nand stubs artifact \n(e.g. stubs-jar)
+"SCC Plugin"->"Fraud\nDetection\nBuild": tests and stubs generated
+"Fraud\nDetection\nBuild"->"Fraud\nDetection\nBuild": run tests
+"Fraud\nDetection\nBuild"->"Fraud\nDetection": generated tests failed!
+"Fraud\nDetection"->"Fraud\nDetection": setup\nbase classes\nfor contract tests
+"Fraud\nDetection"->"Fraud\nDetection\nBuild": run the build
+"Fraud\nDetection\nBuild"->"SCC Plugin": generate tests\nstubs \nand stubs artifact \n(e.g. stubs-jar)
+"SCC Plugin"->"Fraud\nDetection\nBuild": tests and stubs generated
+"Fraud\nDetection\nBuild"->"Fraud\nDetection\nBuild": run tests
+"Fraud\nDetection\nBuild"->"Fraud\nDetection": all the tests passed!
+"Fraud\nDetection"->"Fraud\nDetection": commit and push changes
+"Fraud\nDetection"->"CI": commit pushed!\nTriggers the build
+"CI"->"Nexus / Artifactory": build successful,\nupload artifacts
+----
+
+*Take over the pull request.*
 
 As a reminder, you can see the initial implementation here:
 
@@ -872,8 +913,6 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com
 include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
-
-*Take over the pull request.*
 
 [source,bash,indent=0]
 ----
@@ -991,7 +1030,29 @@ application and the stub artifacts.
 
 === Consumer Side (Loan Issuance) Final Step
 
-As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
+As a developer of the Loan Issuance service (a consumer of the Fraud Detection server) we will want to:
+
+- merge our feature branch to `master`
+- switch to online mode of working
+
+
+[plantuml, getting-started-cdc-client, png]
+----
+"Loan\nIssuance"->"Loan\nIssuance": merge the\nfeature branch\nto master branch
+"Loan\nIssuance"->"Loan\nIssuance": setup SCC Stub Runner\nto fetch stubs\nfrom Nexus / Artifactory
+"Loan\nIssuance"->"LI\nSCC\nStub Runner": start stubs\nof FD from\nNexus / Artifactory
+"LI\nSCC\nStub Runner"->"Local storage": find stubs of [FD]
+"Local storage"->"LI\nSCC\nStub Runner": stubs of [FD] found
+"LI\nSCC\nStub Runner"->"FD stub": run stubs of [FD]
+"FD stub"->"LI\nSCC\nStub Runner": [FD] stub is running
+"LI\nSCC\nStub Runner"->"Loan\nIssuance": stubs running and ready for the test
+"Loan\nIssuance"->"Loan\nIssuance": run a test
+"Loan\nIssuance"->"FD stub": the test\nsends a request\nto the running stub
+"FD stub"->"Loan\nIssuance": stub responds successfuly
+"Loan\nIssuance"->"Loan\nIssuance": the test passes successfully
+"Loan\nIssuance"->"Fraud\nDetection": send a pull request\nwith the\nsuggested contracts
+----
+
 
 *Merge branch to master.*
 
