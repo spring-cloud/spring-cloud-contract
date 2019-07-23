@@ -264,10 +264,33 @@ This brief tour walks through using Spring Cloud Contract:
 You can find an even more brief tour
 <<getting-started-three-second-tour,here>>.
 
+image::getting-started-three-second.png[Getting started first application]
+
 [[getting-started-first-application-producer]]
 === On the Producer Side
 
-To start working with `Spring Cloud Contract`, add files with `REST/` messaging contracts
+To start working with `Spring Cloud Contract`, add Spring Cloud Contract Verifier dependency and plugin to your build file,
+as shown in the following example:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
+----
+
+The following listing shows how to add the plugin, which should go in the build/plugins
+portion of the file:
+
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
+----
+
+Now let's add files with `REST/` messaging contracts
 expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
 `contractsDslDir` property. By default, it is `$rootDir/src/test/resources/contracts`.
 
@@ -355,35 +378,22 @@ include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.
 ----
 ====
 
-
-Then you can add Spring Cloud Contract Verifier dependency and plugin to your build file,
-as shown in the following example:
-
-[source,xml,indent=0]
-----
-include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
-----
-
-The following listing shows how to add the plugin, which should go in the build/plugins
-portion of the file:
-
-[source,xml,indent=0]
-----
-<plugin>
-	<groupId>org.springframework.cloud</groupId>
-	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-	<version>${spring-cloud-contract.version}</version>
-	<extensions>true</extensions>
-</plugin>
-----
-
 Running `./mvnw clean install` automatically generates tests that verify the application
 compliance with the added contracts. By default, the generated tests are under
 `org.springframework.cloud.contract.verifier.tests.`.
 
-The following example shows a sample auto-generated test for an HTTP contract:
+The generated tests will differ, depending on which framework and test type you've setup in your plugin.
 
-[source,java,indent=0]
+In the samples below you'll find:
+
+- the default test mode for HTTP contracts via `MockMvc`
+- JAX-RS client via the `JAXRS` test mode
+- `WebTestClient` based test (this is particularly recommended while working with Reactive, `Web-Flux`-based applications) set via `WEBTESTCLIENT` test mode
+- Spock based test via the `testFramework` property set to `SPOCK`
+
+====
+[source,java,indent=0,role="primary"]
+.mockmvc
 ----
 @Test
 public void validate_shouldMarkClientAsFraud() throws Exception {
@@ -406,18 +416,45 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 }
 ----
 
-The preceding example uses Spring's `MockMvc` to run the tests. This is the default test
-mode for HTTP contracts. However, JAX-RS client and explicit HTTP invocations can also be
-used. (To do so, change the `testMode` property of the plugin to `JAX-RS` or `EXPLICIT`,
-respectively.)
+[source,java,indent=0,role="secondary"]
+.jaxrs
+----
+@SuppressWarnings("rawtypes")
+public class FooTest {
+  WebTarget webTarget;
 
-Since 2.1.0, it is also possible to use `RestAssuredWebTestClient`with Spring's reactive `WebTestClient`
-run under the hood. This is particularly recommended while working with Reactive, `Web-Flux`-based applications.
-In order to use `WebTestClient` set `testMode` to `WEBTESTCLIENT`.
+  @Test
+  public void validate_() throws Exception {
 
-Here is an example of a test generated in `WEBTESTCLIENT` test mode:
+    // when:
+      Response response = webTarget
+              .path("/users")
+              .queryParam("limit", "10")
+              .queryParam("offset", "20")
+              .queryParam("filter", "email")
+              .queryParam("sort", "name")
+              .queryParam("search", "55")
+              .queryParam("age", "99")
+              .queryParam("name", "Denis.Stepanov")
+              .queryParam("email", "bob@email.com")
+              .request()
+              .build("GET")
+              .invoke();
+      String responseAsString = response.readEntity(String.class);
 
-[source,java,indent=0]
+    // then:
+      assertThat(response.getStatus()).isEqualTo(200);
+
+    // and:
+      DocumentContext parsedJson = JsonPath.parse(responseAsString);
+      assertThatJson(parsedJson).field("['property1']").isEqualTo("a");
+  }
+
+}
+----
+
+[source,java,indent=0,role="secondary"]
+.webtestclient
 ----
 @Test
 	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
@@ -439,15 +476,8 @@ Here is an example of a test generated in `WEBTESTCLIENT` test mode:
 	}
 ----
 
-Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
-`testFramework` property to either `JUNIT5` or `Spock`.
-
-TIP: You can now also generate WireMock scenarios based on the contracts, by including an
-order number followed by an underscore at the beginning of the contract file names.
-
-The following example shows an auto-generated test in Spock for a messaging stub contract:
-
-[source,groovy,indent=0]
+[source,groovy,indent=0,role="secondary"]
+.spock
 ----
 given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
@@ -462,6 +492,7 @@ then:
 	 noExceptionThrown()
 	 bookWasDeleted()
 ----
+====
 
 As the implementation of the functionalities described by the contracts is not yet
 present, the tests fail.
@@ -495,17 +526,6 @@ shown in the following example:
 
 You can now merge the changes and publish both the application and the stub artifacts
 in an online repository.
-
-// TODO: Consider moving this section somewhere else
-*Docker Project*
-
-In order to enable working with contracts while creating applications in non-JVM
-technologies, the `springcloud/spring-cloud-contract` Docker image has been created. It
-contains a project that automatically generates tests for HTTP contracts and executes them
-in  `EXPLICIT` test mode. Then, if the tests pass, it generates Wiremock stubs and,
-optionally, publishes them to an artifact manager. In order to use the image, you can
-mount the contracts into the `/contracts` directory and set a few environment variables.
-// TODO: We should answer the obvious question: Which environment variables?
 
 [[getting-started-first-application-consumer]]
 === On the Consumer Side

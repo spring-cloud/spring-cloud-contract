@@ -15,7 +15,7 @@
 :project-full-name: Spring Cloud Contract
 
 // project-specific attributes
-:core_path: {github-raw}
+:core_path: {project-root}
 :plugins_path: {github-raw}/spring-cloud-contract-tools
 :converters_path: {plugins_path}/spring-cloud-contract-converters
 :verifier_root_path: {core_path}/spring-cloud-contract-verifier
