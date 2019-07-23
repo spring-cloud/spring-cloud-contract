@@ -1,8 +1,0 @@
-- Provider contract testing with Maven / Gradle, stubs in artifactory
-- Provider contract testing with Maven / Gradle, stubs in git
-- Consumer Driven Contracts with contracts on the producer side
-- Consumer Driven Contracts with contracts in external repo
-- Consumer Driven Contracts with contracts and stubs in git
-- Provider contract testing with Maven / Gradle, stubs in artifactory in non Spring world
-- Provider contract testing with Maven / Gradle, stubs in artifactory in non JVM world
-- Provider contract testing with REST Docs and with Maven / Gradle stubs in Artifactory
