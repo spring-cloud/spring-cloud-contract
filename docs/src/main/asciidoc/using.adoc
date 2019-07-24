@@ -412,14 +412,366 @@ You can check the <<getting-started.adoc#getting-started-first-application, Deve
 [[flows-provider-non-spring-consumer]]
 === Consumer setup
 
-For the consumer side, it's enough to use a JUnit rule.
+For the consumer side, it's enough to use a JUnit rule. That way you don't even start a Spring context.
+
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.JUnit 4 Rule
+----
+@Rule
+	public StubRunnerRule rule = new StubRunnerRule()
+			.downloadStub("com.example","artifact-id", "0.0.1")
+			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JUnit 5 Extension
+----
+@Rule
+	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+			.downloadStub("com.example","artifact-id", "0.0.1")
+			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
+----
+
+[[flows-provider-non-spring-producer]]
+=== Producer setup
+
+By default, the Spring Cloud Contract Plugin will use the Rest Assured's `MockMvc` setup for the generated tests. Since non Spring applications don't use `MockMvc`, it's enough to change the `testMode` to `EXPLICIT` to send a real request to an application bound at a specific port. '
+
+In this example we will use a framework called https://javalin.io[Javalin] to start a non Spring HTTP server.
+
+Let us assume that we have the following application
+
+[source,java,indent=0]
+----
+package com.example.demo;
+
+import io.javalin.Javalin;
+
+public class DemoApplication {
+
+	public static void main(String[] args) {
+		new DemoApplication().run(7000);
+	}
+
+	public Javalin start(int port) {
+		return Javalin.create().start(port);
+	}
+
+	public Javalin registerGet(Javalin app) {
+		return app.get("/", ctx -> ctx.result("Hello World"));
+	}
+
+	public Javalin run(int port) {
+		return registerGet(start(port));
+	}
+
+}
+----
+
+Setup the plugin to use the `EXPLICIT` mode (i.e. to send out requests to a real port).
+
+====
+[source,xml,indent=0,role="primary"]
+.maven
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+	<configuration>
+		<baseClassForTests>com.example.demo.BaseClass</baseClassForTests>
+		<!-- This will setup the EXPLICIT mode for the tests -->
+		<testMode>EXPLICIT</testMode>
+	</configuration>
+</plugin>
+----
+
+[source,groovy,indent=0,role="secondary"]
+.gradle
+----
+contracts {
+	// This will setup the EXPLICIT mode for the tests
+	testMode = "EXPLICIT"
+	baseClassForTests = "com.example.demo.BaseClass"
+}
+----
+====
+
+The base class could look like this
+
+[source,java,indent=0]
+----
+import io.javalin.Javalin;
+import io.restassured.RestAssured;
+import org.junit.After;
+import org.junit.Before;
+import org.springframework.util.SocketUtils;
+
+public class BaseClass {
+
+	Javalin app;
+
+	@Before
+	public void setup() {
+		// pick a random port
+		int port = SocketUtils.findAvailableTcpPort();
+		// start the application at a random port
+		this.app = start(port);
+		// tell Rest Assured where the started application is
+		RestAssured.baseURI = "http://localhost:" + port;
+	}
+
+	@After
+	public void close() {
+		// stop the server after each test
+		this.app.stop();
+	}
+
+	private Javalin start(int port) {
+		// reuse the production logic to start a server
+		return new DemoApplication().run(port);
+	}
+}
+----
+
+With such a setup
+
+* we've setup the Spring Cloud Contract plugin that it uses the `EXPLICIT` mode to send real requests instead of mocked ones
+* we've defined a base class that
+** starts the HTTP server on a random port for each test
+** sets Rest Assured to send requests to that port
+** closes the HTTP server after each test
 
 [[flows-provider-non-jvm]]
 == Provider contract testing with stubs in Artifactory in non JVM world
 
-[[flows-provider-rest-docs]]
-== Provider contract testing with REST Docs and stubs in Artifactory
+In this flow we assume that
 
+* the API Producer and API Consumer are non JVM applications.
+* the contract definitions are written in YAML
+* the Stub Storage is Artifactory / Nexus
+* Spring Cloud Contract Docker (SCC Docker) and Spring Cloud Contract Stub Runner Docker (SCC Stub Runner Docker) images will be used
+
+You can read more about how to use Spring Cloud Contract with Docker <<docker-project.adoc,in this page>>.
+
+Over https://spring.io/blog/2018/02/13/spring-cloud-contract-in-a-polyglot-world[here] you can read a blog post about how to use Spring Cloud Contract in a polyglot world.
+
+https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs/[Here] you can find a sample of a NodeJS application using Spring Cloud Contract both as a producer and a consumer.
+
+[[flows-provider-non-jvm-producer]]
+=== Producer Flow
+
+At a high level the producer
+
+* writes contract definitions e.g. in YAML
+* sets up the build tool to
+** start the application with mocked services on a given port X
+** in case when mocking is not possible you can setup the infrastructure and define tests in a stateful way
+** run the Spring Cloud Contract Docker image and pass the port of a running application as an environment variable
+* The SCC Docker image
+** generates the tests from the attached volume
+** runs the tests against the running application
+** upon test completion, stubs will get uploaded to a Stub Storage (e.g. Artifactory, Git)
+
+[plantuml, flows-provider-non-jvm-producer, png]
+----
+"API Producer"->"API Producer": write contract definitions
+"API Producer"->"API Producer": (preferable) prepare a way\nto run the app\nwith mocked services
+"API Producer"->"API Producer\nbuild": run the build
+"API Producer\nbuild"->"API Producer\nrunning app": run the app\non port X\nwith mocked services
+"API Producer\nbuild"->"SCC Docker": attach contract definitions\nas a volume
+"API Producer\nbuild"->"SCC Docker": set environment variables\ne.g. app running on port X
+"API Producer\nbuild"->"SCC Docker": run the contract tests
+"SCC Docker"->"SCC Docker\nimage": run the contract tests
+"SCC Docker\nimage"->"SCC Docker\nimage": pick the contract definitions\nfrom volume
+"SCC Docker\nimage"->"SCC Docker\nimage": generate contract tests
+"SCC Docker\nimage"->"SCC Docker\nimage": run the tests\nagainst app running\non port X
+"SCC Docker\nimage"->"SCC Docker\nimage": the tests are passing!
+"SCC Docker\nimage"->"Stub Storage": upload the stubs
+"SCC Docker\nimage"->"SCC Docker": build successful
+"SCC Docker"->"API Producer\nbuild": build successful
+"API Producer\nbuild"->"API Producer": build successful
+----
+
+[[flows-provider-non-jvm-consumer]]
+=== Consumer Flow
+
+At a high level the consumer
+
+* sets up the build tool to
+** start the Spring Cloud Contract Stub Runner Docker image and start the stubs
+*** the environment variables passed will configure
+**** the stubs to fetch
+**** location of the repositories
+*** to use the local storage you can also attach it as a volume
+*** the ports at which the stubs are running need to be exposed
+** run your application tests against the running stubs
+
+[plantuml, flows-provider-non-jvm-consumer, png]
+----
+"API Consumer"->"API Consumer\nbuild": run the build
+"API Consumer\nbuild"->"SCC\nStub Runner\nDocker": set environment variables\ne.g. stub X running on port Y
+"SCC\nStub Runner\nDocker"->"SCC\nStub Runner\nDocker\nimage": fetch and run\nthe stubs
+"SCC\nStub Runner\nDocker\nimage"->"Stub Storage": fetch the stubs of X
+"Stub Storage"->"SCC\nStub Runner\nDocker\nimage": stubs found
+"SCC\nStub Runner\nDocker\nimage"->"X Stub": run the stub of X
+"X Stub"->"SCC\nStub Runner\nDocker\nimage": stub is running\non port Y
+"SCC\nStub Runner\nDocker\nimage"->"SCC\nStub Runner\nDocker": stubs running and\nready for tests
+"API Consumer\nbuild"->"API Consumer\nbuild": run tests against X stub
+"API Consumer\nbuild"->"X Stub": send a request
+"X Stub"->"API Consumer\nbuild": response received
+"API Consumer\nbuild"->"API Consumer": build successful
+----
+
+[[flows-provider-rest-docs]]
+== Provider contract testing with REST Docs and stubs in Nexus / Artifactory
+
+In this flow, we will not use a Spring Cloud Contract Plugin to generate tests and stubs. We will write https://spring.io/projects/spring-restdocs[Spring RESTDocs] and from them we will automatically generate stubs. Finally, we will setup our builds to package the stubs and upload them to the Stub Storage - in our case Nexus / Artifactory.
+
+You can also check the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/rest_docs.html[workshop page] for a step by step instruction on how to do this flow.
+
+[[flows-provider-rest-docs-producer]]
+=== Producer flow
+
+As a producer
+
+* we write RESTDocs tests of our API
+* we add Spring Cloud Contract Stub Runner starter to our build (`spring-cloud-starter-contract-stub-runner`)
++
+====
+[source,xml,indent=0,role="primary"]
+.maven
+----
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+		<scope>test</scope>
+	</dependency>
+</dependencies>
+
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies</artifactId>
+			<version>${spring-cloud.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	</dependencies>
+</dependencyManagement>
+----
+
+[source,groovy,indent=0,role="secondary"]
+.gradle
+----
+dependencies {
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+----
+====
+* we setup the build tool to package our stubs
++
+====
+[source,xml,indent=0,role="primary"]
+.maven
+----
+<!-- pom.xml -->
+<plugins>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-assembly-plugin</artifactId>
+		<executions>
+			<execution>
+				<id>stub</id>
+				<phase>prepare-package</phase>
+				<goals>
+					<goal>single</goal>
+				</goals>
+				<inherited>false</inherited>
+				<configuration>
+					<attach>true</attach>
+					<descriptors>
+						${basedir}/src/assembly/stub.xml
+					</descriptors>
+				</configuration>
+			</execution>
+		</executions>
+	</plugin>
+</plugins>
+
+<!-- src/assembly/stub.xml -->
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+	<id>stubs</id>
+	<formats>
+		<format>jar</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.directory}/generated-snippets/stubs</directory>
+			<outputDirectory>META-INF/${project.groupId}/${project.artifactId}/${project.version}/mappings</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>
+----
+
+[source,groovy,indent=0,role="secondary"]
+.gradle
+----
+task stubsJar(type: Jar) {
+	classifier = "stubs"
+	into("META-INF/${project.group}/${project.name}/${project.version}/mappings") {
+		include('**/*.*')
+		from("${project.buildDir}/generated-snippets/stubs")
+	}
+}
+// we need the tests to pass to build the stub jar
+stubsJar.dependsOn(test)
+bootJar.dependsOn(stubsJar)
+----
+====
+* now, when we run the tests, stubs will be automatically published and packaged
+
+[plantuml, flows-provider-rest-docs-producer, png]
+----
+"API Producer"->"API Producer": write RESTDocs tests
+"API Producer"->"API Producer": add the stub runner\nstarter dependency
+"API Producer"->"API Producer": setup the build tool to package\nthe generated stubs
+"API Producer"->"API Producer\nbuild": run the build
+"API Producer\nbuild"->"RESTDocs": generate HTTP snippets
+"RESTDocs"->"Spring Cloud\nContract": generate HTTP stubs
+"RESTDocs"->"Spring Cloud\nContract": (optional) generate\ncontract DSLs
+"Spring Cloud\nContract"->"RESTDocs": files generated
+"RESTDocs"->"API Producer\nbuild": snippets generated
+"API Producer\nbuild"->"API Producer\nbuild": tests passed
+"API Producer\nbuild"->"API Producer\nbuild": generate stubs jar
+"API Producer\nbuild"->"Stub Storage": upload JAR with the application
+"API Producer\nbuild"->"Stub Storage": upload JAR with the stubs
+"Stub Storage"->"API Producer\nbuild": JARs uploaded
+"API Producer\nbuild"->"API Producer": build successful
+----
+
+[[flows-provider-rest-docs-consumer]]
+=== Consumer flow
+
+Since the consumer flow isn't affected by the tool used to generate the stubs, you can check the <<getting-started.adoc#getting-started-first-application-consumer, Developing Your First Spring Cloud Contract based application>> link to see the consumer side of the provider contract testing with stubs in Nexus / Artifactory flow.
 
 [[using-whats-next]]
 == What to Read Next
