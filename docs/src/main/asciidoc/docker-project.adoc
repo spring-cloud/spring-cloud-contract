@@ -1,4 +1,5 @@
 = Docker Project
+include::_attributes.adoc[]
 
 We're publishing a `springcloud/spring-cloud-contract` Docker image
 that contains a project that will generate tests and execute them in `EXPLICIT` mode
@@ -177,4 +178,5 @@ will be executed against the running application
 under http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/ .
 The stubs will be here http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar.
 
+// TODO: Fix the link
 To see how the client side looks like check out the <<stubrunner-docker>> section.

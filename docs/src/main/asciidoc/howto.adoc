@@ -1002,3 +1002,50 @@ task convertContracts(type: JavaExec) {
 test.dependsOn("convertContracts")
 ----
 ====
+
+[[how-to-work-with-transitivie]]
+== How can I work with transitive dependencies?
+
+The Spring Cloud Contract plugins add the tasks that create the stubs jar for you. One
+problem that arises is that, when reusing the stubs, you can mistakenly import all of
+that stub's dependencies. When building a Maven artifact, even though you have a couple
+of different jars, all of them share one pom:
+
+[source,bash,indent=0]
+----
+├── producer-0.0.1.BUILD-20160903.075506-1-stubs.jar
+├── producer-0.0.1.BUILD-20160903.075506-1-stubs.jar.sha1
+├── producer-0.0.1.BUILD-20160903.075655-2-stubs.jar
+├── producer-0.0.1.BUILD-20160903.075655-2-stubs.jar.sha1
+├── producer-0.0.1.BUILD-SNAPSHOT.jar
+├── producer-0.0.1.BUILD-SNAPSHOT.pom
+├── producer-0.0.1.BUILD-SNAPSHOT-stubs.jar
+├── ...
+└── ...
+----
+
+There are three possibilities of working with those dependencies so as not to have any
+issues with transitive dependencies:
+
+* Mark all application dependencies as optional
+* Create a separate artifactid for the stubs
+* Exclude dependencies on the consumer side
+
+[[how-to-work-with-transitivie-optional]]
+=== Mark all application dependencies as optional
+
+If, in the `producer` application, you mark all of your dependencies as optional,
+when you include the `producer` stubs in another application (or when that
+dependency gets downloaded by Stub Runner) then, since all of the dependencies are
+optional, they will not get downloaded.
+
+[[how-to-work-with-transitivie-separate]]
+=== Create a separate `artifactid` for the stubs
+
+If you create a separate `artifactid`, then you can set it up in whatever way you wish.
+For example, you might decide to have no dependencies at all.
+
+[[how-to-work-with-transitivie-exclude]]
+=== Exclude dependencies on the consumer side
+
+As a consumer, if you add the stub dependency to your classpath, you can explicitly exclude the unwanted dependencies.

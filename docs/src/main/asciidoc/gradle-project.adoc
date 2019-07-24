@@ -1,23 +1,5 @@
-:branch: master
-:core_path: ../../..
-:plugins_path: ../../../spring-cloud-contract-tools
-:converters_path: {plugins_path}/spring-cloud-contract-converters
-:verifier_root_path: {core_path}/spring-cloud-contract-verifier
-:contract_spec_path: {core_path}/specs/spring-cloud-contract-spec-java
-:contract_spec_tests_path: {core_path}/specs/spring-cloud-contract-spec
-:samples_path: {core_path}/samples
-:verifier_core_path: {verifier_root_path}
-:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
-:standalone_samples_path: {samples_path}/standalone/dsl
-:standalone_messaging_samples_path: {samples_path}/standalone/messaging
-:standalone_pact_path: {samples_path}/standalone/pact
-:standalone_restdocs_path: {samples_path}/standalone/restdocs
-:tests_path: {core_path}/tests
-:samples_branch: 2.2.x
-:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/{samples_branch}
-:introduction_url: ${core_path}/../../
-
 = Gradle Project
+include::_attributes.adoc[]
 
 To learn how to set up the Gradle project for Spring Cloud Contract Verifier, read the
 following sections:
@@ -73,10 +55,10 @@ dependencyManagement {
 }
 
 dependencies {
-	testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----

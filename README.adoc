@@ -59,7 +59,7 @@ The `0.1.0` release took place on 26 Jan 2015 and it became stable with `1.0.0` 
 
 Assume that we have a system consisting of multiple microservices:
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
+image::{github-raw}/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
 
 ==== Testing issues
 
@@ -106,7 +106,7 @@ To solve the aforementioned issues, Spring Cloud Contract was created. The main 
 whole world of microservices. If you work on stubs, then the only applications you need
 are those that your application directly uses.
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
+image::{github-raw}/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
 
 Spring Cloud Contract gives you the certainty that the stubs that you use were
 created by the service that you're calling. Also, if you can use them, it means that they
@@ -243,9 +243,7 @@ Stub Runner` properties, as shown in the following example:
 +
 [source,yaml,indent=0]
 ----
-stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: https://repo.spring.io/libs-snapshot
+Unresolved directive in _verifier_how_it_works.adoc - include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -552,9 +550,7 @@ Runner` properties, as shown in the following example:
 +
 [source,yaml,indent=0]
 ----
-stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: https://repo.spring.io/libs-snapshot
+Unresolved directive in _verifier_how_it_works.adoc - include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -1083,9 +1079,7 @@ achieving the same thing by changing the properties.
 
 [source,yaml,indent=0]
 ----
-stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: https://repo.spring.io/libs-snapshot
+Unresolved directive in _verifier_how_it_works.adoc - include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 That's it!

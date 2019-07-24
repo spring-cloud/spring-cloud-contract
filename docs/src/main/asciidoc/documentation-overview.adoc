@@ -60,73 +60,34 @@ If you are getting started with {project-full-name} or 'Spring' in general, star
 Ready to actually start using {project-full-name}? <<using.adoc#using, We have
 you covered>>:
 
-* *Build systems:*
-<<using-{project-name}.adoc#using-contract-maven, Maven>> |
-<<using-{project-name}.adoc#using-contract-gradle, Gradle>> |
-<<using-{project-name}.adoc#using-contract-ant, Ant>> |
-<<using-{project-name}.adoc#using-contract-starter, Starters>>
-* *Best practices:*
-<<using-{project-name}.adoc#using-contract-structuring-your-code, Code Structure>> |
-<<using-{project-name}.adoc#using-contract-configuration-classes, @Configuration>> |
-<<using-{project-name}.adoc#using-contract-auto-configuration, @EnableAutoConfiguration>> |
-<<using-{project-name}.adoc#using-contract-spring-beans-and-dependency-injection, Beans and
-Dependency Injection>>
-* *Running your code:*
-<<using-{project-name}.adoc#using-contract-running-from-an-ide, IDE>> |
-<<using-{project-name}.adoc#using-contract-running-as-a-packaged-application, Packaged>> |
-<<using-{project-name}.adoc#using-contract-running-with-the-maven-plugin, Maven>> |
-<<using-{project-name}.adoc#using-contract-running-with-the-gradle-plugin, Gradle>>
-* *Packaging your app:*
-<<using-{project-name}.adoc#using-contract-packaging-for-production, Production jars>>
-* *{project-full-name} CLI:*
-<<{project-name}-cli.adoc#cli, Using the CLI>>
+* *Provider contract testing:*
+
+** <<using.adoc#flows-provider-nexus,Provider contract testing with stubs in Nexus / Artifactory>>
+** <<using.adoc#flows-provider-git,Provider contract testing with stubs in Git>>
+** <<using.adoc#flows-provider-non-spring,Provider contract testing with stubs in Artifactory for a non Spring application>>
+** <<using.adoc#flows-provider-non-jvm,Provider contract testing with stubs in Artifactory in non JVM world>>
+** <<using.adoc#flows-provider-rest-docs,Provider contract testing with REST Docs and stubs in Nexus / Artifactory>>
+
+* *Consumer-Driven contract testing:*
+** <<using.adoc#flows-cdc-contracts-producer,Consumer Driven Contracts with contracts on the producer side>>
+** <<using.adoc#flows-cdc-contracts-external,Consumer Driven Contracts with contracts in external repo>>
+** <<using.adoc#flows-cdc-contracts-stubs-git,Consumer Driven Contracts with contracts on the producer side, pushed to git>>
 
 
 
 == Learning about {project-full-name} Features
 Need more details about {project-full-name}'s core features?
-<<{project-name}-features.adoc#contract-features, The following content is for you>>:
+<<project-features.adoc#features, The following content is for you>>:
 
 * *Core Features:*
 <<{project-name}-features.adoc#contract-features-spring-application, SpringApplication>> |
 <<{project-name}-features.adoc#contract-features-external-config, External Configuration>> |
 <<{project-name}-features.adoc#contract-features-profiles, Profiles>> |
 <<{project-name}-features.adoc#contract-features-logging, Logging>>
-* *Web Applications:*
-<<{project-name}-features.adoc#contract-features-spring-mvc, MVC>> |
-<<{project-name}-features.adoc#contract-features-embedded-container, Embedded Containers>>
-* *Working with data:*
-<<{project-name}-features.adoc#contract-features-sql, SQL>> |
-<<{project-name}-features.adoc#contract-features-nosql, NO-SQL>>
-* *Messaging:*
-<<{project-name}-features.adoc#contract-features-messaging, Overview>> |
-<<{project-name}-features.adoc#contract-features-jms, JMS>>
-* *Testing:*
-<<{project-name}-features.adoc#contract-features-testing, Overview>> |
-<<{project-name}-features.adoc#contract-features-testing-{project-name}-applications, Boot
-Applications>> |
-<<{project-name}-features.adoc#contract-features-test-utilities, Utils>>
-* *Extending:*
-<<{project-name}-features.adoc#contract-features-developing-auto-configuration, Auto-configuration>> |
-<<{project-name}-features.adoc#contract-features-condition-annotations, @Conditions>>
-
-
-
-== Moving to Production
-When you are ready to push your {project-full-name} application to production, we have
-<<production-ready-features.adoc#production-ready, some tricks>> that you might like:
-
-* *Management endpoints:*
-<<production-ready-features.adoc#production-ready-endpoints, Overview>> |
-<<production-ready-features.adoc#production-ready-customizing-endpoints, Customization>>
-* *Connection options:*
-<<production-ready-features.adoc#production-ready-monitoring, HTTP>> |
-<<production-ready-features.adoc#production-ready-jmx, JMX>>
-* *Monitoring:*
-<<production-ready-features.adoc#production-ready-metrics, Metrics>> |
-<<production-ready-features.adoc#production-ready-auditing, Auditing>> |
-<<production-ready-features.adoc#production-ready-tracing, Tracing>> |
-<<production-ready-features.adoc#production-ready-process-monitoring, Process>>
+* *Build tools:*
+link:maven-project.html[Maven] |
+link:gradle-project.html[Gradle] |
+link:docker-project.html[Docker]
 
 
 

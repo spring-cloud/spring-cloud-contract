@@ -110,7 +110,7 @@ Stub Runner` properties, as shown in the following example:
 +
 [source,yaml,indent=0]
 ----
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -417,7 +417,7 @@ Runner` properties, as shown in the following example:
 +
 [source,yaml,indent=0]
 ----
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -946,7 +946,7 @@ achieving the same thing by changing the properties.
 
 [source,yaml,indent=0]
 ----
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 That's it!
