@@ -44,6 +44,12 @@ class MethodAnnotationBuilder {
 		return this;
 	}
 
+	MethodAnnotationBuilder testNG() {
+		this.singleMethodBuilder.methodAnnotation(
+				new TestNGMethodAnnotation(this.builder, this.metaData));
+		return this;
+	}
+
 	MethodAnnotationBuilder spock() {
 		this.singleMethodBuilder.methodAnnotation(
 				new SpockIgnoreMethodAnnotation(this.builder, this.metaData));

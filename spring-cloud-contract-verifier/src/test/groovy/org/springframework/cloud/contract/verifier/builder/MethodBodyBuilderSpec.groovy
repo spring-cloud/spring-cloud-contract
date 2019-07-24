@@ -154,6 +154,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#588')
@@ -195,6 +198,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -240,6 +246,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -288,6 +297,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#289')
@@ -333,6 +345,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#313')
@@ -374,6 +389,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -418,6 +436,13 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
+			}                                 | { String testBody ->
+				testBody.
+						contains('assertThat(response.header("Content-Length")).isEqualTo(4);') && testBody.
+						contains('assertThat(response.header("Content-Type")).matches("application/pdf.*");')
+			}
+			"mockmvc-testng"   | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
 			}                                 | { String testBody ->
 				testBody.
 						contains('assertThat(response.header("Content-Length")).isEqualTo(4);') && testBody.
@@ -491,6 +516,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#424')
@@ -535,6 +563,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#458')
@@ -568,6 +599,11 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
+			}                                 | { String string ->
+				string.contains('assertThat(responseBody).isEqualTo("My name");')
+			}
+			"mockmvc-testng"         | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
 			}                                 | { String string ->
 				string.contains('assertThat(responseBody).isEqualTo("My name");')
 			}
@@ -636,6 +672,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#702')
@@ -701,6 +740,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#465')
@@ -752,6 +794,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -829,6 +874,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#578')
@@ -893,6 +941,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue('#493')
@@ -953,6 +1004,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	def 'should work with files that have new lines [#methodBuilderName]'() {
@@ -998,6 +1052,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -1075,6 +1132,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	def 'should not escape a regex pattern when matching raw body value [#methodBuilderName]'() {
@@ -1114,6 +1174,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue("#664")
@@ -1140,6 +1203,13 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
+			}                                 | { String string ->
+				string.contains('.body(fileToBytes(this, "worksWithPdf_request_request.pdf"));')
+			}                                                  | { String string ->
+				string.contains('assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "worksWithPdf_response_response.pdf"));')
+			}
+			"mockmvc-testng"         | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
 			}                                 | { String string ->
 				string.contains('.body(fileToBytes(this, "worksWithPdf_request_request.pdf"));')
 			}                                                  | { String string ->
@@ -1245,6 +1315,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue("#852")
@@ -1290,6 +1363,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -1347,6 +1423,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -1448,6 +1527,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue("#727")
@@ -1497,6 +1579,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue("#892")
@@ -1538,6 +1623,13 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 			"mockmvc"         | {
 				properties.testMode = TestMode.MOCKMVC
+			}                                 | { String testContent ->
+				assert testContent.
+						contains('''assertThat(response.header("Content-Type")).matches("^\\\\s*\\\\S[\\\\S\\\\s]*")''') && testContent.
+						contains('''assertThat(response.header("Content-Length")).matches("([1-9]\\\\d*)")'''); return true
+			}
+			"mockmvc-testng"         | {
+				properties.testFramework = TestFramework.TESTNG; properties.testMode = TestMode.MOCKMVC
 			}                                 | { String testContent ->
 				assert testContent.
 						contains('''assertThat(response.header("Content-Type")).matches("^\\\\s*\\\\S[\\\\S\\\\s]*")''') && testContent.
@@ -1599,6 +1691,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue("#1052")
@@ -1656,6 +1751,9 @@ response:
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 	@Issue("#1049")
@@ -1694,6 +1792,9 @@ response:
 			}
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
 			}
 	}
 
@@ -1744,7 +1845,9 @@ response:
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}
-
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
 	}
 
 }
