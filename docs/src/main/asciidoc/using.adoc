@@ -20,6 +20,149 @@ You can also check the https://cloud-samples.spring.io/spring-cloud-contract-sam
 [[flows-provider-git]]
 == Provider contract testing with stubs in Git
 
+In this flow, we will perform the provider contract testing (producer has no knowledge of how consumers use their API). The stubs will be uploaded to a separate repository (they will not be uploaded to Artifactory / Nexus).
+
+Prerequisites:
+
+* Git repository that
+** will contain all the stubs for each producer
+** for an example of such a project you can check the samples
+{samples_code}/contract_git[check the samples ] or {samples_code}/contract_git[check the samples here]
+** as a result of pushing stubs there, the repository will have the following structure
++
+```
+$ tree .
+└── META-INF
+   └── folder.with.group.id.as.its.name
+       └── folder-with-artifact-id
+           └── folder-with-version
+               ├── contractA.groovy
+               ├── contractB.yml
+               └── contractC.groovy
+
+```
+* Consumer code that has Spring Cloud Contract Stub Runner setup
+** for an example of such a project you can {samples_code}/consumer[check the samples] and search for a `BeerControllerGitTest` test
+* Producer code that has Spring Cloud Contract setup together with a plugin
+** for an example of such a project you can {samples_code}/producer_with_empty_git[check the samples]
+
+[[flows-provider-git-flow]]
+=== The flow
+
+The flow looks exactly as the one presented in he <<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract based application>> section, but the `Stub Storage` implementation will be a git repository.
+
+You can read more about setting up git repository as a git storage and setting consumer and producer side in the <<howto.adoc#how-to-use-git-as-storage,How To page>> of the documentation.
+
+[[flows-provider-git-consumer]]
+=== Consumer setup
+
+In order to fetch the stubs from a git repository instead of Nexus / Artifactory, you need to use the `git` protocol in the URL of the `repositoryRoot` property in Stub Runner. Below you have an example of how to set it up.
+
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.Annotation
+----
+@AutoConfigureStubRunner(
+stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		repositoryRoot = "git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git",
+		ids = "com.example:artifact-id:0.0.1")
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JUnit 4 Rule
+----
+@Rule
+	public StubRunnerRule rule = new StubRunnerRule()
+			.downloadStub("com.example","artifact-id", "0.0.1")
+			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JUnit 5 Extension
+----
+@Rule
+	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+			.downloadStub("com.example","artifact-id", "0.0.1")
+			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
+----
+
+[[flows-provider-git-producer]]
+=== Producer setup
+
+In order to push the stubs to a git repository instead of Nexus / Artifactory, you need to use the `git` protocol in the URL of the plugin setup. Also you need to explicitly tell the plugin to push the stubs at the end of the build process.
+
+====
+[source,xml,indent=0,role="primary"]
+.maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <!-- Base class mappings etc. -->
+
+        <!-- We want to pick contracts from a Git repository -->
+        <contractsRepositoryUrl>git://git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git</contractsRepositoryUrl>
+
+        <!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts -->
+        <contractDependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+        </contractDependency>
+
+        <!-- The contracts mode can't be classpath -->
+        <contractsMode>REMOTE</contractsMode>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal -->
+                <goal>pushStubsToScm</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+[source,groovy,indent=0,role="secondary"]
+.gradle
+----
+contracts {
+	// We want to pick contracts from a Git repository
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:${project.version}"
+	}
+	/*
+	We reuse the contract dependency section to set up the path
+	to the folder that contains the contract definitions. In our case the
+	path will be /groupId/artifactId/version/contracts
+	 */
+	contractRepository {
+		repositoryUrl = "git://git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git"
+	}
+	// The mode can't be classpath
+	contractsMode = "REMOTE"
+	// Base class mappings etc.
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publish.dependsOn("publishStubsToScm")
+----
+====
+
+You can read more about setting up git repository as a git storage in the <<howto.adoc#how-to-use-git-as-storage,How To page>> of the documentation.
+
 [[flows-cdc-contracts-producer]]
 == Consumer Driven Contracts with contracts on the producer side
 
@@ -35,7 +178,7 @@ You can check the https://cloud-samples.spring.io/spring-cloud-contract-samples/
 Prerequisites:
 
 * Git repository that
-** will contain all the contract defintiions for each producer
+** will contain all the contract definitions for each producer
 ** can package the contract definitions in a JAR
 ** for each contract producer contains a way (e.g. `pom.xml`) to install stubs locally via the Spring Cloud Contract Plugin (SCC Plugin)
 ** for more information please visit the <<howto.adoc#how-to-common-repo-with-contracts, how to section>> where we describe how to set up such a repository
@@ -44,6 +187,7 @@ Prerequisites:
 ** for an example of such a project you can {samples_code}/consumer[check the samples]
 * Producer code that has Spring Cloud Contract setup together with a plugin
 ** for an example of such a project you can {samples_code}/producer_with_external_contracts[check the samples]
+* The `Stub Storage` will be Nexus / Artifactory
 
 At a high level the flow looks as follows:
 
@@ -235,27 +379,43 @@ contracts {
 "Producer\nBuild"->"Producer": the tests passed
 "Producer"->"Repo\nwith\ncontracts": merge the pull request
 "Repo\nwith\ncontracts"->"CI": build and upload the\ncontract definitions artifact
-"CI"->"Nexus / Artifactory": upload the\ncontract definitions
+"CI"->"Stub Storage": upload the\ncontract definitions
 "Producer"->"Producer": setup the SCC Plugin\nto work remotely
 "Producer"->"Producer": merge the code\nwith the implementation
 "Producer"->"CI": build and upload\nthe artifacts
 "CI"->"Producer\nBuild\non CI": generate tests,\nstubs\nand stub jar
 "Producer\nBuild\non CI"->"SCC\nPlugin": generate tests,\nstubs\nand stub jar
-"SCC\nPlugin"->"Nexus / Artifactory": fetch the contract definitions
-"Nexus / Artifactory"->"SCC\nPlugin": contract definitions found
+"SCC\nPlugin"->"Stub Storage": fetch the contract definitions
+"Stub Storage"->"SCC\nPlugin": contract definitions found
 "SCC\nPlugin"->"SCC\nPlugin": generate tests
 "Producer\nBuild\non CI"->"CI": the build passed
-"Producer\nBuild\non CI"->"Nexus / Artifactory": upload the application JAR\nand the stubs jar
+"Producer\nBuild\non CI"->"Stub Storage": upload the application JAR\nand the stubs jar
 ----
 
 [[flows-cdc-contracts-stubs-git]]
-== Consumer Driven Contracts with contracts and stubs in git
+== Consumer Driven Contracts with contracts on the producer side, pushed to git
+
+You can check the <<getting-started.adoc#getting-started-cdc, Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side>> link to see the Consumer Driven Contracts with contracts on the producer side flow.
+
+The Stub Storage implementation would be the git repository. We describe its setup in the <<flows-provider-git>> section.
+
+You can read more about setting up git repository as a git storage and setting consumer and producer side in the <<howto.adoc#how-to-use-git-as-storage,How To page>> of the documentation.
 
 [[flows-provider-non-spring]]
-== Provider contract testing with stubs in artifactory for a non Spring application
+== Provider contract testing with stubs in Artifactory for a non Spring application
+
+[[flows-provider-non-spring-flow]]
+=== The flow
+
+You can check the <<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract based application>> link to see the provider contract testing with stubs in Nexus / Artifactory flow.
+
+[[flows-provider-non-spring-consumer]]
+=== Consumer setup
+
+For the consumer side, it's enough to use a JUnit rule.
 
 [[flows-provider-non-jvm]]
-== Provider contract testing with stubs in artifactory in non JVM world
+== Provider contract testing with stubs in Artifactory in non JVM world
 
 [[flows-provider-rest-docs]]
 == Provider contract testing with REST Docs and stubs in Artifactory

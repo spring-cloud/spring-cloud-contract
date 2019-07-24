@@ -18,7 +18,7 @@ Spring Cloud Contract moves TDD to the level of software architecture. It allows
 
 Before becoming Spring Cloud Contract, this project was called https://github.com/Codearte/accurest[Accurest].
 It was created by https://twitter.com/mgrzejszczak[Marcin Grzejszczak] and https://twitter.com/jkubrynski[Jakub Kubrynski]
-from (https://github.com/Codearte[Codearte].
+from (https://github.com/Codearte[Codearte]).
 
 The `0.1.0` release took place on 26 Jan 2015 and it became stable with `1.0.0` release on 29 Feb 2016.
 
@@ -141,12 +141,12 @@ You can find a somewhat longer tour
 "API Producer"->"API Producer": define contracts
 "API Producer"->"Build": run build
 "Build"->"SCC Plugin": generate \ntests, stubs and stubs \nartifact (e.g. stubs-jar)
-"Build"->"Nexus / Artifactory": upload contracts \nand stubs and the project arifact
+"Build"->"Stub Storage": upload contracts \nand stubs and the project arifact
 "Build"->"API Producer": Build successful
 "API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
 "API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
-"SCC Stub Runner"->"Nexus / Artifactory": test asks for [API Producer] stubs
-"Nexus / Artifactory"->"SCC Stub Runner": fetch the [API Producer] stubs
+"SCC Stub Runner"->"Stub Storage": test asks for [API Producer] stubs
+"Stub Storage"->"SCC Stub Runner": fetch the [API Producer] stubs
 "SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
 "API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
 "SCC Stub Runner"->"API Consumer": communication is correct
@@ -263,6 +263,8 @@ This brief tour walks through using Spring Cloud Contract:
 
 You can find an even more brief tour
 <<getting-started-three-second-tour,here>>.
+
+For the sake of this example the `Stub Storage` will be Nexus / Artifactory.
 
 image::getting-started-three-second.png[Getting started first application]
 
@@ -604,11 +606,19 @@ Assume that `Loan Issuance` is a client to the `Fraud Detection` server. In the 
 sprint, we must develop a new feature: if a client wants to borrow too much money, then
 we mark the client as a fraud.
 
-Technical remark - Fraud Detection has an `artifact-id` of `http-server`, while Loan
-Issuance has an artifact-id of `http-client`, and both have a `group-id` of `com.example`.
+Technical remarks
 
-Social remark - both client and server development teams need to communicate directly and
-discuss changes while going through the process. CDC is all about communication.
+* Fraud Detection has an `artifact-id` of `http-server`,
+* Loan
+Issuance has an artifact-id of `http-client`
+* both have a `group-id` of `com.example`
+* For the sake of this example the `Stub Storage` will be Nexus / Artifactory
+
+Social remarks
+
+* both client and server development teams need to communicate directly and
+discuss changes while going through the process
+* CDC is all about communication.
 
 The https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-server[server
 side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-client[the
@@ -920,7 +930,7 @@ Let's look at the Fraud Detection flow:
 "Fraud\nDetection\nBuild"->"Fraud\nDetection": all the tests passed!
 "Fraud\nDetection"->"Fraud\nDetection": commit and push changes
 "Fraud\nDetection"->"CI": commit pushed!\nTriggers the build
-"CI"->"Nexus / Artifactory": build successful,\nupload artifacts
+"CI"->"Stub Storage": build successful,\nupload artifacts
 ----
 
 *Take over the pull request.*
@@ -1059,10 +1069,10 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 [plantuml, getting-started-cdc-client, png]
 ----
 "Loan\nIssuance"->"Loan\nIssuance": merge the\nfeature branch\nto master branch
-"Loan\nIssuance"->"Loan\nIssuance": setup SCC Stub Runner\nto fetch stubs\nfrom Nexus / Artifactory
-"Loan\nIssuance"->"LI\nSCC\nStub Runner": start stubs\nof FD from\nNexus / Artifactory
-"LI\nSCC\nStub Runner"->"Nexus / Artifactory": find stubs of [FD]
-"Nexus / Artifactory"->"LI\nSCC\nStub Runner": stubs of [FD] found
+"Loan\nIssuance"->"Loan\nIssuance": setup SCC Stub Runner\nto fetch stubs\nfrom Stub Storage
+"Loan\nIssuance"->"LI\nSCC\nStub Runner": start stubs\nof FD from\nStub Storage
+"LI\nSCC\nStub Runner"->"Stub Storage": find stubs of [FD]
+"Stub Storage"->"LI\nSCC\nStub Runner": stubs of [FD] found
 "LI\nSCC\nStub Runner"->"FD stub": run stubs of [FD]
 "FD stub"->"LI\nSCC\nStub Runner": [FD] stub is running
 "LI\nSCC\nStub Runner"->"Loan\nIssuance": stubs running and ready for the test
