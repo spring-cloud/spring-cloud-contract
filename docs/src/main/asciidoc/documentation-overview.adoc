@@ -108,8 +108,4 @@ Finally, we have a few topics for more advanced users:
 <<advanced.adoc#contract-dsl-custom-stub-generator, Stub Generator>> |
 <<advanced.adoc#contract-dsl-custom-stub-runner, Stub Runner>> |
 <<advanced.adoc#contract-dsl-custom-stub-downloader, Stub Downloader>>
-* *Appendix:*
-<<appendix.adoc#common-application-properties, Application Properties>> |
-<<appendix.adoc#auto-configuration-classes, Auto-configuration classes>> |
-<<appendix.adoc#executable-jar, Executable Jars>>
 
