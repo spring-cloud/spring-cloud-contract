@@ -80,13 +80,20 @@ Need more details about {project-full-name}'s core features?
 <<project-features.adoc#features, The following content is for you>>:
 
 * *Core Features:*
-<<{project-name}-features.adoc#contract-features-spring-application, SpringApplication>> |
-<<{project-name}-features.adoc#contract-features-external-config, External Configuration>>
+<<project-features.adoc#contract-dsl, Contract DSL>> |
+<<project-features.adoc#features-messaging, Messaging>>
+* *Integrations:*
+<<project-features.adoc#features-jax-rs, JAX-RS>> |
+<<project-features.adoc#features-webflux, WebFlux>> |
+<<project-features.adoc#features-context-paths, Context Paths>> |
+<<project-features.adoc#features-rest-docs, RESTDocs>>
+* *Modules:*
+<<project-features.adoc#features-stub-runner, Stub Runner>> |
+<<project-features.adoc#features-wiremock, WireMock>>
 * *Build tools:*
 link:maven-project.html[Maven] |
 link:gradle-project.html[Gradle] |
 link:docker-project.html[Docker]
-
 
 
 == Advanced Topics

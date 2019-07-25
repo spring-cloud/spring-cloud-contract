@@ -1,4 +1,4 @@
-[[features-stub-runner-features-stub-runner]]
+[[features-stub-runner]]
 == Spring Cloud Contract Stub Runner
 
 One of the issues that you might encounter while using Spring Cloud Contract Verifier is
@@ -9,7 +9,7 @@ Copying the JSON files and setting the client side for messaging manually is out
 question. That is why we introduced Spring Cloud Contract Stub Runner. It can
 automatically download and run the stubs for you.
 
-[[features-stub-runner-features-stub-runner-snapshot-versions]]
+[[features-stub-runner-snapshot-versions]]
 === Snapshot versions
 
 Add the additional snapshot repository to your `build.gradle` file to use snapshot
@@ -77,8 +77,7 @@ You can pick the following options of acquiring stubs
 - Classpath scanning solution that searches classpath via pattern to retrieve stubs
 - Write your own implementation of the `org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder` for full customization
 
-// TODO: Fix link
-The latter example is described in the <<custom_stub_runner, Custom Stub Runner>> section.
+The latter example is described in the <<advanced.adoc#customization-custom-stub-runner, Custom Stub Runner>> section.
 
 [[features-stub-runner-downloading-stub]]
 ===== Stub downloading
@@ -382,8 +381,7 @@ include::{stubrunner_core_path}/src/test/java/org/springframework/cloud/contract
 ----
 ====
 
-//TODO: Fix link
-Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.
+Check the <<features-stub-runner-common-properties-junit-spring>> for more information on how to apply global configuration of Stub Runner.
 
 IMPORTANT: To use the JUnit rule or JUnit 5 extension together with messaging, you have to provide an implementation of the
 `MessageVerifier` interface to the rule builder (e.g. `rule.messageVerifier(new MyMessageVerifier())`).

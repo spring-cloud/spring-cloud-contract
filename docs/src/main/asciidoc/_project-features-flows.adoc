@@ -1,6 +1,9 @@
-[[features-jax-rs]]
-== JAX-RS
+[[feature-integrations]]
+== Integrations
 include::_attributes.adoc[]
+
+[[features-jax-rs]]
+=== JAX-RS
 
 The Spring Cloud Contract supports the JAX-RS 2 Client API. The base class needs
 to define `protected WebTarget webTarget` and server initialization. The only option for
@@ -21,15 +24,10 @@ The following example shows a generated test API:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/JaxRsClientMethodBuilderSpec.groovy[tags=jaxrs,indent=0]
 ----
 
-[[contract-webflux]]
-== WebFlux
-
-Spring Cloud Contract offers two ways of working with WebFlux.
-
-[[contract-webtestclient]]
+[[feature-webflux]]
 === WebFlux with WebTestClient
 
-One of them is via the `WebTestClient` mode.
+You can work with WebFlux via the `WebTestClient` mode.
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -74,7 +72,9 @@ public abstract class BeerRestBase {
 }
 ----
 
-[[contract-webflux-explicit]]
+IMPORTANT: The `WebTestClient` mode is faster than the `EXPLICIT` mode
+
+[[feature-webflux-explicit]]
 === WebFlux with Explicit mode
 
 Another way is with the `EXPLICIT` mode in your generated tests

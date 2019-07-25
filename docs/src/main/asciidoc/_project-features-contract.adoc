@@ -1295,7 +1295,7 @@ TIP: As you can see, it is much better if you name your contracts because doing 
 your tests far more meaningful.
 
 [[contract-stateful-contracts]]
-== Stateful Contracts
+=== Stateful Contracts
 
 Stateful contracts (known also as scenarios) are contract definitions that should be read in order. This might be useful in the following situations:
 

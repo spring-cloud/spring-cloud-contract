@@ -3,8 +3,8 @@
 include::_attributes.adoc[]
 
 This section goes into more detail about how you should use {project-full-name}. It covers topics
-such as description of flows of how to work with {{project-full-name}}. We also
-cover some {{project-full-name}} best practices.
+such as description of flows of how to work with {project-full-name}. We also
+cover some {project-full-name} best practices.
 
 If you are starting out with {project-full-name}, you should probably read the
 _<<getting-started.adoc#getting-started, Getting Started>>_ guide before diving into this
@@ -778,4 +778,4 @@ Since the consumer flow isn't affected by the tool used to generate the stubs, y
 You should now understand how you can use {project-full-name} and some best practices that you
 should follow. You can now go on to learn about specific
 _<<project-features#project-features, {project-full-name} features>>_ in depth, or you could
-skip ahead and read about the ...
+skip ahead and read about the _link:advanced.html[advanced features of {project-full-name}]_.

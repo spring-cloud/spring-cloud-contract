@@ -32,8 +32,7 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 [[how-to-not-write-contracts-in-groovy]]
 == How can I write contracts in a language different than Groovy?
 
-// TODO: Add a link
-No problem. You can write a contract in YAML! Check this section for more information
+No problem. You can write a contract in YAML! Check <<project-features.adoc#contract-dsl, this section>> for more information.
 
 We are working on allowing more ways of describing the contracts. You can check the {github-issues}[github-issues] for more information.
 
@@ -125,8 +124,7 @@ How can you then provide one time a matcher for the consumer and a concrete valu
 In Spring Cloud Contract we're allowing you to provide a *dynamic value*. That means that it can differ for both
 sides of the communication.
 
-// TODO: Ensure that the link is correct
-You can read more about this in the <<contract-dsl>> section.
+You can read more about this in the <<project-features.adoc#contract-dsl, Contract DSL>> section.
 
 IMPORTANT: Please read the https://groovy-lang.org/json.html[Groovy docs related to JSON] to understand how to
 properly structure the request / response bodies.

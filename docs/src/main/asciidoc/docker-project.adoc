@@ -193,8 +193,7 @@ that will start the standalone version of Stub Runner.
 [[docker-stubrunner-env-vars]]
 === Environment variables
 
-//TODO: Fix the link
-Just execute the docker image. You can pass any of the <<common-properties-junit-spring>>
+Just execute the docker image. You can pass any of the <<project-features.adoc#features-stub-runner-common-properties-junit-spring, Common Properties for JUnit and Spring>>
 as environment variables. The convention is that all the
 letters should be upper case. The camel case notation should
 and the dot (`.`) should be separated via underscore (`_`). E.g.
