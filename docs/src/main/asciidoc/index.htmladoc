@@ -11,8 +11,6 @@ The reference documentation consists of the following sections:
 <<documentation-overview.adoc#contract-documentation,Documentation Overview>> :: About the Documentation, Getting Help, First Steps, and more.
 <<getting-started.adoc#getting-started,Getting Started>> :: Introducing {project-full-name}, System Requirements, Developing Your First {project-full-name} based Application
 <<using.adoc#using,Using {project-full-name}>> :: {project-full-name} usage examples and workflows
-<<project-features.adoc#features,{project-full-name} Features>> :: Profiles, Logging, Security, Caching, Spring Integration, Testing, and more.
-<<production-ready-features.adoc#production-ready,Spring Boot Actuator>> :: Monitoring, Metrics, Auditing, and more.
-<<build-tool-plugins.adoc#build-tool-plugins,Build Tool Plugins>> :: Maven Plugin, Gradle Plugin.
-<<howto.adoc#howto,"`How-to`" Guides>> :: Application Development, Configuration, Embedded Servers, Data Access, and many more.
-<<appendix.adoc#appendix,Appendices>> :: Properties, Metadata, Configuration, Dependencies, and more.
+<<project-features.adoc#features,{project-full-name} Features>> :: Profiles, Logging, Security, Caching, Spring Integration, Testing, and more.W
+<<project-features.adoc#features-build-tools,Build Tools>> :: Maven Plugin, Gradle Plugin, Docker
+<<howto.adoc#howto,"`How-to`" Guides>> :: Stubs versioning, Pact integration, Debugging, and more.

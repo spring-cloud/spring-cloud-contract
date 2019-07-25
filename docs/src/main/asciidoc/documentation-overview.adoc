@@ -81,9 +81,7 @@ Need more details about {project-full-name}'s core features?
 
 * *Core Features:*
 <<{project-name}-features.adoc#contract-features-spring-application, SpringApplication>> |
-<<{project-name}-features.adoc#contract-features-external-config, External Configuration>> |
-<<{project-name}-features.adoc#contract-features-profiles, Profiles>> |
-<<{project-name}-features.adoc#contract-features-logging, Logging>>
+<<{project-name}-features.adoc#contract-features-external-config, External Configuration>>
 * *Build tools:*
 link:maven-project.html[Maven] |
 link:gradle-project.html[Gradle] |
@@ -94,12 +92,22 @@ link:docker-project.html[Docker]
 == Advanced Topics
 Finally, we have a few topics for more advanced users:
 
-* *{project-full-name} Applications Deployment:*
-<<deployment.adoc#cloud-deployment, Cloud Deployment>> |
-<<deployment.adoc#deployment-service, OS Service>>
-* *Build tool plugins:*
-<<build-tool-plugins.adoc#build-tool-plugins-maven-plugin, Maven>> |
-<<build-tool-plugins.adoc#build-tool-plugins-gradle-plugin, Gradle>>
+* *Customizing DSL:*
+<<advanced.adoc#contract-dsl-customization, DSL customization>> |
+<<advanced.adoc#contract-dsl-extending-common-jar, Common JAR>> |
+<<advanced.adoc#contract-dsl-test-dep, Test dependency>> |
+<<advanced.adoc#contract-dsl-plugin-dep, Plugin dependency>> |
+<<advanced.adoc#contract-dsl-referencing, Referencing DSL>>
+* *Customizing WireMock:*
+<<advanced.adoc#customization-wiremock-extension, Extensions>> |
+<<advanced.adoc#customization-wiremock-configuration, Configuration>>
+* *Customizing {project-full-name}:*
+<<advanced.adoc#contract-dsl-pluggable-architecture, Pluggable architecture>> |
+<<advanced.adoc#contract-dsl-custom-contract-converter, Contract Converter>> |
+<<advanced.adoc#contract-dsl-custom-test-generator, Test Generator>> |
+<<advanced.adoc#contract-dsl-custom-stub-generator, Stub Generator>> |
+<<advanced.adoc#contract-dsl-custom-stub-runner, Stub Runner>> |
+<<advanced.adoc#contract-dsl-custom-stub-downloader, Stub Downloader>>
 * *Appendix:*
 <<appendix.adoc#common-application-properties, Application Properties>> |
 <<appendix.adoc#auto-configuration-classes, Auto-configuration classes>> |

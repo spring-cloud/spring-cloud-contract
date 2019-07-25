@@ -1,38 +1,157 @@
-=== How It Works
+include::_attributes.adoc[]
 
-This section explores how Spring Cloud Contract.
+If you are getting started with {project-full-name}, or "`Spring`" in general, start by reading
+this section. It answers the basic "`what?`", "`how?`" and "`why?`" questions. It
+includes an introduction to {project-full-name}, along with installation instructions. We then
+walk you through building your first {project-full-name} application, discussing some core
+principles as we go.
 
-[[spring-cloud-contract-verifier-intro-three-second-tour]]
-==== A Three-second Tour
+[[getting-started-introducing-spring-cloud-contract]]
+== Introducing Spring Cloud Contract
+
+Spring Cloud Contract moves TDD to the level of software architecture. It allows to perform consumer, consumer-driven and producer-driven contract testing.
+
+[[getting-started-introducing-spring-cloud-contract-history]]
+=== History
+
+Before becoming Spring Cloud Contract, this project was called https://github.com/Codearte/accurest[Accurest].
+It was created by https://twitter.com/mgrzejszczak[Marcin Grzejszczak] and https://twitter.com/jkubrynski[Jakub Kubrynski]
+from (https://github.com/Codearte[Codearte]).
+
+The `0.1.0` release took place on 26 Jan 2015 and it became stable with `1.0.0` release on 29 Feb 2016.
+
+[[getting-started-introducing-spring-cloud-contract-why]]
+==== Why would you need it?
+
+Assume that we have a system consisting of multiple microservices:
+
+image::images/Deps.png[Microservices Architecture]
+
+[[getting-started-introducing-spring-cloud-contract-testing-issues]]
+==== Testing issues
+
+If we wanted to test the application in top left corner to determine whether it can
+communicate with other services, we could do one of two things:
+
+- Deploy all microservices and perform end-to-end tests.
+- Mock other microservices in unit/integration tests.
+
+Both have their advantages but also a lot of disadvantages.
+
+*Deploy all microservices and perform end to end tests*
+
+Advantages:
+
+- Simulates production.
+- Tests real communication between services.
+
+Disadvantages:
+
+- To test one microservice, we have to deploy 6 microservices, a couple of databases,
+etc.
+- The environment where the tests run is locked for a single suite of tests (nobody else
+would be able to run the tests in the meantime).
+- They take a long time to run.
+- The feedback comes very late in the process.
+- They are extremely hard to debug.
+
+*Mock other microservices in unit/integration tests*
+
+Advantages:
+
+- They provide very fast feedback.
+- They have no infrastructure requirements.
+
+Disadvantages:
+
+- The implementor of the service creates stubs that might have nothing to do with
+reality.
+- You can go to production with passing tests and failing production.
+
+To solve the aforementioned issues, Spring Cloud Contract was created. The main idea is to give you very fast feedback, without the need to set up the
+whole world of microservices. If you work on stubs, then the only applications you need
+are those that your application directly uses.
+
+image::images/Stubs2.png[Stubbed Services]
+
+Spring Cloud Contract gives you the certainty that the stubs that you use were
+created by the service that you're calling. Also, if you can use them, it means that they
+were tested against the producer's side. In short, you can trust those stubs.
+
+[[getting-started-introducing-spring-cloud-contract-purposes]]
+=== Purposes
+
+The main purposes of Spring Cloud Contract are:
+
+- To ensure that HTTP / Messaging stubs (used when developing the client) do exactly
+what the actual server-side implementation does.
+- To promote ATDD (acceptance test driven developement) method and Microservices architectural style.
+- To provide a way to publish changes in contracts that are immediately visible on both sides.
+- To generate boilerplate test code to be used on the server side.
+
+By default Spring Cloud Contract integrates with http://wiremock.org[Wiremock] as the HTTP server stub.
+
+IMPORTANT: Spring Cloud Contract's purpose is NOT to start writing business
+features in the contracts. Assume that we have a business use case of fraud check. If a
+user can be a fraud for 100 different reasons, we would assume that you would create 2
+contracts, one for the positive case and one for the negative case. Contract tests are
+used to test contracts between applications and not to simulate full behavior.
+
+[[getting-started-what-is-a-contract]]
+=== What is a contract?
+
+As consumers of services, we need to define what exactly we want to achieve. We need to
+formulate our expectations. That is why we write contracts. In other words a contract is an agreement on how the API / message communication should look like. Let's look at the following example
+
+Assume that you want to send a request containing the ID of a client company and the
+amount it wants to borrow from us. You also want to send it to the /fraudcheck url via
+the PUT method.
+
+====
+[source,groovy,indent=0,role="primary"]
+.groovy
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.yaml
+----
+include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
+----
+====
+
+[[getting-started-three-second-tour]]
+== A Three-second Tour
 
 This very brief tour walks through using Spring Cloud Contract:
 
-* <<spring-cloud-contract-verifier-intro-three-second-tour-producer>>
-* <<spring-cloud-contract-verifier-intro-three-second-tour-consumer>>
+* <<getting-started-three-second-tour-producer>>
+* <<getting-started-three-second-tour-consumer>>
 
 You can find a somewhat longer tour
-<<spring-cloud-contract-verifier-intro-three-minute-tour,here>>.
+<<getting-started-first-application,here>>.
 
-[plantuml, three-second, png]
+[plantuml, getting-started-three-second, png]
 ----
 "API Producer"->"API Producer": add Spring Cloud \nContract (SCC) plugin
 "API Producer"->"API Producer": add SCC Verifier dependency
 "API Producer"->"API Producer": define contracts
 "API Producer"->"Build": run build
 "Build"->"SCC Plugin": generate \ntests, stubs and stubs \nartifact (e.g. stubs-jar)
-"Build"->"Nexus / Artifactory": upload contracts \nand stubs and the project arifact
+"Build"->"Stub Storage": upload contracts \nand stubs and the project arifact
 "Build"->"API Producer": Build successful
 "API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
 "API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
-"SCC Stub Runner"->"Nexus / Artifactory": test asks for [API Producer] stubs
-"Nexus / Artifactory"->"SCC Stub Runner": fetch the [API Producer] stubs
+"SCC Stub Runner"->"Stub Storage": test asks for [API Producer] stubs
+"Stub Storage"->"SCC Stub Runner": fetch the [API Producer] stubs
 "SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
 "API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
 "SCC Stub Runner"->"API Consumer": communication is correct
 ----
 
-[[spring-cloud-contract-verifier-intro-three-second-tour-producer]]
-===== On the Producer Side
+[[getting-started-three-second-tour-producer]]
+=== On the Producer Side
 
 To start working with Spring Cloud Contract, add files with `REST`/messaging contracts
 expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
@@ -77,8 +196,8 @@ application and the stub artifacts are built and installed in the local Maven re
 The changes can now be merged, and both the application and the stub artifacts may be
 published in an online repository.
 
-[[spring-cloud-contract-verifier-intro-three-second-tour-consumer]]
-===== On the Consumer Side
+[[getting-started-three-second-tour-consumer]]
+=== On the Consumer Side
 
 `Spring Cloud Contract Stub Runner` can be used in the integration tests to get a running
 WireMock instance or messaging route that simulates the actual service.
@@ -110,7 +229,7 @@ Stub Runner` properties, as shown in the following example:
 +
 [source,yaml,indent=0]
 ----
-include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -132,21 +251,46 @@ TIP: Use the `REMOTE` `stubsMode` when downloading stubs from an online reposito
 Now, in your integration test, you can receive stubbed versions of HTTP responses or
 messages that are expected to be emitted by the collaborator service.
 
-[[spring-cloud-contract-verifier-intro-three-minute-tour]]
-==== A Three-minute Tour
+[[getting-started-first-application]]
+== Developing Your First Spring Cloud Contract based application
 
 This brief tour walks through using Spring Cloud Contract:
 
-* <<spring-cloud-contract-verifier-intro-three-minute-tour-producer>>
-* <<spring-cloud-contract-verifier-intro-three-minute-tour-consumer>>
+* <<getting-started-first-application-producer>>
+* <<getting-started-first-application-consumer>>
 
 You can find an even more brief tour
-<<spring-cloud-contract-verifier-intro-three-second-tour,here>>.
+<<getting-started-three-second-tour,here>>.
 
-[[spring-cloud-contract-verifier-intro-three-minute-tour-producer]]
-===== On the Producer Side
+For the sake of this example the `Stub Storage` will be Nexus / Artifactory.
 
-To start working with `Spring Cloud Contract`, add files with `REST/` messaging contracts
+image::getting-started-three-second.png[Getting started first application]
+
+[[getting-started-first-application-producer]]
+=== On the Producer Side
+
+To start working with `Spring Cloud Contract`, add Spring Cloud Contract Verifier dependency and plugin to your build file,
+as shown in the following example:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
+----
+
+The following listing shows how to add the plugin, which should go in the build/plugins
+portion of the file:
+
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
+----
+
+Now let's add files with `REST/` messaging contracts
 expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
 `contractsDslDir` property. By default, it is `$rootDir/src/test/resources/contracts`.
 
@@ -234,35 +378,22 @@ include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.
 ----
 ====
 
-
-Then you can add Spring Cloud Contract Verifier dependency and plugin to your build file,
-as shown in the following example:
-
-[source,xml,indent=0]
-----
-include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
-----
-
-The following listing shows how to add the plugin, which should go in the build/plugins
-portion of the file:
-
-[source,xml,indent=0]
-----
-<plugin>
-	<groupId>org.springframework.cloud</groupId>
-	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-	<version>${spring-cloud-contract.version}</version>
-	<extensions>true</extensions>
-</plugin>
-----
-
 Running `./mvnw clean install` automatically generates tests that verify the application
 compliance with the added contracts. By default, the generated tests are under
 `org.springframework.cloud.contract.verifier.tests.`.
 
-The following example shows a sample auto-generated test for an HTTP contract:
+The generated tests will differ, depending on which framework and test type you've setup in your plugin.
 
-[source,java,indent=0]
+In the samples below you'll find:
+
+- the default test mode for HTTP contracts via `MockMvc`
+- JAX-RS client via the `JAXRS` test mode
+- `WebTestClient` based test (this is particularly recommended while working with Reactive, `Web-Flux`-based applications) set via `WEBTESTCLIENT` test mode
+- Spock based test via the `testFramework` property set to `SPOCK`
+
+====
+[source,java,indent=0,role="primary"]
+.mockmvc
 ----
 @Test
 public void validate_shouldMarkClientAsFraud() throws Exception {
@@ -285,18 +416,45 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 }
 ----
 
-The preceding example uses Spring's `MockMvc` to run the tests. This is the default test
-mode for HTTP contracts. However, JAX-RS client and explicit HTTP invocations can also be
-used. (To do so, change the `testMode` property of the plugin to `JAX-RS` or `EXPLICIT`,
-respectively.)
+[source,java,indent=0,role="secondary"]
+.jaxrs
+----
+@SuppressWarnings("rawtypes")
+public class FooTest {
+  WebTarget webTarget;
 
-Since 2.1.0, it is also possible to use `RestAssuredWebTestClient`with Spring's reactive `WebTestClient`
-run under the hood. This is particularly recommended while working with Reactive, `Web-Flux`-based applications.
-In order to use `WebTestClient` set `testMode` to `WEBTESTCLIENT`.
+  @Test
+  public void validate_() throws Exception {
 
-Here is an example of a test generated in `WEBTESTCLIENT` test mode:
+    // when:
+      Response response = webTarget
+              .path("/users")
+              .queryParam("limit", "10")
+              .queryParam("offset", "20")
+              .queryParam("filter", "email")
+              .queryParam("sort", "name")
+              .queryParam("search", "55")
+              .queryParam("age", "99")
+              .queryParam("name", "Denis.Stepanov")
+              .queryParam("email", "bob@email.com")
+              .request()
+              .build("GET")
+              .invoke();
+      String responseAsString = response.readEntity(String.class);
 
-[source,java,indent=0]
+    // then:
+      assertThat(response.getStatus()).isEqualTo(200);
+
+    // and:
+      DocumentContext parsedJson = JsonPath.parse(responseAsString);
+      assertThatJson(parsedJson).field("['property1']").isEqualTo("a");
+  }
+
+}
+----
+
+[source,java,indent=0,role="secondary"]
+.webtestclient
 ----
 @Test
 	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
@@ -318,15 +476,8 @@ Here is an example of a test generated in `WEBTESTCLIENT` test mode:
 	}
 ----
 
-Apart from the default JUnit 4, you can instead use JUnit 5 or Spock tests, by setting the plugin
-`testFramework` property to either `JUNIT5` or `Spock`.
-
-TIP: You can now also generate WireMock scenarios based on the contracts, by including an
-order number followed by an underscore at the beginning of the contract file names.
-
-The following example shows an auto-generated test in Spock for a messaging stub contract:
-
-[source,groovy,indent=0]
+[source,groovy,indent=0,role="secondary"]
+.spock
 ----
 given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
@@ -341,6 +492,7 @@ then:
 	 noExceptionThrown()
 	 bookWasDeleted()
 ----
+====
 
 As the implementation of the functionalities described by the contracts is not yet
 present, the tests fail.
@@ -375,18 +527,8 @@ shown in the following example:
 You can now merge the changes and publish both the application and the stub artifacts
 in an online repository.
 
-*Docker Project*
-
-In order to enable working with contracts while creating applications in non-JVM
-technologies, the `springcloud/spring-cloud-contract` Docker image has been created. It
-contains a project that automatically generates tests for HTTP contracts and executes them
-in  `EXPLICIT` test mode. Then, if the tests pass, it generates Wiremock stubs and,
-optionally, publishes them to an artifact manager. In order to use the image, you can
-mount the contracts into the `/contracts` directory and set a few environment variables.
-// TODO: We should answer the obvious question: Which environment variables?
-
-[[spring-cloud-contract-verifier-intro-three-minute-tour-consumer]]
-===== On the Consumer Side
+[[getting-started-first-application-consumer]]
+=== On the Consumer Side
 
 `Spring Cloud Contract Stub Runner` can be used in the integration tests to get a running
 WireMock instance or messaging route that simulates the actual service.
@@ -417,7 +559,7 @@ Runner` properties, as shown in the following example:
 +
 [source,yaml,indent=0]
 ----
-include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -451,88 +593,8 @@ to the following in the build logs:
 2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]
 ----
 
-==== Defining the Contract
-
-As consumers of services, we need to define what exactly we want to achieve. We need to
-formulate our expectations. That is why we write contracts.
-
-Assume that you want to send a request containing the ID of a client company and the
-amount it wants to borrow from us. You also want to send it to the /fraudcheck url via
-the PUT method.
-
-====
-[source,groovy,indent=0,role="primary"]
-.groovy
-----
-include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
-----
-
-[source,yaml,indent=0,role="secondary"]
-.yaml
-----
-include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
-----
-====
-
-==== Client Side
-
-Spring Cloud Contract generates stubs, which you can use during client-side testing.
-You get a running WireMock instance/Messaging route that simulates the service.
-You would like to feed that instance with a proper stub definition.
-
-At some point in time, you need to send a request to the Fraud Detection service.
-
-[source,groovy,indent=0]
-----
-include::{introduction_url}/samples/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
-----
-
-Annotate your test class with `@AutoConfigureStubRunner`. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.
-
-[source,groovy,indent=0]
-----
-include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
-----
-
-After that, during the tests, Spring Cloud Contract automatically finds the stubs
-(simulating the real service) in the Maven repository and exposes them on a configured
-(or random) port.
-
-==== Server Side
-
-Since you are developing your stub, you need to be sure that it actually resembles your
-concrete implementation. You cannot have a situation where your stub acts in one way and
-your application behaves in a different way, especially in production.
-
-To ensure that your application behaves the way you define in your stub, tests are
-generated from the stub you provide.
-
-The autogenerated test looks, more or less, like this:
-
-[source,java,indent=0]
-----
-@Test
-public void validate_shouldMarkClientAsFraud() throws Exception {
-    // given:
-        MockMvcRequestSpecification request = given()
-                .header("Content-Type", "application/vnd.fraud.v1+json")
-                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
-
-    // when:
-        ResponseOptions response = given().spec(request)
-                .put("/fraudcheck");
-
-    // then:
-        assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
-    // and:
-        DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
-        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
-}
-----
-
-=== Step-by-step Guide to Consumer Driven Contracts (CDC)
+[[getting-started-cdc]]
+== Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side
 
 Consider an example of Fraud Detection and the Loan Issuance process. The business
 scenario is such that we want to issue loans to people but do not want them to steal from
@@ -542,11 +604,19 @@ Assume that `Loan Issuance` is a client to the `Fraud Detection` server. In the 
 sprint, we must develop a new feature: if a client wants to borrow too much money, then
 we mark the client as a fraud.
 
-Technical remark - Fraud Detection has an `artifact-id` of `http-server`, while Loan
-Issuance has an artifact-id of `http-client`, and both have a `group-id` of `com.example`.
+Technical remarks
 
-Social remark - both client and server development teams need to communicate directly and
-discuss changes while going through the process. CDC is all about communication.
+* Fraud Detection has an `artifact-id` of `http-server`,
+* Loan
+Issuance has an artifact-id of `http-client`
+* both have a `group-id` of `com.example`
+* For the sake of this example the `Stub Storage` will be Nexus / Artifactory
+
+Social remarks
+
+* both client and server development teams need to communicate directly and
+discuss changes while going through the process
+* CDC is all about communication.
 
 The https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-server[server
 side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-client[the
@@ -555,7 +625,8 @@ client code here].
 TIP: In this case, the producer owns the contracts. Physically, all the contract are
 in the producer's repository.
 
-==== Technical note
+[[getting-started-cdc-technical-note]]
+=== Technical note
 
 If using the *SNAPSHOT* / *Milestone* / *Release Candidate* versions please add the
 following section to your build:
@@ -572,7 +643,13 @@ include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=repo
 include::{introduction_url}/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
 ----
 
-==== Consumer side (Loan Issuance)
+For simplicity we will use the following acronyms:
+
+- Loan Issuance - LI - the http client
+- Fraud Detection - FD - the http server
+- Spring Cloud Contract - SCC
+
+=== Consumer side (Loan Issuance)
 
 As a developer of the Loan Issuance service (a consumer of the Fraud Detection server), you might do the following steps:
 
@@ -580,7 +657,7 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 . Write the missing implementation.
 . Clone the Fraud Detection service repository locally.
 . Define the contract locally in the repo of Fraud Detection service.
-. Add the Spring Cloud Contract Verifier plugin.
+. Add the Spring Cloud Contract (SCC) plugin.
 . Run the integration tests.
 . File a pull request.
 . Create an initial implementation.
@@ -588,6 +665,36 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 . Write the missing implementation.
 . Deploy your app.
 . Work online.
+
+Let's start with the Loan Issuance flow:
+
+[plantuml, getting-started-cdc-client, png]
+----
+"Loan\nIssuance"->"Loan\nIssuance": start doing TDD\nby writing a test\nfor your feature
+"Loan\nIssuance"->"Loan\nIssuance": write the \nmissing implementation
+"Loan\nIssuance"->"Loan\nIssuance": run a test - it fails\ndue to no server running
+"Loan\nIssuance"->"Fraud\nDetection\nClone": clone the repository
+"Fraud\nDetection\nClone"->"Fraud\nDetection\nClone": add missing dependencies\n& define contracts
+"Fraud\nDetection\nClone"->"Fraud\nDetection\nClone": add the SCC plugin
+"Fraud\nDetection\nClone"->"FD \nClone Build": install the stubs locally
+"FD \nClone Build"->"SCC Plugin \nin FD Clone": generate stubs \nand stubs \nartifact (e.g. stubs-jar)
+"SCC Plugin \nin FD Clone"->"FD \nClone Build": stubs and artifacts\ngenerated
+"FD \nClone Build"->"Local storage": install the stubs locally
+"Local storage"->"FD \nClone Build": stub sucessfully installed
+"FD \nClone Build"->"Fraud\nDetection\nClone": build successful
+"Loan\nIssuance"->"Loan\nIssuance": add a SCC\nStub Runner\ndependency\nand setup
+"Loan\nIssuance"->"LI\nSCC\nStub Runner": start stubs\nof FD from\nlocal storage
+"LI\nSCC\nStub Runner"->"Local storage": find stubs of [FD]
+"Local storage"->"LI\nSCC\nStub Runner": stubs of [FD] found
+"LI\nSCC\nStub Runner"->"FD stub": run stubs of [FD]
+"FD stub"->"LI\nSCC\nStub Runner": [FD] stub is running
+"LI\nSCC\nStub Runner"->"Loan\nIssuance": stubs running and ready for the test
+"Loan\nIssuance"->"Loan\nIssuance": run a test
+"Loan\nIssuance"->"FD stub": the test\nsends a request\nto the running stub
+"FD stub"->"Loan\nIssuance": stub responds successfuly
+"Loan\nIssuance"->"Loan\nIssuance": the test passes successfully
+"Loan\nIssuance"->"Fraud\nDetection": send a pull request\nwith the\nsuggested contracts
+----
 
 *Start doing TDD by writing a test for your feature.*
 
@@ -656,6 +763,7 @@ of an identifier or a timestamp, you need not hardcode a value. You want to allo
 different ranges of values. To enable ranges of values, you can set regular expressions
 matching those values for the consumer side. You can provide the body by means of either
 a map notation or String with interpolations.
+//TODO: Ensure that the links are correct
 Consult the <<contract-dsl>> section for more information. We highly recommend using the map notation!
 
 TIP: You must understand the map notation in order to set up contracts. Please read the
@@ -793,11 +901,37 @@ you wish.
 Once you are satisfied with the results and the test passes, publish a pull request to
 the server side. Currently, the consumer side work is done.
 
-==== Producer side (Fraud Detection server)
+=== Producer side (Fraud Detection server)
 
-As a developer of the Fraud Detection server (a server to the Loan Issuance service):
+As a developer of the Fraud Detection server (a server to the Loan Issuance service) we would like to:
 
-*Create an initial implementation.*
+- take over the pull request
+- write the missing implementation
+- deploy the application
+
+Let's look at the Fraud Detection flow:
+
+[plantuml, getting-started-cdc-server, png]
+----
+"Fraud\nDetection"->"Fraud\nDetection": take over the\n pull request
+"Fraud\nDetection"->"Fraud\nDetection": setup\nSpring Cloud\nContract plugin
+"Fraud\nDetection"->"Fraud\nDetection\nBuild": run the build
+"Fraud\nDetection\nBuild"->"SCC Plugin": generate tests\nstubs \nand stubs artifact \n(e.g. stubs-jar)
+"SCC Plugin"->"Fraud\nDetection\nBuild": tests and stubs generated
+"Fraud\nDetection\nBuild"->"Fraud\nDetection\nBuild": run tests
+"Fraud\nDetection\nBuild"->"Fraud\nDetection": generated tests failed!
+"Fraud\nDetection"->"Fraud\nDetection": setup\nbase classes\nfor contract tests
+"Fraud\nDetection"->"Fraud\nDetection\nBuild": run the build
+"Fraud\nDetection\nBuild"->"SCC Plugin": generate tests\nstubs \nand stubs artifact \n(e.g. stubs-jar)
+"SCC Plugin"->"Fraud\nDetection\nBuild": tests and stubs generated
+"Fraud\nDetection\nBuild"->"Fraud\nDetection\nBuild": run tests
+"Fraud\nDetection\nBuild"->"Fraud\nDetection": all the tests passed!
+"Fraud\nDetection"->"Fraud\nDetection": commit and push changes
+"Fraud\nDetection"->"CI": commit pushed!\nTriggers the build
+"CI"->"Stub Storage": build successful,\nupload artifacts
+----
+
+*Take over the pull request.*
 
 As a reminder, you can see the initial implementation here:
 
@@ -807,8 +941,6 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com
 include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
-
-*Take over the pull request.*
 
 [source,bash,indent=0]
 ----
@@ -924,9 +1056,29 @@ $ git push origin master
 Your CI might run something like `./mvnw clean deploy`, which would publish both the
 application and the stub artifacts.
 
-==== Consumer Side (Loan Issuance) Final Step
+=== Consumer Side (Loan Issuance) Final Step
 
-As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
+As a developer of the Loan Issuance service (a consumer of the Fraud Detection server) we will want to:
+
+- merge our feature branch to `master`
+- switch to online mode of working
+
+
+[plantuml, getting-started-cdc-client, png]
+----
+"Loan\nIssuance"->"Loan\nIssuance": merge the\nfeature branch\nto master branch
+"Loan\nIssuance"->"Loan\nIssuance": setup SCC Stub Runner\nto fetch stubs\nfrom Stub Storage
+"Loan\nIssuance"->"LI\nSCC\nStub Runner": start stubs\nof FD from\nStub Storage
+"LI\nSCC\nStub Runner"->"Stub Storage": find stubs of [FD]
+"Stub Storage"->"LI\nSCC\nStub Runner": stubs of [FD] found
+"LI\nSCC\nStub Runner"->"FD stub": run stubs of [FD]
+"FD stub"->"LI\nSCC\nStub Runner": [FD] stub is running
+"LI\nSCC\nStub Runner"->"Loan\nIssuance": stubs running and ready for the test
+"Loan\nIssuance"->"Loan\nIssuance": run a test
+"Loan\nIssuance"->"FD stub": the test\nsends a request\nto the running stub
+"FD stub"->"Loan\nIssuance": stub responds successfuly
+"Loan\nIssuance"->"Loan\nIssuance": the test passes successfully
+----
 
 *Merge branch to master.*
 
@@ -946,7 +1098,40 @@ achieving the same thing by changing the properties.
 
 [source,yaml,indent=0]
 ----
-include::{github-raw}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 That's it!
+
+[[getting-started-whats-next]]
+== What to Read Next
+Hopefully, this section provided some of the {project-full-name} basics and got you on your way
+to writing your own applications. If you are a task-oriented type of developer, you might
+want to jump over to https://spring.io and check out some of the
+https://spring.io/guides/[getting started] guides that solve specific "`How do I do that
+with Spring?`" problems. We also have {project-full-name}-specific
+"`<<howto.adoc#howto, How-to>>`" reference documentation.
+
+Otherwise, the next logical step is to read _<<using.adoc#using>>_. If
+you are really impatient, you could also jump ahead and read about
+_<<project-features.adoc#project-features, {project-full-name} features>>_.
+
+// TODO: Check if we can link courses
+In addition to that you can check out the following videos:
+
+- "Consumer Driven Contracts and Your Microservice Architecture" by Olga Maciaszek-Sharma and Marcin Grzejszczak
+
+video::pDkC_00hhvA[youtube,width=640,height=480]
+
+- "Contract Tests in the Enterprise" by Marcin Grzejszczak
+
+video::ZyHG-VOzPZg[youtube,width=640,height=480]
+
+- "Why Contract Tests Matter?" by Marcin Grzejszczak
+
+video::TvpkZu1e2Dc[youtube,start=6262,width=640,height=480]
+
+You can find the default project samples at
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples[samples].
+
+You can find the Spring Cloud Contract workshops https://cloud-samples.spring.io/spring-cloud-contract-samples/[over here].

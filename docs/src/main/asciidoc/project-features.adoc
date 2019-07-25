@@ -8,6 +8,24 @@ might want to read the "<<getting-started.adoc#getting-started>>" and
 "<<using.adoc#using>>" sections, so that you have a good grounding of the
 basics.
 
+include::_project-features-contract.adoc[]
+
+include::_project-features-flows.adoc[]
+
+include::_project-features-messaging.adoc[]
+
+include::_project-features-stubrunner.adoc[]
+
+include::_project-features-wiremock.adoc[]
+
+[[features-build-tools]]
+== Build Tools integration
+
+You can run test generation / stub execution in various ways. The most common ones are
+
+* link:maven-project.html[Maven]
+* link:gradle-project.html[Gradle]
+* link:docker-project.html[Docker]
 
 [[features-whats-next]]
 == What to Read Next
@@ -16,4 +34,5 @@ If you want to learn more about any of the classes discussed in this section, yo
 <<howto.adoc#howto, how-to>> section.
 
 If you are comfortable with {project-full-name}'s core features, you can continue on and read
-about ...
+about
+_<<advanced.adoc, {project-full-name} Advanced features>>_.

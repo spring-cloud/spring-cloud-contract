@@ -62,7 +62,6 @@ public class StubRunnerRuleJUnitTest {
 			return "";
 		}
 	}
-	// end::test[]
 
 	// tag::test[]
 	@Test
@@ -90,6 +89,7 @@ public class StubRunnerRuleJUnitTest {
 		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name"))
 				.isEqualTo("fraudDetectionServer");
 	}
+	// end::test[]
 
 	private String httpGet(String url) throws Exception {
 		try (InputStream stream = URI.create(url).toURL().openStream()) {

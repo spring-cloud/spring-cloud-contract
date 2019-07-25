@@ -21,6 +21,7 @@ package org.springframework.cloud.contract.spec.internal;
  */
 interface RegexCreatingProperty<T extends DslProperty> {
 
+	// tag::regex_creating_props[]
 	T anyAlphaUnicode();
 
 	T anyAlphaNumeric();
@@ -62,5 +63,6 @@ interface RegexCreatingProperty<T extends DslProperty> {
 	T anyNonEmptyString();
 
 	T anyOf(String... values);
+	// end::regex_creating_props[]
 
 }
