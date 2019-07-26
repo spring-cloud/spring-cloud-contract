@@ -13,7 +13,7 @@ principles as we go.
 [[getting-started-introducing-spring-cloud-contract]]
 == Introducing Spring Cloud Contract
 
-Spring Cloud Contract moves TDD to the level of software architecture. It allows to perform consumer, consumer-driven and producer-driven contract testing.
+Spring Cloud Contract moves TDD to the level of software architecture. It allows to perform consumer-driven and producer-driven contract testing.
 
 [[getting-started-introducing-spring-cloud-contract-history]]
 === History
@@ -914,7 +914,7 @@ the server side. Currently, the consumer side work is done.
 [[getting-started-cdc-producer]]
 === Producer side (Fraud Detection server)
 
-As a developer of the Fraud Detection server (a server to the Loan Issuance service) we would like to:
+As a developer of the Fraud Detection server (a server to the Loan Issuance service) I would like to:
 
 - take over the pull request
 - write the missing implementation
@@ -1073,7 +1073,7 @@ application and the stub artifacts.
 [[getting-started-cdc-consumer-final]]
 === Consumer Side (Loan Issuance) Final Step
 
-As a developer of the Loan Issuance service (a consumer of the Fraud Detection server) we will want to:
+As a developer of the Loan Issuance service (a consumer of the Fraud Detection server) I will want to:
 
 - merge our feature branch to `master`
 - switch to online mode of working
@@ -1120,7 +1120,7 @@ include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resource
 That's it!
 
 [[getting-started-whats-next]]
-== What to Read Next
+== Next Steps
 Hopefully, this section provided some of the {project-full-name} basics and got you on your way
 to writing your own applications. If you are a task-oriented type of developer, you might
 want to jump over to https://spring.io and check out some of the

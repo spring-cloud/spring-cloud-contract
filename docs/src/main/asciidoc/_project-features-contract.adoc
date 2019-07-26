@@ -6,7 +6,9 @@ Spring Cloud Contract supports out of the box following types of DSL.
 
 * written in `Groovy`
 * written in `YAML`
-* written in `Java`
+
+TIP: If you're not familiar with Groovy, don't worry - you can use Java syntax in the
+Groovy DSL files as well.
 
 If you decide to write the contract in Groovy, do not be alarmed if you have not used Groovy
 before. Knowledge of the language is not really needed, as the Contract DSL uses only a
@@ -43,9 +45,6 @@ TIP: You can compile contracts to stubs mapping using standalone maven command:
 [[contract-limitations]]
 === Limitations
 
-WARNING: Spring Cloud Contract Verifier does not properly support XML. Please use JSON or
-help us implement this feature.
-
 WARNING: The support for verifying the size of JSON arrays is experimental. If you want
 to turn it on, please set the value of the following system property to `true`:
 `spring.cloud.contract.verifier.assert.size`. By default, this feature is set to `false`.
@@ -64,7 +63,6 @@ The following sections describe the most common top-level elements:
 * <<contract-dsl-name>>
 * <<contract-dsl-ignoring-contracts>>
 * <<contract-dsl-passing-values-from-files>>
-* <<contract-dsl-http-top-level-elements>>
 
 [[contract-dsl-description]]
 ==== Description
@@ -205,8 +203,18 @@ include::{verifier_core_path}/src/test/resources/yml/contract_pdf.yml[indent=0]
 
 IMPORTANT: You should use this approach whenever you want to work with binary payloads both for HTTP and messaging.
 
+[[features-http]]
+== Contracts for HTTP
+
+Spring Cloud Contract allows you to verify applications that use REST or HTTP as a
+means of communication. Spring Cloud Contract verifies that for a request that matches the
+criteria from the `request` part of the contract, the server provides a response that is in
+keeping with the `response` part of the contract. Subsequently, the contracts are used to
+generate wiremock stubs that for any request matching the provided criteria, will provide a
+suitable response.
+
 [[contract-dsl-http-top-level-elements]]
-==== HTTP Top-Level Elements
+=== HTTP Top-Level Elements
 
 The following methods can be called in the top-level closure of a contract definition.
 `request` and `response` are mandatory. `priority` is optional.
@@ -1150,8 +1158,8 @@ response:
 ====
 
 [[contract-dsl-xml]]
-=== XML Support for REST
-For REST contracts, we also support XML request and response body.
+=== XML Support for HTTP
+For HTTP contracts, we also support XML request and response body.
 The XML body has to be passed within the `body` element
 as a `String` or `GString`. Also body matchers can be provided for
 both request and response. In place of the `jsonPath(...)` method, the `org.springframework.cloud.contract.spec.internal.BodyMatchers.xPath`

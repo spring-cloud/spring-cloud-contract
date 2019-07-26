@@ -32,11 +32,11 @@ starting out with {project-full-name}, try one of the https://spring.io/guides[g
 * Ask a question. We monitor https://stackoverflow.com[stackoverflow.com] for questions
 tagged with https://stackoverflow.com/tags/{project-name}[`{project-name}`].
 * Report bugs with {project-full-name} at https://github.com/spring-cloud/{project-name}/issues.
+* Chat with us at http://https://gitter.im/spring-cloud/{project-name}[{project-full-name} Gitter]
 
 NOTE: All of {project-full-name} is open source, including the documentation. If you find
 problems with the docs or if you want to improve them, please {github-code}[get
 involved].
-
 
 
 [[contract-documentation-first-steps]]
@@ -50,8 +50,8 @@ If you are getting started with {project-full-name} or 'Spring' in general, star
 <<getting-started.adoc#getting-started-first-application, First application>>
 * *Tutorial:*
 <<getting-started.adoc#getting-started-cdc, Introduction>> |
-<<getting-started.adoc#consumer-side-loan-issuance, Consumer >> |
-<<getting-started.adoc#producer-side-fraud-detection-server, Producer Part 1>> |
+<<getting-started.adoc#consumer-side-loan-issuance, Consumer Part 1>> |
+<<getting-started.adoc#producer-side-fraud-detection-server, Producer>> |
 <<getting-started.adoc#consumer-side-loan-issuance-final-step, Consumer Part 2>>
 
 
@@ -73,7 +73,15 @@ you covered>>:
 ** <<using.adoc#flows-cdc-contracts-external,Consumer Driven Contracts with contracts in external repo>>
 ** <<using.adoc#flows-cdc-contracts-stubs-git,Consumer Driven Contracts with contracts on the producer side, pushed to git>>
 
+TIP: We talk about *Provider Contracts* when it's the producer of the API that defines the contracts and
+publishes it for all its consumers to use. This approach is useful for producers that can't
+directly collaborate with their consumers; for example, when there are too many consumers,
+the consumers are external (don't work within the same company).
 
+TIP: We use the term *Consumer-Driven Contracts* to refer to workflows where the consumers of an API
+play a vital role in the process of creating the contracts; it's the recommended approach, easy
+to implement when both producer and consumer teams work for the same organisations and the number
+of consumers is not extremely large.
 
 == Learning about {project-full-name} Features
 Need more details about {project-full-name}'s core features?
@@ -81,18 +89,20 @@ Need more details about {project-full-name}'s core features?
 
 * *Core Features:*
 <<project-features.adoc#contract-dsl, Contract DSL>> |
-<<project-features.adoc#features-messaging, Messaging>>
+<<project-features.adoc#features-http, Contracts for HTTP>> |
+<<project-features.adoc#features-messaging, Contracts for Messaging>>
 * *Integrations:*
 <<project-features.adoc#features-jax-rs, JAX-RS>> |
-<<project-features.adoc#features-webflux, WebFlux>> |
 <<project-features.adoc#features-context-paths, Context Paths>> |
 <<project-features.adoc#features-rest-docs, RESTDocs>>
+<<howto.adoc#how-to-generate-pact-from-scc, Pact>>
 * *Modules:*
 <<project-features.adoc#features-stub-runner, Stub Runner>> |
 <<project-features.adoc#features-wiremock, WireMock>>
-* *Build tools:*
-link:maven-project.html[Maven] |
-link:gradle-project.html[Gradle] |
+// TODO: links don't work in "build Tools" section
+* *Build Tools:*
+link:maven-project.html[Contract Verifier - Maven] |
+link:gradle-project.html[Contract Verifier - Gradle] |
 link:docker-project.html[Docker]
 
 
