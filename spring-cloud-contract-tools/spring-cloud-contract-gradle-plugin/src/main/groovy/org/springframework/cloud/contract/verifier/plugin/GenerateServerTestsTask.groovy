@@ -18,16 +18,16 @@ package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Task
-import org.gradle.api.internal.ConventionTask
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
-import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.config.TestFramework
 
 import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
 
@@ -37,20 +37,22 @@ import static org.springframework.cloud.contract.verifier.plugin.SpringCloudCont
  * @since 1.0.0
  */
 @CompileStatic
-class GenerateServerTestsTask extends ConventionTask {
+class GenerateServerTestsTask extends DefaultTask {
 
+	@InputDirectory
+	File contractsDslDir
+
+	@OutputDirectory
 	File generatedTestSourcesDir
 
-	//TODO: How to deal with @Input*, @Output* and that domain object?
 	ContractVerifierExtension configProperties
 	GradleContractsDownloader downloader
 
 	@TaskAction
 	void generate() {
 		logger.info("Generated test sources dir [${getGeneratedTestSourcesDir()}]")
-		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
-		ContractVerifierConfigProperties props = props(copyContractsTask)
-		File contractsDslDir = contractsDslDir(copyContractsTask, props)
+		ContractVerifierConfigProperties props = getProps()
+		File contractsDslDir = getContractsDslDir()
 		if (getConfigProperties().getContractDependency()) {
 			project.logger.debug("Updating the stubs locations for the case where we have a JAR with contracts")
 			props.contractsDslDir = contractsDslDir
@@ -59,9 +61,6 @@ class GenerateServerTestsTask extends ConventionTask {
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${props.includedContracts}]")
-		def sourceSetType = getConfigProperties().getTestFramework() == TestFramework.SPOCK ?
-				"groovy" : "java"
-		applySourceSets(sourceSetType)
 		try {
 			props = props ?: ExtensionToProperties.fromExtension(getConfigProperties())
 			props.contractsDslDir = contractsDslDir
@@ -74,18 +73,9 @@ class GenerateServerTestsTask extends ConventionTask {
 		}
 	}
 
-	@CompileDynamic
-	private void applySourceSets(sourceSetType) {
-		project.sourceSets.test."${sourceSetType}" {
-			project.logger.
-					info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
-			srcDir getConfigProperties().getGeneratedTestSourcesDir()
-		}
-		project.sourceSets.test.resources {
-			project.logger.
-					info("Registering ${getConfigProperties().generatedTestResourcesDir} as test resource directory")
-			srcDir getConfigProperties().getGeneratedTestResourcesDir()
-		}
+	private ContractVerifierConfigProperties getProps() {
+		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
+		return props(copyContractsTask)
 	}
 
 	@CompileDynamic
@@ -99,6 +89,12 @@ class GenerateServerTestsTask extends ConventionTask {
 			getDownloader().downloadAndUnpackContractsIfRequired(getConfigProperties(), props)
 			return props
 		}
+	}
+
+	private File getContractsDslDir() {
+		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
+		ContractVerifierConfigProperties props = props(copyContractsTask)
+		return contractsDslDir(copyContractsTask, props)
 	}
 
 	@CompileDynamic
