@@ -17,7 +17,8 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.CompileStatic
-import org.gradle.api.internal.ConventionTask
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 import org.springframework.cloud.contract.stubrunner.ContractProjectUpdater
@@ -33,11 +34,16 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
  * @since 2.0.0
  */
 @CompileStatic
-class PublishStubsToScmTask extends ConventionTask {
-	File stubsOutputDir
-	ContractVerifierExtension configProperties
-	GradleContractsDownloader downloader
+class PublishStubsToScmTask extends DefaultTask {
+
 	private final ExtensionHolderSpec closureHolder = new ClosureHolder()
+
+	@OutputDirectory
+	File stubsOutputDir
+
+	ContractVerifierExtension configProperties
+
+	GradleContractsDownloader downloader
 
 	@TaskAction
 	void publishStubsToScm() {
@@ -67,6 +73,12 @@ class PublishStubsToScmTask extends ConventionTask {
 		return true
 	}
 
+	/**
+	 * This method can be used to perform additional customization of
+	 * the {@link ContractVerifierExtension}.
+	 *
+	 * @param closure to customize the {@link ContractVerifierExtension}
+	 */
 	void customize(@DelegatesTo(ContractVerifierExtension) Closure closure) {
 		project.logger.debug("Storing the extension closure")
 		this.closureHolder.extensionClosure = closure
