@@ -18,8 +18,10 @@ package org.springframework.cloud.contract.verifier.config;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -364,6 +366,35 @@ public class ContractVerifierConfigProperties {
 
 	public void setExcludeBuildFolders(boolean excludeBuildFolders) {
 		this.excludeBuildFolders = excludeBuildFolders;
+	}
+
+	@Override
+	public String toString() {
+		return new StringJoiner(", ",
+				ContractVerifierConfigProperties.class.getSimpleName() + "[", "]")
+						.add("targetFramework=" + targetFramework)
+						.add("testFramework=" + testFramework).add("testMode=" + testMode)
+						.add("basePackageForTests='" + basePackageForTests + "'")
+						.add("baseClassForTests='" + baseClassForTests + "'")
+						.add("nameSuffixForTests='" + nameSuffixForTests + "'")
+						.add("ruleClassForTests='" + ruleClassForTests + "'")
+						.add("excludedFiles=" + excludedFiles)
+						.add("includedFiles=" + includedFiles)
+						.add("ignoredFiles=" + ignoredFiles)
+						.add("imports=" + Arrays.toString(imports))
+						.add("staticImports=" + Arrays.toString(staticImports))
+						.add("contractsDslDir=" + contractsDslDir)
+						.add("generatedTestSourcesDir=" + generatedTestSourcesDir)
+						.add("generatedTestResourcesDir=" + generatedTestResourcesDir)
+						.add("stubsOutputDir=" + stubsOutputDir)
+						.add("stubsSuffix='" + stubsSuffix + "'")
+						.add("assertJsonSize=" + assertJsonSize)
+						.add("includedContracts='" + includedContracts + "'")
+						.add("includedRootFolderAntPattern='"
+								+ includedRootFolderAntPattern + "'")
+						.add("packageWithBaseClasses='" + packageWithBaseClasses + "'")
+						.add("baseClassMappings=" + baseClassMappings)
+						.add("excludeBuildFolders=" + excludeBuildFolders).toString();
 	}
 
 }

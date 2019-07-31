@@ -18,8 +18,10 @@ package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.Task
-import org.gradle.api.internal.ConventionTask
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
@@ -33,8 +35,12 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
  * @since 2.0.0
  */
 @CompileStatic
-class GenerateClientStubsFromDslTask extends ConventionTask {
+class GenerateClientStubsFromDslTask extends DefaultTask {
 
+	@InputDirectory
+	File contractsDslDir
+
+	@OutputDirectory
 	File stubsOutputDir
 
 	ContractVerifierExtension configProperties
@@ -45,14 +51,22 @@ class GenerateClientStubsFromDslTask extends ConventionTask {
 		logger.info("Stubs output dir [${getStubsOutputDir()}")
 		Task copyContractsTask = project.getTasksByName(SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME, false).first()
 		ContractVerifierConfigProperties props = props(copyContractsTask)
-		File contractsDslDir = contractsDslDir(copyContractsTask, props)
 		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion")
-		props.contractsDslDir = contractsDslDir
+		props.contractsDslDir = getContractsDslDir()
 		props.includedContracts = ".*"
 		File outMappingsDir = OutputFolderBuilder.outputMappingsDir(project, getStubsOutputDir())
 		logger.info("Contracts dir is [${contractsDslDir}] output stubs dir is [${outMappingsDir}]")
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(props, outMappingsDir)
 		converter.processFiles()
+	}
+
+	private File getContractsDslDir() {
+		Task copyContractsTask = project.getTasksByName(SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME, false).first()
+		ContractVerifierConfigProperties props = props(copyContractsTask)
+		if (logger.isDebugEnabled()) {
+			logger.debug("Config props [" + props + "]")
+		}
+		return contractsDslDir(copyContractsTask, props)
 	}
 
 	@CompileDynamic
