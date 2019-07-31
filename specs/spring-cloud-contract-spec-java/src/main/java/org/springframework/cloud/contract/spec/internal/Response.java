@@ -733,18 +733,18 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	 * Allows to configure HTTP headers.
 	 * @param consumer function to manipulate the URL
 	 */
-	public void headers(Consumer<ResponseHeaders> consumer) {
+	public void headers(Consumer<Headers> consumer) {
 		this.headers = new Response.ResponseHeaders();
-		consumer.accept((ResponseHeaders) this.headers);
+		consumer.accept(this.headers);
 	}
 
 	/**
 	 * Allows to configure HTTP cookies.
 	 * @param consumer function to manipulate the URL
 	 */
-	public void cookies(Consumer<Response.ResponseCookies> consumer) {
+	public void cookies(Consumer<Cookies> consumer) {
 		this.cookies = new Response.ResponseCookies();
-		consumer.accept((ResponseCookies) this.cookies);
+		consumer.accept(this.cookies);
 	}
 
 	/**
@@ -771,7 +771,7 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	 * Allows to configure HTTP headers.
 	 * @param consumer function to manipulate the URL
 	 */
-	public void headers(@DelegatesTo(ResponseHeaders.class) Closure consumer) {
+	public void headers(@DelegatesTo(Headers.class) Closure consumer) {
 		this.headers = new Response.ResponseHeaders();
 		consumer.setDelegate(this.headers);
 		consumer.call();
@@ -781,7 +781,7 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	 * Allows to configure HTTP cookies.
 	 * @param consumer function to manipulate the URL
 	 */
-	public void cookies(@DelegatesTo(Response.ResponseCookies.class) Closure consumer) {
+	public void cookies(@DelegatesTo(Cookies.class) Closure consumer) {
 		this.cookies = new Response.ResponseCookies();
 		consumer.setDelegate(this.cookies);
 		consumer.call();
