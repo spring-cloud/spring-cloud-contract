@@ -19,10 +19,8 @@ package org.springframework.cloud.contract.verifier.plugin
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import org.gradle.api.DefaultTask
+import org.gradle.api.internal.ConventionTask
 import org.gradle.api.logging.Logger
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.WorkResult
 
@@ -39,30 +37,22 @@ import org.springframework.cloud.contract.verifier.converter.ToYamlConverter
  */
 @PackageScope
 @CompileStatic
-class ContractsCopyTask extends DefaultTask {
+class ContractsCopyTask extends ConventionTask {
 	private static final String ORIGINAL_PATH = "original"
 
 	ContractVerifierExtension extension
 	GradleContractsDownloader downloader
 
-	@InputDirectory
-	File input
-
-	@OutputDirectory
-	File outputContractsFolder
-
 	@TaskAction
 	void copy() {
-		ContractVerifierConfigProperties props = props()
-		if (logger.isDebugEnabled()) {
-			logger.debug("Config props [" + props + "]")
-		}
-		File file = getInput()
+		ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getExtension())
+		File file = getDownloader().downloadAndUnpackContractsIfRequired(getExtension(), props)
+		file = contractsSubDirIfPresent(logger, file)
 		String antPattern = "${props.includedRootFolderAntPattern}*.*"
 		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
-		String root = root()
-		File outputContractsFolder = getOutputContractsFolder()
+		String root = root(props)
+		File outputContractsFolder = outputContractsFolder(root)
 		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		copy(file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
 		if (getExtension().isConvertToYaml()) {
@@ -71,26 +61,15 @@ class ContractsCopyTask extends DefaultTask {
 
 	}
 
-	private File getInput() {
-		File file = getDownloader().downloadAndUnpackContractsIfRequired(getExtension(), props())
-		return contractsSubDirIfPresent(logger, file)
-	}
-
-	private ContractVerifierConfigProperties props() {
-		return ExtensionToProperties.fromExtension(getExtension())
-	}
-
 	@CompileDynamic
-	private File getOutputContractsFolder() {
-		String root = root()
+	private File outputContractsFolder(String root) {
 		File outputContractsFolder = outputFolder(root, "contracts")
 		ext.contractsDslDir = outputContractsFolder
 		return outputContractsFolder
 	}
 
 	@CompileDynamic
-	private String root() {
-		ContractVerifierConfigProperties props = props()
+	private String root(ContractVerifierConfigProperties props) {
 		String root = OutputFolderBuilder.buildRootPath(project)
 		ext.contractVerifierConfigProperties = props
 		return root

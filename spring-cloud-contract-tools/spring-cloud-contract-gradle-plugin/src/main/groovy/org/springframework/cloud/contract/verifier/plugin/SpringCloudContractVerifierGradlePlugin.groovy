@@ -25,9 +25,6 @@ import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.jvm.tasks.Jar
-
-import org.springframework.cloud.contract.verifier.config.TestFramework
-
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -66,30 +63,9 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		Task copyContracts = createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
 		createAndConfigureMavenPublishPlugin(stubsJar, extension)
 		createGenerateTestsTask(extension, copyContracts, downloader)
-		createAndConfigureGenerateClientStubs(extension, copyContracts, downloader)
+		createAndConfigureGenerateClientStubs(extension, copyContracts)
 		createAndConfigurePublishStubsToScmTask(extension, downloader)
 		addIdeaTestSources(project, extension)
-		applyDefaultSourceSets(extension)
-	}
-
-	private void applyDefaultSourceSets(ContractVerifierExtension extension) {
-		def sourceSetType = extension.getTestFramework() == TestFramework.SPOCK ?
-				"groovy" : "java"
-		applySourceSets(extension, sourceSetType)
-	}
-
-	@CompileDynamic
-	private void applySourceSets(ContractVerifierExtension extension, sourceSetType) {
-		project.sourceSets.test."${sourceSetType}" {
-			project.logger.
-					info("Registering ${extension.generatedTestSourcesDir} as test source directory")
-			srcDir extension.getGeneratedTestSourcesDir()
-		}
-		project.sourceSets.test.resources {
-			project.logger.
-					info("Registering ${extension.generatedTestResourcesDir} as test resource directory")
-			srcDir extension.getGeneratedTestResourcesDir()
-		}
 	}
 
 	@CompileDynamic
@@ -132,46 +108,49 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	@CompileDynamic
 	private void createGenerateTestsTask(ContractVerifierExtension extension, Task copyContracts,
 			GradleContractsDownloader gradleContractsDownloader) {
-		GenerateServerTestsTask task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
+		Task task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
 		task.description = "Generate server tests from the contracts"
 		task.group = GROUP_NAME
-		task.with {
-			downloader = gradleContractsDownloader
-			generatedTestSourcesDir = extension.generatedTestSourcesDir
-			configProperties = extension
+		task.conventionMapping.with {
+			downloader = { gradleContractsDownloader }
+			generatedTestSourcesDir = { extension.generatedTestSourcesDir }
+			configProperties = { extension }
 		}
 		task.enabled = !project.gradle.startParameter.excludedTaskNames.contains("test")
 		task.dependsOn copyContracts
 		project.tasks.findByName("compileTestJava").dependsOn(task)
 	}
 
+	@CompileDynamic
 	private void createAndConfigurePublishStubsToScmTask(ContractVerifierExtension extension,
 			GradleContractsDownloader gradleContractsDownloader) {
-		PublishStubsToScmTask task = project.tasks.create(PUBLISH_STUBS_TO_SCM_TASK_NAME, PublishStubsToScmTask)
+		Task task = project.tasks.create(PUBLISH_STUBS_TO_SCM_TASK_NAME, PublishStubsToScmTask)
 		task.description = "The generated stubs get committed to the SCM repo and pushed to origin"
 		task.group = GROUP_NAME
-		task.with {
-			downloader = gradleContractsDownloader
-			configProperties = extension
-			stubsOutputDir = extension.stubsOutputDir
+		task.conventionMapping.with {
+			downloader = { gradleContractsDownloader }
+			configProperties = { extension }
+			stubsOutputDir = { extension.stubsOutputDir }
 		}
 		task.dependsOn DSL_TO_CLIENT_TASK_NAME
 	}
 
+	@CompileDynamic
 	private Task createAndConfigureGenerateClientStubs(ContractVerifierExtension extension,
-			Task copyContracts, GradleContractsDownloader gradleContractsDownloader) {
-		GenerateClientStubsFromDslTask task = project.tasks.create(DSL_TO_CLIENT_TASK_NAME, GenerateClientStubsFromDslTask)
+			Task copyContracts) {
+		Task task = project.tasks.create(DSL_TO_CLIENT_TASK_NAME, GenerateClientStubsFromDslTask)
 		task.description = "Generate client stubs from the contracts"
 		task.group = GROUP_NAME
-		task.with {
-			downloader = gradleContractsDownloader
-			stubsOutputDir = extension.stubsOutputDir
-			configProperties = extension
+		task.conventionMapping.with {
+			downloader = { gradleContractsDownloader }
+			stubsOutputDir = { extension.stubsOutputDir }
+			configProperties = { extension }
 		}
 		task.dependsOn copyContracts
 		return task
 	}
 
+	@CompileDynamic
 	private Task createAndConfigureStubsJarTasks(ContractVerifierExtension extension) {
 		Task task = stubsTask()
 		if (task) {
@@ -179,28 +158,18 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			return task
 		}
 		else {
-			task = createStubsJarTask(extension)
+			task = project.tasks.create(type: Jar, name: VERIFIER_STUBS_JAR_TASK_NAME,
+					dependsOn: DSL_TO_CLIENT_TASK_NAME) {
+				baseName = project.name
+				classifier = extension.stubsSuffix
+				from { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
+			}
 			task.description = "Creates the stubs JAR task"
 			task.group = GROUP_NAME
-			setArchives(task)
+			project.artifacts {
+				archives task
+			}
 			return task
-		}
-	}
-
-	@CompileDynamic
-	private Task createStubsJarTask(ContractVerifierExtension extension) {
-		return project.tasks.create(type: Jar, name: VERIFIER_STUBS_JAR_TASK_NAME,
-				dependsOn: DSL_TO_CLIENT_TASK_NAME) {
-			getArchiveBaseName().set(project.name)
-			getArchiveClassifier().set(extension.stubsSuffix)
-			from { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
-		}
-	}
-
-	@CompileDynamic
-	private void setArchives(Task task) {
-		project.artifacts {
-			archives task
 		}
 	}
 
@@ -213,20 +182,22 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		}
 	}
 
+	@CompileDynamic
 	private Task createAndConfigureCopyContractsTask(Task stubs,
 			GradleContractsDownloader gradleContractsDownloader,
 			ContractVerifierExtension contractVerifierExtension) {
-		ContractsCopyTask task = project.tasks.create(COPY_CONTRACTS_TASK_NAME, ContractsCopyTask)
+		Task task = project.tasks.create(COPY_CONTRACTS_TASK_NAME, ContractsCopyTask)
 		task.description = "Copies contracts to the output folder"
 		task.group = GROUP_NAME
-		task.with {
-			downloader = gradleContractsDownloader
-			extension = contractVerifierExtension
+		task.conventionMapping.with {
+			downloader = { gradleContractsDownloader }
+			extension = { contractVerifierExtension }
 		}
 		stubs.dependsOn task
 		return task
 	}
 
+	@CompileDynamic
 	private void createAndConfigureMavenPublishPlugin(Task stubsTask, ContractVerifierExtension extension) {
 		if (!classIsOnClasspath("org.gradle.api.publish.maven.plugins.MavenPublishPlugin")) {
 			project.logger.debug("Maven Publish Plugin is not present - won't add default publication")
@@ -242,21 +213,16 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 				def publishingExtension = project.extensions.findByName('publishing')
 				if (!hasPublication(publishingExtension)) {
 					project.logger.debug("Spring Cloud Contract Verifier Plugin: Stubs publication is not present - will create one")
-					setPublications(publishingExtension, stubsTask)
+					publishingExtension.publications {
+						stubs(MavenPublication) {
+							artifactId "${project.name}"
+							artifact stubsTask
+						}
+					}
 				}
 				else {
 					project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs publication was present - won't create a new one. Remember about passing stubs as artifact")
 				}
-			}
-		}
-	}
-
-	@CompileDynamic
-	private void setPublications(def publishingExtension, Task stubsTask) {
-		publishingExtension.publications {
-			stubs(MavenPublication) {
-				artifactId "${project.name}"
-				artifact stubsTask
 			}
 		}
 	}
