@@ -56,6 +56,7 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 class RequestResponseSCContractCreator {
 
 	private static final String FULL_BODY = '$'
+	private static final RegexPatterns regexPatterns = new RegexPatterns()
 
 	Collection<Contract> convertFrom(RequestResponsePact pact) {
 		return pact.interactions.collect { RequestResponseInteraction interaction ->
@@ -146,15 +147,15 @@ class RequestResponseSCContractCreator {
 												switch (rule.numberType) {
 												case NumberTypeMatcher.NumberType.NUMBER:
 													jsonPath(key,
-															byRegex(RegexPatterns.number()))
+															byRegex(regexPatterns.number()))
 													break
 												case NumberTypeMatcher.NumberType.INTEGER:
-													jsonPath(key, byRegex(RegexPatterns.
+													jsonPath(key, byRegex(regexPatterns.
 															anInteger()))
 													break
 												case NumberTypeMatcher.NumberType.DECIMAL:
 													jsonPath(key,
-															byRegex(RegexPatterns.aDouble()))
+															byRegex(regexPatterns.aDouble()))
 													break
 												default:
 													throw new RuntimeException("Unsupported number type!")
@@ -236,17 +237,17 @@ class RequestResponseSCContractCreator {
 													switch (rule.numberType) {
 													case NumberTypeMatcher.NumberType.NUMBER:
 														jsonPath(key,
-																byRegex(RegexPatterns.
+																byRegex(regexPatterns.
 																		number()))
 														break
 													case NumberTypeMatcher.NumberType.INTEGER:
 														jsonPath(key,
-																byRegex(RegexPatterns.
+																byRegex(regexPatterns.
 																		anInteger()))
 														break
 													case NumberTypeMatcher.NumberType.DECIMAL:
 														jsonPath(key,
-																byRegex(RegexPatterns.
+																byRegex(regexPatterns.
 																		aDouble()))
 														break
 													default:

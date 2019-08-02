@@ -36,6 +36,8 @@ public class BodyMatchers {
 
 	protected final List<BodyMatcher> matchers = new LinkedList<>();
 
+	private final RegexPatterns regexPatterns = new RegexPatterns();
+
 	public void jsonPath(String path, MatchingTypeValue matchingType) {
 		this.matchers.add(new PathBodyMatcher(path, matchingType));
 	}
@@ -69,15 +71,16 @@ public class BodyMatchers {
 	}
 
 	public MatchingTypeValue byDate() {
-		return new MatchingTypeValue(MatchingType.DATE, RegexPatterns.isoDate());
+		return new MatchingTypeValue(MatchingType.DATE, this.regexPatterns.isoDate());
 	}
 
 	public MatchingTypeValue byTime() {
-		return new MatchingTypeValue(MatchingType.TIME, RegexPatterns.isoTime());
+		return new MatchingTypeValue(MatchingType.TIME, this.regexPatterns.isoTime());
 	}
 
 	public MatchingTypeValue byTimestamp() {
-		return new MatchingTypeValue(MatchingType.TIMESTAMP, RegexPatterns.isoDateTime());
+		return new MatchingTypeValue(MatchingType.TIMESTAMP,
+				this.regexPatterns.isoDateTime());
 	}
 
 	public RegexMatchingTypeValue byRegex(String regex) {

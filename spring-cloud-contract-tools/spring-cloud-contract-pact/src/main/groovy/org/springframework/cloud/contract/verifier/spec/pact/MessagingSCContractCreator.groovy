@@ -50,6 +50,8 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 @PackageScope
 class MessagingSCContractCreator {
 
+	RegexPatterns regexPatterns = new RegexPatterns()
+
 	private static final String FULL_BODY = '$'
 	private static final String DESTINATION_KEY = "sentTo"
 	private static final List<String> NON_HEADER_META_DATA = [DESTINATION_KEY]
@@ -122,15 +124,15 @@ class MessagingSCContractCreator {
 														switch (rule.numberType) {
 														case NumberTypeMatcher.NumberType.NUMBER:
 															jsonPath(key,
-																	byRegex(RegexPatterns.number()))
+																	byRegex(regexPatterns.number()))
 															break
 														case NumberTypeMatcher.NumberType.INTEGER:
 															jsonPath(key,
-																	byRegex(RegexPatterns.anInteger()))
+																	byRegex(regexPatterns.anInteger()))
 															break
 														case NumberTypeMatcher.NumberType.DECIMAL:
 															jsonPath(key,
-																	byRegex(RegexPatterns.aDouble()))
+																	byRegex(regexPatterns.aDouble()))
 															break
 														default:
 															throw new RuntimeException("Unsupported number type!")
@@ -165,11 +167,11 @@ class MessagingSCContractCreator {
 
 	private String getTriggeredBy(Message message) {
 		return message.providerStates.first().name
-					  .replace(':', ' ')
-					  .replace(' ', '_')
-					  .replace('(', '')
-					  .replace(')', '')
-					  .uncapitalize() + "()"
+									 .replace(':', ' ')
+									 .replace(' ', '_')
+									 .replace('(', '')
+									 .replace(')', '')
+									 .uncapitalize() + "()"
 	}
 
 	private String findDestination(Message message) {

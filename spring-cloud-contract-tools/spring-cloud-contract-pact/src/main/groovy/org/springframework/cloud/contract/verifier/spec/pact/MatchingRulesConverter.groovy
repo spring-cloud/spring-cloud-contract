@@ -44,6 +44,8 @@ import org.springframework.cloud.contract.spec.internal.RegexPatterns
 @PackageScope
 class MatchingRulesConverter {
 
+	private static final RegexPatterns regexPatterns = new RegexPatterns()
+
 	static Category matchingRulesForBody(BodyMatchers bodyMatchers) {
 		return matchingRulesFor("body", bodyMatchers)
 	}
@@ -87,15 +89,15 @@ class MatchingRulesConverter {
 				break
 			case MatchingType.REGEX:
 				String pattern = it.value().toString()
-				if (pattern == RegexPatterns.number().pattern()) {
+				if (pattern == regexPatterns.number().pattern()) {
 					category.
 							addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER))
 				}
-				else if (pattern == RegexPatterns.anInteger().pattern()) {
+				else if (pattern == regexPatterns.anInteger().pattern()) {
 					category.
 							addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
 				}
-				else if (pattern == RegexPatterns.aDouble().pattern()) {
+				else if (pattern == regexPatterns.aDouble().pattern()) {
 					category.
 							addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
 				}

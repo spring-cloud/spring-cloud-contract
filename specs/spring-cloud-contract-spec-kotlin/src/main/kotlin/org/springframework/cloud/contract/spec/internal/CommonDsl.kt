@@ -23,6 +23,9 @@ import java.util.regex.Pattern
  * @author Tim Ysewyn
  */
 open class CommonDsl {
+    
+    var httpStatus = HttpStatus()
+    var regexPatterns = RegexPatterns()
 
     /**
      * Helper method to provide a better name for the consumer side.
@@ -100,125 +103,125 @@ open class CommonDsl {
 
     /* HTTP STATUS CODES */
 
-    fun CONTINUE() = HttpStatus.CONTINUE()
+    fun CONTINUE() = httpStatus.CONTINUE()
 
-    fun SWITCHING_PROTOCOLS() = HttpStatus.SWITCHING_PROTOCOLS()
+    fun SWITCHING_PROTOCOLS() = httpStatus.SWITCHING_PROTOCOLS()
 
-    fun PROCESSING() = HttpStatus.PROCESSING()
+    fun PROCESSING() = httpStatus.PROCESSING()
 
-    fun CHECKPOINT() = HttpStatus.CHECKPOINT()
+    fun CHECKPOINT() = httpStatus.CHECKPOINT()
 
-    fun OK() = HttpStatus.OK()
+    fun OK() = httpStatus.OK()
 
-    fun CREATED() = HttpStatus.CREATED()
+    fun CREATED() = httpStatus.CREATED()
 
-    fun ACCEPTED() = HttpStatus.ACCEPTED()
+    fun ACCEPTED() = httpStatus.ACCEPTED()
 
-    fun NON_AUTHORITATIVE_INFORMATION() = HttpStatus.NON_AUTHORITATIVE_INFORMATION()
+    fun NON_AUTHORITATIVE_INFORMATION() = httpStatus.NON_AUTHORITATIVE_INFORMATION()
 
-    fun NO_CONTENT() = HttpStatus.NO_CONTENT()
+    fun NO_CONTENT() = httpStatus.NO_CONTENT()
 
-    fun RESET_CONTENT() = HttpStatus.RESET_CONTENT()
+    fun RESET_CONTENT() = httpStatus.RESET_CONTENT()
 
-    fun PARTIAL_CONTENT() = HttpStatus.PARTIAL_CONTENT()
+    fun PARTIAL_CONTENT() = httpStatus.PARTIAL_CONTENT()
 
-    fun MULTI_STATUS() = HttpStatus.MULTI_STATUS()
+    fun MULTI_STATUS() = httpStatus.MULTI_STATUS()
 
-    fun ALREADY_REPORTED() = HttpStatus.ALREADY_REPORTED()
+    fun ALREADY_REPORTED() = httpStatus.ALREADY_REPORTED()
 
-    fun IM_USED() = HttpStatus.IM_USED()
+    fun IM_USED() = httpStatus.IM_USED()
 
-    fun MULTIPLE_CHOICES() = HttpStatus.MULTIPLE_CHOICES()
+    fun MULTIPLE_CHOICES() = httpStatus.MULTIPLE_CHOICES()
 
-    fun MOVED_PERMANENTLY() = HttpStatus.MOVED_PERMANENTLY()
+    fun MOVED_PERMANENTLY() = httpStatus.MOVED_PERMANENTLY()
 
-    fun FOUND() = HttpStatus.FOUND()
+    fun FOUND() = httpStatus.FOUND()
 
-    fun SEE_OTHER() = HttpStatus.SEE_OTHER()
+    fun SEE_OTHER() = httpStatus.SEE_OTHER()
 
-    fun NOT_MODIFIED() = HttpStatus.NOT_MODIFIED()
+    fun NOT_MODIFIED() = httpStatus.NOT_MODIFIED()
 
-    fun TEMPORARY_REDIRECT() = HttpStatus.TEMPORARY_REDIRECT()
+    fun TEMPORARY_REDIRECT() = httpStatus.TEMPORARY_REDIRECT()
 
-    fun PERMANENT_REDIRECT() = HttpStatus.PERMANENT_REDIRECT()
+    fun PERMANENT_REDIRECT() = httpStatus.PERMANENT_REDIRECT()
 
-    fun BAD_REQUEST() = HttpStatus.BAD_REQUEST()
+    fun BAD_REQUEST() = httpStatus.BAD_REQUEST()
 
-    fun UNAUTHORIZED() = HttpStatus.UNAUTHORIZED()
+    fun UNAUTHORIZED() = httpStatus.UNAUTHORIZED()
 
-    fun PAYMENT_REQUIRED() = HttpStatus.PAYMENT_REQUIRED()
+    fun PAYMENT_REQUIRED() = httpStatus.PAYMENT_REQUIRED()
 
-    fun FORBIDDEN() = HttpStatus.FORBIDDEN()
+    fun FORBIDDEN() = httpStatus.FORBIDDEN()
 
-    fun NOT_FOUND() = HttpStatus.NOT_FOUND()
+    fun NOT_FOUND() = httpStatus.NOT_FOUND()
 
-    fun METHOD_NOT_ALLOWED() = HttpStatus.METHOD_NOT_ALLOWED()
+    fun METHOD_NOT_ALLOWED() = httpStatus.METHOD_NOT_ALLOWED()
 
-    fun NOT_ACCEPTABLE() = HttpStatus.NOT_ACCEPTABLE()
+    fun NOT_ACCEPTABLE() = httpStatus.NOT_ACCEPTABLE()
 
-    fun PROXY_AUTHENTICATION_REQUIRED() = HttpStatus.PROXY_AUTHENTICATION_REQUIRED()
+    fun PROXY_AUTHENTICATION_REQUIRED() = httpStatus.PROXY_AUTHENTICATION_REQUIRED()
 
-    fun REQUEST_TIMEOUT() = HttpStatus.REQUEST_TIMEOUT()
+    fun REQUEST_TIMEOUT() = httpStatus.REQUEST_TIMEOUT()
 
-    fun CONFLICT() = HttpStatus.CONFLICT()
+    fun CONFLICT() = httpStatus.CONFLICT()
 
-    fun GONE() = HttpStatus.GONE()
+    fun GONE() = httpStatus.GONE()
 
-    fun LENGTH_REQUIRED() = HttpStatus.LENGTH_REQUIRED()
+    fun LENGTH_REQUIRED() = httpStatus.LENGTH_REQUIRED()
 
-    fun PRECONDITION_FAILED() = HttpStatus.PRECONDITION_FAILED()
+    fun PRECONDITION_FAILED() = httpStatus.PRECONDITION_FAILED()
 
-    fun PAYLOAD_TOO_LARGE() = HttpStatus.PAYLOAD_TOO_LARGE()
+    fun PAYLOAD_TOO_LARGE() = httpStatus.PAYLOAD_TOO_LARGE()
 
-    fun URI_TOO_LONG() = HttpStatus.URI_TOO_LONG()
+    fun URI_TOO_LONG() = httpStatus.URI_TOO_LONG()
 
-    fun UNSUPPORTED_MEDIA_TYPE() = HttpStatus.UNSUPPORTED_MEDIA_TYPE()
+    fun UNSUPPORTED_MEDIA_TYPE() = httpStatus.UNSUPPORTED_MEDIA_TYPE()
 
-    fun REQUESTED_RANGE_NOT_SATISFIABLE() = HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE()
+    fun REQUESTED_RANGE_NOT_SATISFIABLE() = httpStatus.REQUESTED_RANGE_NOT_SATISFIABLE()
 
-    fun EXPECTATION_FAILED() = HttpStatus.EXPECTATION_FAILED()
+    fun EXPECTATION_FAILED() = httpStatus.EXPECTATION_FAILED()
 
-    fun I_AM_A_TEAPOT() = HttpStatus.I_AM_A_TEAPOT()
+    fun I_AM_A_TEAPOT() = httpStatus.I_AM_A_TEAPOT()
 
-    fun UNPROCESSABLE_ENTITY() = HttpStatus.UNPROCESSABLE_ENTITY()
+    fun UNPROCESSABLE_ENTITY() = httpStatus.UNPROCESSABLE_ENTITY()
 
-    fun LOCKED() = HttpStatus.LOCKED()
+    fun LOCKED() = httpStatus.LOCKED()
 
-    fun FAILED_DEPENDENCY() = HttpStatus.FAILED_DEPENDENCY()
+    fun FAILED_DEPENDENCY() = httpStatus.FAILED_DEPENDENCY()
 
-    fun UPGRADE_REQUIRED() = HttpStatus.UPGRADE_REQUIRED()
+    fun UPGRADE_REQUIRED() = httpStatus.UPGRADE_REQUIRED()
 
-    fun PRECONDITION_REQUIRED() = HttpStatus.PRECONDITION_REQUIRED()
+    fun PRECONDITION_REQUIRED() = httpStatus.PRECONDITION_REQUIRED()
 
-    fun TOO_MANY_REQUESTS() = HttpStatus.TOO_MANY_REQUESTS()
+    fun TOO_MANY_REQUESTS() = httpStatus.TOO_MANY_REQUESTS()
 
-    fun REQUEST_HEADER_FIELDS_TOO_LARGE() = HttpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE()
+    fun REQUEST_HEADER_FIELDS_TOO_LARGE() = httpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE()
 
-    fun UNAVAILABLE_FOR_LEGAL_REASONS() = HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS()
+    fun UNAVAILABLE_FOR_LEGAL_REASONS() = httpStatus.UNAVAILABLE_FOR_LEGAL_REASONS()
 
-    fun INTERNAL_SERVER_ERROR() = HttpStatus.INTERNAL_SERVER_ERROR()
+    fun INTERNAL_SERVER_ERROR() = httpStatus.INTERNAL_SERVER_ERROR()
 
-    fun NOT_IMPLEMENTED() = HttpStatus.NOT_IMPLEMENTED()
+    fun NOT_IMPLEMENTED() = httpStatus.NOT_IMPLEMENTED()
 
-    fun BAD_GATEWAY() = HttpStatus.BAD_GATEWAY()
+    fun BAD_GATEWAY() = httpStatus.BAD_GATEWAY()
 
-    fun SERVICE_UNAVAILABLE() = HttpStatus.SERVICE_UNAVAILABLE()
+    fun SERVICE_UNAVAILABLE() = httpStatus.SERVICE_UNAVAILABLE()
 
-    fun GATEWAY_TIMEOUT() = HttpStatus.GATEWAY_TIMEOUT()
+    fun GATEWAY_TIMEOUT() = httpStatus.GATEWAY_TIMEOUT()
 
-    fun HTTP_VERSION_NOT_SUPPORTED() = HttpStatus.HTTP_VERSION_NOT_SUPPORTED()
+    fun HTTP_VERSION_NOT_SUPPORTED() = httpStatus.HTTP_VERSION_NOT_SUPPORTED()
 
-    fun VARIANT_ALSO_NEGOTIATES() = HttpStatus.VARIANT_ALSO_NEGOTIATES()
+    fun VARIANT_ALSO_NEGOTIATES() = httpStatus.VARIANT_ALSO_NEGOTIATES()
 
-    fun INSUFFICIENT_STORAGE() = HttpStatus.INSUFFICIENT_STORAGE()
+    fun INSUFFICIENT_STORAGE() = httpStatus.INSUFFICIENT_STORAGE()
 
-    fun LOOP_DETECTED() = HttpStatus.LOOP_DETECTED()
+    fun LOOP_DETECTED() = httpStatus.LOOP_DETECTED()
 
-    fun BANDWIDTH_LIMIT_EXCEEDED() = HttpStatus.BANDWIDTH_LIMIT_EXCEEDED()
+    fun BANDWIDTH_LIMIT_EXCEEDED() = httpStatus.BANDWIDTH_LIMIT_EXCEEDED()
 
-    fun NOT_EXTENDED() = HttpStatus.NOT_EXTENDED()
+    fun NOT_EXTENDED() = httpStatus.NOT_EXTENDED()
 
-    fun NETWORK_AUTHENTICATION_REQUIRED() = HttpStatus.NETWORK_AUTHENTICATION_REQUIRED()
+    fun NETWORK_AUTHENTICATION_REQUIRED() = httpStatus.NETWORK_AUTHENTICATION_REQUIRED()
 
     /* REGEX */
 
@@ -230,41 +233,41 @@ open class CommonDsl {
 
     fun regex(regex: RegexProperty) = regex
 
-    fun onlyAlphaUnicode(): RegexProperty = RegexPatterns.onlyAlphaUnicode()
+    fun onlyAlphaUnicode(): RegexProperty = regexPatterns.onlyAlphaUnicode()
 
-    fun alphaNumeric(): RegexProperty = RegexPatterns.alphaNumeric()
+    fun alphaNumeric(): RegexProperty = regexPatterns.alphaNumeric()
 
-    fun number(): RegexProperty = RegexPatterns.number()
+    fun number(): RegexProperty = regexPatterns.number()
 
-    fun positiveInt(): RegexProperty = RegexPatterns.positiveInt()
+    fun positiveInt(): RegexProperty = regexPatterns.positiveInt()
 
-    fun anyBoolean(): RegexProperty = RegexPatterns.anyBoolean()
+    fun anyBoolean(): RegexProperty = regexPatterns.anyBoolean()
 
-    fun anInteger(): RegexProperty = RegexPatterns.anInteger()
+    fun anInteger(): RegexProperty = regexPatterns.anInteger()
 
-    fun aDouble(): RegexProperty = RegexPatterns.aDouble()
+    fun aDouble(): RegexProperty = regexPatterns.aDouble()
 
-    fun ipAddress(): RegexProperty = RegexPatterns.ipAddress()
+    fun ipAddress(): RegexProperty = regexPatterns.ipAddress()
 
-    fun hostname(): RegexProperty = RegexPatterns.hostname()
+    fun hostname(): RegexProperty = regexPatterns.hostname()
 
-    fun email(): RegexProperty = RegexPatterns.email()
+    fun email(): RegexProperty = regexPatterns.email()
 
-    fun url(): RegexProperty = RegexPatterns.url()
+    fun url(): RegexProperty = regexPatterns.url()
 
-    fun httpsUrl(): RegexProperty = RegexPatterns.httpsUrl()
+    fun httpsUrl(): RegexProperty = regexPatterns.httpsUrl()
 
-    fun uuid(): RegexProperty = RegexPatterns.uuid()
+    fun uuid(): RegexProperty = regexPatterns.uuid()
 
-    fun isoDate(): RegexProperty = RegexPatterns.isoDate()
+    fun isoDate(): RegexProperty = regexPatterns.isoDate()
 
-    fun isoDateTime(): RegexProperty = RegexPatterns.isoDateTime()
+    fun isoDateTime(): RegexProperty = regexPatterns.isoDateTime()
 
-    fun isoTime(): RegexProperty = RegexPatterns.isoTime()
+    fun isoTime(): RegexProperty = regexPatterns.isoTime()
 
-    fun iso8601WithOffset(): RegexProperty = RegexPatterns.iso8601WithOffset()
+    fun iso8601WithOffset(): RegexProperty = regexPatterns.iso8601WithOffset()
 
-    fun nonEmpty(): RegexProperty = RegexPatterns.nonEmpty()
+    fun nonEmpty(): RegexProperty = regexPatterns.nonEmpty()
 
-    fun nonBlank(): RegexProperty = RegexPatterns.nonBlank()
+    fun nonBlank(): RegexProperty = regexPatterns.nonBlank()
 }

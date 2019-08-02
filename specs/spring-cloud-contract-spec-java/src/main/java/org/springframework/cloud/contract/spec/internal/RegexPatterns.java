@@ -27,12 +27,9 @@ import java.util.stream.Collectors;
  * @author Tim Ysewyn
  * @since 1.0.0
  */
-public final class RegexPatterns {
+public class RegexPatterns {
 
-	private RegexPatterns() {
-		// Shouldn't be instantiated
-	}
-
+	// tag::regexps[]
 	protected static final Pattern TRUE_OR_FALSE = Pattern.compile("(true|false)");
 
 	protected static final Pattern ALPHA_NUMERIC = Pattern.compile("[a-zA-Z0-9]+");
@@ -111,84 +108,82 @@ public final class RegexPatterns {
 		return contentType.toString();
 	}
 
-	// tag::regexps[]
-
-	public static RegexProperty onlyAlphaUnicode() {
+	public RegexProperty onlyAlphaUnicode() {
 		return new RegexProperty(ONLY_ALPHA_UNICODE).asString();
 	}
 
-	public static RegexProperty alphaNumeric() {
+	public RegexProperty alphaNumeric() {
 		return new RegexProperty(ALPHA_NUMERIC).asString();
 	}
 
-	public static RegexProperty number() {
+	public RegexProperty number() {
 		return new RegexProperty(NUMBER).asDouble();
 	}
 
-	public static RegexProperty positiveInt() {
+	public RegexProperty positiveInt() {
 		return new RegexProperty(POSITIVE_INT).asInteger();
 	}
 
-	public static RegexProperty anyBoolean() {
+	public RegexProperty anyBoolean() {
 		return new RegexProperty(TRUE_OR_FALSE).asBooleanType();
 	}
 
-	public static RegexProperty anInteger() {
+	public RegexProperty anInteger() {
 		return new RegexProperty(INTEGER).asInteger();
 	}
 
-	public static RegexProperty aDouble() {
+	public RegexProperty aDouble() {
 		return new RegexProperty(DOUBLE).asDouble();
 	}
 
-	public static RegexProperty ipAddress() {
+	public RegexProperty ipAddress() {
 		return new RegexProperty(IP_ADDRESS).asString();
 	}
 
-	public static RegexProperty hostname() {
+	public RegexProperty hostname() {
 		return new RegexProperty(HOSTNAME_PATTERN).asString();
 	}
 
-	public static RegexProperty email() {
+	public RegexProperty email() {
 		return new RegexProperty(EMAIL).asString();
 	}
 
-	public static RegexProperty url() {
+	public RegexProperty url() {
 		return new RegexProperty(URL).asString();
 	}
 
-	public static RegexProperty httpsUrl() {
+	public RegexProperty httpsUrl() {
 		return new RegexProperty(HTTPS_URL).asString();
 	}
 
-	public static RegexProperty uuid() {
+	public RegexProperty uuid() {
 		return new RegexProperty(UUID).asString();
 	}
 
-	public static RegexProperty isoDate() {
+	public RegexProperty isoDate() {
 		return new RegexProperty(ANY_DATE).asString();
 	}
 
-	public static RegexProperty isoDateTime() {
+	public RegexProperty isoDateTime() {
 		return new RegexProperty(ANY_DATE_TIME).asString();
 	}
 
-	public static RegexProperty isoTime() {
+	public RegexProperty isoTime() {
 		return new RegexProperty(ANY_TIME).asString();
 	}
 
-	public static RegexProperty iso8601WithOffset() {
+	// end::regexps[]
+
+	public RegexProperty iso8601WithOffset() {
 		return new RegexProperty(ISO8601_WITH_OFFSET).asString();
 	}
 
-	public static RegexProperty nonEmpty() {
+	public RegexProperty nonEmpty() {
 		return new RegexProperty(NON_EMPTY).asString();
 	}
 
-	public static RegexProperty nonBlank() {
+	public RegexProperty nonBlank() {
 		return new RegexProperty(NON_BLANK).asString();
 	}
-
-	// end::regexps[]
 
 }

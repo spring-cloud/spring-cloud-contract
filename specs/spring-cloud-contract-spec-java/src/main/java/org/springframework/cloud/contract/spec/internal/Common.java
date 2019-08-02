@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 /**
  * Contains useful common methods for the DSL.
  *
- * @author Marcin Grzejszczak
- * @author Tim Ysewyn
  * @since 1.0.0
  */
 public class Common {
+
+	private final RegexPatterns regexPatterns = new RegexPatterns();
 
 	public Map<String, DslProperty> convertObjectsToDslProperties(
 			Map<String, Object> body) {
@@ -324,79 +324,79 @@ public class Common {
 	}
 
 	public RegexProperty onlyAlphaUnicode() {
-		return RegexPatterns.onlyAlphaUnicode();
+		return regexPatterns.onlyAlphaUnicode();
 	}
 
 	public RegexProperty alphaNumeric() {
-		return RegexPatterns.alphaNumeric();
+		return regexPatterns.alphaNumeric();
 	}
 
 	public RegexProperty number() {
-		return RegexPatterns.number();
+		return regexPatterns.number();
 	}
 
 	public RegexProperty positiveInt() {
-		return RegexPatterns.positiveInt();
+		return regexPatterns.positiveInt();
 	}
 
 	public RegexProperty anyBoolean() {
-		return RegexPatterns.anyBoolean();
+		return regexPatterns.anyBoolean();
 	}
 
 	public RegexProperty anInteger() {
-		return RegexPatterns.anInteger();
+		return regexPatterns.anInteger();
 	}
 
 	public RegexProperty aDouble() {
-		return RegexPatterns.aDouble();
+		return regexPatterns.aDouble();
 	}
 
 	public RegexProperty ipAddress() {
-		return RegexPatterns.ipAddress();
+		return regexPatterns.ipAddress();
 	}
 
 	public RegexProperty hostname() {
-		return RegexPatterns.hostname();
+		return regexPatterns.hostname();
 	}
 
 	public RegexProperty email() {
-		return RegexPatterns.email();
+		return regexPatterns.email();
 	}
 
 	public RegexProperty url() {
-		return RegexPatterns.url();
+		return regexPatterns.url();
 	}
 
 	public RegexProperty httpsUrl() {
-		return RegexPatterns.httpsUrl();
+		return regexPatterns.httpsUrl();
 	}
 
 	public RegexProperty uuid() {
-		return RegexPatterns.uuid();
+		return regexPatterns.uuid();
 	}
 
 	public RegexProperty isoDate() {
-		return RegexPatterns.isoDate();
+		return regexPatterns.isoDate();
 	}
 
 	public RegexProperty isoDateTime() {
-		return RegexPatterns.isoDateTime();
+		return regexPatterns.isoDateTime();
 	}
 
 	public RegexProperty isoTime() {
-		return RegexPatterns.isoTime();
+		return regexPatterns.isoTime();
 	}
 
 	public RegexProperty iso8601WithOffset() {
-		return RegexPatterns.iso8601WithOffset();
+		return regexPatterns.iso8601WithOffset();
 	}
 
 	public RegexProperty nonEmpty() {
-		return RegexPatterns.nonEmpty();
+		return regexPatterns.nonEmpty();
 	}
 
 	public RegexProperty nonBlank() {
-		return RegexPatterns.nonBlank();
+		return regexPatterns.nonBlank();
 	}
 
 }

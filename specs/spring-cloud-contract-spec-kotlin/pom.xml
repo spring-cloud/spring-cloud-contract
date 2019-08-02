@@ -4,9 +4,6 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<!-- TODO: Bump-->
-		<!-- <automaton.version>1.12-1</automaton.version>-->
-		<automaton.version>1.11-8</automaton.version>
 		<kotlin.version>1.3.41</kotlin.version>
 	</properties>
 	<parent>
@@ -24,56 +21,9 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-spec-java</artifactId>
 		</dependency>
-		<!-- For backward compatibility since Gradle has problems with applying module extensions-->
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>dk.brics.automaton</groupId>
-			<artifactId>automaton</artifactId>
-			<version>${automaton.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-text</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jcl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-nio</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-json</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-xml</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-core</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>info.solidsoft.spock</groupId>
-			<artifactId>spock-global-unroll</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -124,22 +74,6 @@
 								<sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
 							</sourceDirs>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-				<!-- Joint compilation -->
-				<executions>
-					<execution>
-						<goals>
-							<goal>addTestSources</goal>
-							<goal>generateTestStubs</goal>
-							<goal>compileTests</goal>
-							<goal>removeTestStubs</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
