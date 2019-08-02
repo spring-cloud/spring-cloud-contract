@@ -167,11 +167,11 @@ class MessagingSCContractCreator {
 
 	private String getTriggeredBy(Message message) {
 		return message.providerStates.first().name
-									 .replace(':', ' ')
-									 .replace(' ', '_')
-									 .replace('(', '')
-									 .replace(')', '')
-									 .uncapitalize() + "()"
+				.replace(':', ' ')
+				.replace(' ', '_')
+				.replace('(', '')
+				.replace(')', '')
+				.uncapitalize() + "()"
 	}
 
 	private String findDestination(Message message) {
