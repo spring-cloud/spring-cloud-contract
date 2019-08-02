@@ -163,20 +163,6 @@ class ContractSpec extends Specification {
 			noExceptionThrown()
 	}
 
-	def 'should generate a value if only regex is passed for client'() {
-		given:
-			Request request = new Request()
-			DslProperty property
-		when:
-			request.with {
-				property = value(consumer(regex("[0-9]{5}")))
-			}
-			def value = Integer.valueOf(property.serverValue as String)
-		then:
-			value >= 0
-			value <= 99_999
-	}
-
 	def 'should set a description'() {
 		given:
 			// tag::description[]

@@ -24,6 +24,7 @@
 	<modules>
 		<module>spring-cloud-contract-spec-java</module>
 		<module>spring-cloud-contract-spec-groovy</module>
+		<module>spring-cloud-contract-spec-kotlin</module>
 		<module>spring-cloud-contract-spec</module>
 	</modules>
 

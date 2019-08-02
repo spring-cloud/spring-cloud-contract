@@ -20,6 +20,7 @@ package org.springframework.cloud.contract.spec.internal;
  * Helper functions for HTTP statuses.
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 2.0.0
  */
 public class HttpStatus {
@@ -29,7 +30,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.2.1" > HTTP/1.1:
 	 * Semantics and Content, section 6.2.1</a>
 	 */
-	public int CONTINUE() {
+	public static int CONTINUE() {
 		return 100;
 	}
 
@@ -38,7 +39,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.2.2" > HTTP/1.1:
 	 * Semantics and Content, section 6.2.2</a>
 	 */
-	public int SWITCHING_PROTOCOLS() {
+	public static int SWITCHING_PROTOCOLS() {
 		return 101;
 	}
 
@@ -46,7 +47,7 @@ public class HttpStatus {
 	 * {@code 102 Processing}.
 	 * @see <ahref="https://tools.ietf.org/html/rfc2518#section-10.1" > WebDAV</a>
 	 */
-	public int PROCESSING() {
+	public static int PROCESSING() {
 		return 102;
 	}
 
@@ -55,7 +56,7 @@ public class HttpStatus {
 	 * @see <ahref="https://code.google.com/p/gears/wiki/ResumableHttpRequestsProposal" >
 	 * A proposal for supporting resumable POST/PUT HTTP requests in HTTP/1.0</a>
 	 */
-	public int CHECKPOINT() {
+	public static int CHECKPOINT() {
 		return 103;
 	}
 
@@ -64,7 +65,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.3.1" > HTTP/1.1:
 	 * Semantics and Content, section 6.3.1</a>
 	 */
-	public int OK() {
+	public static int OK() {
 		return 200;
 	}
 
@@ -73,7 +74,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.3.2" > HTTP/1.1:
 	 * Semantics and Content, section 6.3.2</a>
 	 */
-	public int CREATED() {
+	public static int CREATED() {
 		return 201;
 	}
 
@@ -82,7 +83,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.3.3" > HTTP/1.1:
 	 * Semantics and Content, section 6.3.3</a>
 	 */
-	public int ACCEPTED() {
+	public static int ACCEPTED() {
 		return 202;
 	}
 
@@ -91,7 +92,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.3.4" > HTTP/1.1:
 	 * Semantics and Content, section 6.3.4</a>
 	 */
-	public int NON_AUTHORITATIVE_INFORMATION() {
+	public static int NON_AUTHORITATIVE_INFORMATION() {
 		return 203;
 	}
 
@@ -100,7 +101,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.3.5" > HTTP/1.1:
 	 * Semantics and Content, section 6.3.5</a>
 	 */
-	public int NO_CONTENT() {
+	public static int NO_CONTENT() {
 		return 204;
 	}
 
@@ -109,7 +110,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.3.6" > HTTP/1.1:
 	 * Semantics and Content, section 6.3.6</a>
 	 */
-	public int RESET_CONTENT() {
+	public static int RESET_CONTENT() {
 		return 205;
 	}
 
@@ -118,7 +119,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7233#section-4.1" > HTTP/1.1: Range
 	 * Requests, section 4.1</a>
 	 */
-	public int PARTIAL_CONTENT() {
+	public static int PARTIAL_CONTENT() {
 		return 206;
 	}
 
@@ -126,7 +127,7 @@ public class HttpStatus {
 	 * {@code 207 Multi-Status}.
 	 * @see <ahref="https://tools.ietf.org/html/rfc4918#section-13" > WebDAV</a>
 	 */
-	public int MULTI_STATUS() {
+	public static int MULTI_STATUS() {
 		return 207;
 	}
 
@@ -135,7 +136,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc5842#section-7.1" > WebDAV Binding
 	 * Extensions</a>
 	 */
-	public int ALREADY_REPORTED() {
+	public static int ALREADY_REPORTED() {
 		return 208;
 	}
 
@@ -144,7 +145,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc3229#section-10.4.1" > Delta encoding
 	 * in HTTP</a>
 	 */
-	public int IM_USED() {
+	public static int IM_USED() {
 		return 226;
 	}
 
@@ -153,7 +154,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.4.1" > HTTP/1.1:
 	 * Semantics and Content, section 6.4.1</a>
 	 */
-	public int MULTIPLE_CHOICES() {
+	public static int MULTIPLE_CHOICES() {
 		return 300;
 	}
 
@@ -162,7 +163,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.4.2" > HTTP/1.1:
 	 * Semantics and Content, section 6.4.2</a>
 	 */
-	public int MOVED_PERMANENTLY() {
+	public static int MOVED_PERMANENTLY() {
 		return 301;
 	}
 
@@ -171,7 +172,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.4.3" > HTTP/1.1:
 	 * Semantics and Content, section 6.4.3</a>
 	 */
-	public int FOUND() {
+	public static int FOUND() {
 		return 302;
 	}
 
@@ -183,7 +184,7 @@ public class HttpStatus {
 	 * {@code HttpStatus.valueOf(302)}
 	 */
 	@Deprecated
-	public int MOVED_TEMPORARILY() {
+	public static int MOVED_TEMPORARILY() {
 		return 302;
 	}
 
@@ -192,7 +193,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.4.4" > HTTP/1.1:
 	 * Semantics and Content, section 6.4.4</a>
 	 */
-	public int SEE_OTHER() {
+	public static int SEE_OTHER() {
 		return 303;
 	}
 
@@ -201,7 +202,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7232#section-4.1" > HTTP/1.1:
 	 * Conditional Requests, section 4.1</a>
 	 */
-	public int NOT_MODIFIED() {
+	public static int NOT_MODIFIED() {
 		return 304;
 	}
 
@@ -212,7 +213,7 @@ public class HttpStatus {
 	 * @deprecated due to security concerns regarding in-band configuration of a proxy
 	 */
 	@Deprecated
-	public int USE_PROXY() {
+	public static int USE_PROXY() {
 		return 305;
 	}
 
@@ -221,7 +222,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.4.7" > HTTP/1.1:
 	 * Semantics and Content, section 6.4.7</a>
 	 */
-	public int TEMPORARY_REDIRECT() {
+	public static int TEMPORARY_REDIRECT() {
 		return 307;
 	}
 
@@ -229,7 +230,7 @@ public class HttpStatus {
 	 * {@code 308 Permanent Redirect}.
 	 * @see <ahref="https://tools.ietf.org/html/rfc7238" > RFC 7238</a>
 	 */
-	public int PERMANENT_REDIRECT() {
+	public static int PERMANENT_REDIRECT() {
 		return 308;
 	}
 
@@ -238,7 +239,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.1" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.1</a>
 	 */
-	public int BAD_REQUEST() {
+	public static int BAD_REQUEST() {
 		return 400;
 	}
 
@@ -247,7 +248,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7235#section-3.1" > HTTP/1.1:
 	 * Authentication, section 3.1</a>
 	 */
-	public int UNAUTHORIZED() {
+	public static int UNAUTHORIZED() {
 		return 401;
 	}
 
@@ -256,7 +257,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.2" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.2</a>
 	 */
-	public int PAYMENT_REQUIRED() {
+	public static int PAYMENT_REQUIRED() {
 		return 402;
 	}
 
@@ -265,7 +266,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.3" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.3</a>
 	 */
-	public int FORBIDDEN() {
+	public static int FORBIDDEN() {
 		return 403;
 	}
 
@@ -274,7 +275,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.4" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.4</a>
 	 */
-	public int NOT_FOUND() {
+	public static int NOT_FOUND() {
 		return 404;
 	}
 
@@ -283,7 +284,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.5" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.5</a>
 	 */
-	public int METHOD_NOT_ALLOWED() {
+	public static int METHOD_NOT_ALLOWED() {
 		return 405;
 	}
 
@@ -292,7 +293,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.6" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.6</a>
 	 */
-	public int NOT_ACCEPTABLE() {
+	public static int NOT_ACCEPTABLE() {
 		return 406;
 	}
 
@@ -301,7 +302,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7235#section-3.2" > HTTP/1.1:
 	 * Authentication, section 3.2</a>
 	 */
-	public int PROXY_AUTHENTICATION_REQUIRED() {
+	public static int PROXY_AUTHENTICATION_REQUIRED() {
 		return 407;
 	}
 
@@ -310,7 +311,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.7" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.7</a>
 	 */
-	public int REQUEST_TIMEOUT() {
+	public static int REQUEST_TIMEOUT() {
 		return 408;
 	}
 
@@ -319,7 +320,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.8" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.8</a>
 	 */
-	public int CONFLICT() {
+	public static int CONFLICT() {
 		return 409;
 	}
 
@@ -328,7 +329,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.9" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.9</a>
 	 */
-	public int GONE() {
+	public static int GONE() {
 		return 410;
 	}
 
@@ -337,7 +338,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.10" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.10</a>
 	 */
-	public int LENGTH_REQUIRED() {
+	public static int LENGTH_REQUIRED() {
 		return 411;
 	}
 
@@ -346,7 +347,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7232#section-4.2" > HTTP/1.1:
 	 * Conditional Requests, section 4.2</a>
 	 */
-	public int PRECONDITION_FAILED() {
+	public static int PRECONDITION_FAILED() {
 		return 412;
 	}
 
@@ -355,7 +356,7 @@ public class HttpStatus {
 	 * @since 4.1* @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.11" >
 	 * HTTP/1.1: Semantics and Content, section 6.5.11</a>
 	 */
-	public int PAYLOAD_TOO_LARGE() {
+	public static int PAYLOAD_TOO_LARGE() {
 		return 413;
 	}
 
@@ -367,7 +368,7 @@ public class HttpStatus {
 	 * {@code HttpStatus.valueOf(413)}
 	 */
 	@Deprecated
-	public int REQUEST_ENTITY_TOO_LARGE() {
+	public static int REQUEST_ENTITY_TOO_LARGE() {
 		return 413;
 	}
 
@@ -376,7 +377,7 @@ public class HttpStatus {
 	 * @since 4.1* @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.12" >
 	 * HTTP/1.1: Semantics and Content, section 6.5.12</a>
 	 */
-	public int URI_TOO_LONG() {
+	public static int URI_TOO_LONG() {
 		return 414;
 	}
 
@@ -388,7 +389,7 @@ public class HttpStatus {
 	 * {@code HttpStatus.valueOf(414)}
 	 */
 	@Deprecated
-	public int REQUEST_URI_TOO_LONG() {
+	public static int REQUEST_URI_TOO_LONG() {
 		return 414;
 	}
 
@@ -397,7 +398,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.13" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.13</a>
 	 */
-	public int UNSUPPORTED_MEDIA_TYPE() {
+	public static int UNSUPPORTED_MEDIA_TYPE() {
 		return 415;
 	}
 
@@ -406,7 +407,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7233#section-4.4" > HTTP/1.1: Range
 	 * Requests, section 4.4</a>
 	 */
-	public int REQUESTED_RANGE_NOT_SATISFIABLE() {
+	public static int REQUESTED_RANGE_NOT_SATISFIABLE() {
 		return 416;
 	}
 
@@ -415,7 +416,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.5.14" > HTTP/1.1:
 	 * Semantics and Content, section 6.5.14</a>
 	 */
-	public int EXPECTATION_FAILED() {
+	public static int EXPECTATION_FAILED() {
 		return 417;
 	}
 
@@ -423,7 +424,7 @@ public class HttpStatus {
 	 * {@code 418 I'm a teapot}.
 	 * @see <ahref="https://tools.ietf.org/html/rfc2324#section-2.3.2" > HTCPCP/1.0</a>
 	 */
-	public int I_AM_A_TEAPOT() {
+	public static int I_AM_A_TEAPOT() {
 		return 418;
 	}
 
@@ -433,7 +434,7 @@ public class HttpStatus {
 	 * Draft Changes</a>
 	 */
 	@Deprecated
-	public int INSUFFICIENT_SPACE_ON_RESOURCE() {
+	public static int INSUFFICIENT_SPACE_ON_RESOURCE() {
 		return 419;
 	}
 
@@ -443,7 +444,7 @@ public class HttpStatus {
 	 * Draft Changes</a>
 	 */
 	@Deprecated
-	public int METHOD_FAILURE() {
+	public static int METHOD_FAILURE() {
 		return 420;
 	}
 
@@ -453,7 +454,7 @@ public class HttpStatus {
 	 * Draft Changes</a>
 	 */
 	@Deprecated
-	public int DESTINATION_LOCKED() {
+	public static int DESTINATION_LOCKED() {
 		return 421;
 	}
 
@@ -461,7 +462,7 @@ public class HttpStatus {
 	 * {@code 422 Unprocessable Entity}.
 	 * @see <ahref="https://tools.ietf.org/html/rfc4918#section-11.2" > WebDAV</a>
 	 */
-	public int UNPROCESSABLE_ENTITY() {
+	public static int UNPROCESSABLE_ENTITY() {
 		return 422;
 	}
 
@@ -469,7 +470,7 @@ public class HttpStatus {
 	 * {@code 423 Locked}.
 	 * @see <ahref="https://tools.ietf.org/html/rfc4918#section-11.3" > WebDAV</a>
 	 */
-	public int LOCKED() {
+	public static int LOCKED() {
 		return 423;
 	}
 
@@ -477,7 +478,7 @@ public class HttpStatus {
 	 * {@code 424 Failed Dependency}.
 	 * @see <ahref="https://tools.ietf.org/html/rfc4918#section-11.4" > WebDAV</a>
 	 */
-	public int FAILED_DEPENDENCY() {
+	public static int FAILED_DEPENDENCY() {
 		return 424;
 	}
 
@@ -486,7 +487,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc2817#section-6" > Upgrading to TLS
 	 * Within HTTP/1.1</a>
 	 */
-	public int UPGRADE_REQUIRED() {
+	public static int UPGRADE_REQUIRED() {
 		return 426;
 	}
 
@@ -495,7 +496,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc6585#section-3" > Additional HTTP
 	 * Status Codes</a>
 	 */
-	public int PRECONDITION_REQUIRED() {
+	public static int PRECONDITION_REQUIRED() {
 		return 428;
 	}
 
@@ -504,7 +505,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc6585#section-4" > Additional HTTP
 	 * Status Codes</a>
 	 */
-	public int TOO_MANY_REQUESTS() {
+	public static int TOO_MANY_REQUESTS() {
 		return 429;
 	}
 
@@ -513,7 +514,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc6585#section-5" > Additional HTTP
 	 * Status Codes</a>
 	 */
-	public int REQUEST_HEADER_FIELDS_TOO_LARGE() {
+	public static int REQUEST_HEADER_FIELDS_TOO_LARGE() {
 		return 431;
 	}
 
@@ -523,7 +524,7 @@ public class HttpStatus {
 	 * > An HTTP Status Code to Report Legal Obstacles</a>
 	 * @since 4.3
 	 */
-	public int UNAVAILABLE_FOR_LEGAL_REASONS() {
+	public static int UNAVAILABLE_FOR_LEGAL_REASONS() {
 		return 451;
 	}
 
@@ -532,7 +533,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.6.1" > HTTP/1.1:
 	 * Semantics and Content, section 6.6.1</a>
 	 */
-	public int INTERNAL_SERVER_ERROR() {
+	public static int INTERNAL_SERVER_ERROR() {
 		return 500;
 	}
 
@@ -541,7 +542,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.6.2" > HTTP/1.1:
 	 * Semantics and Content, section 6.6.2</a>
 	 */
-	public int NOT_IMPLEMENTED() {
+	public static int NOT_IMPLEMENTED() {
 		return 501;
 	}
 
@@ -550,7 +551,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.6.3" > HTTP/1.1:
 	 * Semantics and Content, section 6.6.3</a>
 	 */
-	public int BAD_GATEWAY() {
+	public static int BAD_GATEWAY() {
 		return 502;
 	}
 
@@ -559,7 +560,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.6.4" > HTTP/1.1:
 	 * Semantics and Content, section 6.6.4</a>
 	 */
-	public int SERVICE_UNAVAILABLE() {
+	public static int SERVICE_UNAVAILABLE() {
 		return 503;
 	}
 
@@ -568,7 +569,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.6.5" > HTTP/1.1:
 	 * Semantics and Content, section 6.6.5</a>
 	 */
-	public int GATEWAY_TIMEOUT() {
+	public static int GATEWAY_TIMEOUT() {
 		return 504;
 	}
 
@@ -577,7 +578,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc7231#section-6.6.6" > HTTP/1.1:
 	 * Semantics and Content, section 6.6.6</a>
 	 */
-	public int HTTP_VERSION_NOT_SUPPORTED() {
+	public static int HTTP_VERSION_NOT_SUPPORTED() {
 		return 505;
 	}
 
@@ -586,7 +587,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc2295#section-8.1" > Transparent Content
 	 * Negotiation</a>
 	 */
-	public int VARIANT_ALSO_NEGOTIATES() {
+	public static int VARIANT_ALSO_NEGOTIATES() {
 		return 506;
 	}
 
@@ -594,7 +595,7 @@ public class HttpStatus {
 	 * {@code 507 Insufficient Storage}
 	 * @see <ahref="https://tools.ietf.org/html/rfc4918#section-11.5" > WebDAV</a>
 	 */
-	public int INSUFFICIENT_STORAGE() {
+	public static int INSUFFICIENT_STORAGE() {
 		return 507;
 	}
 
@@ -603,14 +604,14 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc5842#section-7.2" > WebDAV Binding
 	 * Extensions</a>
 	 */
-	public int LOOP_DETECTED() {
+	public static int LOOP_DETECTED() {
 		return 508;
 	}
 
 	/**
 	 * {@code 509 Bandwidth Limit Exceeded}
 	 */
-	public int BANDWIDTH_LIMIT_EXCEEDED() {
+	public static int BANDWIDTH_LIMIT_EXCEEDED() {
 		return 509;
 	}
 
@@ -619,7 +620,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc2774#section-7" > HTTP Extension
 	 * Framework</a>
 	 */
-	public int NOT_EXTENDED() {
+	public static int NOT_EXTENDED() {
 		return 510;
 	}
 
@@ -628,7 +629,7 @@ public class HttpStatus {
 	 * @see <ahref="https://tools.ietf.org/html/rfc6585#section-6" > Additional HTTP
 	 * Status Codes</a>
 	 */
-	public int NETWORK_AUTHENTICATION_REQUIRED() {
+	public static int NETWORK_AUTHENTICATION_REQUIRED() {
 		return 511;
 	}
 
