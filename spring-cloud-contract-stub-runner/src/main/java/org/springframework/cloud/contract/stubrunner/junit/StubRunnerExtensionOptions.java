@@ -150,6 +150,13 @@ interface StubRunnerExtensionOptions {
 	StubRunnerExtension withDeleteStubsAfterTest(boolean deleteStubsAfterTest);
 
 	/**
+	 * @param generateStubs If set to {@code true} will NOT load generated stubs but will
+	 * generate stubs from contract definitions at runtime.
+	 * @return the rule
+	 */
+	StubRunnerExtension withGenerateStubs(boolean generateStubs);
+
+	/**
 	 * @param properties Map of properties that can be passed to custom
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 * @return the stub runner extension

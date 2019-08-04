@@ -47,9 +47,6 @@ import org.jetbrains.annotations.NotNull;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.verifier.converter.StubGenerator;
-import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
-import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
@@ -216,32 +213,16 @@ class PactStubDownloader implements StubDownloader {
 			log.debug("Converted pact file [" + file + "] to [" + contracts.size()
 					+ "] contracts");
 		}
-		StubGeneratorProvider provider = new StubGeneratorProvider();
-		Collection<StubGenerator> stubGenerators = provider
-				.converterForName(ARTIFICIAL_NAME_ENDING_WITH_GROOVY);
-		if (log.isDebugEnabled()) {
-			log.debug("Found following matching stub generators " + stubGenerators);
-		}
-		for (StubGenerator stubGenerator : stubGenerators) {
-			Map<Contract, String> map = stubGenerator.convertContents(file.getName(),
-					new ContractMetadata(file.toPath(), false, contracts.size(), null,
-							contracts));
-			for (Map.Entry<Contract, String> entry : map.entrySet()) {
-				String value = entry.getValue();
-				File mapping = new File(mappingsFolder,
-						StringUtils.stripFilenameExtension(file.getName()) + "_"
-								+ Math.abs(entry.getKey().hashCode()) + ".json");
-				storeFile(mapping.toPath(), value.getBytes());
-			}
-		}
+		MappingGenerator.toMappings(file, contracts, mappingsFolder);
 	}
 
-	private void storeFile(Path path, byte[] contents) {
+	private Path storeFile(Path path, byte[] contents) {
 		try {
-			Files.write(path, contents);
+			Path storedPath = Files.write(path, contents);
 			if (log.isDebugEnabled()) {
 				log.debug("Stored file [" + path.toString() + "]");
 			}
+			return storedPath;
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
