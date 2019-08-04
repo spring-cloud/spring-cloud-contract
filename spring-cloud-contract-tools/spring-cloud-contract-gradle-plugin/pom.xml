@@ -19,6 +19,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<gradle.task>build</gradle.task>
 	</properties>
 
 	<dependencies>
@@ -111,7 +112,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -119,7 +120,7 @@
 								<configuration>
 									<executable>./gradlew</executable>
 									<arguments>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
@@ -145,7 +146,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -153,7 +154,7 @@
 								<configuration>
 									<executable>gradlew.bat</executable>
 									<arguments>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
@@ -177,7 +178,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -185,7 +186,7 @@
 								<configuration>
 									<executable>./gradlew</executable>
 									<arguments>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-Pfast</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
@@ -210,7 +211,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -219,7 +220,7 @@
 									<executable>./gradlew</executable>
 									<arguments>
 										<argument>clean</argument>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
 										<argument>-Pcentral</argument>
 										<argument>publishPlugins</argument>
@@ -233,6 +234,15 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>java13</id>
+			<activation>
+				<jdk>13</jdk>
+			</activation>
+			<properties>
+				<gradle.task>assemble</gradle.task>
+			</properties>
 		</profile>
 	</profiles>
 
