@@ -123,6 +123,12 @@ public class StubRunnerOptions {
 	private boolean generateStubs;
 
 	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	private boolean failOnNoStubs;
+
+	/**
 	 * Map of properties that can be passed to custom
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
@@ -134,7 +140,7 @@ public class StubRunnerOptions {
 			Map<StubConfiguration, Integer> stubIdsToPortMapping, String username,
 			String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
 			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder,
-			boolean deleteStubsAfterTest, boolean generateStubs,
+			boolean deleteStubsAfterTest, boolean generateStubs, boolean failOnNoStubs,
 			Map<String, String> properties,
 			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer) {
 		this.minPortValue = minPortValue;
@@ -153,6 +159,7 @@ public class StubRunnerOptions {
 		this.mappingsOutputFolder = mappingsOutputFolder;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		this.generateStubs = generateStubs;
+		this.failOnNoStubs = failOnNoStubs;
 		this.properties = properties;
 		this.httpServerStubConfigurer = httpServerStubConfigurer;
 	}
@@ -179,6 +186,8 @@ public class StubRunnerOptions {
 						System.getProperty("stubrunner.delete-stubs-after-test", "true")))
 				.withGenerateStubs(Boolean.parseBoolean(
 						System.getProperty("stubrunner.generate-stubs", "false")))
+				.withFailOnNoStubs(Boolean.parseBoolean(
+						System.getProperty("stubrunner.fail-on-no-stubs", "false")))
 				.withProperties(stubRunnerProps());
 		builder = httpStubConfigurer(builder);
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
@@ -330,6 +339,10 @@ public class StubRunnerOptions {
 
 	public boolean isGenerateStubs() {
 		return this.generateStubs;
+	}
+
+	public boolean isFailOnNoStubs() {
+		return this.failOnNoStubs;
 	}
 
 	public Map<String, String> getProperties() {

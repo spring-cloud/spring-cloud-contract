@@ -192,8 +192,14 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 
 	@Override
 	public StubRunnerRule withGenerateStubs(boolean generateStubs) {
-		builder().withGenerateStubs(true);
+		builder().withGenerateStubs(generateStubs);
 		return this.delegate;
+	}
+
+	@Override
+	public StubRunnerRule failOnNoStubs(boolean failOnNoStubs) {
+		builder().withFailOnNoStubs(failOnNoStubs);
+		return null;
 	}
 
 	@Override

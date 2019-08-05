@@ -295,6 +295,12 @@ class ContractVerifierExtension {
 		String version
 		String stringNotation
 
+		/**
+		 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+		 * contracts were found.
+		 */
+		boolean failOnNoStubs;
+
 		void groupId(String groupId) {
 			this.groupId = groupId
 		}

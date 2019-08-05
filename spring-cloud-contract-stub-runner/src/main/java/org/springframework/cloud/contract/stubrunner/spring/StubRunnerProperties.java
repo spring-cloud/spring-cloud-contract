@@ -115,6 +115,12 @@ public class StubRunnerProperties {
 	private boolean generateStubs;
 
 	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	private boolean failOnNoStubs;
+
+	/**
 	 * Map of properties that can be passed to custom
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
@@ -258,6 +264,14 @@ public class StubRunnerProperties {
 
 	public void setGenerateStubs(boolean generateStubs) {
 		this.generateStubs = generateStubs;
+	}
+
+	public boolean isFailOnNoStubs() {
+		return this.failOnNoStubs;
+	}
+
+	public void setFailOnNoStubs(boolean failOnNoStubs) {
+		this.failOnNoStubs = failOnNoStubs;
 	}
 
 	public Class getHttpServerStubConfigurer() {
