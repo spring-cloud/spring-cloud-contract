@@ -38,10 +38,10 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 
 /**
- * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
+ * Convert Spring Cloud Contract Verifier contracts into stubs mappings.
  * <p>
  * This goal allows you to generate `stubs-jar` or execute `spring-cloud-contract:run`
- * with generated WireMock mappings.
+ * with generated mappings.
  *
  * @author Mariusz Smykula
  */

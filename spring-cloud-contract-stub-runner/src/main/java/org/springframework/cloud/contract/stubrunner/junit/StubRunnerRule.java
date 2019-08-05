@@ -191,6 +191,12 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	}
 
 	@Override
+	public StubRunnerRule withGenerateStubs(boolean generateStubs) {
+		builder().withGenerateStubs(true);
+		return this.delegate;
+	}
+
+	@Override
 	public StubRunnerRule withProperties(Map<String, String> properties) {
 		builder().withProperties(properties);
 		return this.delegate;

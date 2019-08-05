@@ -101,6 +101,7 @@ public class StubRunnerConfiguration {
 				.withConsumerName(consumerName())
 				.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
 				.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest())
+				.withGenerateStubs(this.props.isGenerateStubs())
 				.withProperties(this.props.getProperties())
 				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer());
 	}

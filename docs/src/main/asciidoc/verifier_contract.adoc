@@ -1820,7 +1820,7 @@ own implementation of the `StubGenerator` interface. The following code listing 
 
 [source,groovy]
 ----
-include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/StubGenerator.groovy[indent=0,lines=16..-1]
+include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/StubGenerator.java[indent=0,lines=16..-1]
 ----
 
 Again, you must provide a `spring.factories` file, such as the one shown in the following

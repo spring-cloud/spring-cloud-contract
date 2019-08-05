@@ -29,11 +29,6 @@ import org.springframework.cloud.contract.verifier.converter.StubGenerator
 abstract class DslToWireMockConverter implements StubGenerator {
 
 	@Override
-	boolean canHandleFileName(String fileName) {
-		return fileName.endsWith('.groovy')
-	}
-
-	@Override
 	String generateOutputFileNameForInput(String inputFileName) {
 		return inputFileName.replaceAll(extension(inputFileName), 'json')
 	}

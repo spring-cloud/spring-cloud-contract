@@ -253,6 +253,12 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
+	public StubRunnerExtension withGenerateStubs(boolean generateStubs) {
+		builder().withGenerateStubs(generateStubs);
+		return new PortStubRunnerExtension(this.delegate);
+	}
+
+	@Override
 	public StubRunnerExtension withProperties(Map<String, String> properties) {
 		builder().withProperties(properties);
 		return new PortStubRunnerExtension(this.delegate);
