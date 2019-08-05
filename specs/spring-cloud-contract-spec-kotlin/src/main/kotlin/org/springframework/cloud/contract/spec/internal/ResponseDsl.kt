@@ -16,73 +16,118 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import org.springframework.cloud.contract.spec.toDslProperties
+import org.springframework.cloud.contract.spec.toDslProperty
+
 /**
  * @author Tim Ysewyn
  */
 @ContractDslMarker
 class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
-    private val response = Response()
+    var status: DslProperty<Any>? = null
+    var delay: DslProperty<Any>? = null
+    var headers: Headers? = null
+    var cookies: Cookies? = null
+    var body: Body? = null
+    var async: Boolean = false
+    var bodyMatchers: ResponseBodyMatchers? = null
 
-    companion object {
-        fun make(block: ResponseDsl.() -> Unit): Response = ResponseDsl().apply(block).get()
+    fun status(code: Int) {
+        this.status = DslProperty(code)
     }
 
-    private fun get(): Response = response
-
-    fun status(code: Int) = response.status(code)
-
-    fun body(pair: Pair<String, Any>) = response.body(mapOf(pair))
-
-    fun body(vararg pairs: Pair<String, Any>) = response.body(pairs.toMap())
-
-    fun headers(block: Headers.() -> Unit) {
-        response.headers = Headers().apply(block)
+    fun fixedDelayMilliseconds(delay: Long) {
+        this.delay = delay.toDslProperty()
     }
 
-    fun bodyMatchers(block: ResponseBodyMatchers.() -> Unit) {
-        response.bodyMatchers = ResponseBodyMatchers().apply(block)
+    fun headers(headers: Headers.() -> Unit) {
+        this.headers = Headers().apply(headers)
     }
 
-    override fun anyAlphaUnicode(): ServerDslProperty = response.anyAlphaUnicode()
+    fun cookies(cookies: Cookies.() -> Unit) {
+        this.cookies = Cookies().apply(cookies)
+    }
 
-    override fun anyAlphaNumeric(): ServerDslProperty = response.anyAlphaNumeric()
+    fun body(body: Map<String, Any>) {
+        this.body = Body(body.toDslProperties())
+    }
 
-    override fun anyNumber(): ServerDslProperty = response.anyNumber()
+    fun body(vararg body: Pair<String, Any>) {
+        this.body = Body(body.toMap().toDslProperties())
+    }
 
-    override fun anyInteger(): ServerDslProperty = response.anyInteger()
+    fun body(body: Pair<String, Any>) {
+        this.body = Body(mapOf(body).toDslProperties())
+    }
 
-    override fun anyPositiveInt(): ServerDslProperty = response.anyPositiveInt()
+    fun body(body: List<Any>) {
+        this.body = Body(body.toDslProperties())
+    }
 
-    override fun anyDouble(): ServerDslProperty = response.anyDouble()
+    fun body(body: DslProperty<Any>) {
+        this.body = Body(body.toDslProperty())
+    }
 
-    override fun anyHex(): ServerDslProperty = response.anyHex()
+    fun body(body: Any) {
+        this.body = Body(body)
+    }
 
-    override fun aBoolean(): ServerDslProperty = response.aBoolean()
+    fun bodyMatchers(bodyMatchers: ResponseBodyMatchers.() -> Unit) {
+        this.bodyMatchers = ResponseBodyMatchers().apply(bodyMatchers)
+    }
 
-    override fun anyIpAddress(): ServerDslProperty = response.anyIpAddress()
+    override fun anyAlphaUnicode(): ServerDslProperty = Response().anyAlphaUnicode()
 
-    override fun anyHostname(): ServerDslProperty = response.anyHostname()
+    override fun anyAlphaNumeric(): ServerDslProperty = Response().anyAlphaNumeric()
 
-    override fun anyEmail(): ServerDslProperty = response.anyEmail()
+    override fun anyNumber(): ServerDslProperty = Response().anyNumber()
 
-    override fun anyUrl(): ServerDslProperty = response.anyUrl()
+    override fun anyInteger(): ServerDslProperty = Response().anyInteger()
 
-    override fun anyHttpsUrl(): ServerDslProperty = response.anyHttpsUrl()
+    override fun anyPositiveInt(): ServerDslProperty = Response().anyPositiveInt()
 
-    override fun anyUuid(): ServerDslProperty = response.anyUuid()
+    override fun anyDouble(): ServerDslProperty = Response().anyDouble()
 
-    override fun anyDate(): ServerDslProperty = response.anyDate()
+    override fun anyHex(): ServerDslProperty = Response().anyHex()
 
-    override fun anyDateTime(): ServerDslProperty = response.anyDateTime()
+    override fun aBoolean(): ServerDslProperty = Response().aBoolean()
 
-    override fun anyTime(): ServerDslProperty = response.anyTime()
+    override fun anyIpAddress(): ServerDslProperty = Response().anyIpAddress()
 
-    override fun anyIso8601WithOffset(): ServerDslProperty = response.anyIso8601WithOffset()
+    override fun anyHostname(): ServerDslProperty = Response().anyHostname()
 
-    override fun anyNonBlankString(): ServerDslProperty = response.anyNonBlankString()
+    override fun anyEmail(): ServerDslProperty = Response().anyEmail()
 
-    override fun anyNonEmptyString(): ServerDslProperty = response.anyNonEmptyString()
+    override fun anyUrl(): ServerDslProperty = Response().anyUrl()
 
-    override fun anyOf(vararg values: String?): ServerDslProperty = response.anyOf(*values)
+    override fun anyHttpsUrl(): ServerDslProperty = Response().anyHttpsUrl()
+
+    override fun anyUuid(): ServerDslProperty = Response().anyUuid()
+
+    override fun anyDate(): ServerDslProperty = Response().anyDate()
+
+    override fun anyDateTime(): ServerDslProperty = Response().anyDateTime()
+
+    override fun anyTime(): ServerDslProperty = Response().anyTime()
+
+    override fun anyIso8601WithOffset(): ServerDslProperty = Response().anyIso8601WithOffset()
+
+    override fun anyNonBlankString(): ServerDslProperty = Response().anyNonBlankString()
+
+    override fun anyNonEmptyString(): ServerDslProperty = Response().anyNonEmptyString()
+
+    override fun anyOf(vararg values: String?): ServerDslProperty = Response().anyOf(*values)
+
+    internal fun get(): Response {
+        val response = Response()
+        status?.also { response.status = status}
+        delay?.also { response.delay = delay}
+        headers?.also { response.headers = headers }
+        cookies?.also { response.cookies = cookies }
+        body?.also { response.body = body }
+        response.async = async
+        bodyMatchers?.also { response.bodyMatchers = bodyMatchers }
+        return response
+    }
 }

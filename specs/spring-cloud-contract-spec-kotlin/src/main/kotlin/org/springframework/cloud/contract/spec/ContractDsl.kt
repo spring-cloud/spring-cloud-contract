@@ -17,9 +17,13 @@
 package org.springframework.cloud.contract.spec
 
 import org.springframework.cloud.contract.spec.internal.ContractDslMarker
+import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.InputDsl
+import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.spec.internal.OutputMessageDsl
+import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.RequestDsl
+import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.spec.internal.ResponseDsl
 
 /**
@@ -28,38 +32,48 @@ import org.springframework.cloud.contract.spec.internal.ResponseDsl
 @ContractDslMarker
 class ContractDsl {
 
-    val contract = Contract()
-
     companion object {
-        fun make(block: ContractDsl.() -> Unit): Contract = ContractDsl().apply(block).get()
+        fun contract(dsl: ContractDsl.() -> Unit): Contract = ContractDsl().apply(dsl).get()
     }
 
-    private fun get(): Contract = contract
+    var priority: Int? = null
+    var label: String? = null
+    var description: String? = null
+    var name: String? = null
+    var ignored: Boolean = false
+    var request: Request? = null
+    var response: Response? = null
+    var input: Input? = null
+    var outputMessage: OutputMessage? = null
 
-    infix fun priority(priority: Int) = contract.priority(priority)
-
-    infix fun label(label: String) = contract.label(label)
-
-    infix fun description(description: String) = contract.description(description)
-
-    infix fun name(name: String) = contract.name(name)
-
-    fun ignored() = contract.ignored()
-
-    fun request(block: RequestDsl.() -> Unit) {
-        contract.request = RequestDsl.make(block)
+    fun request(request: RequestDsl.() -> Unit) {
+        this.request = RequestDsl().apply(request).get()
     }
 
-    fun response(block: ResponseDsl.() -> Unit) {
-        contract.response = ResponseDsl.make(block)
+    fun response(response: ResponseDsl.() -> Unit) {
+        this.response = ResponseDsl().apply(response).get()
     }
 
-    fun input(block: InputDsl.() -> Unit) {
-        contract.input = InputDsl.make(block)
+    fun input(input: InputDsl.() -> Unit) {
+        this.input = InputDsl().apply(input).get()
     }
 
-    fun outputMessage(block: OutputMessageDsl.() -> Unit) {
-        contract.outputMessage = OutputMessageDsl.make(block)
+    fun outputMessage(outputMessage: OutputMessageDsl.() -> Unit) {
+        this.outputMessage = OutputMessageDsl().apply(outputMessage).get()
+    }
+
+    private fun get(): Contract {
+        val contract = Contract()
+        priority?.also { contract.priority = priority!! }
+        label?.also { contract.label = label!! }
+        description?.also { contract.description = description!! }
+        name?.also { contract.name = name!! }
+        contract.ignored = ignored
+        request?.also { contract.request = request!! }
+        response?.also { contract.response = response!! }
+        input?.also { contract.input = input!! }
+        outputMessage?.also { contract.outputMessage = outputMessage!! }
+        return contract
     }
 
 }

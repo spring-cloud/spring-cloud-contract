@@ -16,109 +16,171 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import org.springframework.cloud.contract.spec.toDslProperties
+
 /**
  * @author Tim Ysewyn
  */
 @ContractDslMarker
-class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
+open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
-    private val request = Request()
+    var method: DslProperty<Any>? = null
+    var url: Url? = null
+    var urlPath: UrlPath? = null
+    var headers: Headers? = null
+    var cookies: Cookies? = null
+    var body: Body? = null
+    var multipart: Multipart? = null
+    var bodyMatchers: BodyMatchers? = null
 
-    companion object {
-        fun make(block: RequestDsl.() -> Unit): Request = RequestDsl().apply(block).get()
+    fun method(method: String) {
+        this.method = DslProperty(method)
     }
 
-    private fun get(): Request = request
-
-    fun method(value: String) = request.method(value)
-
-    fun method(httpMethod: HttpMethods.HttpMethod) = request.method(httpMethod)
-
-    fun url(url: String) = request.url(url)
-
-    fun url(url: DslProperty<Any>) = request.url(url)
-
-    fun urlPath(path: String) = request.urlPath(path)
-
-    fun urlPath(path: DslProperty<Any>) = request.urlPath(path)
-
-    fun headers(block: Headers.() -> Unit) {
-        request.headers = Headers().apply(block)
+    fun method(method: HttpMethods.HttpMethod) {
+        this.method(method.toString())
     }
 
-    fun body(vararg pairs: Pair<String, Any>) = request.body(pairs.toMap())
+    fun url(url: String): Url {
+        return Url(url)
+    }
 
-    fun body(pair: Pair<String, Any>) = request.body(mapOf(pair))
+    fun url(url: DslProperty<Any>): Url {
+        return Url(url)
+    }
 
-    fun body(value: String) = request.body(value)
+    fun urlPath(url: String): UrlPath {
+        return UrlPath(url)
+    }
+
+    fun urlPath(url: DslProperty<Any>): UrlPath {
+        return UrlPath(url)
+    }
+
+    fun headers(headers: Headers.() -> Unit) {
+        this.headers = Headers().apply(headers)
+    }
+
+    fun cookies(cookies: Cookies.() -> Unit) {
+        this.cookies = Cookies().apply(cookies)
+    }
+
+    fun body(body: Map<String, Any>) {
+        this.body = Body(body.toDslProperties())
+    }
+
+    fun body(vararg body: Pair<String, Any>) {
+        this.body = Body(body.toMap().toDslProperties())
+    }
+
+    fun body(body: Pair<String, Any>) {
+        this.body = Body(mapOf(body).toDslProperties())
+    }
+
+    fun body(body: List<Any>) {
+        this.body = Body(body.toDslProperties())
+    }
+
+    fun body(body: DslProperty<Any>) {
+        this.body = Body(body)
+    }
+
+    fun multipart(multipart: Map<String, Any>) {
+        this.multipart = Multipart(multipart.toDslProperties())
+    }
+
+    fun multipart(multipart: List<Any>) {
+        this.multipart = Multipart(multipart.toDslProperties())
+    }
+
+    fun multipart(multipart: DslProperty<Any>) {
+        this.multipart = Multipart(multipart)
+    }
+
+    fun multipart(multipart: Any) {
+        this.multipart = Multipart(multipart)
+    }
 
     fun bodyMatchers(block: BodyMatchers.() -> Unit) {
-        request.bodyMatchers = BodyMatchers().apply(block)
+        bodyMatchers = BodyMatchers().apply(block)
     }
 
-    fun value(value: DslProperty<Any>): DslProperty<Any> = request.value(value)
+    fun value(value: DslProperty<Any>): DslProperty<Any> = Request().value(value)
 
-    fun v(value: DslProperty<Any>): DslProperty<Any> = request.value(value)
+    fun v(value: DslProperty<Any>): DslProperty<Any> = Request().value(value)
 
-    fun `$`(value: DslProperty<Any>): DslProperty<Any> = request.value(value)
+    fun `$`(value: DslProperty<Any>): DslProperty<Any> = Request().value(value)
 
-    fun value(value: Any): DslProperty<Any> = request.value(value)
+    fun value(value: Any): DslProperty<Any> = Request().value(value)
 
-    fun v(value: Any): DslProperty<Any> = request.value(value)
+    fun v(value: Any): DslProperty<Any> = Request().value(value)
 
-    fun `$`(value: Any): DslProperty<Any> = request.value(value)
+    fun `$`(value: Any): DslProperty<Any> = Request().value(value)
 
-    fun value(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = request.value(client, server)
+    fun value(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = Request().value(client, server)
 
-    fun v(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = request.value(client, server)
+    fun v(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = Request().value(client, server)
 
-    fun `$`(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = request.value(client, server)
+    fun `$`(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = Request().value(client, server)
 
-    fun value(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = request.value(client, server)
+    fun value(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = Request().value(client, server)
 
-    fun v(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = request.value(client, server)
+    fun v(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = Request().value(client, server)
 
-    fun `$`(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = request.value(client, server)
+    fun `$`(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = Request().value(client, server)
 
-    override fun anyAlphaUnicode(): ClientDslProperty = request.anyAlphaUnicode()
+    override fun anyAlphaUnicode(): ClientDslProperty = Request().anyAlphaUnicode()
 
-    override fun anyAlphaNumeric(): ClientDslProperty = request.anyAlphaNumeric()
+    override fun anyAlphaNumeric(): ClientDslProperty = Request().anyAlphaNumeric()
 
-    override fun anyNumber(): ClientDslProperty = request.anyNumber()
+    override fun anyNumber(): ClientDslProperty = Request().anyNumber()
 
-    override fun anyInteger(): ClientDslProperty = request.anyInteger()
+    override fun anyInteger(): ClientDslProperty = Request().anyInteger()
 
-    override fun anyPositiveInt(): ClientDslProperty = request.anyPositiveInt()
+    override fun anyPositiveInt(): ClientDslProperty = Request().anyPositiveInt()
 
-    override fun anyDouble(): ClientDslProperty = request.anyDouble()
+    override fun anyDouble(): ClientDslProperty = Request().anyDouble()
 
-    override fun anyHex(): ClientDslProperty = request.anyHex()
+    override fun anyHex(): ClientDslProperty = Request().anyHex()
 
-    override fun aBoolean(): ClientDslProperty = request.aBoolean()
+    override fun aBoolean(): ClientDslProperty = Request().aBoolean()
 
-    override fun anyIpAddress(): ClientDslProperty = request.anyIpAddress()
+    override fun anyIpAddress(): ClientDslProperty = Request().anyIpAddress()
 
-    override fun anyHostname(): ClientDslProperty = request.anyHostname()
+    override fun anyHostname(): ClientDslProperty = Request().anyHostname()
 
-    override fun anyEmail(): ClientDslProperty = request.anyEmail()
+    override fun anyEmail(): ClientDslProperty = Request().anyEmail()
 
-    override fun anyUrl(): ClientDslProperty = request.anyUrl()
+    override fun anyUrl(): ClientDslProperty = Request().anyUrl()
 
-    override fun anyHttpsUrl(): ClientDslProperty = request.anyHttpsUrl()
+    override fun anyHttpsUrl(): ClientDslProperty = Request().anyHttpsUrl()
 
-    override fun anyUuid(): ClientDslProperty = request.anyUuid()
+    override fun anyUuid(): ClientDslProperty = Request().anyUuid()
 
-    override fun anyDate(): ClientDslProperty = request.anyDate()
+    override fun anyDate(): ClientDslProperty = Request().anyDate()
 
-    override fun anyDateTime(): ClientDslProperty = request.anyDateTime()
+    override fun anyDateTime(): ClientDslProperty = Request().anyDateTime()
 
-    override fun anyTime(): ClientDslProperty = request.anyTime()
+    override fun anyTime(): ClientDslProperty = Request().anyTime()
 
-    override fun anyIso8601WithOffset(): ClientDslProperty = request.anyIso8601WithOffset()
+    override fun anyIso8601WithOffset(): ClientDslProperty = Request().anyIso8601WithOffset()
 
-    override fun anyNonBlankString(): ClientDslProperty = request.anyNonBlankString()
+    override fun anyNonBlankString(): ClientDslProperty = Request().anyNonBlankString()
 
-    override fun anyNonEmptyString(): ClientDslProperty = request.anyNonEmptyString()
+    override fun anyNonEmptyString(): ClientDslProperty = Request().anyNonEmptyString()
 
-    override fun anyOf(vararg values: String?): ClientDslProperty = request.anyOf(*values)
+    override fun anyOf(vararg values: String?): ClientDslProperty = Request().anyOf(*values)
+
+    internal fun get(): Request {
+        val request = Request()
+        method?.also { request.method = method!! }
+        url?.also { request.url = url!! }
+        urlPath?.also { request.urlPath = urlPath!! }
+        headers?.also { request.headers = headers!! }
+        cookies?.also { request.cookies = cookies!! }
+        body?.also { request.body = body!! }
+        multipart?.also { request.multipart = multipart!! }
+        bodyMatchers?.also { request.bodyMatchers = bodyMatchers!! }
+        return request
+    }
 }

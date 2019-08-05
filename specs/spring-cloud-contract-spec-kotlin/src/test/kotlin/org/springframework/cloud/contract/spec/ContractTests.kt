@@ -20,8 +20,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.springframework.cloud.contract.spec.Contract.make
-import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+import org.springframework.cloud.contract.spec.internal.HttpMethods
+import org.springframework.cloud.contract.spec.internal.HttpStatus
+import org.springframework.cloud.contract.spec.internal.RegexProperty
+import org.springframework.cloud.contract.spec.internal.Url
+import org.springframework.cloud.contract.spec.internal.UrlPath
 
 /**
  * Tests written based on the Java contract tests written in Groovy
@@ -32,10 +36,10 @@ class ContractTests {
 
 	@Test
 	fun `should work for http`() {
-		val contract = ContractDsl.make {
+		val contract = contract {
 			request {
-				url("/foo")
-				method("PUT")
+				url = Url("/foo")
+				method(HttpMethods.HttpMethod.PUT)
 				headers {
 					header("foo", "bar")
 				}
@@ -52,14 +56,38 @@ class ContractTests {
 
 		assertDoesNotThrow {
 			Contract.assertContract(contract)
+		}.also {
+			val request = contract.request
+			assertThat(request.url.clientValue).isEqualTo("/foo")
+			assertThat(request.url.serverValue).isEqualTo("/foo")
+			assertThat(request.method.clientValue).isEqualTo("PUT")
+			assertThat(request.method.serverValue).isEqualTo("PUT")
+			val headers = request.headers.entries
+			assertThat(headers).hasSize(1)
+			assertThat(headers.elementAt(0).name).isEqualTo("foo")
+			assertThat(headers.elementAt(0).clientValue).isEqualTo("bar")
+			assertThat(headers.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(request.body.clientValue).isEqualTo(mapOf("foo" to "bar"))
+			assertThat(request.body.serverValue).isEqualTo(mapOf("foo" to "bar"))
+		}.also {
+			val response = contract.response
+			assertThat(response.status.clientValue).isEqualTo(200)
+			assertThat(response.status.serverValue).isEqualTo(200)
+			val headers = response.headers.entries
+			assertThat(headers).hasSize(1)
+			assertThat(headers.elementAt(0).name).isEqualTo("foo2")
+			assertThat(headers.elementAt(0).clientValue).isEqualTo("bar")
+			assertThat(headers.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(response.body.clientValue).isEqualTo(mapOf("foo2" to "bar"))
+			assertThat(response.body.serverValue).isEqualTo(mapOf("foo2" to "bar"))
 		}
 	}
 
 	@Test
 	fun `should fail when no method is present`() {
-		val contract = ContractDsl.make {
+		val contract = contract {
 			request {
-				url("/foo")
+				url = Url("/foo")
 			}
 			response {
 				status(200)
@@ -75,7 +103,7 @@ class ContractTests {
 
 	@Test
 	fun `should fail when no url is present`() {
-		val contract = ContractDsl.make {
+		val contract = contract {
 			request {
 				method("GET")
 			}
@@ -93,9 +121,9 @@ class ContractTests {
 
 	@Test
 	fun `should fail when no status is present`() {
-		val contract = ContractDsl.make {
+		val contract = contract {
 			request {
-				url("/foo")
+				url = Url("/foo")
 				method("GET")
 			}
 			response {
@@ -111,7 +139,7 @@ class ContractTests {
 
 	@Test
 	fun `should work for messaging`() {
-		val contract = ContractDsl.make {
+		val contract = contract {
 			input {
 				messageFrom("input")
 				messageBody("foo" to "bar")
@@ -130,12 +158,34 @@ class ContractTests {
 
 		assertDoesNotThrow {
 			Contract.assertContract(contract)
+		}.also {
+			val input = contract.input
+			assertThat(input.messageFrom.clientValue).isEqualTo("input")
+			assertThat(input.messageFrom.serverValue).isEqualTo("input")
+			assertThat(input.messageBody.clientValue).isEqualTo(mapOf("foo" to "bar"))
+			assertThat(input.messageBody.serverValue).isEqualTo(mapOf("foo" to "bar"))
+			val headers = input.messageHeaders.entries
+			assertThat(headers).hasSize(1)
+			assertThat(headers.elementAt(0).name).isEqualTo("foo")
+			assertThat(headers.elementAt(0).clientValue).isEqualTo("bar")
+			assertThat(headers.elementAt(0).serverValue).isEqualTo("bar")
+		}.also {
+			val output = contract.outputMessage
+			assertThat(output.sentTo.clientValue).isEqualTo("output")
+			assertThat(output.sentTo.serverValue).isEqualTo("output")
+			assertThat(output.body.clientValue).isEqualTo("foo2" to "bar")
+			assertThat(output.body.serverValue).isEqualTo("foo2" to "bar")
+			val headers = output.headers.entries
+			assertThat(headers).hasSize(1)
+			assertThat(headers.elementAt(0).name).isEqualTo("foo2")
+			assertThat(headers.elementAt(0).clientValue).isEqualTo("bar")
+			assertThat(headers.elementAt(0).serverValue).isEqualTo("bar")
 		}
 	}
 
 	@Test
 	fun `should work for messaging with pattern properties`() {
-		val contract = ContractDsl.make {
+		val contract = contract {
 			input {
 				messageFrom("input")
 				messageBody("foo" to anyNonBlankString())
@@ -159,15 +209,15 @@ class ContractTests {
 
 	@Test
 	fun `should set a description`() {
-		val contract = ContractDsl.make {
-			description("""
+		val contract = contract {
+			description = """
 given:
 	An input
 when:
 	Sth happens
 then:
 	Output
-""")
+"""
 		}
 
 		assertDoesNotThrow {
@@ -186,8 +236,8 @@ then:
 
 	@Test
 	fun `should set a name`() {
-		val contract = ContractDsl.make {
-			name("some_special_name")
+		val contract = contract {
+			name = "some_special_name"
 		}
 
 		assertDoesNotThrow {
@@ -199,8 +249,8 @@ then:
 
 	@Test
 	fun `should mark a contract ignored`() {
-		val contract = ContractDsl.make {
-			ignored()
+		val contract = contract {
+			ignored = true
 		}
 
 		assertDoesNotThrow {
@@ -212,46 +262,46 @@ then:
 
 	@Test
 	fun `should make equals and hashcode work properly for URL`() {
-		val a: Contract = ContractDsl.make {
+		val a: Contract = contract {
 			request {
 				method("GET")
-				url("/1")
+				url = Url("/1")
 			}
 		}
-		val b: Contract = ContractDsl.make {
+		val b: Contract = contract {
 			request {
 				method("GET")
-				url("/1")
+				url = Url("/1")
 			}
 		}
 
 		assertDoesNotThrow {
 			Contract.assertContract(a)
 			Contract.assertContract(b)
-		}. also {
+		}.also {
 			assertThat(a).isEqualTo(b)
 		}
 	}
 
 	@Test
 	fun `should make equals and hashcode work properly for URL with consumer producer`() {
-		val a: Contract = ContractDsl.make {
+		val a: Contract = contract {
 			request {
 				method("GET")
-				url(value(c("/1"), p("/1")))
+				url = Url(value(c("/1"), p("/1")))
 			}
 		}
-		val b: Contract = ContractDsl.make {
+		val b: Contract = contract {
 			request {
 				method("GET")
-				url(value(c("/1"), p("/1")))
+				url = Url(value(c("/1"), p("/1")))
 			}
 		}
 
 		assertDoesNotThrow {
 			Contract.assertContract(a)
 			Contract.assertContract(b)
-		}. also {
+		}.also {
 			assertThat(a).isEqualTo(b)
 		}
 	}
@@ -259,35 +309,35 @@ then:
 	@Test
 	fun `should return true when comparing two equal contracts with interpolated string`() {
 		val index = 1
-		val a: Contract = ContractDsl.make {
+		val a: Contract = contract {
 			request {
-				method(PUT())
+				method(HttpMethods.HttpMethod.PUT)
 				headers {
 					contentType(applicationJson())
 				}
-				url( "/$index")
+				url = Url("/$index")
 			}
 			response {
-				status(OK())
+				status(HttpStatus.OK())
 			}
 		}
-		val b: Contract = ContractDsl.make {
+		val b: Contract = contract {
 			request {
-				method(PUT())
+				method(HttpMethods.HttpMethod.PUT)
 				headers {
 					contentType(applicationJson())
 				}
-				url("/$index")
+				url = Url("/$index")
 			}
 			response {
-				status(OK())
+				status(HttpStatus.OK())
 			}
 		}
 
 		assertDoesNotThrow {
 			Contract.assertContract(a)
 			Contract.assertContract(b)
-		}. also {
+		}.also {
 			assertThat(a).isEqualTo(b)
 		}
 	}
@@ -295,46 +345,46 @@ then:
 	@Test
 	fun `should return false when comparing two unequal contracts with interpolated string`() {
 		var index = 1
-		val a: Contract = ContractDsl.make {
+		val a: Contract = contract {
 			request {
-				method(PUT())
+				method(HttpMethods.HttpMethod.PUT)
 				headers {
 					contentType(applicationJson())
 				}
-				url( "/$index")
+				url = Url("/$index")
 			}
 			response {
-				status(OK())
+				status(HttpStatus.OK())
 			}
 		}
 		index = 2
-		val b: Contract = ContractDsl.make {
+		val b: Contract = contract {
 			request {
-				method(PUT())
+				method(HttpMethods.HttpMethod.PUT)
 				headers {
 					contentType(applicationJson())
 				}
-				url("/$index")
+				url = Url("/$index")
 			}
 			response {
-				status(OK())
+				status(HttpStatus.OK())
 			}
 		}
 
 		assertDoesNotThrow {
 			Contract.assertContract(a)
 			Contract.assertContract(b)
-		}. also {
+		}.also {
 			assertThat(a).isNotEqualTo(b)
 		}
 	}
 
 	@Test
 	fun `should return true when comparing two equal complex contracts`() {
-		val a: Contract = ContractDsl.make {
+		val a: Contract = contract {
 			request {
-				method(GET())
-				url("/path")
+				method(HttpMethods.HttpMethod.GET)
+				url = Url("/path")
 				headers {
 					header("Accept", value(
 							consumer(regex("text/.*")),
@@ -347,8 +397,8 @@ then:
 				}
 			}
 			response {
-				status(OK())
-				body("id" to ("value" to "132"),
+				status(HttpStatus.OK())
+				body("id" to mapOf("value" to "132"),
 						"surname" to "Kowalsky",
 						"name" to "Jan",
 						"created" to "2014-02-02 12:23:43"
@@ -358,10 +408,10 @@ then:
 				}
 			}
 		}
-		val b: Contract = ContractDsl.make {
+		val b: Contract = contract {
 			request {
-				method(GET())
-				url("/path")
+				method(HttpMethods.HttpMethod.GET)
+				url = Url("/path")
 				headers {
 					header("Accept", value(
 							consumer(regex("text/.*")),
@@ -374,8 +424,8 @@ then:
 				}
 			}
 			response {
-				status(OK())
-				body("id" to ("value" to "132"),
+				status(HttpStatus.OK())
+				body("id" to mapOf("value" to "132"),
 						"surname" to "Kowalsky",
 						"name" to "Jan",
 						"created" to "2014-02-02 12:23:43"
@@ -388,25 +438,60 @@ then:
 		assertDoesNotThrow {
 			Contract.assertContract(a)
 			Contract.assertContract(b)
-		}. also {
+		}.also {
 			assertThat(a).isEqualTo(b)
+		}. also {
+			val request = a.request
+			assertThat(request.url.clientValue).isEqualTo("/path")
+			assertThat(request.url.serverValue).isEqualTo("/path")
+			assertThat(request.method.clientValue).isEqualTo("GET")
+			assertThat(request.method.serverValue).isEqualTo("GET")
+			val headers = request.headers.entries
+			assertThat(headers).hasSize(2)
+			assertThat(headers.elementAt(0).name).isEqualTo("Accept")
+			assertThat(headers.elementAt(0).clientValue).isInstanceOf(RegexProperty::class.java)
+			assertThat((headers.elementAt(0).clientValue as RegexProperty).pattern()).isEqualTo("text/.*")
+			assertThat(headers.elementAt(0).serverValue).isEqualTo("text/plain")
+			assertThat(headers.elementAt(1).name).isEqualTo("X-Custom-Header")
+			assertThat(headers.elementAt(1).clientValue).isInstanceOf(RegexProperty::class.java)
+			assertThat((headers.elementAt(1).clientValue as RegexProperty).pattern()).isEqualTo("^.*2134.*\$")
+			assertThat(headers.elementAt(1).serverValue).isEqualTo("121345")
+		}.also {
+			val response = a.response
+			assertThat(response.status.clientValue).isEqualTo(200)
+			assertThat(response.status.serverValue).isEqualTo(200)
+			val headers = response.headers.entries
+			assertThat(headers).hasSize(1)
+			assertThat(headers.elementAt(0).name).isEqualTo("Content-Type")
+			assertThat(headers.elementAt(0).clientValue).isEqualTo("text/plain")
+			assertThat(headers.elementAt(0).serverValue).isEqualTo("text/plain")
+			assertThat(response.body.clientValue).isEqualTo(mapOf("id" to mapOf("value" to "132"),
+					"surname" to "Kowalsky",
+					"name" to "Jan",
+					"created" to "2014-02-02 12:23:43"
+			))
+			assertThat(response.body.serverValue).isEqualTo(mapOf("id" to mapOf("value" to "132"),
+					"surname" to "Kowalsky",
+					"name" to "Jan",
+					"created" to "2014-02-02 12:23:43"
+			))
 		}
 	}
 
 	@Test
 	fun `should support bodyMatchers`() {
-		val contract = ContractDsl.make {
+		val contract = contract {
 			request {
-				method(GET())
-				url("/path")
-				body("id" to ("value" to "132"))
+				method(HttpMethods.HttpMethod.GET)
+				url = Url("/path")
+				body("id" to mapOf("value" to "132"))
 				bodyMatchers {
 					jsonPath("$.id.value", byRegex(anInteger()))
 				}
 			}
 			response {
-				status(OK())
-				body("id" to ("value" to "132"),
+				status(HttpStatus.OK())
+				body("id" to mapOf("value" to "132"),
 						"surname" to "Kowalsky",
 						"name" to "Jan",
 						"created" to "2014-02-02 12:23:43"
@@ -422,9 +507,111 @@ then:
 
 		assertDoesNotThrow {
 			Contract.assertContract(contract)
-		}. also {
-			assertThat(contract.request.bodyMatchers.hasMatchers()).isTrue()
-			assertThat(contract.response.bodyMatchers.hasMatchers()).isTrue()
+		}.also {
+			val request = contract.request
+			assertThat(request.url.clientValue).isEqualTo("/path")
+			assertThat(request.url.serverValue).isEqualTo("/path")
+			assertThat(request.method.clientValue).isEqualTo("GET")
+			assertThat(request.method.serverValue).isEqualTo("GET")
+			assertThat(request.bodyMatchers.hasMatchers()).isTrue()
+		}.also {
+			val response = contract.response
+			assertThat(response.status.clientValue).isEqualTo(200)
+			assertThat(response.status.serverValue).isEqualTo(200)
+			assertThat(response.bodyMatchers.hasMatchers()).isTrue()
+		}
+	}
+
+	@Test
+	fun `should support query parameters for url`() {
+		val contract = contract {
+			request {
+				method(HttpMethods.HttpMethod.GET)
+				url = Url("/path") withQueryParameters {
+					parameter("foo", "bar")
+				}
+			}
+			response {
+				status(HttpStatus.OK())
+			}
+		}
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			val request = contract.request
+			assertThat(request.url.clientValue).isEqualTo("/path")
+			val queryParameters = request.url.queryParameters.parameters
+			assertThat(queryParameters.elementAt(0).name).isEqualTo("foo")
+			assertThat(queryParameters.elementAt(0).clientValue).isEqualTo("bar")
+			assertThat(queryParameters.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(request.url.serverValue).isEqualTo("/path")
+			assertThat(request.method.clientValue).isEqualTo("GET")
+			assertThat(request.method.serverValue).isEqualTo("GET")
+		}.also {
+			val response = contract.response
+			assertThat(response.status.clientValue).isEqualTo(200)
+			assertThat(response.status.serverValue).isEqualTo(200)
+		}
+	}
+
+	@Test
+	fun `should support query parameters for url path`() {
+		val contract = contract {
+			request {
+				method(HttpMethods.HttpMethod.GET)
+				urlPath = UrlPath("/path") withQueryParameters {
+					parameter("foo", "bar")
+				}
+			}
+			response {
+				status(HttpStatus.OK())
+			}
+		}
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			val request = contract.request
+			assertThat(request.urlPath.clientValue).isEqualTo("/path")
+			assertThat(request.urlPath.serverValue).isEqualTo("/path")
+			val queryParameters = request.urlPath.queryParameters.parameters
+			assertThat(queryParameters.elementAt(0).name).isEqualTo("foo")
+			assertThat(queryParameters.elementAt(0).clientValue).isEqualTo("bar")
+			assertThat(queryParameters.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(request.method.clientValue).isEqualTo("GET")
+			assertThat(request.method.serverValue).isEqualTo("GET")
+		}.also {
+			val response = contract.response
+			assertThat(response.status.clientValue).isEqualTo(200)
+			assertThat(response.status.serverValue).isEqualTo(200)
+		}
+	}
+
+	@Test
+	fun `should work with list as body`() {
+		val contract = contract {
+			request {
+				method(HttpMethods.HttpMethod.PUT)
+				url = Url("/path")
+				body(listOf("foo", "bar"))
+			}
+			response {
+				status(HttpStatus.OK())
+				body(listOf("foo2", "bar2"))
+			}
+		}
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			val request = contract.request
+			assertThat(request.body.clientValue).isEqualTo(listOf("foo", "bar"))
+			assertThat(request.body.serverValue).isEqualTo(listOf("foo", "bar"))
+		}.also {
+			val response = contract.response
+			assertThat(response.body.clientValue).isEqualTo(listOf("foo2", "bar2"))
+			assertThat(response.body.serverValue).isEqualTo(listOf("foo2", "bar2"))
 		}
 	}
 }

@@ -22,67 +22,81 @@ package org.springframework.cloud.contract.spec.internal
 @ContractDslMarker
 class OutputMessageDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
-    private val outputMessage = OutputMessage()
+    var sentTo: DslProperty<String>? = null
+    var headers: Headers? = null
+    var body: DslProperty<Any>? = null
+    var assertThat: ExecutionProperty? = null
+    var bodyMatchers: ResponseBodyMatchers? = null
 
-    companion object {
-        fun make(block: OutputMessageDsl.() -> Unit): OutputMessage = OutputMessageDsl().apply(block).get()
+    fun sentTo(sentTo: String) {
+        this.sentTo = DslProperty(sentTo)
     }
 
-    private fun get(): OutputMessage = outputMessage
-
-    fun sentTo(value: String) = outputMessage.sentTo(value)
-
-    fun sentTo(value: DslProperty<Any>) = outputMessage.sentTo(value)
-
-    fun body(vararg pairs: Pair<String, Any>) = outputMessage.body(pairs.toMap())
-
-    fun body(pair: Pair<String, Any>) = outputMessage.body(mapOf(pair))
-
-    fun body(value: String) = outputMessage.body(value)
-
-    fun headers(block: Headers.() -> Unit) {
-        outputMessage.headers = Headers().apply(block)
+    fun headers(headers: Headers.() -> Unit) {
+        this.headers = Headers().apply(headers)
     }
 
-    override fun anyAlphaUnicode(): ServerDslProperty = outputMessage.anyAlphaUnicode()
+    fun body(body: Any) {
+        this.body = DslProperty(body)
+    }
 
-    override fun anyAlphaNumeric(): ServerDslProperty = outputMessage.anyAlphaNumeric()
+    fun assertThat(assertThat: String) {
+        this.assertThat = ExecutionProperty(assertThat)
+    }
 
-    override fun anyNumber(): ServerDslProperty = outputMessage.anyNumber()
+    fun bodyMatchers(bodyMatchers: ResponseBodyMatchers.() -> Unit) {
+        this.bodyMatchers = ResponseBodyMatchers().apply(bodyMatchers)
+    }
 
-    override fun anyInteger(): ServerDslProperty = outputMessage.anyInteger()
+    override fun anyAlphaUnicode(): ServerDslProperty = OutputMessage().anyAlphaUnicode()
 
-    override fun anyPositiveInt(): ServerDslProperty = outputMessage.anyPositiveInt()
+    override fun anyAlphaNumeric(): ServerDslProperty = OutputMessage().anyAlphaNumeric()
 
-    override fun anyDouble(): ServerDslProperty = outputMessage.anyDouble()
+    override fun anyNumber(): ServerDslProperty = OutputMessage().anyNumber()
 
-    override fun anyHex(): ServerDslProperty = outputMessage.anyHex()
+    override fun anyInteger(): ServerDslProperty = OutputMessage().anyInteger()
 
-    override fun aBoolean(): ServerDslProperty = outputMessage.aBoolean()
+    override fun anyPositiveInt(): ServerDslProperty = OutputMessage().anyPositiveInt()
 
-    override fun anyIpAddress(): ServerDslProperty = outputMessage.anyIpAddress()
+    override fun anyDouble(): ServerDslProperty = OutputMessage().anyDouble()
 
-    override fun anyHostname(): ServerDslProperty = outputMessage.anyHostname()
+    override fun anyHex(): ServerDslProperty = OutputMessage().anyHex()
 
-    override fun anyEmail(): ServerDslProperty = outputMessage.anyEmail()
+    override fun aBoolean(): ServerDslProperty = OutputMessage().aBoolean()
 
-    override fun anyUrl(): ServerDslProperty = outputMessage.anyUrl()
+    override fun anyIpAddress(): ServerDslProperty = OutputMessage().anyIpAddress()
 
-    override fun anyHttpsUrl(): ServerDslProperty = outputMessage.anyHttpsUrl()
+    override fun anyHostname(): ServerDslProperty = OutputMessage().anyHostname()
 
-    override fun anyUuid(): ServerDslProperty = outputMessage.anyUuid()
+    override fun anyEmail(): ServerDslProperty = OutputMessage().anyEmail()
 
-    override fun anyDate(): ServerDslProperty = outputMessage.anyDate()
+    override fun anyUrl(): ServerDslProperty = OutputMessage().anyUrl()
 
-    override fun anyDateTime(): ServerDslProperty = outputMessage.anyDateTime()
+    override fun anyHttpsUrl(): ServerDslProperty = OutputMessage().anyHttpsUrl()
 
-    override fun anyTime(): ServerDslProperty = outputMessage.anyTime()
+    override fun anyUuid(): ServerDslProperty = OutputMessage().anyUuid()
 
-    override fun anyIso8601WithOffset(): ServerDslProperty = outputMessage.anyIso8601WithOffset()
+    override fun anyDate(): ServerDslProperty = OutputMessage().anyDate()
 
-    override fun anyNonBlankString(): ServerDslProperty = outputMessage.anyNonBlankString()
+    override fun anyDateTime(): ServerDslProperty = OutputMessage().anyDateTime()
 
-    override fun anyNonEmptyString(): ServerDslProperty = outputMessage.anyNonEmptyString()
+    override fun anyTime(): ServerDslProperty = OutputMessage().anyTime()
 
-    override fun anyOf(vararg values: String?): ServerDslProperty = outputMessage.anyOf(*values)
+    override fun anyIso8601WithOffset(): ServerDslProperty = OutputMessage().anyIso8601WithOffset()
+
+    override fun anyNonBlankString(): ServerDslProperty = OutputMessage().anyNonBlankString()
+
+    override fun anyNonEmptyString(): ServerDslProperty = OutputMessage().anyNonEmptyString()
+
+    override fun anyOf(vararg values: String?): ServerDslProperty = OutputMessage().anyOf(*values)
+
+    internal fun get(): OutputMessage {
+        val outputMessage = OutputMessage()
+        sentTo?.also { outputMessage.sentTo = sentTo }
+        body?.also { outputMessage.body = body }
+        headers?.also { outputMessage.headers = headers }
+        assertThat?.also { outputMessage.assertThat = assertThat }
+        bodyMatchers?.also { outputMessage.bodyMatchers = bodyMatchers }
+        return outputMessage
+    }
 }
