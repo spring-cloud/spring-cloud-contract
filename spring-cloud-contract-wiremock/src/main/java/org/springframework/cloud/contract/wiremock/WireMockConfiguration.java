@@ -119,6 +119,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
+		if (isRunning()) {
+			updateCurrentServer();
+		}
 	}
 
 	private void logRegisteredMappings() {
@@ -130,6 +133,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	void resetMappings() {
 		this.server.resetAll();
+		WireMock.reset();
 		logRegisteredMappings();
 	}
 
