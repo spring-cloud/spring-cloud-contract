@@ -29,6 +29,9 @@ import java.util.regex.Pattern;
 /**
  * Represents a set of headers of a request / response or a message.
  *
+ * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 public class Headers {
@@ -40,8 +43,6 @@ public class Headers {
 			header) -> ContractUtils.convertTestSideRecursively(header);
 
 	private MediaTypes mediaTypes = new MediaTypes();
-
-	private HttpHeaders httpHeaders = new HttpHeaders();
 
 	private MessagingHeaders messagingHeaders = new MessagingHeaders();
 
@@ -74,7 +75,7 @@ public class Headers {
 	}
 
 	public void contentType(String contentType) {
-		header(httpHeaders.contentType(), matching(contentType));
+		header(HttpHeaders.contentType(), matching(contentType));
 	}
 
 	public void messagingContentType(String contentType) {
@@ -151,14 +152,6 @@ public class Headers {
 		this.mediaTypes = mediaTypes;
 	}
 
-	public HttpHeaders getHttpHeaders() {
-		return httpHeaders;
-	}
-
-	public void setHttpHeaders(HttpHeaders httpHeaders) {
-		this.httpHeaders = httpHeaders;
-	}
-
 	public MessagingHeaders getMessagingHeaders() {
 		return messagingHeaders;
 	}
@@ -180,243 +173,243 @@ public class Headers {
 	}
 
 	public String accept() {
-		return httpHeaders.accept();
+		return HttpHeaders.accept();
 	}
 
 	public String acceptCharset() {
-		return httpHeaders.acceptCharset();
+		return HttpHeaders.acceptCharset();
 	}
 
 	public String acceptEncoding() {
-		return httpHeaders.acceptEncoding();
+		return HttpHeaders.acceptEncoding();
 	}
 
 	public String acceptLanguage() {
-		return httpHeaders.acceptLanguage();
+		return HttpHeaders.acceptLanguage();
 	}
 
 	public String acceptRanges() {
-		return httpHeaders.acceptRanges();
+		return HttpHeaders.acceptRanges();
 	}
 
 	public String accessControlAllowCredentials() {
-		return httpHeaders.accessControlAllowCredentials();
+		return HttpHeaders.accessControlAllowCredentials();
 	}
 
 	public String accessControlAllowHeaders() {
-		return httpHeaders.accessControlAllowHeaders();
+		return HttpHeaders.accessControlAllowHeaders();
 	}
 
 	public String accessControlAllowMethods() {
-		return httpHeaders.accessControlAllowMethods();
+		return HttpHeaders.accessControlAllowMethods();
 	}
 
 	public String accessControlAllowOrigin() {
-		return httpHeaders.accessControlAllowOrigin();
+		return HttpHeaders.accessControlAllowOrigin();
 	}
 
 	public String accessControlExposeHeaders() {
-		return httpHeaders.accessControlExposeHeaders();
+		return HttpHeaders.accessControlExposeHeaders();
 	}
 
 	public String accessControlMaxAge() {
-		return httpHeaders.accessControlMaxAge();
+		return HttpHeaders.accessControlMaxAge();
 	}
 
 	public String accessControlRequestHeaders() {
-		return httpHeaders.accessControlRequestHeaders();
+		return HttpHeaders.accessControlRequestHeaders();
 	}
 
 	public String accessControlRequestMethod() {
-		return httpHeaders.accessControlRequestMethod();
+		return HttpHeaders.accessControlRequestMethod();
 	}
 
 	public String age() {
-		return httpHeaders.age();
+		return HttpHeaders.age();
 	}
 
 	public String allow() {
-		return httpHeaders.allow();
+		return HttpHeaders.allow();
 	}
 
 	public String authorization() {
-		return httpHeaders.authorization();
+		return HttpHeaders.authorization();
 	}
 
 	public String cacheControl() {
-		return httpHeaders.cacheControl();
+		return HttpHeaders.cacheControl();
 	}
 
 	public String connection() {
-		return httpHeaders.connection();
+		return HttpHeaders.connection();
 	}
 
 	public String contentEncoding() {
-		return httpHeaders.contentEncoding();
+		return HttpHeaders.contentEncoding();
 	}
 
 	public String contentDisposition() {
-		return httpHeaders.contentDisposition();
+		return HttpHeaders.contentDisposition();
 	}
 
 	public String contentLanguage() {
-		return httpHeaders.contentLanguage();
+		return HttpHeaders.contentLanguage();
 	}
 
 	public String contentLength() {
-		return httpHeaders.contentLength();
+		return HttpHeaders.contentLength();
 	}
 
 	public String contentLocation() {
-		return httpHeaders.contentLocation();
+		return HttpHeaders.contentLocation();
 	}
 
 	public String contentRange() {
-		return httpHeaders.contentRange();
+		return HttpHeaders.contentRange();
 	}
 
 	public String contentType() {
-		return httpHeaders.contentType();
+		return HttpHeaders.contentType();
 	}
 
 	public String cookie() {
-		return httpHeaders.cookie();
+		return HttpHeaders.cookie();
 	}
 
 	public String date() {
-		return httpHeaders.date();
+		return HttpHeaders.date();
 	}
 
 	public String etag() {
-		return httpHeaders.etag();
+		return HttpHeaders.etag();
 	}
 
 	public String expect() {
-		return httpHeaders.expect();
+		return HttpHeaders.expect();
 	}
 
 	public String expires() {
-		return httpHeaders.expires();
+		return HttpHeaders.expires();
 	}
 
 	public String from() {
-		return httpHeaders.from();
+		return HttpHeaders.from();
 	}
 
 	public String host() {
-		return httpHeaders.host();
+		return HttpHeaders.host();
 	}
 
 	public String ifMatch() {
-		return httpHeaders.ifMatch();
+		return HttpHeaders.ifMatch();
 	}
 
 	public String ifModifiedSince() {
-		return httpHeaders.ifModifiedSince();
+		return HttpHeaders.ifModifiedSince();
 	}
 
 	public String ifNoneMatch() {
-		return httpHeaders.ifNoneMatch();
+		return HttpHeaders.ifNoneMatch();
 	}
 
 	public String ifRange() {
-		return httpHeaders.ifRange();
+		return HttpHeaders.ifRange();
 	}
 
 	public String ifUnmodifiedSince() {
-		return httpHeaders.ifUnmodifiedSince();
+		return HttpHeaders.ifUnmodifiedSince();
 	}
 
 	public String lastModified() {
-		return httpHeaders.lastModified();
+		return HttpHeaders.lastModified();
 	}
 
 	public String link() {
-		return httpHeaders.link();
+		return HttpHeaders.link();
 	}
 
 	public String location() {
-		return httpHeaders.location();
+		return HttpHeaders.location();
 	}
 
 	public String max_forwards() {
-		return httpHeaders.max_forwards();
+		return HttpHeaders.max_forwards();
 	}
 
 	public String origin() {
-		return httpHeaders.origin();
+		return HttpHeaders.origin();
 	}
 
 	public String pragma() {
-		return httpHeaders.pragma();
+		return HttpHeaders.pragma();
 	}
 
 	public String proxyAuthenticate() {
-		return httpHeaders.proxyAuthenticate();
+		return HttpHeaders.proxyAuthenticate();
 	}
 
 	public String proxyAuthorization() {
-		return httpHeaders.proxyAuthorization();
+		return HttpHeaders.proxyAuthorization();
 	}
 
 	public String range() {
-		return httpHeaders.range();
+		return HttpHeaders.range();
 	}
 
 	public String referer() {
-		return httpHeaders.referer();
+		return HttpHeaders.referer();
 	}
 
 	public String retryAfter() {
-		return httpHeaders.retryAfter();
+		return HttpHeaders.retryAfter();
 	}
 
 	public String server() {
-		return httpHeaders.server();
+		return HttpHeaders.server();
 	}
 
 	public String setCookie() {
-		return httpHeaders.setCookie();
+		return HttpHeaders.setCookie();
 	}
 
 	public String setCookie2() {
-		return httpHeaders.setCookie2();
+		return HttpHeaders.setCookie2();
 	}
 
 	public String te() {
-		return httpHeaders.te();
+		return HttpHeaders.te();
 	}
 
 	public String trailer() {
-		return httpHeaders.trailer();
+		return HttpHeaders.trailer();
 	}
 
 	public String transferEncoding() {
-		return httpHeaders.transferEncoding();
+		return HttpHeaders.transferEncoding();
 	}
 
 	public String upgrade() {
-		return httpHeaders.upgrade();
+		return HttpHeaders.upgrade();
 	}
 
 	public String user_agent() {
-		return httpHeaders.user_agent();
+		return HttpHeaders.user_agent();
 	}
 
 	public String vary() {
-		return httpHeaders.vary();
+		return HttpHeaders.vary();
 	}
 
 	public String via() {
-		return httpHeaders.via();
+		return HttpHeaders.via();
 	}
 
 	public String warning() {
-		return httpHeaders.warning();
+		return HttpHeaders.warning();
 	}
 
 	public String wwwAuthenticate() {
-		return httpHeaders.wwwAuthenticate();
+		return HttpHeaders.wwwAuthenticate();
 	}
 
 	public String allValue() {

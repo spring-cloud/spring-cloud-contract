@@ -20,39 +20,68 @@ package org.springframework.cloud.contract.spec.internal;
  * Contains Http Methods.
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.2
  */
-public class HttpMethods {
+public final class HttpMethods {
 
-	public HttpMethod GET() {
+	public HttpMethods() {
+		System.out.println("WARNING: HttpMethods shouldn't be instantiated");
+	}
+
+	/**
+	 * @return {@code GET}.
+	 */
+	public static HttpMethod GET() {
 		return HttpMethod.GET;
 	}
 
-	public HttpMethod HEAD() {
+	/**
+	 * @return {@code HEAD}.
+	 */
+	public static HttpMethod HEAD() {
 		return HttpMethod.HEAD;
 	}
 
-	public HttpMethod POST() {
+	/**
+	 * @return {@code POST}.
+	 */
+	public static HttpMethod POST() {
 		return HttpMethod.POST;
 	}
 
-	public HttpMethod PUT() {
+	/**
+	 * @return {@code PUT}.
+	 */
+	public static HttpMethod PUT() {
 		return HttpMethod.PUT;
 	}
 
-	public HttpMethod PATCH() {
+	/**
+	 * @return {@code PATCH}.
+	 */
+	public static HttpMethod PATCH() {
 		return HttpMethod.PATCH;
 	}
 
-	public HttpMethod DELETE() {
+	/**
+	 * @return {@code DELETE}.
+	 */
+	public static HttpMethod DELETE() {
 		return HttpMethod.DELETE;
 	}
 
-	public HttpMethod OPTIONS() {
+	/**
+	 * @return {@code OPTIONS}.
+	 */
+	public static HttpMethod OPTIONS() {
 		return HttpMethod.OPTIONS;
 	}
 
-	public HttpMethod TRACE() {
+	/**
+	 * @return {@code TRACE}.
+	 */
+	public static HttpMethod TRACE() {
 		return HttpMethod.TRACE;
 	}
 

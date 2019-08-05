@@ -56,8 +56,6 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 	private ServerPatternValueDslProperty property = new ServerPatternValueDslProperty();
 
-	private HttpStatus httpStatus = new HttpStatus();
-
 	public Response() {
 	}
 
@@ -251,14 +249,6 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 		this.property = property;
 	}
 
-	public HttpStatus getHttpStatus() {
-		return httpStatus;
-	}
-
-	public void setHttpStatus(HttpStatus httpStatus) {
-		this.httpStatus = httpStatus;
-	}
-
 	public DslProperty getStatus() {
 		return status;
 	}
@@ -425,278 +415,278 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	}
 
 	public int CONTINUE() {
-		return httpStatus.CONTINUE();
+		return HttpStatus.CONTINUE();
 	}
 
 	public int SWITCHING_PROTOCOLS() {
-		return httpStatus.SWITCHING_PROTOCOLS();
+		return HttpStatus.SWITCHING_PROTOCOLS();
 	}
 
 	public int PROCESSING() {
-		return httpStatus.PROCESSING();
+		return HttpStatus.PROCESSING();
 	}
 
 	public int CHECKPOINT() {
-		return httpStatus.CHECKPOINT();
+		return HttpStatus.CHECKPOINT();
 	}
 
 	public int OK() {
-		return httpStatus.OK();
+		return HttpStatus.OK();
 	}
 
 	public int CREATED() {
-		return httpStatus.CREATED();
+		return HttpStatus.CREATED();
 	}
 
 	public int ACCEPTED() {
-		return httpStatus.ACCEPTED();
+		return HttpStatus.ACCEPTED();
 	}
 
 	public int NON_AUTHORITATIVE_INFORMATION() {
-		return httpStatus.NON_AUTHORITATIVE_INFORMATION();
+		return HttpStatus.NON_AUTHORITATIVE_INFORMATION();
 	}
 
 	public int NO_CONTENT() {
-		return httpStatus.NO_CONTENT();
+		return HttpStatus.NO_CONTENT();
 	}
 
 	public int RESET_CONTENT() {
-		return httpStatus.RESET_CONTENT();
+		return HttpStatus.RESET_CONTENT();
 	}
 
 	public int PARTIAL_CONTENT() {
-		return httpStatus.PARTIAL_CONTENT();
+		return HttpStatus.PARTIAL_CONTENT();
 	}
 
 	public int MULTI_STATUS() {
-		return httpStatus.MULTI_STATUS();
+		return HttpStatus.MULTI_STATUS();
 	}
 
 	public int ALREADY_REPORTED() {
-		return httpStatus.ALREADY_REPORTED();
+		return HttpStatus.ALREADY_REPORTED();
 	}
 
 	public int IM_USED() {
-		return httpStatus.IM_USED();
+		return HttpStatus.IM_USED();
 	}
 
 	public int MULTIPLE_CHOICES() {
-		return httpStatus.MULTIPLE_CHOICES();
+		return HttpStatus.MULTIPLE_CHOICES();
 	}
 
 	public int MOVED_PERMANENTLY() {
-		return httpStatus.MOVED_PERMANENTLY();
+		return HttpStatus.MOVED_PERMANENTLY();
 	}
 
 	public int FOUND() {
-		return httpStatus.FOUND();
+		return HttpStatus.FOUND();
 	}
 
 	@Deprecated
 	public int MOVED_TEMPORARILY() {
-		return httpStatus.MOVED_TEMPORARILY();
+		return HttpStatus.MOVED_TEMPORARILY();
 	}
 
 	public int SEE_OTHER() {
-		return httpStatus.SEE_OTHER();
+		return HttpStatus.SEE_OTHER();
 	}
 
 	public int NOT_MODIFIED() {
-		return httpStatus.NOT_MODIFIED();
+		return HttpStatus.NOT_MODIFIED();
 	}
 
 	@Deprecated
 	public int USE_PROXY() {
-		return httpStatus.USE_PROXY();
+		return HttpStatus.USE_PROXY();
 	}
 
 	public int TEMPORARY_REDIRECT() {
-		return httpStatus.TEMPORARY_REDIRECT();
+		return HttpStatus.TEMPORARY_REDIRECT();
 	}
 
 	public int PERMANENT_REDIRECT() {
-		return httpStatus.PERMANENT_REDIRECT();
+		return HttpStatus.PERMANENT_REDIRECT();
 	}
 
 	public int BAD_REQUEST() {
-		return httpStatus.BAD_REQUEST();
+		return HttpStatus.BAD_REQUEST();
 	}
 
 	public int UNAUTHORIZED() {
-		return httpStatus.UNAUTHORIZED();
+		return HttpStatus.UNAUTHORIZED();
 	}
 
 	public int PAYMENT_REQUIRED() {
-		return httpStatus.PAYMENT_REQUIRED();
+		return HttpStatus.PAYMENT_REQUIRED();
 	}
 
 	public int FORBIDDEN() {
-		return httpStatus.FORBIDDEN();
+		return HttpStatus.FORBIDDEN();
 	}
 
 	public int NOT_FOUND() {
-		return httpStatus.NOT_FOUND();
+		return HttpStatus.NOT_FOUND();
 	}
 
 	public int METHOD_NOT_ALLOWED() {
-		return httpStatus.METHOD_NOT_ALLOWED();
+		return HttpStatus.METHOD_NOT_ALLOWED();
 	}
 
 	public int NOT_ACCEPTABLE() {
-		return httpStatus.NOT_ACCEPTABLE();
+		return HttpStatus.NOT_ACCEPTABLE();
 	}
 
 	public int PROXY_AUTHENTICATION_REQUIRED() {
-		return httpStatus.PROXY_AUTHENTICATION_REQUIRED();
+		return HttpStatus.PROXY_AUTHENTICATION_REQUIRED();
 	}
 
 	public int REQUEST_TIMEOUT() {
-		return httpStatus.REQUEST_TIMEOUT();
+		return HttpStatus.REQUEST_TIMEOUT();
 	}
 
 	public int CONFLICT() {
-		return httpStatus.CONFLICT();
+		return HttpStatus.CONFLICT();
 	}
 
 	public int GONE() {
-		return httpStatus.GONE();
+		return HttpStatus.GONE();
 	}
 
 	public int LENGTH_REQUIRED() {
-		return httpStatus.LENGTH_REQUIRED();
+		return HttpStatus.LENGTH_REQUIRED();
 	}
 
 	public int PRECONDITION_FAILED() {
-		return httpStatus.PRECONDITION_FAILED();
+		return HttpStatus.PRECONDITION_FAILED();
 	}
 
 	public int PAYLOAD_TOO_LARGE() {
-		return httpStatus.PAYLOAD_TOO_LARGE();
+		return HttpStatus.PAYLOAD_TOO_LARGE();
 	}
 
 	@Deprecated
 	public int REQUEST_ENTITY_TOO_LARGE() {
-		return httpStatus.REQUEST_ENTITY_TOO_LARGE();
+		return HttpStatus.REQUEST_ENTITY_TOO_LARGE();
 	}
 
 	public int URI_TOO_LONG() {
-		return httpStatus.URI_TOO_LONG();
+		return HttpStatus.URI_TOO_LONG();
 	}
 
 	@Deprecated
 	public int REQUEST_URI_TOO_LONG() {
-		return httpStatus.REQUEST_URI_TOO_LONG();
+		return HttpStatus.REQUEST_URI_TOO_LONG();
 	}
 
 	public int UNSUPPORTED_MEDIA_TYPE() {
-		return httpStatus.UNSUPPORTED_MEDIA_TYPE();
+		return HttpStatus.UNSUPPORTED_MEDIA_TYPE();
 	}
 
 	public int REQUESTED_RANGE_NOT_SATISFIABLE() {
-		return httpStatus.REQUESTED_RANGE_NOT_SATISFIABLE();
+		return HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE();
 	}
 
 	public int EXPECTATION_FAILED() {
-		return httpStatus.EXPECTATION_FAILED();
+		return HttpStatus.EXPECTATION_FAILED();
 	}
 
 	public int I_AM_A_TEAPOT() {
-		return httpStatus.I_AM_A_TEAPOT();
+		return HttpStatus.I_AM_A_TEAPOT();
 	}
 
 	@Deprecated
 	public int INSUFFICIENT_SPACE_ON_RESOURCE() {
-		return httpStatus.INSUFFICIENT_SPACE_ON_RESOURCE();
+		return HttpStatus.INSUFFICIENT_SPACE_ON_RESOURCE();
 	}
 
 	@Deprecated
 	public int METHOD_FAILURE() {
-		return httpStatus.METHOD_FAILURE();
+		return HttpStatus.METHOD_FAILURE();
 	}
 
 	@Deprecated
 	public int DESTINATION_LOCKED() {
-		return httpStatus.DESTINATION_LOCKED();
+		return HttpStatus.DESTINATION_LOCKED();
 	}
 
 	public int UNPROCESSABLE_ENTITY() {
-		return httpStatus.UNPROCESSABLE_ENTITY();
+		return HttpStatus.UNPROCESSABLE_ENTITY();
 	}
 
 	public int LOCKED() {
-		return httpStatus.LOCKED();
+		return HttpStatus.LOCKED();
 	}
 
 	public int FAILED_DEPENDENCY() {
-		return httpStatus.FAILED_DEPENDENCY();
+		return HttpStatus.FAILED_DEPENDENCY();
 	}
 
 	public int UPGRADE_REQUIRED() {
-		return httpStatus.UPGRADE_REQUIRED();
+		return HttpStatus.UPGRADE_REQUIRED();
 	}
 
 	public int PRECONDITION_REQUIRED() {
-		return httpStatus.PRECONDITION_REQUIRED();
+		return HttpStatus.PRECONDITION_REQUIRED();
 	}
 
 	public int TOO_MANY_REQUESTS() {
-		return httpStatus.TOO_MANY_REQUESTS();
+		return HttpStatus.TOO_MANY_REQUESTS();
 	}
 
 	public int REQUEST_HEADER_FIELDS_TOO_LARGE() {
-		return httpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE();
+		return HttpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE();
 	}
 
 	public int UNAVAILABLE_FOR_LEGAL_REASONS() {
-		return httpStatus.UNAVAILABLE_FOR_LEGAL_REASONS();
+		return HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS();
 	}
 
 	public int INTERNAL_SERVER_ERROR() {
-		return httpStatus.INTERNAL_SERVER_ERROR();
+		return HttpStatus.INTERNAL_SERVER_ERROR();
 	}
 
 	public int NOT_IMPLEMENTED() {
-		return httpStatus.NOT_IMPLEMENTED();
+		return HttpStatus.NOT_IMPLEMENTED();
 	}
 
 	public int BAD_GATEWAY() {
-		return httpStatus.BAD_GATEWAY();
+		return HttpStatus.BAD_GATEWAY();
 	}
 
 	public int SERVICE_UNAVAILABLE() {
-		return httpStatus.SERVICE_UNAVAILABLE();
+		return HttpStatus.SERVICE_UNAVAILABLE();
 	}
 
 	public int GATEWAY_TIMEOUT() {
-		return httpStatus.GATEWAY_TIMEOUT();
+		return HttpStatus.GATEWAY_TIMEOUT();
 	}
 
 	public int HTTP_VERSION_NOT_SUPPORTED() {
-		return httpStatus.HTTP_VERSION_NOT_SUPPORTED();
+		return HttpStatus.HTTP_VERSION_NOT_SUPPORTED();
 	}
 
 	public int VARIANT_ALSO_NEGOTIATES() {
-		return httpStatus.VARIANT_ALSO_NEGOTIATES();
+		return HttpStatus.VARIANT_ALSO_NEGOTIATES();
 	}
 
 	public int INSUFFICIENT_STORAGE() {
-		return httpStatus.INSUFFICIENT_STORAGE();
+		return HttpStatus.INSUFFICIENT_STORAGE();
 	}
 
 	public int LOOP_DETECTED() {
-		return httpStatus.LOOP_DETECTED();
+		return HttpStatus.LOOP_DETECTED();
 	}
 
 	public int BANDWIDTH_LIMIT_EXCEEDED() {
-		return httpStatus.BANDWIDTH_LIMIT_EXCEEDED();
+		return HttpStatus.BANDWIDTH_LIMIT_EXCEEDED();
 	}
 
 	public int NOT_EXTENDED() {
-		return httpStatus.NOT_EXTENDED();
+		return HttpStatus.NOT_EXTENDED();
 	}
 
 	public int NETWORK_AUTHENTICATION_REQUIRED() {
-		return httpStatus.NETWORK_AUTHENTICATION_REQUIRED();
+		return HttpStatus.NETWORK_AUTHENTICATION_REQUIRED();
 	}
 
 	@Override

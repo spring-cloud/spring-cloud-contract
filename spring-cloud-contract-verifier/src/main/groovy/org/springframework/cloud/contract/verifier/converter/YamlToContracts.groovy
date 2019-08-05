@@ -43,6 +43,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.eval
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
+ * @author Tim Ysewyn
  */
 @PackageScope
 class YamlToContracts {
@@ -721,38 +722,37 @@ class YamlToContracts {
 	}
 
 	protected Pattern predefinedToPattern(YamlContract.PredefinedRegex predefinedRegex) {
-		RegexPatterns patterns = new RegexPatterns()
 		switch (predefinedRegex) {
 		case YamlContract.PredefinedRegex.only_alpha_unicode:
-			return patterns.onlyAlphaUnicode().pattern
+			return RegexPatterns.onlyAlphaUnicode().pattern
 		case YamlContract.PredefinedRegex.number:
-			return patterns.number().pattern
+			return RegexPatterns.number().pattern
 		case YamlContract.PredefinedRegex.any_double:
-			return patterns.aDouble().pattern
+			return RegexPatterns.aDouble().pattern
 		case YamlContract.PredefinedRegex.any_boolean:
-			return patterns.anyBoolean().pattern
+			return RegexPatterns.anyBoolean().pattern
 		case YamlContract.PredefinedRegex.ip_address:
-			return patterns.ipAddress().pattern
+			return RegexPatterns.ipAddress().pattern
 		case YamlContract.PredefinedRegex.hostname:
-			return patterns.hostname().pattern
+			return RegexPatterns.hostname().pattern
 		case YamlContract.PredefinedRegex.email:
-			return patterns.email().pattern
+			return RegexPatterns.email().pattern
 		case YamlContract.PredefinedRegex.url:
-			return patterns.url().pattern
+			return RegexPatterns.url().pattern
 		case YamlContract.PredefinedRegex.uuid:
-			return patterns.uuid().pattern
+			return RegexPatterns.uuid().pattern
 		case YamlContract.PredefinedRegex.iso_date:
-			return patterns.isoDate().pattern
+			return RegexPatterns.isoDate().pattern
 		case YamlContract.PredefinedRegex.iso_date_time:
-			return patterns.isoDateTime().pattern
+			return RegexPatterns.isoDateTime().pattern
 		case YamlContract.PredefinedRegex.iso_time:
-			return patterns.isoTime().pattern
+			return RegexPatterns.isoTime().pattern
 		case YamlContract.PredefinedRegex.iso_8601_with_offset:
-			return patterns.iso8601WithOffset().pattern
+			return RegexPatterns.iso8601WithOffset().pattern
 		case YamlContract.PredefinedRegex.non_empty:
-			return patterns.nonEmpty().pattern
+			return RegexPatterns.nonEmpty().pattern
 		case YamlContract.PredefinedRegex.non_blank:
-			return patterns.nonBlank().pattern
+			return RegexPatterns.nonBlank().pattern
 		default:
 			throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex + "] is unsupported. Use on of "
 				+ YamlContract.PredefinedRegex.

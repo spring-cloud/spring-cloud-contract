@@ -50,8 +50,6 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 @PackageScope
 class MessagingSCContractCreator {
 
-	RegexPatterns regexPatterns = new RegexPatterns()
-
 	private static final String FULL_BODY = '$'
 	private static final String DESTINATION_KEY = "sentTo"
 	private static final List<String> NON_HEADER_META_DATA = [DESTINATION_KEY]
@@ -124,15 +122,15 @@ class MessagingSCContractCreator {
 														switch (rule.numberType) {
 														case NumberTypeMatcher.NumberType.NUMBER:
 															jsonPath(key,
-																	byRegex(regexPatterns.number()))
+																	byRegex(RegexPatterns.number()))
 															break
 														case NumberTypeMatcher.NumberType.INTEGER:
 															jsonPath(key,
-																	byRegex(regexPatterns.anInteger()))
+																	byRegex(RegexPatterns.anInteger()))
 															break
 														case NumberTypeMatcher.NumberType.DECIMAL:
 															jsonPath(key,
-																	byRegex(regexPatterns.aDouble()))
+																	byRegex(RegexPatterns.aDouble()))
 															break
 														default:
 															throw new RuntimeException("Unsupported number type!")
