@@ -444,7 +444,7 @@ $(addBlockSwitches);
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant</em></p>
 </div>
 <div class="paragraph">
-<p>{spring-cloud-version}</p>
+<p>2.2.0.BUILD-SNAPSHOT</p>
 </div>
 </div>
 </div>
@@ -13843,43 +13843,57 @@ own implementation of the <code>StubGenerator</code> interface. The following co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter;
 
-import groovy.transform.CompileStatic
+import java.util.Map;
 
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 
 /**
  * Converts contracts into their stub representation.
  *
  * @since 1.1.0
  */
-@CompileStatic
-interface StubGenerator {
+public interface StubGenerator {
 
 	/**
-	 * @return {@code true} if the converter can handle the file to convert it into a stub.
+	 * @param fileName - file name
+	 * @return {@code true} if the converter can handle the file to convert it into a
+	 * stub.
 	 */
-	boolean canHandleFileName(String fileName)
+	default boolean canHandleFileName(String fileName) {
+		return fileName.endsWith(fileExtension());
+	}
 
 	/**
-	 * @return the collection of converted contracts into stubs. One contract can
-	 * result in multiple stubs.
+	 * @param rootName - root name of the contract
+	 * @param content - metadata of the contract
+	 * @return the collection of converted contracts into stubs. One contract can result
+	 * in multiple stubs.
 	 */
-	Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content)
+	Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content);
 
 	/**
-	 * @return the name of the converted stub file. If you have multiple contracts
-	 * in a single file then a prefix will be added to the generated file. If you
-	 * provide the {@link Contract#name} field then that field will override the
-	 * generated file name.
+	 * @param inputFileName - name of the input file
+	 * @return the name of the converted stub file. If you have multiple contracts in a
+	 * single file then a prefix will be added to the generated file. If you provide the
+	 * {@link Contract#name} field then that field will override the generated file name.
 	 *
-	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be
-	 * converted by the implementation to {@code foo.json}. The recursive file
-	 * converter will create two files {@code 0_foo.json} and {@code 1_foo.json}
+	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be converted
+	 * by the implementation to {@code foo.json}. The recursive file converter will create
+	 * two files {@code 0_foo.json} and {@code 1_foo.json}
 	 */
-	String generateOutputFileNameForInput(String inputFileName)
+	String generateOutputFileNameForInput(String inputFileName);
+
+	/**
+	 * Describes the file extension that this stub generator can handle.
+	 * @return string describing the file extension
+	 */
+	default String fileExtension() {
+		return ".json";
+	}
+
 }</code></pre>
 </div>
 </div>
