@@ -148,7 +148,7 @@ public @interface AutoConfigureStubRunner {
 	 * @return when enabled, this flag will tell stub runner to throw an exception when no
 	 * stubs / contracts were found.
 	 */
-	boolean failOnNoStubs() default false;
+	boolean failOnNoStubs() default true;
 
 	/**
 	 * Configuration for an HTTP server stub.

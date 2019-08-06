@@ -45,7 +45,8 @@ import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "convert", requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
+@Mojo(name = "convert", requiresProject = false,
+		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
 
 	static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
@@ -60,7 +61,8 @@ public class ConvertMojo extends AbstractMojo {
 	 * Directory containing Spring Cloud Contract Verifier contracts written using the
 	 * GroovyDSL.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
+			defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
 
 	/**
@@ -183,7 +185,7 @@ public class ConvertMojo extends AbstractMojo {
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
-	@Parameter(property = "failOnNoStubs", defaultValue = "false")
+	@Parameter(property = "failOnNoStubs", defaultValue = "true")
 	private boolean failOnNoStubs;
 
 	@Override

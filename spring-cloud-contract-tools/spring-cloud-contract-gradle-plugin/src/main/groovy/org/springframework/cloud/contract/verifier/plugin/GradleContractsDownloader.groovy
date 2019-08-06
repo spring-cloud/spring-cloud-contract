@@ -91,7 +91,7 @@ class GradleContractsDownloader {
 		if (extension.contractRepository.proxyPort) {
 			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
 		}
-		options = options.withFailOnNoStubs(extension.contractDependency.failOnNoStubs)
+		options = options.withFailOnNoStubs(extension.contractRepository.failOnNoStubs)
 		return options.build()
 	}
 

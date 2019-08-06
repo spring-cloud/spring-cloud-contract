@@ -46,19 +46,23 @@ import org.springframework.cloud.contract.verifier.config.TestMode;
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
+		requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
 
-	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
+			defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
 
-	@Parameter(defaultValue = "${project.build.directory}/generated-test-sources/contracts")
+	@Parameter(
+			defaultValue = "${project.build.directory}/generated-test-sources/contracts")
 	private File generatedTestSourcesDir;
 
-	@Parameter(defaultValue = "${project.build.directory}/generated-test-resources/contracts")
+	@Parameter(
+			defaultValue = "${project.build.directory}/generated-test-resources/contracts")
 	private File generatedTestResourcesDir;
 
 	@Parameter
@@ -107,7 +111,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 	 * Incubating feature. You can check the size of JSON arrays. If not turned on
 	 * explicitly will be disabled.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.assert.size", defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.assert.size",
+			defaultValue = "false")
 	private boolean assertJsonSize;
 
 	/**
@@ -228,7 +233,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
-	@Parameter(property = "failOnNoStubs", defaultValue = "false")
+	@Parameter(property = "failOnNoStubs", defaultValue = "true")
 	private boolean failOnNoStubs;
 
 	@Override

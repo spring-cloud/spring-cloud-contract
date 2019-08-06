@@ -71,7 +71,7 @@ public class StubRunnerOptionsBuilder {
 
 	private boolean generateStubs;
 
-	private boolean failOnNoStubs;
+	private boolean failOnNoStubs = true;
 
 	private Map<String, String> properties = new HashMap<>();
 

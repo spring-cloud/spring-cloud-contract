@@ -267,7 +267,8 @@ class ContractVerifierExtension {
 						password: this.contractRepository.password,
 						proxyPort: this.contractRepository.proxyPort,
 						proxyHost: this.contractRepository.proxyHost,
-						cacheDownloadedContracts: this.contractRepository.cacheDownloadedContracts
+						cacheDownloadedContracts: this.contractRepository.cacheDownloadedContracts,
+						failOnNoStubs: this.contractRepository.failOnNoStubs
 				),
 				contractDependency: new Dependency(
 						groupId: this.contractDependency.groupId,
@@ -294,12 +295,6 @@ class ContractVerifierExtension {
 		String classifier
 		String version
 		String stringNotation
-
-		/**
-		 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
-		 * contracts were found.
-		 */
-		boolean failOnNoStubs;
 
 		void groupId(String groupId) {
 			this.groupId = groupId
@@ -372,6 +367,12 @@ class ContractVerifierExtension {
 		 */
 		boolean cacheDownloadedContracts = true
 
+		/**
+		 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+		 * contracts were found.
+		 */
+		boolean failOnNoStubs = true
+
 		void repositoryUrl(String repositoryUrl) {
 			this.repositoryUrl = repositoryUrl
 		}
@@ -394,6 +395,10 @@ class ContractVerifierExtension {
 
 		void cacheDownloadedContracts(boolean cacheDownloadedContracts) {
 			this.cacheDownloadedContracts = cacheDownloadedContracts
+		}
+
+		void failOnNoStubs(boolean failOnNoStubs) {
+			this.failOnNoStubs = failOnNoStubs
 		}
 	}
 }

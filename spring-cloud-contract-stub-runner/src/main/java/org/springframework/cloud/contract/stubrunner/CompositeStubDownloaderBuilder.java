@@ -73,8 +73,9 @@ class CompositeStubDownloader implements StubDownloader {
 		}
 		log.warn("No matching stubs or contracts were found");
 		if (this.stubRunnerOptions.isFailOnNoStubs()) {
-			throw new IllegalStateException(
-					"No stubs or contracts were found and the switch to fail on no stubs was set.");
+			throw new IllegalArgumentException("No stubs or contracts were found for ["
+					+ stubConfiguration.toColonSeparatedDependencyNotation()
+					+ "] and the switch to fail on no stubs was set.");
 		}
 		return null;
 	}

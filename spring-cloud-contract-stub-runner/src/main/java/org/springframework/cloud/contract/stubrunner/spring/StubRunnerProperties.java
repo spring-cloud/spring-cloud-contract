@@ -118,7 +118,7 @@ public class StubRunnerProperties {
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
-	private boolean failOnNoStubs;
+	private boolean failOnNoStubs = true;
 
 	/**
 	 * Map of properties that can be passed to custom

@@ -63,7 +63,8 @@ public class CompositeStubDownloaderBuilderTests {
 		EmptyStubDownloaderBuilder emptyStubDownloaderBuilder = new EmptyStubDownloaderBuilder();
 		CompositeStubDownloaderBuilder builder = new CompositeStubDownloaderBuilder(
 				Collections.singletonList(emptyStubDownloaderBuilder));
-		StubDownloader downloader = builder.build(new StubRunnerOptionsBuilder().build());
+		StubDownloader downloader = builder
+				.build(new StubRunnerOptionsBuilder().withFailOnNoStubs(false).build());
 
 		Map.Entry<StubConfiguration, File> entry = downloader
 				.downloadAndUnpackStubJar(new StubConfiguration("a:b:v"));
@@ -81,7 +82,7 @@ public class CompositeStubDownloaderBuilderTests {
 
 		BDDAssertions.thenThrownBy(
 				() -> downloader.downloadAndUnpackStubJar(new StubConfiguration("a:b:v")))
-				.isInstanceOf(IllegalStateException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 }
