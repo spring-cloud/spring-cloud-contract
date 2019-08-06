@@ -50,7 +50,8 @@ public class StubDownloaderBuilderProviderTests {
 						.singletonList(StubDownloaderBuilderProviderTests.this.two);
 			}
 		};
-		StubRunnerOptions options = new StubRunnerOptionsBuilder().build();
+		StubRunnerOptions options = new StubRunnerOptionsBuilder()
+				.withFailOnNoStubs(false).build();
 
 		provider.get(options, this.three)
 				.downloadAndUnpackStubJar(new StubConfiguration("a:b:c"));

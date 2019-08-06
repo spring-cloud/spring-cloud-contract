@@ -181,6 +181,13 @@ public class ConvertMojo extends AbstractMojo {
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	@Parameter(property = "failOnNoStubs", defaultValue = "true")
+	private boolean failOnNoStubs;
+
 	@Override
 	public void execute() throws MojoExecutionException {
 		if (this.skip) {
@@ -271,8 +278,9 @@ public class ConvertMojo extends AbstractMojo {
 				getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
-						this.contractsDirectory);
+				this.contractsProperties, this.failOnNoStubs)
+						.downloadAndUnpackContractsIfRequired(config,
+								this.contractsDirectory);
 	}
 
 	private File stubsOutputDir(String rootPath) {

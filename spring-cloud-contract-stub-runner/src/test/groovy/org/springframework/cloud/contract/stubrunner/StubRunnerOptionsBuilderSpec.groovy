@@ -231,7 +231,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		given:
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), StubRunnerProperties.StubsMode.LOCAL,
 					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, [foo: "bar"], Foo))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, false, [foo: "bar"], Foo))
 			builder.withStubs("foo:bar:baz")
 		when:
 			StubRunnerOptions options = builder.build()
@@ -252,6 +252,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.mappingsOutputFolder == "folder"
 			options.deleteStubsAfterTest == false
 			options.generateStubs == true
+			options.failOnNoStubs == false
 			options.properties == [foo: "bar"]
 			options.httpServerStubConfigurer == Foo
 	}
@@ -261,7 +262,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"),
 					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, [:], Foo))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, true, [:], Foo))
 			builder.withStubs("foo:bar:baz")
 		when:
 			String options = builder.build().toString()
@@ -293,6 +294,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			System.setProperty("stubrunner.properties.bar.bar", "foo")
 			System.setProperty("stubrunner.delete-stubs-after-test", "false")
 			System.setProperty("stubrunner.generate-stubs", "true")
+			System.setProperty("stubrunner.fail-on-no-stubs", "false")
 			System.setProperty("stubrunner.http-server-stub-configurer", "org.springframework.cloud.contract.stubrunner.Foo")
 		when:
 			StubRunnerOptions options = StubRunnerOptions.fromSystemProps()
@@ -310,6 +312,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.stubsPerConsumer == true
 			options.deleteStubsAfterTest == false
 			options.generateStubs == true
+			options.failOnNoStubs == false
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
 			options.properties == ["foo-bar": "bar", "foo-baz": "baz", "bar.bar": "foo"]

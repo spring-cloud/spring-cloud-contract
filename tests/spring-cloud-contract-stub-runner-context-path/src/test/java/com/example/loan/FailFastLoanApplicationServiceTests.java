@@ -49,8 +49,7 @@ public class FailFastLoanApplicationServiceTests {
 		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
 		assertThat(throwable.getCause().getCause())
 				.isInstanceOf(IllegalArgumentException.class).hasMessageContaining(
-						"For groupId [org.springframework.cloud.contract.verifier.stubs] artifactId [should-not-be-found] "
-								+ "and classifier [stubs] the version was not resolved! The following exceptions took place");
+						"No stubs or contracts were found for [org.springframework.cloud.contract.verifier.stubs:should-not-be-found:+:stubs] and the switch to fail on no stubs was set.");
 	}
 
 	@Test

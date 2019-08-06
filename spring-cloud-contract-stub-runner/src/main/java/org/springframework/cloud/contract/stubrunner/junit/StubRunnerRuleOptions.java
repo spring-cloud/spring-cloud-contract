@@ -153,6 +153,13 @@ interface StubRunnerRuleOptions {
 	StubRunnerRule withGenerateStubs(boolean generateStubs);
 
 	/**
+	 * @param failOnNoStubs when enabled, this flag will tell stub runner to throw an
+	 * exception when no stubs / contracts were found.
+	 * @return the rule
+	 */
+	StubRunnerRule failOnNoStubs(boolean failOnNoStubs);
+
+	/**
 	 * @param properties Map of properties that can be passed to custom
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 * @return the rule
