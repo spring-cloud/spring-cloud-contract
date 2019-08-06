@@ -10,10 +10,10 @@ question. That is why we introduced Spring Cloud Contract Stub Runner. It can
 automatically download and run the stubs for you.
 
 [[features-stub-runner-snapshot-versions]]
-=== Snapshot versions
+=== Snapshot Versions
 
-Add the additional snapshot repository to your `build.gradle` file to use snapshot
-versions, which are automatically uploaded after every successful build:
+You can add the additional snapshot repository to your `build.gradle` file to use snapshot
+versions, which are automatically uploaded after every successful build, as follows:
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -32,11 +32,13 @@ include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 [[features-stub-runner-publishing-stubs-as-jars]]
 === Publishing Stubs as JARs
 
-The easiest approach would be to centralize the way stubs are kept. For example, you can
-keep them as jars in a Maven repository.
+The easiest approach to publishing stubs as jars is to centralize the way stubs are kept.
+For example, you can keep them as jars in a Maven repository.
 
 TIP: For both Maven and Gradle, the setup comes ready to work. However, you can customize
 it if you want to.
+
+The following example shows how to publish stubs as jars:
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -62,47 +64,52 @@ include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/f
 [[features-stub-runner-core]]
 === Stub Runner Core
 
-Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of
-https://martinfowler.com/articles/consumerDrivenContracts.html[Consumer Driven Contracts].
+The stub runner core runs stubs for service collaborators. Treating stubs as contracts of
+services lets you use stub-runner as an implementation of
+https://martinfowler.com/articles/consumerDrivenContracts.html[Consumer-driven Contracts].
 
-Stub Runner allows you to automatically download the stubs of the provided dependencies (or pick those from the classpath), start WireMock servers for them and feed them with proper stub definitions.
-For messaging, special stub routes are defined.
+Stub Runner lets you automatically download the stubs of the provided dependencies (or
+pick those from the classpath), start WireMock servers for them, and feed them with proper
+stub definitions. For messaging, special stub routes are defined.
 
 [[features-stub-runner-retrieving]]
 ==== Retrieving stubs
 
-You can pick the following options of acquiring stubs
+You can pick from the following options of acquiring stubs:
 
-- Aether based solution that downloads JARs with stubs from Artifactory / Nexus
-- Classpath scanning solution that searches classpath via pattern to retrieve stubs
-- Write your own implementation of the `org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder` for full customization
+- Aether-based solution that downloads JARs with stubs from Artifactory or Nexus
+- Classpath-scanning solution that searches the classpath with a pattern to retrieve stubs
+- Writing your own implementation of the `org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder` for full customization
 
 The latter example is described in the <<advanced.adoc#customization-custom-stub-runner, Custom Stub Runner>> section.
 
 [[features-stub-runner-downloading-stub]]
-===== Stub downloading
+===== Downloading Stubs
 
-You can control the stub downloading via the `stubsMode` switch. It picks value from the
-`StubRunnerProperties.StubsMode` enum. You can use the following options
+You can control the downloading of stubs with the `stubsMode` switch. It picks value from the
+`StubRunnerProperties.StubsMode` enumeration. You can use the following options:
 
-- `StubRunnerProperties.StubsMode.CLASSPATH` (default value) - will pick stubs from the classpath
-- `StubRunnerProperties.StubsMode.LOCAL` - will pick stubs from a local storage (e.g. `.m2`)
-- `StubRunnerProperties.StubsMode.REMOTE` - will pick stubs from a remote location
+- `StubRunnerProperties.StubsMode.CLASSPATH` (default value): Picks stubs from the classpath
+- `StubRunnerProperties.StubsMode.LOCAL`: Picks stubs from a local storage (for example, `.m2`)
+- `StubRunnerProperties.StubsMode.REMOTE`: Picks stubs from a remote location
 
-Example:
+The following example picks stubs from a local location:
 
+====
 [source,java]
 ----
 @AutoConfigureStubRunner(repositoryRoot="https://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 ----
+====
 
 [[features-stub-runner-classpath-scanning]]
 ===== Classpath scanning
 
 If you set the `stubsMode` property to `StubRunnerProperties.StubsMode.CLASSPATH`
-(or set nothing since `CLASSPATH` is the default value) then classpath will get scanned.
-Let's look at the following example:
+(or set nothing since `CLASSPATH` is the default value), the classpath is scanned.
+Consider the following example:
 
+====
 [source,java]
 ----
 @AutoConfigureStubRunner(ids = {
@@ -110,8 +117,9 @@ Let's look at the following example:
     "com.example.foo:bar:1.0.0:superstubs:8096"
 })
 ----
+====
 
-If you've added the dependencies to your classpath
+You can add the dependencies to your classpath, as follows:
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -131,8 +139,8 @@ If you've added the dependencies to your classpath
     </exclusions>
 </dependency>
 <dependency>
-    <groupId>com.example.foo</groupId>
-    <artifactId>bar</artifactId>
+    <groupId>com.example.thing1</groupId>
+    <artifactId>thing2</artifactId>
     <classifier>superstubs</classifier>
     <version>1.0.0</version>
     <scope>test</scope>
@@ -151,29 +159,31 @@ If you've added the dependencies to your classpath
 testCompile("com.example:beer-api-producer-restdocs:0.0.1-SNAPSHOT:stubs") {
     transitive = false
 }
-testCompile("com.example.foo:bar:1.0.0:superstubs") {
+testCompile("com.example.thing1:thing2:1.0.0:superstubs") {
     transitive = false
 }
 ----
 ====
 
-Then the following locations on your classpath will get scanned. For `com.example:beer-api-producer-restdocs`
+Then the specified locations on your classpath get scanned. For `com.example:beer-api-producer-restdocs`,
+the following locations are scanned:
 
 - /META-INF/com.example/beer-api-producer-restdocs/**/*.*
 - /contracts/com.example/beer-api-producer-restdocs/**/*.*
 - /mappings/com.example/beer-api-producer-restdocs/**/*.*
 
-and `com.example.foo:bar`
+For `com.example.thing1:thing2`, the following locations are scanned:
 
-- /META-INF/com.example.foo/bar/**/*.*
-- /contracts/com.example.foo/bar/**/*.*
-- /mappings/com.example.foo/bar/**/*.*
+- /META-INF/com.example.thing1/thing2/**/*.*
+- /contracts/com.example.thing1/thing2/**/*.*
+- /mappings/com.example.thing1/thing2/**/*.*
 
-TIP: As you can see you have to explicitly provide the group and artifact ids when packaging the
+TIP: You have to explicitly provide the group and artifact IDs when you package the
 producer stubs.
 
-The producer would setup the contracts like this:
+To achieve proper stub packaging, the producer would set up the contracts as follows:
 
+====
 [source,bash]
 ----
 └── src
@@ -186,13 +196,13 @@ The producer would setup the contracts like this:
                             └── contract3.groovy
 
 ----
+====
 
-To achieve proper stub packaging.
+By using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/build.gradle[Gradle Jar] task, you have to create the following
+structure in your stubs jar:
 
-Or using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
-https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/build.gradle[Gradle Jar] task you have to create the following
-structure in your stubs jar.
-
+====
 [source,bash]
 ----
 └── META-INF
@@ -206,52 +216,68 @@ structure in your stubs jar.
                     └── mapping.json
 
 ----
+====
 
-By maintaining this structure classpath gets scanned and you can profit from the messaging /
+By maintaining this structure, the classpath gets scanned and you can profit from the messaging or
 HTTP stubs without the need to download artifacts.
 
 [[features-stub-runner-configuring-http-server-stubs]]
 ===== Configuring HTTP Server Stubs
 
-Stub Runner has a notion of a `HttpServerStub` that abstracts the underlaying
-concrete implementation of the HTTP server (e.g. WireMock is one of the implementations).
-Sometimes, you need to perform some additional tuning of the stub servers,
-that is concrete for the given implementation. To do that, Stub Runner gives you
-the `httpServerStubConfigurer` property that is available in the annotation,
-JUnit rule, and is accessible via system properties, where you can provide
-your implementation of the `org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer` interface. The implementations can alter
+Stub Runner has a notion of a `HttpServerStub` that abstracts the underlying
+concrete implementation of the HTTP server (for example, WireMock is one of the implementations).
+Sometimes, you need to perform some additional tuning (which is concrete for the given implementation) of the stub servers.
+To do that, Stub Runner gives you
+the `httpServerStubConfigurer` property that is available in the annotation and the
+JUnit rule and is accessible through system properties, where you can provide
+your implementation of the `org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer`
+interface. The implementations can alter
 the configuration files for the given HTTP server stub.
 
 Spring Cloud Contract Stub Runner comes with an implementation that you
-can extend, for WireMock - `org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer`. In the `configure` method
-you can provide your own, custom configuration for the given stub. The use
-case might be starting WireMock for the given artifact id, on an HTTPs port. Example:
+can extend for WireMock:
+`org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer`.
+In the `configure` method,
+you can provide your own custom configuration for the given stub. The use
+case might be starting WireMock for the given artifact ID, on an HTTPS port. The following
+example shows how to do so:
 
 .WireMockHttpServerStubConfigurer implementation
+====
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=wireMockHttpServerStubConfigurer]
 ----
+====
 
-You can then reuse it via the annotation
+You can then reuse it with the `@AutoConfigureStubRunner` annotation, as follows:
 
+====
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=annotation]
 ----
+====
 
-Whenever an https port is found, it will take precedence over the http one.
+Whenever an HTTPS port is found, it takes precedence over the HTTP port.
 
 [[features-stub-runner-running-stubs]]
 ==== Running stubs
+
+This section describes how to run stubs. It contains the following topics:
+
+* <<features-stub-runner-http-stubs>>
+* <<features-stub-runner-viewing>>
+* <<features-stub-runner-messaging>>
 
 [[features-stub-runner-http-stubs]]
 ===== HTTP Stubs
 
 Stubs are defined in JSON documents, whose syntax is defined in http://wiremock.org/stubbing.html[WireMock documentation]
 
-Example:
+The following example defines a stub in JSON:
 
+====
 [source,javascript,indent=0]
 ----
 {
@@ -268,23 +294,27 @@ Example:
     }
 }
 ----
+====
 
 [[features-stub-runner-viewing]]
-===== Viewing registered mappings
+===== Viewing Registered Mappings
 
-Every stubbed collaborator exposes list of defined mappings under `__/admin/` endpoint.
+Every stubbed collaborator exposes a list of defined mappings under the `__/admin/` endpoint.
 
 You can also use the `mappingsOutputFolder` property to dump the mappings to files.
- For annotation based approach it would look like this
+For the annotation-based approach, it would resembling the following example:
 
+====
 [source,java]
 ----
 @AutoConfigureStubRunner(ids="a.b.c:loanIssuance,a.b.c:fraudDetectionServer",
 mappingsOutputFolder = "target/outputmappings/")
 ----
+====
 
-and for the JUnit approach like this:
+For the JUnit approach, it resembles the following example:
 
+====
 [source,java]
 ----
 @ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
@@ -293,20 +323,24 @@ and for the JUnit approach like this:
 			.downloadStub("a.b.c:fraudDetectionServer")
 			.withMappingsOutputFolder("target/outputmappings")
 ----
+====
 
-Then if you check out the folder `target/outputmappings` you would see the following structure
+Then, if you check out the `target/outputmappings` folder, you would see the following structure;
 
+====
 [source,bash]
 ----
 .
 ├── fraudDetectionServer_13705
 └── loanIssuance_12255
 ----
+====
 
 That means that there were two stubs registered. `fraudDetectionServer` was registered at port `13705`
-and `loanIssuance` at port `12255`. If we take a look at one of the files we would see (for WireMock)
-mappings available for the given server:
+and `loanIssuance` at port `12255`. If we take a look at one of the files, we would see (for WireMock)
+the mappings available for the given server:
 
+====
 [source,json]
 ----
 [{
@@ -324,42 +358,53 @@ mappings available for the given server:
 ...
 ]
 ----
+====
 
 [[features-stub-runner-messaging]]
 ===== Messaging Stubs
 
-Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.
+Depending on the provided Stub Runner dependency and the DSL, the messaging routes are automatically set up.
 
 [[features-stub-runner-junit]]
 === Stub Runner JUnit Rule and Stub Runner JUnit5 Extension
 
-Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:
+Stub Runner comes with a JUnit rule that lets you can download and run stubs for a given
+group and artifact ID, as the following example shows:
 
+====
 [source,java,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleJUnitTest.java[tags=classrule]
 ----
+====
 
-There's also a `StubRunnerExtension` available for JUnit 5. `StubRunnerRule` and `StubRunnerExtension` work in a very
-similar fashion. After the rule/ extension is executed, Stub Runner connects to your Maven repository and for the given list of dependencies tries to:
+A `StubRunnerExtension` is also available for JUnit 5. `StubRunnerRule` and
+`StubRunnerExtension` work in a very similar fashion. After the rule or extension is
+executed, Stub Runner connects to your Maven repository and, for the given list of
+dependencies, tries to:
 
-- download them
-- cache them locally
-- unzip them to a temporary folder
-- start a WireMock server for each Maven dependency on a random port from the provided range of ports / provided port
-- feed the WireMock server with all JSON files that are valid WireMock definitions
-- can also send messages (remember to pass an implementation of `MessageVerifier` interface)
+- Download them
+- Cache them locally
+- Unzip them to a temporary folder
+- Start a WireMock server for each Maven dependency on a random port from the provided
+range of ports or the provided port
+- Feed the WireMock server with all JSON files that are valid WireMock definitions
+- Send messages (remember to pass an implementation of `MessageVerifier` interface)
 
-Stub Runner uses https://wiki.eclipse.org/Aether[Eclipse Aether] mechanism to download the Maven dependencies.
+Stub Runner uses the https://wiki.eclipse.org/Aether[Eclipse Aether] mechanism to download the Maven dependencies.
 Check their https://wiki.eclipse.org/Aether[docs] for more information.
 
-Since the `StubRunnerRule` and `StubRunnerExtension` implement the `StubFinder` they allow you to find the started stubs:
+Since the `StubRunnerRule` and `StubRunnerExtension` implement the `StubFinder` they let
+you find the started stubs, as the following example shows:
 
+====
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/main/java/org/springframework/cloud/contract/stubrunner/StubFinder.java[lines=16..-1]
 ----
+====
 
+The following examples provide more detail about using Stub Runner:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
@@ -381,66 +426,78 @@ include::{stubrunner_core_path}/src/test/java/org/springframework/cloud/contract
 ----
 ====
 
-Check the <<features-stub-runner-common-properties-junit-spring>> for more information on how to apply global configuration of Stub Runner.
+See the <<features-stub-runner-common-properties-junit-spring>> for more information on
+how to apply global configuration of Stub Runner.
 
 IMPORTANT: To use the JUnit rule or JUnit 5 extension together with messaging, you have to provide an implementation of the
-`MessageVerifier` interface to the rule builder (e.g. `rule.messageVerifier(new MyMessageVerifier())`).
-If you don't do this, then whenever you try to send a message an exception will be thrown.
+`MessageVerifier` interface to the rule builder (for example, `rule.messageVerifier(new MyMessageVerifier())`).
+If you do not do this, then, whenever you try to send a message, an exception is thrown.
 
 [[features-stub-runner-rule-maven-settings]]
-==== Maven settings
+==== Maven Settings
 
 The stub downloader honors Maven settings for a different local repository folder.
-Authentication details for repositories and profiles are currently not taken into account, so you need to specify it using the properties mentioned above.
+Authentication details for repositories and profiles are currently not taken into account,
+so you need to specify it by using the properties mentioned above.
 
 [[features-stub-runner-rule-fixed-ports]]
-==== Providing fixed ports
+==== Providing Fixed Ports
 
-You can also run your stubs on fixed ports. You can do it in two different ways. One is to pass it in the properties, and the other via fluent API of
+You can also run your stubs on fixed ports. You can do it in two different ways.
+One is to pass it in the properties, and the other is to use the fluent API of
 JUnit rule.
 
 [[features-stub-runner-rule-fluent-api]]
 ==== Fluent API
 
-When using the `StubRunnerRule` or `StubRunnerExtension` you can add a stub to download and then pass the port for the last downloaded stub.
+When using the `StubRunnerRule` or `StubRunnerExtension`, you can add a stub to download
+and then pass the port for the last downloaded stub. The following example shows how to do so:
 
+====
 [source,java,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleCustomPortJUnitTest.java[tags=classrule_with_port]
 ----
+====
 
-You can see that for this example the following test is valid:
+For the preceding example, the following test is valid:
 
+====
 [source,java,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleCustomPortJUnitTest.java[tags=test_with_port]
 ----
+====
 
 [[features-stub-runner-rule-spring]]
 ==== Stub Runner with Spring
 
-Sets up Spring configuration of the Stub Runner project.
+Stub Runner with Spring sets up Spring configuration of the Stub Runner project.
 
-By providing a list of stubs inside your configuration file the Stub Runner automatically downloads
+By providing a list of stubs inside your configuration file, Stub Runner automatically downloads
 and registers in WireMock the selected stubs.
 
-If you want to find the URL of your stubbed dependency you can autowire the `StubFinder` interface and use
-its methods as presented below:
+If you want to find the URL of your stubbed dependency, you can autowire the `StubFinder` interface and use
+its methods, as follows:
 
+====
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=test]
 ----
+====
 
-for the following configuration file:
+Doing so depends on the following configuration file:
 
+====
 [source,yml,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/resources/application-test.yml[tags=test]
 ----
+====
 
-Instead of using the properties you can also use the properties inside the `@AutoConfigureStubRunner`.
-Below you can find an example of achieving the same result by setting values on the annotation.
+Instead of using the properties, you can also use the properties inside the `@AutoConfigureStubRunner`.
+The following example achieves the same result by setting values on the annotation:
 
 [source,groovy,indent=0]
 ----
@@ -448,74 +505,85 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 ----
 
 Stub Runner Spring registers environment variables in the following manner
-for every registered WireMock server. Example for Stub Runner ids
- `com.example:foo`, `com.example:bar`.
+for every registered WireMock server. The following example shows Stub Runner IDs for
+`com.example:thing1` and `com.example:thing2`:
 
-- `stubrunner.runningstubs.foo.port`
-- `stubrunner.runningstubs.com.example.foo.port`
-- `stubrunner.runningstubs.bar.port`
-- `stubrunner.runningstubs.com.example.bar.port`
+- `stubrunner.runningstubs.thing1.port`
+- `stubrunner.runningstubs.com.example.thing1.port`
+- `stubrunner.runningstubs.thing2.port`
+- `stubrunner.runningstubs.com.example.thing2.port`
 
-Which you can reference in your code.
+You can reference these values in your code.
 
 You can also use the `@StubRunnerPort` annotation to inject the port of a running stub.
-Value of the annotation can be the `groupid:artifactid` or just the `artifactid`. Example for Stub Runner ids
-`com.example:foo`, `com.example:bar`.
+The value of the annotation can be the `groupid:artifactid` or just the `artifactid`.
+The following example works shows Stub Runner IDs for
+`com.example:thing1` and `com.example:thing2`.
 
+====
 [source,java,indent=0]
 ----
-@StubRunnerPort("foo")
-int fooPort;
-@StubRunnerPort("com.example:bar")
-int barPort;
+@StubRunnerPort("thing1")
+int thing1Port;
+@StubRunnerPort("com.example:thing2")
+int thing2Port;
 ----
+====
 
 [[features-stub-runner-cloud]]
 === Stub Runner Spring Cloud
 
 Stub Runner can integrate with Spring Cloud.
 
-For real life examples you can check the
+For real life examples, see:
 
- - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer[producer app sample]
- - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_with_discovery[consumer app sample]
+- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer[The producer app sample]
+- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_with_discovery[The consumer app sample]
 
 [[features-stub-runner-cloud-stubbing-discovery]]
 ==== Stubbing Service Discovery
 
-The most important feature of `Stub Runner Spring Cloud` is the fact that it's stubbing
+The most important feature of `Stub Runner Spring Cloud` is the fact that it stubs:
 
 - `DiscoveryClient`
 - `Ribbon` `ServerList`
 
-that means that regardless of the fact whether you're using Zookeeper, Consul, Eureka or anything else, you don't need that in your tests.
-We're starting WireMock instances of your dependencies and we're telling your application whenever you're using `Feign`, load balanced `RestTemplate`
-or `DiscoveryClient` directly, to call those stubbed servers instead of calling the real Service Discovery tool.
+That means that, regardless of whether you use Zookeeper, Consul, Eureka, or anything
+else, you do not need that in your tests. We are starting WireMock instances of your
+dependencies and we are telling your application, whenever you use `Feign`, to load a
+balanced `RestTemplate` or `DiscoveryClient` directly, to call those stubbed servers
+instead of calling the real Service Discovery tool.
 
-For example this test will pass
+For example, the following test passes:
 
+====
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerSpringCloudAutoConfigurationSpec.groovy[tags=test]
 ----
+====
 
-for the following configuration file
+Note that the preceding example requires the following configuration file:
 
+====
 [source,yml,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/resources/application.yml[tags=ids]
 ----
+====
 
 [[features-stub-runner-cloud-stubbing-profiles]]
-===== Test profiles and service discovery
+===== Test Profiles and Service Discovery
 
-In your integration tests you typically don't want to call neither a discovery service (e.g. Eureka)
-or Config Server. That's why you create an additional test configuration in which you want to disable
+In your integration tests, you typically do not want to call either a discovery service (such as Eureka)
+or Config Server. That is why you create an additional test configuration in which you want to disable
 these features.
 
-Due to certain limitations of https://github.com/spring-cloud/spring-cloud-commons/issues/156[`spring-cloud-commons`] to achieve this you have disable these properties
-via a static block like presented below (example for Eureka)
+Due to certain limitations of https://github.com/spring-cloud/spring-cloud-commons/issues/156[`spring-cloud-commons`],
+to achieve this, you have to disable these properties
+in a static block such as the following example (for Eureka):
 
+====
 [source,java]
 ----
     //Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156
@@ -524,75 +592,80 @@ via a static block like presented below (example for Eureka)
         System.setProperty("spring.cloud.config.failFast", "false");
     }
 ----
+====
 
 [[features-stub-runner-additional-config]]
 ==== Additional Configuration
 
-You can match the artifactId of the stub with the name of your app by using the `stubrunner.idsToServiceIds:` map.
-You can disable Stub Runner Ribbon support by providing: `stubrunner.cloud.ribbon.enabled` equal to `false`
-You can disable Stub Runner support by providing: `stubrunner.cloud.enabled` equal to `false`
+You can match the `artifactId` of the stub with the name of your application by using the `stubrunner.idsToServiceIds:` map.
+You can disable Stub Runner Ribbon support by setting `stubrunner.cloud.ribbon.enabled` to `false`
+You can disable Stub Runner support by setting `stubrunner.cloud.enabled` to `false`
 
-TIP: By default all service discovery will be stubbed. That means that regardless of the fact if you have
-an existing `DiscoveryClient` its results will be ignored. However, if you want to reuse it, just set
- `stubrunner.cloud.delegate.enabled` to `true` and then your existing `DiscoveryClient` results will be
+TIP: By default, all service discovery is stubbed. This means that, regardless of whether you have
+an existing `DiscoveryClient`, its results are ignored. However, if you want to reuse it, you can set
+ `stubrunner.cloud.delegate.enabled` to `true`, and then your existing `DiscoveryClient` results are
  merged with the stubbed ones.
 
 The default Maven configuration used by Stub Runner can be tweaked either
-via the following system properties or environment variables
+by setting the following system properties or by setting the corresponding environment variables:
 
-- `maven.repo.local` - path to the custom maven local repository location
-- `org.apache.maven.user-settings` - path to custom maven user settings location
-- `org.apache.maven.global-settings` - path to maven global settings location
+- `maven.repo.local`: Path to the custom maven local repository location
+- `org.apache.maven.user-settings`: Path to custom maven user settings location
+- `org.apache.maven.global-settings`: Path to maven global settings location
 
 [[features-stub-runner-boot]]
-=== Stub Runner Boot Application
+=== Using the Stub Runner Boot Application
 
 Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
-trigger the messaging labels and to access started WireMock servers.
+trigger the messaging labels and to access WireMock servers.
 
-One of the use-cases is to run some smoke (end to end) tests on a deployed application.
+One of the use cases is to run some smoke (end-to-end) tests on a deployed application.
 You can check out the https://github.com/spring-cloud/spring-cloud-pipelines[Spring Cloud Pipelines]
 project for more information.
-
-[[features-stub-runner-boot-how]]
-==== How to use it?
 
 [[features-stub-runner-boot-server]]
 ===== Stub Runner Server
 
-Just add the
+To use the Stub Runner Server, add the following dependency:
 
+====
 [source,groovy,indent=0]
 ----
 compile "org.springframework.cloud:spring-cloud-starter-stub-runner"
 ----
+====
 
-Annotate a class with `@EnableStubRunnerServer`, build a fat-jar and you're ready to go!
+Then annotate a class with `@EnableStubRunnerServer`, build a fat jar, and it is ready to work.
 
-For the properties check the *Stub Runner Spring* section.
+For the properties, see the <<features-stub-runner-rule-spring,Stub Runner Spring>> section.
 
 [[features-stub-runner-boot-how-fat-jar]]
 ===== Stub Runner Server Fat Jar
 
-You can download a standalone JAR from Maven (e.g. for version 2.0.1.RELEASE), as follows:
+You can download a standalone JAR from Maven (for example, for version 2.0.1.RELEASE)
+by running the following commands:
 
+====
 [source,bash,indent=0]
 ----
 $ wget -O stub-runner.jar 'https://search.maven.org/remotecontent?filepath=org/springframework/cloud/spring-cloud-contract-stub-runner-boot/2.0.1.RELEASE/spring-cloud-contract-stub-runner-boot-2.0.1.RELEASE.jar'
 $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 ----
+====
 
 [[features-stub-runner-boot-how-cli]]
 ===== Spring Cloud CLI
 
-Starting from `1.4.0.RELEASE` version of the https://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
-project you can start Stub Runner Boot by executing `spring cloud stubrunner`.
+Starting from the `1.4.0.RELEASE` version of the https://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
+project, you can start Stub Runner Boot by running `spring cloud stubrunner`.
 
-In order to pass the configuration just create a `stubrunner.yml` file in the current working directory
-or a subdirectory called `config` or in `~/.spring-cloud`. The file could look like this
-(example for running stubs installed locally)
+In order to pass the configuration, you can create a `stubrunner.yml` file in the current working directory,
+in a subdirectory called `config`, or in `~/.spring-cloud`. The file could resemble the following
+example for running stubs installed locally:
+
 
 .stubrunner.yml
+====
 [source,yml,indent=0]
 ----
 stubrunner:
@@ -600,30 +673,41 @@ stubrunner:
   ids:
     - com.example:beer-api-producer:+:9876
 ----
+====
 
-and then just call `spring cloud stubrunner` from your terminal window to start
-the Stub Runner server. It will be available at port `8750`.
+Then you can call `spring cloud stubrunner` from your terminal window to start
+the Stub Runner server. It is available at port `8750`.
 
 [[features-stub-runner-boot-endpoints]]
 ==== Endpoints
 
+Stub Runner Boot offers two endpoints:
+
+* <<features-stub-runner-boot-endpoints-http>>
+* <<features-stub-runner-boot-endpoints-messaging>>
+
 [[features-stub-runner-boot-endpoints-http]]
 ===== HTTP
 
-- GET `/stubs` - returns a list of all running stubs in `ivy:integer` notation
-- GET `/stubs/{ivy}` - returns a port for the given `ivy` notation (when calling the endpoint `ivy` can also be `artifactId` only)
+For HTTP, Stub Runner Boot makes the following endpoints available:
+
+- GET `/stubs`: Returns a list of all running stubs in `ivy:integer` notation
+- GET `/stubs/{ivy}`: Returns a port for the given `ivy` notation (when calling the endpoint `ivy` can also be `artifactId` only)
 
 [[features-stub-runner-boot-endpoints-messaging]]
 ===== Messaging
 
-For Messaging
+For Messaging, Stub Runner Boot makes the following endpoints available:
 
-- GET `/triggers` - returns a list of all running labels in `ivy : [ label1, label2 ...]` notation
-- POST `/triggers/{label}` - executes a trigger with `label`
-- POST `/triggers/{ivy}/{label}` - executes a trigger with `label` for the given `ivy` notation (when calling the endpoint `ivy` can also be `artifactId` only)
+- GET `/triggers`: Returns a list of all running labels in `ivy : [ label1, label2 ...]` notation
+- POST `/triggers/{label}`: Runs a trigger with `label`
+- POST `/triggers/{ivy}/{label}`: Runs a trigger with a `label` for the given `ivy` notation
+(when calling the endpoint, `ivy` can also be `artifactId` only)
 
 [[features-stub-runner-boot-endpoints-example]]
 ==== Example
+
+The following example shows typical usage of Stub Runner Boot:
 
 [source,groovy,indent=0]
 ----
@@ -633,55 +717,59 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 [[features-stub-runner-boot-service-discovery]]
 ==== Stub Runner Boot with Service Discovery
 
-One of the possibilities of using Stub Runner Boot is to use it as a feed of stubs for "smoke-tests". What does it mean?
- Let's assume that you don't want to deploy 50 microservice to a test environment in order
- to check if your application is working fine. You've already executed a suite of tests during the build process
- but you would also like to ensure that the packaging of your application is fine. What you can do
- is to deploy your application to an environment, start it and run a couple of tests on it to see if
- it's working fine. We can call those tests smoke-tests since their idea is to check only a handful
- of testing scenarios.
+One way to use Stub Runner Boot is to use it as a feed of stubs for "`smoke tests`". What does that mean?
+Assume that you do not want to deploy 50 microservices to a test environment in order
+to see whether your application works. You have already executed a suite of tests during the build process,
+but you would also like to ensure that the packaging of your application works. You can
+deploy your application to an environment, start it, and run a couple of tests on it to see whether
+it works. We can call those tests "`smoke tests`", because their purpose is to check only a handful
+of testing scenarios.
 
-The problem with this approach is such that if you're doing microservices most likely you're
- using a service discovery tool. Stub Runner Boot allows you to solve this issue by starting the
- required stubs and register them in a service discovery tool. Let's take a look at an example of
- such a setup with Eureka. Let's assume that Eureka was already running.
+The problem with this approach is thatm if you use microservices, you most likely also
+use a service discovery tool. Stub Runner Boot lets you solve this issue by starting the
+required stubs and registering them in a service discovery tool. Consider the following example of
+such a setup with Eureka (assume that Eureka is already running):
 
+====
 [source,java,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka]
 ----
+====
 
-As you can see we want to start a Stub Runner Boot server `@EnableStubRunnerServer`, enable Eureka client `@EnableEurekaClient`
-and we want to have the stub runner feature turned on `@AutoConfigureStubRunner`.
+We want to start a Stub Runner Boot server (`@EnableStubRunnerServer`), enable the Eureka client (`@EnableEurekaClient`),
+and have the stub runner feature turned on (`@AutoConfigureStubRunner`).
 
-Now let's assume that we want to start this application so that the stubs get automatically registered.
- We can do it by running the app `java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar` where
- `${SYSTEM_PROPS}` would contain the following list of properties
+Now assume that we want to start this application so that the stubs get automatically registered.
+We can do so by running the application with `java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar`, where
+`${SYSTEM_PROPS}` contains the following list of properties:
 
+====
 [source,bash,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka_args]
 ----
+====
 
-That way your deployed application can send requests to started WireMock servers via the service
-discovery. Most likely points 1-3 could be set by default in `application.yml` cause they are not
-likely to change. That way you can provide only the list of stubs to download whenever you start
+That way, your deployed application can send requests to started WireMock servers through service
+discovery. Most likely, points 1 through 3 could be set by default in `application.yml`, because they are not
+likely to change. That way, you can provide only the list of stubs to download whenever you start
 the Stub Runner Boot.
 
 [[features-stub-runner-stubs-per-consumer]]
 === Consumer-Driven Contracts: Stubs Per Consumer
 
-There are cases in which 2 consumers of the same endpoint want to have 2 different responses.
+There are cases in which two consumers of the same endpoint want to have two different responses.
 
-TIP: This approach also allows you to immediately know which consumer is using which part of your API.
-You can remove part of a response that your API produces and you can see which of your autogenerated tests
-fails. If none fails then you can safely delete that part of the response cause nobody is using it.
+TIP: This approach also lets you immediately know which consumer uses which part of your API.
+You can remove part of a response that your API produces and see which of your autogenerated tests
+fails. If none fails, you can safely delete that part of the response, because nobody uses it.
 
-Let's look at the following example for contract defined for the producer called `producer`.
-There are 2 consumers: `foo-consumer` and `bar-consumer`.
+Consider the following example of a contract defined for the producer called `producer`,
+which has two consumers (`foo-consumer` and `bar-consumer`):
 
-*Consumer `foo-service`*
-
+====
+.Consumer `foo-service`
 [source,groovy]
 ----
 request {
@@ -696,12 +784,11 @@ response {
 }
 ----
 
-*Consumer `bar-service`*
-
+.Consumer `bar-service`
 [source,groovy]
 ----
 request {
-   url '/foo'
+   url '/bar'
    method GET()
 }
 response {
@@ -711,14 +798,15 @@ response {
     }
 }
 ----
+====
 
-You can't produce for the same request 2 different responses. That's why you can properly package the
+You cannot produce two different responses for the same request. That is why you can properly package the
 contracts and then profit from the `stubsPerConsumer` feature.
 
-On the producer side the consumers can have a folder that contains contracts related only to them.
-By setting the `stubrunner.stubs-per-consumer` flag to `true` we no longer register all stubs but only those that
-correspond to the consumer application's name. In other words we'll scan the path of every stub and
-if it contains the subfolder with name of the consumer in the path only then will it get registered.
+On the producer side, the consumers can have a folder that contains contracts related only to them.
+By setting the `stubrunner.stubs-per-consumer` flag to `true`, we no longer register all stubs but only those that
+correspond to the consumer application's name. In other words, we scan the path of every stub and,
+if it contains a subfolder with name of the consumer in the path, only then is it registered.
 
 On the `foo` producer side the contracts would look like this
 
@@ -734,36 +822,40 @@ On the `foo` producer side the contracts would look like this
         └── shouldCallFoo.groovy
 ----
 
-Being the `bar-consumer` consumer you can either set the `spring.application.name` or the `stubrunner.consumer-name` to `bar-consumer`
-Or set the test as follows:
+The `bar-consumer` consumer can either set the `spring.application.name` or the `stubrunner.consumer-name` to `bar-consumer`
+Alternatively, you can set the test as follows:
 
+====
 [source,groovy]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerStubsPerConsumerSpec.groovy[tags=test]
 ...
 }
 ----
+====
 
-Then only the stubs registered under a path that contains the `bar-consumer` in its name (i.e. those from the
-`src/test/resources/contracts/bar-consumer/some/contracts/...` folder) will be allowed to be referenced.
+Then only the stubs registered under a path that contains `bar-consumer` in its name (that is, those from the
+`src/test/resources/contracts/bar-consumer/some/contracts/...` folder) are allowed to be referenced.
 
-Or set the consumer name explicitly
+You can also set the consumer name explicitly, as follows:
 
+====
 [source,groovy]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerStubsPerConsumerWithConsumerNameSpec.groovy[tags=test]
 ...
 }
 ----
+====
 
-Then only the stubs registered under a path that contains the `foo-consumer` in its name (i.e. those from the
-`src/test/resources/contracts/foo-consumer/some/contracts/...` folder) will be allowed to be referenced.
+Then only the stubs registered under a path that contains the `foo-consumer` in its name (that is, those from the
+`src/test/resources/contracts/foo-consumer/some/contracts/...` folder) are allowed to be referenced.
 
-You can check out https://github.com/spring-cloud/spring-cloud-contract/issues/224[issue 224] for more
+See https://github.com/spring-cloud/spring-cloud-contract/issues/224[issue 224] for more
 information about the reasons behind this change.
 
 [[features-stub-runner-common]]
-=== Common
+=== Common Properties
 
 This section briefly describes common properties, including:
 
@@ -774,14 +866,14 @@ This section briefly describes common properties, including:
 ==== Common Properties for JUnit and Spring
 
 You can set repetitive properties by using system properties or Spring configuration
-properties. Here are their names with their default values:
+properties. The following table shows their names with their default values:
 
 [frame="topbot",options="header"]
 |===============
 | Property name | Default value | Description
 |stubrunner.minPort|10000| Minimum value of a port for a started WireMock with stubs.
 |stubrunner.maxPort|15000| Maximum value of a port for a started WireMock with stubs.
-|stubrunner.repositoryRoot|| Maven repo URL. If blank, then call the local maven repo.
+|stubrunner.repositoryRoot|| Maven repo URL. If blank, then call the local Maven repo.
 |stubrunner.classifier|stubs| Default classifier for the stub artifacts.
 |stubrunner.stubsMode|CLASSPATH| The way you want to fetch and register the stubs
 |stubrunner.ids|| Array of Ivy notation stubs to download.
@@ -789,29 +881,31 @@ properties. Here are their names with their default values:
 stubs.
 |stubrunner.password|| Optional password to access the tool that stores the JARs with
 stubs.
-|stubrunner.stubsPerConsumer|false| Set to `true` if you want to use different stubs for
+|stubrunner.stubsPerConsumer|`false`| Set to `true` if you want to use different stubs for
 each consumer instead of registering all stubs for every consumer.
 |stubrunner.consumerName|| If you want to use a stub for each consumer and want to
-override the consumer name just change this value.
+override the consumer name, change this value.
 |===============
 
 [[features-stub-runner-stub-runner-stub-ids]]
 ==== Stub Runner Stubs IDs
 
-You can provide the stubs to download via the `stubrunner.ids` system property. They
-follow this pattern:
+You can set the stubs to download in the `stubrunner.ids` system property. They
+use the following pattern:
 
+====
 [source,java,indent=0]
 ----
 groupId:artifactId:version:classifier:port
 ----
+====
 
-Note that `version`, `classifier` and `port` are optional.
+Note that `version`, `classifier`, and `port` are optional.
 
-* If you do not provide the `port`, a random one will be picked.
+* If you do not provide the `port`, a random one is picked.
 * If you do not provide the `classifier`, the default is used. (Note that you can
 pass an empty classifier this way: `groupId:artifactId:version:`).
-* If you do not provide the `version`, then the `+` will be passed and the latest one is
+* If you do not provide the `version`, then `+` is passed, and the latest one is
 downloaded.
 
 `port` means the port of the WireMock server.

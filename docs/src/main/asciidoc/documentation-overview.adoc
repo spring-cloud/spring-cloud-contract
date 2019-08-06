@@ -9,10 +9,11 @@ as a map for the rest of the document.
 
 [[contract-documentation-about]]
 == About the Documentation
+
 The {project-full-name} reference guide is available as
 
 * {docs-url}/html[Multi-page HTML]
-* {docs-url}/htmlsingle[Single page HTML]
+* {docs-url}/htmlsingle[Single-page HTML]
 * {docs-url}/pdf/{project-name}.pdf[PDF]
 
 Copies of this document may be made for your own use and for distribution to others,
@@ -50,9 +51,9 @@ If you are getting started with {project-full-name} or 'Spring' in general, star
 <<getting-started.adoc#getting-started-first-application, First application>>
 * *Tutorial:*
 <<getting-started.adoc#getting-started-cdc, Introduction>> |
-<<getting-started.adoc#consumer-side-loan-issuance, Consumer Part 1>> |
+<<getting-started.adoc#consumer-side-loan-issuance, Consumer, Part 1>> |
 <<getting-started.adoc#producer-side-fraud-detection-server, Producer>> |
-<<getting-started.adoc#consumer-side-loan-issuance-final-step, Consumer Part 2>>
+<<getting-started.adoc#consumer-side-loan-issuance-final-step, Consumer, Part 2>>
 
 
 
@@ -62,9 +63,9 @@ you covered>>:
 
 * *Provider contract testing:*
 
-** <<using.adoc#flows-provider-nexus,Provider contract testing with stubs in Nexus / Artifactory>>
+** <<using.adoc#flows-provider-nexus,Provider contract testing with stubs in Nexus or Artifactory>>
 ** <<using.adoc#flows-provider-git,Provider contract testing with stubs in Git>>
-** <<using.adoc#flows-provider-non-spring,Provider contract testing with stubs in Artifactory for a non Spring application>>
+** <<using.adoc#flows-provider-non-spring,Provider contract testing with stubs in Artifactory for a non-Spring application>>
 ** <<using.adoc#flows-provider-non-jvm,Provider contract testing with stubs in Artifactory in non JVM world>>
 ** <<using.adoc#flows-provider-rest-docs,Provider contract testing with REST Docs and stubs in Nexus / Artifactory>>
 
@@ -73,14 +74,14 @@ you covered>>:
 ** <<using.adoc#flows-cdc-contracts-external,Consumer Driven Contracts with contracts in external repo>>
 ** <<using.adoc#flows-cdc-contracts-stubs-git,Consumer Driven Contracts with contracts on the producer side, pushed to git>>
 
-TIP: We talk about *Provider Contracts* when it's the producer of the API that defines the contracts and
-publishes it for all its consumers to use. This approach is useful for producers that can't
-directly collaborate with their consumers; for example, when there are too many consumers,
-the consumers are external (don't work within the same company).
+TIP: We talk about *Provider Contracts* when it is the producer of the API that defines the contracts and
+publishes it for all its consumers to use. This approach is useful for producers that cannot
+directly collaborate with their consumers -- for example, when there are too many consumers or
+the consumers are external (do not work within the same company).
 
-TIP: We use the term *Consumer-Driven Contracts* to refer to workflows where the consumers of an API
-play a vital role in the process of creating the contracts; it's the recommended approach, easy
-to implement when both producer and consumer teams work for the same organisations and the number
+TIP: We use the term, *Consumer-Driven Contracts*, to refer to workflows where the consumers of an API
+play a vital role in the process of creating the contracts. We recommended this approach, because it is easy
+to implement when both producer and consumer teams work for the same organizations and the number
 of consumers is not extremely large.
 
 == Learning about {project-full-name} Features
@@ -109,20 +110,19 @@ link:docker-project.html[Docker]
 == Advanced Topics
 Finally, we have a few topics for more advanced users:
 
-* *Customizing DSL:*
-<<advanced.adoc#contract-dsl-customization, DSL customization>> |
+* *Customizing the DSL:*
+<<advanced.adoc#contract-dsl-customization, DSL Customization>> |
 <<advanced.adoc#contract-dsl-extending-common-jar, Common JAR>> |
-<<advanced.adoc#contract-dsl-test-dep, Test dependency>> |
-<<advanced.adoc#contract-dsl-plugin-dep, Plugin dependency>> |
-<<advanced.adoc#contract-dsl-referencing, Referencing DSL>>
+<<advanced.adoc#contract-dsl-test-dep, Test Dependency>> |
+<<advanced.adoc#contract-dsl-plugin-dep, Plugin Dependency>> |
+<<advanced.adoc#contract-dsl-referencing, Referencing the DSL>>
 * *Customizing WireMock:*
 <<advanced.adoc#customization-wiremock-extension, Extensions>> |
 <<advanced.adoc#customization-wiremock-configuration, Configuration>>
 * *Customizing {project-full-name}:*
-<<advanced.adoc#contract-dsl-pluggable-architecture, Pluggable architecture>> |
+<<advanced.adoc#contract-dsl-pluggable-architecture, Pluggable Architecture>> |
 <<advanced.adoc#contract-dsl-custom-contract-converter, Contract Converter>> |
 <<advanced.adoc#contract-dsl-custom-test-generator, Test Generator>> |
 <<advanced.adoc#contract-dsl-custom-stub-generator, Stub Generator>> |
 <<advanced.adoc#contract-dsl-custom-stub-runner, Stub Runner>> |
 <<advanced.adoc#contract-dsl-custom-stub-downloader, Stub Downloader>>
-

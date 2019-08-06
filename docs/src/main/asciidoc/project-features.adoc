@@ -19,9 +19,10 @@ include::_project-features-stubrunner.adoc[]
 include::_project-features-wiremock.adoc[]
 
 [[features-build-tools]]
-== Build Tools integration
+== Build Tools Integration
 
-You can run test generation / stub execution in various ways. The most common ones are
+You can run test generation and stub execution in various ways. The most common ones are
+as follows:
 
 * link:maven-project.html[Maven]
 * link:gradle-project.html[Gradle]
@@ -29,10 +30,11 @@ You can run test generation / stub execution in various ways. The most common on
 
 [[features-whats-next]]
 == What to Read Next
+
 If you want to learn more about any of the classes discussed in this section, you can browse the
-{github-code}[source code directly]. If you have specific questions, take a look at the
+{github-code}[source code directly]. If you have specific questions, see the
 <<howto.adoc#howto, how-to>> section.
 
 If you are comfortable with {project-full-name}'s core features, you can continue on and read
 about
-_<<advanced.adoc, {project-full-name} Advanced features>>_.
+<<advanced.adoc, {project-full-name}'s advanced features>>.

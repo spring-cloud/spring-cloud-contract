@@ -2,12 +2,12 @@
 = Spring Cloud Contract customization
 include::_attributes.adoc[]
 
-In this section we describe how to customize various parts of Spring Cloud Contract.
+In this section, we describe how to customize various parts of Spring Cloud Contract.
 
 [[customization-customization]]
 == DSL Customization
 
-IMPORTANT: This section is valid only for Groovy DSL
+IMPORTANT: This section is valid only for the Groovy DSL
 
 You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
 the remainder of this section.
@@ -29,35 +29,45 @@ https://github.com/spring-cloud-samples/spring-cloud-contract-samples[here].
 
 The following examples show three classes that can be reused in the DSLs.
 
-*PatternUtils* contains functions used by both the **consumer** and the **producer**.
+`PatternUtils` contains functions used by both the consumer and the producer.
+The following listing shows the `PatternUtils` class:
 
+====
 [source,java]
 ----
 include::{samples_url}/common/src/main/java/com/example/PatternUtils.java[]
 ----
+====
 
-*ConsumerUtils* contains functions used by the **consumer**.
+`ConsumerUtils` contains functions used by the consumer.
+The following listing shows the `ConsumerUtils` class:
 
+====
 [source,java]
 ----
 include::{samples_url}/common/src/main/java/com/example/ConsumerUtils.java[]
 ----
+====
 
-*ProducerUtils* contains functions used by the **producer**.
+`ProducerUtils` contains functions used by the producer.
+The following listing shows the `ProducerUtils` class:
 
+====
 [source,java]
 ----
 include::{samples_url}/common/src/main/java/com/example/ProducerUtils.java[]
 ----
+====
 
 [[customization-test-dep]]
-=== Add a test dependency in the Project's Dependencies
+=== Adding a Test Dependency in the Project's Dependencies
 
-First, add the common jar dependency as a test dependency. Because your contracts files
+To add a test dependency in the project's dependencies, you must first add the common jar
+dependency as a test dependency. Because your contracts files
 are available on the test resources path,  the common jar classes automatically become
 visible in your Groovy files. The following examples show how to test the dependency:
 
-==
+====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
@@ -69,15 +79,15 @@ include::{samples_url}/producer/pom.xml[tags=test_dep,indent=0]
 ----
 include::{samples_url}/producer/build.gradle[tags=test_dep,indent=0]
 ----
-==
+====
 
 [[customization-plugin-dep]]
-=== Add a test dependency in the Plugin's Dependencies
+=== Adding a Test Dependency in the Plugin's Dependencies
 
-Now, you must add the dependency for the plugin to reuse at runtime, as shown in the
-following example:
+Now, you must add the dependency for the plugin to reuse at runtime, as the
+following example shows:
 
-==
+====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
@@ -89,24 +99,28 @@ include::{samples_url}/producer/pom.xml[tags=test_dep_in_plugin,indent=0]
 ----
 include::{samples_url}/producer/build.gradle[tags=test_dep_in_plugin,indent=0]
 ----
-==
+====
 
 [[customization-referencing]]
-=== Referencing classes in DSLs
+=== Referencing Classes in DSLs
 
-You can now reference your classes in your DSL, as shown in the following example:
+You can now reference your classes in your DSL, as the following example shows:
 
+====
 [source,groovy]
 ----
 include::{samples_url}/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]
 ----
+====
 
-IMPORTANT: You can set the Spring Cloud Contract plugin up by setting `convertToYaml` to `true`. That way you will NOT have to add the dependency with the extended functionality to the consumer side, since the consumer side will be using YAML contracts instead of Groovy ones.
+IMPORTANT: You can set the Spring Cloud Contract plugin up by setting `convertToYaml` to
+`true`. That way, you do NOT have to add the dependency with the extended functionality
+to the consumer side, since the consumer side uses YAML contracts instead of Groovy contracts.
 
 [[customization-wiremock]]
-== WireMock customization
+== WireMock Customization
 
-In this section you will learn how to customize the way you work with https://wiremock.org[WireMock].
+In this section, we show how to customize the way you work with https://wiremock.org[WireMock].
 
 [[customization-wiremock-extension]]
 === Registering Your Own WireMock Extension
@@ -115,44 +129,50 @@ WireMock lets you register custom extensions. By default, Spring Cloud Contract 
 the transformer, which lets you reference a request from a response. If you want to
 provide your own extensions, you can register an implementation of the
 `org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions` interface.
-Since we use the spring.factories extension approach, you can create an entry in
+Since we use the `spring.factories` extension approach, you can create an entry in
 `META-INF/spring.factories` file similar to the following:
 
+====
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/resources/META-INF/spring.factories[indent=0]
 ----
+====
 
-The following is an example of a custom extension:
+The following example shows a custom extension:
 
 .TestWireMockExtensions.groovy
+====
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
 ----
+====
 
 IMPORTANT: Remember to override the `applyGlobally()` method and set it to `false` if you
 want the transformation to be applied only for a mapping that explicitly requires it.
 
 [[customization-wiremock-configuration]]
-=== Customization of WireMock configuration
+=== Customization of WireMock Configuration
 
-You can register a bean of `org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer` type
-in order to customize the WireMock configuration (e.g. add custom transformers).
-Example:
+You can register a bean of type `org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer`
+to customize the WireMock configuration (for example, to add custom transformers).
+The following example shows how to do so:
 
+====
 [source,java,indent=0]
 ----
 include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_1]
 // perform your customization here
 include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_2]
 ----
+====
 
 [[customization-pluggable-architecture]]
 == Using the Pluggable Architecture
 
-You may encounter cases where you have your contracts have been defined in other formats,
-such as YAML, RAML or PACT. In those cases, you still want to benefit from the automatic
+You may encounter cases where your contracts have been defined in other formats,
+such as YAML, RAML, or PACT. In those cases, you still want to benefit from the automatic
 generation of tests and stubs. You can add your own implementation for generating both
 tests and stubs. Also, you can customize the way tests are generated (for example, you
 can generate tests for other languages) and the way stubs are generated (for example, you
@@ -164,10 +184,12 @@ can generate stubs for other HTTP server implementations).
 The `ContractConverter` interface lets you register your own implementation of a contract
 structure converter. The following code listing shows the `ContractConverter` interface:
 
+====
 [source,java]
 ----
 include::{contract_spec_path}/src/main/java/org/springframework/cloud/contract/spec/ContractConverter.java[indent=0,lines=17..-1]
 ----
+====
 
 Your implementation must define the condition on which it should start the
 conversion. Also, you must define how to perform that conversion in both directions.
@@ -178,11 +200,13 @@ implementation.
 
 The following example shows a typical `spring.factories` file:
 
+====
 [source]
 ----
 org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 ----
+====
 
 [[customization-custom-test-generator]]
 === Using the Custom Test Generator
@@ -193,19 +217,23 @@ way the verifier builds Java tests, you can register your own implementation.
 The `SingleTestGenerator` interface lets you register your own implementation.  The
 following code listing shows the `SingleTestGenerator` interface:
 
+====
 [source,groovy]
 ----
 include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGenerator.java[indent=0,lines=17..-1]
 ----
+====
 
 Again, you must provide a `spring.factories` file, such as the one shown in the following
 example:
 
+====
 [source]
 ----
 org.springframework.cloud.contract.verifier.builder.SingleTestGenerator=/
 com.example.MyGenerator
 ----
+====
 
 [[customization-custom-stub-generator]]
 === Using the Custom Stub Generator
@@ -214,18 +242,22 @@ If you want to generate stubs for stub servers other than WireMock, you can plug
 own implementation of the `StubGenerator` interface. The following code listing shows the
 `StubGenerator` interface:
 
+====
 [source,groovy]
 ----
 include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/StubGenerator.groovy[indent=0,lines=16..-1]
 ----
+====
 
 Again, you must provide a `spring.factories` file, such as the one shown in the following
 example:
 
+====
 [source]
 ----
 include::{converters_path}/src/main/resources/META-INF/spring.factories[indent=0]
 ----
+====
 
 The default implementation is the WireMock stub generation.
 
@@ -244,31 +276,36 @@ you have written a stub generator and placed your stubs in a JAR file.
 In order for Stub Runner to know how to run your stubs, you have to define a custom
 HTTP Stub server implementation, which might resemble the following example:
 
+====
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/MocoHttpServerStub.groovy[indent=0,lines=16..-1]
 ----
+====
 
-Then, you can register it in your `spring.factories` file, as shown in the following
-example:
+Then you can register it in your `spring.factories` file, as the following
+example shows:
 
+====
 [source]
 ----
 org.springframework.cloud.contract.stubrunner.HttpServerStub=\
 org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub
 ----
+====
 
 Now you can run stubs with Moco.
 
-IMPORTANT: If you do not provide any implementation, then the default (WireMock)
+IMPORTANT: If you do not provide any implementation, the default (WireMock)
 implementation is used. If you provide more than one, the first one on the list is used.
 
 [[customization-custom-stub-downloader]]
 === Using the Custom Stub Downloader
 
 You can customize the way your stubs are downloaded by creating an implementation of the
-`StubDownloaderBuilder` interface, as shown in the following example:
+`StubDownloaderBuilder` interface, as the following example shows:
 
+====
 [source,java]
 ----
 package com.example;
@@ -292,36 +329,39 @@ class CustomStubDownloaderBuilder implements StubDownloaderBuilder {
 			}
 }
 ----
+====
 
-Then you can register it in your `spring.factories` file, as shown in the following
-example:
+Then you can register it in your `spring.factories` file, as the following
+example shows:
 
+====
 [source]
 ----
 # Example of a custom Stub Downloader Provider
 org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
 com.example.CustomStubDownloaderBuilder
 ----
+====
 
 Now you can pick a folder with the source of your stubs.
 
-IMPORTANT: If you do not provide any implementation, then the default is used (scan classpath).
+IMPORTANT: If you do not provide any implementation, the default (scanning the classpath) is used.
 If you provide the `stubsMode = StubRunnerProperties.StubsMode.LOCAL` or
-`, stubsMode = StubRunnerProperties.StubsMode.REMOTE` then the Aether implementation will be used
-If you provide more than one, then the first one on the list is used.
+`stubsMode = StubRunnerProperties.StubsMode.REMOTE`, the Aether implementation is used
+If you provide more than one, the first one on the list is used.
 
 [[scm-stub-downloader]]
 === Using the SCM Stub Downloader
 
 Whenever the `repositoryRoot` starts with a SCM protocol
-(currently we support only `git://`), the stub downloader will try
+(currently, we support only `git://`), the stub downloader tries
 to clone the repository and use it as a source of contracts
 to generate tests or stubs.
 
-Either via environment variables, system properties, properties set
-inside the plugin or contracts repository configuration you can
-tweak the downloader's behaviour. Below you can find the list of
-properties
+Through environment variables, system properties, or properties set
+inside the plugin or the contracts repository configuration, you can
+tweak the downloader's behavior. The following table describes the available
+properties:
 
 .SCM Stub Downloader properties
 |====
@@ -369,5 +409,5 @@ properties
 
 * `STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS`  (env prop)
 |1000
-|Number of millis to wait between attempts to push the commits to `origin`
+|Number of milliseconds to wait between attempts to push the commits to `origin`
 |====
