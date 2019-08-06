@@ -670,18 +670,18 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	 * Allows to configure HTTP headers.
 	 * @param consumer function to manipulate the headers
 	 */
-	public void headers(Consumer<Request.RequestHeaders> consumer) {
+	public void headers(Consumer<Headers> consumer) {
 		this.headers = new Request.RequestHeaders();
-		consumer.accept((RequestHeaders) this.headers);
+		consumer.accept(this.headers);
 	}
 
 	/**
 	 * Allows to configure HTTP cookies.
 	 * @param consumer function to manipulate the cookies
 	 */
-	public void cookies(Consumer<Request.RequestCookies> consumer) {
+	public void cookies(Consumer<Cookies> consumer) {
 		this.cookies = new Request.RequestCookies();
-		consumer.accept((RequestCookies) this.cookies);
+		consumer.accept(this.cookies);
 	}
 
 	/**
@@ -755,7 +755,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	 * Allows to configure HTTP headers.
 	 * @param consumer function to manipulate the headers
 	 */
-	public void headers(@DelegatesTo(Request.RequestHeaders.class) Closure consumer) {
+	public void headers(@DelegatesTo(Headers.class) Closure consumer) {
 		this.headers = new Request.RequestHeaders();
 		consumer.setDelegate(this.headers);
 		consumer.call();
@@ -765,7 +765,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	 * Allows to configure HTTP cookies.
 	 * @param consumer function to manipulate the cookies
 	 */
-	public void cookies(@DelegatesTo(Request.RequestCookies.class) Closure consumer) {
+	public void cookies(@DelegatesTo(Cookies.class) Closure consumer) {
 		this.cookies = new Request.RequestCookies();
 		consumer.setDelegate(this.cookies);
 		consumer.call();
