@@ -86,6 +86,10 @@ class ContractMetadata {
 		return this.convertedContractWithMetadata
 				.find { it.contract == contract }
 	}
+
+	boolean anyInProgress() {
+		return this.convertedContract.any { it.inProgress }
+	}
 }
 
 @CompileStatic

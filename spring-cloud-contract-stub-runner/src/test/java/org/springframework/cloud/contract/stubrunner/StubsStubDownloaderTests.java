@@ -39,7 +39,11 @@ public class StubsStubDownloaderTests {
 				.downloadAndUnpackStubJar(new StubConfiguration("lv.spring.cloud:bye"));
 
 		BDDAssertions.then(entry).isNotNull();
-		BDDAssertions.then(entry.getValue().getPath()).endsWith("repository/mappings");
+		BDDAssertions.then(entry.getValue()).exists();
+		BDDAssertions.then(new File(entry.getValue(), "pl/spring/cloud/bye/pl_bye.json"))
+				.exists();
+		BDDAssertions.then(new File(entry.getValue(), "lv/spring/cloud/bye/lv_bye.json"))
+				.exists();
 	}
 
 	@Test

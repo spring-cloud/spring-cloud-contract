@@ -40,16 +40,11 @@ import shaded.com.google.common.base.Function;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.util.StringUtils;
 
 class ResourceResolvingStubDownloader implements StubDownloader {
 
 	private static final Log log = LogFactory
 			.getLog(ResourceResolvingStubDownloader.class);
-
-	private static final int TEMP_DIR_ATTEMPTS = 10000;
-
-	private static final String LATEST_VERSION = "+";
 
 	private final StubRunnerOptions stubRunnerOptions;
 
@@ -71,6 +66,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 	@Override
 	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration config) {
+		registerShutdownHook();
 		List<RepoRoot> repoRoots = repoRootFunction.apply(stubRunnerOptions, config);
 		List<String> paths = toPaths(repoRoots);
 		List<Resource> resources = resolveResources(paths);
@@ -81,7 +77,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 			throw new IllegalStateException("No stubs were found on classpath for ["
 					+ config.getGroupId() + ":" + config.getArtifactId() + "]");
 		}
-		final File tmp = createTempDir();
+		final File tmp = TemporaryFileStorage.createTempDir("classpath-stubs");
 		if (stubRunnerOptions.isDeleteStubsAfterTest()) {
 			tmp.deleteOnExit();
 		}
@@ -93,7 +89,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 				if (log.isDebugEnabled()) {
 					log.debug("Relative path for resource is [" + relativePath + "]");
 				}
-				if (StringUtils.isEmpty(relativePath)) {
+				if (relativePath == null) {
 					log.warn("Unable to match the URI [" + resource.getURI() + "]");
 					continue;
 				}
@@ -117,6 +113,11 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 				tmp);
 	}
 
+	private void registerShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> TemporaryFileStorage
+				.cleanup(stubRunnerOptions.isDeleteStubsAfterTest())));
+	}
+
 	private void copyTheFoundFiles(File tmp, Resource resource, String relativePath)
 			throws IOException {
 		// the relative path is OS agnostic and contains / only
@@ -133,6 +134,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 		if (!newFile.exists() && !isDirectory(resource)) {
 			try (InputStream stream = resource.getInputStream()) {
 				Files.copy(stream, newFile.toPath());
+				TemporaryFileStorage.add(newFile);
 			}
 		}
 		if (log.isDebugEnabled()) {
@@ -157,14 +159,29 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 
 	String relativePathPicker(Resource resource, Pattern groupAndArtifactPattern)
 			throws IOException {
-		String uri = resource.getURI().toString();
-		Matcher groupAndArtifactMatcher = groupAndArtifactPattern.matcher(uri);
-		if (groupAndArtifactMatcher.matches()) {
+		Matcher groupAndArtifactMatcher = matcher(resource, groupAndArtifactPattern);
+		if (groupAndArtifactMatcher.matches()
+				&& groupAndArtifactMatcher.groupCount() > 2) {
 			MatchResult groupAndArtifactResult = groupAndArtifactMatcher.toMatchResult();
 			return groupAndArtifactResult.group(2) + groupAndArtifactResult.group(3);
 		}
+		else if (groupAndArtifactMatcher.matches()) {
+			return groupAndArtifactMatcher.group(1);
+		}
 		else {
-			return "";
+			return null;
+		}
+	}
+
+	private Matcher matcher(Resource resource, Pattern groupAndArtifactPattern)
+			throws IOException {
+		try {
+			String path = resource.getURI().getPath();
+			return groupAndArtifactPattern.matcher(path);
+		}
+		catch (Exception ex) {
+			String path = resource.getURI().toString();
+			return groupAndArtifactPattern.matcher(path);
 		}
 	}
 
@@ -190,21 +207,6 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 			}
 		}
 		return resources;
-	}
-
-	// Taken from Guava
-	private File createTempDir() {
-		File baseDir = new File(System.getProperty("java.io.tmpdir"));
-		String baseName = System.currentTimeMillis() + "-";
-		for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
-			File tempDir = new File(baseDir, baseName + counter);
-			if (tempDir.mkdir()) {
-				return tempDir;
-			}
-		}
-		throw new IllegalStateException("Failed to create directory within "
-				+ TEMP_DIR_ATTEMPTS + " attempts (tried " + baseName + "0 to " + baseName
-				+ (TEMP_DIR_ATTEMPTS - 1) + ")");
 	}
 
 }

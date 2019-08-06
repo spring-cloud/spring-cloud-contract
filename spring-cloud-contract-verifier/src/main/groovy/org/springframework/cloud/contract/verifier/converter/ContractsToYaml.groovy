@@ -58,6 +58,7 @@ class ContractsToYaml {
 			}
 			yamlContract.name = contract.name
 			yamlContract.ignored = contract.ignored
+			yamlContract.inProgress = contract.inProgress
 			yamlContract.description = contract.description
 			yamlContract.label = contract.label
 			request(contract, yamlContract)

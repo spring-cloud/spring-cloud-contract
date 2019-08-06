@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.AbstractMap;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -134,12 +134,40 @@ class StubsStubDownloader implements StubDownloader {
 		boolean shouldFindProducer = shouldFindProducer();
 		if (!shouldFindProducer) {
 			String schemeSpecific = schemeSpecificPart();
-			log.info("Stubs are present under [" + schemeSpecific + "]");
-			return new AbstractMap.SimpleEntry<>(stubConfiguration,
-					new File(schemeSpecific));
+			log.info("Stubs are present under [" + schemeSpecific
+					+ "]. Will copy them to a temporary directory.");
+			return new ResourceResolvingStubDownloader(stubRunnerOptions,
+					this::repoRootForSchemeSpecificPart, this::anyPattern)
+							.downloadAndUnpackStubJar(stubConfiguration);
 		}
 		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
 				this::gavPattern).downloadAndUnpackStubJar(stubConfiguration);
+	}
+
+	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions,
+			StubConfiguration configuration) {
+		String specificPart = schemeSpecificPart();
+		specificPart = specificPart.endsWith("/") ? specificPart : (specificPart + "/");
+		specificPart = specificPart + "**/*.*";
+		return new RepoRoots(Collections.singleton(new RepoRoot(specificPart)));
+	}
+
+	private Pattern anyPattern(StubConfiguration config) {
+		return Pattern.compile(resolvePath() + "(.*)");
+	}
+
+	private String resolvePath() {
+		String schemeSpecificPart = schemeSpecificPart();
+		Resource resource = ResourceResolver.resource(schemeSpecificPart);
+		if (resource != null) {
+			try {
+				return Paths.get(resource.getURI()).toString();
+			}
+			catch (IOException ex) {
+				return schemeSpecificPart;
+			}
+		}
+		return schemeSpecificPart;
 	}
 
 	// for group id a.b.c and artifact id d

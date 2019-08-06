@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {
 		"com.example:http-server-dsl"},
-		repositoryRoot = "stubs://classpath://contractsAtRuntime/",
+		repositoryRoot = "stubs://classpath:contractsAtRuntime/",
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL,
 		generateStubs = true)
 public class GoodbyeWorldTests {
