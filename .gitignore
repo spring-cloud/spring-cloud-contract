@@ -15,6 +15,7 @@ sample-pages
 target/
 build/
 src/s
+out/
 
 hs_err_pid*
 .DS_Store
