@@ -197,6 +197,15 @@ then:
 			// end::ignored[]
 	}
 
+	def 'should mark a contract in progress'() {
+		given:
+			// tag::in_progress[]
+			org.springframework.cloud.contract.spec.Contract.make {
+				inProgress()
+			}
+			// end::in_progress[]
+	}
+
 	def 'should make equals and hashcode work properly for URL'() {
 		expect:
 			def a = Contract.make {

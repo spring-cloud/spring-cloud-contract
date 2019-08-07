@@ -69,6 +69,10 @@ public class StubRunnerOptionsBuilder {
 
 	private boolean deleteStubsAfterTest = true;
 
+	private boolean generateStubs;
+
+	private boolean failOnNoStubs = true;
+
 	private Map<String, String> properties = new HashMap<>();
 
 	private Class httpServerStubConfigurer = HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
@@ -194,6 +198,8 @@ public class StubRunnerOptionsBuilder {
 		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null
 				? options.stubIdsToPortMapping : new LinkedHashMap<>();
 		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
+		this.generateStubs = options.isGenerateStubs();
+		this.failOnNoStubs = options.isFailOnNoStubs();
 		this.properties = options.getProperties();
 		this.httpServerStubConfigurer = options.getHttpServerStubConfigurer();
 		return this;
@@ -208,6 +214,16 @@ public class StubRunnerOptionsBuilder {
 	public StubRunnerOptionsBuilder withDeleteStubsAfterTest(
 			boolean deleteStubsAfterTest) {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withGenerateStubs(boolean generateStubs) {
+		this.generateStubs = generateStubs;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withFailOnNoStubs(boolean failOnNoStubs) {
+		this.failOnNoStubs = failOnNoStubs;
 		return this;
 	}
 
@@ -228,7 +244,8 @@ public class StubRunnerOptionsBuilder {
 				buildDependencies(), this.stubIdsToPortMapping, this.username,
 				this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer,
 				this.consumerName, this.mappingsOutputFolder, this.deleteStubsAfterTest,
-				this.properties, this.httpServerStubConfigurer);
+				this.generateStubs, this.failOnNoStubs, this.properties,
+				this.httpServerStubConfigurer);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

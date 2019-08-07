@@ -113,7 +113,9 @@ class TestGenerator {
 	void generateTestClasses(final String basePackageName) {
 		ListMultimap<Path, ContractMetadata> contracts = contractFileScanner.
 				findContracts()
-		contracts.asMap().entrySet().each {
+		contracts.asMap().entrySet()
+		.findAll { Map.Entry<Path, Collection<ContractMetadata>> entry -> !entry.value.any { it.anyInProgress() }}
+		.each {
 			Map.Entry<Path, Collection<ContractMetadata>> entry ->
 				processIncludedDirectory(
 						relativizeContractPath(entry), (Collection<ContractMetadata>) entry.

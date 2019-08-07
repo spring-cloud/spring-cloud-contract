@@ -229,6 +229,13 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	@Parameter(property = "failOnNoStubs", defaultValue = "true")
+	private boolean failOnNoStubs;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.mavenTestSkip || this.skipTests) {
@@ -258,8 +265,9 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsMode, getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
-						this.contractsDirectory);
+				this.contractsProperties, this.failOnNoStubs)
+						.downloadAndUnpackContractsIfRequired(config,
+								this.contractsDirectory);
 		getLog().info(
 				"Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);

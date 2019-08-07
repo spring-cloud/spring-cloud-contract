@@ -67,6 +67,21 @@ class CompositeStubDownloader implements StubDownloader {
 	@Override
 	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
+		Map.Entry<StubConfiguration, File> entry = entry(stubConfiguration);
+		if (entry != null) {
+			return entry;
+		}
+		log.warn("No matching stubs or contracts were found");
+		if (this.stubRunnerOptions.isFailOnNoStubs()) {
+			throw new IllegalArgumentException("No stubs or contracts were found for ["
+					+ stubConfiguration.toColonSeparatedDependencyNotation()
+					+ "] and the switch to fail on no stubs was set.");
+		}
+		return null;
+	}
+
+	private Map.Entry<StubConfiguration, File> entry(
+			StubConfiguration stubConfiguration) {
 		for (StubDownloaderBuilder builder : this.builders) {
 			StubDownloader downloader = builder.build(this.stubRunnerOptions);
 			if (downloader == null) {

@@ -89,6 +89,12 @@ public class Contract {
 	 */
 	private boolean ignored;
 
+	/**
+	 * Whether the contract is in progress. It's not ignored, but the feature is not yet
+	 * finished. Used together with the {@code generateStubs} option.
+	 */
+	private boolean inProgress;
+
 	public Contract() {
 
 	}
@@ -259,6 +265,17 @@ public class Contract {
 		this.ignored = true;
 	}
 
+	/**
+	 * Whether the contract is in progress or not.
+	 */
+	public void inProgress() {
+		this.inProgress = true;
+	}
+
+	public boolean isInProgress() {
+		return this.inProgress;
+	}
+
 	public Integer getPriority() {
 		return priority;
 	}
@@ -333,6 +350,10 @@ public class Contract {
 
 	public void setIgnored(boolean ignored) {
 		this.ignored = ignored;
+	}
+
+	public void setInProgress(boolean inProgress) {
+		this.inProgress = inProgress;
 	}
 
 	@Override

@@ -38,10 +38,10 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 
 /**
- * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
+ * Convert Spring Cloud Contract Verifier contracts into stubs mappings.
  * <p>
  * This goal allows you to generate `stubs-jar` or execute `spring-cloud-contract:run`
- * with generated WireMock mappings.
+ * with generated mappings.
  *
  * @author Mariusz Smykula
  */
@@ -181,6 +181,13 @@ public class ConvertMojo extends AbstractMojo {
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	@Parameter(property = "failOnNoContracts", defaultValue = "true")
+	private boolean failOnNoContracts;
+
 	@Override
 	public void execute() throws MojoExecutionException {
 		if (this.skip) {
@@ -271,8 +278,9 @@ public class ConvertMojo extends AbstractMojo {
 				getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
-						this.contractsDirectory);
+				this.contractsProperties, this.failOnNoContracts)
+						.downloadAndUnpackContractsIfRequired(config,
+								this.contractsDirectory);
 	}
 
 	private File stubsOutputDir(String rootPath) {

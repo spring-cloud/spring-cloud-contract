@@ -101,6 +101,22 @@ class ContractHttpDocsSpec extends Specification {
 			}
 	// end::http_dsl[]
 
+	org.springframework.cloud.contract.spec.Contract methodDsl =
+			org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					// tag::method[]
+					method GET()
+					// end::method[]
+					url "/foo"
+				}
+
+				response {
+					status 200
+				}
+
+				priority 1
+			}
+
 	org.springframework.cloud.contract.spec.Contract request =
 			// tag::request[]
 			org.springframework.cloud.contract.spec.Contract.make {

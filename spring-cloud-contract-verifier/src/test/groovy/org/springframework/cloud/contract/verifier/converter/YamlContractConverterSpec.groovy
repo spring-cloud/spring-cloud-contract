@@ -713,6 +713,7 @@ label: null
 name: "post1"
 priority: null
 ignored: false
+inProgress: false
 '''
 			String expectedYaml2 = '''\
 ---
@@ -754,6 +755,7 @@ label: null
 name: "post2"
 priority: null
 ignored: false
+inProgress: false
 '''
 		when:
 			Map<String, byte[]> strings = converter.store([
@@ -794,6 +796,7 @@ ignored: false
 		and:
 			List<Contract> contracts = [Contract.make {
 				request {
+					inProgress()
 					url("/foo")
 					method("PUT")
 					headers {
@@ -823,6 +826,7 @@ ignored: false
 		then:
 			yamlContracts.size() == 1
 			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.inProgress == true
 			yamlContract.request.url == "/foo"
 			yamlContract.request.method == "PUT"
 			yamlContract.request.headers.find { it.key == "foo" && it.value == "bar" }
@@ -982,6 +986,7 @@ ignored: false
 				name("fooo")
 				label("card_rejected")
 				ignored()
+				inProgress()
 				input {
 					messageFrom("input")
 					messageBody([
@@ -1090,6 +1095,7 @@ ignored: false
 			YamlContract yamlContract = yamlContracts.first()
 			yamlContract.name == "fooo"
 			yamlContract.ignored == true
+			yamlContract.inProgress == true
 			yamlContract.label == "card_rejected"
 			yamlContract.input.messageFrom == "input"
 			yamlContract.input.messageBody == [

@@ -138,6 +138,19 @@ public @interface AutoConfigureStubRunner {
 	boolean deleteStubsAfterTest() default true;
 
 	/**
+	 * @return When enabled, this flag will tell stub runner to not load the generated
+	 * stubs, but convert the found contracts at runtime to a stub format and run those
+	 * stubs.
+	 */
+	boolean generateStubs() default false;
+
+	/**
+	 * @return when enabled, this flag will tell stub runner to throw an exception when no
+	 * stubs / contracts were found.
+	 */
+	boolean failOnNoStubs() default true;
+
+	/**
 	 * Configuration for an HTTP server stub.
 	 * @return class that allows to perform additional HTTP server stub configuration
 	 */

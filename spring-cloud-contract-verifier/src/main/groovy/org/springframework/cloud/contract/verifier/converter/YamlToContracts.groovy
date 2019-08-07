@@ -99,6 +99,9 @@ class YamlToContracts {
 				if (yamlContract.ignored) {
 					ignored()
 				}
+				if (yamlContract.inProgress) {
+					inProgress()
+				}
 				if (yamlContract.request?.method) {
 					request {
 						method(yamlContract.request?.method)

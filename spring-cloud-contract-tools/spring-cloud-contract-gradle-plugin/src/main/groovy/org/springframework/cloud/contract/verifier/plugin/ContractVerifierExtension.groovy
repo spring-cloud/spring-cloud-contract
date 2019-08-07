@@ -139,6 +139,12 @@ class ContractVerifierExtension {
 	 */
 	Boolean assertJsonSize = false
 
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	boolean failOnNoContracts = true
+
 	ContractRepository contractRepository = new ContractRepository()
 
 	/**
@@ -242,6 +248,10 @@ class ContractVerifierExtension {
 		this.disableStubPublication = disableStubPublication
 	}
 
+	void failOnNoContracts(boolean failOnNoContracts) {
+		this.failOnNoContracts = failOnNoContracts
+	}
+
 	ContractVerifierExtension copy() {
 		return new ContractVerifierExtension(
 				testFramework: this.testFramework,
@@ -261,13 +271,14 @@ class ContractVerifierExtension {
 				stubsOutputDir: this.stubsOutputDir,
 				stubsSuffix: this.stubsSuffix,
 				assertJsonSize: this.assertJsonSize,
+				failOnNoContracts: this.failOnNoContracts,
 				contractRepository: new ContractRepository(
 						repositoryUrl: this.contractRepository.repositoryUrl,
 						username: this.contractRepository.username,
 						password: this.contractRepository.password,
 						proxyPort: this.contractRepository.proxyPort,
 						proxyHost: this.contractRepository.proxyHost,
-						cacheDownloadedContracts: this.contractRepository.cacheDownloadedContracts
+						cacheDownloadedContracts: this.contractRepository.cacheDownloadedContracts,
 				),
 				contractDependency: new Dependency(
 						groupId: this.contractDependency.groupId,

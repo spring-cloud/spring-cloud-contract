@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.plugin
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.gradle.api.GradleException
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskAction
@@ -48,6 +49,7 @@ class ContractsCopyTask extends ConventionTask {
 		ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getExtension())
 		File file = getDownloader().downloadAndUnpackContractsIfRequired(getExtension(), props)
 		file = contractsSubDirIfPresent(logger, file)
+		throwExceptionWhenFailOnNoContracts(file)
 		String antPattern = "${props.includedRootFolderAntPattern}*.*"
 		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
@@ -59,6 +61,14 @@ class ContractsCopyTask extends ConventionTask {
 			convertBackedUpDslsToYaml(root, file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
 		}
 
+	}
+
+	private void throwExceptionWhenFailOnNoContracts(File file) {
+		if (getExtension().isFailOnNoContracts() && (!file.exists() || file.listFiles().length == 0)) {
+			throw new GradleException("Contracts could not be found: ["
+					+ file.getAbsolutePath()
+					+ "] .\nPlease make sure that the contracts were defined, or set the [failOnNoContracts] flag to [false]")
+		}
 	}
 
 	@CompileDynamic

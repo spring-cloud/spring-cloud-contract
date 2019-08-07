@@ -40,14 +40,14 @@
 		<spock-spring.version>1.3-groovy-2.5</spock-spring.version>
 		<spock-global-unroll.version>0.5.1</spock-global-unroll.version>
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
-		<commons-text.version>1.6</commons-text.version>
+		<commons-text.version>1.7</commons-text.version>
 		<handlebars.version>4.1.2</handlebars.version>
 		<jgit.version>5.3.1.201904271842-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 
 		<junit-platform.version>1.3.2</junit-platform.version>
-		<junit-vintage.version>5.4.2</junit-vintage.version>
-		<junit-jupiter.version>5.4.2</junit-jupiter.version>
+		<junit-vintage.version>5.5.1</junit-vintage.version>
+		<junit-jupiter.version>5.5.1</junit-jupiter.version>
 		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
 		<gmavenplus-plugin.version>1.6.3</gmavenplus-plugin.version>
@@ -59,7 +59,8 @@
 		<aether.version>1.1.0</aether.version>
 		<xpath2.processor.version>2.1.100</xpath2.processor.version>
 		<xerces.version>2.11.0</xerces.version>
-		<jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
 	</properties>
 
 	<modules>

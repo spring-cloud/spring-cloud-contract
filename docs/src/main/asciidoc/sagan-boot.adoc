@@ -1,8 +1,15 @@
-Add Sleuth to your classpath:
+== Adding Sleuth to Your Classpath:
 
-Maven
+This section details how to add Sleuth to your class path for both Maven and Gradle
 
-```xml
+=== Maven
+
+To add Sleuth to your classpath with Maven, add the following elements
+to your `pom.xml` file:
+
+====
+[source,xml]
+----
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -20,11 +27,17 @@ Maven
         <artifactId>spring-cloud-starter-sleuth</artifactId>
     </dependency>
 </dependencies>
-```
+----
+====
 
-Gradle
+=== Gradle
 
-```groovy
+To add Sleuth to your classpath with Gradle, add the following
+to your `build.gradle` file:
+
+====
+[src,groovy]
+----
 buildscript {
     dependencies {
         classpath "io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE"
@@ -41,11 +54,15 @@ dependencyManagement {
 dependencies {
     compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
 }
-```
+----
+====
 
-As long as Spring Cloud Sleuth is on the classpath any Spring Boot application will generate trace data:
+As long as Spring Cloud Sleuth is on the classpath, any Spring Boot application can
+generate trace data. The following example shows how to do so:
 
-```java
+====
+[src,java]
+----
 @SpringBootApplication
 @RestController
 public class Application {
@@ -63,12 +80,21 @@ public class Application {
   }
 
 }
-```
+----
+====
 
-Run this app and then hit the home page. You will see traceId and spanId populated in the logs. If this app calls out to another one (e.g. with `RestTemplate`) it will send the trace data in headers and if the receiver is another Sleuth app you will see the trace continue there.
+Now you can run this application and visit the home page. In the logs, you can see
+`traceId` and `spanId` populated. If this application calls out to another one (for
+example, with `RestTemplate`), it sends the trace data in headers, and, if the receiver is
+another Sleuth application, you can see the trace continue there.
 
-IMPORTANT: instead of logging the request in the handler explicitly, you could set `logging.level.org.springframework.web.servlet.DispatcherServlet=DEBUG`
+IMPORTANT: instead of logging the request in the handler explicitly, you could set
+`logging.level.org.springframework.web.servlet.DispatcherServlet=DEBUG`
 
-IMPORTANT: If you use Zipkin, configure the probability of spans exported by setting (for `2.0.x`) `spring.sleuth.sampler.probability` or (up till `2.0.x`)`spring.sleuth.sampler.percentage` (default: 0.1, which is 10 percent). Otherwise, you might think that Sleuth is not working because it omits some spans.
+IMPORTANT: If you use Zipkin, you can configure the probability of spans being exported by
+setting (for `2.0.x`) `spring.sleuth.sampler.probability` or (up till `2.0.x`)
+`spring.sleuth.sampler.percentage` (default: 0.1, which is 10 percent). Otherwise, you
+might think that Sleuth is not working because it omits some spans.
 
-IMPORTANT: Set `spring.application.name=bar` (for instance) to see the service name as well as the trace and span ids.
+IMPORTANT: Set `spring.application.name=bar` (for instance) to see the service name as
+well as the trace and span IDs.

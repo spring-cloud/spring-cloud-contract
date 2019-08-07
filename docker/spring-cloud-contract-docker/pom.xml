@@ -3,6 +3,9 @@
 		 xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<dependency-management-plugin.version>1.0.8.RELEASE</dependency-management-plugin.version>
+	</properties>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -46,7 +49,7 @@
 		<dependency>
 			<groupId>io.spring.gradle</groupId>
 			<artifactId>dependency-management-plugin</artifactId>
-			<version>1.0.4.RELEASE</version>
+			<version>${dependency-management-plugin.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
@@ -88,7 +91,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.6.0</version>
+				<version>${exec-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>gradle</id>

@@ -52,6 +52,8 @@ public class YamlContract {
 
 	public boolean ignored;
 
+	public boolean inProgress;
+
 	public static class Request {
 
 		public String method;
