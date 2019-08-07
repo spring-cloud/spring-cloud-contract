@@ -1437,3 +1437,8 @@ TIP: You need not specify the output directory for the generated snippets (since
 == How can I Use Stubs from a Location
 
 If you want to fetch contracts or stubs from a given location without cloning a repo or fetching a JAR, just use the `stubs://` protocol when providing the repository root argument for Stub Runner or the Spring Cloud Contract plugin. You can read more about this in <<project-features.adoc#features-stub-runner-stubs-protocol, this section>> of the documentation.
+
+[[how-to-generate-stubs-at-runtime]]
+== How can I Generate Stubs at Runtime
+
+If you want to generate stubs at runtime for contracts, it's enough to switch the `generateStubs` property in the `@AutoConfigureStubRunner` annotation, or call the `withGenerateStubs()` method on the JUnit Rule or Extension. You can read more about this in <<project-features.adoc#features-stub-runner-generate-stubs-at-runtime, this section>> of the documentation.

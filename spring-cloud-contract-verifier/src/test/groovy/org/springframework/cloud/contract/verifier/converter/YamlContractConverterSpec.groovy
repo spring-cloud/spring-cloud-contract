@@ -799,6 +799,7 @@ inProgress: false
 		and:
 			List<Contract> contracts = [Contract.make {
 				request {
+					inProgress()
 					url("/foo")
 					method("PUT")
 					headers {
@@ -828,6 +829,7 @@ inProgress: false
 		then:
 			yamlContracts.size() == 1
 			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.inProgress == true
 			yamlContract.request.url == "/foo"
 			yamlContract.request.method == "PUT"
 			yamlContract.request.headers.find { it.key == "foo" && it.value == "bar" }

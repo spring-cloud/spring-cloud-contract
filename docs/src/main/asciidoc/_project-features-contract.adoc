@@ -69,6 +69,7 @@ The following sections describe the most common top-level elements:
 * <<contract-dsl-description>>
 * <<contract-dsl-name>>
 * <<contract-dsl-ignoring-contracts>>
+* <<contract-dsl-in-progress>>
 * <<contract-dsl-passing-values-from-files>>
 
 [[contract-dsl-description]]
@@ -138,6 +139,30 @@ include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/co
 .yml
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=ignored,indent=0]
+----
+====
+
+[[contract-dsl-in-progress]]
+==== Contracts in Progress
+
+A contract in progress will not generate tests on the producer side, but will allow generation of stubs.
+
+IMPORTANT: Use this feature with caution as it may lead to false positives. You generate stubs for your consumers to use without actually having the implementation in place!
+
+If you want to set a contract in progress the following
+example shows how to do so:
+
+====
+[source,groovy,indent=0,role="primary"]
+.groovy
+----
+include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=in_progress,indent=0]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.yml
+----
+include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=in_progress,indent=0]
 ----
 ====
 

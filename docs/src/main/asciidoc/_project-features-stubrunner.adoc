@@ -972,6 +972,49 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 ----
 ====
 
+[[features-stub-runner-generate-stubs-at-runtime]]
+=== Generating Stubs at Runtime
+
+As a consumer, you might not want to wait for the producer to finish its implementation and then publish their stubs. A solution to this problem can be generation of stubs at runtime.
+
+As a producer, when a contract is defined, you are required to make the generated tests pass in order for the stubs to be published. There are cases where you would like to unblock the consumers so that they can fetch the stubs before your tests are actually passing. In this case you should set such contracts as in progress. You can read more about this under the <<contract-dsl-in-progress>> section. That way your tests will not be generated, but the stubs will.
+
+As a consumer, you can toggle a switch to generate stubs at runtime. Stub Runner will ignore all the existing stub mappings and will generate new ones for all the contract definitions. Another option is to pass the `stubrunner.generate-stubs` system property. Below you can find an example of such setup.
+
+====
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.Annotation
+----
+@AutoConfigureStubRunner(
+stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		repositoryRoot = "stubs://file://location/to/the/contracts",
+		ids = "com.example:some-producer",
+		generateStubs = true)
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JUnit 4 Rule
+----
+@Rule
+	public StubRunnerRule rule = new StubRunnerRule()
+			.downloadStub("com.example:some-producer")
+			.repoRoot("stubs://file://location/to/the/contracts")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+			.withGenerateStubs(true);
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JUnit 5 Extension
+----
+@RegisterExtension
+	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+			.downloadStub("com.example:some-producer")
+			.repoRoot("stubs://file://location/to/the/contracts")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+			.withGenerateStubs(true);
+----
+====
+
 [[features-stub-runner-common]]
 === Common Properties
 
