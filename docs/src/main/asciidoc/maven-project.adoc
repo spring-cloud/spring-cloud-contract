@@ -222,6 +222,7 @@ extends `com.example.base.BaseClass`. This setting takes precedence over
 `packageWithBaseClasses` and `baseClassForTests`.
 * `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
+* `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
 
 If you want to download your contract definitions from a Maven repository, you can use
 the following options:

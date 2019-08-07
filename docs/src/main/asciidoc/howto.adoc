@@ -1441,4 +1441,11 @@ If you want to fetch contracts or stubs from a given location without cloning a 
 [[how-to-generate-stubs-at-runtime]]
 == How can I Generate Stubs at Runtime
 
-If you want to generate stubs at runtime for contracts, it's enough to switch the `generateStubs` property in the `@AutoConfigureStubRunner` annotation, or call the `withGenerateStubs()` method on the JUnit Rule or Extension. You can read more about this in <<project-features.adoc#features-stub-runner-generate-stubs-at-runtime, this section>> of the documentation.
+If you want to generate stubs at runtime for contracts, it's enough to switch the `generateStubs` property in the `@AutoConfigureStubRunner` annotation, or call the `withGenerateStubs(true)` method on the JUnit Rule or Extension. You can read more about this in <<project-features.adoc#features-stub-runner-generate-stubs-at-runtime, this section>> of the documentation.
+
+[[how-to-use-the-failonnostubs-feature]]
+== How can I Make The Build Pass if There Are No Contracts or Stubs
+
+If you want Stub Runner not to fail if no stubs were found, it's enough to switch the `generateStubs` property in the `@AutoConfigureStubRunner` annotation, or call the `withFailOnNoStubs(false)` method on the JUnit Rule or Extension. You can read more about this in <<project-features.adoc#features-stub-runner-fail-on-no-stubs, this section>> of the documentation.
+
+If you want the plugins not to fail the build when no contracts were found, you can set the `failOnNoStubs` flag in Maven or call the `contractRepository { failOnNoStubs(false) }` Closure in Gradle.

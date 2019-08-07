@@ -82,6 +82,13 @@ public class GenerateStubsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "stubs")
 	private String classifier;
 
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	@Parameter(property = "failOnNoContracts", defaultValue = "true")
+	private boolean failOnNoContracts;
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.jarSkip) {
 			getLog().info(
@@ -90,18 +97,22 @@ public class GenerateStubsMojo extends AbstractMojo {
 							+ this.jarSkip);
 			return;
 		}
+		else if (stubsOutputMissing(this.outputDirectory) && !this.failOnNoContracts) {
+			getLog().warn(
+					"The stubs output directory is missing, the flag to fail on no stubs if off - will continue without throwing an exception");
+			return;
+		}
+		else if (stubsOutputMissing(this.outputDirectory) && this.failOnNoContracts) {
+			throw new MojoExecutionException("Stubs could not be found: ["
+					+ this.outputDirectory.getAbsolutePath()
+					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
+		}
 		File stubsJarFile = createStubJar(this.outputDirectory);
 		this.projectHelper.attachArtifact(this.project, "jar", this.classifier,
 				stubsJarFile);
 	}
 
-	private File createStubJar(File stubsOutputDir)
-			throws MojoFailureException, MojoExecutionException {
-		if (!stubsOutputDir.exists()) {
-			throw new MojoExecutionException("Stubs could not be found: ["
-					+ stubsOutputDir.getAbsolutePath()
-					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
-		}
+	private File createStubJar(File stubsOutputDir) throws MojoFailureException {
 		String stubArchiveName = this.project.getBuild().getFinalName() + "-"
 				+ this.classifier + ".jar";
 		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
@@ -122,6 +133,10 @@ public class GenerateStubsMojo extends AbstractMojo {
 					"Exception while packaging " + this.classifier + " jar.", e);
 		}
 		return stubsJarFile;
+	}
+
+	private boolean stubsOutputMissing(File stubsOutputDir) {
+		return !stubsOutputDir.exists();
 	}
 
 	private String[] excludes() {

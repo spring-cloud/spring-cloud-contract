@@ -78,7 +78,7 @@ class MavenContractsDownloader {
 			StubRunnerProperties.StubsMode stubsMode, Log log, String repositoryUsername,
 			String repositoryPassword, String repositoryProxyHost,
 			Integer repositoryProxyPort, boolean deleteStubsAfterTest,
-			Map<String, String> contractsProperties, boolean failOnNoStubs) {
+			Map<String, String> contractsProperties, boolean failOnNoContracts) {
 		this.project = project;
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
@@ -92,7 +92,7 @@ class MavenContractsDownloader {
 		this.stubDownloaderBuilderProvider = new StubDownloaderBuilderProvider();
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		this.contractsProperties = contractsProperties;
-		this.failOnNoStubs = failOnNoStubs;
+		this.failOnNoStubs = failOnNoContracts;
 	}
 
 	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config,

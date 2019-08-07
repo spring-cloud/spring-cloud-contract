@@ -308,6 +308,16 @@ closure to set it up.
 JAR is available offline, remotely, and so on).
 * `deleteStubsAfterTest`: If set to `false`, do not remove any downloaded
 contracts from temporary directories.
+* `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
+
+There is also the `contractRepository { ... }` closure that contains the following properties
+
+* `repositoryUrl`: the URL to the repository with contract definitions
+* `username` : Repository username
+* `password` : Repository password
+* `proxyPort` : the port of the proxy
+* `proxyHost` : the host of the proxy
+* `cacheDownloadedContracts` : If set to `true` then will cache the folder where non snapshot contract artifacts got downloaded. Defaults to `true`.
 
 You can also turn on the following experimental features in the plugin:
 

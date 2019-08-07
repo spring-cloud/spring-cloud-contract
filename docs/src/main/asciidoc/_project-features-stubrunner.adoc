@@ -1015,6 +1015,45 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 ----
 ====
 
+[[features-stub-runner-fail-on-no-stubs]]
+=== Fail On No Stubs
+
+By default Stub Runner will fail if no stubs were found. In order to change that behaviour, just set to `false` the `failOnNoStubs` property in the annotation or call the `withFailOnNoStubs(false)` method on a JUnit Rule or Extension.
+
+====
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.Annotation
+----
+@AutoConfigureStubRunner(
+stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		repositoryRoot = "stubs://file://location/to/the/contracts",
+		ids = "com.example:some-producer",
+		failOnNoStubs = false)
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JUnit 4 Rule
+----
+@Rule
+	public StubRunnerRule rule = new StubRunnerRule()
+			.downloadStub("com.example:some-producer")
+			.repoRoot("stubs://file://location/to/the/contracts")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+			.withFailOnNoStubs(false);
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JUnit 5 Extension
+----
+@RegisterExtension
+	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+			.downloadStub("com.example:some-producer")
+			.repoRoot("stubs://file://location/to/the/contracts")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+			.withFailOnNoStubs(false);
+----
+====
+
 [[features-stub-runner-common]]
 === Common Properties
 

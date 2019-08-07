@@ -185,8 +185,8 @@ public class ConvertMojo extends AbstractMojo {
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
-	@Parameter(property = "failOnNoStubs", defaultValue = "true")
-	private boolean failOnNoStubs;
+	@Parameter(property = "failOnNoContracts", defaultValue = "true")
+	private boolean failOnNoContracts;
 
 	@Override
 	public void execute() throws MojoExecutionException {
@@ -278,7 +278,7 @@ public class ConvertMojo extends AbstractMojo {
 				getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties, this.failOnNoStubs)
+				this.contractsProperties, this.failOnNoContracts)
 						.downloadAndUnpackContractsIfRequired(config,
 								this.contractsDirectory);
 	}
