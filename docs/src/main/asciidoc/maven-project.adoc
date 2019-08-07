@@ -146,6 +146,14 @@ The `generateTests` plugin goal is assigned to be invoked in the phase called
 `generate-test-sources`. If you want it to be part of your build process, you need not do
 anything. If you want only to generate tests, invoke the `generateTests` goal.
 
+If you want to run stubs via Maven it's enough to call the `run` goal with the stubs to run as the `spring.cloud.contract.verifier.stubs` system property as follows:
+
+[source,bash,indent=0]
+====
+mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:run \
+-Dspring.cloud.contract.verifier.stubs="com.acme:service-name"
+====
+
 [[maven-configure-plugin]]
 == Configure plugin
 
