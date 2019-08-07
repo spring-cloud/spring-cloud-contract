@@ -190,7 +190,7 @@ include::{verifier_core_path}/src/test/resources/classpath/response.json[indent=
 ----
 ====
 
-When test or stub generation takes place, the contents of the `readFromFile.groovy` file is passed to the body
+When test or stub generation takes place, the contents of the `request.json` and `response.json` files are passed to the body
 of a request or a response. The name of the file needs to be a file with location
 relative to the folder in which the contract lays.
 

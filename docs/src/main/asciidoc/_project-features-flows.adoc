@@ -352,7 +352,7 @@ methods to create request matchers, but you cannot use both approaches.
 
 On the consumer side, you can make the `resource.json` generated earlier in this section
 available on the classpath (by
-<<features-stub-runner-publishing-stubs-as-jars], for example). After that, you can create a stub that uses WireMock in a
+<<features-stub-runner-publishing-stubs-as-jars>>, for example). After that, you can create a stub that uses WireMock in a
 number of different ways, including by using
 `@AutoConfigureWireMock(stubs="classpath:resource.json")`, as described earlier in this
 document.
