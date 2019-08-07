@@ -17,6 +17,8 @@ following sections:
 * <<maven-pushing-stubs-to-scm>>
 * <<maven-sts>>
 
+You can also check the plugin's documentation  link:../../spring-cloud-contract-maven-plugin/index.html[here].
+
 [[maven-add-plugin]]
 == Adding the Maven Plugin
 
