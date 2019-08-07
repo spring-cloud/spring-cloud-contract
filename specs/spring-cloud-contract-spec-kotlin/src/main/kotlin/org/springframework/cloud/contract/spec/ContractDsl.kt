@@ -41,6 +41,7 @@ class ContractDsl {
     var description: String? = null
     var name: String? = null
     var ignored: Boolean = false
+    var inProgress: Boolean = false
     var request: Request? = null
     var response: Response? = null
     var input: Input? = null
@@ -69,6 +70,7 @@ class ContractDsl {
         description?.also { contract.description = description!! }
         name?.also { contract.name = name!! }
         contract.ignored = ignored
+        contract.isInProgress = inProgress
         request?.also { contract.request = request!! }
         response?.also { contract.response = response!! }
         input?.also { contract.input = input!! }

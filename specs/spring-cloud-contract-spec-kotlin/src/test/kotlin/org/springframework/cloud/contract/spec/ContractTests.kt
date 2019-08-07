@@ -259,6 +259,19 @@ then:
 	}
 
 	@Test
+	fun `should mark a contract in progress`() {
+		val contract = contract {
+			inProgress = true
+		}
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			assertThat(contract.isInProgress).isTrue()
+		}
+	}
+
+	@Test
 	fun `should make equals and hashcode work properly for URL`() {
 		val a: Contract = contract {
 			request {
