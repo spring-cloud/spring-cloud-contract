@@ -83,6 +83,54 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
     /* HELPER FUNCTIONS */
 
+    /**
+     * Sets the equality check to the given query parameter.
+     * @param value value to check against
+     * @return matching strategy
+     */
+    fun equalTo(value: Any) = MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO)
+
+    /**
+     * Sets the containing check to the given query parameter.
+     * @param value value to check against
+     * @return matching strategy
+     */
+    fun containing(value: Any) = MatchingStrategy(value, MatchingStrategy.Type.CONTAINS)
+
+    /**
+     * Sets the matching check to the given query parameter.
+     * @param value value to check against
+     * @return matching strategy
+     */
+    fun matching(value: Any) = MatchingStrategy(value, MatchingStrategy.Type.MATCHING)
+
+    /**
+     * Sets the not matching check to the given query parameter.
+     * @param value value to check against
+     * @return matching strategy
+     */
+    fun notMatching(value: Any) = MatchingStrategy(value, MatchingStrategy.Type.NOT_MATCHING)
+
+    /**
+     * Sets the XML equality check to the body.
+     * @param value value to check against
+     * @return matching strategy
+     */
+    fun equalToXml(value: Any) = MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_XML)
+
+    /**
+     * Sets the JSON equality check to the body.
+     * @param value value to check against
+     * @return matching strategy
+     */
+    fun equalToJson(value: Any) = MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON)
+
+    /**
+     * Sets absence check to the given query parameter.
+     * @return matching strategy
+     */
+    fun absent() = MatchingStrategy(true, MatchingStrategy.Type.ABSENT)
+
     fun value(value: ClientDslProperty) = delegate.value(value)
 
     fun v(value: ClientDslProperty) = delegate.value(value)

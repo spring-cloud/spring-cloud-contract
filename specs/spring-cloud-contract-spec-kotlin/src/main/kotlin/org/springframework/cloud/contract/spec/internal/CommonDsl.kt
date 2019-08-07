@@ -101,14 +101,20 @@ open class CommonDsl {
      * @param charset to use for converting the bytes to String
      * @return String file contents
      */
-    fun file(relativePath: String, charset: Charset) = Body(FromFileProperty(fileLocation(relativePath), String::class.java, charset))
+    fun file(relativePath: String, charset: Charset) = FromFileProperty(fileLocation(relativePath), String::class.java, charset)
 
     /**
      * Read file contents as bytes[].
      * @param relativePath of the file to read
      * @return String file contents
      */
-    fun fileAsBytes(relativePath: String) = Body(FromFileProperty(fileLocation(relativePath), ByteArray::class.java))
+    fun fileAsBytes(relativePath: String) = FromFileProperty(fileLocation(relativePath), ByteArray::class.java)
+
+    fun bodyFromFile(relativePath: String) = bodyFromFile(relativePath, Charset.defaultCharset())
+
+    fun bodyFromFile(relativePath: String, charset: Charset) = Body(FromFileProperty(fileLocation(relativePath), String::class.java, charset))
+
+    fun bodyFromFileAsBytes(relativePath: String) = Body(FromFileProperty(fileLocation(relativePath), ByteArray::class.java))
 
     /**
      * Read file contents as array of bytes.
@@ -124,6 +130,13 @@ open class CommonDsl {
             throw IllegalStateException(ex)
         }
     }
+
+    fun named(name: DslProperty<Any>, value: DslProperty<Any>) = NamedProperty(name, value)
+
+    fun named(name: DslProperty<Any>, value: DslProperty<Any>,
+              contentType: DslProperty<Any>) = NamedProperty(name, value, contentType)
+
+    fun named(namedMap: Map<String, DslProperty<Any>>) = NamedProperty(namedMap)
 
     /* REGEX */
 

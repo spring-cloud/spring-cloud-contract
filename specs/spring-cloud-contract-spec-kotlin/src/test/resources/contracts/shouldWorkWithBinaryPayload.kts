@@ -26,11 +26,11 @@ contract {
 		headers {
 			contentType(applicationOctetStream())
 		}
-		body = fileAsBytes("contracts/request.pdf")
+		body = bodyFromFileAsBytes("contracts/request.pdf")
 	}
 	response {
 		status = code(200)
-		body = fileAsBytes("contracts/response.pdf")
+		body = bodyFromFileAsBytes("contracts/response.pdf")
 		headers {
 			contentType(applicationOctetStream())
 		}
