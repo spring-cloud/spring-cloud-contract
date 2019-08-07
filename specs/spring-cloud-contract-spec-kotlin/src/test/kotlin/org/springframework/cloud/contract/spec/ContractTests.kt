@@ -267,7 +267,7 @@ then:
 		assertDoesNotThrow {
 			Contract.assertContract(contract)
 		}.also {
-			assertThat(contract.isInProgress).isTrue()
+			assertThat(contract.inProgress).isTrue()
 		}
 	}
 

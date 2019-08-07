@@ -70,7 +70,7 @@ class ContractDsl {
         description?.also { contract.description = description!! }
         name?.also { contract.name = name!! }
         contract.ignored = ignored
-        contract.isInProgress = inProgress
+        contract.inProgress = inProgress
         request?.also { contract.request = request!! }
         response?.also { contract.response = response!! }
         input?.also { contract.input = input!! }

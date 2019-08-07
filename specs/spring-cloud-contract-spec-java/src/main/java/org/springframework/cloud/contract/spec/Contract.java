@@ -352,6 +352,10 @@ public class Contract {
 		this.ignored = ignored;
 	}
 
+	public boolean getInProgress() {
+		return this.inProgress;
+	}
+
 	public void setInProgress(boolean inProgress) {
 		this.inProgress = inProgress;
 	}
