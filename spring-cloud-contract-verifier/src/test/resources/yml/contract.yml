@@ -21,7 +21,7 @@ request:
   queryParameters:
     a: b
     b: c
-  #tag::query_params[]
+  #end::query_params[]
   #tag::headers[]
   headers:
     foo: bar

@@ -1,0 +1,40 @@
+[[features]]
+= Spring Cloud Contract Features
+include::_attributes.adoc[]
+
+This section dives into the details of {project-full-name}. Here you can learn about the key
+features that you may want to use and customize. If you have not already done so, you
+might want to read the "<<getting-started.adoc#getting-started>>" and
+"<<using.adoc#using>>" sections, so that you have a good grounding of the
+basics.
+
+include::_project-features-contract.adoc[]
+
+include::_project-features-flows.adoc[]
+
+include::_project-features-messaging.adoc[]
+
+include::_project-features-stubrunner.adoc[]
+
+include::_project-features-wiremock.adoc[]
+
+[[features-build-tools]]
+== Build Tools Integration
+
+You can run test generation and stub execution in various ways. The most common ones are
+as follows:
+
+* link:maven-project.html[Maven]
+* link:gradle-project.html[Gradle]
+* link:docker-project.html[Docker]
+
+[[features-whats-next]]
+== What to Read Next
+
+If you want to learn more about any of the classes discussed in this section, you can browse the
+{github-code}[source code directly]. If you have specific questions, see the
+<<howto.adoc#howto, how-to>> section.
+
+If you are comfortable with {project-full-name}'s core features, you can continue on and read
+about
+<<advanced.adoc, {project-full-name}'s advanced features>>.
