@@ -44,20 +44,20 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
         this.method(method.toString())
     }
 
-    fun url(url: String): Url {
-        return Url(url)
+    fun url(url: String) {
+        this.url = Url(url)
     }
 
-    fun url(url: DslProperty<Any>): Url {
-        return Url(url)
+    fun url(url: DslProperty<Any>) {
+        this.url = Url(url)
     }
 
-    fun urlPath(url: String): UrlPath {
-        return UrlPath(url)
+    fun urlPath(url: String) {
+        this.urlPath = UrlPath(url)
     }
 
-    fun urlPath(url: DslProperty<Any>): UrlPath {
-        return UrlPath(url)
+    fun urlPath(url: DslProperty<Any>) {
+        this.urlPath = UrlPath(url)
     }
 
     fun headers(headers: Headers.() -> Unit) {
