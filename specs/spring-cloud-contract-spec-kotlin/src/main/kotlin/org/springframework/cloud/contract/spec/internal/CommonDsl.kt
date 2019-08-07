@@ -22,62 +22,68 @@ import java.util.regex.Pattern
  * @author Tim Ysewyn
  */
 open class CommonDsl {
+
+    /* HELPER FUNCTIONS */
     
     /**
      * Helper method to provide a better name for the consumer side.
      * @param clientValue client value
      * @return client dsl property
      */
-    fun client(clientValue: Any) = ClientDslProperty(clientValue)
+    fun client(clientValue: Any?) = ClientDslProperty(clientValue)
 
     /**
      * Helper method to provide a better name for the consumer side.
      * @param clientValue client value
      * @return client dsl property
      */
-    fun c(clientValue: Any) = ClientDslProperty(clientValue)
+    fun c(clientValue: Any?) = ClientDslProperty(clientValue)
 
     /**
      * Helper method to provide a better name for the consumer side.
      * @param clientValue client value
      * @return client dsl property
      */
-    fun consumer(clientValue: Any) = ClientDslProperty(clientValue)
+    fun consumer(clientValue: Any?) = ClientDslProperty(clientValue)
 
     /**
      * Helper method to provide a better name for the consumer side.
      * @param clientValue client value
      * @return client dsl property
      */
-    fun stub(clientValue: Any) = ClientDslProperty(clientValue)
+    fun stub(clientValue: Any?) = ClientDslProperty(clientValue)
 
     /**
      * Helper method to provide a better name for the server side.
      * @param serverValue server value
      * @return server dsl property
      */
-    fun server(serverValue: Any) = ServerDslProperty(serverValue)
+    fun server(serverValue: Any?) = ServerDslProperty(serverValue)
 
     /**
      * Helper method to provide a better name for the server side.
      * @param serverValue server value
      * @return server dsl property
      */
-    fun p(serverValue: Any) = ServerDslProperty(serverValue)
+    fun p(serverValue: Any?) = ServerDslProperty(serverValue)
 
     /**
      * Helper method to provide a better name for the server side.
      * @param serverValue server value
      * @return server dsl property
      */
-    fun producer(serverValue: Any) = ServerDslProperty(serverValue)
+    fun producer(serverValue: Any?) = ServerDslProperty(serverValue)
 
     /**
      * Helper method to provide a better name for the server side.
      * @param serverValue server value
      * @return server dsl property
      */
-    fun test(serverValue: Any) = ServerDslProperty(serverValue)
+    fun test(serverValue: Any?) = ServerDslProperty(serverValue)
+
+    fun optional(value: Any?) = OptionalProperty(value)
+
+    fun execute(commandToExecute: String) = ExecutionProperty(commandToExecute)
 
     /* REGEX */
 

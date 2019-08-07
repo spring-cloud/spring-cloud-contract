@@ -18,12 +18,15 @@ package org.springframework.cloud.contract.spec.internal
 
 import org.springframework.cloud.contract.spec.toDslProperties
 import org.springframework.cloud.contract.spec.toDslProperty
+import java.util.regex.Pattern
 
 /**
  * @author Tim Ysewyn
  */
 @ContractDslMarker
 class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
+
+    private val delegate = Response()
 
     var status: DslProperty<Any>? = null
     var delay: DslProperty<Any>? = null
@@ -77,47 +80,91 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
         this.bodyMatchers = ResponseBodyMatchers().apply(bodyMatchers)
     }
 
-    override fun anyAlphaUnicode(): ServerDslProperty = Response().anyAlphaUnicode()
+    /* HELPER FUNCTIONS */
 
-    override fun anyAlphaNumeric(): ServerDslProperty = Response().anyAlphaNumeric()
+    fun value(value: ClientDslProperty) = delegate.value(value)
 
-    override fun anyNumber(): ServerDslProperty = Response().anyNumber()
+    fun v(value: ClientDslProperty) = delegate.value(value)
 
-    override fun anyInteger(): ServerDslProperty = Response().anyInteger()
+    fun `$`(value: ClientDslProperty) = delegate.value(value)
 
-    override fun anyPositiveInt(): ServerDslProperty = Response().anyPositiveInt()
+    fun value(value: DslProperty<Any>) = delegate.value(value)
 
-    override fun anyDouble(): ServerDslProperty = Response().anyDouble()
+    fun v(value: DslProperty<Any>) = delegate.value(value)
 
-    override fun anyHex(): ServerDslProperty = Response().anyHex()
+    fun `$`(value: DslProperty<Any>) = delegate.value(value)
 
-    override fun aBoolean(): ServerDslProperty = Response().aBoolean()
+    fun value(value: Pattern) = delegate.value(value)
 
-    override fun anyIpAddress(): ServerDslProperty = Response().anyIpAddress()
+    fun v(value: Pattern) = delegate.value(value)
 
-    override fun anyHostname(): ServerDslProperty = Response().anyHostname()
+    fun `$`(value: Pattern) = delegate.value(value)
 
-    override fun anyEmail(): ServerDslProperty = Response().anyEmail()
+    fun value(value: RegexProperty) = delegate.value(value)
 
-    override fun anyUrl(): ServerDslProperty = Response().anyUrl()
+    fun v(value: RegexProperty) = delegate.value(value)
 
-    override fun anyHttpsUrl(): ServerDslProperty = Response().anyHttpsUrl()
+    fun `$`(value: RegexProperty) = delegate.value(value)
 
-    override fun anyUuid(): ServerDslProperty = Response().anyUuid()
+    fun value(value: Any?) = delegate.value(value)
 
-    override fun anyDate(): ServerDslProperty = Response().anyDate()
+    fun v(value: Any?) = delegate.value(value)
 
-    override fun anyDateTime(): ServerDslProperty = Response().anyDateTime()
+    fun `$`(value: Any?) = delegate.value(value)
 
-    override fun anyTime(): ServerDslProperty = Response().anyTime()
+    fun value(client: ClientDslProperty, server: ServerDslProperty) = delegate.value(client, server)
 
-    override fun anyIso8601WithOffset(): ServerDslProperty = Response().anyIso8601WithOffset()
+    fun v(client: ClientDslProperty, server: ServerDslProperty) = delegate.value(client, server)
 
-    override fun anyNonBlankString(): ServerDslProperty = Response().anyNonBlankString()
+    fun `$`(client: ClientDslProperty, server: ServerDslProperty) = delegate.value(client, server)
 
-    override fun anyNonEmptyString(): ServerDslProperty = Response().anyNonEmptyString()
+    fun value(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
 
-    override fun anyOf(vararg values: String?): ServerDslProperty = Response().anyOf(*values)
+    fun v(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
+
+    fun `$`(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
+
+    override fun anyAlphaUnicode() = delegate.anyAlphaUnicode()
+
+    override fun anyAlphaNumeric() = delegate.anyAlphaNumeric()
+
+    override fun anyNumber() = delegate.anyNumber()
+
+    override fun anyInteger() = delegate.anyInteger()
+
+    override fun anyPositiveInt() = delegate.anyPositiveInt()
+
+    override fun anyDouble() = delegate.anyDouble()
+
+    override fun anyHex() = delegate.anyHex()
+
+    override fun aBoolean() = delegate.aBoolean()
+
+    override fun anyIpAddress() = delegate.anyIpAddress()
+
+    override fun anyHostname() = delegate.anyHostname()
+
+    override fun anyEmail() = delegate.anyEmail()
+
+    override fun anyUrl() = delegate.anyUrl()
+
+    override fun anyHttpsUrl() = delegate.anyHttpsUrl()
+
+    override fun anyUuid() = delegate.anyUuid()
+
+    override fun anyDate() = delegate.anyDate()
+
+    override fun anyDateTime() = delegate.anyDateTime()
+
+    override fun anyTime() = delegate.anyTime()
+
+    override fun anyIso8601WithOffset() = delegate.anyIso8601WithOffset()
+
+    override fun anyNonBlankString() = delegate.anyNonBlankString()
+
+    override fun anyNonEmptyString() = delegate.anyNonEmptyString()
+
+    override fun anyOf(vararg values: String?) = delegate.anyOf(*values)
 
     internal fun get(): Response {
         val response = Response()
