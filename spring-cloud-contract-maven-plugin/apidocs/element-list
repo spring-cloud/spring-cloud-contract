@@ -1,0 +1,2 @@
+org.springframework.cloud.contract.maven.verifier
+org.springframework.cloud.contract.maven.verifier.stubrunner

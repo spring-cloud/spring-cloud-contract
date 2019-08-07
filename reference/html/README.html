@@ -100,7 +100,7 @@ $(addBlockSwitches);
 <li><a href="#_spring_cloud_contract_workshops">Spring Cloud Contract workshops</a></li>
 </ul>
 </li>
-<li><a href="#_documentation">Documentation</a></li>
+<li><a href="#_project_page">Project page</a></li>
 <li><a href="#_contributing">Contributing</a>
 <ul class="sectlevel2">
 <li><a href="#_sign_the_contributor_license_agreement">Sign the Contributor License Agreement</a></li>
@@ -110,7 +110,7 @@ $(addBlockSwitches);
 <li><a href="#_ide_setup">IDE setup</a></li>
 </ul>
 </li>
-<li><a href="#_how_to_build_it">How to build it</a>
+<li><a href="#_how_to_build_spring_cloud_contract">How to Build Spring Cloud Contract</a>
 <ul class="sectlevel2">
 <li><a href="#_project_structure">Project structure</a></li>
 <li><a href="#_commands">Commands</a></li>
@@ -121,32 +121,13 @@ $(addBlockSwitches);
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="imageblock">
-<div class="content">
-<a class="image" href="https://gitter.im/spring-cloud/spring-cloud-contract?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Gitter"></a>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="https://codecov.io/gh/spring-cloud/spring-cloud-contract"><img src="https://codecov.io/gh/spring-cloud/spring-cloud-contract/branch/master/graph/badge.svg" alt="codecov"></a>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="https://circleci.com/gh/spring-cloud/spring-cloud-contract"><img src="https://circleci.com/gh/spring-cloud/spring-cloud-contract.svg?style=svg" alt="CircleCI"></a>
-</div>
-</div>
-</div>
-</div>
 <div class="sect1">
 <h2 id="_spring_cloud_contract"><a class="link" href="#_spring_cloud_contract">Spring Cloud Contract</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You always need confidence when pushing new features into a new application or service in
-a distributed system. To that end, this project provides support for Consumer-driven
-Contracts and service schemas in Spring applications, covering a range of options for
+a distributed system. To that end, this project provides support for consumer-driven
+contracts and service schemas in Spring applications, covering a range of options for
 writing tests, publishing them as assets, and asserting that a contract is kept by
 producers and consumers&#8201;&#8212;&#8201;for both HTTP and message-based interactions.</p>
 </div>
@@ -161,11 +142,10 @@ workshops under
 </div>
 </div>
 <div class="sect1">
-<h2 id="_documentation"><a class="link" href="#_documentation">Documentation</a></h2>
+<h2 id="_project_page"><a class="link" href="#_project_page">Project page</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can read more about Spring Cloud Contract Verifier by reading the
-{documentation_url}[docs]</p>
+<p>You can read more about Spring Cloud Contract by going to <a href="https://spring.io/projects/spring-cloud-contract">the project page</a></p>
 </div>
 </div>
 </div>
@@ -476,7 +456,7 @@ Remember to set the <code>Scan Scope</code> to <code>All sources</code> since we
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_build_it"><a class="link" href="#_how_to_build_it">How to build it</a></h2>
+<h2 id="_how_to_build_spring_cloud_contract"><a class="link" href="#_how_to_build_spring_cloud_contract">How to Build Spring Cloud Contract</a></h2>
 <div class="sectionbody">
 <div class="admonitionblock important">
 <table>
@@ -486,9 +466,9 @@ Remember to set the <code>Scan Scope</code> to <code>All sources</code> since we
 </td>
 <td class="content">
 You need to have all the necessary Groovy plugins
- installed for your IDE to properly resolve the sources. For example in
- Intellij IDEA having both Eclipse Groovy Compiler Plugin &amp; GMavenPlus Intellij Plugin
- results in properly imported project.
+installed for your IDE to properly resolve the sources. For example, in
+Intellij IDEA, having both the Eclipse Groovy Compiler Plugin and the GMavenPlus Intellij
+Plugin results in properly imported project.
 </td>
 </tr>
 </table>
@@ -513,7 +493,7 @@ have Docker installed.
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-If you want to run the build in offline mode, you have to have Maven 3.5.2+ installed.
+If you want to run the build in offline mode, you must have Maven 3.5.2+ installed.
 </td>
 </tr>
 </table>
@@ -521,7 +501,7 @@ If you want to run the build in offline mode, you have to have Maven 3.5.2+ inst
 <div class="sect2">
 <h3 id="_project_structure"><a class="link" href="#_project_structure">Project structure</a></h3>
 <div class="paragraph">
-<p>Here you can find the Spring Cloud Contract folder structure</p>
+<p>The following listing shows the Spring Cloud Contract folder structure:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -541,52 +521,55 @@ If you want to run the build in offline mode, you have to have Maven 3.5.2+ inst
 └── tests</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The following list describes each of the top-level folders in the project structure:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>config</code> - folder contains setup for Spring Cloud Release Tools automated release process</p>
+<p><code>config</code>: Folder contains setup for Spring Cloud Release Tools automated release process</p>
 </li>
 <li>
-<p><code>docker</code> - folder contains docker images</p>
+<p><code>docker</code>: Folder contains docker images</p>
 </li>
 <li>
-<p><code>samples</code> - folder contains test samples together with standalone ones used also to build documentation</p>
+<p><code>samples</code>: Folder contains test samples together with standalone ones used also to build documentation</p>
 </li>
 <li>
-<p><code>scripts</code> - contains scripts to build and test <code>Spring Cloud Contract</code> with Maven, Gradle and standalone projects</p>
+<p><code>scripts</code>: Contains scripts to build and test <code>Spring Cloud Contract</code> with Maven, Gradle and standalone projects</p>
 </li>
 <li>
-<p><code>specs</code> - contains specifications for the Contract DSL.</p>
+<p><code>specs</code>: Contains specifications for the Contract DSL.</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-dependencies</code> - contains Spring Cloud Contract BOM</p>
+<p><code>spring-cloud-contract-dependencies</code>: Contains Spring Cloud Contract BOM</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-shade</code> - shaded dependencies used by the plugins</p>
+<p><code>spring-cloud-contract-shade</code>: Shaded dependencies used by the plugins</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-starters</code> - contains Spring Cloud Contract Starters</p>
+<p><code>spring-cloud-contract-starters</code>: Contains Spring Cloud Contract Starters</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-spec</code> - contains specification modules (contains concept of a Contract)</p>
+<p><code>spring-cloud-contract-spec</code>: Contains specification modules (contains concept of a Contract)</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-stub-runner</code> - contains Stub Runner related modules</p>
+<p><code>spring-cloud-contract-stub-runner</code>: Contains Stub Runner related modules</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-stub-runner-boot</code> - contains Stub Runner Boot app</p>
+<p><code>spring-cloud-contract-stub-runner-boot</code>: Contains Stub Runner Boot app</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-tools</code> - Gradle and Maven plugin for <code>Spring Cloud Contract Verifier</code></p>
+<p><code>spring-cloud-contract-tools</code>: Gradle and Maven plugin for <code>Spring Cloud Contract Verifier</code></p>
 </li>
 <li>
-<p><code>spring-cloud-contract-verifier</code> - core of the <code>Spring Cloud Contract Verifier</code> functionality</p>
+<p><code>spring-cloud-contract-verifier</code>: Core of the <code>Spring Cloud Contract Verifier</code> functionality</p>
 </li>
 <li>
-<p><code>spring-cloud-contract-wiremock</code> - all WireMock related functionality</p>
+<p><code>spring-cloud-contract-wiremock</code>: All WireMock related functionality</p>
 </li>
 <li>
-<p><code>tests</code> - integration tests for different messaging technologies</p>
+<p><code>tests</code>: Integration tests for different messaging technologies</p>
 </li>
 </ul>
 </div>
@@ -594,7 +577,8 @@ If you want to run the build in offline mode, you have to have Maven 3.5.2+ inst
 <div class="sect2">
 <h3 id="_commands"><a class="link" href="#_commands">Commands</a></h3>
 <div class="paragraph">
-<p>To build the core functionality together with Maven Plugin you can run</p>
+<p>To build the core functionality together with the Maven Plugin, you can run the following
+command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -602,11 +586,12 @@ If you want to run the build in offline mode, you have to have Maven 3.5.2+ inst
 </div>
 </div>
 <div class="paragraph">
-<p>Calling that function will build core, Maven plugin, Gradle plugin and run end to end tests on the
-standalone samples in proper order (both for Maven and Gradle).</p>
+<p>Calling that function builds the core, the Maven plugin, and the Gradle plugin and runs
+end-to_end tests on the
+standalone samples in the proper order (both for Maven and Gradle).</p>
 </div>
 <div class="paragraph">
-<p>To build the Gradle Plugin only</p>
+<p>To build only the Gradle Plugin, you can run the following commands:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -618,10 +603,11 @@ standalone samples in proper order (both for Maven and Gradle).</p>
 <div class="sect2">
 <h3 id="_helpful_scripts"><a class="link" href="#_helpful_scripts">Helpful scripts</a></h3>
 <div class="paragraph">
-<p>We&#8217;re providing a couple of helpful scripts to build the project.</p>
+<p>We provide a couple of helpful scripts to build the project.</p>
 </div>
 <div class="paragraph">
-<p>To build the project in parallel (by default uses 4 cores but you can change it)</p>
+<p>To build the project in parallel (by default, it uses four cores, but you can change it),
+run the following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -629,7 +615,7 @@ standalone samples in proper order (both for Maven and Gradle).</p>
 </div>
 </div>
 <div class="paragraph">
-<p>and with 8 cores</p>
+<p>To use eight 8 cores, run thke following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -637,7 +623,8 @@ standalone samples in proper order (both for Maven and Gradle).</p>
 </div>
 </div>
 <div class="paragraph">
-<p>To build the project without any integration tests (by default uses 1 core)</p>
+<p>To build the project without any integration tests (by default, this uses one core), run
+the following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -645,7 +632,7 @@ standalone samples in proper order (both for Maven and Gradle).</p>
 </div>
 </div>
 <div class="paragraph">
-<p>and with 8 cores</p>
+<p>To use eight cores, run the following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -653,7 +640,8 @@ standalone samples in proper order (both for Maven and Gradle).</p>
 </div>
 </div>
 <div class="paragraph">
-<p>To generate the documentation (both the root one and the maven plugin one)</p>
+<p>To generate the documentation (for both the root project and the maven plugin), run the
+following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">

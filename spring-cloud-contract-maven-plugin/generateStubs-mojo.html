@@ -321,6 +321,18 @@ to be executed first.</div>
           
 <tr class="b">
             
+<td><b><a href="#failOnNoContracts">failOnNoContracts</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>When enabled, this flag will tell stub runner to throw an exception
+when no stubs / contracts were found.<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>failOnNoContracts</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
 <td><b><a href="#jarSkip">jarSkip</a></b></td>
             
 <td><tt>boolean</tt></td>
@@ -330,7 +342,7 @@ to be executed first.</div>
 <td>Set this to &quot;true&quot; to bypass only JAR creation.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.jar.skip</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#outputDirectory">outputDirectory</a></b></td>
             
@@ -341,7 +353,7 @@ to be executed first.</div>
 <td>(no description)<br /><b>Default value is</b>: <tt>${project.build.directory}/stubs</tt>.<br /><b>User property is</b>: <tt>stubsDirectory</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#skip">skip</a></b></td>
             
@@ -378,6 +390,21 @@ to be executed first.</div>
 <li><b>Type</b>: <tt>java.lang.String[]</tt></li>
           
 <li><b>Required</b>: <tt>No</tt></li>
+        </ul><hr />
+<p><b><a name="failOnNoContracts">failOnNoContracts</a>:</b></p>
+        
+<div>When enabled, this flag will tell stub runner to throw an exception
+when no stubs / contracts were found.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>failOnNoContracts</tt></li>
+          
+<li><b>Default</b>: <tt>true</tt></li>
         </ul><hr />
 <p><b><a name="jarSkip">jarSkip</a>:</b></p>
         
