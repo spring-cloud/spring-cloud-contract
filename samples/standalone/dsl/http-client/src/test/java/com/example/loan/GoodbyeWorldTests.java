@@ -38,7 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL,
 		generateStubs = true)
 public class GoodbyeWorldTests {
-
 	// end::autoconfigure_stubrunner[]
 
 	@StubRunnerPort("http-server-dsl")

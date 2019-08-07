@@ -73,7 +73,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 		if (log.isDebugEnabled()) {
 			log.debug("For paths " + paths + " found following resources " + resources);
 		}
-		if (resources.isEmpty()) {
+		if (resources.isEmpty() && this.stubRunnerOptions.isFailOnNoStubs()) {
 			throw new IllegalStateException("No stubs were found on classpath for ["
 					+ config.getGroupId() + ":" + config.getArtifactId() + "]");
 		}

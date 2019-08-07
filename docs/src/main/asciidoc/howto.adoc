@@ -1432,3 +1432,8 @@ include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/
 ====
 
 TIP: You need not specify the output directory for the generated snippets (since version 1.2.0.RELEASE of Spring REST Docs).
+
+[[how-to-use-stubs-from-a-location]]
+== How can I Use Stubs from a Location
+
+If you want to fetch contracts or stubs from a given location without cloning a repo or fetching a JAR, just use the `stubs://` protocol when providing the repository root argument for Stub Runner or the Spring Cloud Contract plugin. You can read more about this in <<project-features.adoc#features-stub-runner-stubs-protocol, this section>> of the documentation.
