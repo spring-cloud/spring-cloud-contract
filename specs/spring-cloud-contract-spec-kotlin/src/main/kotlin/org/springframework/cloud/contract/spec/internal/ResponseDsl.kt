@@ -36,45 +36,29 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
     var async: Boolean = false
     var bodyMatchers: ResponseBodyMatchers? = null
 
-    fun status(code: Int) {
-        this.status = DslProperty(code)
-    }
+    fun code(code: Int): DslProperty<Any> = code.toDslProperty()
 
-    fun fixedDelayMilliseconds(delay: Long) {
-        this.delay = delay.toDslProperty()
-    }
+    fun fixedMilliseconds(delay: Long) = delay.toDslProperty()
 
     fun headers(headers: Headers.() -> Unit) {
-        this.headers = Headers().apply(headers)
+        this.headers = Response.ResponseHeaders().apply(headers)
     }
 
     fun cookies(cookies: Cookies.() -> Unit) {
-        this.cookies = Cookies().apply(cookies)
+        this.cookies = Response.ResponseCookies().apply(cookies)
     }
 
-    fun body(body: Map<String, Any>) {
-        this.body = Body(body.toDslProperties())
-    }
+    fun body(body: Map<String, Any>) = Body(body.toDslProperties())
 
-    fun body(vararg body: Pair<String, Any>) {
-        this.body = Body(body.toMap().toDslProperties())
-    }
+    fun body(vararg body: Pair<String, Any>) = Body(body.toMap().toDslProperties())
 
-    fun body(body: Pair<String, Any>) {
-        this.body = Body(mapOf(body).toDslProperties())
-    }
+    fun body(body: Pair<String, Any>) = Body(mapOf(body).toDslProperties())
 
-    fun body(body: List<Any>) {
-        this.body = Body(body.toDslProperties())
-    }
+    fun body(body: List<Any>) = Body(body.toDslProperties())
 
-    fun body(body: DslProperty<Any>) {
-        this.body = Body(body.toDslProperty())
-    }
+    fun body(body: DslProperty<Any>) = Body(body.toDslProperty())
 
-    fun body(body: Any) {
-        this.body = Body(body)
-    }
+    fun body(body: Any) = Body(body)
 
     fun bodyMatchers(bodyMatchers: ResponseBodyMatchers.() -> Unit) {
         this.bodyMatchers = ResponseBodyMatchers().apply(bodyMatchers)
@@ -123,6 +107,9 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
     fun v(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
 
     fun `$`(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
+
+//    TODO, needs to be reworked - no lazy string interpolation like in Groovy
+//    fun fromRequest() = FromRequest()
 
     override fun anyAlphaUnicode() = delegate.anyAlphaUnicode()
 

@@ -31,7 +31,7 @@ contract {
 
     }
     response {
-        status(200)
+        code(200)
         body(
                 "fraudCheckStatus" to "OK",
                 "rejectionReason" to listOf(value(consumer(null), producer("assertThatRejectionReasonIsNull(\$it)")))

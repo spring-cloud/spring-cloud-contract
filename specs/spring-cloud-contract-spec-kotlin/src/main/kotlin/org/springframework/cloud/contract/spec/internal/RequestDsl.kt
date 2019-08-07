@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.spec.internal
 
 import org.springframework.cloud.contract.spec.toDslProperties
+import org.springframework.cloud.contract.spec.toDslProperty
 import java.util.regex.Pattern
 
 /**
@@ -36,73 +37,45 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
     var multipart: Multipart? = null
     var bodyMatchers: BodyMatchers? = null
 
-    fun method(method: String) {
-        this.method = DslProperty(method)
-    }
+    fun method(method: String) = method.toDslProperty()
 
-    fun method(method: HttpMethods.HttpMethod) {
-        this.method(method.toString())
-    }
+    fun method(method: HttpMethods.HttpMethod) = this.method(method.toString())
 
-    fun url(url: String) {
-        this.url = Url(url)
-    }
+    fun url(url: String) = Url(url)
 
-    fun url(url: DslProperty<Any>) {
-        this.url = Url(url)
-    }
+    fun url(url: DslProperty<Any>) = Url(url)
 
-    fun urlPath(url: String) {
-        this.urlPath = UrlPath(url)
-    }
+    fun path(path: String) = UrlPath(path)
 
-    fun urlPath(url: DslProperty<Any>) {
-        this.urlPath = UrlPath(url)
-    }
+    fun path(path: DslProperty<Any>) = UrlPath(path)
 
     fun headers(headers: Headers.() -> Unit) {
-        this.headers = Headers().apply(headers)
+        this.headers = Request.RequestHeaders().apply(headers)
     }
 
     fun cookies(cookies: Cookies.() -> Unit) {
-        this.cookies = Cookies().apply(cookies)
+        this.cookies = Request.RequestCookies().apply(cookies)
     }
 
-    fun body(body: Map<String, Any>) {
-        this.body = Body(body.toDslProperties())
-    }
+    fun body(body: Map<String, Any>) = Body(body.toDslProperties())
 
-    fun body(vararg body: Pair<String, Any>) {
-        this.body = Body(body.toMap().toDslProperties())
-    }
+    fun body(vararg body: Pair<String, Any>) = Body(body.toMap().toDslProperties())
 
-    fun body(body: Pair<String, Any>) {
-        this.body = Body(mapOf(body).toDslProperties())
-    }
+    fun body(body: Pair<String, Any>) = Body(mapOf(body).toDslProperties())
 
-    fun body(body: List<Any>) {
-        this.body = Body(body.toDslProperties())
-    }
+    fun body(body: List<Any>) = Body(body.toDslProperties())
 
-    fun body(body: DslProperty<Any>) {
-        this.body = Body(body)
-    }
+    fun body(body: DslProperty<Any>) = Body(body)
 
-    fun multipart(multipart: Map<String, Any>) {
-        this.multipart = Multipart(multipart.toDslProperties())
-    }
+    fun body(body: Any) = Body(body)
 
-    fun multipart(multipart: List<Any>) {
-        this.multipart = Multipart(multipart.toDslProperties())
-    }
+    fun multipart(multipart: Map<String, Any>) = Multipart(multipart.toDslProperties())
 
-    fun multipart(multipart: DslProperty<Any>) {
-        this.multipart = Multipart(multipart)
-    }
+    fun multipart(multipart: List<Any>) = Multipart(multipart.toDslProperties())
 
-    fun multipart(multipart: Any) {
-        this.multipart = Multipart(multipart)
-    }
+    fun multipart(multipart: DslProperty<Any>) = Multipart(multipart)
+
+    fun multipart(multipart: Any) = Multipart(multipart)
 
     fun bodyMatchers(block: BodyMatchers.() -> Unit) {
         bodyMatchers = BodyMatchers().apply(block)

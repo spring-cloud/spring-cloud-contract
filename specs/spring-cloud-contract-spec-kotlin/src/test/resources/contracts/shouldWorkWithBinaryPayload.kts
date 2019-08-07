@@ -17,32 +17,22 @@
 package contracts
 
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+import org.springframework.cloud.contract.spec.internal.HttpMethods
 
-arrayOf(
-    contract {
-        request {
-            method("GET")
-            url("/frauds")
-        }
-        response {
-            code(200)
-            body("count" to 200)
-            headers {
-                contentType("application/vnd.fraud.v1+json")
-            }
-        }
-    },
-    contract {
-        request {
-            method("GET")
-            url("/drunks")
-        }
-        response {
-            code(200)
-            body("count" to 100)
-            headers {
-                contentType("application/vnd.fraud.v1+json")
-            }
-        }
-    }
-)
+contract {
+	request {
+		url = url("/1")
+		method = method(HttpMethods.PUT())
+		headers {
+			contentType(applicationOctetStream())
+		}
+		body = fileAsBytes("contracts/request.pdf")
+	}
+	response {
+		status = code(200)
+		body = fileAsBytes("contracts/response.pdf")
+		headers {
+			contentType(applicationOctetStream())
+		}
+	}
+}

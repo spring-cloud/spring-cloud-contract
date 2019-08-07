@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.io.File
+import java.net.URISyntaxException
+import java.nio.charset.Charset
 import java.util.regex.Pattern
 
 /**
@@ -84,6 +87,43 @@ open class CommonDsl {
     fun optional(value: Any?) = OptionalProperty(value)
 
     fun execute(commandToExecute: String) = ExecutionProperty(commandToExecute)
+
+    /**
+     * Read file contents as String.
+     * @param relativePath of the file to read
+     * @return String file contents
+     */
+    fun file(relativePath: String) = file(relativePath, Charset.defaultCharset())
+
+    /**
+     * Read file contents as String with the given Charset.
+     * @param relativePath of the file to read
+     * @param charset to use for converting the bytes to String
+     * @return String file contents
+     */
+    fun file(relativePath: String, charset: Charset) = Body(FromFileProperty(fileLocation(relativePath), String::class.java, charset))
+
+    /**
+     * Read file contents as bytes[].
+     * @param relativePath of the file to read
+     * @return String file contents
+     */
+    fun fileAsBytes(relativePath: String) = Body(FromFileProperty(fileLocation(relativePath), ByteArray::class.java))
+
+    /**
+     * Read file contents as array of bytes.
+     * @param relativePath of the file to read
+     * @return file contents as an array of bytes
+     */
+    private fun fileLocation(relativePath: String): File {
+        val resource = Thread.currentThread().contextClassLoader
+                .getResource(relativePath) ?: throw IllegalStateException("File [$relativePath] is not present")
+        try {
+            return File(resource.toURI())
+        } catch (ex: URISyntaxException) {
+            throw IllegalStateException(ex)
+        }
+    }
 
     /* REGEX */
 

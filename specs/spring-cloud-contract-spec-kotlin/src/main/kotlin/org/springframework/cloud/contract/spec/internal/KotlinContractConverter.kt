@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.spec.internal
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import java.io.File
+import java.net.URLClassLoader.newInstance
 import javax.script.ScriptEngineManager
 
 /**
@@ -39,10 +40,12 @@ class KotlinContractConverter: ContractConverter<List<Contract>> {
     }
 
     override fun convertFrom(file: File): Collection<Contract> {
-        val eval = file.reader().use {
-            // Get a new engine every time we need to process a file.
-            // Reusing the script engine could leak context and will fail subsequent evals
-            ScriptEngineManager().getEngineByExtension(ext).eval(it)
+        val eval = withUpdatedClassloader(file) {
+            file.reader().use {
+                // Get a new engine every time we need to process a file.
+                // Reusing the script engine could leak context and will fail subsequent evals
+                ScriptEngineManager().getEngineByExtension(ext).eval(it)
+            }
         }
         return when (eval) {
             is Contract -> listOf(eval)
@@ -53,4 +56,15 @@ class KotlinContractConverter: ContractConverter<List<Contract>> {
     }
 
     override fun convertTo(contract: Collection<Contract>) = contract.toList()
+
+    private fun withUpdatedClassloader(file: File, block: ClassLoader.() -> Any): Any {
+        val currentClassLoader = Thread.currentThread().contextClassLoader
+        try {
+            val tempClassLoader = newInstance(arrayOf(file.parentFile.toURI().toURL()), currentClassLoader)
+            Thread.currentThread().contextClassLoader = tempClassLoader
+            return tempClassLoader.block()
+        } finally {
+            Thread.currentThread().contextClassLoader = currentClassLoader
+        }
+    }
 }

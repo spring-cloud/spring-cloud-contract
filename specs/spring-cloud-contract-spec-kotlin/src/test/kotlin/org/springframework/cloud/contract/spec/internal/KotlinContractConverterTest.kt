@@ -16,7 +16,8 @@
 
 package org.springframework.cloud.contract.spec.internal
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.springframework.cloud.contract.spec.Contract
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -40,6 +41,14 @@ class KotlinContractConverterTest {
         val converter = KotlinContractConverter()
         val contracts = converter.convertFrom(file("contracts/multipleDefinitions.kts"))
         assertEquals(2, contracts.size)
+    }
+
+    @Test
+    fun `should work with binary payload`() {
+        val converter = KotlinContractConverter()
+        val contracts = converter.convertFrom(file("contracts/shouldWorkWithBinaryPayload.kts"))
+        assertEquals(1, contracts.size)
+        Contract.assertContract(contracts.elementAt(0))
     }
 
     private fun file(filename: String) = File(javaClass.classLoader.getResource(filename)!!.toURI())
