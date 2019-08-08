@@ -179,7 +179,7 @@ private void test(String test) {
 		String fqnClassName = "com.example.${className}"
 		test = test.replaceAll("class FooTest", "class " + className)
 		.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
-		return InMemoryJavaCompiler.compile(fqnClassName, test)
+		return InMemoryJavaCompiler.newInstance().compile(fqnClassName, test)
 	}
 
 	private static String className(String test) {
@@ -192,7 +192,7 @@ private void test(String test) {
 	}
 
 	static boolean tryToCompileJavaWithoutImports(String fqn, String test) {
-		InMemoryJavaCompiler.compile(fqn, test)
+		InMemoryJavaCompiler.newInstance().compile(fqn, test)
 		return true
 	}
 
