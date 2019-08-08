@@ -21,12 +21,12 @@ import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 arrayOf(
     contract {
         request {
-            method("GET")
-            url("/frauds")
+            method = GET
+            url = url("/frauds")
         }
         response {
-            code(200)
-            body("count" to 200)
+            status = OK
+            body = body("count" to 200)
             headers {
                 contentType("application/vnd.fraud.v1+json")
             }
@@ -34,12 +34,12 @@ arrayOf(
     },
     contract {
         request {
-            method("GET")
-            url("/drunks")
+            method = GET
+            url = url("/drunks")
         }
         response {
-            code(200)
-            body("count" to 100)
+            status = OK
+            body = body("count" to 100)
             headers {
                 contentType("application/vnd.fraud.v1+json")
             }

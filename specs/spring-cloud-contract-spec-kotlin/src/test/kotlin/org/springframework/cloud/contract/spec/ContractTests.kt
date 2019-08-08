@@ -37,14 +37,14 @@ class ContractTests {
 		val contract = contract {
 			request {
 				url = url("/foo")
-				method = method(HttpMethods.HttpMethod.PUT)
+				method = PUT
 				headers {
 					header("foo", "bar")
 				}
 				body = body("foo" to "bar")
 			}
 			response {
-				status = code(200)
+				status = OK
 				headers {
 					header("foo2", "bar")
 				}
@@ -88,7 +88,7 @@ class ContractTests {
 				url = url("/foo")
 			}
 			response {
-				status = code(200)
+				status = OK
 			}
 		}
 
@@ -103,10 +103,10 @@ class ContractTests {
 	fun `should fail when no url is present`() {
 		val contract = contract {
 			request {
-				method = method("GET")
+				method = GET
 			}
 			response {
-				status = code(200)
+				status = OK
 			}
 		}
 
@@ -122,7 +122,7 @@ class ContractTests {
 		val contract = contract {
 			request {
 				url = url("/foo")
-				method = method("GET")
+				method = GET
 			}
 			response {
 			}
@@ -275,13 +275,13 @@ then:
 	fun `should make equals and hashcode work properly for URL`() {
 		val a: Contract = contract {
 			request {
-				method = method("GET")
+				method = GET
 				url = url("/1")
 			}
 		}
 		val b: Contract = contract {
 			request {
-				method = method("GET")
+				method = GET
 				url = url("/1")
 			}
 		}
@@ -298,14 +298,14 @@ then:
 	fun `should make equals and hashcode work properly for URL with consumer producer`() {
 		val a: Contract = contract {
 			request {
-				method = method("GET")
-				url = url(value(c("/1"), p("/1")))
+				method = GET
+				url = url(c("/1"), p("/1"))
 			}
 		}
 		val b: Contract = contract {
 			request {
-				method = method("GET")
-				url = url(value(c("/1"), p("/1")))
+				method = GET
+				url = url(c("/1"), p("/1"))
 			}
 		}
 
@@ -322,26 +322,26 @@ then:
 		val index = 1
 		val a: Contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.PUT)
+				method = PUT
 				headers {
 					contentType(applicationJson())
 				}
 				url = url("/$index")
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 			}
 		}
 		val b: Contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.PUT)
+				method = PUT
 				headers {
 					contentType(applicationJson())
 				}
 				url = url("/$index")
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 			}
 		}
 
@@ -358,27 +358,27 @@ then:
 		var index = 1
 		val a: Contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.PUT)
+				method = PUT
 				headers {
 					contentType(applicationJson())
 				}
 				url = url("/$index")
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 			}
 		}
 		index = 2
 		val b: Contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.PUT)
+				method = PUT
 				headers {
 					contentType(applicationJson())
 				}
 				url = url("/$index")
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 			}
 		}
 
@@ -394,7 +394,7 @@ then:
 	fun `should return true when comparing two equal complex contracts`() {
 		val a: Contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.GET)
+				method = GET
 				url = url("/path")
 				headers {
 					header("Accept", value(
@@ -408,7 +408,7 @@ then:
 				}
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 				body = body("id" to mapOf("value" to "132"),
 						"surname" to "Kowalsky",
 						"name" to "Jan",
@@ -421,7 +421,7 @@ then:
 		}
 		val b: Contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.GET)
+				method = GET
 				url = url("/path")
 				headers {
 					header("Accept", value(
@@ -435,7 +435,7 @@ then:
 				}
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 				body = body("id" to mapOf("value" to "132"),
 						"surname" to "Kowalsky",
 						"name" to "Jan",
@@ -493,16 +493,16 @@ then:
 	fun `should support bodyMatchers`() {
 		val contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.GET)
+				method = GET
 				url = url("/path")
-				body("id" to mapOf("value" to "132"))
+				body = body("id" to mapOf("value" to "132"))
 				bodyMatchers {
 					jsonPath("$.id.value", byRegex(anInteger()))
 				}
 			}
 			response {
-				status = code(HttpStatus.OK())
-				body("id" to mapOf("value" to "132"),
+				status = OK
+				body = body("id" to mapOf("value" to "132"),
 						"surname" to "Kowalsky",
 						"name" to "Jan",
 						"created" to "2014-02-02 12:23:43"
@@ -537,13 +537,13 @@ then:
 	fun `should support query parameters for url`() {
 		val contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.GET)
+				method = GET
 				url = url("/path") withQueryParameters {
 					parameter("foo", "bar")
 				}
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 			}
 		}
 
@@ -570,13 +570,13 @@ then:
 	fun `should support query parameters for url path`() {
 		val contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.GET)
+				method = GET
 				urlPath = path("/path") withQueryParameters {
 					parameter("foo", "bar")
 				}
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 			}
 		}
 
@@ -603,12 +603,12 @@ then:
 	fun `should work with list as body`() {
 		val contract = contract {
 			request {
-				method = method(HttpMethods.HttpMethod.PUT)
+				method = PUT
 				url = url("/path")
 				body = body(listOf("foo", "bar"))
 			}
 			response {
-				status = code(HttpStatus.OK())
+				status = OK
 				body = body(listOf("foo2", "bar2"))
 			}
 		}

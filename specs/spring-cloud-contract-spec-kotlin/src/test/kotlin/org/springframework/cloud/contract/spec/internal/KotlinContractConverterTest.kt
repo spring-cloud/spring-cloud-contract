@@ -34,6 +34,7 @@ class KotlinContractConverterTest {
         val converter = KotlinContractConverter()
         val contracts = converter.convertFrom(file("contracts/singleDefinition.kts"))
         assertEquals(1, contracts.size)
+        contracts.forEach(Contract::assertContract)
     }
 
     @Test
@@ -41,6 +42,7 @@ class KotlinContractConverterTest {
         val converter = KotlinContractConverter()
         val contracts = converter.convertFrom(file("contracts/multipleDefinitions.kts"))
         assertEquals(2, contracts.size)
+        contracts.forEach(Contract::assertContract)
     }
 
     @Test
@@ -48,7 +50,7 @@ class KotlinContractConverterTest {
         val converter = KotlinContractConverter()
         val contracts = converter.convertFrom(file("contracts/shouldWorkWithBinaryPayload.kts"))
         assertEquals(1, contracts.size)
-        Contract.assertContract(contracts.elementAt(0))
+        contracts.forEach(Contract::assertContract)
     }
 
     private fun file(filename: String) = File(javaClass.classLoader.getResource(filename)!!.toURI())

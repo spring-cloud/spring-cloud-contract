@@ -20,9 +20,9 @@ import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 
 contract {
     request {
-        method("PUT")
-        url("/fraudcheck")
-        body("clientId" to value(consumer(regex("[0-9]{10}")), producer("1234567890")),
+        method = PUT
+        url = url("/fraudcheck")
+        body = body("clientId" to value(consumer(regex("[0-9]{10}")), producer("1234567890")),
                 "loanAmount" to 123.123
         )
         headers {
@@ -31,8 +31,8 @@ contract {
 
     }
     response {
-        code(200)
-        body(
+        status = OK
+        body = body(
                 "fraudCheckStatus" to "OK",
                 "rejectionReason" to listOf(value(consumer(null), producer("assertThatRejectionReasonIsNull(\$it)")))
         )

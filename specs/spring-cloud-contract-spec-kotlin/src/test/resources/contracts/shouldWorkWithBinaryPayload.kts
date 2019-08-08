@@ -22,14 +22,14 @@ import org.springframework.cloud.contract.spec.internal.HttpMethods
 contract {
 	request {
 		url = url("/1")
-		method = method(HttpMethods.PUT())
+		method = PUT
 		headers {
 			contentType(applicationOctetStream())
 		}
 		body = bodyFromFileAsBytes("contracts/request.pdf")
 	}
 	response {
-		status = code(200)
+		status = OK
 		body = bodyFromFileAsBytes("contracts/response.pdf")
 		headers {
 			contentType(applicationOctetStream())

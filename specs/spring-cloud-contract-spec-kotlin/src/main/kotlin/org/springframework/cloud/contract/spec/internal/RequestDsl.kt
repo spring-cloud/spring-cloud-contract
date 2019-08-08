@@ -39,11 +39,11 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
     fun method(method: String) = method.toDslProperty()
 
-    fun method(method: HttpMethods.HttpMethod) = this.method(method.toString())
-
     fun url(url: String) = Url(url)
 
     fun url(url: DslProperty<Any>) = Url(url)
+
+    fun url(client: ClientDslProperty, server: ServerDslProperty) = Url(value(client, server))
 
     fun path(path: String) = UrlPath(path)
 
@@ -80,6 +80,26 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
     fun bodyMatchers(block: BodyMatchers.() -> Unit) {
         bodyMatchers = BodyMatchers().apply(block)
     }
+
+    /* HELPER VARIABLES */
+
+    /* HTTP METHODS */
+
+    val GET = method(HttpMethods.HttpMethod.GET.name)
+
+    val HEAD = method(HttpMethods.HttpMethod.HEAD.name)
+
+    val POST = method(HttpMethods.HttpMethod.POST.name)
+
+    val PUT = method(HttpMethods.HttpMethod.PUT.name)
+
+    val PATCH = method(HttpMethods.HttpMethod.PATCH.name)
+
+    val DELETE = method(HttpMethods.HttpMethod.DELETE.name)
+
+    val OPTIONS = method(HttpMethods.HttpMethod.OPTIONS.name)
+
+    val TRACE = method(HttpMethods.HttpMethod.TRACE.name)
 
     /* HELPER FUNCTIONS */
 
