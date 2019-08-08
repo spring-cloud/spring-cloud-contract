@@ -21,7 +21,7 @@ import org.springframework.cloud.contract.spec.internal.HttpMethods
 
 contract {
 	request {
-		method = method("POST")
+		method = POST
 		url = url("/tests")
 		multipart = multipart(mapOf(
 				"file1" to named(
@@ -40,7 +40,7 @@ contract {
 		}
 	}
 	response {
-		status = code(200)
+		status = OK
 		body = body("status" to "ok")
 		headers {
 			contentType("application/json")

@@ -24,11 +24,11 @@ listOf(
     contract {
         name = "should count all frauds"
         request {
-            method = method(HttpMethods.GET())
+            method = GET
             url = url("/frauds")
         }
         response {
-            status = code(HttpStatus.OK())
+            status = OK
             body = body(
                     "count" to value(regex("[2-9][0-9][0-9]"))
             )
@@ -39,11 +39,11 @@ listOf(
     },
     contract {
         request {
-            method = method(HttpMethods.GET())
+            method = GET
             url = url("/drunks")
         }
         response {
-            status = code(HttpStatus.OK())
+            status = OK
             body = body(
                     "count" to 100
             )

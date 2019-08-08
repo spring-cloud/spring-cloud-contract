@@ -24,7 +24,7 @@ contract {
 	// highest priority
 	priority = 1
 	request {
-		method = method(HttpMethods.HttpMethod.PUT)
+		method = PUT
 		url = url("/frauds/name")
 		body = body("name" to "fraud")
 		headers {
@@ -32,7 +32,7 @@ contract {
 		}
 	}
 	response {
-		status = code(HttpStatus.OK())
+		status = OK
 //		TODO
 //		body = body("result" to "Sorry ${fromRequest().body("$.name")} but you're a fraud")
 //		headers {

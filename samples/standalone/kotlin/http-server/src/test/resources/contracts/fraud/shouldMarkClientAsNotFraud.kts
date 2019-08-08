@@ -21,7 +21,7 @@ import org.springframework.cloud.contract.spec.internal.HttpStatus
 
 contract {
 	request {
-		method = method("PUT")
+		method = PUT
 		url = url("/fraudcheck")
 		body = body(
 				"client.id" to value(consumer(regex("[0-9]{10}")), producer("1234567890")),
@@ -31,7 +31,7 @@ contract {
 		}
 	}
 	response {
-		status = code(HttpStatus.OK())
+		status = OK
 		body = body(
 				"fraudCheckStatus" to "OK",
 				"rejection.reason" to value(consumer(null), producer(execute("assertThatRejectionReasonIsNull(\$it)")))

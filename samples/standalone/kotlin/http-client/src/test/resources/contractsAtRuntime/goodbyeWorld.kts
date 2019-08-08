@@ -21,10 +21,10 @@ import org.springframework.cloud.contract.spec.internal.HttpStatus
 contract {
 	request {
 		url = url("/goodbye")
-		method = method(HttpMethods.HttpMethod.GET)
+		method = GET
 	}
 	response {
-		status = code(HttpStatus.OK())
+		status = OK
 		body = body("Goodbye World!")
 	}
 }

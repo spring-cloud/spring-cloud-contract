@@ -21,7 +21,7 @@ import org.springframework.cloud.contract.spec.internal.HttpMethods
 
 contract {
 	request {
-		method = method(HttpMethods.HttpMethod.GET)
+		method = GET
 		url = url("/frauds/name")
 		cookies {
 			cookie("name", "foo")
@@ -29,7 +29,7 @@ contract {
 		}
 	}
 	response {
-		status = code(200)
+		status = OK
 		body = body("foo bar")
 	}
 }

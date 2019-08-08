@@ -22,7 +22,7 @@ import org.springframework.cloud.contract.spec.internal.HttpStatus
 
 contract {
 	request {
-		method = method(HttpMethods.HttpMethod.PUT)
+		method = PUT
 		url = url("/frauds/name")
 		body = body("name" to `$`(anyAlphaUnicode()))
 		headers {
@@ -30,7 +30,7 @@ contract {
 		}
 	}
 	response {
-		status = code(HttpStatus.OK())
+		status = OK
 //		TODO
 //		body("result" to "Don't worry ${fromRequest().body("$.name")} you're not a fraud")
 //		headers {
