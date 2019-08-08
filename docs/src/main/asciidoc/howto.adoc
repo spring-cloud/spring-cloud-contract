@@ -1449,3 +1449,10 @@ If you want to generate stubs at runtime for contracts, it's enough to switch th
 If you want Stub Runner not to fail if no stubs were found, it's enough to switch the `generateStubs` property in the `@AutoConfigureStubRunner` annotation, or call the `withFailOnNoStubs(false)` method on the JUnit Rule or Extension. You can read more about this in <<project-features.adoc#features-stub-runner-fail-on-no-stubs, this section>> of the documentation.
 
 If you want the plugins not to fail the build when no contracts were found, you can set the `failOnNoStubs` flag in Maven or call the `contractRepository { failOnNoStubs(false) }` Closure in Gradle.
+
+[[how-to-mark-contract-in-progress]]
+== How can I Mark that a Contract Is in Progress
+
+If a contract is in progress, it means that the on the producer side tests will not be generated, but the stub will be. You can read more about this in <<project-features.adoc#contract-dsl-in-progress, this section>> of the documentation.
+
+In a CI build, before going to production, you would like to ensure that no in progress contracts are there on the classpath. That's because you may lead to false positives. That's why, by default, in the Spring Cloud Contract plugin, we set the value of `failOnInProgress` to `true`. If you want to allow such contracts when tests are to be generated, just set the flag to `false`.

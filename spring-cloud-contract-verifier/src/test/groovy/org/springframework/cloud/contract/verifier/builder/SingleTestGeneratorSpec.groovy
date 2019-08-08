@@ -16,14 +16,20 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.nio.file.Paths
+
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Issue
 import spock.lang.Specification
+import wiremock.com.google.common.collect.ArrayListMultimap
 
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.FileSaver
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import org.springframework.util.FileSystemUtils

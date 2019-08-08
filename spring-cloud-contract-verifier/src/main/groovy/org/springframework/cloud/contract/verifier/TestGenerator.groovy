@@ -89,6 +89,16 @@ class TestGenerator {
 				.build()
 	}
 
+	protected TestGenerator(ContractVerifierConfigProperties configProperties, SingleTestGenerator generator, FileSaver saver, ContractFileScanner contractFileScanner) {
+		this.configProperties = configProperties
+		if (configProperties.contractsDslDir == null) {
+			throw new ContractVerifierException("Stubs directory not found under " + configProperties.contractsDslDir)
+		}
+		this.generator = generator
+		this.saver = saver
+		this.contractFileScanner = contractFileScanner
+	}
+
 	int generate() {
 		generateTestClasses(basePackageName())
 		NamesUtil.recrusiveDirectoryToPackage(configProperties.generatedTestSourcesDir)
@@ -113,6 +123,15 @@ class TestGenerator {
 	void generateTestClasses(final String basePackageName) {
 		ListMultimap<Path, ContractMetadata> contracts = contractFileScanner.
 				findContracts()
+		Set<Map.Entry<Path,Collection<ContractMetadata>>> inProgress = contracts.asMap().entrySet()
+				 .findAll { Map.Entry<Path, Collection<ContractMetadata>> entry -> entry.value.any { it.anyInProgress() }}
+		if (!inProgress.isEmpty() && configProperties.failOnInProgress) {
+			throw new IllegalStateException("In progress contracts found in paths [" + inProgress.collect { it.key.toString() }.join(",") + "] and the switch [failOnInProgress] is set to [true]. Either unmark those contracts as in progress, or set the switch to [false].")
+		}
+		processAllNotInProgress(contracts,basePackageName)
+	}
+
+	@PackageScope Set<Map.Entry<Path,Collection<ContractMetadata>>> processAllNotInProgress(ListMultimap<Path,ContractMetadata> contracts, String basePackageName) {
 		contracts.asMap().entrySet()
 		.findAll { Map.Entry<Path, Collection<ContractMetadata>> entry -> !entry.value.any { it.anyInProgress() }}
 		.each {

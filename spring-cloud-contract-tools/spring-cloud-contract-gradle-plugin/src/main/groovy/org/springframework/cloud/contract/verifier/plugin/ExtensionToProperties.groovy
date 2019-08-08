@@ -33,7 +33,8 @@ class ExtensionToProperties {
 				assertJsonSize: extension.getAssertJsonSize(),
 				packageWithBaseClasses: extension.getPackageWithBaseClasses(),
 				baseClassMappings: extension.getBaseClassMappings(),
-				excludeBuildFolders: extension.getExcludeBuildFolders()
+				excludeBuildFolders: extension.getExcludeBuildFolders(),
+				failOnInProgress: extension.getFailOnInProgress()
 		)
 	}
 }

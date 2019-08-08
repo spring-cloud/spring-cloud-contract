@@ -145,6 +145,14 @@ class ContractVerifierExtension {
 	 */
 	boolean failOnNoContracts = true
 
+	/**
+	 * If set to true then if any contracts that are in progress are found, will break the
+	 * build. On the producer side you need to be explicit about the fact that you have
+	 * contracts in progress and take into consideration that you might be causing false
+	 * positive test execution results on the consumer side.
+	 */
+	boolean failOnInProgress = true;
+
 	ContractRepository contractRepository = new ContractRepository()
 
 	/**
@@ -252,6 +260,10 @@ class ContractVerifierExtension {
 		this.failOnNoContracts = failOnNoContracts
 	}
 
+	void failOnInProgress(boolean failOnInProgress) {
+		this.failOnInProgress = failOnInProgress
+	}
+
 	ContractVerifierExtension copy() {
 		return new ContractVerifierExtension(
 				testFramework: this.testFramework,
@@ -272,6 +284,7 @@ class ContractVerifierExtension {
 				stubsSuffix: this.stubsSuffix,
 				assertJsonSize: this.assertJsonSize,
 				failOnNoContracts: this.failOnNoContracts,
+				failOnInProgress: this.failOnInProgress,
 				contractRepository: new ContractRepository(
 						repositoryUrl: this.contractRepository.repositoryUrl,
 						username: this.contractRepository.username,
