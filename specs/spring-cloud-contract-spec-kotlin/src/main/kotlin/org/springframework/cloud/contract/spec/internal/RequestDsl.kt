@@ -54,8 +54,8 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
         this.headers = RequestHeadersDsl().apply(headers).get()
     }
 
-    fun cookies(cookies: Cookies.() -> Unit) {
-        this.cookies = Request.RequestCookies().apply(cookies)
+    fun cookies(cookies: CookiesDsl.() -> Unit) {
+        this.cookies = RequestCookiesDsl().apply(cookies).get()
     }
 
     fun body(body: Map<String, Any>) = Body(body.toDslProperties())
@@ -250,6 +250,24 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
     }
 
     private class RequestHeadersDsl: HeadersDsl() {
+
+        private val common = Common()
+
+        override fun matching(value: Any?): Any? {
+            return value?.also {
+                return when(value) {
+                    is String -> this.common.value(
+                            c(regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
+                            p(value)
+                    )
+                    else -> value
+                }
+            }
+        }
+
+    }
+
+    private class RequestCookiesDsl: CookiesDsl() {
 
         private val common = Common()
 

@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-package fraudname
+package org.springframework.cloud.contract.spec.internal
 
-import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
-import org.springframework.cloud.contract.spec.internal.HttpMethods
+import kotlin.properties.Delegates
 
-contract {
-	request {
-		method = GET
-		url = url("/frauds/name")
-		cookies {
-			cookie {
-				name = "name"
-				value = "foo"
-			}
-			cookie{
-				name = "name2"
-				value = "bar"
-			}
-		}
-	}
-	response {
-		status = OK
-		body = body("foo bar")
-	}
+/**
+ * @author Tim Ysewyn
+ */
+class CookieDsl {
+
+	var name: String by Delegates.notNull()
+
+	var value: Any by Delegates.notNull()
 }

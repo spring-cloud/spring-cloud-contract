@@ -45,9 +45,9 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
         this.headers = ResponseHeadersDsl().apply(headers).get()
     }
 
-    fun cookies(cookies: Cookies.() -> Unit) {
-        this.cookies = Response.ResponseCookies().apply(cookies)
-    }
+	fun cookies(cookies: CookiesDsl.() -> Unit) {
+		this.cookies = ResponseCookiesDsl().apply(cookies).get()
+	}
 
     fun body(body: Map<String, Any>) = Body(body.toDslProperties())
 
@@ -298,6 +298,24 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 					is String -> return this.common.value(
 							c(value),
 							p(NotToEscapePattern(Pattern.compile(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")))
+					)
+					else -> value
+				}
+			}
+		}
+
+	}
+
+	private class ResponseCookiesDsl: CookiesDsl() {
+
+		private val common = Common()
+
+		override fun matching(value: Any?): Any? {
+			return value?.also {
+				return when(value) {
+					is String -> return this.common.value(
+							c(value),
+							p(regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*"))
 					)
 					else -> value
 				}

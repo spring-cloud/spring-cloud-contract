@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 
 /**
@@ -698,6 +699,94 @@ then:
 			}
 		}.also {
 			assertThat(it.message).contains("Header is missing its name or value")
+		}
+	}
+
+	@Test
+	fun `should work with cookies`() {
+		val contract = contract {
+			request {
+				method = GET
+				url = url("/cookie")
+				cookies {
+					cookie {
+						name = "name"
+						value = "foo"
+					}
+					cookie {
+						name = "name2"
+						value = "bar"
+					}
+				}
+			}
+			response {
+				status = OK
+				cookies {
+					cookie {
+						name = "name"
+						value = "foo"
+					}
+					cookie {
+						name = "name2"
+						value = "bar"
+					}
+				}
+			}
+		}
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			val request = contract.request
+			val cookies = request.cookies.entries
+			assertThat(cookies).hasSize(2)
+			assertThat(cookies).containsExactlyInAnyOrder(Cookie.build("name", "foo"), Cookie.build("name2", "bar"))
+		}.also {
+			val response = contract.response
+			val cookies = response.cookies.entries
+			assertThat(cookies).hasSize(2)
+			assertThat(cookies).containsExactlyInAnyOrder(Cookie.build("name", "foo"), Cookie.build("name2", "bar"))
+		}
+	}
+
+	@Test
+	fun `should throw error when cookie is not configured correctly`() {
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					cookies {
+						cookie {
+							value = "bar"
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Cookie is missing its name or value")
+		}
+
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					cookies {
+						cookie {
+							name = "foo"
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Cookie is missing its name or value")
 		}
 	}
 
