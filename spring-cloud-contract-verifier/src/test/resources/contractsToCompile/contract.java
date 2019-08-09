@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package example;
 
 import java.util.Collection;
@@ -21,11 +22,11 @@ import java.util.function.Supplier;
 
 import org.springframework.cloud.contract.spec.Contract;
 
-class MyContractSupplier implements Supplier<Collection<Contract>> {
+class contract implements Supplier<Collection<Contract>> {
 
 	@Override
 	public Collection<Contract> get() {
-		return Collections.singletonList(Contract.make( c -> {
+		return Collections.singletonList(Contract.make(c -> {
 			c.request(r -> {
 				r.method(r.PUT());
 				r.headers(h -> {

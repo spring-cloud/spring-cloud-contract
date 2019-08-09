@@ -179,7 +179,7 @@ private void test(String test) {
 		String fqnClassName = "com.example.${className}"
 		test = test.replaceAll("class FooTest", "class " + className)
 		.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
-		return InMemoryJavaCompiler.newInstance().compile(fqnClassName, test)
+		return new org.springframework.cloud.function.compiler.java.RuntimeJavaCompiler().compile(fqnClassName, test)
 	}
 
 	private static String className(String test) {

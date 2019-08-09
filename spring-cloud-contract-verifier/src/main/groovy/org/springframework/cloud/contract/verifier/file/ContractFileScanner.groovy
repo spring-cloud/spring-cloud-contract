@@ -139,6 +139,7 @@ class ContractFileScanner {
 
 	protected List<ContractConverter> convertersWithYml() {
 		List<ContractConverter> converters = converters()
+		converters.add(ContractVerifierDslConverter.INSTANCE)
 		converters.add(YamlContractConverter.INSTANCE)
 		return converters
 	}
@@ -213,22 +214,7 @@ class ContractFileScanner {
 	}
 
 	private boolean isContractFile(File file) {
-		return file.isFile() && getFilenameExtension(file.toString())?.equalsIgnoreCase("groovy")
-	}
-
-	private static String getFilenameExtension(String path) {
-		if (path == null) {
-			return null
-		}
-		int extIndex = path.lastIndexOf('.')
-		if (extIndex == -1) {
-			return null
-		}
-		int folderIndex = path.lastIndexOf('/')
-		if (folderIndex > extIndex) {
-			return null
-		}
-		return path.substring(extIndex + 1)
+		return file.isFile() && ContractVerifierDslConverter.INSTANCE.isAccepted(file)
 	}
 
 	/**

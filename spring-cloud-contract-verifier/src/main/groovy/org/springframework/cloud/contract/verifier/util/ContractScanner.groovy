@@ -85,7 +85,7 @@ final class ContractScanner {
 									contractDescriptors
 											.addAll(ContractVerifierDslConverter
 											.convertAsCollection(
-											file.getParentFile(), file))
+											file.getParentFile(), file).findAll { it })
 								}
 								else if (converter != null
 										&& converter.isAccepted(file)) {
@@ -120,6 +120,6 @@ final class ContractScanner {
 	}
 
 	private static boolean isContractDescriptor(File file) {
-		return file.isFile() && file.getName().endsWith(".groovy")
+		return ContractVerifierDslConverter.INSTANCE.isAccepted(file)
 	}
 }

@@ -27,7 +27,7 @@ class ContractVerifierDslConverterSpec extends Specification {
 
 	URL single = ContractVerifierDslConverterSpec.getResource("/contract.groovy")
 	File singleContract = new File(single.toURI())
-	URL singleJava = ContractVerifierDslConverterSpec.getResource("/contract.java")
+	URL singleJava = ContractVerifierDslConverterSpec.getResource("/contractsToCompile/contract.java")
 	File singleContractJava = new File(singleJava.toURI())
 	URL multiple = ContractVerifierDslConverterSpec.getResource("/multiple_contracts.groovy")
 	File multipleContracts = new File(multiple.toURI())

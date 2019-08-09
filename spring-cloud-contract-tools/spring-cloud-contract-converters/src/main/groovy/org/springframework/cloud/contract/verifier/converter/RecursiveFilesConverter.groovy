@@ -59,12 +59,13 @@ class RecursiveFilesConverter {
 	}
 
 	void processFiles() {
-		ContractFileScanner scanner = new ContractFileScannerBuilder().
-				baseDir(props.contractsDslDir)
-																	  .excluded(props.excludedFiles as Set)
-																	  .ignored([] as Set).included([] as Set)
-																	  .includeMatcher(props.includedContracts)
-																	  .build()
+		ContractFileScanner scanner = new ContractFileScannerBuilder()
+				.baseDir(props.contractsDslDir)
+				.excluded(props.excludedFiles as Set)
+				.ignored([] as Set)
+				.included([] as Set)
+				.includeMatcher(props.includedContracts)
+				.build()
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		if (log.isDebugEnabled()) {
 			log.debug("Found the following contracts $contracts")
