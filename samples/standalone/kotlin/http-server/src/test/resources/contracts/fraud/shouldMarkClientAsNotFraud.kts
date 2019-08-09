@@ -27,7 +27,7 @@ contract {
 				"client.id" to value(consumer(regex("[0-9]{10}")), producer("1234567890")),
 				"loanAmount" to 123.123)
 		headers {
-			contentType("application/json")
+			contentType = "application/json"
 		}
 	}
 	response {
@@ -37,7 +37,7 @@ contract {
 				"rejection.reason" to value(consumer(null), producer(execute("assertThatRejectionReasonIsNull(\$it)")))
 		)
 		headers {
-			contentType("application/json")
+			contentType = "application/json"
 		}
 	}
 }

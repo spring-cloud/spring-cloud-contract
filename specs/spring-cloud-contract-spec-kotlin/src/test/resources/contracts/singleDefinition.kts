@@ -26,7 +26,7 @@ contract {
                 "loanAmount" to 123.123
         )
         headers {
-            contentType("application/vnd.fraud.v1+json")
+            contentType = "application/vnd.fraud.v1+json"
         }
 
     }
@@ -37,7 +37,7 @@ contract {
                 "rejectionReason" to listOf(value(consumer(null), producer("assertThatRejectionReasonIsNull(\$it)")))
         )
         headers {
-            contentType("application/vnd.fraud.v1+json")
+            contentType = "application/vnd.fraud.v1+json"
         }
     }
 }

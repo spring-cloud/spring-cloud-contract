@@ -24,7 +24,7 @@ class InputDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
     var messageFrom: DslProperty<String>? = null
     var triggeredBy: ExecutionProperty? = null
-    var messageHeaders: Headers? = null
+    var headers: Headers? = null
     var messageBody: Input.BodyType? = null
     var assertThat: ExecutionProperty? = null
     var bodyMatchers: BodyMatchers? = null
@@ -33,8 +33,8 @@ class InputDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
         this.messageFrom = DslProperty(messageFrom)
     }
 
-    fun messageHeaders(headers: Headers.() -> Unit) {
-        this.messageHeaders = Headers().apply(headers)
+    fun headers(headers: HeadersDsl.() -> Unit) {
+        this.headers = HeadersDsl().apply(headers).get()
     }
 
     fun triggeredBy(triggeredBy: String) {
@@ -107,7 +107,7 @@ class InputDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
         val input = Input()
         messageFrom?.also { input.messageFrom = messageFrom!! }
         triggeredBy?.also { input.triggeredBy = triggeredBy!! }
-        messageHeaders?.also { input.messageHeaders = messageHeaders!! }
+        headers?.also { input.messageHeaders = headers!! }
         messageBody?.also { input.messageBody = messageBody!! }
         assertThat?.also { input.assertThat = assertThat!! }
         bodyMatchers?.also { input.bodyMatchers = bodyMatchers!! }

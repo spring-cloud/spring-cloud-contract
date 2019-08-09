@@ -28,7 +28,7 @@ arrayOf(
             status = OK
             body = body("count" to 200)
             headers {
-                contentType("application/vnd.fraud.v1+json")
+                contentType = "application/vnd.fraud.v1+json"
             }
         }
     },
@@ -41,7 +41,7 @@ arrayOf(
             status = OK
             body = body("count" to 100)
             headers {
-                contentType("application/vnd.fraud.v1+json")
+                contentType = "application/vnd.fraud.v1+json"
             }
         }
     }

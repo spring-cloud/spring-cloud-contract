@@ -24,7 +24,7 @@ contract {
 		url = url("/1")
 		method = PUT
 		headers {
-			contentType(applicationOctetStream())
+			contentType = APPLICATION_OCTET_STREAM
 		}
 		body = bodyFromFileAsBytes("contracts/request.pdf")
 	}
@@ -32,7 +32,7 @@ contract {
 		status = OK
 		body = bodyFromFileAsBytes("contracts/response.pdf")
 		headers {
-			contentType(applicationOctetStream())
+			contentType = APPLICATION_OCTET_STREAM
 		}
 	}
 }

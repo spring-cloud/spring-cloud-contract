@@ -26,7 +26,7 @@ contract {
 		url = url("/frauds/name")
 		body = body("name" to `$`(anyAlphaUnicode()))
 		headers {
-			contentType("application/json")
+			contentType = "application/json"
 		}
 	}
 	response {

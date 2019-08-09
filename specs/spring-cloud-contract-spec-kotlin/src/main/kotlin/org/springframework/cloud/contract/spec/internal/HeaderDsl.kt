@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package binary
+package org.springframework.cloud.contract.spec.internal
 
-import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
-import org.springframework.cloud.contract.spec.internal.HttpMethods
+import kotlin.properties.Delegates
 
-contract {
-	request {
-		url = url("/1")
-		method = PUT
-		headers {
-			contentType = APPLICATION_OCTET_STREAM
-		}
-		body = bodyFromFileAsBytes("request.pdf")
-	}
-	response {
-		status = OK
-		body = bodyFromFileAsBytes("response.pdf")
-		headers {
-			contentType = APPLICATION_OCTET_STREAM
-		}
-	}
+/**
+ * @author Tim Ysewyn
+ */
+class HeaderDsl {
+
+	var name: String by Delegates.notNull()
+
+	var value: Any by Delegates.notNull()
 }

@@ -28,7 +28,7 @@ contract {
 		url = url("/frauds/name")
 		body = body("name" to "fraud")
 		headers {
-			contentType("application/json")
+			contentType = "application/json"
 		}
 	}
 	response {

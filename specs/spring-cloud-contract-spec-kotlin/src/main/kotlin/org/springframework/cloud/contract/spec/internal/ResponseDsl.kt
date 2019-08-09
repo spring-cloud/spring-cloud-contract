@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.spec.internal
 
 import org.springframework.cloud.contract.spec.toDslProperties
 import org.springframework.cloud.contract.spec.toDslProperty
+import org.springframework.cloud.contract.spec.util.RegexpUtils
 import java.util.regex.Pattern
 
 /**
@@ -40,8 +41,8 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
     fun fixedMilliseconds(delay: Long) = delay.toDslProperty()
 
-    fun headers(headers: Headers.() -> Unit) {
-        this.headers = Response.ResponseHeaders().apply(headers)
+    fun headers(headers: HeadersDsl.() -> Unit) {
+        this.headers = ResponseHeadersDsl().apply(headers).get()
     }
 
     fun cookies(cookies: Cookies.() -> Unit) {
@@ -286,4 +287,22 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
         bodyMatchers?.also { response.bodyMatchers = bodyMatchers }
         return response
     }
+
+	private class ResponseHeadersDsl: HeadersDsl() {
+
+		private val common = Common()
+
+		override fun matching(value: Any?): Any? {
+			return value?.also {
+				return when(value) {
+					is String -> return this.common.value(
+							c(value),
+							p(NotToEscapePattern(Pattern.compile(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")))
+					)
+					else -> value
+				}
+			}
+		}
+
+	}
 }

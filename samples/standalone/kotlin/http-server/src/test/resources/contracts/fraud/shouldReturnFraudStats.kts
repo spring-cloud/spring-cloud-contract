@@ -33,7 +33,7 @@ listOf(
                     "count" to value(regex("[2-9][0-9][0-9]"))
             )
             headers {
-                contentType("application/json")
+                contentType = "application/json"
             }
         }
     },
@@ -48,7 +48,7 @@ listOf(
                     "count" to 100
             )
             headers {
-                contentType("application/json")
+                contentType = "application/json"
             }
         }
     }

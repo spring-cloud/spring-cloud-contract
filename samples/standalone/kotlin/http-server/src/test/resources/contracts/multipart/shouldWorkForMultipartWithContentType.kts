@@ -36,14 +36,14 @@ contract {
 						value("application/json"))
 		))
 		headers {
-			contentType("multipart/form-data")
+			contentType = "multipart/form-data"
 		}
 	}
 	response {
 		status = OK
 		body = body("status" to "ok")
 		headers {
-			contentType("application/json")
+			contentType = "application/json"
 		}
 	}
 }

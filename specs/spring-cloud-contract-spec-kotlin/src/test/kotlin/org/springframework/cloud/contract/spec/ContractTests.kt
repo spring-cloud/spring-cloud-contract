@@ -21,8 +21,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
-import org.springframework.cloud.contract.spec.internal.HttpMethods
-import org.springframework.cloud.contract.spec.internal.HttpStatus
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 
 /**
@@ -39,14 +37,20 @@ class ContractTests {
 				url = url("/foo")
 				method = PUT
 				headers {
-					header("foo", "bar")
+					header {
+						name = "foo"
+						value = "bar"
+					}
 				}
 				body = body("foo" to "bar")
 			}
 			response {
 				status = OK
 				headers {
-					header("foo2", "bar")
+					header {
+						name = "foo2"
+						value = "bar"
+					}
 				}
 				body = body("foo2" to "bar")
 			}
@@ -141,15 +145,21 @@ class ContractTests {
 			input {
 				messageFrom("input")
 				messageBody("foo" to "bar")
-				messageHeaders {
-					header("foo", "bar")
+				headers {
+					header {
+						name = "foo"
+						value = "bar"
+					}
 				}
 			}
 			outputMessage {
 				sentTo("output")
 				body("foo2" to "bar")
 				headers {
-					header("foo2", "bar")
+					header {
+						name = "foo2"
+						value = "bar"
+					}
 				}
 			}
 		}
@@ -187,15 +197,21 @@ class ContractTests {
 			input {
 				messageFrom("input")
 				messageBody("foo" to anyNonBlankString())
-				messageHeaders {
-					header("foo", anyNumber())
+				headers {
+					header {
+						name = "foo"
+						value = anyNumber()
+					}
 				}
 			}
 			outputMessage {
 				sentTo("output")
 				body("foo2" to anyNonEmptyString())
 				headers {
-					header("foo2", anyIpAddress())
+					header {
+						name = "foo2"
+						value = anyIpAddress()
+					}
 				}
 			}
 		}
@@ -324,7 +340,7 @@ then:
 			request {
 				method = PUT
 				headers {
-					contentType(applicationJson())
+					contentType = APPLICATION_JSON
 				}
 				url = url("/$index")
 			}
@@ -336,7 +352,7 @@ then:
 			request {
 				method = PUT
 				headers {
-					contentType(applicationJson())
+					contentType = APPLICATION_JSON
 				}
 				url = url("/$index")
 			}
@@ -360,7 +376,7 @@ then:
 			request {
 				method = PUT
 				headers {
-					contentType(applicationJson())
+					contentType = APPLICATION_JSON
 				}
 				url = url("/$index")
 			}
@@ -373,7 +389,7 @@ then:
 			request {
 				method = PUT
 				headers {
-					contentType(applicationJson())
+					contentType = APPLICATION_JSON
 				}
 				url = url("/$index")
 			}
@@ -397,14 +413,20 @@ then:
 				method = GET
 				url = url("/path")
 				headers {
-					header("Accept", value(
+					header {
+						name = "Accept"
+						value = value(
 							consumer(regex("text/.*")),
 							producer("text/plain")
-					))
-					header("X-Custom-Header", value(
+						)
+					}
+					header {
+						name = "X-Custom-Header"
+						value = value(
 							consumer(regex("^.*2134.*$")),
 							producer("121345")
-					))
+						)
+					}
 				}
 			}
 			response {
@@ -415,7 +437,10 @@ then:
 						"created" to "2014-02-02 12:23:43"
 				)
 				headers {
-					header("Content-Type", "text/plain")
+					header {
+						name = "Content-Type"
+						value = "text/plain"
+					}
 				}
 			}
 		}
@@ -424,14 +449,20 @@ then:
 				method = GET
 				url = url("/path")
 				headers {
-					header("Accept", value(
-							consumer(regex("text/.*")),
-							producer("text/plain")
-					))
-					header("X-Custom-Header", value(
-							consumer(regex("^.*2134.*$")),
-							producer("121345")
-					))
+					header {
+						name = "Accept"
+						value = value(
+								consumer(regex("text/.*")),
+								producer("text/plain")
+						)
+					}
+					header {
+						name = "X-Custom-Header"
+						value = value(
+								consumer(regex("^.*2134.*$")),
+								producer("121345")
+						)
+					}
 				}
 			}
 			response {
@@ -442,7 +473,10 @@ then:
 						"created" to "2014-02-02 12:23:43"
 				)
 				headers {
-					header("Content-Type", "text/plain")
+					header {
+						name = "Content-Type"
+						value = "text/plain"
+					}
 				}
 			}
 		}
@@ -508,7 +542,7 @@ then:
 						"created" to "2014-02-02 12:23:43"
 				)
 				headers {
-					contentType(applicationJson())
+					contentType = APPLICATION_JSON
 				}
 				bodyMatchers {
 					jsonPath("$.created", byTimestamp())
@@ -625,4 +659,46 @@ then:
 			assertThat(response.body.serverValue).isEqualTo(listOf("foo2", "bar2"))
 		}
 	}
+
+	@Test
+	fun `should throw error when header is not configured correctly`() {
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					headers {
+						header {
+							name = "foo"
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Header is missing its name or value")
+		}
+
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					headers {
+						header {
+							value = "bar"
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Header is missing its name or value")
+		}
+	}
+
 }

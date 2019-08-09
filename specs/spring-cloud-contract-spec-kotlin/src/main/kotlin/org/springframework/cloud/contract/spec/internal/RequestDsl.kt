@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.spec.internal
 
 import org.springframework.cloud.contract.spec.toDslProperties
 import org.springframework.cloud.contract.spec.toDslProperty
+import org.springframework.cloud.contract.spec.util.RegexpUtils
 import java.util.regex.Pattern
 
 /**
@@ -49,8 +50,8 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
     fun path(path: DslProperty<Any>) = UrlPath(path)
 
-    fun headers(headers: Headers.() -> Unit) {
-        this.headers = Request.RequestHeaders().apply(headers)
+    fun headers(headers: HeadersDsl.() -> Unit) {
+        this.headers = RequestHeadersDsl().apply(headers).get()
     }
 
     fun cookies(cookies: Cookies.() -> Unit) {
@@ -85,21 +86,21 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
     /* HTTP METHODS */
 
-    val GET = method(HttpMethods.HttpMethod.GET.name)
+    val GET = method(HttpMethods.GET)
 
-    val HEAD = method(HttpMethods.HttpMethod.HEAD.name)
+    val HEAD = method(HttpMethods.HEAD)
 
-    val POST = method(HttpMethods.HttpMethod.POST.name)
+    val POST = method(HttpMethods.POST)
 
-    val PUT = method(HttpMethods.HttpMethod.PUT.name)
+    val PUT = method(HttpMethods.PUT)
 
-    val PATCH = method(HttpMethods.HttpMethod.PATCH.name)
+    val PATCH = method(HttpMethods.PATCH)
 
-    val DELETE = method(HttpMethods.HttpMethod.DELETE.name)
+    val DELETE = method(HttpMethods.DELETE)
 
-    val OPTIONS = method(HttpMethods.HttpMethod.OPTIONS.name)
+    val OPTIONS = method(HttpMethods.OPTIONS)
 
-    val TRACE = method(HttpMethods.HttpMethod.TRACE.name)
+    val TRACE = method(HttpMethods.TRACE)
 
     /* HELPER FUNCTIONS */
 
@@ -246,5 +247,23 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
         multipart?.also { request.multipart = multipart!! }
         bodyMatchers?.also { request.bodyMatchers = bodyMatchers!! }
         return request
+    }
+
+    private class RequestHeadersDsl: HeadersDsl() {
+
+        private val common = Common()
+
+        override fun matching(value: Any?): Any? {
+            return value?.also {
+                return when(value) {
+                    is String -> this.common.value(
+                            c(regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
+                            p(value)
+                    )
+                    else -> value
+                }
+            }
+        }
+
     }
 }

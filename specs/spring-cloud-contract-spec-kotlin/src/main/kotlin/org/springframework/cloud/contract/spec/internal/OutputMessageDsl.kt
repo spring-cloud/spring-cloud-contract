@@ -32,8 +32,8 @@ class OutputMessageDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
         this.sentTo = DslProperty(sentTo)
     }
 
-    fun headers(headers: Headers.() -> Unit) {
-        this.headers = Headers().apply(headers)
+    fun headers(headers: HeadersDsl.() -> Unit) {
+        this.headers = HeadersDsl().apply(headers).get()
     }
 
     fun body(body: Any) {

@@ -27,7 +27,7 @@ contract {
                 "client.id" to value(regex("[0-9]{10}")),
                 "loanAmount" to 99999)
         headers { // (5)
-            contentType("application/json")
+            contentType = "application/json"
         }
     }
     response { // (6)
@@ -36,7 +36,7 @@ contract {
                 "fraudCheckStatus" to "FRAUD",
                 "rejection.reason" to "Amount too high")
         headers { // (9)
-            contentType("application/json")
+            contentType = "application/json"
         }
     }
 }
