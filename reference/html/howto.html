@@ -158,6 +158,7 @@ $(addBlockSwitches);
 <li><a href="#how-to-use-stubs-from-a-location">15. How can I Use Stubs from a Location</a></li>
 <li><a href="#how-to-generate-stubs-at-runtime">16. How can I Generate Stubs at Runtime</a></li>
 <li><a href="#how-to-use-the-failonnostubs-feature">17. How can I Make The Build Pass if There Are No Contracts or Stubs</a></li>
+<li><a href="#how-to-mark-contract-in-progress">18. How can I Mark that a Contract Is in Progress</a></li>
 </ul>
 </div>
 </div>
@@ -2495,6 +2496,17 @@ You need not specify the output directory for the generated snippets (since vers
 </div>
 <div class="paragraph">
 <p>If you want the plugins not to fail the build when no contracts were found, you can set the <code>failOnNoStubs</code> flag in Maven or call the <code>contractRepository { failOnNoStubs(false) }</code> Closure in Gradle.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-mark-contract-in-progress"><a class="anchor" href="#how-to-mark-contract-in-progress"></a><a class="link" href="#how-to-mark-contract-in-progress">18. How can I Mark that a Contract Is in Progress</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If a contract is in progress, it means that the on the producer side tests will not be generated, but the stub will be. You can read more about this in <a href="project-features.html#contract-dsl-in-progress">this section</a> of the documentation.</p>
+</div>
+<div class="paragraph">
+<p>In a CI build, before going to production, you would like to ensure that no in progress contracts are there on the classpath. That&#8217;s because you may lead to false positives. That&#8217;s why, by default, in the Spring Cloud Contract plugin, we set the value of <code>failOnInProgress</code> to <code>true</code>. If you want to allow such contracts when tests are to be generated, just set the flag to <code>false</code>.</p>
 </div>
 </div>
 </div>

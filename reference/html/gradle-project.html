@@ -580,6 +580,9 @@ contracts from temporary directories.</p>
 <li>
 <p><code>failOnNoContracts</code>: When enabled, will throw an exception when no contracts were found. Defaults to <code>true</code>.</p>
 </li>
+<li>
+<p><code>failOnInProgress</code>: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to <code>true</code>.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
