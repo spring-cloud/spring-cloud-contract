@@ -16,29 +16,20 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import org.assertj.core.api.BDDAssertions;
+import org.junit.jupiter.api.Test;
+
 /**
- * Contains most commonly used messaging headers.
- *
- * @author Marcin Grzejszczak
  * @author Tim Ysewyn
- * @since 1.1.2
  */
-public class MessagingHeaders {
+class MessagingHeadersTests {
 
-	/**
-	 * The Content Type of a message.
-	 * @return messaging content type
-	 */
-	public static final String MESSAGING_CONTENT_TYPE = "contentType";
-
-	/**
-	 * The Content Type of a message.
-	 * @return messaging content type
-	 * @deprecated Replaced by {@code MessagingHeaders.MESSAGING_CONTENT_TYPE}.
-	 */
-	@Deprecated
-	public String messagingContentType() {
-		return MESSAGING_CONTENT_TYPE;
+	@Test
+	public void MESSAGING_CONTENT_TYPE() {
+		BDDAssertions.then(MessagingHeaders.MESSAGING_CONTENT_TYPE)
+				.isEqualTo("contentType");
+		BDDAssertions.then(new MessagingHeaders().messagingContentType())
+				.isEqualTo(MessagingHeaders.MESSAGING_CONTENT_TYPE);
 	}
 
 }

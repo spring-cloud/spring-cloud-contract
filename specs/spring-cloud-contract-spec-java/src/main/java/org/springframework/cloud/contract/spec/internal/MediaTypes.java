@@ -20,76 +20,265 @@ package org.springframework.cloud.contract.spec.internal;
  * Contains most commonly used media types.
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.2
  */
 public class MediaTypes {
 
+	/**
+	 * Public constant for that includes all media ranges (i.e. "*&#47;*").
+	 * @return {@code *&#47;*}
+	 */
+	public static final String ALL_VALUE = "*/*";
+
+	/**
+	 * Public constant for {@code application/atom+xml}.
+	 * @return {@code application/atom+xml}
+	 */
+	public static final String APPLICATION_ATOM_XML = "application/atom+xml";
+
+	/**
+	 * Public constant for {@code application/x-www-form-urlencoded}.
+	 * @return {@code application/x-www-form-urlencoded}
+	 */
+	public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
+
+	/**
+	 * Public constant for {@code application/json}.
+	 * @return {@code application/json}
+	 */
+	public static final String APPLICATION_JSON = "application/json";
+
+	/**
+	 * Public constant for {@code application/json;charset=UTF-8}.
+	 * @return {@code application/json;charset=UTF-8}
+	 */
+	public static final String APPLICATION_JSON_UTF8 = APPLICATION_JSON
+			+ ";charset=UTF-8";
+
+	/**
+	 * Public constant for {@code application/octet-stream}.
+	 * @return {@code application/octet-stream}
+	 */
+	public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+
+	/**
+	 * Public constant for {@code application/pdf}.
+	 * @return {@code application/pdf}
+	 */
+	public static final String APPLICATION_PDF = "application/pdf";
+
+	/**
+	 * Public constant for {@code application/xhtml+xml}.
+	 * @return {@code application/xhtml+xml}
+	 */
+	public static final String APPLICATION_XHTML_XML = "application/xhtml+xml";
+
+	/**
+	 * Public constant for {@code application/xml}.
+	 * @return {@code application/xml}
+	 */
+	public static final String APPLICATION_XML = "application/xml";
+
+	/**
+	 * Public constant for {@code image/gif}.
+	 * @return {@code image/gif}
+	 */
+	public static final String IMAGE_GIF = "image/gif";
+
+	/**
+	 * Public constant for {@code image/jpeg}.
+	 * @return {@code image/jpeg}
+	 */
+	public static final String IMAGE_JPEG = "image/jpeg";
+
+	/**
+	 * Public constant for {@code image/png}.
+	 * @return {@code image/png}
+	 */
+	public static final String IMAGE_PNG = "image/png";
+
+	/**
+	 * Public constant for {@code multipart/form-data}.
+	 * @return {@code multipart/form-data}
+	 */
+	public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+
+	/**
+	 * Public constant for {@code text/html}.
+	 * @return {@code text/html}
+	 */
+	public static final String TEXT_HTML = "text/html";
+
+	/**
+	 * Public constant for {@code text/markdown}.
+	 * @return {@code text/markdown}
+	 */
+	public static final String TEXT_MARKDOWN = "text/markdown";
+
+	/**
+	 * Public constant for {@code text/plain}.
+	 * @return {@code text/plain}
+	 */
+	public static final String TEXT_PLAIN = "text/plain";
+
+	/**
+	 * Public constant for {@code text/xml}.
+	 * @return {@code text/xml}
+	 */
+	public static final String TEXT_XML = "text/xml";
+
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.ALL_VALUE}.
+	 * @return {@code MediaTypes.ALL_VALUE}
+	 */
+	@Deprecated
 	public String allValue() {
-		return "*/*";
+		return ALL_VALUE;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_ATOM_XML}.
+	 * @return {@code MediaTypes.APPLICATION_ATOM_XML}
+	 */
+	@Deprecated
 	public String applicationAtomXml() {
-		return "application/atom+xml";
+		return APPLICATION_ATOM_XML;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_FORM_URLENCODED}.
+	 * @return {@code MediaTypes.APPLICATION_FORM_URLENCODED}
+	 */
+	@Deprecated
 	public String applicationFormUrlencoded() {
-		return "application/x-www-form-urlencoded";
+		return APPLICATION_FORM_URLENCODED;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_JSON}.
+	 * @return {@code MediaTypes.APPLICATION_JSON}
+	 */
+	@Deprecated
 	public String applicationJson() {
-		return "application/json";
+		return APPLICATION_JSON;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_JSON_UTF8}.
+	 * @return {@code MediaTypes.APPLICATION_JSON_UTF8}
+	 */
+	@Deprecated
 	public String applicationJsonUtf8() {
-		return applicationJson() + ";charset=UTF-8";
+		return APPLICATION_JSON_UTF8;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_OCTET_STREAM}.
+	 * @return {@code MediaTypes.APPLICATION_OCTET_STREAM}
+	 */
+	@Deprecated
 	public String applicationOctetStream() {
-		return "application/octet-stream";
+		return APPLICATION_OCTET_STREAM;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_PDF}.
+	 * @return {@code MediaTypes.APPLICATION_PDF}
+	 */
+	@Deprecated
 	public String applicationPdf() {
-		return "application/pdf";
+		return APPLICATION_PDF;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_XHTML_XML}.
+	 * @return {@code MediaTypes.APPLICATION_XHTML_XML}
+	 */
+	@Deprecated
 	public String applicationXhtmlXml() {
-		return "application/xhtml+xml";
+		return APPLICATION_XHTML_XML;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.APPLICATION_XML}.
+	 * @return {@code MediaTypes.APPLICATION_XML}
+	 */
+	@Deprecated
 	public String applicationXml() {
-		return "application/xml";
+		return APPLICATION_XML;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.IMAGE_GIF}.
+	 * @return {@code MediaTypes.IMAGE_GIF}
+	 */
+	@Deprecated
 	public String imageGif() {
-		return "image/gif";
+		return IMAGE_GIF;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.IMAGE_JPEG}.
+	 * @return {@code MediaTypes.IMAGE_JPEG}
+	 */
+	@Deprecated
 	public String imageJpeg() {
-		return "image/jpeg";
+		return IMAGE_JPEG;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.IMAGE_PNG}.
+	 * @return {@code MediaTypes.IMAGE_PNG}
+	 */
+	@Deprecated
 	public String imagePng() {
-		return "image/png";
+		return IMAGE_PNG;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.MULTIPART_FORM_DATA}.
+	 * @return {@code MediaTypes.MULTIPART_FORM_DATA}
+	 */
+	@Deprecated
 	public String multipartFormData() {
-		return "multipart/form-data";
+		return MULTIPART_FORM_DATA;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.TEXT_HTML}.
+	 * @return {@code MediaTypes.TEXT_HTML}
+	 */
+	@Deprecated
 	public String textHtml() {
-		return "text/html";
+		return TEXT_HTML;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.TEXT_MARKDOWN}.
+	 * @return {@code MediaTypes.TEXT_MARKDOWN}
+	 */
+	@Deprecated
 	public String textMarkdown() {
-		return "text/markdown";
+		return TEXT_MARKDOWN;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.TEXT_PLAIN}.
+	 * @return {@code MediaTypes.TEXT_PLAIN}
+	 */
+	@Deprecated
 	public String textPlain() {
-		return "text/plain";
+		return TEXT_PLAIN;
 	}
 
+	/**
+	 * @deprecated Replaced by {@code MediaTypes.TEXT_XML}.
+	 * @return {@code MediaTypes.TEXT_XML}
+	 */
+	@Deprecated
 	public String textXml() {
-		return "text/xml";
+		return TEXT_XML;
 	}
 
 }

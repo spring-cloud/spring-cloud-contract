@@ -82,9 +82,11 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	/**
 	 * Name of the HTTP method.
 	 * @param httpMethod HTTP method name
+	 * @deprecated In favor of {@code method(String method)}
 	 */
+	@Deprecated
 	public void method(HttpMethods.HttpMethod httpMethod) {
-		this.method = toDslProperty(httpMethod.toString());
+		this.method = toDslProperty(httpMethod.getMethodName());
 	}
 
 	/**
@@ -549,36 +551,36 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 		return property.anyOf(values);
 	}
 
-	public HttpMethods.HttpMethod GET() {
-		return HttpMethods.GET();
+	public String GET() {
+		return HttpMethods.GET;
 	}
 
-	public HttpMethods.HttpMethod HEAD() {
-		return HttpMethods.HEAD();
+	public String HEAD() {
+		return HttpMethods.HEAD;
 	}
 
-	public HttpMethods.HttpMethod POST() {
-		return HttpMethods.POST();
+	public String POST() {
+		return HttpMethods.POST;
 	}
 
-	public HttpMethods.HttpMethod PUT() {
-		return HttpMethods.PUT();
+	public String PUT() {
+		return HttpMethods.PUT;
 	}
 
-	public HttpMethods.HttpMethod PATCH() {
-		return HttpMethods.PATCH();
+	public String PATCH() {
+		return HttpMethods.PATCH;
 	}
 
-	public HttpMethods.HttpMethod DELETE() {
-		return HttpMethods.DELETE();
+	public String DELETE() {
+		return HttpMethods.DELETE;
 	}
 
-	public HttpMethods.HttpMethod OPTIONS() {
-		return HttpMethods.OPTIONS();
+	public String OPTIONS() {
+		return HttpMethods.OPTIONS;
 	}
 
-	public HttpMethods.HttpMethod TRACE() {
-		return HttpMethods.TRACE();
+	public String TRACE() {
+		return HttpMethods.TRACE;
 	}
 
 	@Override

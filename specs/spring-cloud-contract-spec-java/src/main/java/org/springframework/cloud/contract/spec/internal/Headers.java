@@ -42,10 +42,6 @@ public class Headers {
 	private static final BiFunction<String, Header, Object> SERVER_SIDE = (s,
 			header) -> ContractUtils.convertTestSideRecursively(header);
 
-	private MediaTypes mediaTypes = new MediaTypes();
-
-	private MessagingHeaders messagingHeaders = new MessagingHeaders();
-
 	private Set<Header> entries = new LinkedHashSet<>();
 
 	public void header(Map<String, Object> singleHeader) {
@@ -75,11 +71,11 @@ public class Headers {
 	}
 
 	public void contentType(String contentType) {
-		header(HttpHeaders.contentType(), matching(contentType));
+		header(HttpHeaders.CONTENT_TYPE, matching(contentType));
 	}
 
 	public void messagingContentType(String contentType) {
-		header(messagingHeaders.messagingContentType(), matching(contentType));
+		header(MessagingHeaders.MESSAGING_CONTENT_TYPE, matching(contentType));
 	}
 
 	/**
@@ -144,22 +140,6 @@ public class Headers {
 		return "Headers{" + "\nentries=" + entries + '}';
 	}
 
-	public MediaTypes getMediaTypes() {
-		return mediaTypes;
-	}
-
-	public void setMediaTypes(MediaTypes mediaTypes) {
-		this.mediaTypes = mediaTypes;
-	}
-
-	public MessagingHeaders getMessagingHeaders() {
-		return messagingHeaders;
-	}
-
-	public void setMessagingHeaders(MessagingHeaders messagingHeaders) {
-		this.messagingHeaders = messagingHeaders;
-	}
-
 	public Set<Header> getEntries() {
 		return entries;
 	}
@@ -169,315 +149,315 @@ public class Headers {
 	}
 
 	public String messagingContentType() {
-		return messagingHeaders.messagingContentType();
+		return MessagingHeaders.MESSAGING_CONTENT_TYPE;
 	}
 
 	public String accept() {
-		return HttpHeaders.accept();
+		return HttpHeaders.ACCEPT;
 	}
 
 	public String acceptCharset() {
-		return HttpHeaders.acceptCharset();
+		return HttpHeaders.ACCEPT_CHARSET;
 	}
 
 	public String acceptEncoding() {
-		return HttpHeaders.acceptEncoding();
+		return HttpHeaders.ACCEPT_ENCODING;
 	}
 
 	public String acceptLanguage() {
-		return HttpHeaders.acceptLanguage();
+		return HttpHeaders.ACCEPT_LANGUAGE;
 	}
 
 	public String acceptRanges() {
-		return HttpHeaders.acceptRanges();
+		return HttpHeaders.ACCEPT_RANGES;
 	}
 
 	public String accessControlAllowCredentials() {
-		return HttpHeaders.accessControlAllowCredentials();
+		return HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS;
 	}
 
 	public String accessControlAllowHeaders() {
-		return HttpHeaders.accessControlAllowHeaders();
+		return HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
 	}
 
 	public String accessControlAllowMethods() {
-		return HttpHeaders.accessControlAllowMethods();
+		return HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
 	}
 
 	public String accessControlAllowOrigin() {
-		return HttpHeaders.accessControlAllowOrigin();
+		return HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
 	}
 
 	public String accessControlExposeHeaders() {
-		return HttpHeaders.accessControlExposeHeaders();
+		return HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS;
 	}
 
 	public String accessControlMaxAge() {
-		return HttpHeaders.accessControlMaxAge();
+		return HttpHeaders.ACCESS_CONTROL_MAX_AGE;
 	}
 
 	public String accessControlRequestHeaders() {
-		return HttpHeaders.accessControlRequestHeaders();
+		return HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS;
 	}
 
 	public String accessControlRequestMethod() {
-		return HttpHeaders.accessControlRequestMethod();
+		return HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 	}
 
 	public String age() {
-		return HttpHeaders.age();
+		return HttpHeaders.AGE;
 	}
 
 	public String allow() {
-		return HttpHeaders.allow();
+		return HttpHeaders.ALLOW;
 	}
 
 	public String authorization() {
-		return HttpHeaders.authorization();
+		return HttpHeaders.AUTHORIZATION;
 	}
 
 	public String cacheControl() {
-		return HttpHeaders.cacheControl();
+		return HttpHeaders.CACHE_CONTROL;
 	}
 
 	public String connection() {
-		return HttpHeaders.connection();
+		return HttpHeaders.CONNECTION;
 	}
 
 	public String contentEncoding() {
-		return HttpHeaders.contentEncoding();
+		return HttpHeaders.CONTENT_ENCODING;
 	}
 
 	public String contentDisposition() {
-		return HttpHeaders.contentDisposition();
+		return HttpHeaders.CONTENT_DISPOSITION;
 	}
 
 	public String contentLanguage() {
-		return HttpHeaders.contentLanguage();
+		return HttpHeaders.CONTENT_LANGUAGE;
 	}
 
 	public String contentLength() {
-		return HttpHeaders.contentLength();
+		return HttpHeaders.CONTENT_LENGTH;
 	}
 
 	public String contentLocation() {
-		return HttpHeaders.contentLocation();
+		return HttpHeaders.CONTENT_LOCATION;
 	}
 
 	public String contentRange() {
-		return HttpHeaders.contentRange();
+		return HttpHeaders.CONTENT_RANGE;
 	}
 
 	public String contentType() {
-		return HttpHeaders.contentType();
+		return HttpHeaders.CONTENT_TYPE;
 	}
 
 	public String cookie() {
-		return HttpHeaders.cookie();
+		return HttpHeaders.COOKIE;
 	}
 
 	public String date() {
-		return HttpHeaders.date();
+		return HttpHeaders.DATE;
 	}
 
 	public String etag() {
-		return HttpHeaders.etag();
+		return HttpHeaders.ETAG;
 	}
 
 	public String expect() {
-		return HttpHeaders.expect();
+		return HttpHeaders.EXPECT;
 	}
 
 	public String expires() {
-		return HttpHeaders.expires();
+		return HttpHeaders.EXPIRES;
 	}
 
 	public String from() {
-		return HttpHeaders.from();
+		return HttpHeaders.FROM;
 	}
 
 	public String host() {
-		return HttpHeaders.host();
+		return HttpHeaders.HOST;
 	}
 
 	public String ifMatch() {
-		return HttpHeaders.ifMatch();
+		return HttpHeaders.IF_MATCH;
 	}
 
 	public String ifModifiedSince() {
-		return HttpHeaders.ifModifiedSince();
+		return HttpHeaders.IF_MODIFIED_SINCE;
 	}
 
 	public String ifNoneMatch() {
-		return HttpHeaders.ifNoneMatch();
+		return HttpHeaders.IF_NONE_MATCH;
 	}
 
 	public String ifRange() {
-		return HttpHeaders.ifRange();
+		return HttpHeaders.IF_RANGE;
 	}
 
 	public String ifUnmodifiedSince() {
-		return HttpHeaders.ifUnmodifiedSince();
+		return HttpHeaders.IF_UNMODIFIED_SINCE;
 	}
 
 	public String lastModified() {
-		return HttpHeaders.lastModified();
+		return HttpHeaders.LAST_MODIFIED;
 	}
 
 	public String link() {
-		return HttpHeaders.link();
+		return HttpHeaders.LINK;
 	}
 
 	public String location() {
-		return HttpHeaders.location();
+		return HttpHeaders.LOCATION;
 	}
 
 	public String max_forwards() {
-		return HttpHeaders.max_forwards();
+		return HttpHeaders.MAX_FORWARDS;
 	}
 
 	public String origin() {
-		return HttpHeaders.origin();
+		return HttpHeaders.ORIGIN;
 	}
 
 	public String pragma() {
-		return HttpHeaders.pragma();
+		return HttpHeaders.PRAGMA;
 	}
 
 	public String proxyAuthenticate() {
-		return HttpHeaders.proxyAuthenticate();
+		return HttpHeaders.PROXY_AUTHENTICATE;
 	}
 
 	public String proxyAuthorization() {
-		return HttpHeaders.proxyAuthorization();
+		return HttpHeaders.PROXY_AUTHORIZATION;
 	}
 
 	public String range() {
-		return HttpHeaders.range();
+		return HttpHeaders.RANGE;
 	}
 
 	public String referer() {
-		return HttpHeaders.referer();
+		return HttpHeaders.REFERER;
 	}
 
 	public String retryAfter() {
-		return HttpHeaders.retryAfter();
+		return HttpHeaders.RETRY_AFTER;
 	}
 
 	public String server() {
-		return HttpHeaders.server();
+		return HttpHeaders.SERVER;
 	}
 
 	public String setCookie() {
-		return HttpHeaders.setCookie();
+		return HttpHeaders.SET_COOKIE;
 	}
 
 	public String setCookie2() {
-		return HttpHeaders.setCookie2();
+		return HttpHeaders.SET_COOKIE_2;
 	}
 
 	public String te() {
-		return HttpHeaders.te();
+		return HttpHeaders.TE;
 	}
 
 	public String trailer() {
-		return HttpHeaders.trailer();
+		return HttpHeaders.TRAILER;
 	}
 
 	public String transferEncoding() {
-		return HttpHeaders.transferEncoding();
+		return HttpHeaders.TRANSFER_ENCODING;
 	}
 
 	public String upgrade() {
-		return HttpHeaders.upgrade();
+		return HttpHeaders.UPGRADE;
 	}
 
 	public String user_agent() {
-		return HttpHeaders.user_agent();
+		return HttpHeaders.USER_AGENT;
 	}
 
 	public String vary() {
-		return HttpHeaders.vary();
+		return HttpHeaders.VARY;
 	}
 
 	public String via() {
-		return HttpHeaders.via();
+		return HttpHeaders.VIA;
 	}
 
 	public String warning() {
-		return HttpHeaders.warning();
+		return HttpHeaders.WARNING;
 	}
 
 	public String wwwAuthenticate() {
-		return HttpHeaders.wwwAuthenticate();
+		return HttpHeaders.WWW_AUTHENTICATE;
 	}
 
 	public String allValue() {
-		return mediaTypes.allValue();
+		return MediaTypes.ALL_VALUE;
 	}
 
 	public String applicationAtomXml() {
-		return mediaTypes.applicationAtomXml();
+		return MediaTypes.APPLICATION_ATOM_XML;
 	}
 
 	public String applicationFormUrlencoded() {
-		return mediaTypes.applicationFormUrlencoded();
+		return MediaTypes.APPLICATION_FORM_URLENCODED;
 	}
 
 	public String applicationJson() {
-		return mediaTypes.applicationJson();
+		return MediaTypes.APPLICATION_JSON;
 	}
 
 	public String applicationJsonUtf8() {
-		return mediaTypes.applicationJsonUtf8();
+		return MediaTypes.APPLICATION_JSON_UTF8;
 	}
 
 	public String applicationOctetStream() {
-		return mediaTypes.applicationOctetStream();
+		return MediaTypes.APPLICATION_OCTET_STREAM;
 	}
 
 	public String applicationPdf() {
-		return mediaTypes.applicationPdf();
+		return MediaTypes.APPLICATION_PDF;
 	}
 
 	public String applicationXhtmlXml() {
-		return mediaTypes.applicationXhtmlXml();
+		return MediaTypes.APPLICATION_XHTML_XML;
 	}
 
 	public String applicationXml() {
-		return mediaTypes.applicationXml();
+		return MediaTypes.APPLICATION_XML;
 	}
 
 	public String imageGif() {
-		return mediaTypes.imageGif();
+		return MediaTypes.IMAGE_GIF;
 	}
 
 	public String imageJpeg() {
-		return mediaTypes.imageJpeg();
+		return MediaTypes.IMAGE_JPEG;
 	}
 
 	public String imagePng() {
-		return mediaTypes.imagePng();
+		return MediaTypes.IMAGE_PNG;
 	}
 
 	public String multipartFormData() {
-		return mediaTypes.multipartFormData();
+		return MediaTypes.MULTIPART_FORM_DATA;
 	}
 
 	public String textHtml() {
-		return mediaTypes.textHtml();
+		return MediaTypes.TEXT_HTML;
 	}
 
 	public String textMarkdown() {
-		return mediaTypes.textMarkdown();
+		return MediaTypes.TEXT_MARKDOWN;
 	}
 
 	public String textPlain() {
-		return mediaTypes.textPlain();
+		return MediaTypes.TEXT_PLAIN;
 	}
 
 	public String textXml() {
-		return mediaTypes.textXml();
+		return MediaTypes.TEXT_XML;
 	}
 
 }
