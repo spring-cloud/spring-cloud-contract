@@ -27,104 +27,87 @@ public class MediaTypes {
 
 	/**
 	 * Public constant for that includes all media ranges (i.e. "*&#47;*").
-	 * @return {@code *&#47;*}
 	 */
 	public static final String ALL_VALUE = "*/*";
 
 	/**
 	 * Public constant for {@code application/atom+xml}.
-	 * @return {@code application/atom+xml}
 	 */
 	public static final String APPLICATION_ATOM_XML = "application/atom+xml";
 
 	/**
 	 * Public constant for {@code application/x-www-form-urlencoded}.
-	 * @return {@code application/x-www-form-urlencoded}
 	 */
 	public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
 	/**
 	 * Public constant for {@code application/json}.
-	 * @return {@code application/json}
 	 */
 	public static final String APPLICATION_JSON = "application/json";
 
 	/**
 	 * Public constant for {@code application/json;charset=UTF-8}.
-	 * @return {@code application/json;charset=UTF-8}
 	 */
 	public static final String APPLICATION_JSON_UTF8 = APPLICATION_JSON
 			+ ";charset=UTF-8";
 
 	/**
 	 * Public constant for {@code application/octet-stream}.
-	 * @return {@code application/octet-stream}
 	 */
 	public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
 	/**
 	 * Public constant for {@code application/pdf}.
-	 * @return {@code application/pdf}
 	 */
 	public static final String APPLICATION_PDF = "application/pdf";
 
 	/**
 	 * Public constant for {@code application/xhtml+xml}.
-	 * @return {@code application/xhtml+xml}
 	 */
 	public static final String APPLICATION_XHTML_XML = "application/xhtml+xml";
 
 	/**
 	 * Public constant for {@code application/xml}.
-	 * @return {@code application/xml}
 	 */
 	public static final String APPLICATION_XML = "application/xml";
 
 	/**
 	 * Public constant for {@code image/gif}.
-	 * @return {@code image/gif}
 	 */
 	public static final String IMAGE_GIF = "image/gif";
 
 	/**
 	 * Public constant for {@code image/jpeg}.
-	 * @return {@code image/jpeg}
 	 */
 	public static final String IMAGE_JPEG = "image/jpeg";
 
 	/**
 	 * Public constant for {@code image/png}.
-	 * @return {@code image/png}
 	 */
 	public static final String IMAGE_PNG = "image/png";
 
 	/**
 	 * Public constant for {@code multipart/form-data}.
-	 * @return {@code multipart/form-data}
 	 */
 	public static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
 	/**
 	 * Public constant for {@code text/html}.
-	 * @return {@code text/html}
 	 */
 	public static final String TEXT_HTML = "text/html";
 
 	/**
 	 * Public constant for {@code text/markdown}.
-	 * @return {@code text/markdown}
 	 */
 	public static final String TEXT_MARKDOWN = "text/markdown";
 
 	/**
 	 * Public constant for {@code text/plain}.
-	 * @return {@code text/plain}
 	 */
 	public static final String TEXT_PLAIN = "text/plain";
 
 	/**
 	 * Public constant for {@code text/xml}.
-	 * @return {@code text/xml}
 	 */
 	public static final String TEXT_XML = "text/xml";
 

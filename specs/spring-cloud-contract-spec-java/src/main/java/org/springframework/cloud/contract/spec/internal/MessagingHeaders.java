@@ -26,14 +26,13 @@ package org.springframework.cloud.contract.spec.internal;
 public class MessagingHeaders {
 
 	/**
-	 * The Content Type of a message.
-	 * @return messaging content type
+	 * The Content-Type header name of a message.
 	 */
 	public static final String MESSAGING_CONTENT_TYPE = "contentType";
 
 	/**
-	 * The Content Type of a message.
-	 * @return messaging content type
+	 * The Content-Type header name of a message.
+	 * @return the Content-Type header name
 	 * @deprecated Replaced by {@code MessagingHeaders.MESSAGING_CONTENT_TYPE}.
 	 */
 	@Deprecated

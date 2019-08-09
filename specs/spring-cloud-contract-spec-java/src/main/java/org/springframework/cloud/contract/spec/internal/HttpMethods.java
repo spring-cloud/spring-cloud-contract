@@ -26,42 +26,42 @@ package org.springframework.cloud.contract.spec.internal;
 public final class HttpMethods {
 
 	/**
-	 * @return {@code GET}.
+	 * The HTTP {@code GET} method.
 	 */
 	public static String GET = "GET";
 
 	/**
-	 * @return {@code HEAD}.
+	 * The HTTP {@code HEAD} method.
 	 */
 	public static String HEAD = "HEAD";
 
 	/**
-	 * @return {@code POST}.
+	 * The HTTP {@code POST} method.
 	 */
 	public static String POST = "POST";
 
 	/**
-	 * @return {@code PUT}.
+	 * The HTTP {@code PUT} method.
 	 */
 	public static String PUT = "PUT";
 
 	/**
-	 * @return {@code PATCH}.
+	 * The HTTP {@code PATCH} method.
 	 */
 	public static String PATCH = "PATCH";
 
 	/**
-	 * @return {@code DELETE}.
+	 * The HTTP {@code DELETE} method.
 	 */
 	public static String DELETE = "DELETE";
 
 	/**
-	 * @return {@code OPTIONS}.
+	 * The HTTP {@code OPTIONS} method.
 	 */
 	public static String OPTIONS = "OPTIONS";
 
 	/**
-	 * @return {@code TRACE}.
+	 * The HTTP {@code TRACE} method.
 	 */
 	public static String TRACE = "TRACE";
 

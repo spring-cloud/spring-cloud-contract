@@ -102,7 +102,7 @@ public class Headers {
 
 	/**
 	 * Converts the headers into their stub side representations and returns as a map of
-	 * String key => Object value.
+	 * String key =&gt; Object value.
 	 * @return converted map
 	 */
 	public Map<String, Object> asStubSideMap() {
@@ -111,7 +111,7 @@ public class Headers {
 
 	/**
 	 * Converts the headers into their stub side representations and returns as a map of
-	 * String key => Object value.
+	 * String key =&gt; Object value.
 	 * @return converted map
 	 */
 	public Map<String, Object> asTestSideMap() {
