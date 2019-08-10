@@ -16,13 +16,20 @@
 
 package org.springframework.cloud.contract.spec
 
+import java.io.File
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 import org.springframework.cloud.contract.spec.internal.Cookie
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
+import org.springframework.cloud.contract.spec.internal.KotlinContractConverter
 import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 
 /**
@@ -705,6 +712,52 @@ then:
 			assertThat(headers.elementAt(0).name).isEqualTo("Content-Type")
 			assertThat(headers.elementAt(0).clientValue).isEqualTo("{{{request.headers.Accept.[0]}}}")
 			assertThat(headers.elementAt(0).serverValue).isEqualTo("{{{request.headers.Accept.[0]}}}")
+		}
+	}
+
+	@Test
+	@Suppress("UNCHECKED_CAST")
+	fun `should support multipart`() {
+		val contract = KotlinContractConverter()
+				.convertFrom(File(javaClass.classLoader.getResource("contracts/multipart.kts")!!.toURI()))
+				.elementAt(0)
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			val request = contract.request
+			assertThat(request.multipart).isNotNull()
+			assertThat(request.multipart.clientValue).isNotNull()
+			assertThat(request.multipart.clientValue).isInstanceOf(LinkedHashMap::class.java)
+			val multipartData = request.multipart.clientValue as LinkedHashMap<String, Any>
+			assertThat(multipartData).hasSize(3)
+			assertThat(multipartData.keys).containsExactly("file1", "file2", "test")
+			var namedProperty: NamedProperty
+
+			assertThat(multipartData["file1"]).isInstanceOf(NamedProperty::class.java)
+			namedProperty = multipartData["file1"] as NamedProperty
+			assertThat(((namedProperty.name as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.name as DslProperty<Any>).serverValue as String).isEqualTo("filename1")
+			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.value as DslProperty<Any>).serverValue as String).isEqualTo("content1")
+			assertThat(namedProperty.contentType).isNull()
+
+			assertThat(multipartData["file2"]).isInstanceOf(NamedProperty::class.java)
+			namedProperty = multipartData["file2"] as NamedProperty
+			assertThat(((namedProperty.name as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.name as DslProperty<Any>).serverValue as String).isEqualTo("filename2")
+			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.value as DslProperty<Any>).serverValue as String).isEqualTo("content2")
+			assertThat(namedProperty.contentType).isNull()
+
+			assertThat(multipartData["test"]).isInstanceOf(NamedProperty::class.java)
+			namedProperty = multipartData["test"] as NamedProperty
+			assertThat(((namedProperty.name as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.name as DslProperty<Any>).serverValue as String).isEqualTo("filename3")
+			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat(((namedProperty.value as DslProperty<Any>).serverValue as FromFileProperty).fileName()).isEqualTo("test.json")
+			assertThat((namedProperty.contentType as DslProperty<Any>).clientValue).isEqualTo("application/json")
+			assertThat((namedProperty.contentType as DslProperty<Any>).serverValue).isEqualTo("application/json")
 		}
 	}
 

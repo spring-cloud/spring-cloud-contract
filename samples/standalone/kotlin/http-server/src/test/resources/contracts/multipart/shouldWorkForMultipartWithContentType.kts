@@ -23,18 +23,18 @@ contract {
 	request {
 		method = POST
 		url = url("/tests")
-		multipart = multipart(mapOf(
-				"file1" to named(
-						value(consumer(regex(nonEmpty())), producer("filename1")),
-						value(consumer(regex(nonEmpty())), producer("content1"))),
-				"file2" to named(
-						value(consumer(regex(nonEmpty())), producer("filename1")),
-						value(consumer(regex(nonEmpty())), producer("content2"))),
-				"test" to named(
-						value(consumer(regex(nonEmpty())), producer("filename1")),
-						value(consumer(regex(nonEmpty())), producer(file("test.json"))),
-						value("application/json"))
-		))
+		multipart {
+			field("file1", named(
+					value(consumer(regex(nonEmpty())), producer("filename1")),
+					value(consumer(regex(nonEmpty())), producer("content1"))))
+			field("file2", named(
+					value(consumer(regex(nonEmpty())), producer("filename2")),
+					value(consumer(regex(nonEmpty())), producer("content2"))))
+			field("test", named(
+					value(consumer(regex(nonEmpty())), producer("filename3")),
+					value(consumer(regex(nonEmpty())), producer(file("test.json"))),
+					value("application/json")))
+		}
 		headers {
 			contentType = "multipart/form-data"
 		}

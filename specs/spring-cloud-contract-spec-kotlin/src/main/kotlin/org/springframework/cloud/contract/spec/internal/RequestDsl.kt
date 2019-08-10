@@ -68,16 +68,12 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
     fun body(body: Any) = Body(body)
 
-    fun multipart(multipart: Map<String, Any>) = Multipart(multipart.toDslProperties())
-
-    fun multipart(multipart: List<Any>) = Multipart(multipart.toDslProperties())
-
-    fun multipart(multipart: DslProperty<Any>) = Multipart(multipart)
-
-    fun multipart(multipart: Any) = Multipart(multipart)
+    fun multipart(configurer: MultipartDsl.() -> Unit) {
+        this.multipart = MultipartDsl().apply(configurer).get()
+    }
 
     fun bodyMatchers(configurer: BodyMatchersDsl.() -> Unit) {
-        bodyMatchers = BodyMatchersDsl().apply(configurer).get()
+        this.bodyMatchers = BodyMatchersDsl().apply(configurer).get()
     }
 
     /* HELPER VARIABLES */
