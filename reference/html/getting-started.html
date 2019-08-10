@@ -582,10 +582,47 @@ present, the tests fail.</p>
 </div>
 <div class="paragraph">
 <p>To make them pass, you must add the correct implementation of either handling HTTP
-requests or messages. Also, you must add a correct base test class for auto-generated
+requests or messages. Also, you must add a base test class for auto-generated
 tests to the project. This class is extended by all the auto-generated tests, and it
 should contain all the setup information necessary to run them (for example <code>RestAssuredMockMvc</code>
 controller setup or messaging test setup).</p>
+</div>
+<div class="paragraph">
+<p>The following example, from <code>pom.xml</code>, shows how to specify the base test class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>&lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;2.1.2.RELEASE&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;baseClassForTests&gt;com.example.contractTest.BaseTestClass&lt;/baseClassForTests&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>baseClassForTests</code> element lets you specify your base test class. It must be a child
+of a <code>configuration</code> element within <code>spring-cloud-contract-maven-plugin</code>.</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>Once the implementation and the test base class are in place, the tests pass, and both the
@@ -774,10 +811,35 @@ portion of the file:</p>
 </div>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The easiest way to get started is to go to <a href="https://start.spring.io">the Spring Initializr</a>
+and add &#8220;Web&#8221; and &#8220;Contract Verifier&#8221; as dependencies. Doing so pulls in the previously
+mentioned dependencies and everything else you need in the <code>pom.xml</code> file (except for
+setting the base test class, which we cover later in this section). The following image
+shows the settings to use in <a href="https://start.spring.io">the Spring Initializr</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/start_spring_io_dependencies.png" alt="Spring Initializr with Web and Contract Verifier" width="800">
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Now you can add files with <code>REST/</code> messaging contracts
 expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
-<code>contractsDslDir</code> property. By default, it is <code>$rootDir/src/test/resources/contracts</code>.</p>
+<code>contractsDslDir</code> property. By default, it is <code>$rootDir/src/test/resources/contracts</code>.
+Note that the file name does not matter. You can organize your contracts within this
+directory with whatever naming scheme you like.</p>
 </div>
 <div class="paragraph">
 <p>For the HTTP stubs, a contract defines what kind of response should be returned for a
@@ -844,7 +906,7 @@ response:
 </div>
 </div>
 <div class="paragraph">
-<p>In the case of messaging, you can define:</p>
+<p>If you need to use messaging, you can define:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -905,7 +967,8 @@ compliance with the added contracts. By default, the generated tests are under
 <code>org.springframework.cloud.contract.verifier.tests.</code>.</p>
 </div>
 <div class="paragraph">
-<p>The generated tests may differ, depending on which framework and test type you have setup in your plugin.</p>
+<p>The generated tests may differ, depending on which framework and test type you have setup
+in your plugin.</p>
 </div>
 <div class="paragraph">
 <p>In the next listing, you can find:</p>
@@ -927,8 +990,21 @@ Reactive, <code>Web-Flux</code>-based applications) set with the <code>WEBTESTCL
 </li>
 </ul>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You need only one of these test frameworks. MockMvc is the default. To use one
+of the other frameworks, add its library to your classpath.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>The following listing shows all these samples:</p>
+<p>The following listing shows samples for all frameworks:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -1041,14 +1117,178 @@ present, the tests fail.</p>
 </div>
 <div class="paragraph">
 <p>To make them pass, you must add the correct implementation of handling either HTTP
-requests or messages. Also, you must add a correct base test class for auto-generated
+requests or messages. Also, you must add a base test class for auto-generated
 tests to the project. This class is extended by all the auto-generated tests and should
 contain all the setup necessary information needed to run them (for example,
 <code>RestAssuredMockMvc</code> controller setup or messaging test setup).</p>
 </div>
 <div class="paragraph">
+<p>The following example, from <code>pom.xml</code>, shows how to specify the base test class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>&lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;2.1.2.RELEASE&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;baseClassForTests&gt;com.example.contractTest.BaseTestClass&lt;/baseClassForTests&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>baseClassForTests</code> element lets you specify your base test class. It must be a child
+of a <code>configuration</code> element within <code>spring-cloud-contract-maven-plugin</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example shows a minimal (but functional) base test class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>package com.example.contractTest;
+
+import org.junit.Before;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+
+public class BaseTestClass {
+
+    @Before
+    public void setup() {
+        RestAssuredMockMvc.standaloneSetup(new FraudController());
+    }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This minimal class really is all you need to get your tests to work. It serves as a
+starting place to which the automatically generated tests attach.</p>
+</div>
+<div class="paragraph">
+<p>Now we can move on to the implementation. For that, we first need a data class, which we
+then use in our controller. The following listing shows the data class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>package com.example.Test;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class LoanRequest {
+
+    @JsonProperty("client.id")
+    private String clientId;
+
+    private Long loanAmount;
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public Long getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanRequestAmount(Long loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The preceding class provides an object in which we can store the parameters. Because the
+client ID in the contract is called <code>client.id</code>, we need to use the
+<code>@JsonProperty("client.id")</code> parameter to map it to the <code>clientId</code> field.</p>
+</div>
+<div class="paragraph">
+<p>Now we can move along to the controller, which the following listing shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>package com.example.docTest;
+
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class FraudController {
+
+    @PutMapping(value = "/fraudcheck", consumes="application/json", produces="application/json")
+    public String check(@RequestBody LoanRequest loanRequest) { <i class="conum" data-value="1"></i><b>(1)</b>
+
+        if (loanRequest.getLoanAmount() &gt; 10000) { <i class="conum" data-value="2"></i><b>(2)</b>
+            return "{fraudCheckStatus: FRAUD, rejection.reason: Amount too high}"; <i class="conum" data-value="3"></i><b>(3)</b>
+        } else {
+            return "{fraudCheckStatus: OK, acceptance.reason: Amount OK}"; <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+    }
+}</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We map the incoming parameters to a <code>LoanRequest</code> object.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We check the requested loan amount to see if it is too much.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>If it is too much, we return the JSON (created with a simple string here) that the
+test expects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If we had a test to catch when the amount is allowable, we could match it to this output.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>FraudController</code> is about as simple as things get. You can do much more, including
+logging, validating the client ID, and so on.</p>
+</div>
+<div class="paragraph">
 <p>Once the implementation and the test base class are in place, the tests pass, and both the
-application and the stub artifacts are built and installed in the local Maven repository.
+application and the stub artifacts are built and installed in the local Maven repository
 Information about installing the stubs jar to the local repository appears in the logs, as
 the following example shows:</p>
 </div>
