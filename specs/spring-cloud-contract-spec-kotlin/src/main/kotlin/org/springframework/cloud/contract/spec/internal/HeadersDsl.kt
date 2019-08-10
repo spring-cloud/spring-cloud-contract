@@ -438,17 +438,13 @@ open class HeadersDsl: CommonDsl() {
     val TEXT_XML = MediaTypes.TEXT_XML
 
 	/**
-	 * Adds and configures a configurer.
+	 * Adds a header.
 	 *
-	 * @param configurer The lambda to configure the configurer.
+	 * @param name The name of the header.
+	 * @param value The value of the header.
 	 */
-	fun header(configurer: HeaderDsl.() -> Unit) {
-		try {
-			val header = HeaderDsl().apply(configurer)
-			this.headers[header.name] = header.value
-		} catch (ex: IllegalStateException) {
-			throw IllegalStateException("Header is missing its name or value")
-		}
+	fun header(name: String, value: Any) {
+		this.headers[name] = value
 	}
 
     internal fun get(): Headers {

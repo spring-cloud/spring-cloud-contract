@@ -39,20 +39,14 @@ class ContractTests {
 				url = url("/foo")
 				method = PUT
 				headers {
-					header {
-						name = "foo"
-						value = "bar"
-					}
+					header("foo", "bar")
 				}
 				body = body("foo" to "bar")
 			}
 			response {
 				status = OK
 				headers {
-					header {
-						name = "foo2"
-						value = "bar"
-					}
+					header("foo2", "bar")
 				}
 				body = body("foo2" to "bar")
 			}
@@ -148,20 +142,14 @@ class ContractTests {
 				messageFrom = messageFrom("input")
 				messageBody = messageBody("foo" to "bar")
 				headers {
-					header {
-						name = "foo"
-						value = "bar"
-					}
+					header("foo", "bar")
 				}
 			}
 			outputMessage {
 				sentTo = sentTo("output")
 				body = body("foo2" to "bar")
 				headers {
-					header {
-						name = "foo2"
-						value = "bar"
-					}
+					header("foo2", "bar")
 				}
 			}
 		}
@@ -200,20 +188,14 @@ class ContractTests {
 				messageFrom("input")
 				messageBody("foo" to anyNonBlankString())
 				headers {
-					header {
-						name = "foo"
-						value = anyNumber()
-					}
+					header("foo", anyNumber())
 				}
 			}
 			outputMessage {
 				sentTo("output")
 				body("foo2" to anyNonEmptyString())
 				headers {
-					header {
-						name = "foo2"
-						value = anyIpAddress()
-					}
+					header("foo2", anyIpAddress())
 				}
 			}
 		}
@@ -415,20 +397,18 @@ then:
 				method = GET
 				url = url("/path")
 				headers {
-					header {
-						name = "Accept"
+					header(name = "Accept",
 						value = value(
 							consumer(regex("text/.*")),
 							producer("text/plain")
 						)
-					}
-					header {
-						name = "X-Custom-Header"
+					)
+					header(name = "X-Custom-Header",
 						value = value(
 							consumer(regex("^.*2134.*$")),
 							producer("121345")
 						)
-					}
+					)
 				}
 			}
 			response {
@@ -439,10 +419,7 @@ then:
 						"created" to "2014-02-02 12:23:43"
 				)
 				headers {
-					header {
-						name = "Content-Type"
-						value = "text/plain"
-					}
+					header("Content-Type", "text/plain")
 				}
 			}
 		}
@@ -451,20 +428,18 @@ then:
 				method = GET
 				url = url("/path")
 				headers {
-					header {
-						name = "Accept"
+					header(name = "Accept",
 						value = value(
 								consumer(regex("text/.*")),
 								producer("text/plain")
 						)
-					}
-					header {
-						name = "X-Custom-Header"
+					)
+					header(name = "X-Custom-Header",
 						value = value(
 								consumer(regex("^.*2134.*$")),
 								producer("121345")
 						)
-					}
+					)
 				}
 			}
 			response {
@@ -475,10 +450,7 @@ then:
 						"created" to "2014-02-02 12:23:43"
 				)
 				headers {
-					header {
-						name = "Content-Type"
-						value = "text/plain"
-					}
+					header("Content-Type", "text/plain")
 				}
 			}
 		}
@@ -533,10 +505,7 @@ then:
 				url = url("/path")
 				body = body("id" to mapOf("value" to "132"))
 				bodyMatchers {
-					jsonPath {
-						path = "$.id.value"
-						matcher = byRegex(anInteger())
-					}
+					jsonPath( "$.id.value", byRegex(anInteger()))
 				}
 			}
 			response {
@@ -550,10 +519,7 @@ then:
 					contentType = APPLICATION_JSON
 				}
 				bodyMatchers {
-					jsonPath {
-						path = "$.id.value"
-						matcher = byTimestamp()
-					}
+					jsonPath("$.id.value", byTimestamp())
 				}
 			}
 		}
@@ -578,84 +544,6 @@ then:
 			val matchers = response.bodyMatchers.matchers()
 			assertThat(matchers[0].path()).isEqualTo("$.id.value")
 			assertThat(matchers[0].matchingType()).isEqualTo(MatchingType.TIMESTAMP)
-		}
-	}
-
-	@Test
-	fun `should throw error when body matcher is not configured correctly`() {
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					bodyMatchers {
-						jsonPath {
-							matcher = byRegex(anInteger())
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Body matcher is missing its path or matcher")
-		}
-
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					bodyMatchers {
-						jsonPath {
-							path = "$.id.value"
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Body matcher is missing its path or matcher")
-		}
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					bodyMatchers {
-						xPath {
-							matcher = byRegex(anInteger())
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Body matcher is missing its path or matcher")
-		}
-
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					bodyMatchers {
-						xPath {
-							path = "$.id.value"
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Body matcher is missing its path or matcher")
 		}
 	}
 
@@ -753,74 +641,21 @@ then:
 	}
 
 	@Test
-	fun `should throw error when header is not configured correctly`() {
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					headers {
-						header {
-							name = "foo"
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Header is missing its name or value")
-		}
-
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					headers {
-						header {
-							value = "bar"
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Header is missing its name or value")
-		}
-	}
-
-	@Test
 	fun `should work with cookies`() {
 		val contract = contract {
 			request {
 				method = GET
 				url = url("/cookie")
 				cookies {
-					cookie {
-						name = "name"
-						value = "foo"
-					}
-					cookie {
-						name = "name2"
-						value = "bar"
-					}
+					cookie("name", "foo")
+					cookie("name2", "bar")
 				}
 			}
 			response {
 				status = OK
 				cookies {
-					cookie {
-						name = "name"
-						value = "foo"
-					}
-					cookie {
-						name = "name2"
-						value = "bar"
-					}
+					cookie("name", "foo")
+					cookie("name2", "bar")
 				}
 			}
 		}
@@ -837,47 +672,6 @@ then:
 			val cookies = response.cookies.entries
 			assertThat(cookies).hasSize(2)
 			assertThat(cookies).containsExactlyInAnyOrder(Cookie.build("name", "foo"), Cookie.build("name2", "bar"))
-		}
-	}
-
-	@Test
-	fun `should throw error when cookie is not configured correctly`() {
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					cookies {
-						cookie {
-							value = "bar"
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Cookie is missing its name or value")
-		}
-
-		assertThrows<IllegalStateException> {
-			contract {
-				request {
-					method = GET
-					url = url("/cookie")
-					cookies {
-						cookie {
-							name = "foo"
-						}
-					}
-				}
-				response {
-					status = OK
-				}
-			}
-		}.also {
-			assertThat(it.message).contains("Cookie is missing its name or value")
 		}
 	}
 

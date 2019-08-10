@@ -27,31 +27,23 @@ open class BodyMatchersDsl {
 	private val xPathMatchers = LinkedHashMap<String, MatchingTypeValue>()
 
 	/**
-	 * Adds and configures a JSON path matcher.
+	 * Adds a JSON path matcher.
 	 *
-	 * @param configurer The lambda to configure the JSON path matcher.
+	 * @param path The path.
+	 * @param matcher The matcher.
 	 */
-	fun jsonPath(configurer: BodyMatcherDsl.() -> Unit) {
-		try {
-			val bodyMatcher = BodyMatcherDsl().apply(configurer)
-			this.jsonPathMatchers[bodyMatcher.path] = bodyMatcher.matcher
-		} catch (ex: IllegalStateException) {
-			throw IllegalStateException("Body matcher is missing its path or matcher")
-		}
+	fun jsonPath(path: String, matcher: MatchingTypeValue) {
+		this.jsonPathMatchers[path] = matcher
 	}
 
 	/**
-	 * Adds and configures a xPath matcher.
+	 * Adds an xPath matcher.
 	 *
-	 * @param configurer The lambda to configure the xPath matcher.
+	 * @param path The path.
+	 * @param matcher The matcher.
 	 */
-	fun xPath(configurer: BodyMatcherDsl.() -> Unit) {
-		try {
-			val bodyMatcher = BodyMatcherDsl().apply(configurer)
-			this.jsonPathMatchers[bodyMatcher.path] = bodyMatcher.matcher
-		} catch (ex: IllegalStateException) {
-			throw IllegalStateException("Body matcher is missing its path or matcher")
-		}
+	fun xPath(path: String, matcher: MatchingTypeValue) {
+		this.xPathMatchers[path] = matcher
 	}
 
 	fun byDate() = MatchingTypeValue(MatchingType.DATE, RegexPatterns.isoDate())

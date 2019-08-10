@@ -26,17 +26,13 @@ open class CookiesDsl : CommonDsl() {
     open fun matching(value: Any?): Any? = value
 
     /**
-     * Adds and configures a cookie.
+     * Adds a cookie.
      *
-     * @param configurer The lambda to configure the cookie.
+     * @param name The name of the cookie.
+     * @param value The value of the cookie.
      */
-    fun cookie(configurer: CookieDsl.() -> Unit) {
-        try {
-            val cookie = CookieDsl().apply(configurer)
-            this.cookies[cookie.name] = cookie.value
-        } catch (ex: IllegalStateException) {
-            throw IllegalStateException("Cookie is missing its name or value")
-        }
+    fun cookie(name: String, value: Any) {
+        this.cookies[name] = value
     }
 
     internal fun get(): Cookies {

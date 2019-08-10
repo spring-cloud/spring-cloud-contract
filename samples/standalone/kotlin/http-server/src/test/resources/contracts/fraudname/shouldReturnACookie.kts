@@ -24,14 +24,8 @@ contract {
 		method = GET
 		url = url("/frauds/name")
 		cookies {
-			cookie {
-				name = "name"
-				value = "foo"
-			}
-			cookie{
-				name = "name2"
-				value = "bar"
-			}
+			cookie("name", "foo")
+			cookie("name2", "bar")
 		}
 	}
 	response {
