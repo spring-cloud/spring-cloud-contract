@@ -29,7 +29,7 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
     
     private val delegate = Request()
 
-    var method: DslProperty<Any>? = null
+    var method: DslProperty<*>? = null
     var url: Url? = null
     var urlPath: UrlPath? = null
     var headers: Headers? = null
@@ -65,8 +65,6 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
     fun body(body: Pair<String, Any>) = Body(mapOf(body).toDslProperties())
 
     fun body(body: List<Any>) = Body(body.toDslProperties())
-
-    fun body(body: DslProperty<Any>) = Body(body)
 
     fun body(body: Any) = Body(body)
 
@@ -238,14 +236,14 @@ open class RequestDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
 
     internal fun get(): Request {
         val request = Request()
-        method?.also { request.method = method!! }
-        url?.also { request.url = url!! }
-        urlPath?.also { request.urlPath = urlPath!! }
-        headers?.also { request.headers = headers!! }
-        cookies?.also { request.cookies = cookies!! }
-        body?.also { request.body = body!! }
-        multipart?.also { request.multipart = multipart!! }
-        bodyMatchers?.also { request.bodyMatchers = bodyMatchers!! }
+        method?.also { request.method = method }
+        url?.also { request.url = url }
+        urlPath?.also { request.urlPath = urlPath }
+        headers?.also { request.headers = headers }
+        cookies?.also { request.cookies = cookies }
+        body?.also { request.body = body }
+        multipart?.also { request.multipart = multipart }
+        bodyMatchers?.also { request.bodyMatchers = bodyMatchers }
         return request
     }
 

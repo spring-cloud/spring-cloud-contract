@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import org.springframework.cloud.contract.spec.toDslProperty
+
 /**
  * @author Tim Ysewyn
  */
@@ -30,17 +32,13 @@ class OutputMessageDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
     var assertThat: String? = null
     var bodyMatchers: ResponseBodyMatchers? = null
 
-    fun sentTo(sentTo: String) {
-        this.sentTo = DslProperty(sentTo)
-    }
+    fun sentTo(sentTo: String) = sentTo.toDslProperty()
 
     fun headers(headers: HeadersDsl.() -> Unit) {
         this.headers = HeadersDsl().apply(headers).get()
     }
 
-    fun body(body: Any) {
-        this.body = DslProperty(body)
-    }
+    fun body(body: Any) = body.toDslProperty()
 
     fun bodyMatchers(configurer: ResponseBodyMatchersDsl.() -> Unit) {
         this.bodyMatchers = ResponseBodyMatchersDsl().apply(configurer).get()

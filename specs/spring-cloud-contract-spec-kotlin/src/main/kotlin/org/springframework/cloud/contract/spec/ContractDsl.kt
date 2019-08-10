@@ -65,16 +65,16 @@ class ContractDsl {
 
     private fun get(): Contract {
         val contract = Contract()
-        priority?.also { contract.priority = priority!! }
-        label?.also { contract.label = label!! }
-        description?.also { contract.description = description!! }
-        name?.also { contract.name = name!! }
+        priority?.also { contract.priority = priority }
+        label?.also { contract.label = label }
+        description?.also { contract.description = description }
+        name?.also { contract.name = name }
         contract.ignored = ignored
         contract.inProgress = inProgress
-        request?.also { contract.request = request!! }
-        response?.also { contract.response = response!! }
-        input?.also { contract.input = input!! }
-        outputMessage?.also { contract.outputMessage = outputMessage!! }
+        request?.also { contract.request = request }
+        response?.also { contract.response = response }
+        input?.also { contract.input = input }
+        outputMessage?.also { contract.outputMessage = outputMessage }
         return contract
     }
 

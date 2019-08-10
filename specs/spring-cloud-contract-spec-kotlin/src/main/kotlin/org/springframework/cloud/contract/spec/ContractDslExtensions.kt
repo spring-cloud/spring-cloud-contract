@@ -34,9 +34,7 @@ infix fun UrlPath.withQueryParameters(parameters: QueryParameters.() -> Unit) = 
     queryParameters = QueryParameters().apply(parameters)
 }
 
-fun Any.toDslProperty(): DslProperty<Any> {
-    return DslProperty(this)
-}
+fun <T: Any> T.toDslProperty(): DslProperty<T> = DslProperty(this)
 
 fun Map<String, Any>.toDslProperties(): Map<String, DslProperty<Any>> {
     return entries.stream().collect(Collectors.toMap(

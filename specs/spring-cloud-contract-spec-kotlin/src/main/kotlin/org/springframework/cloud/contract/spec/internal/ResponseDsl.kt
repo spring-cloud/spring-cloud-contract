@@ -57,8 +57,6 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
     fun body(body: List<Any>) = Body(body.toDslProperties())
 
-    fun body(body: DslProperty<Any>) = Body(body.toDslProperty())
-
     fun body(body: Any) = Body(body)
 
 	fun bodyMatchers(configurer: ResponseBodyMatchersDsl.() -> Unit) {

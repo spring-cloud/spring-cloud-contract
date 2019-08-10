@@ -145,8 +145,8 @@ class ContractTests {
 	fun `should work for messaging`() {
 		val contract = contract {
 			input {
-				messageFrom("input")
-				messageBody("foo" to "bar")
+				messageFrom = messageFrom("input")
+				messageBody = messageBody("foo" to "bar")
 				headers {
 					header {
 						name = "foo"
@@ -155,8 +155,8 @@ class ContractTests {
 				}
 			}
 			outputMessage {
-				sentTo("output")
-				body("foo2" to "bar")
+				sentTo = sentTo("output")
+				body = body("foo2" to "bar")
 				headers {
 					header {
 						name = "foo2"
