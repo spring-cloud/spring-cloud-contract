@@ -20,6 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<gradle.task>build</gradle.task>
+		<build-helper-maven-plugin.phase>package</build-helper-maven-plugin.phase>
 	</properties>
 
 	<dependencies>
@@ -68,7 +69,7 @@
 				<executions>
 					<execution>
 						<id>attach-artifacts</id>
-						<phase>package</phase>
+						<phase>${build-helper-maven-plugin.phase}</phase>
 						<goals>
 							<goal>attach-artifact</goal>
 						</goals>
@@ -242,6 +243,7 @@
 			</activation>
 			<properties>
 				<gradle.task>assemble</gradle.task>
+				<build-helper-maven-plugin.phase>none</build-helper-maven-plugin.phase>
 			</properties>
 		</profile>
 	</profiles>

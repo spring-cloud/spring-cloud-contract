@@ -233,8 +233,17 @@ public class GenerateTestsMojo extends AbstractMojo {
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
-	@Parameter(property = "failOnNoStubs", defaultValue = "true")
-	private boolean failOnNoStubs;
+	@Parameter(property = "failOnNoContracts", defaultValue = "true")
+	private boolean failOnNoContracts;
+
+	/**
+	 * If set to true then if any contracts that are in progress are found, will break the
+	 * build. On the producer side you need to be explicit about the fact that you have
+	 * contracts in progress and take into consideration that you might be causing false
+	 * positive test execution results on the consumer side.
+	 */
+	@Parameter(property = "failOnInProgress", defaultValue = "true")
+	private boolean failOnInProgress = true;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -259,13 +268,14 @@ public class GenerateTestsMojo extends AbstractMojo {
 		getLog().info(
 				"Generating server tests source code for Spring Cloud Contract Verifier contract verification");
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
+		config.setFailOnInProgress(this.failOnInProgress);
 		// download contracts, unzip them and pass as output directory
 		File contractsDirectory = new MavenContractsDownloader(this.project,
 				this.contractDependency, this.contractsPath, this.contractsRepositoryUrl,
 				this.contractsMode, getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties, this.failOnNoStubs)
+				this.contractsProperties, this.failOnNoContracts)
 						.downloadAndUnpackContractsIfRequired(config,
 								this.contractsDirectory);
 		getLog().info(

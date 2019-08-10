@@ -166,6 +166,8 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=in_progre
 ----
 ====
 
+You can set the value of the `failOnInProgress` Spring Cloud Contract plugin property to ensure that your build will break when at least one contract in progress remains in your sources.
+
 [[contract-dsl-passing-values-from-files]]
 ==== Passing Values from Files
 

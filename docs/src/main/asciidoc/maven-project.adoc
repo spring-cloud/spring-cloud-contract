@@ -17,6 +17,8 @@ following sections:
 * <<maven-pushing-stubs-to-scm>>
 * <<maven-sts>>
 
+You can also check the plugin's documentation  link:../../spring-cloud-contract-maven-plugin/index.html[here].
+
 [[maven-add-plugin]]
 == Adding the Maven Plugin
 
@@ -223,6 +225,7 @@ extends `com.example.base.BaseClass`. This setting takes precedence over
 * `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
 * `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
+* `failOnInProgress`: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to `true`.
 
 If you want to download your contract definitions from a Maven repository, you can use
 the following options:

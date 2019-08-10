@@ -175,6 +175,14 @@ public class ContractVerifierConfigProperties {
 	 */
 	private boolean excludeBuildFolders;
 
+	/**
+	 * If set to true then if any contracts that are in progress are found, will break the
+	 * build. On the producer side you need to be explicit about the fact that you have
+	 * contracts in progress and take into consideration that you might be causing false
+	 * positive test execution results on the consumer side.
+	 */
+	private boolean failOnInProgress = true;
+
 	@Deprecated
 	public void setTargetFramework(TestFramework targetFramework) {
 		log.warn("Please use the [testFramework] field. [targetFramework] is deprecated");
@@ -364,6 +372,14 @@ public class ContractVerifierConfigProperties {
 
 	public void setExcludeBuildFolders(boolean excludeBuildFolders) {
 		this.excludeBuildFolders = excludeBuildFolders;
+	}
+
+	public boolean isFailOnInProgress() {
+		return this.failOnInProgress;
+	}
+
+	public void setFailOnInProgress(boolean failOnInProgress) {
+		this.failOnInProgress = failOnInProgress;
 	}
 
 }

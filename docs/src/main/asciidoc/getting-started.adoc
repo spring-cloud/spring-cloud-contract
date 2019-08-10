@@ -202,10 +202,37 @@ As the implementation of the functionalities described by the contracts is not y
 present, the tests fail.
 
 To make them pass, you must add the correct implementation of either handling HTTP
-requests or messages. Also, you must add a correct base test class for auto-generated
+requests or messages. Also, you must add a base test class for auto-generated
 tests to the project. This class is extended by all the auto-generated tests, and it
 should contain all the setup information necessary to run them (for example `RestAssuredMockMvc`
 controller setup or messaging test setup).
+
+The following example, from `pom.xml`, shows how to specify the base test class:
+
+====
+[src,xml]
+----
+<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                <version>2.1.2.RELEASE</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <baseClassForTests>com.example.contractTest.BaseTestClass</baseClassForTests> <1>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+----
+<1> The `baseClassForTests` element lets you specify your base test class. It must be a child
+of a `configuration` element within `spring-cloud-contract-maven-plugin`.
+====
 
 Once the implementation and the test base class are in place, the tests pass, and both the
 application and the stub artifacts are built and installed in the local Maven repository.
@@ -320,9 +347,22 @@ portion of the file:
 ----
 ====
 
+[TIP]
+====
+The easiest way to get started is to go to https://start.spring.io[the Spring Initializr]
+and add "`Web`" and "`Contract Verifier`" as dependencies. Doing so pulls in the previously
+mentioned dependencies and everything else you need in the `pom.xml` file (except for
+setting the base test class, which we cover later in this section). The following image
+shows the settings to use in https://start.spring.io[the Spring Initializr]:
+
+image::start_spring_io_dependencies.png[width=800,alt=Spring Initializr with Web and Contract Verifier]
+====
+
 Now you can add files with `REST/` messaging contracts
 expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
 `contractsDslDir` property. By default, it is `$rootDir/src/test/resources/contracts`.
+Note that the file name does not matter. You can organize your contracts within this
+directory with whatever naming scheme you like.
 
 For the HTTP stubs, a contract defines what kind of response should be returned for a
 given request (taking into account the HTTP methods, URLs, headers, status codes, and so
@@ -385,7 +425,7 @@ response:
 ----
 ====
 
-In the case of messaging, you can define:
+If you need to use messaging, you can define:
 
 * The input and output messages (taking into account from and where it
 was sent, the message body, and the header).
@@ -412,7 +452,8 @@ Running `./mvnw clean install` automatically generates tests that verify the app
 compliance with the added contracts. By default, the generated tests are under
 `org.springframework.cloud.contract.verifier.tests.`.
 
-The generated tests may differ, depending on which framework and test type you have setup in your plugin.
+The generated tests may differ, depending on which framework and test type you have setup
+in your plugin.
 
 In the next listing, you can find:
 
@@ -422,7 +463,10 @@ In the next listing, you can find:
 Reactive, `Web-Flux`-based applications) set with the `WEBTESTCLIENT` test mode
 - A Spock-based test with the `testFramework` property set to `SPOCK`
 
-The following listing shows all these samples:
+NOTE: You need only one of these test frameworks. MockMvc is the default. To use one
+of the other frameworks, add its library to your classpath.
+
+The following listing shows samples for all frameworks:
 
 ====
 [source,java,indent=0,role="primary"]
@@ -531,13 +575,139 @@ As the implementation of the functionalities described by the contracts is not y
 present, the tests fail.
 
 To make them pass, you must add the correct implementation of handling either HTTP
-requests or messages. Also, you must add a correct base test class for auto-generated
+requests or messages. Also, you must add a base test class for auto-generated
 tests to the project. This class is extended by all the auto-generated tests and should
 contain all the setup necessary information needed to run them (for example,
 `RestAssuredMockMvc` controller setup or messaging test setup).
 
+The following example, from `pom.xml`, shows how to specify the base test class:
+
+====
+[src,xml]
+----
+<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                <version>2.1.2.RELEASE</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <baseClassForTests>com.example.contractTest.BaseTestClass</baseClassForTests> <1>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+----
+<1> The `baseClassForTests` element lets you specify your base test class. It must be a child
+of a `configuration` element within `spring-cloud-contract-maven-plugin`.
+====
+
+The following example shows a minimal (but functional) base test class:
+
+====
+[src,Java]
+----
+package com.example.contractTest;
+
+import org.junit.Before;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+
+public class BaseTestClass {
+
+	@Before
+	public void setup() {
+		RestAssuredMockMvc.standaloneSetup(new FraudController());
+	}
+}
+----
+====
+
+This minimal class really is all you need to get your tests to work. It serves as a
+starting place to which the automatically generated tests attach.
+
+Now we can move on to the implementation. For that, we first need a data class, which we
+then use in our controller. The following listing shows the data class:
+
+====
+[src,Java]
+----
+package com.example.Test;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class LoanRequest {
+
+	@JsonProperty("client.id")
+	private String clientId;
+
+	private Long loanAmount;
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public Long getLoanAmount() {
+		return loanAmount;
+	}
+
+	public void setLoanRequestAmount(Long loanAmount) {
+		this.loanAmount = loanAmount;
+	}
+}
+----
+====
+
+The preceding class provides an object in which we can store the parameters. Because the
+client ID in the contract is called `client.id`, we need to use the
+`@JsonProperty("client.id")` parameter to map it to the `clientId` field.
+
+Now we can move along to the controller, which the following listing shows:
+
+====
+[src,Java]
+----
+package com.example.docTest;
+
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class FraudController {
+
+	@PutMapping(value = "/fraudcheck", consumes="application/json", produces="application/json")
+	public String check(@RequestBody LoanRequest loanRequest) { <1>
+
+		if (loanRequest.getLoanAmount() > 10000) { <2>
+			return "{fraudCheckStatus: FRAUD, rejection.reason: Amount too high}"; <3>
+		} else {
+			return "{fraudCheckStatus: OK, acceptance.reason: Amount OK}"; <4>
+		}
+	}
+}
+----
+<1> We map the incoming parameters to a `LoanRequest` object.
+<2> We check the requested loan amount to see if it is too much.
+<3> If it is too much, we return the JSON (created with a simple string here) that the
+test expects.
+<4> If we had a test to catch when the amount is allowable, we could match it to this output.
+====
+
+The `FraudController` is about as simple as things get. You can do much more, including
+logging, validating the client ID, and so on.
+
 Once the implementation and the test base class are in place, the tests pass, and both the
-application and the stub artifacts are built and installed in the local Maven repository.
+application and the stub artifacts are built and installed in the local Maven repository
 Information about installing the stubs jar to the local repository appears in the logs, as
 the following example shows:
 
