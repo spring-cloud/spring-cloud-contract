@@ -17,8 +17,6 @@
 package fraudname
 
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
-import org.springframework.cloud.contract.spec.internal.HttpMethods
-import org.springframework.cloud.contract.spec.internal.HttpStatus
 
 contract {
 	request {
@@ -31,10 +29,9 @@ contract {
 	}
 	response {
 		status = OK
-//		TODO
-//		body("result" to "Don't worry ${fromRequest().body("$.name")} you're not a fraud")
-//		headers {
-//			header(contentType(), fromRequest().header(contentType()))
-//		}
+		body = body("result" to "Don't worry ${fromRequest().body("$.name")} you're not a fraud")
+		headers {
+			contentType = fromRequest().header(CONTENT_TYPE)
+		}
 	}
 }

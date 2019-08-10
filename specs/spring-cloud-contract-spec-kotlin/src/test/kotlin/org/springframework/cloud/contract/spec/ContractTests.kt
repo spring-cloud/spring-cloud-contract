@@ -881,4 +881,37 @@ then:
 		}
 	}
 
+	@Test
+	fun `should support fromRequest`() {
+		val contract = contract {
+			request {
+				method = GET
+				url = url("/path")
+				body = body("id" to mapOf("value" to "132"))
+				headers {
+					accept = APPLICATION_JSON
+				}
+			}
+			response {
+				status = OK
+				body = body("value is ${fromRequest().body("$.value")}")
+				headers {
+					contentType = fromRequest().header(ACCEPT)
+				}
+			}
+		}
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			val response = contract.response
+			assertThat(response.body.clientValue).isEqualTo("value is {{{jsonPath request.body '$.value'}}}")
+			val headers = response.headers.entries
+			assertThat(headers).hasSize(1)
+			assertThat(headers.elementAt(0).name).isEqualTo("Content-Type")
+			assertThat(headers.elementAt(0).clientValue).isEqualTo("{{{request.headers.Accept.[0]}}}")
+			assertThat(headers.elementAt(0).serverValue).isEqualTo("{{{request.headers.Accept.[0]}}}")
+		}
+	}
+
 }

@@ -17,8 +17,6 @@
 package fraudname
 
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
-import org.springframework.cloud.contract.spec.internal.HttpMethods
-import org.springframework.cloud.contract.spec.internal.HttpStatus
 
 contract {
 	// highest priority
@@ -33,10 +31,9 @@ contract {
 	}
 	response {
 		status = OK
-//		TODO
-//		body = body("result" to "Sorry ${fromRequest().body("$.name")} but you're a fraud")
-//		headers {
-//			header(contentType(), fromRequest().header(contentType()))
-//		}
+		body = body("result" to "Sorry ${fromRequest().body("$.name")} but you're a fraud")
+		headers {
+			contentType = fromRequest().header(CONTENT_TYPE)
+		}
 	}
 }

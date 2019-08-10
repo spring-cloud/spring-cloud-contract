@@ -229,8 +229,7 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
     fun `$`(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
 
-//    TODO, needs to be reworked - no lazy string interpolation like in Groovy
-//    fun fromRequest() = FromRequest()
+    fun fromRequest() = FromRequestDsl()
 
     override fun anyAlphaUnicode() = delegate.anyAlphaUnicode()
 

@@ -23,6 +23,7 @@ import java.nio.file.Files
 import com.example.loan.model.Client
 import com.example.loan.model.LoanApplication
 import com.example.loan.model.LoanApplicationStatus
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
 import io.restassured.RestAssured
@@ -145,4 +146,23 @@ class LoanApplicationServiceTests {
 		assertThat(exchange.body).isEqualTo(Files.readAllBytes(response.toPath()))
 	}
 
+	@Test
+	fun shouldSuccessfullyReturnRequestDataInResponse() {
+		// when:
+		val exchange: ResponseEntity<FraudCheckResponse> = RestTemplate().exchange(
+				RequestEntity.put(URI.create("http://localhost:6565/frauds/name"))
+						.header("Content-Type", "application/json")
+						.body(FraudCheckRequest("Tim")),
+				FraudCheckResponse::class.java)
+		// then:
+		assertThat(exchange.statusCodeValue).isEqualTo(200)
+		assertThat(exchange.headers["Content-Type"]?.get(0))
+				.isEqualTo("application/json")
+		// and:
+		assertThat(exchange.body?.message).isEqualTo("Don't worry Tim you're not a fraud")
+	}
+
 }
+
+data class FraudCheckRequest(@JsonProperty("name") val name: String)
+data class FraudCheckResponse(@JsonProperty("result") val message: String)
