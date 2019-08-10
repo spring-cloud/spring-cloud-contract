@@ -22,6 +22,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 import org.springframework.cloud.contract.spec.internal.Cookie
+import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 
 /**
@@ -532,7 +533,10 @@ then:
 				url = url("/path")
 				body = body("id" to mapOf("value" to "132"))
 				bodyMatchers {
-					jsonPath("$.id.value", byRegex(anInteger()))
+					jsonPath {
+						path = "$.id.value"
+						matcher = byRegex(anInteger())
+					}
 				}
 			}
 			response {
@@ -546,7 +550,10 @@ then:
 					contentType = APPLICATION_JSON
 				}
 				bodyMatchers {
-					jsonPath("$.created", byTimestamp())
+					jsonPath {
+						path = "$.id.value"
+						matcher = byTimestamp()
+					}
 				}
 			}
 		}
@@ -560,11 +567,95 @@ then:
 			assertThat(request.method.clientValue).isEqualTo("GET")
 			assertThat(request.method.serverValue).isEqualTo("GET")
 			assertThat(request.bodyMatchers.hasMatchers()).isTrue()
+			val matchers = request.bodyMatchers.matchers()
+			assertThat(matchers[0].path()).isEqualTo("$.id.value")
+			assertThat(matchers[0].matchingType()).isEqualTo(MatchingType.REGEX)
 		}.also {
 			val response = contract.response
 			assertThat(response.status.clientValue).isEqualTo(200)
 			assertThat(response.status.serverValue).isEqualTo(200)
 			assertThat(response.bodyMatchers.hasMatchers()).isTrue()
+			val matchers = response.bodyMatchers.matchers()
+			assertThat(matchers[0].path()).isEqualTo("$.id.value")
+			assertThat(matchers[0].matchingType()).isEqualTo(MatchingType.TIMESTAMP)
+		}
+	}
+
+	@Test
+	fun `should throw error when body matcher is not configured correctly`() {
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					bodyMatchers {
+						jsonPath {
+							matcher = byRegex(anInteger())
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Body matcher is missing its path or matcher")
+		}
+
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					bodyMatchers {
+						jsonPath {
+							path = "$.id.value"
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Body matcher is missing its path or matcher")
+		}
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					bodyMatchers {
+						xPath {
+							matcher = byRegex(anInteger())
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Body matcher is missing its path or matcher")
+		}
+
+		assertThrows<IllegalStateException> {
+			contract {
+				request {
+					method = GET
+					url = url("/cookie")
+					bodyMatchers {
+						xPath {
+							path = "$.id.value"
+						}
+					}
+				}
+				response {
+					status = OK
+				}
+			}
+		}.also {
+			assertThat(it.message).contains("Body matcher is missing its path or matcher")
 		}
 	}
 
@@ -588,9 +679,9 @@ then:
 			val request = contract.request
 			assertThat(request.url.clientValue).isEqualTo("/path")
 			val queryParameters = request.url.queryParameters.parameters
-			assertThat(queryParameters.elementAt(0).name).isEqualTo("foo")
-			assertThat(queryParameters.elementAt(0).clientValue).isEqualTo("bar")
-			assertThat(queryParameters.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(queryParameters[0].name).isEqualTo("foo")
+			assertThat(queryParameters[0].clientValue).isEqualTo("bar")
+			assertThat(queryParameters[0].serverValue).isEqualTo("bar")
 			assertThat(request.url.serverValue).isEqualTo("/path")
 			assertThat(request.method.clientValue).isEqualTo("GET")
 			assertThat(request.method.serverValue).isEqualTo("GET")
@@ -622,9 +713,9 @@ then:
 			assertThat(request.urlPath.clientValue).isEqualTo("/path")
 			assertThat(request.urlPath.serverValue).isEqualTo("/path")
 			val queryParameters = request.urlPath.queryParameters.parameters
-			assertThat(queryParameters.elementAt(0).name).isEqualTo("foo")
-			assertThat(queryParameters.elementAt(0).clientValue).isEqualTo("bar")
-			assertThat(queryParameters.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(queryParameters[0].name).isEqualTo("foo")
+			assertThat(queryParameters[0].clientValue).isEqualTo("bar")
+			assertThat(queryParameters[0].serverValue).isEqualTo("bar")
 			assertThat(request.method.clientValue).isEqualTo("GET")
 			assertThat(request.method.serverValue).isEqualTo("GET")
 		}.also {

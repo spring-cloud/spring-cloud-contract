@@ -57,8 +57,8 @@ class InputDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
         this.assertThat = ExecutionProperty(assertThat)
     }
 
-    fun bodyMatchers(bodyMatchers: BodyMatchers.() -> Unit) {
-        this.bodyMatchers = BodyMatchers().apply(bodyMatchers)
+    fun bodyMatchers(configurer: BodyMatchersDsl.() -> Unit) {
+        bodyMatchers = BodyMatchersDsl().apply(configurer).get()
     }
 
     override fun anyAlphaUnicode(): ClientDslProperty = Input().anyAlphaUnicode()

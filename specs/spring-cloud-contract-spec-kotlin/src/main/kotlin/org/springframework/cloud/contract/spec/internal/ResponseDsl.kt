@@ -61,9 +61,9 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
     fun body(body: Any) = Body(body)
 
-    fun bodyMatchers(bodyMatchers: ResponseBodyMatchers.() -> Unit) {
-        this.bodyMatchers = ResponseBodyMatchers().apply(bodyMatchers)
-    }
+	fun bodyMatchers(configurer: ResponseBodyMatchersDsl.() -> Unit) {
+		bodyMatchers = ResponseBodyMatchersDsl().apply(configurer).get()
+	}
 
     /* HELPER VARIABLES */
 

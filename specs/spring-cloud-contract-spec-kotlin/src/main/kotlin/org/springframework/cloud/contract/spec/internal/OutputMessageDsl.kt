@@ -44,8 +44,8 @@ class OutputMessageDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
         this.assertThat = ExecutionProperty(assertThat)
     }
 
-    fun bodyMatchers(bodyMatchers: ResponseBodyMatchers.() -> Unit) {
-        this.bodyMatchers = ResponseBodyMatchers().apply(bodyMatchers)
+    fun bodyMatchers(configurer: ResponseBodyMatchersDsl.() -> Unit) {
+        bodyMatchers = ResponseBodyMatchersDsl().apply(configurer).get()
     }
 
     override fun anyAlphaUnicode(): ServerDslProperty = OutputMessage().anyAlphaUnicode()
