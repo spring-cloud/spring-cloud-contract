@@ -1,27 +1,38 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.DefaultPropertyState
 import org.gradle.api.logging.Logger
-import spock.lang.Specification
-
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import spock.lang.Specification
 
 /**
  * @author Marcin Grzejszczak
+ * @author Anatoliy Balakirev
  */
 class GradleContractsDownloaderSpec extends Specification {
 
 	Project project = Stub(Project)
 	Logger logger = Stub(Logger)
+	ObjectFactory objectFactory = Mock(ObjectFactory)
+
+	def setup() {
+		// Is there any better way to say that I need a new object on each interaction with mock?
+		objectFactory.property(String) >>> [prop(String), prop(String), prop(String), prop(String), prop(String), prop(String), prop(String), prop(String), prop(String)]
+		objectFactory.property(Integer) >> prop(Integer)
+		objectFactory.property(Boolean) >> prop(Boolean)
+	}
 
 	def "should parse dependency via string notation"() {
 		given:
 			String stringNotation = "com.example:foo:1.0.0:stubs"
-			def dep = new ContractVerifierExtension.Dependency(stringNotation: stringNotation)
+			ContractVerifierExtension.Dependency dep = new ContractVerifierExtension.Dependency(objectFactory)
+			dep.stringNotation.set(stringNotation)
 		when:
 			StubConfiguration stubConfig = new GradleContractsDownloader(null, null).stubConfiguration(dep)
 		then:
@@ -33,12 +44,11 @@ class GradleContractsDownloaderSpec extends Specification {
 
 	def "should parse dependency via direct setting"() {
 		given:
-			def dep = new ContractVerifierExtension.Dependency(
-					groupId: "com.example",
-					artifactId: "foo",
-					version: "1.0.0",
-					classifier: "stubs"
-			)
+			ContractVerifierExtension.Dependency dep = new ContractVerifierExtension.Dependency(objectFactory)
+			dep.groupId.set("com.example")
+			dep.artifactId.set("foo")
+			dep.version.set("1.0.0")
+			dep.classifier.set("stubs")
 		when:
 			StubConfiguration stubConfig = new GradleContractsDownloader(null, null).stubConfiguration(dep)
 		then:
@@ -51,8 +61,8 @@ class GradleContractsDownloaderSpec extends Specification {
 	def "should parse dependency via string notation with methods"() {
 		given:
 			String stringNotation = "com.example:foo:1.0.0:stubs"
-			def dep = new ContractVerifierExtension.Dependency()
-			dep.stringNotation(stringNotation)
+			ContractVerifierExtension.Dependency dep = new ContractVerifierExtension.Dependency(objectFactory)
+			dep.stringNotation.set(stringNotation)
 		when:
 			StubConfiguration stubConfig = new GradleContractsDownloader(null, null).stubConfiguration(dep)
 		then:
@@ -64,11 +74,11 @@ class GradleContractsDownloaderSpec extends Specification {
 
 	def "should parse dependency via direct setting with methods"() {
 		given:
-			def dep = new ContractVerifierExtension.Dependency()
-			dep.groupId("com.example")
-			dep.artifactId("foo")
-			dep.version("1.0.0")
-			dep.classifier("stubs")
+			ContractVerifierExtension.Dependency dep = new ContractVerifierExtension.Dependency(objectFactory)
+			dep.groupId.set("com.example")
+			dep.artifactId.set("foo")
+			dep.version.set("1.0.0")
+			dep.classifier.set("stubs")
 		when:
 			StubConfiguration stubConfig = new GradleContractsDownloader(null, null).stubConfiguration(dep)
 		then:
@@ -80,158 +90,138 @@ class GradleContractsDownloaderSpec extends Specification {
 
 	def "should pick dependency from cache for a non snapshot contract dependency with new property"() {
 		given:
-			ContractVerifierExtension ext = new ContractVerifierExtension()
-			ext.with {
-				contractsMode = StubRunnerProperties.StubsMode.REMOTE
-				contractDependency {
-					groupId("com.example")
-					artifactId("foo")
-					version("1.0.0")
-					classifier("stubs")
-				}
-				contractRepository {
-					repositoryUrl("foo")
-				}
-			}
+			ContractVerifierExtension.Dependency contractDependency = new ContractVerifierExtension.Dependency(objectFactory)
+			contractDependency.groupId.set("com.example")
+			contractDependency.artifactId.set("foo")
+			contractDependency.version.set("1.0.0")
+			contractDependency.classifier.set("stubs")
+			ContractVerifierExtension.ContractRepository contractRepository = new ContractVerifierExtension.ContractRepository(objectFactory)
+			contractRepository.repositoryUrl.set("foo")
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
 			final ContractDownloader contractDownloader = Mock(ContractDownloader)
 		and:
-			def gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
+			GradleContractsDownloader gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
 		and:
 			StubConfiguration expectedStubConfig = new StubConfiguration("com.example:foo:1.0.0:stubs")
 			File expectedFileFromCache = new File("foo/bar")
 			GradleContractsDownloader.downloadedContract.put(expectedStubConfig, expectedFileFromCache)
 		when:
-			File file = gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
+			GradleContractsDownloader.DownloadedData downloaded = gradleDownloader.downloadAndUnpackContractsIfRequired(contractDependency, contractRepository, null, StubRunnerProperties.StubsMode.REMOTE, true, [:], true)
 		then:
-			file == expectedFileFromCache
+			downloaded.downloadedContracts == expectedFileFromCache
 	}
 
 	def "should not pick dependency from cache for a non snapshot contract dependency with cache switch off"() {
 		given:
-			ContractVerifierExtension ext = new ContractVerifierExtension()
-			ext.with {
-				contractsMode = StubRunnerProperties.StubsMode.REMOTE
-				contractDependency {
-					groupId("com.example")
-					artifactId("foo")
-					version("1.0.0")
-					classifier("stubs")
-				}
-				contractRepository {
-					repositoryUrl("foo")
-					cacheDownloadedContracts(false)
-				}
-				disableStubPublication(true)
-			}
+			ContractVerifierExtension.Dependency contractDependency = new ContractVerifierExtension.Dependency(objectFactory)
+			contractDependency.groupId.set("com.example")
+			contractDependency.artifactId.set("foo")
+			contractDependency.version.set("1.0.0")
+			contractDependency.classifier.set("stubs")
+			ContractVerifierExtension.ContractRepository contractRepository = new ContractVerifierExtension.ContractRepository(objectFactory)
+			contractRepository.repositoryUrl.set("foo")
+			contractRepository.cacheDownloadedContracts.set(false)
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
 			final ContractDownloader contractDownloader = Mock(ContractDownloader)
 		and:
-			def gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
+			GradleContractsDownloader gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
 		and:
 			StubConfiguration expectedStubConfig = new StubConfiguration("com.example:foo:1.0.0:stubs")
 			File expectedFileFromCache = new File("foo/bar")
 			GradleContractsDownloader.downloadedContract.put(expectedStubConfig, expectedFileFromCache)
 		and:
 			File expectedFileNotFromCache = new File("foo/bar/baz")
-			contractDownloader.unpackedDownloadedContracts(_) >> expectedFileNotFromCache
+			contractDownloader.unpackAndDownloadContracts() >> expectedFileNotFromCache
 		when:
-			File file = gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
+			GradleContractsDownloader.DownloadedData downloaded = gradleDownloader.downloadAndUnpackContractsIfRequired(contractDependency, contractRepository, null, StubRunnerProperties.StubsMode.REMOTE, true, [:], true)
 		then:
-			file == expectedFileNotFromCache
+			downloaded.downloadedContracts == expectedFileNotFromCache
 	}
 
 	def "should not pick dependency from cache for snapshot contract dependency"() {
 		given:
-			ContractVerifierExtension ext = new ContractVerifierExtension()
-			ext.with {
-				contractsMode = StubRunnerProperties.StubsMode.REMOTE
-				contractDependency {
-					groupId("com.example")
-					artifactId("foo")
-					version("1.0.0.BUILD-SNAPSHOT")
-					classifier("stubs")
-				}
-				contractRepository {
-					repositoryUrl("foo")
-				}
-			}
+			ContractVerifierExtension.Dependency contractDependency = new ContractVerifierExtension.Dependency(objectFactory)
+			contractDependency.groupId.set("com.example")
+			contractDependency.artifactId.set("foo")
+			contractDependency.version.set("1.0.0.BUILD-SNAPSHOT")
+			contractDependency.classifier.set("stubs")
+			ContractVerifierExtension.ContractRepository contractRepository = new ContractVerifierExtension.ContractRepository(objectFactory)
+			contractRepository.repositoryUrl.set("foo")
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
 			final ContractDownloader contractDownloader = Mock(ContractDownloader)
 			File expectedFileNotFromCache = new File("foo/bar/baz")
-			contractDownloader.unpackedDownloadedContracts(_) >> expectedFileNotFromCache
+			contractDownloader.unpackAndDownloadContracts() >> expectedFileNotFromCache
 		and:
-			def gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
+			GradleContractsDownloader gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
 		when:
-			File file = gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
+			GradleContractsDownloader.DownloadedData downloaded = gradleDownloader.downloadAndUnpackContractsIfRequired(contractDependency, contractRepository, null, StubRunnerProperties.StubsMode.REMOTE, true, [:], true)
 		then:
-			file == expectedFileNotFromCache
+			downloaded.downloadedContracts == expectedFileNotFromCache
 	}
 
 	private GradleContractsDownloader stubbedContractDownloader(downloader, contractDownloader) {
 		new GradleContractsDownloader(project, logger) {
 			@Override
-			protected AetherStubDownloader stubDownloader(ContractVerifierExtension extension) {
+			protected AetherStubDownloader stubDownloader(ContractVerifierExtension.ContractRepository contractRepository,
+														  StubRunnerProperties.StubsMode contractsMode, boolean deleteStubsAfterTest,
+														  Map<String, String> contractsProperties, boolean failOnNoContracts) {
 				return downloader
 			}
 
 			@Override
-			protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
+			protected ContractDownloader contractDownloader(StubConfiguration configuration,
+															ContractVerifierExtension.ContractRepository contractRepository,
+															String contractsPath, StubRunnerProperties.StubsMode contractsMode,
+															boolean deleteStubsAfterTest, Map<String, String> contractsProperties,
+															boolean failOnNoContracts) {
 				return contractDownloader
 			}
 		}
 	}
 
-	def "should pick contract directory location from extension"() {
+	def "should not start downloading"() {
 		given:
-			ContractVerifierExtension ext = new ContractVerifierExtension()
-			ext.with {
-				contractsDslDir = new File("/foo/bar/baz")
-			}
+			ContractVerifierExtension.Dependency contractDependency = new ContractVerifierExtension.Dependency(objectFactory)
+			ContractVerifierExtension.ContractRepository contractRepository = new ContractVerifierExtension.ContractRepository(objectFactory)
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
 			final ContractDownloader contractDownloader = Mock(ContractDownloader)
 		and:
-			def gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
+			GradleContractsDownloader gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
 		and:
 			StubConfiguration expectedStubConfig = new StubConfiguration("com.example:foo:1.0.0:stubs")
 			GradleContractsDownloader.downloadedContract.put(expectedStubConfig, new File("foo/bar"))
 		when:
-			File file = gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
+			GradleContractsDownloader.DownloadedData downloaded = gradleDownloader.downloadAndUnpackContractsIfRequired(contractDependency, contractRepository, null, StubRunnerProperties.StubsMode.CLASSPATH, true, [:], true)
 		then:
-			file == new File("/foo/bar/baz")
+			downloaded == null
 	}
 
 	def "should pass contract dependency properties as a parameter to the builder"() {
 		given:
-			ContractVerifierExtension ext = new ContractVerifierExtension()
-			ext.with {
-				contractDependency {
-					groupId("com.example")
-					artifactId("foo")
-					version("1.0.0.BUILD-SNAPSHOT")
-					classifier("stubs")
-				}
-				contractRepository {
-					repositoryUrl("foo")
-					username("foo1")
-					password("foo2")
-					proxyHost("foo3")
-					proxyPort(12)
-				}
-			}
+			ContractVerifierExtension.Dependency contractDependency = new ContractVerifierExtension.Dependency(objectFactory)
+			contractDependency.groupId.set("com.example")
+			contractDependency.artifactId.set("foo")
+			contractDependency.version.set("1.0.0.BUILD-SNAPSHOT")
+			contractDependency.classifier.set("stubs")
+			ContractVerifierExtension.ContractRepository contractRepository = new ContractVerifierExtension.ContractRepository(objectFactory)
+			contractRepository.repositoryUrl.set("foo")
+			contractRepository.username.set("foo1")
+			contractRepository.password.set("foo2")
+			contractRepository.proxyHost.set("foo3")
+			contractRepository.proxyPort.set(12)
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
 			final ContractDownloader contractDownloader = Mock(ContractDownloader)
 			File expectedFileNotFromCache = new File("foo/bar/baz")
-			contractDownloader.unpackedDownloadedContracts(_) >> expectedFileNotFromCache
+			contractDownloader.unpackAndDownloadContracts() >> expectedFileNotFromCache
 		and:
-			def gradleDownloader = assertingContractDownloader(downloader, contractDownloader)
+			GradleContractsDownloader gradleDownloader = assertingContractDownloader(downloader, contractDownloader)
 		when:
-			gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
+			gradleDownloader.downloadAndUnpackContractsIfRequired(contractDependency, contractRepository, null, StubRunnerProperties.StubsMode.CLASSPATH, true, [:], true)
 		then:
 			noExceptionThrown()
 	}
@@ -239,7 +229,9 @@ class GradleContractsDownloaderSpec extends Specification {
 	private GradleContractsDownloader assertingContractDownloader(downloader, contractDownloader) {
 		new GradleContractsDownloader(project, logger) {
 			@Override
-			protected AetherStubDownloader stubDownloader(ContractVerifierExtension extension) {
+			protected AetherStubDownloader stubDownloader(ContractVerifierExtension.ContractRepository contractRepository,
+														  StubRunnerProperties.StubsMode contractsMode, boolean deleteStubsAfterTest,
+														  Map<String, String> contractsProperties, boolean failOnNoContracts) {
 				assert extension.contractRepository.username == "foo1"
 				assert extension.contractRepository.password == "foo2"
 				assert extension.contractRepository.proxyHost == "foo3"
@@ -248,10 +240,18 @@ class GradleContractsDownloaderSpec extends Specification {
 			}
 
 			@Override
-			protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
+			protected ContractDownloader contractDownloader(StubConfiguration configuration,
+															ContractVerifierExtension.ContractRepository contractRepository,
+															String contractsPath, StubRunnerProperties.StubsMode contractsMode,
+															boolean deleteStubsAfterTest, Map<String, String> contractsProperties,
+															boolean failOnNoContracts) {
 				return contractDownloader
 			}
 		}
 	}
 
+	// Have to use this internal property impl here. Is there some better way?
+	static <T> Property<T> prop(Class<T> aClass) {
+		return new DefaultPropertyState(aClass)
+	}
 }

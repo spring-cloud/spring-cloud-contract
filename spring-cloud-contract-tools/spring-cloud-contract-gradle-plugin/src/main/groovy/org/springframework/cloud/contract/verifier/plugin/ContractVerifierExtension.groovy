@@ -17,133 +17,133 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 
+import javax.inject.Inject
+
 /**
  * @author Marcin Grzejszczak
+ * @author Anatoliy Balakirev
  */
-@ToString
 @CompileStatic
 class ContractVerifierExtension {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierExtension)
 
-	/**
-	 * For which unit test library tests should be generated
-	 * @deprecated - use {@code testFramework}
-	 */
-	@Deprecated
-	TestFramework targetFramework
-
 	@Deprecated
 	void setTargetFramework(TestFramework targetFramework) {
 		log.warn("Please use the [testFramework] field. This one is deprecated")
-		setTestFramework(targetFramework)
+		this.testFramework.set(targetFramework)
 	}
 
 	@Deprecated
 	TestFramework getTargetFramework() {
-		return getTestFramework()
+		return getTestFramework().get()
 	}
 
 	/**
 	 * For which unit test library tests should be generated
 	 */
-	TestFramework testFramework = TestFramework.JUNIT
+	Property<TestFramework> testFramework
 
 	/**
 	 * Which mechanism should be used to invoke REST calls during tests
 	 */
-	TestMode testMode = TestMode.MOCKMVC
+	Property<TestMode> testMode
 
 	/**
 	 * Base package for generated tests
 	 */
-	String basePackageForTests
+	Property<String> basePackageForTests
 
 	/**
 	 * Class which all generated tests should extend
 	 */
-	String baseClassForTests
+	Property<String> baseClassForTests
 
 	/**
 	 * Suffix for generated test classes, like Spec or Test
 	 */
-	String nameSuffixForTests
+	Property<String> nameSuffixForTests
 
 	/**
 	 * Rule class that should be added to generated tests
 	 */
-	String ruleClassForTests
+	Property<String> ruleClassForTests
 
 	/**
 	 * Patterns that should not be taken into account for processing
 	 */
-	List<String> excludedFiles = []
+	ListProperty<String> excludedFiles
 
 	/**
 	 * Patterns that should be taken into account for processing
 	 */
-	List<String> includedFiles = []
+	ListProperty<String> includedFiles
 
 	/**
 	 * Patterns for which generated tests should be @Ignored
 	 */
-	List<String> ignoredFiles = []
+	ListProperty<String> ignoredFiles
 
 	/**
 	 * Imports that should be added to generated tests
 	 */
-	String[] imports = []
+	ListProperty<String> imports
 
 	/**
 	 * Static imports that should be added to generated tests
 	 */
-	String[] staticImports = []
+	ListProperty<String> staticImports
 
 	/**
 	 * Directory containing contracts written using the GroovyDSL
 	 */
-	File contractsDslDir
+	DirectoryProperty contractsDslDir
 
 	/**
 	 * Test source directory where tests generated from Groovy DSL should be placed
 	 */
-	File generatedTestSourcesDir
+	DirectoryProperty generatedTestSourcesDir
 
 	/**
 	 * Test resource directory where tests generated from Groovy DSL should be referenced
 	 */
-	File generatedTestResourcesDir
+	DirectoryProperty generatedTestResourcesDir
 
 	/**
 	 * Dir where the generated stubs from Groovy DSL should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
-	File stubsOutputDir
+	DirectoryProperty stubsOutputDir
 
 	/**
 	 * Suffix for the generated Stubs Jar task
 	 */
-	String stubsSuffix = 'stubs'
+	Property<String> stubsSuffix
 
 	/**
 	 * Incubating feature. You can check the size of JSON arrays. If not turned on
 	 * explicitly will be disabled.
 	 */
-	Boolean assertJsonSize = false
+	Property<Boolean> assertJsonSize
 
 	/**
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
-	boolean failOnNoContracts = true
+	Property<Boolean> failOnNoContracts
 
 	/**
 	 * If set to true then if any contracts that are in progress are found, will break the
@@ -151,14 +151,14 @@ class ContractVerifierExtension {
 	 * contracts in progress and take into consideration that you might be causing false
 	 * positive test execution results on the consumer side.
 	 */
-	boolean failOnInProgress = true;
+	Property<Boolean> failOnInProgress
 
-	ContractRepository contractRepository = new ContractRepository()
+	ContractRepository contractRepository
 
 	/**
 	 * Dependency that contains packaged contracts
 	 */
-	Dependency contractDependency = new Dependency()
+	Dependency contractDependency
 
 	/**
 	 * The path in the JAR with all the contracts where contracts for this particular service lay.
@@ -167,12 +167,12 @@ class ContractVerifierExtension {
 	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
 	 * {@code /com/example/artifactid}
 	 */
-	String contractsPath
+	Property<String> contractsPath
 
 	/**
 	 * Picks the mode in which stubs will be found and registered
 	 */
-	StubRunnerProperties.StubsMode contractsMode = StubRunnerProperties.StubsMode.CLASSPATH
+	Property<StubRunnerProperties.StubsMode> contractsMode
 
 	/**
 	 * A package that contains all the base clases for generated tests. If your contract resides in a location
@@ -181,7 +181,7 @@ class ContractVerifierExtension {
 	 * have the package {@code com.example.contracts.base} and name {@code ExampleV1Base}. As you can see
 	 * it will take the two last folders to and attach {@code Base} to its name.
 	 */
-	String packageWithBaseClasses
+	Property<String> packageWithBaseClasses
 
 	/**
 	 * A way to override any base class mappings. The keys are regular expressions on the package name
@@ -194,14 +194,14 @@ class ContractVerifierExtension {
 	 * When a contract's package matches the provided regular expression then extending class will be the one
 	 * provided in the map - in this case {@code com.example.SomeBaseClass}
 	 */
-	Map<String, String> baseClassMappings = [:]
+	MapProperty<String, String> baseClassMappings
 
 	/**
 	 * If set to true then the {@code target} or {@code build} folders are getting
 	 * excluded from any operations. This is used out of the box when working with
 	 * common repo with contracts.
 	 */
-	boolean excludeBuildFolders = false
+	Property<Boolean> excludeBuildFolders
 
 	/**
 	 * If set to {@code true} will not assert whether the downloaded stubs / contract
@@ -210,23 +210,23 @@ class ContractVerifierExtension {
 	 * @deprecated - with 2.1.0 this option is redundant
 	 */
 	@Deprecated
-	boolean contractsSnapshotCheckSkip = false
+	Property<Boolean> contractsSnapshotCheckSkip
 
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary
 	 * folder after running tests
 	 */
-	boolean deleteStubsAfterTest = true
+	Property<Boolean> deleteStubsAfterTest
 
 	/**
 	 * If {@code true} then will convert contracts to a YAML representation
 	 */
-	boolean convertToYaml = false
+	Property<Boolean> convertToYaml
 
 	/**
 	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
-	Map<String, String> contractsProperties = [:]
+	MapProperty<String, String> contractsProperties
 
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency
@@ -243,175 +243,167 @@ class ContractVerifierExtension {
 		closure.call()
 	}
 
-	void contractsProperties(Map<String, String> props) {
-		contractsProperties = props
-	}
-
 	/**
 	 * Is set to true will not provide the default publication task
 	 */
-	boolean disableStubPublication = false
+	Property<Boolean> disableStubPublication
 
-	void disableStubPublication(boolean disableStubPublication) {
-		this.disableStubPublication = disableStubPublication
+	// Added for backward compatibility only. Use setter of dedicated enum type
+	@Deprecated
+	void setTestMode(String testMode) {
+		if (testMode != null) {
+			this.testMode.set(TestMode.valueOf(testMode.toUpperCase()))
+		}
 	}
 
-	void failOnNoContracts(boolean failOnNoContracts) {
-		this.failOnNoContracts = failOnNoContracts
+	// Added for backward compatibility only. Use setter of dedicated enum type
+	@Deprecated
+	void setTestFramework(String testFramework) {
+		if (testFramework != null) {
+			this.testFramework.set(TestFramework.valueOf(testFramework.toUpperCase()))
+		}
 	}
 
-	void failOnInProgress(boolean failOnInProgress) {
-		this.failOnInProgress = failOnInProgress
+	// Added for backward compatibility only. Use setter of dedicated enum type
+	@Deprecated
+	void setContractsMode(String contractsMode) {
+		if (contractsMode != null) {
+			this.contractsMode.set(StubRunnerProperties.StubsMode.valueOf(contractsMode.toUpperCase()))
+		}
 	}
 
-	ContractVerifierExtension copy() {
-		return new ContractVerifierExtension(
-				testFramework: this.testFramework,
-				testMode: this.testMode,
-				basePackageForTests: this.basePackageForTests,
-				baseClassForTests: this.baseClassForTests,
-				nameSuffixForTests: this.nameSuffixForTests,
-				ruleClassForTests: this.ruleClassForTests,
-				excludedFiles: new ArrayList<String>(this.excludedFiles),
-				includedFiles: new ArrayList<String>(this.includedFiles),
-				ignoredFiles: new ArrayList<String>(this.ignoredFiles),
-				imports: Arrays.asList(this.imports).toArray() as String[],
-				staticImports: Arrays.asList(this.staticImports).toArray() as String[],
-				contractsDslDir: this.contractsDslDir,
-				generatedTestSourcesDir: this.generatedTestSourcesDir,
-				generatedTestResourcesDir: this.generatedTestResourcesDir,
-				stubsOutputDir: this.stubsOutputDir,
-				stubsSuffix: this.stubsSuffix,
-				assertJsonSize: this.assertJsonSize,
-				failOnNoContracts: this.failOnNoContracts,
-				failOnInProgress: this.failOnInProgress,
-				contractRepository: new ContractRepository(
-						repositoryUrl: this.contractRepository.repositoryUrl,
-						username: this.contractRepository.username,
-						password: this.contractRepository.password,
-						proxyPort: this.contractRepository.proxyPort,
-						proxyHost: this.contractRepository.proxyHost,
-						cacheDownloadedContracts: this.contractRepository.cacheDownloadedContracts,
-				),
-				contractDependency: new Dependency(
-						groupId: this.contractDependency.groupId,
-						artifactId: this.contractDependency.artifactId,
-						classifier: this.contractDependency.classifier,
-						version: this.contractDependency.version,
-						stringNotation: this.contractDependency.stringNotation
-				),
-				contractsPath: this.contractsPath,
-				contractsMode: this.contractsMode,
-				packageWithBaseClasses: this.packageWithBaseClasses,
-				baseClassMappings: new HashMap<String, String>(this.baseClassMappings),
-				excludeBuildFolders: this.excludeBuildFolders,
-				deleteStubsAfterTest: this.deleteStubsAfterTest,
-				convertToYaml: this.convertToYaml,
-				contractsProperties: new HashMap<String, String>(this.contractsProperties)
-		)
+	@Inject
+	ContractVerifierExtension(ObjectFactory objects) {
+		this.testFramework = objects.property(TestFramework).convention(TestFramework.JUNIT)
+		this.testMode = objects.property(TestMode).convention(TestMode.MOCKMVC)
+		this.basePackageForTests = objects.property(String)
+		this.baseClassForTests = objects.property(String)
+		this.nameSuffixForTests = objects.property(String)
+		this.ruleClassForTests = objects.property(String)
+		this.excludedFiles = objects.listProperty(String).convention([])
+		this.includedFiles = objects.listProperty(String).convention([])
+		this.ignoredFiles = objects.listProperty(String).convention([])
+		this.imports = objects.listProperty(String).convention([])
+		this.staticImports = objects.listProperty(String).convention([])
+		this.contractsDslDir = objects.directoryProperty()
+		this.generatedTestSourcesDir = objects.directoryProperty()
+		this.generatedTestResourcesDir = objects.directoryProperty()
+		this.stubsOutputDir = objects.directoryProperty()
+		this.stubsSuffix = objects.property(String).convention("stubs")
+		this.assertJsonSize = objects.property(Boolean).convention(false)
+		this.failOnNoContracts = objects.property(Boolean).convention(true)
+		this.failOnInProgress = objects.property(Boolean).convention(true)
+		this.contractRepository = new ContractRepository(objects)
+		this.contractDependency = new Dependency(objects)
+		this.contractsPath = objects.property(String)
+		this.contractsMode = objects.property(StubRunnerProperties.StubsMode).convention(StubRunnerProperties.StubsMode.CLASSPATH)
+		this.packageWithBaseClasses = objects.property(String)
+		this.baseClassMappings = objects.mapProperty(String, String).convention([:])
+		this.excludeBuildFolders = objects.property(Boolean).convention(false)
+		this.contractsSnapshotCheckSkip = objects.property(Boolean).convention(false)
+		this.deleteStubsAfterTest = objects.property(Boolean).convention(true)
+		this.convertToYaml = objects.property(Boolean).convention(false)
+		this.contractsProperties = objects.mapProperty(String, String).convention([:])
+		this.disableStubPublication = objects.property(Boolean).convention(false)
 	}
 
-	@ToString(includeNames = true, includePackage = false)
 	static class Dependency {
-		String groupId
-		String artifactId
-		String classifier
-		String version
-		String stringNotation
+		@Input
+		@Optional
+		Property<String> groupId
+		@Input
+		@Optional
+		Property<String> artifactId
+		@Input
+		@Optional
+		Property<String> version
+		@Input
+		@Optional
+		Property<String> classifier
+		@Input
+		@Optional
+		Property<String> stringNotation
 
-		void groupId(String groupId) {
-			this.groupId = groupId
+		@Inject
+		Dependency(ObjectFactory objects) {
+			groupId = objects.property(String)
+			artifactId = objects.property(String)
+			version = objects.property(String)
+			classifier = objects.property(String)
+			stringNotation = objects.property(String)
 		}
 
-		void artifactId(String artifactId) {
-			this.artifactId = artifactId
-		}
-
-		void classifier(String classifier) {
-			this.classifier = classifier
-		}
-
-		void version(String version) {
-			this.version = version
-		}
-
-		void stringNotation(String stringNotation) {
-			this.stringNotation = stringNotation
+		@Override
+		String toString() {
+			return "Dependency{" +
+					"groupId=" + groupId.getOrNull() +
+					", artifactId=" + artifactId.getOrNull() +
+					", classifier=" + classifier.getOrNull() +
+					", version=" + version.getOrNull() +
+					", stringNotation=" + stringNotation.getOrNull() +
+					'}'
 		}
 	}
 
-	@ToString(includeNames = true, includePackage = false)
 	static class BaseClassMapping {
-		private final Map<String, String> delegate
+		private final MapProperty<String, String> delegate
 
-		BaseClassMapping(Map<String, String> delegate) {
+		private BaseClassMapping(MapProperty<String, String> delegate) {
 			this.delegate = delegate
 		}
 
 		void baseClassMapping(String packageRegex, String fqnBaseClass) {
-			this.delegate[packageRegex] = fqnBaseClass
+			delegate.put(packageRegex, fqnBaseClass)
 		}
 
-		void baseClassMapping(Map mapping) {
-			this.delegate.putAll(mapping)
+		void baseClassMapping(Map<String, String> mapping) {
+			delegate.putAll(mapping)
 		}
 	}
 
-	@ToString(includeNames = true, includePackage = false)
+	// This class is used as an input to the tasks, so all fields are marked as `@Input` to allow incremental build
 	static class ContractRepository {
+		@Input
+		@Optional
+		Property<String> repositoryUrl
+		@Input
+		@Optional
+		Property<String> username
+		@Input
+		@Optional
+		Property<String> password
+		@Input
+		@Optional
+		Property<Integer> proxyPort
+		@Input
+		@Optional
+		Property<String> proxyHost
 		/**
-		 * Repository URL
+		 * If set to true then will cache the folder where non snapshot contract artifacts got downloaded.
 		 */
-		String repositoryUrl
+		@Input
+		Property<Boolean> cacheDownloadedContracts
 
-		/**
-		 * Repository username
-		 */
-		String username
-
-		/**
-		 * Repository password
-		 */
-		String password
-
-		/**
-		 * Repository proxy port
-		 */
-		Integer proxyPort
-
-		/**
-		 * Repository proxy host
-		 */
-		String proxyHost
-
-		/**
-		 * If set to true then will cache the folder where non snapshot contract artifacts
-		 * got downloaded.
-		 */
-		boolean cacheDownloadedContracts = true
-
-		void repositoryUrl(String repositoryUrl) {
-			this.repositoryUrl = repositoryUrl
+		@Inject
+		ContractRepository(ObjectFactory objects) {
+			this.repositoryUrl = objects.property(String)
+			this.username = objects.property(String)
+			this.password = objects.property(String)
+			this.proxyHost = objects.property(String)
+			this.proxyPort = objects.property(Integer)
+			this.cacheDownloadedContracts = objects.property(Boolean).convention(true)
 		}
 
-		void username(String username) {
-			this.username = username
-		}
-
-		void password(String password) {
-			this.password = password
-		}
-
-		void proxyPort(Integer proxyPort) {
-			this.proxyPort = proxyPort
-		}
-
-		void proxyHost(String proxyHost) {
-			this.proxyHost = proxyHost
-		}
-
-		void cacheDownloadedContracts(boolean cacheDownloadedContracts) {
-			this.cacheDownloadedContracts = cacheDownloadedContracts
+		@Override
+		String toString() {
+			return "ContractRepository{" +
+					"repositoryUrl=" + repositoryUrl.getOrNull() +
+					", username=" + username.getOrNull() +
+					", password=" + password.getOrNull() +
+					", proxyPort=" + proxyPort.getOrNull() +
+					", proxyHost=" + proxyHost.getOrNull() +
+					", cacheDownloadedContracts=" + cacheDownloadedContracts.get() +
+					'}'
 		}
 	}
 }

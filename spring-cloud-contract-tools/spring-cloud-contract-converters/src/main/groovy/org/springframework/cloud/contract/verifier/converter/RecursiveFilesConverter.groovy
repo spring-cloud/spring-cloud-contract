@@ -43,28 +43,41 @@ import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientC
 class RecursiveFilesConverter {
 
 	private final StubGeneratorProvider holder
-	private final ContractVerifierConfigProperties props
 	private final File outMappingsDir
+	private final File contractsDslDir
+	private final List<String> excludedFiles
+	private final String includedContracts
+	private final boolean excludeBuildFolders
 
+	// Use constructor without ContractVerifierConfigProperties
+	@Deprecated
 	RecursiveFilesConverter(ContractVerifierConfigProperties props, StubGeneratorProvider holder = null) {
-		this.props = props
-		this.outMappingsDir = props.stubsOutputDir
-		this.holder = holder ?: new StubGeneratorProvider()
+		this(props.stubsOutputDir, props.contractsDslDir, props.excludedFiles, props.includedContracts, props.excludeBuildFolders, holder)
 	}
 
-	RecursiveFilesConverter(ContractVerifierConfigProperties props, File outMappingsDir, StubGeneratorProvider holder = null) {
-		this.props = props
-		this.outMappingsDir = outMappingsDir
+	// Use constructor without ContractVerifierConfigProperties
+	@Deprecated
+	RecursiveFilesConverter(ContractVerifierConfigProperties props, File stubsOutputDir, StubGeneratorProvider holder = null) {
+		this(stubsOutputDir, props.contractsDslDir, props.excludedFiles, props.includedContracts, props.excludeBuildFolders, holder)
+	}
+
+	RecursiveFilesConverter(File stubsOutputDir, File contractsDslDir, List<String> excludedFiles,
+							String includedContracts, boolean excludeBuildFolders, StubGeneratorProvider holder = null) {
+		this.outMappingsDir = stubsOutputDir
+		this.contractsDslDir = contractsDslDir
+		this.excludedFiles = excludedFiles
+		this.includedContracts = includedContracts
+		this.excludeBuildFolders = excludeBuildFolders
 		this.holder = holder ?: new StubGeneratorProvider()
 	}
 
 	void processFiles() {
 		ContractFileScanner scanner = new ContractFileScannerBuilder()
-				.baseDir(props.contractsDslDir)
-				.excluded(props.excludedFiles as Set)
+				.baseDir(contractsDslDir)
+				.excluded(excludedFiles as Set)
 				.ignored([] as Set)
 				.included([] as Set)
-				.includeMatcher(props.includedContracts)
+				.includeMatcher(includedContracts)
 				.build()
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		if (log.isDebugEnabled()) {
@@ -81,7 +94,7 @@ class RecursiveFilesConverter {
 						holder.converterForName(sourceFile.name)
 				try {
 					String path = sourceFile.path
-					if (props.isExcludeBuildFolders()
+					if (excludeBuildFolders
 							&& (
 							matchesPath(path, "target") || matchesPath(path, "build"))) {
 						if (log.isDebugEnabled()) {
@@ -131,7 +144,7 @@ class RecursiveFilesConverter {
 	}
 
 	private Path createAndReturnTargetDirectory(File sourceFile) {
-		Path relativePath = Paths.get(props.contractsDslDir.toURI()).
+		Path relativePath = Paths.get(contractsDslDir.toURI()).
 				relativize(sourceFile.parentFile.toPath())
 		Path absoluteTargetPath = outMappingsDir.toPath().resolve(relativePath)
 		Files.createDirectories(absoluteTargetPath)

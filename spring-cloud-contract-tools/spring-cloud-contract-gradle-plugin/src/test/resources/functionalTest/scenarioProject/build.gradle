@@ -43,6 +43,7 @@ subprojects {
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
+	version = "1.0.0"
 
 	repositories {
 		mavenCentral()
@@ -154,5 +155,5 @@ configure(project(':loanApplicationService')) {
 		into "src/test/resources/mappings"
 	}
 
-	generateContractTests.dependsOn('copyCollaboratorStubs')
+	project.tasks.named("generateContractTests").get().dependsOn('copyCollaboratorStubs')
 }

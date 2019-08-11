@@ -18,8 +18,6 @@ package org.springframework.cloud.contract.stubrunner
 
 import spock.lang.Specification
 
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -35,16 +33,13 @@ class ContractDownloaderSpec extends Specification {
 			String contractPath = File.separator + ['a', 'b', 'c', 'd'].join(File.separator)
 			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader,
 					stubConfiguration, contractPath, '', '', '')
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-		and:
-			stubDownloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(stubConfiguration, file)
 		when:
-			contractDownloader.unpackedDownloadedContracts(properties)
+			ContractDownloader.InclusionProperties inclusionProperties = contractDownloader.createNewInclusionProperties(file)
 		then:
-			properties.includedContracts.startsWith('^')
-			properties.includedContracts.endsWith('$')
-			properties.includedContracts.contains(fileSeparated('/some/path/to/somewhere(/)?.*/a/b/c/d/.*'))
-			properties.includedRootFolderAntPattern == "**/a/b/c/d/**/"
+			inclusionProperties.includedContracts.startsWith('^')
+			inclusionProperties.includedContracts.endsWith('$')
+			inclusionProperties.includedContracts.contains(fileSeparated('/some/path/to/somewhere(/)?.*/a/b/c/d/.*'))
+			inclusionProperties.includedRootFolderAntPattern == "**/a/b/c/d/**/"
 	}
 
 	def 'should set inclusion pattern on config when path pattern was explicitly provided without a separator at the beginning'() {
@@ -52,16 +47,14 @@ class ContractDownloaderSpec extends Specification {
 			String contractPath = ['a', 'b', 'c', 'd'].join(File.separator)
 			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader,
 					stubConfiguration, contractPath, '', '', '')
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-		and:
-			stubDownloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(stubConfiguration, file)
 		when:
-			contractDownloader.unpackedDownloadedContracts(properties)
+			ContractDownloader.InclusionProperties inclusionProperties =
+				contractDownloader.createNewInclusionProperties(file)
 		then:
-			properties.includedContracts.startsWith('^')
-			properties.includedContracts.endsWith('$')
-			properties.includedContracts.contains(fileSeparated('/some/path/to/somewhere(/)?.*/a/b/c/d/.*'))
-			properties.includedRootFolderAntPattern == "**/a/b/c/d/**/"
+			inclusionProperties.includedContracts.startsWith('^')
+			inclusionProperties.includedContracts.endsWith('$')
+			inclusionProperties.includedContracts.contains(fileSeparated('/some/path/to/somewhere(/)?.*/a/b/c/d/.*'))
+			inclusionProperties.includedRootFolderAntPattern == "**/a/b/c/d/**/"
 	}
 
 	private static String fileSeparated(String string) {

@@ -60,8 +60,8 @@ class TestGenerator {
 
 	TestGenerator(ContractVerifierConfigProperties configProperties) {
 		this(configProperties, singleTestGenerator(),
-				new FileSaver(configProperties.generatedTestSourcesDir,
-						singleTestGenerator(), configProperties))
+				new FileSaver(configProperties.generatedTestSourcesDir, configProperties.testFramework.classExtension,
+						singleTestGenerator()))
 	}
 
 	private static SingleTestGenerator singleTestGenerator() {

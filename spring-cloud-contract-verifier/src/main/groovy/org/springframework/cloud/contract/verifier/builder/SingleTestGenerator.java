@@ -69,6 +69,7 @@ public interface SingleTestGenerator {
 	 * or {@code .php}
 	 * @param properties - properties passed to the plugin
 	 */
+	@Deprecated
 	String fileExtension(ContractVerifierConfigProperties properties);
 
 	class GeneratedClassData {

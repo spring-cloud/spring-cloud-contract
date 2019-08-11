@@ -1,20 +1,19 @@
 package org.springframework.cloud.contract.verifier.plugin
 
-import java.util.concurrent.ConcurrentHashMap
-
 import groovy.transform.CompileStatic
+import groovy.transform.Immutable
+import groovy.transform.ImmutableOptions
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
-
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubDownloader
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider
-import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
-import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.StringUtils
+
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Marcin Grzejszczak
@@ -26,88 +25,115 @@ class GradleContractsDownloader {
 	private static final String LATEST_VERSION = '+'
 
 	private final Project project
-	private final Logger log
+	private final Logger logger
 	protected static final Map<StubConfiguration, File> downloadedContract = new ConcurrentHashMap<>()
 
-	GradleContractsDownloader(Project project, Logger log) {
+	GradleContractsDownloader(Project project, Logger logger) {
 		this.project = project
-		this.log = log
+		this.logger = logger
 	}
 
-	File downloadAndUnpackContractsIfRequired(ContractVerifierExtension extension,
-			ContractVerifierConfigProperties config) {
-		File defaultContractsDir = extension.contractsDslDir
-		this.log.info("Project has group id [{}], artifact id [{}]", this.project.group, this.project.name)
+	DownloadedData downloadAndUnpackContractsIfRequired(ContractVerifierExtension.Dependency contractDependency,
+														ContractVerifierExtension.ContractRepository contractRepository, String contractsPath,
+														StubRunnerProperties.StubsMode contractsMode, boolean deleteStubsAfterTest,
+														Map<String, String> contractsProperties, boolean failOnNoContracts) {
+		if (!shouldDownloadContracts(contractDependency, contractRepository)) {
+			return null
+		}
+		logger.info("Project has group id [{}], artifact id [{}]", project.group, project.name)
 		// download contracts, unzip them and pass as output directory
-		if (shouldDownloadContracts(extension)) {
-			this.log.info("For project [${this.project.name}] Download dependency is provided - will download contract jars")
-			this.log.info("Contract dependency [{}]", extension.contractDependency)
-			StubConfiguration configuration = stubConfiguration(extension.contractDependency)
-			this.log.info("Got the following contract dependency to download [{}]", configuration)
-			this.log.info("The contract dependency is a changing one [{}] and cache download switch is set to [{}]",
-					configuration.isVersionChanging(), extension.contractRepository.cacheDownloadedContracts)
-			if (!configuration.isVersionChanging() && extension.contractRepository.cacheDownloadedContracts) {
-				this.log.info("Resolved a non changing version - will try to return the folder from a cache")
-				File cachedFolder = downloadedContract.get(configuration)
-				if (cachedFolder) {
-					this.log.info("For project [{}] returning the cached location of the contracts", this.project.name)
-					contractDownloader(extension, configuration).updatePropertiesWithInclusion(cachedFolder, config)
-					return cachedFolder
-				}
+
+		logger.info("For project [${project.name}] Download dependency is provided - will download contract jars")
+		logger.info("Contract dependency [{}]", contractDependency)
+		StubConfiguration configuration = stubConfiguration(contractDependency)
+		logger.info("Got the following contract dependency to download [{}]", configuration)
+		logger.info("The contract dependency is a changing one [{}] and cache download switch is set to [{}]",
+				configuration.isVersionChanging(), contractRepository.cacheDownloadedContracts.get())
+		if (!configuration.isVersionChanging() && contractRepository.cacheDownloadedContracts.get()) {
+			logger.info("Resolved a non changing version - will try to return the folder from a cache")
+			File cachedFolder = downloadedContract.get(configuration)
+			if (cachedFolder) {
+				logger.info("For project [{}] returning the cached location of the contracts", project.name)
+				final ContractDownloader.InclusionProperties inclusionProperties =
+						contractDownloader(configuration, contractRepository, contractsPath, contractsMode,
+								deleteStubsAfterTest, contractsProperties, failOnNoContracts).createNewInclusionProperties(cachedFolder)
+
+				return new DownloadedData(
+						downloadedContracts: contractsSubDirIfPresent(cachedFolder, logger),
+						inclusionProperties: inclusionProperties
+				)
 			}
-			File downloadedContracts = contractDownloader(extension, configuration).unpackedDownloadedContracts(config)
-			downloadedContract.put(configuration, downloadedContracts)
-			return downloadedContracts
 		}
-		this.log.info("For project [{}] will use contracts provided in the folder [{}]", this.project.name, defaultContractsDir)
-		return defaultContractsDir
+		final ContractDownloader contractDownloader =
+				contractDownloader(configuration, contractRepository, contractsPath, contractsMode, deleteStubsAfterTest,
+						contractsProperties, failOnNoContracts);
+		final File downloadedContracts = contractDownloader.unpackAndDownloadContracts();
+		final ContractDownloader.InclusionProperties inclusionProperties =
+				contractDownloader.createNewInclusionProperties(downloadedContracts)
+
+		downloadedContract.put(configuration, downloadedContracts)
+
+		return new DownloadedData(
+				downloadedContracts: contractsSubDirIfPresent(downloadedContracts, logger),
+				inclusionProperties: inclusionProperties
+		)
 	}
 
-	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
-		return StringUtils.hasText(extension.contractDependency.getArtifactId()) ||
-				StringUtils.hasText(extension.contractDependency.getStringNotation()) ||
-				StringUtils.hasText(extension.contractRepository.repositoryUrl)
-	}
-
-	protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
-		return new ContractDownloader(stubDownloader(extension), configuration,
-				extension.contractsPath, this.project.group as String, this.project.name, this.project.version as String)
-	}
-
-	protected StubDownloader stubDownloader(ContractVerifierExtension extension) {
-		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
-		return provider.get(options(extension))
-	}
-
-	protected StubRunnerOptions options(ContractVerifierExtension extension) {
-		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
-				.withOptions(StubRunnerOptions.fromSystemProps())
-				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
-				.withStubsMode(extension.contractsMode)
-				.withUsername(extension.contractRepository.username)
-				.withPassword(extension.contractRepository.password)
-				.withDeleteStubsAfterTest(extension.deleteStubsAfterTest)
-				.withProperties(extension.contractsProperties)
-		if (extension.contractRepository.proxyPort) {
-			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
+	private static File contractsSubDirIfPresent(File contractsDirectory, Logger logger) {
+		File contracts = new File(contractsDirectory, "contracts")
+		if (contracts.exists()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Contracts folder found [" + contracts + "]")
+			}
+			contractsDirectory = contracts
 		}
-		options = options.withFailOnNoStubs(extension.failOnNoContracts)
-		return options.build()
+		return contractsDirectory
 	}
 
 	@PackageScope
 	StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
-		String groupId = contractDependency.groupId
-		String artifactId = contractDependency.artifactId
-		String version = StringUtils.hasText(contractDependency.version) ?
-				contractDependency.version : LATEST_VERSION
-		String classifier = contractDependency.classifier
-		String stringNotation = contractDependency.stringNotation
+		String groupId = contractDependency.groupId.getOrNull()
+		String artifactId = contractDependency.artifactId.getOrNull()
+		String version = StringUtils.hasText(contractDependency.version.getOrNull()) ?
+				contractDependency.version.getOrNull() : LATEST_VERSION
+		String classifier = contractDependency.classifier.getOrNull()
+		String stringNotation = contractDependency.stringNotation.getOrNull()
 		if (StringUtils.hasText(stringNotation)) {
 			StubConfiguration stubConfiguration = new StubConfiguration(stringNotation)
 			return new StubConfiguration(stubConfiguration.groupId, stubConfiguration.artifactId,
 					stubConfiguration.version, stubConfiguration.classifier)
 		}
 		return new StubConfiguration(groupId, artifactId, version, classifier)
+	}
+
+	protected ContractDownloader contractDownloader(StubConfiguration configuration,
+													ContractVerifierExtension.ContractRepository contractRepository,
+													String contractsPath, StubRunnerProperties.StubsMode contractsMode,
+													boolean deleteStubsAfterTest, Map<String, String> contractsProperties,
+													boolean failOnNoContracts) {
+		return new ContractDownloader(stubDownloader(contractRepository, contractsMode, deleteStubsAfterTest, contractsProperties, failOnNoContracts),
+				configuration, contractsPath, project.group as String, project.name, project.version as String)
+	}
+
+	protected StubDownloader stubDownloader(ContractVerifierExtension.ContractRepository contractRepository,
+											StubRunnerProperties.StubsMode contractsMode, boolean deleteStubsAfterTest,
+											Map<String, String> contractsProperties, boolean failOnNoContracts) {
+		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
+		return provider.get(StubRunnerOptionsFactory.createStubRunnerOptions(contractRepository, contractsMode,
+				deleteStubsAfterTest, contractsProperties, failOnNoContracts))
+	}
+
+	private static boolean shouldDownloadContracts(ContractVerifierExtension.Dependency contractDependency,
+												   ContractVerifierExtension.ContractRepository contractRepository) {
+		return StringUtils.hasText(contractDependency.getArtifactId().getOrNull()) ||
+				StringUtils.hasText(contractDependency.getStringNotation().getOrNull()) ||
+				StringUtils.hasText(contractRepository.repositoryUrl.getOrNull())
+	}
+
+	@ImmutableOptions(knownImmutableClasses = [File, ContractDownloader.InclusionProperties])
+	@Immutable
+	static class DownloadedData {
+		final File downloadedContracts
+		final ContractDownloader.InclusionProperties inclusionProperties
 	}
 }
