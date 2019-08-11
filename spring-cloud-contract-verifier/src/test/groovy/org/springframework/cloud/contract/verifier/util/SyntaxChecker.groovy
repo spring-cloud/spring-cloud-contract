@@ -45,6 +45,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil
+import org.springframework.cloud.function.compiler.java.RuntimeJavaCompiler
 import org.springframework.util.ReflectionUtils
 /**
  * checking the syntax of produced scripts
@@ -53,7 +54,7 @@ import org.springframework.util.ReflectionUtils
 @Commons
 class SyntaxChecker {
 
-	Entity entity
+	public static final RuntimeJavaCompiler COMPILER = new RuntimeJavaCompiler()
 
 	private static final String[] DEFAULT_IMPORTS = [
 			Contract.name,
@@ -179,20 +180,26 @@ private void test(String test) {
 		String fqnClassName = "com.example.${className}"
 		test = test.replaceAll("class FooTest", "class " + className)
 		.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
-		return new org.springframework.cloud.function.compiler.java.RuntimeJavaCompiler().compile(fqnClassName, test)
+		return compileJava(fqnClassName, test)
+
+	}
+
+	private static Class<?> compileJava(String fqnClassName, String test) {
+		return InMemoryJavaCompiler.newInstance()
+							.ignoreWarnings()
+							.compile(fqnClassName, test)
 	}
 
 	private static String className(String test) {
 		Random random = new Random()
 		int first = Math.abs(random.nextInt())
 		int hashCode = Math.abs(test.hashCode())
-		StringBuffer sourceCode = new StringBuffer()
 		String className = "TestClass_${first}_${hashCode}"
 		return className
 	}
 
 	static boolean tryToCompileJavaWithoutImports(String fqn, String test) {
-		InMemoryJavaCompiler.newInstance().compile(fqn, test)
+		compileJava(fqn, test)
 		return true
 	}
 
