@@ -72,7 +72,7 @@ pseudocode):</p><pre class="programlisting">contracts {
     testMode = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'MockMvc'</span>
     generatedTestSourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/generated-test-sources/contracts"</span>)
     generatedTestResourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/generated-test-resources/contracts"</span>)
-    contractsDslDir = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.rootDir}/src/test/resources/contracts"</span>
+    contractsDslDir = file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.rootDir}/src/test/resources/contracts"</span>)
     basePackageForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.verifier.tests'</span>
     stubsOutputDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/stubs"</span>)
 
