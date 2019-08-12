@@ -27,7 +27,6 @@ class MyHttpContract implements Supplier<Contract> {
 			c.request(r -> {
 				r.method(r.GET());
 				r.url("/example");
-				r.body(r.file("request.json"));
 			});
 			c.response(r -> {
 				r.status(r.OK());
