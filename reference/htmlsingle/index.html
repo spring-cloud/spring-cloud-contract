@@ -215,8 +215,10 @@ $(addBlockSwitches);
 <ul class="sectlevel2">
 <li><a href="#contract-dsl">4.1. Contract DSL</a>
 <ul class="sectlevel3">
-<li><a href="#contract-limitations">4.1.1. Limitations</a></li>
-<li><a href="#contract-common-top-elements">4.1.2. Common Top-Level Elements</a>
+<li><a href="#contract-groovy">4.1.1. Contract DSL in Groovy</a></li>
+<li><a href="#contract-java">4.1.2. Contract DSL in Java</a></li>
+<li><a href="#contract-limitations">4.1.3. Limitations</a></li>
+<li><a href="#contract-common-top-elements">4.1.4. Common Top-Level Elements</a>
 <ul class="sectlevel4">
 <li><a href="#contract-dsl-description">Description</a></li>
 <li><a href="#contract-dsl-name">Name</a></li>
@@ -483,13 +485,13 @@ as a map for the rest of the document.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://cloud.spring.io/spring-cloud-contract/master/reference/html">Multi-page HTML</a></p>
+<p><a href="https://cloud.spring.io/spring-cloud-contract/reference/html">Multi-page HTML</a></p>
 </li>
 <li>
-<p><a href="https://cloud.spring.io/spring-cloud-contract/master/reference/htmlsingle">Single-page HTML</a></p>
+<p><a href="https://cloud.spring.io/spring-cloud-contract/reference/htmlsingle">Single-page HTML</a></p>
 </li>
 <li>
-<p><a href="https://cloud.spring.io/spring-cloud-contract/master/reference/pdf/spring-cloud-contract.pdf">PDF</a></p>
+<p><a href="https://cloud.spring.io/spring-cloud-contract/reference/pdf/spring-cloud-contract.pdf">PDF</a></p>
 </li>
 </ul>
 </div>
@@ -4225,42 +4227,10 @@ basics.</p>
 <li>
 <p>YAML</p>
 </li>
+<li>
+<p>Java</p>
+</li>
 </ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-If you are not familiar with Groovy, do not worry - you can use Java syntax in the
-Groovy DSL files as well.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>If you decide to write the contract in Groovy, do not be alarmed if you have not used Groovy
-before. Knowledge of the language is not really needed, as the Contract DSL uses only a
-tiny subset of it (only literals, method calls, and closures). Also, the DSL is statically
-typed, to make it programmer-readable without any knowledge of the DSL itself.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Remember that, inside the Groovy contract file, you have to provide the fully
-qualified name to the <code>Contract</code> class and <code>make</code> static imports, such as
-<code>org.springframework.cloud.spec.Contract.make { &#8230;&#8203; }</code>. You can also provide an import to
-the <code>Contract</code> class (<code>import org.springframework.cloud.spec.Contract</code>) and then call
-<code>Contract.make { &#8230;&#8203; }</code>.
-</td>
-</tr>
-</table>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -4380,6 +4350,12 @@ response:
         command: andMeToo($it)</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -4402,7 +4378,71 @@ response:
 </table>
 </div>
 <div class="sect3">
-<h4 id="contract-limitations"><a class="anchor" href="#contract-limitations"></a><a class="link" href="#contract-limitations">4.1.1. Limitations</a></h4>
+<h4 id="contract-groovy"><a class="anchor" href="#contract-groovy"></a><a class="link" href="#contract-groovy">4.1.1. Contract DSL in Groovy</a></h4>
+<div class="paragraph">
+<p>If you are not familiar with Groovy, do not worry - you can use Java syntax in the
+Groovy DSL files as well.</p>
+</div>
+<div class="paragraph">
+<p>If you decide to write the contract in Groovy, do not be alarmed if you have not used Groovy
+before. Knowledge of the language is not really needed, as the Contract DSL uses only a
+tiny subset of it (only literals, method calls, and closures). Also, the DSL is statically
+typed, to make it programmer-readable without any knowledge of the DSL itself.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Remember that, inside the Groovy contract file, you have to provide the fully
+qualified name to the <code>Contract</code> class and <code>make</code> static imports, such as
+<code>org.springframework.cloud.spec.Contract.make { &#8230;&#8203; }</code>. You can also provide an import to
+the <code>Contract</code> class (<code>import org.springframework.cloud.spec.Contract</code>) and then call
+<code>Contract.make { &#8230;&#8203; }</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="contract-java"><a class="anchor" href="#contract-java"></a><a class="link" href="#contract-java">4.1.2. Contract DSL in Java</a></h4>
+<div class="paragraph">
+<p>To write a contract definition in Java, you need to create a class, that implements either the <code>Supplier&lt;Contract&gt;</code> interface for a single contract or <code>Supplier&lt;Collection&lt;Contract&gt;&gt;</code> for multiple contracts.</p>
+</div>
+<div class="paragraph">
+<p>You can also write the contract definitions under <code>src/test/java</code> (e.g. <code>src/test/java/contracts</code>) so that you don&#8217;t have to modify the classpath of your project. In this case you&#8217;ll have to provide a new location of contract definitions to your Spring Cloud Contract plugin.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;contractsDirectory&gt;src/test/java/contracts&lt;/contractsDirectory&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    contractsDslDir = new File(project.rootDir, "src/test/java/contracts")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="contract-limitations"><a class="anchor" href="#contract-limitations"></a><a class="link" href="#contract-limitations">4.1.3. Limitations</a></h4>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -4434,7 +4474,7 @@ is why you should use the Groovy Map notation.
 </div>
 </div>
 <div class="sect3">
-<h4 id="contract-common-top-elements"><a class="anchor" href="#contract-common-top-elements"></a><a class="link" href="#contract-common-top-elements">4.1.2. Common Top-Level Elements</a></h4>
+<h4 id="contract-common-top-elements"><a class="anchor" href="#contract-common-top-elements"></a><a class="link" href="#contract-common-top-elements">4.1.4. Common Top-Level Elements</a></h4>
 <div class="paragraph">
 <p>The following sections describe the most common top-level elements:</p>
 </div>
@@ -4534,6 +4574,14 @@ response:
         command: andMeToo($it)</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Contract.make(c -&gt; {
+    c.description("Some description");
+}));</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4579,6 +4627,14 @@ override each other.
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">name: some name</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Contract.make(c -&gt; {
+    c.name("some name");
+}));</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4603,6 +4659,14 @@ example shows how to do so:</p>
 <div class="title">yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">ignored: true</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Contract.make(c -&gt; {
+    c.ignored();
+}));</code></pre>
 </div>
 </div>
 </div>
@@ -4643,6 +4707,14 @@ example shows how to do so:</p>
 <div class="title">yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">inProgress: true</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Contract.make(c -&gt; {
+    c.inProgress();
+}));</code></pre>
 </div>
 </div>
 </div>
@@ -4725,6 +4797,12 @@ response:
   bodyFromFile: response.json</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -4757,7 +4835,7 @@ relative to the folder in which the contract lays.</p>
 </div>
 <div class="paragraph">
 <p>If you need to pass the contents of a file in binary form,
-you can use the <code>fileAsBytes</code> method in Groovy DSL or a <code>bodyFromFileAsBytes</code> field in YAML.</p>
+you can use the <code>fileAsBytes</code> method in the coded DSL or a <code>bodyFromFileAsBytes</code> field in YAML.</p>
 </div>
 <div class="paragraph">
 <p>The following example shows how to pass the contents of binary files:</p>
@@ -4802,6 +4880,42 @@ response:
   bodyFromFileAsBytes: response.pdf
   headers:
     Content-Type: application/octet-stream</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
+
+import org.springframework.cloud.contract.spec.Contract;
+
+class contract_rest_from_pdf implements Supplier&lt;Collection&lt;Contract&gt;&gt; {
+
+    @Override
+    public Collection&lt;Contract&gt; get() {
+        return Collections.singletonList(Contract.make(c -&gt; {
+            c.request(r -&gt; {
+                r.url("/1");
+                r.method(r.PUT());
+                r.body(r.fileAsBytes("request.pdf"));
+                r.headers(h -&gt; {
+                    h.contentType(h.applicationOctetStream());
+                });
+            });
+            c.response(r -&gt; {
+                r.status(r.OK());
+                r.body(r.fileAsBytes("response.pdf"));
+                r.headers(h -&gt; {
+                    h.contentType(h.applicationOctetStream());
+                });
+            });
+        }));
+    }
+
+}
+// end::class[]</code></pre>
 </div>
 </div>
 </div>
@@ -4893,6 +5007,34 @@ response:
 ...</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    // Definition of HTTP request part of the contract
+    // (this can be a valid request or invalid depending
+    // on type of contract being specified).
+    c.request(r -&gt; {
+        r.method(r.GET());
+        r.url("/foo");
+        // ...
+    });
+
+    // Definition of HTTP response part of the contract
+    // (a service implementing this contract should respond
+    // with following response after receiving request
+    // specified in "request" part above).
+    c.response(r -&gt; {
+        r.status(200);
+        // ...
+    });
+
+    // Contract priority, which can be used for overriding
+    // contracts (1 is highest). Priority is optional.
+    c.priority(1);
+});</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -4947,6 +5089,25 @@ same information is mandatory in request definition of the contract.</p>
 url: /foo</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        // HTTP request method (GET/POST/PUT/DELETE).
+        r.method("GET");
+
+        // Path component of request URL is specified as follows.
+        r.urlPath("/users");
+    });
+
+    c.response(r -&gt; {
+        // ...
+        r.status(200);
+    });
+});</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -4982,6 +5143,24 @@ the recommended way, as doing so makes the tests be host-independent.</p>
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">request:
   method: PUT
   urlPath: /foo</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        r.method("GET");
+
+        // Specifying `url` and `urlPath` in one contract is illegal.
+        r.url("http://localhost:8888/users");
+    });
+
+    c.response(r -&gt; {
+        // ...
+        r.status(200);
+    });
+});</code></pre>
 </div>
 </div>
 </div>
@@ -5049,6 +5228,60 @@ queryParameters:
   b: c</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        // ...
+        r.method(r.GET());
+
+        r.urlPath("/users", u -&gt; {
+
+            // Each parameter is specified in form
+            // `'paramName' : paramValue` where parameter value
+            // may be a simple literal or one of matcher functions,
+            // all of which are used in this example.
+            u.queryParameters(q -&gt; {
+
+                // If a simple literal is used as value
+                // default matcher function is used (equalTo)
+                q.parameter("limit", 100);
+
+                // `equalTo` function simply compares passed value
+                // using identity operator (==).
+                q.parameter("filter", r.equalTo("email"));
+
+                // `containing` function matches strings
+                // that contains passed substring.
+                q.parameter("gender",
+                        r.value(r.consumer(r.containing("[mf]")),
+                                r.producer("mf")));
+
+                // `matching` function tests parameter
+                // against passed regular expression.
+                q.parameter("offset",
+                        r.value(r.consumer(r.matching("[0-9]+")),
+                                r.producer(123)));
+
+                // `notMatching` functions tests if parameter
+                // does not match passed regular expression.
+                q.parameter("loginStartsWith",
+                        r.value(r.consumer(r.notMatching(".{0,2}")),
+                                r.producer(3)));
+            });
+        });
+
+        // ...
+    });
+
+    c.response(r -&gt; {
+        // ...
+        r.status(200);
+    });
+});</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -5090,6 +5323,32 @@ queryParameters:
 headers:
   foo: bar
   fooReq: baz</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        // ...
+        r.method(r.GET());
+        r.url("/foo");
+
+        // Each header is added in form `'Header-Name' : 'Header-Value'`.
+        // there are also some helper methods
+        r.headers(h -&gt; {
+            h.header("key", "value");
+            h.contentType(h.applicationJson());
+        });
+
+        // ...
+    });
+
+    c.response(r -&gt; {
+        // ...
+        r.status(200);
+    });
+});</code></pre>
 </div>
 </div>
 </div>
@@ -5135,6 +5394,32 @@ cookies:
   fooReq: baz</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        // ...
+        r.method(r.GET());
+        r.url("/foo");
+
+        // Each Cookies is added in form `'Cookie-Key' : 'Cookie-Value'`.
+        // there are also some helper methods
+        r.cookies(ck -&gt; {
+            ck.cookie("key", "value");
+            ck.cookie("another_key", "another_value");
+        });
+
+        // ...
+    });
+
+    c.response(r -&gt; {
+        // ...
+        r.status(200);
+    });
+});</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -5170,6 +5455,27 @@ cookies:
 ...
 body:
   foo: bar</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        // ...
+        r.method(r.GET());
+        r.url("/foo");
+
+        // Currently only JSON format of request body is supported.
+        // Format will be determined from a header or body's content.
+        r.body("{ \"login\" : \"john\", \"name\": \"John The Contract\" }");
+    });
+
+    c.response(r -&gt; {
+        // ...
+        r.status(200);
+    });
+});</code></pre>
 </div>
 </div>
 </div>
@@ -5263,13 +5569,19 @@ response:
   status: 200</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
 <p>In the preceding example, we define parameters in either of two ways:</p>
 </div>
 <div class="ulist">
-<div class="title">Groovy DSL</div>
+<div class="title">Coded DSL</div>
 <ul>
 <li>
 <p>Directly, by using the map notation, where the value can be a dynamic property (such as
@@ -5402,6 +5714,23 @@ following code shows an example:</p>
 status: 200</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        // ...
+        r.method(r.GET());
+        r.url("/foo");
+    });
+    c.response(r -&gt; {
+        // Status code sent by the server
+        // in response to request specified above.
+        r.status(r.OK());
+    });
+});</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -5460,7 +5789,7 @@ See the <a href="https://github.com/spring-cloud/spring-cloud-contract/wiki/Spri
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-This section is valid only for the Groovy DSL. Check out the
+This section is valid only for the Coded DSL (Groovy, Java etc.). Check out the
 <a href="#contract-dsl-matchers">Dynamic Properties in the Matchers Sections</a> section for YAML examples of a similar feature.
 </td>
 </tr>
@@ -5528,7 +5857,10 @@ There are several additional <a href="#contract-dsl-regex-limitations">known lim
 <div class="paragraph">
 <p>The following example shows how to use regular expressions to write a request:</p>
 </div>
-<div class="listingblock">
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
     request {
@@ -5556,10 +5888,32 @@ There are several additional <a href="#contract-dsl-regex-limitations">known lim
 }</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.request(r -&gt; {
+        r.method("GET");
+        r.url(r.$(r.consumer(r.regex("\\/[0-9]{2}")), r.producer("/12")));
+    });
+    c.response(r -&gt; {
+        r.status(r.OK());
+        r.body(ContractVerifierUtil.map().entry("id", r.$(r.anyNumber()))
+                .entry("surname", r.$(r.consumer("Kowalsky"),
+                        r.producer(r.regex("[a-zA-Z]+")))));
+        r.headers(h -&gt; {
+            h.header("Content-Type", "text/plain");
+        });
+    });
+});</code></pre>
+</div>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>You can also provide only one side of the communication with a regular expression. If you
 do so, then the contract engine automatically provides the generated string that matches
-the provided regular expression. The following code shows an example:</p>
+the provided regular expression. The following code shows an example for Groovy:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5740,7 +6094,7 @@ public RegexProperty isoTime() {
 </div>
 </div>
 <div class="paragraph">
-<p>In your contract, you can use it as follows:</p>
+<p>In your contract, you can use it as follows (example for the Groovy DSL):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5821,7 +6175,7 @@ T anyOf(String... values);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The following example shows how you can reference those methods:</p>
+<p>The following example shows how you can reference those methods (example for Groovy DSL):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5922,7 +6276,10 @@ optional parameters only for the following:</p>
 <div class="paragraph">
 <p>The following example shows how to provide optional parameters:</p>
 </div>
-<div class="listingblock">
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
     priority 1
@@ -5950,6 +6307,38 @@ optional parameters only for the following:</p>
 }</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">org.springframework.cloud.contract.spec.Contract.make(c -&gt; {
+    c.priority(1);
+    c.name("optionals");
+    c.request(r -&gt; {
+        r.method("POST");
+        r.url("/users/password");
+        r.headers(h -&gt; {
+            h.contentType(h.applicationJson());
+        });
+        r.body(ContractVerifierUtil.map()
+                .entry("email",
+                        r.$(r.consumer(r.optional(r.regex(r.email()))),
+                                r.producer("abc@abc.com")))
+                .entry("callback_url", r.$(r.consumer(r.regex(r.hostname())),
+                        r.producer("https://partners.com"))));
+    });
+    c.response(r -&gt; {
+        r.status(404);
+        r.headers(h -&gt; {
+            h.header("Content-Type", "application/json");
+        });
+        r.body(ContractVerifierUtil.map().entry("code", r.value(
+                r.consumer("123123"), r.producer(r.optional("123123")))));
+    });
+});</code></pre>
+</div>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>By wrapping a part of the body with the <code>optional()</code> method, you create a regular
 expression that must be present 0 or more times.</p>
@@ -5957,7 +6346,10 @@ expression that must be present 0 or more times.</p>
 <div class="paragraph">
 <p>If you use Spock, the following test would be generated from the previous example:</p>
 </div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
+<div class="title">groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">                    """\
 package com.example
@@ -5997,6 +6389,8 @@ class FooSpec extends Specification {
 
 }
 """</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -6053,9 +6447,20 @@ This section is valid only for Groovy DSL. Check out the
 method can be added to the class defined as <code>baseClassForTests</code> in the configuration. The
 following code shows an example of the contract portion of the test case:</p>
 </div>
-<div class="listingblock">
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">method GET()</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">r.method(r.GET());</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -6218,7 +6623,7 @@ matches the JSON Path.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>If you use the YAML contract definition, you have to use the
+<p>If you use the YAML contract definition or the Java one, you have to use the
 <a href="https://handlebarsjs.com/">Handlebars</a> <code>{{{ }}}</code> notation with custom Spring Cloud Contract
 functions to achieve this. In that case, you can use the following options:</p>
 </div>
@@ -6372,6 +6777,46 @@ response:
     responseBaz2: "Bla bla {{{ jsonpath this '$.foo' }}} bla bla"</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package contracts.beer.rest;
+
+import java.util.function.Supplier;
+
+import org.springframework.cloud.contract.spec.Contract;
+
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.map;
+
+class shouldReturnStatsForAUser implements Supplier&lt;Contract&gt; {
+
+    @Override
+    public Contract get() {
+        return Contract.make(c -&gt; {
+            c.request(r -&gt; {
+                r.method("POST");
+                r.url("/stats");
+                r.body(map().entry("name", r.anyAlphaUnicode()));
+                r.headers(h -&gt; {
+                    h.contentType(h.applicationJson());
+                });
+            });
+            c.response(r -&gt; {
+                r.status(r.OK());
+                r.body(map()
+                        .entry("text",
+                                "Dear {{{jsonPath request.body '$.name'}}} thanks for your interested in drinking beer")
+                        .entry("quantity", r.$(r.c(5), r.p(r.anyNumber()))));
+                r.headers(h -&gt; {
+                    h.contentType(h.applicationJson());
+                });
+            });
+        });
+    }
+
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -6523,7 +6968,7 @@ contract.</p>
 following matching possibilities:</p>
 </div>
 <div class="sect5">
-<h6 id="groovy-dsl"><a class="anchor" href="#groovy-dsl"></a><a class="link" href="#groovy-dsl">Groovy DSL</a></h6>
+<h6 id="coded-dsl"><a class="anchor" href="#coded-dsl"></a><a class="link" href="#coded-dsl">Coded DSL</a></h6>
 <div class="ulist">
 <ul>
 <li>
@@ -7374,6 +7819,27 @@ provide an <code>async()</code> method in the <code>response</code> section. The
     async: true</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class contract implements Supplier&lt;Collection&lt;Contract&gt;&gt; {
+
+    @Override
+    public Collection&lt;Contract&gt; get() {
+        return Collections.singletonList(Contract.make(c -&gt; {
+            c.request(r -&gt; {
+                // ...
+            });
+            c.response(r -&gt; {
+                r.async();
+                // ...
+            });
+        }));
+    }
+
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -7403,6 +7869,27 @@ The following example shows how to do so:</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">response:
     fixedDelayMilliseconds: 1000</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class contract implements Supplier&lt;Collection&lt;Contract&gt;&gt; {
+
+    @Override
+    public Collection&lt;Contract&gt; get() {
+        return Collections.singletonList(Contract.make(c -&gt; {
+            c.request(r -&gt; {
+                // ...
+            });
+            c.response(r -&gt; {
+                r.fixedDelayMilliseconds(1000);
+                // ...
+            });
+        }));
+    }
+
+}</code></pre>
 </div>
 </div>
 </div>
@@ -7477,7 +7964,13 @@ and the appropriate <code>MatchingType</code> as second. All the body matchers a
 <div class="listingblock secondary">
 <div class="title">yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">include::/opt/jenkins/data/workspace/spring-cloud-contract-master-releaser/spring-cloud-contract-verifier/src/test/resources/yml/contract_rest_xml.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">include::/opt/jenkins/data/workspace/spring-cloud-contract-master-ci/spring-cloud-contract-verifier/src/test/resources/yml/contract_rest_xml.yml</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
 </div>
 </div>
 </div>
@@ -7573,6 +8066,28 @@ request:
   url: /users/3
 response:
   status: 200</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class contract implements Supplier&lt;Collection&lt;Contract&gt;&gt; {
+
+    @Override
+    public Collection&lt;Contract&gt; get() {
+        return Arrays.asList(
+            Contract.make(c -&gt; {
+                c.name("should post a user");
+                // ...
+            }), Contract.make(c -&gt; {
+                // ...
+            }), Contract.make(c -&gt; {
+                // ...
+            })
+        );
+    }
+
+}</code></pre>
 </div>
 </div>
 </div>
@@ -7735,11 +8250,8 @@ name of <code>scenario1</code> and the three following steps:</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>You can find nore details about WireMock scenarios at
+<p>You can find more details about WireMock scenarios at
 <a href="https://wiremock.org/docs/stateful-behaviour/">https://wiremock.org/docs/stateful-behaviour/</a>.</p>
-</div>
-<div class="paragraph">
-<p>Spring Cloud Contract also generates tests with a guaranteed order of execution.</p>
 </div>
 </div>
 </div>
