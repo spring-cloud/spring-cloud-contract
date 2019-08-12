@@ -150,7 +150,7 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 	}
 
 	private static Constructor<?> classConstructor(File dsl) {
-		String classText = new String(new FileInputStream(dsl).readAllBytes())
+		String classText = dsl.text
 		String fqn = fqn(classText)
 		CompilationResult compilationResult = COMPILER
 				.compile(fqn, classText)
