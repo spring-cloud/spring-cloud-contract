@@ -141,7 +141,7 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 	}
 
 	private static Object parseJavaFile(ClassLoader cl, File dsl) {
-		Constructor<?> constructor = classConstructor(cl, dsl)
+		Constructor<?> constructor = classConstructor(dsl)
 		Object newInstance = constructor.newInstance()
 		if (!newInstance instanceof Supplier) {
 			if (log.isDebugEnabled()) {
@@ -153,7 +153,7 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 		return supplier.get()
 	}
 
-	private static Constructor<?> classConstructor(ClassLoader cl, File dsl) {
+	private static Constructor<?> classConstructor(File dsl) {
 		String classText = dsl.text
 		String fqn = fqn(classText)
 		CompilationResult compilationResult = COMPILER

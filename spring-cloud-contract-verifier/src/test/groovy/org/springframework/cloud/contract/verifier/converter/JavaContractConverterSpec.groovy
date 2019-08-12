@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.verifier.converter
 
 import groovy.json.JsonSlurper
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -64,7 +63,7 @@ class JavaContractConverterSpec extends Specification {
 
 	def "should convert Java DSL with REST to DSL for [#contractFile]"() {
 		when:
-			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(new File("/"), contractFile)
+			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(contractFile.parentFile, contractFile)
 		then:
 			Contract contract = contracts.first()
 			contract.description == "Some description"
@@ -119,11 +118,9 @@ class JavaContractConverterSpec extends Specification {
 			contractFile << [javaRestFile, javaRestWithTagsFile]
 	}
 
-	//TODO: Fix Me
-	@Ignore
 	def "should convert java with REST with body from file"() {
 		when:
-			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(new File("/"), contractBodyFile)
+			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(contractBodyFile.parentFile, contractBodyFile)
 		then:
 			contracts.size() == 1
 			Contract contract = contracts.first()
@@ -134,11 +131,9 @@ class JavaContractConverterSpec extends Specification {
 					new JsonSlurper().parseText('''{ "hello" : "response" }''')
 	}
 
-	//TODO: Fix Me
-	@Ignore
 	def "should convert java with REST with body as bytes"() {
 		when:
-			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(new File("/"), contractBodyBytesFile)
+			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(contractBodyBytesFile.parentFile, contractBodyBytesFile)
 		then:
 			contracts.size() == 1
 			Contract contract = contracts.first()
@@ -149,7 +144,7 @@ class JavaContractConverterSpec extends Specification {
 
 	def "should convert java with REST for docs"() {
 		when:
-			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(new File("/"), docsFile)
+			Collection<Contract> contracts = ContractVerifierDslConverter.convertAsCollection(docsFile.parentFile, docsFile)
 		then:
 			contracts.size() == 1
 	}
