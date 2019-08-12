@@ -113,8 +113,12 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 	private static ClassLoader updatedClassLoader(File rootFolder, ClassLoader classLoader) {
 		ClassLoader urlCl = URLClassLoader
 				.newInstance([rootFolder.toURI().toURL()] as URL[], classLoader)
-		Thread.currentThread().setContextClassLoader(urlCl)
+		updateTheThreadClassLoader(urlCl)
 		return urlCl
+	}
+
+	private static void updateTheThreadClassLoader(ClassLoader urlCl) {
+		Thread.currentThread().setContextClassLoader(urlCl)
 	}
 
 	private static GroovyShell groovyShell() {
@@ -124,7 +128,7 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 	private static Object toObject(ClassLoader cl, File rootFolder, File dsl) {
 		if (isJava(dsl)) {
 			try {
-				return parseJavaFile(dsl)
+				return parseJavaFile(cl, dsl)
 			}
 			catch (Exception ex) {
 				if (log.isWarnEnabled()) {
@@ -136,8 +140,8 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 		return groovyShell(cl, rootFolder).evaluate(dsl)
 	}
 
-	private static Object parseJavaFile(File dsl) {
-		Constructor<?> constructor = classConstructor(dsl)
+	private static Object parseJavaFile(ClassLoader cl, File dsl) {
+		Constructor<?> constructor = classConstructor(cl, dsl)
 		Object newInstance = constructor.newInstance()
 		if (!newInstance instanceof Supplier) {
 			if (log.isDebugEnabled()) {
@@ -149,7 +153,7 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 		return supplier.get()
 	}
 
-	private static Constructor<?> classConstructor(File dsl) {
+	private static Constructor<?> classConstructor(ClassLoader cl, File dsl) {
 		String classText = dsl.text
 		String fqn = fqn(classText)
 		CompilationResult compilationResult = COMPILER
@@ -158,6 +162,9 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 			throw new IllegalStateException("Exceptions occurred while trying to compile the file " + compilationResult.compilationMessages)
 		}
 		Class<?> clazz = compilationResult.compiledClasses.find { it.name == fqn}
+		if (clazz == null) {
+			throw new IllegalStateException("Class with name [" + fqn + "] not found")
+		}
 		Constructor<?> constructor = clazz.getDeclaredConstructor()
 		constructor.setAccessible(true)
 		return constructor

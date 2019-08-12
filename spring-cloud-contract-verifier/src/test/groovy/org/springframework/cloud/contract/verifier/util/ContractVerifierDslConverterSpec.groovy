@@ -55,24 +55,46 @@ class ContractVerifierDslConverterSpec extends Specification {
 		}
 	}
 
-	Contract expectedSingleContractForJava = Contract.make {
-		name("contract")
-		request {
-			method('PUT')
-			headers {
-				contentType(applicationJson())
-			}
-			body(""" { "status" : "OK" } """)
-			url("/1")
-		}
-		response {
-			status OK()
-			body(""" { "status" : "OK" } """)
-			headers {
-				contentType(textPlain())
-			}
-		}
-	}
+	Contract expectedSingleContractForJava = Contract.make( {
+		description("Some description");
+		name("some name");
+		priority(8);
+		ignored();
+		request( {
+			url("/foo", {
+				queryParameters({
+					parameter("a", "b");
+					parameter("b", "c");
+				});
+			});
+			method(PUT());
+			headers( {
+				header("foo", value(client(regex("bar")), server("bar")));
+				header("fooReq", "baz");
+			});
+			body(ContractVerifierUtil.map().entry("foo", "bar"));
+			bodyMatchers( {
+				jsonPath("\$.foo", byRegex("bar"));
+			});
+		});
+		response( {
+			fixedDelayMilliseconds(1000);
+			status(OK());
+			headers( {
+				header("foo2", value(server(regex("bar")), client("bar")));
+				header("foo3", value(server(execute("andMeToo(\$it)")),
+						client("foo33")));
+				header("fooRes", "baz");
+			});
+			body(ContractVerifierUtil.map().entry("foo2", "bar")
+									   .entry("foo3", "baz").entry("nullValue", null));
+			bodyMatchers( {
+				jsonPath("\$.foo2", byRegex("bar"));
+				jsonPath("\$.foo3", byCommand("executeMe(\$it)"));
+				jsonPath("\$.nullValue", byNull());
+			});
+		});
+	})
 
 	Contract expectedSingleContractForText = Contract.make {
 		request {
