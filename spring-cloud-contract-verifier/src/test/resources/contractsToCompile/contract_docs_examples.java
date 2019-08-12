@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//tag::class[]
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -130,18 +130,21 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 
 							// `containing` function matches strings
 							// that contains passed substring.
-							q.parameter("gender", r.value(
-									r.consumer(r.containing("[mf]")), r.producer("mf")));
+							q.parameter("gender",
+									r.value(r.consumer(r.containing("[mf]")),
+											r.producer("mf")));
 
 							// `matching` function tests parameter
 							// against passed regular expression.
-							q.parameter("offset", r.value(
-									r.consumer(r.matching("[0-9]+")), r.producer(123)));
+							q.parameter("offset",
+									r.value(r.consumer(r.matching("[0-9]+")),
+											r.producer(123)));
 
 							// `notMatching` functions tests if parameter
 							// does not match passed regular expression.
-							q.parameter("loginStartsWith", r.value(
-									r.consumer(r.notMatching(".{0,2}")), r.producer(3)));
+							q.parameter("loginStartsWith",
+									r.value(r.consumer(r.notMatching(".{0,2}")),
+											r.producer(3)));
 						});
 					});
 

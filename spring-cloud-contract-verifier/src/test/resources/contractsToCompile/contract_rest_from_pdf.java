@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2013-2019 the original author or authors.
  *
@@ -14,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 //tag::class[]
 import java.util.Collection;
 import java.util.Collections;
