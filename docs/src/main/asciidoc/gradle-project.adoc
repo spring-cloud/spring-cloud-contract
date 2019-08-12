@@ -195,7 +195,7 @@ contracts {
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
     generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
-    contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
+    contractsDslDir = project.file("${project.rootDir}/src/test/resources/contracts")
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
 
