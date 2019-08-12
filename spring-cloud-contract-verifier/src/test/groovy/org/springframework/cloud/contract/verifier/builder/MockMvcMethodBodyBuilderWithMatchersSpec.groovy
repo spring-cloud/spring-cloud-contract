@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.builder
 
 import org.junit.Rule
+import org.mdkt.compiler.CompilationException
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -237,10 +238,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			try {
 				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 			}
-			catch (ClassFormatError classFormatError) {
-				String output = outputCapture.toString()
-				assert output.contains('error: cannot find symbol')
-				assert output.contains('assertThatValueIsANumber(parsedJson.read("$.duck"));')
+			catch (CompilationException classFormatError) {
+				String output = classFormatError.message
+				assert output.contains('cannot find symbol')
+				assert output.contains('assertThatValueIsANumber')
 			}
 		where:
 			methodBuilderName | methodBuilder                                      | rootElement

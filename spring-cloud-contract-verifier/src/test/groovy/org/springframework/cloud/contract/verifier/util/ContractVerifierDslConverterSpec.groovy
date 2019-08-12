@@ -27,12 +27,35 @@ class ContractVerifierDslConverterSpec extends Specification {
 
 	URL single = ContractVerifierDslConverterSpec.getResource("/contract.groovy")
 	File singleContract = new File(single.toURI())
+	URL singleJava = ContractVerifierDslConverterSpec.getResource("/contractsToCompile/contract.java")
+	File singleContractJava = new File(singleJava.toURI())
+	URL singleRestJava = ContractVerifierDslConverterSpec.getResource("/contractsToCompile/contract_rest.java")
+	File singleContractRestJava = new File(singleRestJava.toURI())
 	URL multiple = ContractVerifierDslConverterSpec.getResource("/multiple_contracts.groovy")
 	File multipleContracts = new File(multiple.toURI())
 	URL invalid = ContractVerifierDslConverterSpec.getResource("/contract.yml")
 	File invalidContract = new File(invalid.toURI())
 
 	Contract expectedSingleContract = Contract.make {
+		name("contract")
+		request {
+			method('PUT')
+			headers {
+				contentType(applicationJson())
+			}
+			body(""" { "status" : "OK" } """)
+			url("/1")
+		}
+		response {
+			status OK()
+			body(""" { "status" : "OK" } """)
+			headers {
+				contentType(textPlain())
+			}
+		}
+	}
+
+	Contract expectedSingleContractForJava = Contract.make {
 		name("contract")
 		request {
 			method('PUT')
@@ -152,6 +175,20 @@ class ContractVerifierDslConverterSpec extends Specification {
 			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"), singleContract)
 		then:
 			contract == [expectedSingleContract]
+	}
+
+	def "should convert file to a list of Contracts when there's only one declared java contract"() {
+		when:
+			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"), singleContractJava)
+		then:
+			contract == [expectedSingleContract]
+	}
+
+	def "should convert file to a list of Contracts for a REST contract for docs"() {
+		when:
+			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"), singleContractRestJava)
+		then:
+			contract == [expectedSingleContractForJava]
 	}
 
 	def "should convert text to a list of Contracts when there's only one declared contract"() {

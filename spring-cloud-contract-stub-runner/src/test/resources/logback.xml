@@ -19,6 +19,8 @@
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
 	<logger name="org.springframework.cloud" level="DEBUG"/>
 
+	<logger name="org.springframework.cloud.function" level="INFO"/>
+
 	<root level="INFO">
 		<appender-ref ref="CONSOLE"/>
 	</root>
