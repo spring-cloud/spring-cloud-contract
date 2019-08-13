@@ -19,7 +19,10 @@ package org.springframework.cloud.contract.spec.internal
 import java.util.regex.Pattern
 
 /**
+ * Matching strategy of dynamic parts of the body.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 open class BodyMatchersDsl {
 

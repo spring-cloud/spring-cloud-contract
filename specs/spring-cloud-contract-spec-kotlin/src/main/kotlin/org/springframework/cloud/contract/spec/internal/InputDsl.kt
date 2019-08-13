@@ -19,18 +19,46 @@ package org.springframework.cloud.contract.spec.internal
 import org.springframework.cloud.contract.spec.toDslProperty
 
 /**
+ * Represents an input for messaging.
+ * The input can be a message or some action inside the application.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 @ContractDslMarker
 class InputDsl : CommonDsl() {
 
     private val delegate = Input()
 
+    /**
+     * Name of a destination from which message would come to trigger action in the
+     * system.
+     */
     var messageFrom: DslProperty<String>? = null
+
+    /**
+     * Function that needs to be executed to trigger action in the system.
+     */
     var triggeredBy: String? = null
+
+    /**
+     * The message headers part of the contract.
+     */
     var headers: Headers? = null
+
+    /**
+     * The contents of the incoming message.
+     */
     var messageBody: Input.BodyType? = null
+
+    /**
+     * Function that needs to be executed after the message has been received/processed by the system.
+     */
     var assertThat: String? = null
+
+    /**
+     * The body matchers part of the contract.
+     */
     var bodyMatchers: BodyMatchers? = null
 
     fun messageFrom(messageFrom: String) = messageFrom.toDslProperty()

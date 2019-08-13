@@ -19,7 +19,10 @@ package org.springframework.cloud.contract.spec.internal
 import org.springframework.cloud.contract.spec.toDslProperty
 
 /**
+ * Represents the content when sending multipart HTTP requests.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 class MultipartDsl {
 

@@ -22,20 +22,54 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils
 import java.util.regex.Pattern
 
 /**
+ * Represents the request side of the HTTP communication.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 @ContractDslMarker
 open class RequestDsl : CommonDsl() {
     
     private val delegate = Request()
 
+    /**
+     * The HTTP method.
+     */
     var method: DslProperty<*>? = null
+
+    /**
+     * The URL to which the request will be sent.
+     */
     var url: Url? = null
+
+    /**
+     * The URL to which the request will be sent.
+     */
     var urlPath: UrlPath? = null
+
+    /**
+     * The HTTP headers which should be sent with the request.
+     */
     var headers: Headers? = null
+
+    /**
+     * The HTTP cookies which should be sent with the request.
+     */
     var cookies: Cookies? = null
+
+    /**
+     * The HTTP request body which should be sent.
+     */
     var body: Body? = null
+
+    /**
+     * The content that needs to be sent with a multipart HTTP request.
+     */
     var multipart: Multipart? = null
+
+    /**
+     * The HTTP request body matchers.
+     */
     var bodyMatchers: BodyMatchers? = null
 
     fun method(method: String) = method.toDslProperty()

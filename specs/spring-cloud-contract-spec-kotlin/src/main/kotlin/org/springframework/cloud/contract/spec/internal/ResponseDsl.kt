@@ -22,20 +22,50 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils
 import java.util.regex.Pattern
 
 /**
+ * Represents the response side of the HTTP communication.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 @ContractDslMarker
 class ResponseDsl : CommonDsl() {
 
     private val delegate = Response()
 
-    var status: DslProperty<Any>? = null
-    var delay: DslProperty<Any>? = null
-    var headers: Headers? = null
-    var cookies: Cookies? = null
-    var body: Body? = null
-    var async: Boolean = false
-    var bodyMatchers: ResponseBodyMatchers? = null
+	/**
+	 * The HTTP response status.
+	 */
+	var status: DslProperty<Any>? = null
+
+	/**
+	 * The HTTP response delay in milliseconds.
+	 */
+	var delay: DslProperty<Any>? = null
+
+	/**
+	 * The HTTP response headers.
+	 */
+	var headers: Headers? = null
+
+	/**
+	 * The HTTP response cookies.
+	 */
+	var cookies: Cookies? = null
+
+	/**
+	 * The HTTP response body.
+	 */
+	var body: Body? = null
+
+	/**
+	 * Indicates asynchronous communication.
+	 */
+	var async: Boolean = false
+
+	/**
+	 * The HTTP response body matchers.
+	 */
+	var bodyMatchers: ResponseBodyMatchers? = null
 
     fun code(code: Int): DslProperty<Any> = code.toDslProperty()
 

@@ -19,17 +19,41 @@ package org.springframework.cloud.contract.spec.internal
 import org.springframework.cloud.contract.spec.toDslProperty
 
 /**
+ * Represents an output for messaging.
+ * Used for verifying the body and headers that are sent.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 @ContractDslMarker
 class OutputMessageDsl : CommonDsl() {
 
     private val delegate = OutputMessage()
 
+    /**
+     * Name of a destination to which a message should be sent.
+     */
     var sentTo: DslProperty<String>? = null
+
+    /**
+     * The message headers part of the contract.
+     */
     var headers: Headers? = null
+
+    /**
+     * Name of a destination from which message would come to trigger action in the
+     * system.
+     */
     var body: DslProperty<Any>? = null
+
+    /**
+     * Function that needs to be executed after the message has been sent out of the system.
+     */
     var assertThat: String? = null
+
+    /**
+     * The body matchers part of the contract.
+     */
     var bodyMatchers: ResponseBodyMatchers? = null
 
     fun sentTo(sentTo: String) = sentTo.toDslProperty()

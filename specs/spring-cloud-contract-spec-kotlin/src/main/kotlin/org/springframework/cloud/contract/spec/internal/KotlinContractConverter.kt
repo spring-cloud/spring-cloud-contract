@@ -23,7 +23,10 @@ import java.net.URLClassLoader.newInstance
 import javax.script.ScriptEngineManager
 
 /**
+ * Converter that will convert the Kotlin DSL to Java DSL.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 class KotlinContractConverter: ContractConverter<List<Contract>> {
 

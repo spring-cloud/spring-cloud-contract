@@ -22,7 +22,10 @@ import java.nio.charset.Charset
 import java.util.regex.Pattern
 
 /**
+ * Composed out of common variables and funtions.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 open class CommonDsl {
 
@@ -145,8 +148,18 @@ open class CommonDsl {
      */
     fun test(serverValue: Any?) = ServerDslProperty(serverValue)
 
+    /**
+     * Helper method to indicate an optional property.
+     * @param value the optional property value
+     * @return optional dsl property
+     */
     fun optional(value: Any?) = OptionalProperty(value)
 
+    /**
+     * Helper method to indicate that a method needs to be executed during testing.
+     * @param commandToExecute the name of the method to execute
+     * @return execution dsl property
+     */
     fun execute(commandToExecute: String) = ExecutionProperty(commandToExecute)
 
     /**
@@ -165,16 +178,33 @@ open class CommonDsl {
     fun file(relativePath: String, charset: Charset) = FromFileProperty(fileLocation(relativePath), String::class.java, charset)
 
     /**
-     * Read file contents as bytes[].
+     * Read file contents as String with the given Charset.
      * @param relativePath of the file to read
+     * @param charset to use for converting the bytes to String
      * @return String file contents
      */
     fun fileAsBytes(relativePath: String) = FromFileProperty(fileLocation(relativePath), ByteArray::class.java)
 
+    /**
+     * Read file contents as String using a default charset (mostly UTF-8).
+     * @param relativePath of the file to read
+     * @return Body DSL property with the content of the file as String
+     */
     fun bodyFromFile(relativePath: String) = bodyFromFile(relativePath, Charset.defaultCharset())
 
+    /**
+     * Read file contents as String using the provided file encoding.
+     * @param relativePath of the file to read
+     * @param charset of the file's encoding
+     * @return Body the body with the String as its content
+     */
     fun bodyFromFile(relativePath: String, charset: Charset) = Body(FromFileProperty(fileLocation(relativePath), String::class.java, charset))
 
+    /**
+     * Read file contents as bytes[].
+     * @param relativePath of the file to read
+     * @return Body the body with the byte array as its content
+     */
     fun bodyFromFileAsBytes(relativePath: String) = Body(FromFileProperty(fileLocation(relativePath), ByteArray::class.java))
 
     /**

@@ -17,7 +17,10 @@
 package org.springframework.cloud.contract.spec.internal
 
 /**
+ * Represents the cookies when sending/receiving HTTP traffic.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 open class CookiesDsl : CommonDsl() {
     

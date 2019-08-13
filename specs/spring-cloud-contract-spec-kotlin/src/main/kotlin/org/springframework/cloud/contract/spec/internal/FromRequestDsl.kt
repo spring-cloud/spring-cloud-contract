@@ -19,7 +19,10 @@ package org.springframework.cloud.contract.spec.internal
 import org.springframework.cloud.contract.spec.ContractTemplate
 
 /**
+ * Helper class to reference the request body parameters.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 class FromRequestDsl {
 
@@ -52,7 +55,7 @@ class FromRequestDsl {
 	fun path() = FromRequestDslProperty(template.escapedPath())
 
 	/**
-	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}*.
+	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}.
 	 * @param index path index
 	 * @return dsl property
 	 */
@@ -74,7 +77,7 @@ class FromRequestDsl {
 	fun header(key: String, index: Int) = FromRequestDslProperty(template.escapedHeader(key, index))
 
 	/**
-	 * Retruns the tempalte for retrieving the first value of a cookie with certain key.
+	 * Returns the template for retrieving the first value of a cookie with certain key.
 	 * @param key cookie key
 	 * @return dsl property
 	 */
@@ -100,7 +103,7 @@ class FromRequestDsl {
 	fun rawUrl() = FromRequestDslProperty(template.url())
 
 	/**
-	 * Unescaped First value of a query parameter e.g. request.query.search.
+	 * Unescaped first value of a query parameter e.g. request.query.search.
 	 * @param key query key
 	 * @return dsl property
 	 */
@@ -122,14 +125,14 @@ class FromRequestDsl {
 	fun rawPath() = FromRequestDslProperty(template.path())
 
 	/**
-	 * Unescaped nth value of a URL path (zero indexed) e.g. {{{ request.path.[2]. }}}*
+	 * Unescaped nth value of a URL path (zero indexed) e.g. {{{ request.path.[2]. }}}.
 	 * @param index path index
 	 * @return dsl property
 	 */
 	fun rawPath(index: Int) = FromRequestDslProperty(template.path(index))
 
 	/**
-	 * Unescaped First value of a request header e.g. request.headers.X-Request-Id.
+	 * Unescaped first value of a request header e.g. request.headers.X-Request-Id.
 	 * @param key header key
 	 * @return dsl property
 	 */

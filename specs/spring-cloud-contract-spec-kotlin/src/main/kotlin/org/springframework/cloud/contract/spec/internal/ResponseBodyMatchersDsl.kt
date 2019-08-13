@@ -17,7 +17,10 @@
 package org.springframework.cloud.contract.spec.internal
 
 /**
+ * Additional matchers for the response or output message part.
+ *
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 class ResponseBodyMatchersDsl: BodyMatchersDsl() {
 

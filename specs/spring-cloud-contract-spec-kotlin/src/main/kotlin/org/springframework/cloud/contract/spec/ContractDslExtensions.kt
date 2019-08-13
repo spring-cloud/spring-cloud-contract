@@ -24,7 +24,9 @@ import java.lang.IllegalStateException
 import java.util.stream.Collectors
 
 /**
+ * Class extension functions which make our lives easier.
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 infix fun Url.withQueryParameters(parameters: QueryParameters.() -> Unit) = apply {
     queryParameters = QueryParameters().apply(parameters)
