@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Contains most commonly used media types.
  *
@@ -24,6 +27,13 @@ package org.springframework.cloud.contract.spec.internal;
  * @since 1.0.2
  */
 public class MediaTypes {
+
+	private static final Log log = LogFactory.getLog(MediaTypes.class);
+
+	public MediaTypes() {
+		log.warn(
+				"WARNING: MediaTypes shouldn't be instantiated. Use its static methods instead.");
+	}
 
 	/**
 	 * Public constant for that includes all media ranges (i.e. "*&#47;*").

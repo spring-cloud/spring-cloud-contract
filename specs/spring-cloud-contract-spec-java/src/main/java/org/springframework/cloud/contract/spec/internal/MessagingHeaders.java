@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Contains most commonly used messaging headers.
  *
@@ -24,6 +27,13 @@ package org.springframework.cloud.contract.spec.internal;
  * @since 1.1.2
  */
 public class MessagingHeaders {
+
+	private static final Log log = LogFactory.getLog(MessagingHeaders.class);
+
+	public MessagingHeaders() {
+		log.warn(
+				"WARNING: MessagingHeaders shouldn't be instantiated. Use its static methods instead.");
+	}
 
 	/**
 	 * The Content-Type header name of a message.

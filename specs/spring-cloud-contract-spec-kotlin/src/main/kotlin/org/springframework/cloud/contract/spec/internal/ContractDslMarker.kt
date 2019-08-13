@@ -17,7 +17,9 @@
 package org.springframework.cloud.contract.spec.internal
 
 /**
+ * Marker to narrow the scope inside the lamda.
  * @author Tim Ysewyn
+ * @since 2.2.0
  */
 @DslMarker
 annotation class ContractDslMarker

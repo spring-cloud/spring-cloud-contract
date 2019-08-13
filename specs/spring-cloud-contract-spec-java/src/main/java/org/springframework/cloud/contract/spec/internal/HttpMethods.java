@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Contains Http Methods.
  *
@@ -24,6 +27,13 @@ package org.springframework.cloud.contract.spec.internal;
  * @since 1.0.2
  */
 public final class HttpMethods {
+
+	private static final Log log = LogFactory.getLog(HttpMethods.class);
+
+	public HttpMethods() {
+		log.warn(
+				"WARNING: HttpMethods shouldn't be instantiated. Use its static methods instead.");
+	}
 
 	/**
 	 * The HTTP {@code GET} method.

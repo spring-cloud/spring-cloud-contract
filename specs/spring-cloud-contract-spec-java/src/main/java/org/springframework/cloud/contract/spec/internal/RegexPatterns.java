@@ -20,6 +20,9 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Contains most common regular expression patterns.
  *
@@ -29,8 +32,11 @@ import java.util.stream.Collectors;
  */
 public final class RegexPatterns {
 
+	private static final Log log = LogFactory.getLog(RegexPatterns.class);
+
 	public RegexPatterns() {
-		System.out.println("WARNING: RegexPatterns shouldn't be instantiated");
+		log.warn(
+				"WARNING: RegexPatterns shouldn't be instantiated. Use its static methods instead.");
 	}
 
 	protected static final Pattern TRUE_OR_FALSE = Pattern.compile("(true|false)");

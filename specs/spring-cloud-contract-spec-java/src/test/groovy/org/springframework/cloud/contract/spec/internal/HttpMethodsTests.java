@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Tim Ysewyn
  */
-public class HttpMethodsTests {
+class HttpMethodsTests {
 
 	@Test
 	public void GET() {

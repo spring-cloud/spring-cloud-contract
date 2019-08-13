@@ -22,7 +22,7 @@ import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class KotlinContractConverterTest {
+class KotlinContractConverterTests {
 
     @Test
     fun `accept kts files`() {

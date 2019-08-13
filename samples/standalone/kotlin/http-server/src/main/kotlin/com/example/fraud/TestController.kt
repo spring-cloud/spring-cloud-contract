@@ -52,7 +52,7 @@ class TestController {
 		if (!Arrays.equals(this.request, requestBody)) {
 			throw IllegalStateException("Invalid request body");
 		}
-		return this.response;
+		return response;
 	}
 
 }

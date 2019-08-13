@@ -52,7 +52,7 @@ class FromRequestDsl {
 	fun path() = FromRequestDslProperty(template.escapedPath())
 
 	/**
-	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}* @param index.
+	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}*.
 	 * @param index path index
 	 * @return dsl property
 	 */

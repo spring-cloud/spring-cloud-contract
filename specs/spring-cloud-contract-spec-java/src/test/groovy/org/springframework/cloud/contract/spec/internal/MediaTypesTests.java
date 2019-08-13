@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Tim Ysewyn
  */
-public class MediaTypesTests {
+class MediaTypesTests {
 
 	@Test
 	public void ALL_VALUE() {

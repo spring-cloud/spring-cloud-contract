@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Helper functions for HTTP statuses.
  *
@@ -24,6 +27,13 @@ package org.springframework.cloud.contract.spec.internal;
  * @since 2.0.0
  */
 public final class HttpStatus {
+
+	private static final Log log = LogFactory.getLog(HttpStatus.class);
+
+	public HttpStatus() {
+		log.warn(
+				"WARNING: HttpStatus shouldn't be instantiated. Use its static methods instead.");
+	}
 
 	/**
 	 * The HTTP {@code 100 Continue} status code.
