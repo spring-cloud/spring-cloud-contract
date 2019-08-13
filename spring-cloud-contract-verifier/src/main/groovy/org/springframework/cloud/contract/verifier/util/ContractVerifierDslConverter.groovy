@@ -128,19 +128,16 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 	private static Object toObject(ClassLoader cl, File rootFolder, File dsl) {
 		if (isJava(dsl)) {
 			try {
-				return parseJavaFile(cl, dsl)
+				return parseJavaFile(dsl)
 			}
 			catch (Exception ex) {
-				if (log.isWarnEnabled()) {
-					log.warn("Exception occurred while trying to parse the file [" + dsl + "] as a contract. Will not parse it.", ex)
-				}
-				return null
+				throw new DslParseException("Exception occurred while trying to parse the file [" + dsl + "] as a contract. Will not parse it.", ex)
 			}
 		}
 		return groovyShell(cl, rootFolder).evaluate(dsl)
 	}
 
-	private static Object parseJavaFile(ClassLoader cl, File dsl) {
+	private static Object parseJavaFile(File dsl) {
 		Constructor<?> constructor = classConstructor(dsl)
 		Object newInstance = constructor.newInstance()
 		if (!newInstance instanceof Supplier) {
@@ -161,7 +158,7 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 		if (!compilationResult.wasSuccessful()) {
 			throw new IllegalStateException("Exceptions occurred while trying to compile the file " + compilationResult.compilationMessages)
 		}
-		Class<?> clazz = compilationResult.compiledClasses.find { it.name == fqn}
+		Class<?> clazz = compilationResult.compiledClasses.find { it.name == fqn }
 		if (clazz == null) {
 			throw new IllegalStateException("Class with name [" + fqn + "] not found")
 		}
