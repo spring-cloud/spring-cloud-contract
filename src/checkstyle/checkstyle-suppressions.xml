@@ -45,5 +45,6 @@
 	<suppress files=".*HttpHeaders.*" checks="HideUtility*"/>
 	<suppress files=".*HttpMethods.*" checks="(Javadoc*|HideUtility*)"/>
 	<suppress files=".*HttpStatus.*" checks="HideUtility*"/>
+	<suppress files=".*contractsToCompile.*" checks=".*"/>
 	<suppress files=".*RegexPatterns.*" checks="HideUtility*"/>
 </suppressions>
