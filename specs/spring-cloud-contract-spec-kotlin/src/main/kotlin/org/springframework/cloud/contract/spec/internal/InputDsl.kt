@@ -22,7 +22,7 @@ import org.springframework.cloud.contract.spec.toDslProperty
  * @author Tim Ysewyn
  */
 @ContractDslMarker
-class InputDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
+class InputDsl : CommonDsl() {
 
     private val delegate = Input()
 
@@ -49,47 +49,71 @@ class InputDsl : CommonDsl(), RegexCreatingProperty<ClientDslProperty> {
         this.bodyMatchers = BodyMatchersDsl().apply(configurer).get()
     }
 
-    override fun anyAlphaUnicode(): ClientDslProperty = delegate.anyAlphaUnicode()
+    /* HELPER VARIABLES */
 
-    override fun anyAlphaNumeric(): ClientDslProperty = delegate.anyAlphaNumeric()
+    val anyAlphaUnicode: ClientDslProperty
+        get() = delegate.anyAlphaUnicode()
 
-    override fun anyNumber(): ClientDslProperty = delegate.anyNumber()
+    val anyAlphaNumeric: ClientDslProperty
+        get() = delegate.anyAlphaNumeric()
 
-    override fun anyInteger(): ClientDslProperty = delegate.anyInteger()
+    val anyNumber: ClientDslProperty
+        get() = delegate.anyNumber()
 
-    override fun anyPositiveInt(): ClientDslProperty = delegate.anyPositiveInt()
+    val anyInteger: ClientDslProperty
+        get() = delegate.anyInteger()
 
-    override fun anyDouble(): ClientDslProperty = delegate.anyDouble()
+    val anyPositiveInt: ClientDslProperty
+        get() = delegate.anyPositiveInt()
 
-    override fun anyHex(): ClientDslProperty = delegate.anyHex()
+    val anyDouble: ClientDslProperty
+        get() = delegate.anyDouble()
 
-    override fun aBoolean(): ClientDslProperty = delegate.aBoolean()
+    val anyHex: ClientDslProperty
+        get() = delegate.anyHex()
 
-    override fun anyIpAddress(): ClientDslProperty = delegate.anyIpAddress()
+    val aBoolean: ClientDslProperty
+        get() = delegate.aBoolean()
 
-    override fun anyHostname(): ClientDslProperty = delegate.anyHostname()
+    val anyIpAddress: ClientDslProperty
+        get() = delegate.anyIpAddress()
 
-    override fun anyEmail(): ClientDslProperty = delegate.anyEmail()
+    val anyHostname: ClientDslProperty
+        get() = delegate.anyHostname()
 
-    override fun anyUrl(): ClientDslProperty = delegate.anyUrl()
+    val anyEmail: ClientDslProperty
+        get() = delegate.anyEmail()
 
-    override fun anyHttpsUrl(): ClientDslProperty = delegate.anyHttpsUrl()
+    val anyUrl: ClientDslProperty
+        get() = delegate.anyUrl()
 
-    override fun anyUuid(): ClientDslProperty = delegate.anyUuid()
+    val anyHttpsUrl: ClientDslProperty
+        get() = delegate.anyHttpsUrl()
 
-    override fun anyDate(): ClientDslProperty = delegate.anyDate()
+    val anyUuid: ClientDslProperty
+        get() = delegate.anyUuid()
 
-    override fun anyDateTime(): ClientDslProperty = delegate.anyDateTime()
+    val anyDate: ClientDslProperty
+        get() = delegate.anyDate()
 
-    override fun anyTime(): ClientDslProperty = delegate.anyTime()
+    val anyDateTime: ClientDslProperty
+        get() = delegate.anyDateTime()
 
-    override fun anyIso8601WithOffset(): ClientDslProperty = delegate.anyIso8601WithOffset()
+    val anyTime: ClientDslProperty
+        get() = delegate.anyTime()
 
-    override fun anyNonBlankString(): ClientDslProperty = delegate.anyNonBlankString()
+    val anyIso8601WithOffset: ClientDslProperty
+        get() = delegate.anyIso8601WithOffset()
 
-    override fun anyNonEmptyString(): ClientDslProperty = delegate.anyNonEmptyString()
+    val anyNonBlankString: ClientDslProperty
+        get() = delegate.anyNonBlankString()
 
-    override fun anyOf(vararg values: String?): ClientDslProperty = delegate.anyOf(*values)
+    val anyNonEmptyString: ClientDslProperty
+        get() = delegate.anyNonEmptyString()
+
+    /* HELPER FUNCTIONS */
+
+    fun anyOf(vararg values: String?) = delegate.anyOf(*values)
 
     internal fun get(): Input {
         val input = Input()

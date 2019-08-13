@@ -26,6 +26,67 @@ import java.util.regex.Pattern
  */
 open class CommonDsl {
 
+    /* HELPER VARIABLES */
+
+    /* REGEX */
+
+    val onlyAlphaUnicode: RegexProperty
+        get() = RegexPatterns.onlyAlphaUnicode()
+
+    val alphaNumeric: RegexProperty
+        get() = RegexPatterns.alphaNumeric()
+
+    val number: RegexProperty
+        get() = RegexPatterns.number()
+
+    val positiveInt: RegexProperty
+        get() = RegexPatterns.positiveInt()
+
+    val anyBoolean: RegexProperty
+        get() = RegexPatterns.anyBoolean()
+
+    val anInteger: RegexProperty
+        get() = RegexPatterns.anInteger()
+
+    val aDouble: RegexProperty
+        get() = RegexPatterns.aDouble()
+
+    val ipAddress: RegexProperty
+        get() = RegexPatterns.ipAddress()
+
+    val hostname: RegexProperty
+        get() = RegexPatterns.hostname()
+
+    val email: RegexProperty
+        get() = RegexPatterns.email()
+
+    val anUrl: RegexProperty
+        get() = RegexPatterns.url()
+
+    val anHttpsUrl: RegexProperty
+        get() = RegexPatterns.httpsUrl()
+
+    val uuid: RegexProperty
+        get() = RegexPatterns.uuid()
+
+    val isoDate: RegexProperty
+        get() = RegexPatterns.isoDate()
+
+    val isoDateTime: RegexProperty
+        get() = RegexPatterns.isoDateTime()
+
+    val isoTime: RegexProperty
+        get() = RegexPatterns.isoTime()
+
+    val iso8601WithOffset: RegexProperty
+        get() = RegexPatterns.iso8601WithOffset()
+
+    val nonEmpty: RegexProperty
+        get() = RegexPatterns.nonEmpty()
+
+    val nonBlank: RegexProperty
+        get() = RegexPatterns.nonBlank()
+
     /* HELPER FUNCTIONS */
     
     /**
@@ -137,8 +198,8 @@ open class CommonDsl {
               contentType: DslProperty<Any>) = NamedProperty(name, value, contentType)
 
     fun named(namedMap: Map<String, DslProperty<Any>>) = NamedProperty(namedMap)
-
-    /* REGEX */
+    
+    /* REGEX FUNCTIONS */
 
     fun regexProperty(value: Any) = RegexProperty(value)
 
@@ -147,42 +208,4 @@ open class CommonDsl {
     fun regex(regex: Pattern) = regexProperty(regex)
 
     fun regex(regex: RegexProperty) = regex
-
-    fun onlyAlphaUnicode(): RegexProperty = RegexPatterns.onlyAlphaUnicode()
-
-    fun alphaNumeric(): RegexProperty = RegexPatterns.alphaNumeric()
-
-    fun number(): RegexProperty = RegexPatterns.number()
-
-    fun positiveInt(): RegexProperty = RegexPatterns.positiveInt()
-
-    fun anyBoolean(): RegexProperty = RegexPatterns.anyBoolean()
-
-    fun anInteger(): RegexProperty = RegexPatterns.anInteger()
-
-    fun aDouble(): RegexProperty = RegexPatterns.aDouble()
-
-    fun ipAddress(): RegexProperty = RegexPatterns.ipAddress()
-
-    fun hostname(): RegexProperty = RegexPatterns.hostname()
-
-    fun email(): RegexProperty = RegexPatterns.email()
-
-    fun url(): RegexProperty = RegexPatterns.url()
-
-    fun httpsUrl(): RegexProperty = RegexPatterns.httpsUrl()
-
-    fun uuid(): RegexProperty = RegexPatterns.uuid()
-
-    fun isoDate(): RegexProperty = RegexPatterns.isoDate()
-
-    fun isoDateTime(): RegexProperty = RegexPatterns.isoDateTime()
-
-    fun isoTime(): RegexProperty = RegexPatterns.isoTime()
-
-    fun iso8601WithOffset(): RegexProperty = RegexPatterns.iso8601WithOffset()
-
-    fun nonEmpty(): RegexProperty = RegexPatterns.nonEmpty()
-
-    fun nonBlank(): RegexProperty = RegexPatterns.nonBlank()
 }

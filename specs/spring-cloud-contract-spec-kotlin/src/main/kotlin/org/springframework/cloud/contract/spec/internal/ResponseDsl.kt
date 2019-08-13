@@ -25,7 +25,7 @@ import java.util.regex.Pattern
  * @author Tim Ysewyn
  */
 @ContractDslMarker
-class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
+class ResponseDsl : CommonDsl() {
 
     private val delegate = Response()
 
@@ -67,123 +67,244 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
     /* HTTP STATUS CODES */
     
-    val CONTINUE = code(HttpStatus.CONTINUE)
+    val CONTINUE
+        get() = code(HttpStatus.CONTINUE)
 
-	val SWITCHING_PROTOCOLS = code(HttpStatus.SWITCHING_PROTOCOLS)
+	val SWITCHING_PROTOCOLS
+        get() = code(HttpStatus.SWITCHING_PROTOCOLS)
 
-	val PROCESSING = code(HttpStatus.PROCESSING)
+	val PROCESSING
+        get() = code(HttpStatus.PROCESSING)
 
-	val CHECKPOINT = code(HttpStatus.CHECKPOINT)
+	val CHECKPOINT
+        get() = code(HttpStatus.CHECKPOINT)
 
-    val OK = code(HttpStatus.OK)
+    val OK
+        get() = code(HttpStatus.OK)
 
-	val CREATED = code(HttpStatus.CREATED)
+	val CREATED
+        get() = code(HttpStatus.CREATED)
 
-	val ACCEPTED = code(HttpStatus.ACCEPTED)
+	val ACCEPTED
+        get() = code(HttpStatus.ACCEPTED)
 
-	val NON_AUTHORITATIVE_INFORMATION = code(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
+	val NON_AUTHORITATIVE_INFORMATION
+        get() = code(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
 
-	val NO_CONTENT = code(HttpStatus.NO_CONTENT)
+	val NO_CONTENT
+        get() = code(HttpStatus.NO_CONTENT)
 
-	val RESET_CONTENT = code(HttpStatus.RESET_CONTENT)
+	val RESET_CONTENT
+        get() = code(HttpStatus.RESET_CONTENT)
 
-	val PARTIAL_CONTENT = code(HttpStatus.PARTIAL_CONTENT)
+	val PARTIAL_CONTENT
+        get() = code(HttpStatus.PARTIAL_CONTENT)
 
-	val MULTI_STATUS = code(HttpStatus.MULTI_STATUS)
+	val MULTI_STATUS
+        get() = code(HttpStatus.MULTI_STATUS)
 
-	val ALREADY_REPORTED = code(HttpStatus.ALREADY_REPORTED)
+	val ALREADY_REPORTED
+        get() = code(HttpStatus.ALREADY_REPORTED)
 
-	val IM_USED = code(HttpStatus.IM_USED)
+	val IM_USED
+        get() = code(HttpStatus.IM_USED)
 
-	val MULTIPLE_CHOICES = code(HttpStatus.MULTIPLE_CHOICES)
+	val MULTIPLE_CHOICES
+        get() = code(HttpStatus.MULTIPLE_CHOICES)
 
-	val MOVED_PERMANENTLY = code(HttpStatus.MOVED_PERMANENTLY)
+	val MOVED_PERMANENTLY
+        get() = code(HttpStatus.MOVED_PERMANENTLY)
 
-	val FOUND = code(HttpStatus.FOUND)
+	val FOUND
+        get() = code(HttpStatus.FOUND)
 
-	val SEE_OTHER = code(HttpStatus.SEE_OTHER)
+	val SEE_OTHER
+        get() = code(HttpStatus.SEE_OTHER)
 
-	val NOT_MODIFIED = code(HttpStatus.NOT_MODIFIED)
+	val NOT_MODIFIED
+        get() = code(HttpStatus.NOT_MODIFIED)
 
-	val TEMPORARY_REDIRECT = code(HttpStatus.TEMPORARY_REDIRECT)
+	val TEMPORARY_REDIRECT
+        get() = code(HttpStatus.TEMPORARY_REDIRECT)
 
-	val PERMANENT_REDIRECT = code(HttpStatus.PERMANENT_REDIRECT)
+	val PERMANENT_REDIRECT
+        get() = code(HttpStatus.PERMANENT_REDIRECT)
 
-	val BAD_REQUEST = code(HttpStatus.BAD_REQUEST)
+	val BAD_REQUEST
+        get() = code(HttpStatus.BAD_REQUEST)
 
-	val UNAUTHORIZED = code(HttpStatus.UNAUTHORIZED)
+	val UNAUTHORIZED
+        get() = code(HttpStatus.UNAUTHORIZED)
 
-	val PAYMENT_REQUIRED = code(HttpStatus.PAYMENT_REQUIRED)
+	val PAYMENT_REQUIRED
+        get() = code(HttpStatus.PAYMENT_REQUIRED)
 
-	val FORBIDDEN = code(HttpStatus.FORBIDDEN)
+	val FORBIDDEN
+        get() = code(HttpStatus.FORBIDDEN)
 
-	val NOT_FOUND = code(HttpStatus.NOT_FOUND)
+	val NOT_FOUND
+        get() = code(HttpStatus.NOT_FOUND)
 
-	val METHOD_NOT_ALLOWED = code(HttpStatus.METHOD_NOT_ALLOWED)
+	val METHOD_NOT_ALLOWED
+        get() = code(HttpStatus.METHOD_NOT_ALLOWED)
 
-	val NOT_ACCEPTABLE = code(HttpStatus.NOT_ACCEPTABLE)
+	val NOT_ACCEPTABLE
+        get() = code(HttpStatus.NOT_ACCEPTABLE)
 
-	val PROXY_AUTHENTICATION_REQUIRED = code(HttpStatus.PROXY_AUTHENTICATION_REQUIRED)
+	val PROXY_AUTHENTICATION_REQUIRED
+        get() = code(HttpStatus.PROXY_AUTHENTICATION_REQUIRED)
 
-	val REQUEST_TIMEOUT = code(HttpStatus.REQUEST_TIMEOUT)
+	val REQUEST_TIMEOUT
+        get() = code(HttpStatus.REQUEST_TIMEOUT)
 
-	val CONFLICT = code(HttpStatus.CONFLICT)
+	val CONFLICT
+        get() = code(HttpStatus.CONFLICT)
 
-	val GONE = code(HttpStatus.GONE)
+	val GONE
+        get() = code(HttpStatus.GONE)
 
-	val LENGTH_REQUIRED = code(HttpStatus.LENGTH_REQUIRED)
+	val LENGTH_REQUIRED
+        get() = code(HttpStatus.LENGTH_REQUIRED)
 
-	val PRECONDITION_FAILED = code(HttpStatus.PRECONDITION_FAILED)
+	val PRECONDITION_FAILED
+        get() = code(HttpStatus.PRECONDITION_FAILED)
 
-	val PAYLOAD_TOO_LARGE = code(HttpStatus.PAYLOAD_TOO_LARGE)
+	val PAYLOAD_TOO_LARGE
+        get() = code(HttpStatus.PAYLOAD_TOO_LARGE)
 
-	val UNSUPPORTED_MEDIA_TYPE = code(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+	val UNSUPPORTED_MEDIA_TYPE
+        get() = code(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
 
-	val REQUESTED_RANGE_NOT_SATISFIABLE = code(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
+	val REQUESTED_RANGE_NOT_SATISFIABLE
+        get() = code(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
 
-	val EXPECTATION_FAILED = code(HttpStatus.EXPECTATION_FAILED)
+	val EXPECTATION_FAILED
+        get() = code(HttpStatus.EXPECTATION_FAILED)
 
-	val I_AM_A_TEAPOT = code(HttpStatus.I_AM_A_TEAPOT)
+	val I_AM_A_TEAPOT
+        get() = code(HttpStatus.I_AM_A_TEAPOT)
 
-	val UNPROCESSABLE_ENTITY = code(HttpStatus.UNPROCESSABLE_ENTITY)
+	val UNPROCESSABLE_ENTITY
+        get() = code(HttpStatus.UNPROCESSABLE_ENTITY)
 
-	val LOCKED = code(HttpStatus.LOCKED)
+	val LOCKED
+        get() = code(HttpStatus.LOCKED)
 
-	val FAILED_DEPENDENCY = code(HttpStatus.FAILED_DEPENDENCY)
+	val FAILED_DEPENDENCY
+        get() = code(HttpStatus.FAILED_DEPENDENCY)
 
-	val UPGRADE_REQUIRED = code(HttpStatus.UPGRADE_REQUIRED)
+	val UPGRADE_REQUIRED
+        get() = code(HttpStatus.UPGRADE_REQUIRED)
 
-	val PRECONDITION_REQUIRED = code(HttpStatus.PRECONDITION_REQUIRED)
+	val PRECONDITION_REQUIRED
+        get() = code(HttpStatus.PRECONDITION_REQUIRED)
 
-	val TOO_MANY_REQUESTS = code(HttpStatus.TOO_MANY_REQUESTS)
+	val TOO_MANY_REQUESTS
+        get() = code(HttpStatus.TOO_MANY_REQUESTS)
 
-	val REQUEST_HEADER_FIELDS_TOO_LARGE = code(HttpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE)
+	val REQUEST_HEADER_FIELDS_TOO_LARGE
+        get() = code(HttpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE)
 
-	val UNAVAILABLE_FOR_LEGAL_REASONS = code(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS)
+	val UNAVAILABLE_FOR_LEGAL_REASONS
+        get() = code(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS)
 
-	val INTERNAL_SERVER_ERROR = code(HttpStatus.INTERNAL_SERVER_ERROR)
+	val INTERNAL_SERVER_ERROR
+        get() = code(HttpStatus.INTERNAL_SERVER_ERROR)
 
-	val NOT_IMPLEMENTED = code(HttpStatus.NOT_IMPLEMENTED)
+	val NOT_IMPLEMENTED
+        get() = code(HttpStatus.NOT_IMPLEMENTED)
 
-	val BAD_GATEWAY = code(HttpStatus.BAD_GATEWAY)
+	val BAD_GATEWAY
+        get() = code(HttpStatus.BAD_GATEWAY)
 
-	val SERVICE_UNAVAILABLE = code(HttpStatus.SERVICE_UNAVAILABLE)
+	val SERVICE_UNAVAILABLE
+        get() = code(HttpStatus.SERVICE_UNAVAILABLE)
 
-	val GATEWAY_TIMEOUT = code(HttpStatus.GATEWAY_TIMEOUT)
+	val GATEWAY_TIMEOUT
+        get() = code(HttpStatus.GATEWAY_TIMEOUT)
 
-	val HTTP_VERSION_NOT_SUPPORTED = code(HttpStatus.HTTP_VERSION_NOT_SUPPORTED)
+	val HTTP_VERSION_NOT_SUPPORTED
+        get() = code(HttpStatus.HTTP_VERSION_NOT_SUPPORTED)
 
-	val VARIANT_ALSO_NEGOTIATES = code(HttpStatus.VARIANT_ALSO_NEGOTIATES)
+	val VARIANT_ALSO_NEGOTIATES
+        get() = code(HttpStatus.VARIANT_ALSO_NEGOTIATES)
 
-	val INSUFFICIENT_STORAGE = code(HttpStatus.INSUFFICIENT_STORAGE)
+	val INSUFFICIENT_STORAGE
+        get() = code(HttpStatus.INSUFFICIENT_STORAGE)
 
-	val LOOP_DETECTED = code(HttpStatus.LOOP_DETECTED)
+	val LOOP_DETECTED
+        get() = code(HttpStatus.LOOP_DETECTED)
 
-	val BANDWIDTH_LIMIT_EXCEEDED = code(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)
+	val BANDWIDTH_LIMIT_EXCEEDED
+        get() = code(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)
 
-	val NOT_EXTENDED = code(HttpStatus.NOT_EXTENDED)
+	val NOT_EXTENDED
+        get() = code(HttpStatus.NOT_EXTENDED)
 
-	val NETWORK_AUTHENTICATION_REQUIRED = code(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
+	val NETWORK_AUTHENTICATION_REQUIRED
+        get() = code(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
+
+	/* REGEX */
+
+	val anyAlphaUnicode
+        get() = delegate.anyAlphaUnicode()
+
+	val anyAlphaNumeric
+        get() = delegate.anyAlphaNumeric()
+
+	val anyNumber
+        get() = delegate.anyNumber()
+
+	val anyInteger
+        get() = delegate.anyInteger()
+
+	val anyPositiveInt
+        get() = delegate.anyPositiveInt()
+
+	val anyDouble
+        get() = delegate.anyDouble()
+
+	val anyHex
+        get() = delegate.anyHex()
+
+	val aBoolean
+        get() = delegate.aBoolean()
+
+	val anyIpAddress
+        get() = delegate.anyIpAddress()
+
+	val anyHostname
+        get() = delegate.anyHostname()
+
+	val anyEmail
+        get() = delegate.anyEmail()
+
+	val anyUrl
+        get() = delegate.anyUrl()
+
+	val anyHttpsUrl
+        get() = delegate.anyHttpsUrl()
+
+	val anyUuid
+        get() = delegate.anyUuid()
+
+	val anyDate
+        get() = delegate.anyDate()
+
+	val anyDateTime
+        get() = delegate.anyDateTime()
+
+	val anyTime
+        get() = delegate.anyTime()
+
+	val anyIso8601WithOffset
+        get() = delegate.anyIso8601WithOffset()
+
+	val anyNonBlankString
+        get() = delegate.anyNonBlankString()
+
+	val anyNonEmptyString
+        get() = delegate.anyNonEmptyString()
 
     /* HELPER FUNCTIONS */
 
@@ -191,87 +312,33 @@ class ResponseDsl : CommonDsl(), RegexCreatingProperty<ServerDslProperty> {
 
     fun v(value: ClientDslProperty) = delegate.value(value)
 
-    fun `$`(value: ClientDslProperty) = delegate.value(value)
-
     fun value(value: DslProperty<Any>) = delegate.value(value)
 
     fun v(value: DslProperty<Any>) = delegate.value(value)
-
-    fun `$`(value: DslProperty<Any>) = delegate.value(value)
 
     fun value(value: Pattern) = delegate.value(value)
 
     fun v(value: Pattern) = delegate.value(value)
 
-    fun `$`(value: Pattern) = delegate.value(value)
-
     fun value(value: RegexProperty) = delegate.value(value)
 
     fun v(value: RegexProperty) = delegate.value(value)
-
-    fun `$`(value: RegexProperty) = delegate.value(value)
 
     fun value(value: Any?) = delegate.value(value)
 
     fun v(value: Any?) = delegate.value(value)
 
-    fun `$`(value: Any?) = delegate.value(value)
-
     fun value(client: ClientDslProperty, server: ServerDslProperty) = delegate.value(client, server)
 
     fun v(client: ClientDslProperty, server: ServerDslProperty) = delegate.value(client, server)
-
-    fun `$`(client: ClientDslProperty, server: ServerDslProperty) = delegate.value(client, server)
 
     fun value(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
 
     fun v(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
 
-    fun `$`(server: ServerDslProperty, client: ClientDslProperty) = delegate.value(client, server)
-
     fun fromRequest() = FromRequestDsl()
 
-    override fun anyAlphaUnicode() = delegate.anyAlphaUnicode()
-
-    override fun anyAlphaNumeric() = delegate.anyAlphaNumeric()
-
-    override fun anyNumber() = delegate.anyNumber()
-
-    override fun anyInteger() = delegate.anyInteger()
-
-    override fun anyPositiveInt() = delegate.anyPositiveInt()
-
-    override fun anyDouble() = delegate.anyDouble()
-
-    override fun anyHex() = delegate.anyHex()
-
-    override fun aBoolean() = delegate.aBoolean()
-
-    override fun anyIpAddress() = delegate.anyIpAddress()
-
-    override fun anyHostname() = delegate.anyHostname()
-
-    override fun anyEmail() = delegate.anyEmail()
-
-    override fun anyUrl() = delegate.anyUrl()
-
-    override fun anyHttpsUrl() = delegate.anyHttpsUrl()
-
-    override fun anyUuid() = delegate.anyUuid()
-
-    override fun anyDate() = delegate.anyDate()
-
-    override fun anyDateTime() = delegate.anyDateTime()
-
-    override fun anyTime() = delegate.anyTime()
-
-    override fun anyIso8601WithOffset() = delegate.anyIso8601WithOffset()
-
-    override fun anyNonBlankString() = delegate.anyNonBlankString()
-
-    override fun anyNonEmptyString() = delegate.anyNonEmptyString()
-
-    override fun anyOf(vararg values: String?) = delegate.anyOf(*values)
+	fun anyOf(vararg values: String?) = delegate.anyOf(*values)
 
     internal fun get(): Response {
         val response = Response()

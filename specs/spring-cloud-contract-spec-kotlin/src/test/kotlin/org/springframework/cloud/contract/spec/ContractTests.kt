@@ -193,16 +193,16 @@ class ContractTests {
 		val contract = contract {
 			input {
 				messageFrom("input")
-				messageBody("foo" to anyNonBlankString())
+				messageBody("foo" to anyNonBlankString)
 				headers {
-					header("foo", anyNumber())
+					header("foo", anyNumber)
 				}
 			}
 			outputMessage {
 				sentTo("output")
-				body("foo2" to anyNonEmptyString())
+				body("foo2" to anyNonEmptyString)
 				headers {
-					header("foo2", anyIpAddress())
+					header("foo2", anyIpAddress)
 				}
 			}
 		}
@@ -512,7 +512,7 @@ then:
 				url = url("/path")
 				body = body("id" to mapOf("value" to "132"))
 				bodyMatchers {
-					jsonPath( "$.id.value", byRegex(anInteger()))
+					jsonPath( "$.id.value", byRegex(anInteger))
 				}
 			}
 			response {
@@ -526,7 +526,7 @@ then:
 					contentType = APPLICATION_JSON
 				}
 				bodyMatchers {
-					jsonPath("$.id.value", byTimestamp())
+					jsonPath("$.id.value", byTimestamp)
 				}
 			}
 		}

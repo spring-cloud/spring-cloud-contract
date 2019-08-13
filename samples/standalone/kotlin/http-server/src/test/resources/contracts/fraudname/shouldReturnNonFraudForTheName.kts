@@ -22,7 +22,7 @@ contract {
 	request {
 		method = PUT
 		url = url("/frauds/name")
-		body = body("name" to `$`(anyAlphaUnicode()))
+		body = body("name" to value(anyAlphaUnicode))
 		headers {
 			contentType = "application/json"
 		}

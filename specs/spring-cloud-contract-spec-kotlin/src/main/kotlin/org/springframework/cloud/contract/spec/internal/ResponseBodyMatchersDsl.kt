@@ -21,9 +21,11 @@ package org.springframework.cloud.contract.spec.internal
  */
 class ResponseBodyMatchersDsl: BodyMatchersDsl() {
 
-	fun byType() = MatchingTypeValue(MatchingType.TYPE)
+	val byType
+        get() = MatchingTypeValue(MatchingType.TYPE)
 
-	fun byNull() = MatchingTypeValue(MatchingType.NULL)
+	val byNull
+        get() = MatchingTypeValue(MatchingType.NULL)
 
 	fun byCommand(execute: String) = MatchingTypeValue().apply {
 		type = MatchingType.COMMAND

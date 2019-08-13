@@ -46,19 +46,27 @@ open class BodyMatchersDsl {
 		this.xPathMatchers[path] = matcher
 	}
 
-	fun byDate() = MatchingTypeValue(MatchingType.DATE, RegexPatterns.isoDate())
+	/* HELPER VARIABLES */
 
-	fun byTime() = MatchingTypeValue(MatchingType.TIME, RegexPatterns.isoTime())
+	val byDate
+		get() = MatchingTypeValue(MatchingType.DATE, RegexPatterns.isoDate())
 
-	fun byTimestamp() = MatchingTypeValue(MatchingType.TIMESTAMP, RegexPatterns.isoDateTime())
+	val byTime
+		get() = MatchingTypeValue(MatchingType.TIME, RegexPatterns.isoTime())
 
-	fun byRegex(regex: String)= byRegex(Pattern.compile(regex))
+	val byTimestamp
+		get() = MatchingTypeValue(MatchingType.TIMESTAMP, RegexPatterns.isoDateTime())
+
+	val byEquality
+		get() = MatchingTypeValue(MatchingType.EQUALITY)
+
+	/* HELPER FUNCTIONS */
+
+	fun byRegex(regex: String) = byRegex(Pattern.compile(regex))
 
 	fun byRegex(regex: RegexProperty) = RegexMatchingTypeValue(MatchingType.REGEX, regex)
 
 	fun byRegex(regex: Pattern) = RegexMatchingTypeValue(MatchingType.REGEX, RegexProperty(regex))
-
-	fun byEquality() = MatchingTypeValue(MatchingType.EQUALITY)
 
 	fun byType(configurer: MatchingTypeValueHolder.() -> Unit): MatchingTypeValue = MatchingTypeValueHolder().apply(configurer).matchingTypeValue
 
