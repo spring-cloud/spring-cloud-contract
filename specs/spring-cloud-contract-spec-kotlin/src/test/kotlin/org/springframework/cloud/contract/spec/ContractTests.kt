@@ -214,8 +214,11 @@ class ContractTests {
 
 	@Test
 	fun `should set a description`() {
-		val contract = contract {
-			description = """
+		val contract =
+// @formatter: off
+// tag::description[]
+contract {
+	description = """
 given:
 	An input
 when:
@@ -223,8 +226,9 @@ when:
 then:
 	Output
 """
-		}
-
+}
+// end::description[]
+// @formatter: on
 		assertDoesNotThrow {
 			Contract.assertContract(contract)
 		}.also {
@@ -241,9 +245,12 @@ then:
 
 	@Test
 	fun `should set a name`() {
-		val contract = contract {
+		val contract =
+		// tag::name[]
+		contract {
 			name = "some_special_name"
 		}
+		// end::name[]
 
 		assertDoesNotThrow {
 			Contract.assertContract(contract)
@@ -254,9 +261,12 @@ then:
 
 	@Test
 	fun `should mark a contract ignored`() {
-		val contract = contract {
+		val contract =
+		// tag::ignored[]
+		contract {
 			ignored = true
 		}
+		// end::ignored[]
 
 		assertDoesNotThrow {
 			Contract.assertContract(contract)
@@ -267,9 +277,12 @@ then:
 
 	@Test
 	fun `should mark a contract in progress`() {
-		val contract = contract {
+		val contract =
+		// tag::in_progress[]
+		contract {
 			inProgress = true
 		}
+		// end::in_progress[]
 
 		assertDoesNotThrow {
 			Contract.assertContract(contract)

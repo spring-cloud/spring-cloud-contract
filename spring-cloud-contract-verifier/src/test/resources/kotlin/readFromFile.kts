@@ -14,32 +14,24 @@
  * limitations under the License.
  */
 
-package fraud
-
+// tag::class[]
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
-import org.springframework.cloud.contract.spec.internal.HttpStatus
 
-// tag::contract[]
 contract {
 	request {
+		url = url("/1")
 		method = PUT
-		url = url("/fraudcheck")
-		body = body(
-				"client.id" to value(consumer(regex("[0-9]{10}")), producer("1234567890")),
-				"loanAmount" to 123.123)
 		headers {
-			contentType = "application/json"
+			contentType = APPLICATION_JSON
 		}
+		body = bodyFromFile("request.json")
 	}
 	response {
 		status = OK
-		body = body(
-				"fraudCheckStatus" to "OK",
-				"rejection.reason" to value(consumer(null), producer(execute("assertThatRejectionReasonIsNull(\$it)")))
-		)
+		body = bodyFromFile("response.json")
 		headers {
-			contentType = "application/json"
+			contentType = APPLICATION_JSON
 		}
 	}
 }
-// end::contract[]
+// end::class[]

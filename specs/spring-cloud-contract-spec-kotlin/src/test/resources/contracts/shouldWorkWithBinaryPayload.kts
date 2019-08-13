@@ -16,8 +16,8 @@
 
 package contracts
 
+//tag::class[]
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
-import org.springframework.cloud.contract.spec.internal.HttpMethods
 
 contract {
 	request {
@@ -36,3 +36,4 @@ contract {
 		}
 	}
 }
+//end::class[]

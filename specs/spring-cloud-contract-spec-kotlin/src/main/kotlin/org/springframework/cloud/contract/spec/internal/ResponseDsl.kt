@@ -39,7 +39,7 @@ class ResponseDsl : CommonDsl() {
 
     fun code(code: Int): DslProperty<Any> = code.toDslProperty()
 
-    fun fixedMilliseconds(delay: Long) = delay.toDslProperty()
+    fun fixedMilliseconds(delay: Long): DslProperty<Any> = delay.toDslProperty()
 
     fun headers(headers: HeadersDsl.() -> Unit) {
         this.headers = ResponseHeadersDsl().apply(headers).get()
