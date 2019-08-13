@@ -44,8 +44,15 @@ public class OptionalProperty implements Serializable, CanBeDynamic {
 	}
 
 	public String value() {
-		return this.value instanceof RegexProperty
-				? ((RegexProperty) this.value).pattern() : this.value.toString();
+		if (this.value == null) {
+			return "";
+		}
+		else if (this.value instanceof RegexProperty) {
+			return ((RegexProperty) this.value).pattern();
+		}
+		else {
+			return this.value.toString();
+		}
 	}
 
 	protected Pattern optionalPatternValue() {

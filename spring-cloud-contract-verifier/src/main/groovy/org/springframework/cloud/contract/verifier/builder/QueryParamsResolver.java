@@ -34,12 +34,12 @@ interface QueryParamsResolver {
 			return resolveParamValue(((OptionalProperty) value).optionalPattern());
 		}
 		else if (value instanceof MatchingStrategy) {
-			return ((MatchingStrategy) value).getServerValue().toString();
+			return resolveParamValue(((MatchingStrategy) value).getServerValue());
 		}
 		else if (value instanceof DslProperty) {
 			return resolveParamValue(((DslProperty) value).getServerValue());
 		}
-		return value.toString();
+		return value == null ? "null" : value.toString();
 	}
 
 }
