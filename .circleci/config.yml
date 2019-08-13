@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: cloudpipelines/pipeline-base
-    environment:WW
+    environment:
       JAVA_TOOL_OPTIONS: "-Xms64m -Xmx300m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms64m -Xmx300m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false'
       TERM: dumb
