@@ -57,7 +57,7 @@ contracts {
 	testFramework = 'Spock'
 }
 
-generateContractTests.dependsOn generateClientStubs
+project.tasks.named("generateContractTests").get().dependsOn project.tasks.named("generateClientStubs")
 
 test {
 	testLogging {

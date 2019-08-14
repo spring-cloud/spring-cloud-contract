@@ -128,5 +128,5 @@ configure(project(':loanApplicationService')) {
 		into "src/test/resources/"
 	}
 
-	generateContractTests.dependsOn('copyCollaboratorStubs')
+	project.tasks.named("generateContractTests").get().dependsOn('copyCollaboratorStubs')
 }

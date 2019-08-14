@@ -31,7 +31,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
 import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
@@ -149,12 +148,10 @@ class StubRunnerFactory {
 
 	private void generateNewMappings(Path path) {
 		File unpackedLocation = path.toFile();
-		ContractVerifierConfigProperties configProperties = new ContractVerifierConfigProperties();
-		configProperties
-				.setContractsDslDir(subfolderIfPresent(unpackedLocation, "contracts"));
-		configProperties
-				.setStubsOutputDir(subfolderIfPresent(unpackedLocation, "mappings"));
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(configProperties);
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(
+				subfolderIfPresent(unpackedLocation, "mappings"),
+				subfolderIfPresent(unpackedLocation, "contracts"), new ArrayList<>(),
+				".*", false);
 		converter.processFiles();
 	}
 

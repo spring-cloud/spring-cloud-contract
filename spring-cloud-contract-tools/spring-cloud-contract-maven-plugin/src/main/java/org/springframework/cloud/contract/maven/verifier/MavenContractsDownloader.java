@@ -106,15 +106,24 @@ class MavenContractsDownloader {
 			this.log.info(
 					"Another mojo has downloaded the contracts - will reuse them from ["
 							+ downloadedContractsDir + "]");
-			contractDownloader().updatePropertiesWithInclusion(downloadedContractsDir,
-					config);
+			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader()
+					.createNewInclusionProperties(downloadedContractsDir);
+			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
+			config.setIncludedRootFolderAntPattern(
+					inclusionProperties.getIncludedRootFolderAntPattern());
 			return downloadedContractsDir;
 		}
 		else if (shouldDownloadContracts()) {
 			this.log.info(
 					"Download dependency is provided - will retrieve contracts from a remote location");
-			File downloadedContracts = contractDownloader()
-					.unpackedDownloadedContracts(config);
+			final ContractDownloader contractDownloader = contractDownloader();
+			final File downloadedContracts = contractDownloader
+					.unpackAndDownloadContracts();
+			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader
+					.createNewInclusionProperties(downloadedContracts);
+			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
+			config.setIncludedRootFolderAntPattern(
+					inclusionProperties.getIncludedRootFolderAntPattern());
 			this.project.getProperties().setProperty(CONTRACTS_DIRECTORY_PROP,
 					downloadedContracts.getAbsolutePath());
 			return downloadedContracts;

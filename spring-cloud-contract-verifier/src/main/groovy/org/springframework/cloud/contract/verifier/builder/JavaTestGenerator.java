@@ -121,6 +121,7 @@ public class JavaTestGenerator implements SingleTestGenerator {
 		// @formatter:on
 	}
 
+	@Deprecated
 	@Override
 	public String fileExtension(ContractVerifierConfigProperties properties) {
 		return properties.getTestFramework().getClassExtension();

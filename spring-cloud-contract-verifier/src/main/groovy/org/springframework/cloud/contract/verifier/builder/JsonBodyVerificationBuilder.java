@@ -34,7 +34,6 @@ import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.MatchingType;
 import org.springframework.cloud.contract.spec.internal.RegexProperty;
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
@@ -53,7 +52,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 
 	private static final String FROM_REQUEST_PATH = "path";
 
-	private final ContractVerifierConfigProperties configProperties;
+	private final boolean assertJsonSize;
 
 	private final TemplateProcessor templateProcessor;
 
@@ -69,11 +68,11 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	// Passing way more arguments here than I would like to, but since we are planning a
 	// major
 	// refactoring of this module for Hoxton release, leaving it this way for now
-	JsonBodyVerificationBuilder(ContractVerifierConfigProperties configProperties,
+	JsonBodyVerificationBuilder(boolean assertJsonSize,
 			TemplateProcessor templateProcessor, ContractTemplate contractTemplate,
 			Contract contract, Optional<String> lineSuffix,
 			Function<String, String> postProcessJsonPathCall) {
-		this.configProperties = configProperties;
+		this.assertJsonSize = assertJsonSize;
 		this.templateProcessor = templateProcessor;
 		this.contractTemplate = contractTemplate;
 		this.contract = contract;
@@ -107,7 +106,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 				? TestSideRequestTemplateModel.from(contract.getRequest()) : null;
 		convertedResponseBody = MapConverter.transformValues(convertedResponseBody,
 				returnReferencedEntries(templateModel), parsingClosure);
-		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties)
+		JsonPaths jsonPaths = new JsonToJsonPathsConverter(assertJsonSize)
 				.transformToJsonPathWithTestsSideValues(convertedResponseBody,
 						parsingClosure);
 		DocumentContext finalParsedRequestBody = parsedRequestBody;

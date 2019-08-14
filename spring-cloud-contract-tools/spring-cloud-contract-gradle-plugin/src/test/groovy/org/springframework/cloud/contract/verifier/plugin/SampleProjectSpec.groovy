@@ -16,8 +16,11 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import org.gradle.testkit.runner.BuildResult
 import org.junit.Ignore
 import spock.lang.Stepwise
+
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 @Stepwise
 @Ignore
@@ -32,22 +35,33 @@ class SampleProjectSpec extends ContractVerifierIntegrationSpec {
 	def "should pass basic flow for Spock"() {
 		given:
 			assert fileExists('build.gradle')
-		expect:
+		when:
 			String[] args = ["check", "publishToMavenLocal", "--debug"] as String[]
 			if (WORK_OFFLINE) {
 				args << "--offline"
 			}
 			runTasksSuccessfully(args)
+		then:
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+		when: "running generation without change inputs"
+			BuildResult secondExecutionResult = runTasksSuccessfully()
+		then: "tasks should be up-to-date"
+			validateTasksOutcome(secondExecutionResult, UP_TO_DATE, 'generateClientStubs', 'generateContractTests', 'copyContracts')
+
 	}
 
 	def "should pass basic flow for JUnit"() {
 		given:
 			switchToJunitTestFramework()
 			assert fileExists('build.gradle')
-		expect:
+		when:
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
+		then:
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+		when: "running generation without change inputs"
+			BuildResult secondExecutionResult = runTasksSuccessfully()
+		then: "tasks should be up-to-date"
+			validateTasksOutcome(secondExecutionResult, UP_TO_DATE, 'generateClientStubs', 'generateContractTests', 'copyContracts')
 	}
 
 }

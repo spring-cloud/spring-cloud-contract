@@ -57,14 +57,20 @@ class JsonToJsonPathsConverter {
 	private static final String ANY_ARRAY_NOTATION_IN_JSONPATH = "[*]"
 	private static final String DESCENDANT_OPERATOR = ".."
 
-	private final ContractVerifierConfigProperties configProperties
+	private final boolean assertJsonSize
 
+	// Use constructor with dedicated input param instead
+	@Deprecated
 	JsonToJsonPathsConverter(ContractVerifierConfigProperties configProperties) {
-		this.configProperties = configProperties
+		assertJsonSize = configProperties.assertJsonSize
+	}
+
+	JsonToJsonPathsConverter(boolean assertJsonSize) {
+		this.assertJsonSize = assertJsonSize
 	}
 
 	JsonToJsonPathsConverter() {
-		this(new ContractVerifierConfigProperties())
+		this(false)
 		if (log.isTraceEnabled()) {
 			log.trace("Creating JsonToJsonPaths converter with default properties")
 		}
@@ -401,7 +407,7 @@ class JsonToJsonPathsConverter {
 	// Size verification: https://github.com/Codearte/accurest/issues/279
 	private void addSizeVerificationForListWithPrimitives(MethodBufferingJsonVerifiable key, Closure closure, List value) {
 		String systemPropValue = System.getProperty(SIZE_ASSERTION_SYSTEM_PROP)
-		Boolean configPropValue = configProperties.assertJsonSize
+		Boolean configPropValue = assertJsonSize
 		if ((systemPropValue != null && Boolean.parseBoolean(systemPropValue))
 				||
 				configPropValue && listContainsOnlyPrimitives(value)) {

@@ -92,7 +92,7 @@ class GenericJsonBodyThen implements Then {
 	private void addJsonBodyVerification(SingleContractMetadata contractMetadata,
 			Object responseBody, BodyMatchers bodyMatchers) {
 		JsonBodyVerificationBuilder jsonBodyVerificationBuilder = new JsonBodyVerificationBuilder(
-				this.generatedClassMetaData.configProperties, this.templateProcessor,
+				this.generatedClassMetaData.configProperties.getAssertJsonSize(), this.templateProcessor,
 				this.contractTemplate, contractMetadata.getContract(),
 				Optional.of(this.blockBuilder.getLineEnding()),
 				bodyParser::postProcessJsonPath);

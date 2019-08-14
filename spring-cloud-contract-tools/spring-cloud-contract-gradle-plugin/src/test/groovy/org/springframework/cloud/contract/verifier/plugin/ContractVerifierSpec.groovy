@@ -1,8 +1,9 @@
 package org.springframework.cloud.contract.verifier.plugin
 
-import org.gradle.api.Task
 import org.gradle.api.internal.project.DefaultProject
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.GroovyPlugin
+import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.testfixtures.ProjectBuilder
@@ -12,92 +13,71 @@ class ContractVerifierSpec extends Specification {
 	DefaultProject project
 
 	def setup() {
-		def dateString = new Date().format("yyyy-MM-dd_HH-mm-ss")
-		def testFolder = new File("build/generated-tests/${getClass().simpleName}/${dateString}")
+		String dateString = new Date().format("yyyy-MM-dd_HH-mm-ss")
+		File testFolder = new File("build/generated-tests/${getClass().simpleName}/${dateString}")
 		testFolder.mkdirs()
 		project = (DefaultProject) ProjectBuilder.builder().withProjectDir(testFolder).build()
+		project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 	}
 
 	def "should apply groovy plugin"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
 			project.plugins.hasPlugin(GroovyPlugin)
 	}
 
 	def "should create contracts extension"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
 			project.extensions.findByType(ContractVerifierExtension) != null
 	}
 
 	def "should create generateContractTests task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
-			project.tasks.findByName("generateContractTests") != null
+			project.tasks.named("generateContractTests") != null
 	}
 
 	def "should configure generateContractTests task as a dependency of the check task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
-			project.tasks.check.getDependsOn().contains("generateContractTests")
+			project.tasks.check.getDependsOn().contains(project.tasks.named("generateContractTests"))
 	}
 
 	def "should create generateClientStubs task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
-			project.tasks.findByName("generateClientStubs") != null
+			project.tasks.named("generateClientStubs") != null
 	}
 
 	def "should create verifierStubsJar task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
-			project.tasks.findByName("verifierStubsJar") != null
+			project.tasks.named("verifierStubsJar") != null
 	}
 
 	def "should configure generateClientStubs task as a dependency of the verifierStubsJar task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
-			project.tasks.verifierStubsJar.getDependsOn().contains("generateClientStubs")
+			project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("generateClientStubs"))
 	}
 
 	def "should configure generateClientStubs task as a dependency of the publishStubsToScm task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
-			project.tasks.publishStubsToScm.getDependsOn().contains("generateClientStubs")
+			project.tasks.publishStubsToScm.getDependsOn().contains(project.tasks.named("generateClientStubs"))
 	}
 
 	def "should create copyContracts task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
 		expect:
-			project.tasks.findByName("copyContracts") != null
+			project.tasks.named("copyContracts") != null
 	}
 
 	def "should configure copyContracts task as a dependency of the verifierStubsJar task"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-			Task copyContracts = project.tasks.copyContracts
-			assert copyContracts != null
-
 		expect:
-			project.tasks.verifierStubsJar.getDependsOn().contains(copyContracts)
+			project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("copyContracts"))
+	}
+
+	def "should create initContracts task"() {
+		expect:
+			project.tasks.named("initContracts") != null
+	}
+
+	def "should configure initContracts task as a dependency of the copyContracts task"() {
+		expect:
+			project.tasks.copyContracts.getDependsOn().contains(project.tasks.named("initContracts"))
 	}
 
 	/**
@@ -112,22 +92,23 @@ class ContractVerifierSpec extends Specification {
 			project.evaluate() // Currently internal method to trigger afterEvaluate blocks.
 
 		expect:
-			def publications = project.extensions.getByType(PublishingExtension).publications
+			PublicationContainer publications = project.extensions.getByType(PublishingExtension).publications
 			publications.size() > 0
-			publications.findByName("stubs") != null
+			publications.named("stubs") != null
 	}
 
 	def "should compile"() {
 		given:
-			ContractVerifierExtension extension = new ContractVerifierExtension()
+			ObjectFactory objectFactory = Stub(ObjectFactory)
+			ContractVerifierExtension extension = new ContractVerifierExtension(objectFactory)
 			extension.with {
 
 				// tag::package_with_base_classes[]
-				packageWithBaseClasses = 'com.example.base'
+				packageWithBaseClasses.set('com.example.base')
 				// end::package_with_base_classes[]
 
 				// tag::base_class_mappings[]
-				baseClassForTests = "com.example.FooBase"
+				baseClassForTests.set("com.example.FooBase")
 				baseClassMappings {
 					baseClassMapping('.*/com/.*', 'com.example.ComBase')
 					baseClassMapping('.*/bar/.*': 'com.example.BarBase')

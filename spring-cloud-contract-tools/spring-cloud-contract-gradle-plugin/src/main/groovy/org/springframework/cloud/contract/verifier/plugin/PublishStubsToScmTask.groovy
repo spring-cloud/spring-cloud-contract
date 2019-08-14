@@ -17,12 +17,19 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.CompileStatic
-import org.gradle.api.internal.ConventionTask
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-
 import org.springframework.cloud.contract.stubrunner.ContractProjectUpdater
 import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 
 /**
  * For SCM based repositories will copy the generated stubs
@@ -30,49 +37,66 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
  * commit the changes and push them to origin.
  *
  * @author Marcin Grzejszczak
+ * @author Anatoliy Balakirev
  * @since 2.0.0
  */
 @CompileStatic
-class PublishStubsToScmTask extends ConventionTask {
-	File stubsOutputDir
-	ContractVerifierExtension configProperties
-	GradleContractsDownloader downloader
-	private final ExtensionHolderSpec closureHolder = new ClosureHolder()
+class PublishStubsToScmTask extends DefaultTask {
+
+	static final String TASK_NAME = 'publishStubsToScm'
+	@Nested
+	Config config
+
+	static class Config {
+		// All fields inside `@Nested` one are properly marked as an `@Input` to work with incremental build:
+		@Nested
+		@Optional
+		ContractVerifierExtension.ContractRepository contractRepository
+		@Input
+		@Optional
+		Provider<StubRunnerProperties.StubsMode> contractsMode
+		@Input
+		Provider<Boolean> deleteStubsAfterTest
+		@Input
+		Provider<Boolean> failOnNoContracts
+		@Input
+		MapProperty<String, String> contractsProperties
+
+		@OutputDirectory
+		DirectoryProperty stubsOutputDir
+	}
 
 	@TaskAction
 	void publishStubsToScm() {
-		ContractVerifierExtension clonedExtension = modifyExtension()
-		if (!shouldRun(clonedExtension)) {
+		if (!shouldRun()) {
 			return
 		}
 		String projectName = project.group.toString() + ":" + project.name.toString() + ":" + this.project.version.toString()
 		project.logger.info("Pushing Stubs to SCM for project [" + projectName + "]")
-		StubRunnerOptions options = getDownloader().options(clonedExtension)
-		new ContractProjectUpdater(options).updateContractProject(projectName, getStubsOutputDir().toPath())
+		StubRunnerOptions stubRunnerOptions = StubRunnerOptionsFactory.createStubRunnerOptions(
+				config.contractRepository, config.contractsMode.getOrNull(), config.deleteStubsAfterTest.get(),
+				config.contractsProperties.get(), config.failOnNoContracts.get())
+		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectName, config.stubsOutputDir.get().asFile.toPath())
 	}
 
-	private ContractVerifierExtension modifyExtension() {
-		ContractVerifierExtension clone = getConfigProperties().copy()
-		this.closureHolder.extensionClosure.delegate = clone
-		this.closureHolder.extensionClosure.call(clone)
-		return clone
+	static Config fromExtension(ContractVerifierExtension extension) {
+		return new Config(
+				contractRepository: extension.contractRepository,
+				contractsMode: extension.contractsMode,
+				failOnNoContracts: extension.failOnNoContracts,
+				deleteStubsAfterTest: extension.deleteStubsAfterTest,
+				contractsProperties: extension.contractsProperties,
+
+				stubsOutputDir: extension.stubsOutputDir
+		)
 	}
 
-	private boolean shouldRun(ContractVerifierExtension clonedExtension) {
-		String contractRepoUrl = clonedExtension.contractRepository.repositoryUrl ?: ""
+	private boolean shouldRun() {
+		String contractRepoUrl = config.contractRepository.repositoryUrl.getOrNull() ?: ""
 		if (!contractRepoUrl || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
 			project.logger.warn("Skipping pushing stubs to scm since your contracts repository URL [${contractRepoUrl}] doesn't match any of the accepted protocols for SCM stub downloader")
 			return false
 		}
 		return true
-	}
-
-	void customize(@DelegatesTo(ContractVerifierExtension) Closure closure) {
-		project.logger.debug("Storing the extension closure")
-		this.closureHolder.extensionClosure = closure
-	}
-
-	private static class ClosureHolder implements ExtensionHolderSpec {
-		Closure extensionClosure = Closure.IDENTITY
 	}
 }
