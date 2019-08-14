@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
 
+// tag::class[]
 class contract_rest implements Supplier<Collection<Contract>> {
 
 	@Override

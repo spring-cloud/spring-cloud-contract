@@ -73,8 +73,8 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 	public ClassMetaData parentClass() {
 		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
 		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
-		String baseClass = baseClassProvider().retrieveBaseClass(properties,
-				includedDirectoryRelativePath);
+		String baseClass = baseClassProvider().retrieveBaseClass(properties.getBaseClassMappings(),
+				properties.getPackageWithBaseClasses(), properties.getBaseClassForTests(), includedDirectoryRelativePath);
 		baseClass = StringUtils.hasText(baseClass) ? baseClass : "Specification";
 		int lastIndexOf = baseClass.lastIndexOf(".");
 		if (lastIndexOf > 0) {

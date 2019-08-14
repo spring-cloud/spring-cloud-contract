@@ -16,115 +16,138 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.internal.ConventionTask
-import org.gradle.api.logging.Logger
+import org.gradle.api.Project
+import org.gradle.api.file.CopySpec
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.WorkResult
-
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter
 
+// TODO: Convert to incremental task: https://docs.gradle.org/current/userguide/custom_tasks.html#incremental_tasks
 /**
  * Task that copies the contracts in order for the jar task to
  * generate the jar. It takes into consideration the inclusion
  * patterns when working with repo with shared contracts.
  *
  * @author Marcin Grzejszczak
+ * @author Anatoliy Balakirev
  * @since 1.0.2
  */
 @PackageScope
 @CompileStatic
-class ContractsCopyTask extends ConventionTask {
-	private static final String ORIGINAL_PATH = "original"
+class ContractsCopyTask extends DefaultTask {
 
-	ContractVerifierExtension extension
-	GradleContractsDownloader downloader
+	static final String TASK_NAME = 'copyContracts'
+	static final String CONTRACTS = "contracts"
+	static final String BACKUP = "original"
+	@Nested
+	Config config
 
+	static class Config {
+		@Input
+		Provider<Boolean> convertToYaml
+		@Input
+		Provider<Boolean> excludeBuildFolders
+		@Input
+		Provider<Boolean> failOnNoContracts
+		@Input
+		Provider<String> includedRootFolderAntPattern
+		@InputDirectory
+		Provider<Directory> contractsDirectory
+
+		@OutputDirectory
+		DirectoryProperty copiedContractsFolder
+		@Optional
+		@OutputDirectory
+		DirectoryProperty backupContractsFolder
+	}
 	@TaskAction
-	void copy() {
-		ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getExtension())
-		File file = getDownloader().downloadAndUnpackContractsIfRequired(getExtension(), props)
-		file = contractsSubDirIfPresent(logger, file)
-		throwExceptionWhenFailOnNoContracts(file)
-		String antPattern = "${props.includedRootFolderAntPattern}*.*"
+	void sync() {
+		File contractsDirectory = config.contractsDirectory.get().asFile
+		throwExceptionWhenFailOnNoContracts(contractsDirectory)
+		String antPattern = "${config.includedRootFolderAntPattern.get()}*.*"
 		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
-		String root = root(props)
-		File outputContractsFolder = outputContractsFolder(root)
-		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
-		copy(file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
-		if (getExtension().isConvertToYaml()) {
-			convertBackedUpDslsToYaml(root, file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
+		File output = config.copiedContractsFolder.get().asFile
+		logger.info("Downloading and unpacking files from [${contractsDirectory}()] to [$output]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
+		sync(contractsDirectory, antPattern, slashSeparatedAntPattern, config.excludeBuildFolders.get(), output)
+		if (config.convertToYaml.get()) {
+			convertBackedUpDslsToYaml(contractsDirectory, antPattern, slashSeparatedAntPattern, output, config.excludeBuildFolders.get())
 		}
+	}
 
+	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<InitContractsTask> initContractsTask, String root, Project project) {
+		return new Config(
+				convertToYaml: extension.convertToYaml,
+				excludeBuildFolders: extension.excludeBuildFolders,
+				failOnNoContracts: extension.failOnNoContracts,
+				includedRootFolderAntPattern: initContractsTask.flatMap { it.config.includedRootFolderAntPattern },
+				contractsDirectory: initContractsTask.flatMap { it.config.initialisedContractsDirectory },
+
+				copiedContractsFolder: createTaskOutput(root, extension.stubsOutputDir, ContractsCopyTask.CONTRACTS, project),
+				backupContractsFolder: createTaskOutput(root, extension.stubsOutputDir, ContractsCopyTask.BACKUP, project)
+		)
+	}
+
+	private void convertBackedUpDslsToYaml(File file, String antPattern, String slashSeparatedAntPattern, File outputContractsFolder, boolean excludeBuildFolders) {
+		sync(file, antPattern, slashSeparatedAntPattern, excludeBuildFolders, config.backupContractsFolder.get().asFile)
+		ToYamlConverter.replaceContractWithYaml(outputContractsFolder)
+		logger.info("Replaced DSL files with their YAML representation at [" + outputContractsFolder + "]")
+	}
+
+	protected WorkResult sync(File file, String antPattern, String slashSeparatedAntPattern, boolean excludeBuildFolders, File outputContractsFolder) {
+		// TODO: Is there any better way to make it statically compiled, avoiding explicit creation of new Action?
+		// sync will remove files from target if they are removed from source. So using it here instead of copy:
+		return project.sync(new Action<CopySpec>() {
+			@Override
+			void execute(final CopySpec spec) {
+				spec.with {
+					from(file)
+					// by default group id is slash separated...
+					include(antPattern)
+					// ...we also want to allow dot separation
+					include(slashSeparatedAntPattern)
+					if (excludeBuildFolders) {
+						exclude "**/target/**", "**/build/**", "**/.mvn/**", "**/.gradle/**"
+					}
+					into(outputContractsFolder)
+				}
+			}
+		})
+	}
+
+	private static DirectoryProperty createTaskOutput(String root, DirectoryProperty stubsOutputDir, String suffix, Project project) {
+		Provider<Directory> provider = stubsOutputDir.flatMap {
+			Directory dir = it
+			File output = project.file("${dir.asFile}/${root}/${suffix}")
+
+			DirectoryProperty property = project.objects.directoryProperty()
+			property.set(output)
+			return property
+		}
+		DirectoryProperty property = project.objects.directoryProperty();
+		property.set(provider)
+		return property
 	}
 
 	private void throwExceptionWhenFailOnNoContracts(File file) {
-		if (getExtension().isFailOnNoContracts() && (!file.exists() || file.listFiles().length == 0)) {
+		if (config.failOnNoContracts.get() && (!file.exists() || file.listFiles().length == 0)) {
 			throw new GradleException("Contracts could not be found: ["
 					+ file.getAbsolutePath()
 					+ "] .\nPlease make sure that the contracts were defined, or set the [failOnNoContracts] flag to [false]")
 		}
-	}
-
-	@CompileDynamic
-	private File outputContractsFolder(String root) {
-		File outputContractsFolder = outputFolder(root, "contracts")
-		ext.contractsDslDir = outputContractsFolder
-		return outputContractsFolder
-	}
-
-	@CompileDynamic
-	private String root(ContractVerifierConfigProperties props) {
-		String root = OutputFolderBuilder.buildRootPath(project)
-		ext.contractVerifierConfigProperties = props
-		return root
-	}
-
-	@CompileDynamic
-	private void convertBackedUpDslsToYaml(String root, File file, String antPattern, String slashSeparatedAntPattern, ContractVerifierConfigProperties props, File outputContractsFolder) {
-		File originalContracts = outputFolder(root, ORIGINAL_PATH)
-		copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
-		ToYamlConverter.replaceContractWithYaml(outputContractsFolder)
-		project.logger.
-				info("Replaced DSL files with their YAML representation at [" + ext.contractsDslDir + "]")
-	}
-
-	@CompileDynamic
-	protected WorkResult copy(File file, String antPattern, String slashSeparatedAntPattern, props, File outputContractsFolder) {
-		return project.copy {
-			from(file)
-			// by default group id is slash separated...
-			include(antPattern)
-			// ...we also want to allow dot separation
-			include(slashSeparatedAntPattern)
-			if (props.isExcludeBuildFolders()) {
-				exclude "**/target/**", "**/build/**", "**/.mvn/**", "**/.gradle/**"
-			}
-			into(outputContractsFolder)
-		}
-	}
-
-	@CompileStatic
-	private File outputFolder(String root, String suffix) {
-		return getExtension().stubsOutputDir != null ?
-				project.file("${getExtension().stubsOutputDir}/${root}/${suffix}") :
-				project.file("${project.buildDir}/stubs/${root}/${suffix}")
-	}
-
-	@CompileStatic
-	private File contractsSubDirIfPresent(Logger logger, File contractsDirectory) {
-		File contracts = new File(contractsDirectory, "contracts")
-		if (contracts.exists()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Contracts folder found [" + contracts + "]")
-			}
-			contractsDirectory = contracts
-		}
-		return contractsDirectory
 	}
 }

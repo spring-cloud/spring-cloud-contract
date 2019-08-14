@@ -624,7 +624,7 @@ You can check out the https://github.com/spring-cloud/spring-cloud-pipelines[Spr
 project for more information.
 
 [[features-stub-runner-boot-server]]
-===== Stub Runner Server
+==== Stub Runner Server
 
 To use the Stub Runner Server, add the following dependency:
 
@@ -640,7 +640,7 @@ Then annotate a class with `@EnableStubRunnerServer`, build a fat jar, and it is
 For the properties, see the <<features-stub-runner-rule-spring,Stub Runner Spring>> section.
 
 [[features-stub-runner-boot-how-fat-jar]]
-===== Stub Runner Server Fat Jar
+==== Stub Runner Server Fat Jar
 
 You can download a standalone JAR from Maven (for example, for version 2.0.1.RELEASE)
 by running the following commands:
@@ -654,7 +654,7 @@ $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 ====
 
 [[features-stub-runner-boot-how-cli]]
-===== Spring Cloud CLI
+==== Spring Cloud CLI
 
 Starting from the `1.4.0.RELEASE` version of the https://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
 project, you can start Stub Runner Boot by running `spring cloud stubrunner`.
@@ -905,7 +905,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 Contracts and stubs may be stored in a location, where each producer has its own, dedicated folder for contracts and stub mappings. Under that folder each consumer can have its own setup. To make Stub Runner find the dedicated folder from the provided ids one can pass a property `stubs.find-producer=true` or a system property `stubrunner.stubs.find-producer=true` .
 
 [source,bash,indent=0]
-====
+----
 └── com.example <1>
     ├── some-artifact-id <2>
     │   └── 0.0.1
@@ -919,7 +919,7 @@ Contracts and stubs may be stored in a location, where each producer has its own
         └── mappings
             └── shouldReturnStuffForOtherArtifactId.json
 
-====
+----
 <1> group id of the consumers
 <2> consumer with artifact id [some-artifact-id]
 <3> contracts for the consumer with artifact id [some-artifact-id]

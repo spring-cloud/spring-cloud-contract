@@ -215,7 +215,10 @@ public class ConvertMojo extends AbstractMojo {
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		logSetup(config, contractsDslDir);
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(config);
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(
+				config.getStubsOutputDir(), config.getContractsDslDir(),
+				config.getExcludedFiles(), config.getIncludedContracts(),
+				config.isExcludeBuildFolders());
 		converter.processFiles();
 	}
 

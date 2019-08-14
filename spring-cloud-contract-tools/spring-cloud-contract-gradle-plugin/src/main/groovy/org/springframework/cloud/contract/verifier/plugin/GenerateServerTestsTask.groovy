@@ -16,56 +16,121 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.Task
-import org.gradle.api.internal.ConventionTask
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-
-import org.springframework.cloud.contract.spec.Contract
+import org.gradle.api.tasks.TaskProvider
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
-
-import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
+import org.springframework.cloud.contract.verifier.config.TestMode
 
 /**
  * Task used to generate server side tests
  *
+ * @author Marcin Grzejszczak
+ * @author Anatoliy Balakirev
  * @since 1.0.0
  */
 @CompileStatic
-class GenerateServerTestsTask extends ConventionTask {
+class GenerateServerTestsTask extends DefaultTask {
+	static final String TASK_NAME = 'generateContractTests'
+	@Nested
+	Config config
 
-	File generatedTestSourcesDir
+	static class Config {
+		@InputDirectory
+		Provider<Directory> contractsDslDir
+		@Input
+		Provider<String> includedContracts
+		@Input
+		@Optional
+		Provider<String> nameSuffixForTests
+		@Input
+		@Optional
+		Provider<String> basePackageForTests
+		@Input
+		@Optional
+		Provider<String> baseClassForTests
+		@Input
+		@Optional
+		Provider<String> packageWithBaseClasses
+		@Input
+		ListProperty<String> excludedFiles
+		@Input
+		ListProperty<String> ignoredFiles
+		@Input
+		ListProperty<String> includedFiles
+		@Input
+		ListProperty<String> imports
+		@Input
+		ListProperty<String> staticImports
+		@Input
+		Provider<TestMode> testMode
+		@Input
+		Provider<TestFramework> testFramework
+		@Input
+		MapProperty<String, String> baseClassMappings
+		@Input
+		Provider<Boolean> assertJsonSize
+		@Input
+		Provider<Boolean> failOnInProgress
 
-	//TODO: How to deal with @Input*, @Output* and that domain object?
-	ContractVerifierExtension configProperties
-	GradleContractsDownloader downloader
+		@OutputDirectory
+		DirectoryProperty generatedTestSourcesDir
+		@OutputDirectory
+		DirectoryProperty generatedTestResourcesDir
+	}
 
 	@TaskAction
 	void generate() {
-		logger.info("Generated test sources dir [${getGeneratedTestSourcesDir()}]")
-		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
-		ContractVerifierConfigProperties props = props(copyContractsTask)
-		File contractsDslDir = contractsDslDir(copyContractsTask, props)
-		if (getConfigProperties().getContractDependency()) {
-			project.logger.debug("Updating the stubs locations for the case where we have a JAR with contracts")
-			props.contractsDslDir = contractsDslDir
-			props.includedContracts = ".*"
-		}
+		File generatedTestSources = config.generatedTestSourcesDir.get().asFile
+		File generatedTestResources = config.generatedTestResourcesDir.get().asFile
+		logger.info("Generated test sources dir [${ generatedTestSources}]")
+		logger.info("Generated test resources dir [${generatedTestResources}]")
+		File contractsDslDir = config.contractsDslDir.get().asFile
+		String includedContracts = config.includedContracts.get()
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
-		project.logger.info("Included contracts are [${props.includedContracts}]")
-		def sourceSetType = getConfigProperties().getTestFramework() == TestFramework.SPOCK ?
-				"groovy" : "java"
-		applySourceSets(sourceSetType)
+		project.logger.info("Included contracts are [${includedContracts}]")
 		try {
-			props = props ?: ExtensionToProperties.fromExtension(getConfigProperties())
-			props.contractsDslDir = contractsDslDir
-			TestGenerator generator = new TestGenerator(props)
+			List<String> excludedFiles = config.excludedFiles.get()
+			List<String> ignoredFiles = config.ignoredFiles.get()
+			List<String> includedFiles = config.includedFiles.get()
+			String[] imports = config.imports.get().toArray(new String[0])
+			String[] staticImports = config.staticImports.get().toArray(new String[0])
+			TestGenerator generator = new TestGenerator(new ContractVerifierConfigProperties(
+					includedContracts: includedContracts,
+					contractsDslDir: contractsDslDir,
+					nameSuffixForTests: config.nameSuffixForTests.getOrNull(),
+					generatedTestSourcesDir: generatedTestSources,
+					generatedTestResourcesDir: generatedTestResources,
+					basePackageForTests: config.basePackageForTests.getOrNull(),
+					baseClassForTests: config.baseClassForTests.getOrNull(),
+					packageWithBaseClasses: config.packageWithBaseClasses.getOrNull(),
+					excludedFiles: excludedFiles,
+					ignoredFiles: ignoredFiles,
+					includedFiles: includedFiles,
+					imports: imports,
+					staticImports: staticImports,
+					testMode: config.testMode.get(),
+					testFramework: config.testFramework.get(),
+					baseClassMappings: config.baseClassMappings.get(),
+					assertJsonSize: config.assertJsonSize.get(),
+					failOnInProgress: config.failOnInProgress.get()
+			))
 			int generatedClasses = generator.generate()
 			project.logger.info("Generated {} test classes", generatedClasses)
 		}
@@ -74,41 +139,28 @@ class GenerateServerTestsTask extends ConventionTask {
 		}
 	}
 
-	@CompileDynamic
-	private void applySourceSets(sourceSetType) {
-		project.sourceSets.test."${sourceSetType}" {
-			project.logger.
-					info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
-			srcDir getConfigProperties().getGeneratedTestSourcesDir()
-		}
-		project.sourceSets.test.resources {
-			project.logger.
-					info("Registering ${getConfigProperties().generatedTestResourcesDir} as test resource directory")
-			srcDir getConfigProperties().getGeneratedTestResourcesDir()
-		}
-	}
+	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<InitContractsTask> initContractsTask,
+								TaskProvider<ContractsCopyTask> copyContractsTask) {
+		return new Config(
+				contractsDslDir: copyContractsTask.flatMap { it.config.copiedContractsFolder },
+				includedContracts: initContractsTask.flatMap { it.config.includedContracts },
+				nameSuffixForTests: extension.nameSuffixForTests,
+				basePackageForTests: extension.basePackageForTests,
+				baseClassForTests: extension.baseClassForTests,
+				packageWithBaseClasses: extension.packageWithBaseClasses,
+				excludedFiles: extension.excludedFiles,
+				ignoredFiles: extension.ignoredFiles,
+				includedFiles: extension.includedFiles,
+				imports: extension.imports,
+				staticImports: extension.staticImports,
+				testMode: extension.testMode,
+				testFramework: extension.testFramework,
+				baseClassMappings: extension.baseClassMappings,
+				assertJsonSize: extension.assertJsonSize,
+				failOnInProgress: extension.failOnInProgress,
 
-	@CompileDynamic
-	private ContractVerifierConfigProperties props(Task task) {
-		try {
-			return task.ext.contractVerifierConfigProperties
-		}
-		catch (Exception e) {
-			project.logger.error("Couldn't retrieve the configuration property set by the copy contracts task", e)
-			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
-			getDownloader().downloadAndUnpackContractsIfRequired(getConfigProperties(), props)
-			return props
-		}
-	}
-
-	@CompileDynamic
-	private File contractsDslDir(Task task, ContractVerifierConfigProperties props) {
-		try {
-			return task.ext.contractsDslDir
-		}
-		catch (Exception e) {
-			project.logger.error("Couldn't retrieve the contract dsl property set by the copy contracts task", e)
-			return props.contractsDslDir
-		}
+				generatedTestSourcesDir: extension.generatedTestSourcesDir,
+				generatedTestResourcesDir: extension.generatedTestResourcesDir,
+		)
 	}
 }
