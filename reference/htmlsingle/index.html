@@ -217,8 +217,9 @@ $(addBlockSwitches);
 <ul class="sectlevel3">
 <li><a href="#contract-groovy">4.1.1. Contract DSL in Groovy</a></li>
 <li><a href="#contract-java">4.1.2. Contract DSL in Java</a></li>
-<li><a href="#contract-limitations">4.1.3. Limitations</a></li>
-<li><a href="#contract-common-top-elements">4.1.4. Common Top-Level Elements</a>
+<li><a href="#contract-kotlin">4.1.3. Contract DSL in Kotlin</a></li>
+<li><a href="#contract-limitations">4.1.4. Limitations</a></li>
+<li><a href="#contract-common-top-elements">4.1.5. Common Top-Level Elements</a>
 <ul class="sectlevel4">
 <li><a href="#contract-dsl-description">Description</a></li>
 <li><a href="#contract-dsl-name">Name</a></li>
@@ -348,7 +349,7 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#features-stub-runner-boot">4.5.6. Using the Stub Runner Boot Application</a>
-<ul class="sectlevel5">
+<ul class="sectlevel4">
 <li><a href="#features-stub-runner-boot-server">Stub Runner Server</a></li>
 <li><a href="#features-stub-runner-boot-how-fat-jar">Stub Runner Server Fat Jar</a></li>
 <li><a href="#features-stub-runner-boot-how-cli">Spring Cloud CLI</a></li>
@@ -2696,7 +2697,7 @@ can also provide the offline work switch (<code>StubRunnerProperties.StubsMode.L
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {
-        "com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+        "com.example:http-server-dsl:+:stubs" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {</code></pre>
 </div>
 </div>
@@ -4230,6 +4231,9 @@ basics.</p>
 <li>
 <p>Java</p>
 </li>
+<li>
+<p>Kotlin</p>
+</li>
 </ul>
 </div>
 <div class="admonitionblock tip">
@@ -4353,7 +4357,108 @@ response:
 <div class="listingblock secondary">
 <div class="title">java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
+
+import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
+
+class contract_rest implements Supplier&lt;Collection&lt;Contract&gt;&gt; {
+
+    @Override
+    public Collection&lt;Contract&gt; get() {
+        return Collections.singletonList(Contract.make(c -&gt; {
+            c.description("Some description");
+            c.name("some name");
+            c.priority(8);
+            c.ignored();
+            c.request(r -&gt; {
+                r.url("/foo", u -&gt; {
+                    u.queryParameters(q -&gt; {
+                        q.parameter("a", "b");
+                        q.parameter("b", "c");
+                    });
+                });
+                r.method(r.PUT());
+                r.headers(h -&gt; {
+                    h.header("foo", r.value(r.client(r.regex("bar")), r.server("bar")));
+                    h.header("fooReq", "baz");
+                });
+                r.body(ContractVerifierUtil.map().entry("foo", "bar"));
+                r.bodyMatchers(m -&gt; {
+                    m.jsonPath("$.foo", m.byRegex("bar"));
+                });
+            });
+            c.response(r -&gt; {
+                r.fixedDelayMilliseconds(1000);
+                r.status(r.OK());
+                r.headers(h -&gt; {
+                    h.header("foo2", r.value(r.server(r.regex("bar")), r.client("bar")));
+                    h.header("foo3", r.value(r.server(r.execute("andMeToo($it)")),
+                            r.client("foo33")));
+                    h.header("fooRes", "baz");
+                });
+                r.body(ContractVerifierUtil.map().entry("foo2", "bar")
+                        .entry("foo3", "baz").entry("nullValue", null));
+                r.bodyMatchers(m -&gt; {
+                    m.jsonPath("$.foo2", m.byRegex("bar"));
+                    m.jsonPath("$.foo3", m.byCommand("executeMe($it)"));
+                    m.jsonPath("$.nullValue", m.byNull());
+                });
+            });
+        }));
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+import org.springframework.cloud.contract.spec.withQueryParameters
+
+contract {
+    name = "some name"
+    description = "Some description"
+    priority = 8
+    ignored = true
+    request {
+        url = url("/foo") withQueryParameters  {
+            parameter("a", "b")
+            parameter("b", "c")
+        }
+        method = PUT
+        headers {
+            header("foo", value(client(regex("bar")), server("bar")))
+            header("fooReq", "baz")
+        }
+        body = body(mapOf("foo" to "bar"))
+        bodyMatchers {
+            jsonPath("$.foo", byRegex("bar"))
+        }
+    }
+    response {
+        delay = fixedMilliseconds(1000)
+        status = OK
+        headers {
+            header("foo2", value(server(regex("bar")), client("bar")))
+            header("foo3", value(server(execute("andMeToo(\$it)")), client("foo33")))
+            header("fooRes", "baz")
+        }
+        body = body(mapOf(
+                "foo" to "bar",
+                "foo3" to "baz",
+                "nullValue" to null
+        ))
+        bodyMatchers {
+            jsonPath("$.foo2", byRegex("bar"))
+            jsonPath("$.foo3", byCommand("executeMe(\$it)"))
+            jsonPath("$.nullValue", byNull)
+        }
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4442,7 +4547,29 @@ the <code>Contract</code> class (<code>import org.springframework.cloud.spec.Con
 </div>
 </div>
 <div class="sect3">
-<h4 id="contract-limitations"><a class="anchor" href="#contract-limitations"></a><a class="link" href="#contract-limitations">4.1.3. Limitations</a></h4>
+<h4 id="contract-kotlin"><a class="anchor" href="#contract-kotlin"></a><a class="link" href="#contract-kotlin">4.1.3. Contract DSL in Kotlin</a></h4>
+<div class="paragraph">
+<p>To get started with writing contracts in Kotlin you would need to start with a (newly created) Kotlin Script file (.kts).
+Just like the with the Java DSL you can put your contracts in any directory of your choice.
+The Maven and Gradle plugins will look at the <code>src/test/resources/contracts</code> directory by default.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Remember that, inside the Kotlin Script file, you have to provide the fully qualified name to the <code>ContractDSL</code> class.
+Generally you would use its contract function like this: <code>org.springframework.cloud.contract.spec.ContractDsl.contract { &#8230;&#8203; }</code>.
+You can also provide an import to the <code>contract</code> function (<code>import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract</code>) and then call <code>contract { &#8230;&#8203; }</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="contract-limitations"><a class="anchor" href="#contract-limitations"></a><a class="link" href="#contract-limitations">4.1.4. Limitations</a></h4>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -4474,7 +4601,7 @@ is why you should use the Groovy Map notation.
 </div>
 </div>
 <div class="sect3">
-<h4 id="contract-common-top-elements"><a class="anchor" href="#contract-common-top-elements"></a><a class="link" href="#contract-common-top-elements">4.1.4. Common Top-Level Elements</a></h4>
+<h4 id="contract-common-top-elements"><a class="anchor" href="#contract-common-top-elements"></a><a class="link" href="#contract-common-top-elements">4.1.5. Common Top-Level Elements</a></h4>
 <div class="paragraph">
 <p>The following sections describe the most common top-level elements:</p>
 </div>
@@ -4582,6 +4709,21 @@ response:
 }));</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    description = """
+given:
+    An input
+when:
+    Sth happens
+then:
+    Output
+"""
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4635,6 +4777,14 @@ override each other.
 }));</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    name = "some_special_name"
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4667,6 +4817,14 @@ example shows how to do so:</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Contract.make(c -&gt; {
     c.ignored();
 }));</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    ignored = true
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4715,6 +4873,14 @@ example shows how to do so:</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Contract.make(c -&gt; {
     c.inProgress();
 }));</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    inProgress = true
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4800,7 +4966,54 @@ response:
 <div class="listingblock secondary">
 <div class="title">java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
+
+import org.springframework.cloud.contract.spec.Contract;
+
+class contract_rest_from_file implements Supplier&lt;Collection&lt;Contract&gt;&gt; {
+
+    @Override
+    public Collection&lt;Contract&gt; get() {
+        return Collections.singletonList(Contract.make(c -&gt; {
+            c.request(r -&gt; {
+                r.url("/foo");
+                r.method(r.GET());
+                r.body(r.file("request.json"));
+            });
+            c.response(r -&gt; {
+                r.status(r.OK());
+                r.body(r.file("response.json"));
+            });
+        }));
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        url = url("/1")
+        method = PUT
+        headers {
+            contentType = APPLICATION_JSON
+        }
+        body = bodyFromFile("request.json")
+    }
+    response {
+        status = OK
+        body = bodyFromFile("response.json")
+        headers {
+            contentType = APPLICATION_JSON
+        }
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4914,8 +5127,31 @@ class contract_rest_from_pdf implements Supplier&lt;Collection&lt;Contract&gt;&g
         }));
     }
 
-}
-// end::class[]</code></pre>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        url = url("/1")
+        method = PUT
+        headers {
+            contentType = APPLICATION_OCTET_STREAM
+        }
+        body = bodyFromFileAsBytes("contracts/request.pdf")
+    }
+    response {
+        status = OK
+        body = bodyFromFileAsBytes("contracts/response.pdf")
+        headers {
+            contentType = APPLICATION_OCTET_STREAM
+        }
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -5035,6 +5271,34 @@ response:
 });</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    // Definition of HTTP request part of the contract
+    // (this can be a valid request or invalid depending
+    // on type of contract being specified).
+    request {
+        method = GET
+        url = url("/foo")
+        // ...
+    }
+
+    // Definition of HTTP response part of the contract
+    // (a service implementing this contract should respond
+    // with following response after receiving request
+    // specified in "request" part above).
+    response {
+        status = OK
+        // ...
+    }
+
+    // Contract priority, which can be used for overriding
+    // contracts (1 is highest). Priority is optional.
+    priority = 1
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -5108,6 +5372,24 @@ url: /foo</code></pre>
 });</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        // HTTP request method (GET/POST/PUT/DELETE).
+        method = method("GET")
+
+        // Path component of request URL is specified as follows.
+        urlPath = path("/users")
+    }
+    response {
+        // ...
+        status = code(200)
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -5161,6 +5443,23 @@ the recommended way, as doing so makes the tests be host-independent.</p>
         r.status(200);
     });
 });</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        method = GET
+
+        // Specifying `url` and `urlPath` in one contract is illegal.
+        url("http://localhost:8888/users")
+    }
+    response {
+        // ...
+        status = OK
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -5282,6 +5581,49 @@ queryParameters:
 });</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        // ...
+        method = GET
+
+        // Each parameter is specified in form
+        // `'paramName' : paramValue` where parameter value
+        // may be a simple literal or one of matcher functions,
+        // all of which are used in this example.
+        urlPath = path("/users") withQueryParameters {
+            // If a simple literal is used as value
+            // default matcher function is used (equalTo)
+            parameter("limit", 100)
+
+            // `equalTo` function simply compares passed value
+            // using identity operator (==).
+            parameter("filter", equalTo("email"))
+
+            // `containing` function matches strings
+            // that contains passed substring.
+            parameter("gender", value(consumer(containing("[mf]")), producer("mf")))
+
+            // `matching` function tests parameter
+            // against passed regular expression.
+            parameter("offset", value(consumer(matching("[0-9]+")), producer(123)))
+
+            // `notMatching` functions tests if parameter
+            // does not match passed regular expression.
+            parameter("loginStartsWith", value(consumer(notMatching(".{0,2}")), producer(3)))
+        }
+
+        // ...
+    }
+    response {
+        // ...
+        status = code(200)
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -5349,6 +5691,31 @@ headers:
         r.status(200);
     });
 });</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        // ...
+        method = GET
+        url = url("/foo")
+
+        // Each header is added in form `'Header-Name' : 'Header-Value'`.
+        // there are also some helper variables
+        headers {
+            header("key", "value")
+            contentType = APPLICATION_JSON
+        }
+
+        // ...
+    }
+    response {
+        // ...
+        status = OK
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -5420,6 +5787,32 @@ cookies:
 });</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        // ...
+        method = GET
+        url = url("/foo")
+
+        // Each Cookies is added in form `'Cookie-Key' : 'Cookie-Value'`.
+        // there are also some helper methods
+        cookies {
+            cookie("key", "value")
+            cookie("another_key", "another_value")
+        }
+
+        // ...
+    }
+
+    response {
+        // ...
+        status = code(200)
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -5476,6 +5869,26 @@ body:
         r.status(200);
     });
 });</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        // ...
+        method = GET
+        url = url("/foo")
+
+        // Currently only JSON format of request body is supported.
+        // Format will be determined from a header or body's content.
+        body = body("{ \"login\" : \"john\", \"name\": \"John The Contract\" }")
+    }
+    response {
+        // ...
+        status = OK
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -5572,7 +5985,92 @@ response:
 <div class="listingblock secondary">
 <div class="title">java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.internal.DslProperty;
+import org.springframework.cloud.contract.spec.internal.Request;
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
+
+class contract_multipart implements Supplier&lt;Collection&lt;Contract&gt;&gt; {
+
+    private static Map&lt;String, DslProperty&gt; namedProps(Request r) {
+        Map&lt;String, DslProperty&gt; map = new HashMap&lt;&gt;();
+        // name of the file
+        map.put("name", r.$(r.c(r.regex(r.nonEmpty())), r.p("filename.csv")));
+        // content of the file
+        map.put("content", r.$(r.c(r.regex(r.nonEmpty())), r.p("file content")));
+        // content type for the part
+        map.put("contentType", r.$(r.c(r.regex(r.nonEmpty())), r.p("application/json")));
+        return map;
+    }
+
+    @Override
+    public Collection&lt;Contract&gt; get() {
+        return Collections.singletonList(Contract.make(c -&gt; {
+            c.request(r -&gt; {
+                r.method("PUT");
+                r.url("/multipart");
+                r.headers(h -&gt; {
+                    h.contentType("multipart/form-data;boundary=AaB03x");
+                });
+                r.multipart(ContractVerifierUtil.map()
+                        // key (parameter name), value (parameter value) pair
+                        .entry("formParameter",
+                                r.$(r.c(r.regex("\".+\"")),
+                                        r.p("\"formParameterValue\"")))
+                        .entry("someBooleanParameter",
+                                r.$(r.c(r.regex(r.anyBoolean())), r.p("true")))
+                        // a named parameter (e.g. with `file` name) that represents file
+                        // with
+                        // `name` and `content`. You can also call `named("fileName",
+                        // "fileContent")`
+                        .entry("file", r.named(namedProps(r))));
+            });
+            c.response(r -&gt; {
+                r.status(r.OK());
+            });
+        }));
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        method = PUT
+        url = url("/multipart")
+        multipart {
+            field("formParameter", value(consumer(regex("\".+\"")), producer("\"formParameterValue\"")))
+            field("someBooleanParameter", value(consumer(anyBoolean), producer("true")))
+            field("file",
+                named(
+                    // name of the file
+                    value(consumer(regex(nonEmpty)), producer("filename.csv")),
+                    // content of the file
+                    value(consumer(regex(nonEmpty)), producer("file content")),
+                    // content type for the part
+                    value(consumer(regex(nonEmpty)), producer("application/json"))
+                )
+            )
+        }
+        headers {
+            contentType = "multipart/form-data;boundary=AaB03x"
+        }
+    }
+    response {
+        status = OK
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -5729,6 +6227,23 @@ status: 200</code></pre>
         r.status(r.OK());
     });
 });</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        // ...
+        method = GET
+        url =url("/foo")
+    }
+    response {
+        // Status code sent by the server
+        // in response to request specified above.
+        status = OK
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -5908,6 +6423,27 @@ There are several additional <a href="#contract-dsl-regex-limitations">known lim
 });</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    request {
+        method = method("GET")
+        url = url(v(consumer(regex("\\/[0-9]{2}")), producer("/12")))
+    }
+    response {
+        status = OK
+        body(mapOf(
+                "id" to v(anyNumber),
+                "surname" to v(consumer("Kowalsky"), producer(regex("[a-zA-Z]+")))
+        ))
+        headers {
+            header("Content-Type", "text/plain")
+        }
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -5950,146 +6486,80 @@ use in your contracts, as the following example shows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected static final Pattern TRUE_OR_FALSE = Pattern.compile("(true|false)");
-
-protected static final Pattern ALPHA_NUMERIC = Pattern.compile("[a-zA-Z0-9]+");
-
-protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile("[\\p{L}]*");
-
-protected static final Pattern NUMBER = Pattern.compile("-?(\\d*\\.\\d+|\\d+)");
-
-protected static final Pattern INTEGER = Pattern.compile("-?(\\d+)");
-
-protected static final Pattern POSITIVE_INT = Pattern.compile("([1-9]\\d*)");
-
-protected static final Pattern DOUBLE = Pattern.compile("-?(\\d*\\.\\d+)");
-
-protected static final Pattern HEX = Pattern.compile("[a-fA-F0-9]+");
-
-protected static final Pattern IP_ADDRESS = Pattern.compile(
-        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
-
-protected static final Pattern HOSTNAME_PATTERN = Pattern
-        .compile("((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?");
-
-protected static final Pattern EMAIL = Pattern
-        .compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}");
-
-protected static final Pattern URL = UrlHelper.URL;
-
-protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL;
-
-protected static final Pattern UUID = Pattern
-        .compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
-
-protected static final Pattern ANY_DATE = Pattern
-        .compile("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
-
-protected static final Pattern ANY_DATE_TIME = Pattern.compile(
-        "([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
-
-protected static final Pattern ANY_TIME = Pattern
-        .compile("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
-
-protected static final Pattern NON_EMPTY = Pattern.compile("[\\S\\s]+");
-
-protected static final Pattern NON_BLANK = Pattern.compile("^\\s*\\S[\\S\\s]*");
-
-protected static final Pattern ISO8601_WITH_OFFSET = Pattern.compile(
-        "([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.\\d{3})?(Z|[+-][01]\\d:[0-5]\\d)");
-
-protected static Pattern anyOf(String... values) {
-    return Pattern.compile(Arrays.stream(values).map(it -&gt; '^' + it + '$')
-            .collect(Collectors.joining("|")));
-}
-
-public static String multipartParam(Object name, Object value) {
-    return ".*--(.*)\r\nContent-Disposition: form-data; name=\"" + name
-            + "\"\r\n(Content-Type: .*\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n"
-            + value + "\r\n--\\1.*";
-}
-
-public static String multipartFile(Object name, Object filename, Object content,
-        Object contentType) {
-    return ".*--(.*)\r\nContent-Disposition: form-data; name=\"" + name
-            + "\"; filename=\"" + filename + "\"\r\n(Content-Type: "
-            + toContentType(contentType)
-            + "\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n"
-            + content + "\r\n--\\1.*";
-}
-
-private static String toContentType(Object contentType) {
-    if (contentType == null) {
-        return ".*";
-    }
-    if (contentType instanceof RegexProperty) {
-        return ((RegexProperty) contentType).pattern();
-    }
-    return contentType.toString();
-}
-
-public RegexProperty onlyAlphaUnicode() {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static RegexProperty onlyAlphaUnicode() {
     return new RegexProperty(ONLY_ALPHA_UNICODE).asString();
 }
 
-public RegexProperty alphaNumeric() {
+public static RegexProperty alphaNumeric() {
     return new RegexProperty(ALPHA_NUMERIC).asString();
 }
 
-public RegexProperty number() {
+public static RegexProperty number() {
     return new RegexProperty(NUMBER).asDouble();
 }
 
-public RegexProperty positiveInt() {
+public static RegexProperty positiveInt() {
     return new RegexProperty(POSITIVE_INT).asInteger();
 }
 
-public RegexProperty anyBoolean() {
+public static RegexProperty anyBoolean() {
     return new RegexProperty(TRUE_OR_FALSE).asBooleanType();
 }
 
-public RegexProperty anInteger() {
+public static RegexProperty anInteger() {
     return new RegexProperty(INTEGER).asInteger();
 }
 
-public RegexProperty aDouble() {
+public static RegexProperty aDouble() {
     return new RegexProperty(DOUBLE).asDouble();
 }
 
-public RegexProperty ipAddress() {
+public static RegexProperty ipAddress() {
     return new RegexProperty(IP_ADDRESS).asString();
 }
 
-public RegexProperty hostname() {
+public static RegexProperty hostname() {
     return new RegexProperty(HOSTNAME_PATTERN).asString();
 }
 
-public RegexProperty email() {
+public static RegexProperty email() {
     return new RegexProperty(EMAIL).asString();
 }
 
-public RegexProperty url() {
+public static RegexProperty url() {
     return new RegexProperty(URL).asString();
 }
 
-public RegexProperty httpsUrl() {
+public static RegexProperty httpsUrl() {
     return new RegexProperty(HTTPS_URL).asString();
 }
 
-public RegexProperty uuid() {
+public static RegexProperty uuid() {
     return new RegexProperty(UUID).asString();
 }
 
-public RegexProperty isoDate() {
+public static RegexProperty isoDate() {
     return new RegexProperty(ANY_DATE).asString();
 }
 
-public RegexProperty isoDateTime() {
+public static RegexProperty isoDateTime() {
     return new RegexProperty(ANY_DATE_TIME).asString();
 }
 
-public RegexProperty isoTime() {
+public static RegexProperty isoTime() {
     return new RegexProperty(ANY_TIME).asString();
+}
+
+public static RegexProperty iso8601WithOffset() {
+    return new RegexProperty(ISO8601_WITH_OFFSET).asString();
+}
+
+public static RegexProperty nonEmpty() {
+    return new RegexProperty(NON_EMPTY).asString();
+}
+
+public static RegexProperty nonBlank() {
+    return new RegexProperty(NON_BLANK).asString();
 }</code></pre>
 </div>
 </div>
@@ -6175,9 +6645,12 @@ T anyOf(String... values);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The following example shows how you can reference those methods (example for Groovy DSL):</p>
+<p>The following example shows how you can reference those methods:</p>
 </div>
-<div class="listingblock">
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Contract contractDsl = Contract.make {
     name "foo"
@@ -6210,6 +6683,47 @@ T anyOf(String... values);</code></pre>
         ])
     }
 }</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract {
+    name = "foo"
+    label = "trigger_event"
+    input {
+        triggeredBy = "toString()"
+    }
+    outputMessage {
+        sentTo = sentTo("topic.rateablequote")
+        body(mapOf(
+                "alpha" to v(anyAlphaUnicode),
+                "number" to v(anyNumber),
+                "anInteger" to v(anyInteger),
+                "positiveInt" to v(anyPositiveInt),
+                "aDouble" to v(anyDouble),
+                "aBoolean" to v(aBoolean),
+                "ip" to v(anyIpAddress),
+                "hostname" to v(anyAlphaUnicode),
+                "email" to v(anyEmail),
+                "url" to v(anyUrl),
+                "httpsUrl" to v(anyHttpsUrl),
+                "uuid" to v(anyUuid),
+                "date" to v(anyDate),
+                "dateTime" to v(anyDateTime),
+                "time" to v(anyTime),
+                "iso8601WithOffset" to v(anyIso8601WithOffset),
+                "nonBlankString" to v(anyNonBlankString),
+                "nonEmptyString" to v(anyNonEmptyString),
+                "anyOf" to v(anyOf('foo', 'bar'))
+        ))
+        headers {
+            header("Content-Type", "text/plain")
+        }
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect5">
@@ -6337,6 +6851,35 @@ optional parameters only for the following:</p>
 });</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">contract { c -&gt;
+    priority = 1
+    name = "optionals"
+    request {
+        method = POST
+        url = url("/users/password")
+        headers {
+            contentType = APPLICATION_JSON
+        }
+        body = body(mapOf(
+                "email" to v(consumer(optional(regex(email))), producer("abc@abc.com")),
+                "callback_url" to v(consumer(regex(hostname)), producer("https://partners.com"))
+        ))
+    }
+    response {
+        status = NOT_FOUND
+        headers {
+            header("Content-Type", "application/json")
+        }
+        body(mapOf(
+                "code" to value(consumer("123123"), producer(optional("123123")))
+        ))
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -6459,6 +7002,12 @@ following code shows an example of the contract portion of the test case:</p>
 <div class="title">java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">r.method(r.GET());</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">method = GET</code></pre>
 </div>
 </div>
 </div>
@@ -6814,6 +7363,37 @@ class shouldReturnStatsForAUser implements Supplier&lt;Contract&gt; {
         });
     }
 
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">package contracts.beer.rest
+
+import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        method = method("POST")
+        url = url("/stats")
+        body(mapOf(
+            "name" to anyAlphaUnicode
+        ))
+        headers {
+            contentType = APPLICATION_JSON
+        }
+    }
+    response {
+        status = OK
+        body(mapOf(
+            "text" to "Don't worry ${fromRequest().body("$.name")} thanks for your interested in drinking beer",
+            "quantity" to v(c(5), p(anyNumber))
+        ))
+        headers {
+            contentType = fromRequest().header(CONTENT_TYPE)
+        }
+    }
 }</code></pre>
 </div>
 </div>
@@ -7840,6 +8420,22 @@ provide an <code>async()</code> method in the <code>response</code> section. The
 }</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        // ...
+    }
+    response {
+        async = true
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -7889,6 +8485,22 @@ The following example shows how to do so:</p>
         }));
     }
 
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        // ...
+    }
+    response {
+        delay = fixedMilliseconds(1000)
+        // ...
+    }
 }</code></pre>
 </div>
 </div>
@@ -7970,7 +8582,100 @@ and the appropriate <code>MatchingType</code> as second. All the body matchers a
 <div class="listingblock secondary">
 <div class="title">java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import java.util.function.Supplier;
+
+import org.springframework.cloud.contract.spec.Contract;
+
+class contract_xml implements Supplier&lt;Contract&gt; {
+
+    @Override
+    public Contract get() {
+        return Contract.make(c -&gt; {
+            c.request(r -&gt; {
+                r.method(r.GET());
+                r.urlPath("/get");
+                r.headers(h -&gt; {
+                    h.contentType(h.applicationXml());
+                });
+            });
+            c.response(r -&gt; {
+                r.status(r.OK());
+                r.headers(h -&gt; {
+                    h.contentType(h.applicationXml());
+                });
+                r.body("&lt;test&gt;\n" + "&lt;duck type='xtype'&gt;123&lt;/duck&gt;\n"
+                        + "&lt;alpha&gt;abc&lt;/alpha&gt;\n" + "&lt;list&gt;\n" + "&lt;elem&gt;abc&lt;/elem&gt;\n"
+                        + "&lt;elem&gt;def&lt;/elem&gt;\n" + "&lt;elem&gt;ghi&lt;/elem&gt;\n" + "&lt;/list&gt;\n"
+                        + "&lt;number&gt;123&lt;/number&gt;\n" + "&lt;aBoolean&gt;true&lt;/aBoolean&gt;\n"
+                        + "&lt;date&gt;2017-01-01&lt;/date&gt;\n"
+                        + "&lt;dateTime&gt;2017-01-01T01:23:45&lt;/dateTime&gt;\n"
+                        + "&lt;time&gt;01:02:34&lt;/time&gt;\n"
+                        + "&lt;valueWithoutAMatcher&gt;foo&lt;/valueWithoutAMatcher&gt;\n"
+                        + "&lt;key&gt;&lt;complex&gt;foo&lt;/complex&gt;&lt;/key&gt;\n" + "&lt;/test&gt;");
+                r.bodyMatchers(m -&gt; {
+                    m.xPath("/test/duck/text()", m.byRegex("[0-9]{3}"));
+                    m.xPath("/test/duck/text()", m.byCommand("equals($it)"));
+                    m.xPath("/test/duck/xxx", m.byNull());
+                    m.xPath("/test/duck/text()", m.byEquality());
+                    m.xPath("/test/alpha/text()", m.byRegex(r.onlyAlphaUnicode()));
+                    m.xPath("/test/alpha/text()", m.byEquality());
+                    m.xPath("/test/number/text()", m.byRegex(r.number()));
+                    m.xPath("/test/date/text()", m.byDate());
+                    m.xPath("/test/dateTime/text()", m.byTimestamp());
+                    m.xPath("/test/time/text()", m.byTime());
+                    m.xPath("/test/*/complex/text()", m.byEquality());
+                    m.xPath("/test/duck/@type", m.byEquality());
+                });
+            });
+        });
+    };
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        method = GET
+        urlPath = path("/get")
+        headers {
+            contentType = APPLICATION_XML
+        }
+    }
+    response {
+        status = OK
+        headers {
+            contentType =APPLICATION_XML
+        }
+        body = body("&lt;test&gt;\n" + "&lt;duck type='xtype'&gt;123&lt;/duck&gt;\n"
+                + "&lt;alpha&gt;abc&lt;/alpha&gt;\n" + "&lt;list&gt;\n" + "&lt;elem&gt;abc&lt;/elem&gt;\n"
+                + "&lt;elem&gt;def&lt;/elem&gt;\n" + "&lt;elem&gt;ghi&lt;/elem&gt;\n" + "&lt;/list&gt;\n"
+                + "&lt;number&gt;123&lt;/number&gt;\n" + "&lt;aBoolean&gt;true&lt;/aBoolean&gt;\n"
+                + "&lt;date&gt;2017-01-01&lt;/date&gt;\n"
+                + "&lt;dateTime&gt;2017-01-01T01:23:45&lt;/dateTime&gt;\n"
+                + "&lt;time&gt;01:02:34&lt;/time&gt;\n"
+                + "&lt;valueWithoutAMatcher&gt;foo&lt;/valueWithoutAMatcher&gt;\n"
+                + "&lt;key&gt;&lt;complex&gt;foo&lt;/complex&gt;&lt;/key&gt;\n" + "&lt;/test&gt;")
+        bodyMatchers {
+            xPath("/test/duck/text()", byRegex("[0-9]{3}"))
+            xPath("/test/duck/text()", byCommand("equals(\$it)"))
+            xPath("/test/duck/xxx", byNull)
+            xPath("/test/duck/text()", byEquality)
+            xPath("/test/alpha/text()", byRegex(onlyAlphaUnicode))
+            xPath("/test/alpha/text()", byEquality)
+            xPath("/test/number/text()", byRegex(number))
+            xPath("/test/date/text()", byDate)
+            xPath("/test/dateTime/text()", byTimestamp)
+            xPath("/test/time/text()", byTime)
+            xPath("/test/*/complex/text()", byEquality)
+            xPath("/test/duck/@type", byEquality)
+        }
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -8087,6 +8792,25 @@ response:
         );
     }
 
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">kotlin</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+arrayOf(
+    contract {
+        name("should post a user")
+        // ...
+    },
+    contract {
+        // ...
+    },
+    contract {
+        // ...
+    }
 }</code></pre>
 </div>
 </div>
@@ -12195,8 +12919,8 @@ trigger the messaging labels and to access WireMock servers.</p>
 You can check out the <a href="https://github.com/spring-cloud/spring-cloud-pipelines">Spring Cloud Pipelines</a>
 project for more information.</p>
 </div>
-<div class="sect5">
-<h6 id="features-stub-runner-boot-server"><a class="anchor" href="#features-stub-runner-boot-server"></a><a class="link" href="#features-stub-runner-boot-server">Stub Runner Server</a></h6>
+<div class="sect4">
+<h5 id="features-stub-runner-boot-server"><a class="anchor" href="#features-stub-runner-boot-server"></a><a class="link" href="#features-stub-runner-boot-server">Stub Runner Server</a></h5>
 <div class="paragraph">
 <p>To use the Stub Runner Server, add the following dependency:</p>
 </div>
@@ -12216,8 +12940,8 @@ project for more information.</p>
 <p>For the properties, see the <a href="#features-stub-runner-rule-spring">Stub Runner Spring</a> section.</p>
 </div>
 </div>
-<div class="sect5">
-<h6 id="features-stub-runner-boot-how-fat-jar"><a class="anchor" href="#features-stub-runner-boot-how-fat-jar"></a><a class="link" href="#features-stub-runner-boot-how-fat-jar">Stub Runner Server Fat Jar</a></h6>
+<div class="sect4">
+<h5 id="features-stub-runner-boot-how-fat-jar"><a class="anchor" href="#features-stub-runner-boot-how-fat-jar"></a><a class="link" href="#features-stub-runner-boot-how-fat-jar">Stub Runner Server Fat Jar</a></h5>
 <div class="paragraph">
 <p>You can download a standalone JAR from Maven (for example, for version 2.0.1.RELEASE)
 by running the following commands:</p>
@@ -12233,8 +12957,8 @@ $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 </div>
 </div>
 </div>
-<div class="sect5">
-<h6 id="features-stub-runner-boot-how-cli"><a class="anchor" href="#features-stub-runner-boot-how-cli"></a><a class="link" href="#features-stub-runner-boot-how-cli">Spring Cloud CLI</a></h6>
+<div class="sect4">
+<h5 id="features-stub-runner-boot-how-cli"><a class="anchor" href="#features-stub-runner-boot-how-cli"></a><a class="link" href="#features-stub-runner-boot-how-cli">Spring Cloud CLI</a></h5>
 <div class="paragraph">
 <p>Starting from the <code>1.4.0.RELEASE</code> version of the <a href="https://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</a>
 project, you can start Stub Runner Boot by running <code>spring cloud stubrunner</code>.</p>
@@ -12676,22 +13400,20 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 <div class="paragraph">
 <p>Contracts and stubs may be stored in a location, where each producer has its own, dedicated folder for contracts and stub mappings. Under that folder each consumer can have its own setup. To make Stub Runner find the dedicated folder from the provided ids one can pass a property <code>stubs.find-producer=true</code> or a system property <code>stubrunner.stubs.find-producer=true</code> .</p>
 </div>
-<div class="exampleblock">
+<div class="listingblock">
 <div class="content">
-<div class="paragraph">
-<p>└── com.example &lt;1&gt;
-    ├── some-artifact-id &lt;2&gt;
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">└── com.example <i class="conum" data-value="1"></i><b>(1)</b>
+    ├── some-artifact-id <i class="conum" data-value="2"></i><b>(2)</b>
     │   └── 0.0.1
-    │       ├── contracts &lt;3&gt;
+    │       ├── contracts <i class="conum" data-value="3"></i><b>(3)</b>
     │       │   └── shouldReturnStuffForArtifactId.groovy
-    │       └── mappings &lt;4&gt;
+    │       └── mappings <i class="conum" data-value="4"></i><b>(4)</b>
     │           └── shouldReturnStuffForArtifactId.json
-    └── some-other-artifact-id &lt;5&gt;
+    └── some-other-artifact-id <i class="conum" data-value="5"></i><b>(5)</b>
         ├── contracts
         │   └── shouldReturnStuffForOtherArtifactId.groovy
         └── mappings
-            └── shouldReturnStuffForOtherArtifactId.json</p>
-</div>
+            └── shouldReturnStuffForOtherArtifactId.json</code></pre>
 </div>
 </div>
 <div class="colist arabic">

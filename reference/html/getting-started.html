@@ -2143,7 +2143,7 @@ can also provide the offline work switch (<code>StubRunnerProperties.StubsMode.L
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {
-        "com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+        "com.example:http-server-dsl:+:stubs" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {</code></pre>
 </div>
 </div>
