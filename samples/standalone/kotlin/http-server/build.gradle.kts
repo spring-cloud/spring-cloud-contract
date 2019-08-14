@@ -58,7 +58,7 @@ dependencies {
 
 // tag::contract_dsl[]
 contracts {
-	packageWithBaseClasses = "com.example.fraud"
+	packageWithBaseClasses = objects.property(String::class).value("com.example.fraud")
 }
 // end::contract_dsl[]
 

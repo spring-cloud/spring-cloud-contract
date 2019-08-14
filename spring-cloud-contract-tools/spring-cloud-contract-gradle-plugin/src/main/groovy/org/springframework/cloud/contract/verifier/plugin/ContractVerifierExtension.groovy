@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import javax.inject.Inject
+
 import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -26,11 +28,10 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
+
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
-
-import javax.inject.Inject
 
 /**
  * @author Marcin Grzejszczak

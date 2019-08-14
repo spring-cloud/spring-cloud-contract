@@ -27,8 +27,9 @@ interface DefaultBaseClassProvider {
 	default String fqnBaseClass() {
 		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
 		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
-		return baseClassProvider().retrieveBaseClass(properties.getBaseClassMappings(), properties.getPackageWithBaseClasses(),
-				properties.getBaseClassForTests(), includedDirectoryRelativePath);
+		return baseClassProvider().retrieveBaseClass(properties.getBaseClassMappings(),
+				properties.getPackageWithBaseClasses(), properties.getBaseClassForTests(),
+				includedDirectoryRelativePath);
 	}
 
 }
