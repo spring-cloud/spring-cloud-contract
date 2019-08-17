@@ -548,7 +548,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 	}
 
 	@Issue('#1091')
-	def 'should work for map with array value where matchers cover all array fields for #methodBuilderName]'() {
+	def 'should work for map with array value where matchers cover all array fields for [#methodBuilderName]'() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -581,6 +581,67 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							contentType(applicationJsonUtf8())
 						}
 					}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('''assertThatJson(parsedJson).array("['prices']").isEmpty()''')
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
+
+	@Issue('#1091')
+	def 'should work for array containing map with array value where matchers cover all array fields for [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					name "ISSUE 1091"
+					method 'GET'
+					url '/test'
+					headers {
+						contentType(applicationJson())
+					}
+				}
+				response {
+					status OK()
+					body('''
+								{
+								"test": [		
+								{
+								"id": "652a506c-81a0-41c8-8be0-2b550a8bcd4c",
+								"barcode": "0000000084659",				
+								"prices": [
+									{
+									"country"      : "ES",
+									"originalPrice": "1500"
+									}
+										]
+											}
+												]
+													}
+											
+'''
+					)
+					bodyMatchers {
+						jsonPath('$.[0].barcode', byRegex(nonBlank()))
+						jsonPath('$.[0].id', byRegex(nonBlank()))
+						jsonPath('$.prices[0].country', byRegex(nonBlank()))
+						jsonPath('$.prices[0].originalPrice', byRegex(number()))
+					}
+					headers {
+						contentType(applicationJsonUtf8())
+					}
+				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
