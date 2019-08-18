@@ -10,7 +10,7 @@ Spring Cloud Contract Verifier is a tool that enables Consumer Driven Contract (
 
 Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 
-To see how Spring Cloud Contract supports other languages just check out this blog post.
+To see how Spring Cloud Contract supports other languages just check out https://spring.io/blog/2018/02/13/spring-cloud-contract-in-a-polyglot-world[this blog post].
 
 ## Features
 
