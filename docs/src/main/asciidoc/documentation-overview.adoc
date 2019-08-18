@@ -12,9 +12,9 @@ as a map for the rest of the document.
 
 The {project-full-name} reference guide is available as
 
-* {docs-url}reference/html[Multi-page HTML]
-* {docs-url}reference/htmlsingle[Single-page HTML]
-* {docs-url}reference/pdf/{project-name}.pdf[PDF]
+* {docs-url}/reference/html[Multi-page HTML]
+* {docs-url}/reference/htmlsingle[Single-page HTML]
+* {docs-url}/reference/pdf/{project-name}.pdf[PDF]
 
 Copies of this document may be made for your own use and for distribution to others,
 provided that you do not charge any fee for such copies and further provided that each
