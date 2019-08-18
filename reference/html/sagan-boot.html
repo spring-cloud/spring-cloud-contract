@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.7.1">
-<title>Adding Sleuth to Your Classpath:</title>
+<title>On the Producer Side</title>
 <link rel="stylesheet" href="css/spring.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -95,160 +95,139 @@ $(addBlockSwitches);
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_adding_sleuth_to_your_classpath">Adding Sleuth to Your Classpath:</a>
-<ul class="sectlevel2">
-<li><a href="#_maven">Maven</a></li>
-<li><a href="#_gradle">Gradle</a></li>
-</ul>
-</li>
+<li><a href="#_on_the_producer_side">On the Producer Side</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_adding_sleuth_to_your_classpath"><a class="link" href="#_adding_sleuth_to_your_classpath">Adding Sleuth to Your Classpath:</a></h2>
+<h2 id="_on_the_producer_side"><a class="link" href="#_on_the_producer_side">On the Producer Side</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section details how to add Sleuth to your class path for both Maven and Gradle</p>
+<p>To start working with Spring Cloud Contract, you can add files with REST or messaging contracts expressed in either Groovy DSL or YAML to the contracts directory, which is set by the contractsDslDir property. By default, it is $rootDir/src/test/resources/contracts.</p>
 </div>
-<div class="sect2">
-<h3 id="_maven"><a class="link" href="#_maven">Maven</a></h3>
 <div class="paragraph">
-<p>To add Sleuth to your classpath with Maven, add the following elements
-to your <code>pom.xml</code> file:</p>
+<p>Then you can add the Spring Cloud Contract Verifier dependency and plugin to your build file, as the following example shows:</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following listing shows how to add the plugin, which should go in the build/plugins portion of the file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Running <code>./mvnw clean install</code> automatically generates tests that verify the application compliance with the added contracts. By default, the tests get generated under <code>org.springframework.cloud.contract.verifier.tests</code>.</p>
+</div>
+<div class="paragraph">
+<p>As the implementation of the functionalities described by the contracts is not yet present, the tests fail.</p>
+</div>
+<div class="paragraph">
+<p>To make them pass, you must add the correct implementation of either handling HTTP requests or messages. Also, you must add a base test class for auto-generated tests to the project. This class is extended by all the auto-generated tests, and it should contain all the setup information necessary to run them (for example <code>RestAssuredMockMvc</code> controller setup or messaging test setup).</p>
+</div>
+<div class="paragraph">
+<p>The following example, from pom.xml, shows how to specify the base test class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
             &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-sleuth&lt;/artifactId&gt;
-            &lt;version&gt;${spring-cloud-sleuth.version}&lt;/version&gt;
-            &lt;type&gt;pom&lt;/type&gt;
-            &lt;scope&gt;import&lt;/scope&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-&lt;/dependencyManagement&gt;
-&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-cloud-starter-sleuth&lt;/artifactId&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;</code></pre>
+            &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+            &lt;extensions&gt;true&lt;/extensions&gt;
+            &lt;configuration&gt;
+                &lt;baseClassForTests&gt;com.example.contractTest.BaseTestClass&lt;/baseClassForTests&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_gradle"><a class="link" href="#_gradle">Gradle</a></h3>
 <div class="paragraph">
-<p>To add Sleuth to your classpath with Gradle, add the following
-to your <code>build.gradle</code> file:</p>
+<p>INFO: The baseClassForTests element lets you specify your base test class. It must be a child of a configuration element within spring-cloud-contract-maven-plugin.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
+<div class="paragraph">
+<p>Once the implementation and the test base class are in place, the tests pass, and both the application and the stub artifacts are built and installed in the local Maven repository. You can now merge the changes, and you can publish both the application and the stub artifacts in an online repository.
+2.2. On the Consumer Side</p>
+</div>
+<div class="paragraph">
+<p>You can use Spring Cloud Contract Stub Runner in the integration tests to get a running WireMock instance or messaging route that simulates the actual service.</p>
+</div>
+<div class="paragraph">
+<p>To do so, add the dependency to Spring Cloud Contract Stub Runner, as the following example shows:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre>buildscript {
-    dependencies {
-        classpath "io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE"
-    }
-}
-
-apply plugin: "io.spring.dependency-management"
-
-dependencyManagement {
-     imports {
-          mavenBom "org.springframework.cloud:spring-cloud-sleuth:${springCloudSleuthVersion}"
-     }
-}
-dependencies {
-    compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
-}</pre>
-</div>
-</div>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>As long as Spring Cloud Sleuth is on the classpath, any Spring Boot application can
-generate trace data. The following example shows how to do so:</p>
+<p>You can get the Producer-side stubs installed in your Maven repository in either of two ways:</p>
 </div>
-<div class="exampleblock">
-<div class="content">
+<div class="paragraph">
+<p>By checking out the Producer side repository and adding contracts and generating the stubs by running the following commands:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre>@SpringBootApplication
-@RestController
-public class Application {
-
-  private static Logger log = LoggerFactory.getLogger(DemoController.class);
-
-  @RequestMapping("/")
-  public String home() {
-    log.info("Handling home");
-    return "Hello World";
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-  }
-
-}</pre>
-</div>
-</div>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Now you can run this application and visit the home page. In the logs, you can see
-<code>traceId</code> and <code>spanId</code> populated. If this application calls out to another one (for
-example, with <code>RestTemplate</code>), it sends the trace data in headers, and, if the receiver is
-another Sleuth application, you can see the trace continue there.</p>
+<p>The tests are being skipped because the producer-side contract implementation is not in place yet, so the automatically-generated contract tests fail.</p>
 </div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-instead of logging the request in the handler explicitly, you could set
-<code>logging.level.org.springframework.web.servlet.DispatcherServlet=DEBUG</code>
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>By getting already-existing producer service stubs from a remote repository. To do so, pass the stub artifact IDs and artifact repository URL as Spring Cloud Contract Stub Runner properties, as the following example shows:</p>
 </div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-If you use Zipkin, you can configure the probability of spans being exported by
-setting (for <code>2.0.x</code>) <code>spring.sleuth.sampler.probability</code> or (up till <code>2.0.x</code>)
-<code>spring.sleuth.sampler.percentage</code> (default: 0.1, which is 10 percent). Otherwise, you
-might think that Sleuth is not working because it omits some spans.
-</td>
-</tr>
-</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">    stubrunner:
+      ids: 'com.example:http-server-dsl:+:stubs:8080'
+      repositoryRoot: https://repo.spring.io/libs-snapshot</code></pre>
 </div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Set <code>spring.application.name=bar</code> (for instance) to see the service name as
-well as the trace and span IDs.
-</td>
-</tr>
-</table>
 </div>
+<div class="paragraph">
+<p>Now you can annotate your test class with <code>@AutoConfigureStubRunner</code>. In the annotation, provide the group-id and artifact-id values for Spring Cloud Contract Stub Runner to run the collaborators' stubs for you, as the following example shows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+        stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+public class LoanApplicationServiceTests {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use the <code>REMOTE</code> stubsMode when downloading stubs from an online repository and <code>LOCAL</code> for offline work.</p>
+</div>
+<div class="paragraph">
+<p>Now, in your integration test, you can receive stubbed versions of HTTP responses or messages that are expected to be emitted by the collaborator service.</p>
 </div>
 </div>
 </div>
