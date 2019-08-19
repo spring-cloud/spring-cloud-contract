@@ -936,7 +936,7 @@ example shows a test and stub that came from this process:
 [[how-to-use-pact-broker-pact-consumers]]
 === Pact for Consumers
 
-On the producer side, you must add two additional dependencies to your project
+On the consumer side, you must add two additional dependencies to your project
 dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
 current Pact version that you use. The following listing shows how to do so for both
 Maven and Gradle:
