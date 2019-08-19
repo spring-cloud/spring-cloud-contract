@@ -139,8 +139,8 @@ class JsonToJsonPathsConverter {
 	private static boolean removeTrailingContainers(String matcherPath, DocumentContext context) {
 		Matcher matcher = ANY_ARRAY_NOTATION_IN_JSONPATH.matcher(matcherPath)
 		boolean containsArray = matcher.find()
-		String pathWithoutAnyArray = containsArray ? matcherPath.substring(0, matcherPath.
-				lastIndexOf(matcher.group())) : matcherPath
+		String pathWithoutAnyArray = containsArray ? matcherPath.
+				substring(0, matcherPath.lastIndexOf(lastMatch(matcher))) : matcherPath
 		def object = entry(context, pathWithoutAnyArray)
 		// object got removed and it was the only element
 		// let's get its parent and see if it contains an empty element
@@ -165,6 +165,15 @@ class JsonToJsonPathsConverter {
 			}
 		}
 		return false
+	}
+
+	private static String lastMatch(Matcher matcher) {
+		List<String> matches = []
+		while ({
+			matches << matcher.group()
+			matcher.find()
+		}()) continue
+		return matches[matches.size() - 1]
 	}
 
 	private static boolean isIterable(Object object) {

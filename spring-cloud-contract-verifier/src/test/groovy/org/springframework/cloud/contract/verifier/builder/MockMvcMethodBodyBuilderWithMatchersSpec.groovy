@@ -590,7 +590,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		when:
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
-			!test.contains('''assertThatJson(parsedJson).array("['prices']").isEmpty()''')
+			!test.contains('isEmpty()')
 		where:
 			methodBuilderName                                             | methodBuilder
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
@@ -617,13 +617,11 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					body('''
 								{
 								"test": [		
-								{
-								"id": "652a506c-81a0-41c8-8be0-2b550a8bcd4c",
-								"barcode": "0000000084659",				
+								{				
 								"prices": [
 									{
 									"country"      : "ES",
-									"originalPrice": "1500"
+									"originalPrice": 1500
 									}
 										]
 											}
@@ -633,10 +631,12 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 '''
 					)
 					bodyMatchers {
-						jsonPath('$.[0].barcode', byRegex(nonBlank()))
-						jsonPath('$.[0].id', byRegex(nonBlank()))
-						jsonPath('$.prices[0].country', byRegex(nonBlank()))
-						jsonPath('$.prices[0].originalPrice', byRegex(number()))
+						jsonPath('$.test[0].barcode', byRegex(nonBlank()))
+						jsonPath('$.test[0].id', byRegex(nonBlank()))
+						jsonPath('$.test[0].prices[0].country', byRegex(nonBlank()))
+						jsonPath('$.test[0].prices[0].originalPrice', byRegex(nonBlank()))
+						jsonPath('$.test[0].prices[?(@.originalPrice==1500)].originalPrice',
+								byRegex(nonBlank()))
 					}
 					headers {
 						contentType(applicationJsonUtf8())
@@ -651,7 +651,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		when:
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
-			!test.contains('''assertThatJson(parsedJson).array("['prices']").isEmpty()''')
+			!test.contains('isEmpty()')
 		where:
 			methodBuilderName                                             | methodBuilder
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
