@@ -244,6 +244,14 @@ class ContractVerifierExtension {
 		closure.call()
 	}
 
+	void contractsProperties(Map<String, String> map) {
+		contractsProperties.set(map)
+	}
+
+	void setContractsProperties(Map<String, String> map) {
+		contractsProperties.set(map)
+	}
+
 	/**
 	 * Is set to true will not provide the default publication task
 	 */
@@ -272,6 +280,95 @@ class ContractVerifierExtension {
 			this.contractsMode.set(StubRunnerProperties.StubsMode.valueOf(contractsMode.toUpperCase()))
 		}
 	}
+
+	void setBasePackageForTests(String basePackageForTests) {
+		this.basePackageForTests.set(basePackageForTests)
+	}
+
+	void setBaseClassForTests(String baseClassForTests) {
+		this.baseClassForTests.set(baseClassForTests)
+	}
+
+	void setNameSuffixForTests(String nameSuffixForTests) {
+		this.nameSuffixForTests.set(nameSuffixForTests)
+	}
+
+	void setRuleClassForTests(String ruleClassForTests) {
+		this.ruleClassForTests.set(ruleClassForTests)
+	}
+
+	void setContractsDslDir(String contractsDslDir) {
+		this.contractsDslDir.set(new File(contractsDslDir))
+	}
+
+	void setGeneratedTestSourcesDir(String generatedTestSourcesDir) {
+		this.generatedTestSourcesDir.set(new File(generatedTestSourcesDir))
+	}
+
+	void setGeneratedTestResourcesDir(String generatedTestResourcesDir) {
+		this.generatedTestResourcesDir.set(new File(generatedTestResourcesDir))
+	}
+
+	void setStubsOutputDir(String stubsOutputDir) {
+		this.stubsOutputDir.set(new File(stubsOutputDir))
+	}
+
+	void setStubsSuffix(String stubsSuffix) {
+		this.stubsSuffix.set(stubsSuffix)
+	}
+
+	void setContractsPath(String contractsPath) {
+		this.contractsPath.set(contractsPath)
+	}
+
+	void setPackageWithBaseClasses(String packageWithBaseClasses) {
+		this.packageWithBaseClasses.set(packageWithBaseClasses)
+	}
+
+	void setBasePackageForTests(GString basePackageForTests) {
+		this.basePackageForTests.set(basePackageForTests.toString())
+	}
+
+	void setBaseClassForTests(GString baseClassForTests) {
+		this.baseClassForTests.set(baseClassForTests.toString())
+	}
+
+	void setNameSuffixForTests(GString nameSuffixForTests) {
+		this.nameSuffixForTests.set(nameSuffixForTests.toString())
+	}
+
+	void setRuleClassForTests(GString ruleClassForTests) {
+		this.ruleClassForTests.set(ruleClassForTests.toString())
+	}
+
+	void setContractsDslDir(GString contractsDslDir) {
+		this.contractsDslDir.set(new File(contractsDslDir.toString()))
+	}
+
+	void setGeneratedTestSourcesDir(GString generatedTestSourcesDir) {
+		this.generatedTestSourcesDir.set(new File(generatedTestSourcesDir.toString()))
+	}
+
+	void setGeneratedTestResourcesDir(GString generatedTestResourcesDir) {
+		this.generatedTestResourcesDir.set(new File(generatedTestResourcesDir.toString()))
+	}
+
+	void setStubsOutputDir(GString stubsOutputDir) {
+		this.stubsOutputDir.set(new File(stubsOutputDir.toString()))
+	}
+
+	void setStubsSuffix(GString stubsSuffix) {
+		this.stubsSuffix.set(stubsSuffix.toString())
+	}
+
+	void setContractsPath(GString contractsPath) {
+		this.contractsPath.set(contractsPath.toString())
+	}
+
+	void setPackageWithBaseClasses(GString packageWithBaseClasses) {
+		this.packageWithBaseClasses.set(packageWithBaseClasses.toString())
+	}
+
 
 	@Inject
 	ContractVerifierExtension(ObjectFactory objects) {
@@ -344,6 +441,46 @@ class ContractVerifierExtension {
 					", stringNotation=" + stringNotation.getOrNull() +
 					'}'
 		}
+
+		void setGroupId(String groupId) {
+			this.groupId.set(groupId)
+		}
+
+		void setArtifactId(String artifactId) {
+			this.artifactId.set(artifactId)
+		}
+
+		void setVersion(String version) {
+			this.version.set(version)
+		}
+
+		void setClassifier(String classifier) {
+			this.classifier.set(classifier)
+		}
+
+		void setStringNotation(String stringNotation) {
+			this.stringNotation.set(stringNotation)
+		}
+
+		void setGroupId(GString groupId) {
+			this.groupId.set(groupId.toString())
+		}
+
+		void setArtifactId(GString artifactId) {
+			this.artifactId.set(artifactId.toString())
+		}
+
+		void setVersion(GString version) {
+			this.version.set(version.toString())
+		}
+
+		void setClassifier(GString classifier) {
+			this.classifier.set(classifier.toString())
+		}
+
+		void setStringNotation(GString stringNotation) {
+			this.stringNotation.set(stringNotation.toString())
+		}
 	}
 
 	static class BaseClassMapping {
@@ -405,6 +542,38 @@ class ContractVerifierExtension {
 					", proxyHost=" + proxyHost.getOrNull() +
 					", cacheDownloadedContracts=" + cacheDownloadedContracts.get() +
 					'}'
+		}
+
+		void setRepositoryUrl(String repositoryUrl) {
+			this.repositoryUrl.set(repositoryUrl)
+		}
+
+		void setUsername(String username) {
+			this.username.set(username)
+		}
+
+		void setPassword(String password) {
+			this.password.set(password)
+		}
+
+		void setProxyHost(String proxyHost) {
+			this.proxyHost.set(proxyHost)
+		}
+
+		void setRepositoryUrl(GString repositoryUrl) {
+			this.repositoryUrl.set(repositoryUrl.toString())
+		}
+
+		void setUsername(GString username) {
+			this.username.set(username.toString())
+		}
+
+		void setPassword(GString password) {
+			this.password.set(password.toString())
+		}
+
+		void setProxyHost(GString proxyHost) {
+			this.proxyHost.set(proxyHost.toString())
 		}
 	}
 }
