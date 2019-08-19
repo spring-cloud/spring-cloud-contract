@@ -9935,7 +9935,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 </section>
 <section xml:id="_pact_for_consumers">
 <title>Pact for Consumers</title>
-<simpara>On the producer side, you must add two additional dependencies to your project
+<simpara>On the consumer side, you must add two additional dependencies to your project
 dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
 current Pact version that you use.</simpara>
 <formalpara role="primary">
