@@ -1758,7 +1758,7 @@ The corresponding generated stub might be as follows:
 
 ==== Pact for Consumers
 
-On the producer side, you must add two additional dependencies to your project
+On the consumer side, you must add two additional dependencies to your project
 dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
 current Pact version that you use.
 
