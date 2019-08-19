@@ -547,4 +547,118 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 	}
 
+	@Issue('#1091')
+	def 'should work for map with array value where matchers cover all array fields for [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					name "ISSUE 1091"
+					method 'GET'
+					url '/test'
+					headers {
+						contentType(applicationJson())
+					}
+				}
+					response {
+						status OK()
+						body('''
+								{							
+								"prices": [
+									{
+									"country"      : "ES",
+									"originalPrice": "1500"
+									}
+											]
+											}
+											
+'''
+								)
+						bodyMatchers {
+							jsonPath('$.prices[0].country', byRegex(nonBlank()))
+							jsonPath('$.prices[0].originalPrice', byRegex(number()))
+						}
+						headers {
+							contentType(applicationJsonUtf8())
+						}
+					}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('isEmpty()')
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
+
+	@Issue('#1091')
+	def 'should work for array containing map with array value where matchers cover all array fields for [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					name "ISSUE 1091"
+					method 'GET'
+					url '/test'
+					headers {
+						contentType(applicationJson())
+					}
+				}
+				response {
+					status OK()
+					body('''
+								{
+								"test": [		
+								{				
+								"prices": [
+									{
+									"country"      : "ES",
+									"originalPrice": 1500
+									}
+										]
+											}
+												]
+													}
+											
+'''
+					)
+					bodyMatchers {
+						jsonPath('$.test[0].barcode', byRegex(nonBlank()))
+						jsonPath('$.test[0].id', byRegex(nonBlank()))
+						jsonPath('$.test[0].prices[0].country', byRegex(nonBlank()))
+						jsonPath('$.test[0].prices[0].originalPrice', byRegex(nonBlank()))
+						jsonPath('$.test[0].prices[?(@.originalPrice==1500)].originalPrice',
+								byRegex(nonBlank()))
+					}
+					headers {
+						contentType(applicationJsonUtf8())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('isEmpty()')
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
+
 }

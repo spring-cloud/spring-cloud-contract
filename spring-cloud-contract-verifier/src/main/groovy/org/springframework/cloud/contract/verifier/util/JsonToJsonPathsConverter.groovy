@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 import com.jayway.jsonpath.DocumentContext
@@ -42,6 +43,7 @@ import org.springframework.util.SerializationUtils
  *
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
+ * @author Olga Maciaszek-Sharma
  */
 @Commons
 class JsonToJsonPathsConverter {
@@ -54,7 +56,7 @@ class JsonToJsonPathsConverter {
 
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
-	private static final String ANY_ARRAY_NOTATION_IN_JSONPATH = "[*]"
+	private static final Pattern ANY_ARRAY_NOTATION_IN_JSONPATH = ~/\[(.*?)\]/
 	private static final String DESCENDANT_OPERATOR = ".."
 
 	private final ContractVerifierConfigProperties configProperties
@@ -126,7 +128,7 @@ class JsonToJsonPathsConverter {
 	}
 
 	/**
-	 * Related to #391. The converted body looks different when done via the String notation than
+	 * Related to #391 and #1091. The converted body looks different when done via the String notation than
 	 * it does when done via a map notation. When working with String body and when matchers
 	 * are provided, even when all entries of a map / list got removed, the map / list itself
 	 * remains. That leads to unnecessary creation of checks for empty collection. With this method
@@ -135,9 +137,10 @@ class JsonToJsonPathsConverter {
 	 * defining body...
 	 */
 	private static boolean removeTrailingContainers(String matcherPath, DocumentContext context) {
-		boolean containsArray = matcherPath.contains(ANY_ARRAY_NOTATION_IN_JSONPATH)
-		String pathWithoutAnyArray = containsArray ? matcherPath.substring(0, matcherPath.
-				lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH)) : matcherPath
+		Matcher matcher = ANY_ARRAY_NOTATION_IN_JSONPATH.matcher(matcherPath)
+		boolean containsArray = matcher.find()
+		String pathWithoutAnyArray = containsArray ? matcherPath.
+				substring(0, matcherPath.lastIndexOf(lastMatch(matcher))) : matcherPath
 		def object = entry(context, pathWithoutAnyArray)
 		// object got removed and it was the only element
 		// let's get its parent and see if it contains an empty element
@@ -162,6 +165,15 @@ class JsonToJsonPathsConverter {
 			}
 		}
 		return false
+	}
+
+	private static String lastMatch(Matcher matcher) {
+		List<String> matches = []
+		while ({
+			matches << matcher.group()
+			matcher.find()
+		}()) continue
+		return matches[matches.size() - 1]
 	}
 
 	private static boolean isIterable(Object object) {
