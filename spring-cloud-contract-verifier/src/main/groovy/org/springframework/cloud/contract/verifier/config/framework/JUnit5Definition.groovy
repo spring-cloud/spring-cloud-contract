@@ -60,12 +60,13 @@ class JUnit5Definition implements TestFrameworkDefinition {
 
 	@Override
 	List<String> getOrderAnnotationImports() {
-		throw new UnsupportedOperationException('Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48')
+		return ['org.junit.jupiter.api.TestMethodOrder',
+				'org.junit.jupiter.api.MethodOrderer']
 	}
 
 	@Override
 	String getOrderAnnotation() {
-		throw new UnsupportedOperationException('Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48')
+		return '@TestMethodOrder(MethodOrderer.Alphanumeric.class)'
 	}
 
 	@Override
