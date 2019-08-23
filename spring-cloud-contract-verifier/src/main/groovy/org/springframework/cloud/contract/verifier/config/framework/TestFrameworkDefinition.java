@@ -19,12 +19,16 @@ package org.springframework.cloud.contract.verifier.config.framework;
 import java.util.List;
 
 /**
+ * @deprecated appropriate implementations of <code>org.springframework.cloud.contract.verifier.builder.Visitor</code>
+ * should be used instead.
+ *
  * Defines elements characteristic of a given test framework to be used during test class
  * construction.
  *
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
+@Deprecated
 public interface TestFrameworkDefinition {
 
 	/**
