@@ -47,6 +47,10 @@ public class GenerateStubsMojo extends AbstractMojo {
 			required = true)
 	private File projectBuildDirectory;
 
+	@Parameter(defaultValue = "${project.build.finalName}", readonly = true,
+			required = true)
+	private String projectFinalName;
+
 	@Parameter(property = "stubsDirectory",
 			defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
@@ -112,9 +116,14 @@ public class GenerateStubsMojo extends AbstractMojo {
 				stubsJarFile);
 	}
 
-	private File createStubJar(File stubsOutputDir) throws MojoFailureException {
-		String stubArchiveName = this.project.getBuild().getFinalName() + "-"
-				+ this.classifier + ".jar";
+	private File createStubJar(File stubsOutputDir)
+			throws MojoFailureException, MojoExecutionException {
+		if (!stubsOutputDir.exists()) {
+			throw new MojoExecutionException("Stubs could not be found: ["
+					+ stubsOutputDir.getAbsolutePath()
+					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
+		}
+		String stubArchiveName = this.projectFinalName + "-" + this.classifier + ".jar";
 		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
 		String[] excludes = excludes();
 		getLog().info("Files matching this pattern will be excluded from "

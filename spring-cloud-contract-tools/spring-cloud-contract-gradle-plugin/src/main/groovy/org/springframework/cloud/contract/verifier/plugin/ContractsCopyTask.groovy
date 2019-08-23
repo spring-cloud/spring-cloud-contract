@@ -82,7 +82,7 @@ class ContractsCopyTask extends DefaultTask {
 	@TaskAction
 	void sync() {
 		File contractsDirectory = config.contractsDirectory.get().asFile
-		String contractsRepository = config.contractsRepository
+		String contractsRepository = config.contractsRepository.get()
 		throwExceptionWhenFailOnNoContracts(contractsDirectory, contractsRepository)
 		String antPattern = "${config.includedRootFolderAntPattern.get()}*.*"
 		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
