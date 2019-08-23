@@ -27,6 +27,7 @@
 	<version>0.1</version>
 
 	<build>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
