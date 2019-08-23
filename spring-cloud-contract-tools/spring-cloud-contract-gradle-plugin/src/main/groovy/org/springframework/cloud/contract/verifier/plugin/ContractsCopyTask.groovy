@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.Action
@@ -34,8 +35,9 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.WorkResult
-import org.springframework.cloud.contract.verifier.converter.ToYamlConverter
 
+import org.springframework.cloud.contract.verifier.converter.ToYamlConverter
+import org.springframework.util.StringUtils
 // TODO: Convert to incremental task: https://docs.gradle.org/current/userguide/custom_tasks.html#incremental_tasks
 /**
  * Task that copies the contracts in order for the jar task to
@@ -67,6 +69,8 @@ class ContractsCopyTask extends DefaultTask {
 		Provider<String> includedRootFolderAntPattern
 		@InputDirectory
 		Provider<Directory> contractsDirectory
+		@Input
+		Provider<String> contractsRepository
 
 		@OutputDirectory
 		DirectoryProperty copiedContractsFolder
@@ -74,10 +78,12 @@ class ContractsCopyTask extends DefaultTask {
 		@OutputDirectory
 		DirectoryProperty backupContractsFolder
 	}
+
 	@TaskAction
 	void sync() {
 		File contractsDirectory = config.contractsDirectory.get().asFile
-		throwExceptionWhenFailOnNoContracts(contractsDirectory)
+		String contractsRepository = config.contractsRepository
+		throwExceptionWhenFailOnNoContracts(contractsDirectory, contractsRepository)
 		String antPattern = "${config.includedRootFolderAntPattern.get()}*.*"
 		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
@@ -96,7 +102,7 @@ class ContractsCopyTask extends DefaultTask {
 				failOnNoContracts: extension.failOnNoContracts,
 				includedRootFolderAntPattern: initContractsTask.flatMap { it.config.includedRootFolderAntPattern },
 				contractsDirectory: initContractsTask.flatMap { it.config.initialisedContractsDirectory },
-
+				contractsRepository: extension.contractRepository.repositoryUrl.isPresent() ? extension.contractRepository.repositoryUrl : project.provider({ String s -> "" }),
 				copiedContractsFolder: createTaskOutput(root, extension.stubsOutputDir, ContractsCopyTask.CONTRACTS, project),
 				backupContractsFolder: createTaskOutput(root, extension.stubsOutputDir, ContractsCopyTask.BACKUP, project)
 		)
@@ -143,7 +149,13 @@ class ContractsCopyTask extends DefaultTask {
 		return property
 	}
 
-	private void throwExceptionWhenFailOnNoContracts(File file) {
+	private void throwExceptionWhenFailOnNoContracts(File file, String contractsRepository) {
+		if (StringUtils.hasText(contractsRepository)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Contracts repository is set, will not throw an exception that the contracts are not found")
+			}
+			return
+		}
 		if (config.failOnNoContracts.get() && (!file.exists() || file.listFiles().length == 0)) {
 			throw new GradleException("Contracts could not be found: ["
 					+ file.getAbsolutePath()
