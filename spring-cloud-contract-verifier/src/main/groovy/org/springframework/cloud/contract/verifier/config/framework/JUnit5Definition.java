@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.config.framework;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -59,14 +60,13 @@ public class JUnit5Definition implements TestFrameworkDefinition {
 
 	@Override
 	public List<String> getOrderAnnotationImports() {
-		throw new UnsupportedOperationException(
-				"Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+		return Arrays.asList("org.junit.jupiter.api.TestMethodOrder",
+				"org.junit.jupiter.api.MethodOrderer");
 	}
 
 	@Override
 	public String getOrderAnnotation() {
-		throw new UnsupportedOperationException(
-				"Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+		return "@TestMethodOrder(MethodOrderer.Alphanumeric.class)";
 	}
 
 	@Override

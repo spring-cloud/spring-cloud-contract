@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.util.Arrays;
+
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 
 class JUnit5OrderImports implements Imports {
@@ -24,7 +26,8 @@ class JUnit5OrderImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = { "" };
+	private static final String[] IMPORTS = { "org.junit.jupiter.api.TestMethodOrder",
+			"org.junit.jupiter.api.MethodOrderer" };
 
 	JUnit5OrderImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
@@ -34,10 +37,9 @@ class JUnit5OrderImports implements Imports {
 
 	@Override
 	public Imports call() {
-		// Arrays.stream(IMPORTS)
-		// .forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
-		throw new UnsupportedOperationException(
-				"Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+		Arrays.stream(IMPORTS)
+				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		return this;
 	}
 
 	@Override

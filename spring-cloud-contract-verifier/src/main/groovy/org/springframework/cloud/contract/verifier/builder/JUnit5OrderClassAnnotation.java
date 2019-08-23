@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.util.Arrays;
+
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 
 class JUnit5OrderClassAnnotation implements ClassAnnotation {
@@ -25,7 +27,7 @@ class JUnit5OrderClassAnnotation implements ClassAnnotation {
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] ANNOTATIONS = {
-			"@FixMethodOrder(MethodSorters.NAME_ASCENDING)" };
+			"@TestMethodOrder(MethodOrderer.Alphanumeric.class)" };
 
 	JUnit5OrderClassAnnotation(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
@@ -35,9 +37,8 @@ class JUnit5OrderClassAnnotation implements ClassAnnotation {
 
 	@Override
 	public ClassAnnotation call() {
-		// Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
-		throw new UnsupportedOperationException(
-				"Not implemented yet in JUnit5 - https://github.com/junit-team/junit5/issues/48");
+		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
+		return this;
 	}
 
 	@Override
