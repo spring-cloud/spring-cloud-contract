@@ -148,7 +148,7 @@ public class PluginUnitTest {
 	public void shouldGenerateStubs() throws Exception {
 		File basedir = this.resources.getBasedir("generatedStubs");
 		this.maven.executeMojo(basedir, "generateStubs", defaultPackageForTests());
-		assertFilesPresent(basedir, "target/sample-project-0.1-stubs.jar");
+		assertFilesPresent(basedir, "target/sample-project-stubs.jar");
 	}
 
 	@Test
@@ -156,7 +156,7 @@ public class PluginUnitTest {
 		File basedir = this.resources.getBasedir("generatedStubs");
 		this.maven.executeMojo(basedir, "generateStubs", defaultPackageForTests(),
 				newParameter("attachContracts", "false"));
-		assertFilesPresent(basedir, "target/sample-project-0.1-stubs.jar");
+		assertFilesPresent(basedir, "target/sample-project-stubs.jar");
 		// FIXME: add assertion for jar content
 	}
 
@@ -165,7 +165,7 @@ public class PluginUnitTest {
 		File basedir = this.resources.getBasedir("generatedStubs");
 		this.maven.executeMojo(basedir, "generateStubs", defaultPackageForTests(),
 				newParameter("classifier", "foo"));
-		assertFilesPresent(basedir, "target/sample-project-0.1-foo.jar");
+		assertFilesPresent(basedir, "target/sample-project-foo.jar");
 	}
 
 	@Test
