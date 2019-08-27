@@ -4,8 +4,7 @@ jobs:
     docker:
       - image: cloudpipelines/pipeline-base
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx250m"
-      MAVEN_OPTS: "-Xms64m -Xmx768m"
+      MAVEN_OPTS: "-Xms64m -Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xms64m -Xmx250m -XX:+HeapDumpOnOutOfMemoryError"
       TERM: dumb
     branches:
