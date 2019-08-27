@@ -11,7 +11,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 
@@ -53,7 +52,8 @@ class InitContractsTask extends DefaultTask {
 		@Internal
 		Property<String> includedRootFolderAntPattern
 
-		@OutputDirectory
+		// TODO: Enable it when all caching from `GradleContractsDownloader` is replaced with Gradle's one here:
+		// @OutputDirectory
 		DirectoryProperty initialisedContractsDirectory
 	}
 
@@ -68,7 +68,8 @@ class InitContractsTask extends DefaultTask {
 			config.includedRootFolderAntPattern.set(downloaded.inclusionProperties.includedRootFolderAntPattern)
 			config.initialisedContractsDirectory.set(downloaded.downloadedContracts)
 		}
-		logger.info("For project [{}] will use contracts provided in the folder [{}]", project.name, config.initialisedContractsDirectory.get())
+		logger.info("For project [{}] will use contracts provided in the folder [{}]", project.name,
+				config.initialisedContractsDirectory.get())
 	}
 
 	static Config fromExtension(ContractVerifierExtension extension, Project project) {

@@ -98,10 +98,16 @@ class GenerateServerTestsTask extends DefaultTask {
 	void generate() {
 		File generatedTestSources = config.generatedTestSourcesDir.get().asFile
 		File generatedTestResources = config.generatedTestResourcesDir.get().asFile
-		logger.info("Generated test sources dir [${ generatedTestSources}]")
+		logger.info("Generated test sources dir [${generatedTestSources}]")
 		logger.info("Generated test resources dir [${generatedTestResources}]")
 		File contractsDslDir = config.contractsDslDir.get().asFile
-		String includedContracts = config.includedContracts.get()
+		// There used to be some bug in old code, which was always setting `includedContracts` to ".*" instead of 
+		// getting it from the config (which is coming from contracts downloader). In fact, that `correct` behaviour 
+		// doesn't even make sense here as contracts are already copied, so that inclusion filter will not include 
+		// anything. So for now just restoring this old behaviour, but it must be reviewed. Probably that 
+		// `includedContracts` should be used in the `copyContracts` task instead?
+		// String includedContracts = config.includedContracts.get()
+		String includedContracts = ".*"
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${includedContracts}]")

@@ -88,7 +88,7 @@ class ContractsCopyTask extends DefaultTask {
 		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
 		File output = config.copiedContractsFolder.get().asFile
-		logger.info("Downloading and unpacking files from [${contractsDirectory}()] to [$output]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
+		logger.info("Downloading and unpacking files from [${contractsDirectory}] to [$output]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		sync(contractsDirectory, antPattern, slashSeparatedAntPattern, config.excludeBuildFolders.get(), output)
 		if (config.convertToYaml.get()) {
 			convertBackedUpDslsToYaml(contractsDirectory, antPattern, slashSeparatedAntPattern, output, config.excludeBuildFolders.get())
