@@ -70,16 +70,6 @@ class ContractVerifierSpec extends Specification {
 			project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("copyContracts"))
 	}
 
-	def "should create initContracts task"() {
-		expect:
-			project.tasks.named("initContracts") != null
-	}
-
-	def "should configure initContracts task as a dependency of the copyContracts task"() {
-		expect:
-			project.tasks.copyContracts.getDependsOn().contains(project.tasks.named("initContracts"))
-	}
-
 	/**
 	 * project.evaluate() is used here in order to trigger the evaluation lifecycle of a project.
 	 * This method is currently exposed via the internal API and is subject to change, however, Gradle

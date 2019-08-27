@@ -57,12 +57,11 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		ContractVerifierExtension extension = project.extensions.create(EXTENSION_NAME, ContractVerifierExtension)
 		setConfigurationDefaults(extension)
 
-		TaskProvider<InitContractsTask> initContracts = createAndConfigureContractsInitTask(extension)
-		TaskProvider<ContractsCopyTask> copyContracts = createAndConfigureCopyContractsTask(initContracts, extension)
+		TaskProvider<ContractsCopyTask> copyContracts = createAndConfigureCopyContractsTask(extension)
 		TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs = createAndConfigureGenerateClientStubs(extension, copyContracts)
 
 		createAndConfigureStubsJarTasks(extension, copyContracts, generateClientStubs)
-		createGenerateTestsTask(extension, copyContracts, initContracts)
+		createGenerateTestsTask(extension, copyContracts)
 		createAndConfigurePublishStubsToScmTask(extension, generateClientStubs)
 		project.afterEvaluate {
 			addIdeaTestSources(project, extension)
@@ -112,14 +111,13 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 
-	private void createGenerateTestsTask(ContractVerifierExtension extension,
-										 TaskProvider<ContractsCopyTask> copyContracts, TaskProvider<InitContractsTask> initContracts) {
+	private void createGenerateTestsTask(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContracts) {
 		TaskProvider<GenerateServerTestsTask> task = project.tasks.register(GenerateServerTestsTask.TASK_NAME, GenerateServerTestsTask)
 		task.configure {
 			it.description = "Generate server tests from the contracts"
 			it.group = GROUP_NAME
 			it.enabled = !project.gradle.startParameter.excludedTaskNames.contains("test")
-			it.config = GenerateServerTestsTask.fromExtension(extension, initContracts, copyContracts)
+			it.config = GenerateServerTestsTask.fromExtension(extension, copyContracts)
 
 			it.dependsOn copyContracts
 		}
@@ -133,7 +131,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		task.configure {
 			it.description = "The generated stubs get committed to the SCM repo and pushed to origin"
 			it.group = GROUP_NAME
-			it.config = PublishStubsToScmTask.fromExtension(extension)
+			it.config = PublishStubsToScmTask.fromExtension(extension, project.objects)
 
 			it.dependsOn generateClientStubs
 		}
@@ -242,25 +240,12 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return task
 	}
 
-	private TaskProvider<ContractsCopyTask> createAndConfigureCopyContractsTask(TaskProvider<InitContractsTask> initContractsTask,
-																				ContractVerifierExtension extension) {
+	private TaskProvider<ContractsCopyTask> createAndConfigureCopyContractsTask(ContractVerifierExtension extension) {
 		TaskProvider<ContractsCopyTask> task = project.tasks.register(ContractsCopyTask.TASK_NAME, ContractsCopyTask)
 		task.configure {
 			it.description = "Copies contracts to the output folder"
 			it.group = GROUP_NAME
-			it.config = ContractsCopyTask.fromExtension(extension, initContractsTask, buildRootPath(), project)
-
-			it.dependsOn initContractsTask
-		}
-		return task
-	}
-
-	private TaskProvider<InitContractsTask> createAndConfigureContractsInitTask(ContractVerifierExtension extension) {
-		TaskProvider<InitContractsTask> task = project.tasks.register(InitContractsTask.TASK_NAME, InitContractsTask)
-		task.configure {
-			it.description = "Initialises contracts either downloading or using default provided folder"
-			it.group = GROUP_NAME
-			it.config = InitContractsTask.fromExtension(extension, project)
+			it.config = ContractsCopyTask.fromExtension(extension, buildRootPath(), project)
 		}
 		return task
 	}

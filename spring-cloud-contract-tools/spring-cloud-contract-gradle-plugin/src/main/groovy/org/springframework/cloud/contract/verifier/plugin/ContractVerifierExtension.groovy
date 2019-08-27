@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import org.gradle.api.tasks.Internal
+
 import javax.inject.Inject
 
 import groovy.transform.CompileStatic
@@ -517,10 +519,11 @@ class ContractVerifierExtension {
 		@Optional
 		Property<String> proxyHost
 		/**
-		 * If set to true then will cache the folder where non snapshot contract artifacts got downloaded.
+		 * Not used any more, as we switched to Gradle's incremental build.
 		 */
-		@Input
-		Property<Boolean> cacheDownloadedContracts
+		@Internal
+		@Deprecated
+		boolean cacheDownloadedContracts
 
 		@Inject
 		ContractRepository(ObjectFactory objects) {
@@ -529,7 +532,6 @@ class ContractVerifierExtension {
 			this.password = objects.property(String)
 			this.proxyHost = objects.property(String)
 			this.proxyPort = objects.property(Integer)
-			this.cacheDownloadedContracts = objects.property(Boolean).convention(true)
 		}
 
 		@Override
@@ -540,7 +542,6 @@ class ContractVerifierExtension {
 					", password=" + password.getOrNull() +
 					", proxyPort=" + proxyPort.getOrNull() +
 					", proxyHost=" + proxyHost.getOrNull() +
-					", cacheDownloadedContracts=" + cacheDownloadedContracts.get() +
 					'}'
 		}
 
@@ -574,6 +575,10 @@ class ContractVerifierExtension {
 
 		void setProxyHost(GString proxyHost) {
 			this.proxyHost.set(proxyHost.toString())
+		}
+
+		void setProxyPort(Integer proxyPort) {
+			this.proxyPort.set(proxyPort)
 		}
 
 		void repositoryUrl(String repositoryUrl) {
