@@ -26,11 +26,7 @@
 		<module>contracts</module>
 		<module>restdocs</module>
 		<module>dsl</module>
-		<module>messaging</module>
-		<module>pact</module>
 		<module>webclient</module>
-		<module>yml</module>
-		<module>kotlin</module>
 	</modules>
 
 	<build>

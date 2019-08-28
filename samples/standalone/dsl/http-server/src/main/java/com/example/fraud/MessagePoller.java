@@ -16,19 +16,20 @@
 
 package com.example.fraud;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@SpringBootApplication
-@EnableBinding({ Source.class, MyProcessor.class })
-public class Application {
+@Component
+class MessagePoller {
+	private final Source source;
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	MessagePoller(Source source) {
+		this.source = source;
 	}
 
+	public void poll() {
+		this.source.output().send(MessageBuilder
+				.withPayload("{\"id\":\"99\",\"temperature\":\"123.45\"}").build());
+	}
 }

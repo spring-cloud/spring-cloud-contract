@@ -41,6 +41,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-test-support</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- tag::verifier_test_dependencies[] -->
 		<dependency>
@@ -79,8 +88,16 @@
 				<extensions>true</extensions>
 				<configuration>
 					<packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
-					<convertToYaml>true</convertToYaml>
+<!--					<convertToYaml>true</convertToYaml>-->
 				</configuration>
+				<!-- if additional dependencies are needed e.g. for Pact -->
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.cloud</groupId>
+						<artifactId>spring-cloud-contract-pact</artifactId>
+						<version>${spring-cloud-contract.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<!-- end::contract_maven_plugin[] -->
 			<plugin>

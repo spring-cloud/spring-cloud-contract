@@ -126,7 +126,7 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resource
 [source,yaml,indent=0,role="secondary"]
 .yaml
 ----
-include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[]
 ----
 ====
 
@@ -983,7 +983,7 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resource
 [source,yaml,indent=0,role="secondary"]
 .yaml
 ----
-include::{introduction_url}/samples/standalone/yml/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.yml[]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[]
 ----
 ====
 

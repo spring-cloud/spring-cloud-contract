@@ -26,8 +26,8 @@
 :verifier_core_path: {verifier_root_path}
 :stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
 :standalone_samples_path: {samples_path}/standalone/dsl
-:standalone_messaging_samples_path: {samples_path}/standalone/messaging
-:standalone_pact_path: {samples_path}/standalone/pact
+:standalone_messaging_samples_path: {samples_path}/standalone/dsl
+:standalone_pact_path: {samples_path}/standalone/dsl
 :standalone_restdocs_path: {samples_path}/standalone/restdocs
 :tests_path: {core_path}/tests
 :samples_branch: 2.2.x

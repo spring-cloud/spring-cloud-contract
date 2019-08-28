@@ -16,19 +16,18 @@
 
 package com.example.fraud;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.context.annotation.Configuration;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
 
-@Configuration
-@SpringBootApplication
-@EnableBinding({ Source.class, MyProcessor.class })
-public class Application {
+public class YmlFraudnameBase {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	private static final String FRAUD_NAME = "fraud";
+
+	FraudVerifier fraudVerifier = FRAUD_NAME::equals;
+
+	@Before
+	public void setup() {
+		RestAssuredMockMvc.standaloneSetup(new FraudNameController(this.fraudVerifier));
 	}
 
 }

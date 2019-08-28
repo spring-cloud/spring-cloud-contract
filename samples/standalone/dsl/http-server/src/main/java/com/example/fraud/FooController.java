@@ -16,19 +16,18 @@
 
 package com.example.fraud;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Configuration
-@SpringBootApplication
-@EnableBinding({ Source.class, MyProcessor.class })
-public class Application {
+/**
+ * @author Marcin Grzejszczak
+ */
+@RestController
+class FooController {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	@GetMapping("/foo")
+	void foo() {
+
 	}
 
 }

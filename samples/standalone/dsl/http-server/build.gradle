@@ -11,6 +11,10 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${findProperty('bootVersion') ?: bootVersion}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+		//tag::pact_dependency[]
+		// if additional dependencies are needed e.g. for Pact
+		classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"
+		//end::pact_dependency[]
 	}
 }
 
@@ -47,8 +51,10 @@ contracts {
 dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
+	compile("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
 
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
 }
 
 test {

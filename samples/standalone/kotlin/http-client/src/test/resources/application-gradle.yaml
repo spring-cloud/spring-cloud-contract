@@ -1,3 +1,0 @@
-stubrunner:
-  stubs-mode: local
-  stubs.ids: 'com.example:http-server-kotlin-gradle:+:stubs:6569'

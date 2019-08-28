@@ -846,7 +846,7 @@ Spring Cloud Contract can read the Pact JSON definition. You can place the file 
 ====
 [source,javascript,indent=0]
 ----
-include::{standalone_pact_path}/pact-http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.json[indent=0]
+include::{standalone_pact_path}/http-server/src/test/resources/contracts/pact/shouldMarkClientAsFraud.json[indent=0]
 ----
 ====
 
@@ -862,13 +862,13 @@ Maven and Gradle:
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-include::{standalone_pact_path}/pact-http-server/pom.xml[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/http-server/pom.xml[tags=pact_dependency,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-include::{standalone_pact_path}/pact-http-server/build.gradle[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/http-server/build.gradle[tags=pact_dependency,indent=0]
 ----
 ====
 
@@ -945,13 +945,13 @@ Maven and Gradle:
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-include::{standalone_pact_path}/pact-http-client/pom.xml[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/http-client/pom.xml[tags=pact_dependency,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-include::{standalone_pact_path}/pact-http-client/build.gradle[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/http-client/build.gradle[tags=pact_dependency,indent=0]
 ----
 ====
 

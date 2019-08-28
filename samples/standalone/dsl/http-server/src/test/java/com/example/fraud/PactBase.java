@@ -16,19 +16,31 @@
 
 package com.example.fraud;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.context.annotation.Configuration;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
 
-@Configuration
-@SpringBootApplication
-@EnableBinding({ Source.class, MyProcessor.class })
-public class Application {
+public class PactBase {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	@Before
+	public void setup() {
+		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
+				new FraudStatsController(stubbedStatsProvider()));
+	}
+
+	private StatsProvider stubbedStatsProvider() {
+		return fraudType -> {
+			switch (fraudType) {
+			case DRUNKS:
+				return 100;
+			case ALL:
+				return 200;
+			}
+			return 0;
+		};
+	}
+
+	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
+		assert rejectionReason == null;
 	}
 
 }
