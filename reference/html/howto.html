@@ -1582,9 +1582,9 @@ set a <code>metaData</code> entry in the Pact file with the <code>sentTo</code> 
       "description": "",
       "request": {
         "method": "PUT",
-        "path": "/fraudcheck",
+        "path": "/pactfraudcheck",
         "headers": {
-          "Content-Type": "application/vnd.fraud.v1+json"
+          "Content-Type": "application/json"
         },
         "body": {
           "clientId": "1234567890",
@@ -1604,7 +1604,7 @@ set a <code>metaData</code> entry in the Pact file with the <code>sentTo</code> 
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
+                  "regex": "application/json.*"
                 }
               ],
               "combine": "AND"
@@ -1626,11 +1626,11 @@ set a <code>metaData</code> entry in the Pact file with the <code>sentTo</code> 
       "response": {
         "status": 200,
         "headers": {
-          "Content-Type": "application/vnd.fraud.v1+json"
+          "Content-Type": "application/json"
         },
         "body": {
           "fraudCheckStatus": "FRAUD",
-          "rejectionReason": "Amount too high"
+          "rejection.reason": "Amount too high"
         },
         "matchingRules": {
           "header": {
@@ -1638,7 +1638,7 @@ set a <code>metaData</code> entry in the Pact file with the <code>sentTo</code> 
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
+                  "regex": "application/json.*"
                 }
               ],
               "combine": "AND"
@@ -1686,28 +1686,14 @@ Maven and Gradle:</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
-    &lt;extensions&gt;true&lt;/extensions&gt;
-    &lt;configuration&gt;
-        &lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
-    &lt;/configuration&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
-            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-&lt;/plugin&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml"></code></pre>
 </div>
 </div>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// if additional dependencies are needed e.g. for Pact
+classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"</code></pre>
 </div>
 </div>
 </div>
@@ -1790,17 +1776,13 @@ Maven and Gradle:</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
-    &lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml"></code></pre>
 </div>
 </div>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">testCompile "org.springframework.cloud:spring-cloud-contract-pact"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy"></code></pre>
 </div>
 </div>
 </div>
