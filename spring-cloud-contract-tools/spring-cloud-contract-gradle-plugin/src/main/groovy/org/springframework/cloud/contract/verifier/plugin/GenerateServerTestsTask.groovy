@@ -54,8 +54,6 @@ class GenerateServerTestsTask extends DefaultTask {
 		@InputDirectory
 		Provider<Directory> contractsDslDir
 		@Input
-		Provider<String> includedContracts
-		@Input
 		@Optional
 		Provider<String> nameSuffixForTests
 		@Input
@@ -101,12 +99,6 @@ class GenerateServerTestsTask extends DefaultTask {
 		logger.info("Generated test sources dir [${generatedTestSources}]")
 		logger.info("Generated test resources dir [${generatedTestResources}]")
 		File contractsDslDir = config.contractsDslDir.get().asFile
-		// There used to be some bug in old code, which was always setting `includedContracts` to ".*" instead of 
-		// getting it from the config (which is coming from contracts downloader). In fact, that `correct` behaviour 
-		// doesn't even make sense here as contracts are already copied, so that inclusion filter will not include 
-		// anything. So for now just restoring this old behaviour, but it must be reviewed. Probably that 
-		// `includedContracts` should be used in the `copyContracts` task instead?
-		// String includedContracts = config.includedContracts.get()
 		String includedContracts = ".*"
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
@@ -145,11 +137,9 @@ class GenerateServerTestsTask extends DefaultTask {
 		}
 	}
 
-	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<InitContractsTask> initContractsTask,
-								TaskProvider<ContractsCopyTask> copyContractsTask) {
+	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContractsTask) {
 		return new Config(
 				contractsDslDir: copyContractsTask.flatMap { it.config.copiedContractsFolder },
-				includedContracts: initContractsTask.flatMap { it.config.includedContracts },
 				nameSuffixForTests: extension.nameSuffixForTests,
 				basePackageForTests: extension.basePackageForTests,
 				baseClassForTests: extension.baseClassForTests,
