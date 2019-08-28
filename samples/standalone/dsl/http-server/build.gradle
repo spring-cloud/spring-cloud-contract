@@ -45,7 +45,7 @@ dependencyManagement {
 
 contracts {
 	packageWithBaseClasses = 'com.example.fraud'
-	convertToYaml = true
+//	convertToYaml = true
 }
 
 dependencies {

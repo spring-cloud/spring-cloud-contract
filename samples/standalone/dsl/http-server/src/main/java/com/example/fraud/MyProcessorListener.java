@@ -62,6 +62,7 @@ class MyProcessorListener {
 	void listen(byte[] payload) {
 		log.info("Got the message!");
 		if (!Arrays.equals(payload, this.expectedInput)) {
+			log.error("Input payload size is [" + payload.length + "] and the expected one is [" + this.expectedInput.length + "]");
 			throw new IllegalStateException("Wrong input");
 		}
 		this.processor.output()

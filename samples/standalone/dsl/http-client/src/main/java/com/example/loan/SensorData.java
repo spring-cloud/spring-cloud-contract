@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.sink;
+package com.example.loan;
 
 /**
  * @author Marius Bogoevici
