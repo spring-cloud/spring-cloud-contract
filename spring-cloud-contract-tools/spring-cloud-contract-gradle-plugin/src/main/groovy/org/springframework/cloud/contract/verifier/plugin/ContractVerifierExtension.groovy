@@ -575,5 +575,37 @@ class ContractVerifierExtension {
 		void setProxyHost(GString proxyHost) {
 			this.proxyHost.set(proxyHost.toString())
 		}
+
+		void repositoryUrl(String repositoryUrl) {
+			this.repositoryUrl.set(repositoryUrl)
+		}
+
+		void username(String username) {
+			this.username.set(username)
+		}
+
+		void password(String password) {
+			this.password.set(password)
+		}
+
+		void proxyHost(String proxyHost) {
+			this.proxyHost.set(proxyHost)
+		}
+
+		void repositoryUrl(GString repositoryUrl) {
+			this.repositoryUrl.set(repositoryUrl.toString())
+		}
+
+		void username(GString username) {
+			this.username.set(username.toString())
+		}
+
+		void password(GString password) {
+			this.password.set(password.toString())
+		}
+
+		void proxyHost(GString proxyHost) {
+			this.proxyHost.set(proxyHost.toString())
+		}
 	}
 }
