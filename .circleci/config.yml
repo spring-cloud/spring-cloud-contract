@@ -32,7 +32,7 @@ jobs:
           command: rm -rf ~/.m2/repository/org/springframework/cloud/contract && rm -rf ~/.m2/repository/com/example
       - run:
           name: "Running build"
-          command: ./mvnw -s .settings.xml clean install -U -Pdocs,fast,integration -nsu --batch-mode -Dmaven.test.redirectTestOutputToFile=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+          command: ./scripts/noIntegration.sh && ./scripts/integrationOnly.sh
       - run:
           name: "Aggregate test results"
           when: always
