@@ -4,8 +4,8 @@ jobs:
     docker:
       - image: cloudpipelines/pipeline-base
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms128m -Xmx250m"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms128m -Xmx250m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false'
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx250m"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms64m -Xmx250m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false'
       TERM: dumb
     branches:
       ignore:
@@ -32,7 +32,7 @@ jobs:
           command: rm -rf ~/.m2/repository/org/springframework/cloud/contract && rm -rf ~/.m2/repository/com/example
       - run:
           name: "Running build"
-          command: ./scripts/noIntegration.sh && ./scripts/integrationOnly.sh
+          command: ./scripts/ciBuild.sh
       - run:
           name: "Aggregate test results"
           when: always
