@@ -7,9 +7,7 @@ buildscript {
 			jcenter()
 		}
 		//For plugin-publish-plugin. Could be limited only to that dependency with Gradle 5.1+ - https://docs.gradle.org/5.1.1/release-notes.html#repository-to-dependency-matching
-		maven {
-			url 'https://plugins.gradle.org/m2/'
-		}
+		gradlePluginPortal()
 	}
 	dependencies {
 		classpath "com.bmuschko:gradle-nexus-plugin:2.3"
