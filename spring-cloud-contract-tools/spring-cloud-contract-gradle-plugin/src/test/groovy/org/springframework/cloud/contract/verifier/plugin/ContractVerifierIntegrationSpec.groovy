@@ -54,13 +54,15 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		String gradlePluginSysProp = System.getProperty("contract-gradle-plugin-libs-dir")
 		String gradlePluginLibsDir = (gradlePluginSysProp ?: new File("build/").absolutePath.toString()).replace('\\', '\\\\')
 
-		buildFile.write """
-			buildscript {
-				dependencies {
-					classpath fileTree(dir: '$gradlePluginLibsDir', include: '*.jar')
+		initFile.write """
+			allprojects {
+				buildscript {
+					dependencies {
+						classpath fileTree(dir: '$gradlePluginLibsDir', include: '*.jar')
+					}
 				}
 			}
-		""" + buildFile.text
+		"""
 		// Extending buildscript is required when 'apply' is used.
 		// 'GradleRunner#withPluginClasspath' can be used when plugin is added using 'plugins { id...'
 	}
@@ -102,9 +104,13 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	}
 
 	protected BuildResult run(String... tasks) {
+		List<String> arguments = new ArrayList<>()
+		arguments.addAll(tasks)
+		arguments.add("-I" + getInitFile().absolutePath)
+
 		return GradleRunner.create()
 						   .withProjectDir(testProjectDir)
-						   .withArguments(tasks)
+						   .withArguments(arguments)
 						   .withDebug(true)
 						   .forwardOutput()
 						   .build()
@@ -142,6 +148,10 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	protected File getBuildFile() {
 		return new File(testProjectDir, 'build.gradle')
+	}
+
+	protected File getInitFile() {
+		return new File(testProjectDir, 'init.gradle')
 	}
 
 	protected boolean jarContainsContractVerifierContracts(String path) {
