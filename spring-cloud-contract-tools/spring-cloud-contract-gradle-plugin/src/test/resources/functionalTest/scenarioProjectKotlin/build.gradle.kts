@@ -36,6 +36,7 @@ import org.springframework.cloud.contract.verifier.plugin.ContractVerifierExtens
 
 plugins {
 	groovy
+//	id("org.springframework.cloud.contract")
 }
 
 val restAssuredVersion by extra("3.0.7")

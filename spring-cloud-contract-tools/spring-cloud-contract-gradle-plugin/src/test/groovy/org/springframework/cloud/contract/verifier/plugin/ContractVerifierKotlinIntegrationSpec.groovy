@@ -16,9 +16,25 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import java.nio.file.Files
+import java.nio.file.Path
+
+import static java.nio.charset.StandardCharsets.UTF_8
+
 abstract class ContractVerifierKotlinIntegrationSpec extends ContractVerifierIntegrationSpec {
+	public static final String SPOCK = "testFramework.set(TestFramework.SPOCK)"
+	public static final String JUNIT = "testFramework.set(TestFramework.JUNIT)"
+
 	@Override
 	protected File getBuildFile() {
 		return new File(testProjectDir, 'build.gradle.kts')
+	}
+
+	@Override
+	protected void switchToJunitTestFramework(String from, String to) {
+		Path path = buildFile.toPath()
+		String content = new StringBuilder(new String(Files.readAllBytes(path), UTF_8)).replaceAll(SPOCK, JUNIT)
+																					   .replaceAll(from, to)
+		Files.write(path, content.getBytes(UTF_8))
 	}
 }
