@@ -1406,7 +1406,7 @@ publishStubsToScm {
         path will be /groupId/artifactId/version/contracts
          */
         contractRepository {
-            repositoryUrl = "git://file://${System.getenv("ROOT")}/target/contract_empty_git/"
+            repositoryUrl = "git://file://${project.buildDir}/target/contract_empty_git/"
         }
         // The mode can't be classpath
         contractsMode = "LOCAL"
