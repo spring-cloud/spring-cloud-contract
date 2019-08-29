@@ -25,9 +25,7 @@ ext {
 	repoUser = System.getenv('REPO_USERNAME') ?: project.findProperty('REPO_USERNAME') ?: ''
 	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
 
-	contractVerifierGradlePluginLibsDir = "$buildDir/contractVerifier-gradle-plugin-libs"
 	testSystemProperties = [
-			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
 			"WORK_OFFLINE"                   : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
 	JavaVersion javaVer = JavaVersion.current()
@@ -38,6 +36,7 @@ ext {
 
 project.version = findProperty('verifierVersion')
 apply plugin: 'groovy'
+apply plugin: "java-gradle-plugin"
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'
 //apply plugin: "jacoco"
@@ -65,8 +64,6 @@ task allInsight(type: DependencyInsightReportTask) {}
 configurations {
 	// fixing the groovydoc issue https://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
 	jansi.extendsFrom(runtime)
-
-	contractVerifierGradlePluginLibs
 }
 
 dependencies {
@@ -89,7 +86,6 @@ dependencies {
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
 	checkstyle "org.springframework.cloud:spring-cloud-build:${springCloudBuildVersion}"
-
 }
 
 task libtest() {
@@ -121,18 +117,8 @@ groovydoc {
 }
 
 dependencies {
-	contractVerifierGradlePluginLibs project
 	jansi 'org.fusesource.jansi:jansi:1.11'
 }
-
-task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
-	enabled = !incompatibleJdk
-	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
-	into contractVerifierGradlePluginLibsDir
-}
-
-archiveContractVerifierGradlePluginLibsDependencies.dependsOn project.tasks.jar
-test.dependsOn archiveContractVerifierGradlePluginLibsDependencies
 
 /*jacoco {
 	toolVersion = "0.7.7.201606060606"

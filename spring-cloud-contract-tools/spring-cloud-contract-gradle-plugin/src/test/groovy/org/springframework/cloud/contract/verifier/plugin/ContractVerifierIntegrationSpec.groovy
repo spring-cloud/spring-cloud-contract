@@ -51,14 +51,15 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	protected void setupForProject(String projectRoot) {
 		copyResourcesToRoot(projectRoot)
-		String gradlePluginSysProp = System.getProperty("contract-gradle-plugin-libs-dir")
-		String gradlePluginLibsDir = (gradlePluginSysProp ?: new File("build/").absolutePath.toString()).replace('\\', '\\\\')
+		Properties pluginClasspathProperties = new Properties()
+		pluginClasspathProperties.load(this.class.getResourceAsStream("/plugin-under-test-metadata.properties"))
+		List<String> classpath = pluginClasspathProperties.getProperty("implementation-classpath").split(";").collect { it.replaceAll("\\\\", "/") }
 
 		initFile.write """
 			allprojects {
 				buildscript {
 					dependencies {
-						classpath fileTree(dir: '$gradlePluginLibsDir', include: '*.jar')
+						classpath(files(\"${classpath.join("\",\"")}\"))
 					}
 				}
 			}
