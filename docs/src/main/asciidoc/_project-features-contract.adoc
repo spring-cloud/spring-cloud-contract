@@ -103,6 +103,63 @@ To get started with writing contracts in Kotlin you would need to start with a (
 Just like the with the Java DSL you can put your contracts in any directory of your choice.
 The Maven and Gradle plugins will look at the `src/test/resources/contracts` directory by default.
 
+You need to explicitly pass the the `spring-cloud-contract-spec-kotlin` dependency to your project plugin setup.
+
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <!-- some config -->
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-spec-kotlin</artifactId>
+            <version>${spring-cloud-contract.version}</version>
+        </dependency>
+    </dependencies>
+</plugin>
+
+<dependencies>
+        <!-- Remember to add this for the DSL support in the IDE and on the consumer side -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-spec-kotlin</artifactId>
+            <scope>test</scope>
+        </dependency>
+</dependencies>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+buildscript {
+    repositories {
+        // ...
+    }
+	dependencies {
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${scContractVersion}"
+        // remember to add this:
+		classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${scContractVersion}"
+	}
+}
+
+dependencies {
+    // ...
+
+    // Remember to add this for the DSL support in the IDE and on the consumer side
+    testImplementation "org.springframework.cloud:spring-cloud-contract-spec-kotlin"
+}
+----
+====
+
 IMPORTANT: Remember that, inside the Kotlin Script file, you have to provide the fully qualified name to the `ContractDSL` class.
 Generally you would use its contract function like this: `org.springframework.cloud.contract.spec.ContractDsl.contract { ... }`.
 You can also provide an import to the `contract` function (`import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract`) and then call `contract { ... }`.

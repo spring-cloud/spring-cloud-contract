@@ -841,7 +841,7 @@ set a `metaData` entry in the Pact file with the `sentTo` key equal to the desti
 === Pact Contract
 
 Spring Cloud Contract can read the Pact JSON definition. You can place the file in the
-`src/test/resources/contracts` folder. The following example shows such a Pact contract:
+`src/test/resources/contracts` folder. Remember to put the `spring-cloud-contract-pact` dependency to your classpath. The following example shows such a Pact contract:
 
 ====
 [source,javascript,indent=0]
