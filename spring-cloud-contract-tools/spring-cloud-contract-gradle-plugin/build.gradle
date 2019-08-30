@@ -38,7 +38,6 @@ apply plugin: "java-gradle-plugin"
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'
 //apply plugin: "jacoco"
-apply plugin: 'checkstyle'
 
 group = 'org.springframework.cloud'
 
@@ -83,7 +82,6 @@ dependencies {
 	}
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
-	checkstyle "org.springframework.cloud:spring-cloud-build:${springCloudBuildVersion}"
 }
 
 task libtest() {
