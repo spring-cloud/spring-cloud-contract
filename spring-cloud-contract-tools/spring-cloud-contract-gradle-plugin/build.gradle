@@ -36,7 +36,6 @@ project.version = findProperty('verifierVersion')
 apply plugin: 'groovy'
 apply plugin: "java-gradle-plugin"
 apply from: "$rootDir/gradle/release.gradle"
-apply plugin: 'eclipse'
 //apply plugin: "jacoco"
 
 group = 'org.springframework.cloud'
