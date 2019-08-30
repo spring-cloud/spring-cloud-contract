@@ -23,7 +23,7 @@ package org.springframework.cloud.contract.spec.internal
  * @since 2.2.0
  */
 open class CookiesDsl : CommonDsl() {
-    
+
     private val cookies = LinkedHashMap<String, Any>()
 
     open fun matching(value: Any?): Any? = value

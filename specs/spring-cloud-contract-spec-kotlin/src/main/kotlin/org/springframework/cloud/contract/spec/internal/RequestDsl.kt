@@ -29,7 +29,7 @@ import java.util.regex.Pattern
  */
 @ContractDslMarker
 open class RequestDsl : CommonDsl() {
-    
+
     private val delegate = Request()
 
     /**
@@ -293,13 +293,13 @@ open class RequestDsl : CommonDsl() {
         return request
     }
 
-    private class RequestHeadersDsl: HeadersDsl() {
+    private class RequestHeadersDsl : HeadersDsl() {
 
         private val common = Common()
 
         override fun matching(value: Any?): Any? {
             return value?.also {
-                return when(value) {
+                return when (value) {
                     is String -> this.common.value(
                             c(regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
                             p(value)
@@ -311,13 +311,13 @@ open class RequestDsl : CommonDsl() {
 
     }
 
-    private class RequestCookiesDsl: CookiesDsl() {
+    private class RequestCookiesDsl : CookiesDsl() {
 
         private val common = Common()
 
         override fun matching(value: Any?): Any? {
             return value?.also {
-                return when(value) {
+                return when (value) {
                     is String -> this.common.value(
                             c(regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
                             p(value)

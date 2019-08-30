@@ -20,7 +20,6 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.spec.internal.UrlPath
-import java.lang.IllegalStateException
 import java.util.stream.Collectors
 
 /**
@@ -36,7 +35,7 @@ infix fun UrlPath.withQueryParameters(parameters: QueryParameters.() -> Unit) = 
     queryParameters = QueryParameters().apply(parameters)
 }
 
-fun <T: Any> T.toDslProperty(): DslProperty<T> = DslProperty(this)
+fun <T : Any> T.toDslProperty(): DslProperty<T> = DslProperty(this)
 
 fun Map<String, Any>.toDslProperties(): Map<String, DslProperty<Any>> {
     return entries.stream().collect(Collectors.toMap(

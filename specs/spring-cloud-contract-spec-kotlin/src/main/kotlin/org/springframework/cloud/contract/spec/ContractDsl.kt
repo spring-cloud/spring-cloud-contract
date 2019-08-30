@@ -16,15 +16,7 @@
 
 package org.springframework.cloud.contract.spec
 
-import org.springframework.cloud.contract.spec.internal.ContractDslMarker
-import org.springframework.cloud.contract.spec.internal.Input
-import org.springframework.cloud.contract.spec.internal.InputDsl
-import org.springframework.cloud.contract.spec.internal.OutputMessage
-import org.springframework.cloud.contract.spec.internal.OutputMessageDsl
-import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.spec.internal.RequestDsl
-import org.springframework.cloud.contract.spec.internal.Response
-import org.springframework.cloud.contract.spec.internal.ResponseDsl
+import org.springframework.cloud.contract.spec.internal.*
 
 /**
  * @author Tim Ysewyn

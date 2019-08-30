@@ -26,151 +26,151 @@ import org.springframework.cloud.contract.spec.ContractTemplate
  */
 class FromRequestDsl {
 
-	private val template: ContractTemplate = HandlebarsContractTemplate()
+    private val template: ContractTemplate = HandlebarsContractTemplate()
 
-	/**
-	 * @return URL path and query.
-	 */
-	fun url() = FromRequestDslProperty(template.escapedUrl())
+    /**
+     * @return URL path and query.
+     */
+    fun url() = FromRequestDslProperty(template.escapedUrl())
 
-	/**
-	 * First value of a query parameter e.g. request.query.search.
-	 * @param key key for the query param
-	 * @return dsl property
-	 */
-	fun query(key: String) = FromRequestDslProperty(template.escapedQuery(key))
+    /**
+     * First value of a query parameter e.g. request.query.search.
+     * @param key key for the query param
+     * @return dsl property
+     */
+    fun query(key: String) = FromRequestDslProperty(template.escapedQuery(key))
 
-	/**
-	 * nth value of a query parameter (zero indexed) e.g. request.query.search.[5].
-	 * @param key key for the query param
-	 * @param index index of the query param
-	 * @return dsl property
-	 */
-	fun query(key: String, index: Int) = FromRequestDslProperty(template.escapedQuery(key, index))
+    /**
+     * nth value of a query parameter (zero indexed) e.g. request.query.search.[5].
+     * @param key key for the query param
+     * @param index index of the query param
+     * @return dsl property
+     */
+    fun query(key: String, index: Int) = FromRequestDslProperty(template.escapedQuery(key, index))
 
-	/**
-	 * URL path.
-	 * @return dsl property
-	 */
-	fun path() = FromRequestDslProperty(template.escapedPath())
+    /**
+     * URL path.
+     * @return dsl property
+     */
+    fun path() = FromRequestDslProperty(template.escapedPath())
 
-	/**
-	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}.
-	 * @param index path index
-	 * @return dsl property
-	 */
-	fun path(index: Int) = FromRequestDslProperty(template.escapedPath(index))
+    /**
+     * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}.
+     * @param index path index
+     * @return dsl property
+     */
+    fun path(index: Int) = FromRequestDslProperty(template.escapedPath(index))
 
-	/**
-	 * First value of a request header e.g. request.headers.X-Request-Id.
-	 * @param key header key
-	 * @return dsl property
-	 */
-	fun header(key: String) = FromRequestDslProperty(template.escapedHeader(key))
+    /**
+     * First value of a request header e.g. request.headers.X-Request-Id.
+     * @param key header key
+     * @return dsl property
+     */
+    fun header(key: String) = FromRequestDslProperty(template.escapedHeader(key))
 
-	/**
-	 * nth value of a request header (zero indexed) e.g. request.headers.X-Request-Id.
-	 * @param key header key
-	 * @param index header index
-	 * @return dsl property
-	 */
-	fun header(key: String, index: Int) = FromRequestDslProperty(template.escapedHeader(key, index))
+    /**
+     * nth value of a request header (zero indexed) e.g. request.headers.X-Request-Id.
+     * @param key header key
+     * @param index header index
+     * @return dsl property
+     */
+    fun header(key: String, index: Int) = FromRequestDslProperty(template.escapedHeader(key, index))
 
-	/**
-	 * Returns the template for retrieving the first value of a cookie with certain key.
-	 * @param key cookie key
-	 * @return dsl property
-	 */
-	fun cookie(key: String) = FromRequestDslProperty(template.escapedCookie(key))
+    /**
+     * Returns the template for retrieving the first value of a cookie with certain key.
+     * @param key cookie key
+     * @return dsl property
+     */
+    fun cookie(key: String) = FromRequestDslProperty(template.escapedCookie(key))
 
-	/**
-	 * Request body text (avoid for non-text bodies).
-	 * @return dsl property
-	 */
-	fun body() = FromRequestDslProperty(template.escapedBody())
+    /**
+     * Request body text (avoid for non-text bodies).
+     * @return dsl property
+     */
+    fun body() = FromRequestDslProperty(template.escapedBody())
 
-	/**
-	 * Request body text for the given JsonPath.
-	 * @param jsonPath json path body
-	 * @return dsl property
-	 */
-	fun body(jsonPath: String) = FromRequestDslProperty(template.escapedBody(jsonPath))
+    /**
+     * Request body text for the given JsonPath.
+     * @param jsonPath json path body
+     * @return dsl property
+     */
+    fun body(jsonPath: String) = FromRequestDslProperty(template.escapedBody(jsonPath))
 
-	/**
-	 * Unescaped URL path and query.
-	 * @return dsl property
-	 */
-	fun rawUrl() = FromRequestDslProperty(template.url())
+    /**
+     * Unescaped URL path and query.
+     * @return dsl property
+     */
+    fun rawUrl() = FromRequestDslProperty(template.url())
 
-	/**
-	 * Unescaped first value of a query parameter e.g. request.query.search.
-	 * @param key query key
-	 * @return dsl property
-	 */
-	fun rawQuery(key: String) = FromRequestDslProperty(template.query(key))
+    /**
+     * Unescaped first value of a query parameter e.g. request.query.search.
+     * @param key query key
+     * @return dsl property
+     */
+    fun rawQuery(key: String) = FromRequestDslProperty(template.query(key))
 
-	/**
-	 * Unescaped nth value of a query parameter (zero indexed) e.g.
-	 * request.query.search.[5].
-	 * @param key query key
-	 * @param index query index
-	 * @return dsl property
-	 */
-	fun rawQuery(key: String, index: Int) = FromRequestDslProperty(template.query(key, index))
+    /**
+     * Unescaped nth value of a query parameter (zero indexed) e.g.
+     * request.query.search.[5].
+     * @param key query key
+     * @param index query index
+     * @return dsl property
+     */
+    fun rawQuery(key: String, index: Int) = FromRequestDslProperty(template.query(key, index))
 
-	/**
-	 * Unescaped URL path.
-	 * @return dsl property
-	 */
-	fun rawPath() = FromRequestDslProperty(template.path())
+    /**
+     * Unescaped URL path.
+     * @return dsl property
+     */
+    fun rawPath() = FromRequestDslProperty(template.path())
 
-	/**
-	 * Unescaped nth value of a URL path (zero indexed) e.g. {{{ request.path.[2]. }}}.
-	 * @param index path index
-	 * @return dsl property
-	 */
-	fun rawPath(index: Int) = FromRequestDslProperty(template.path(index))
+    /**
+     * Unescaped nth value of a URL path (zero indexed) e.g. {{{ request.path.[2]. }}}.
+     * @param index path index
+     * @return dsl property
+     */
+    fun rawPath(index: Int) = FromRequestDslProperty(template.path(index))
 
-	/**
-	 * Unescaped first value of a request header e.g. request.headers.X-Request-Id.
-	 * @param key header key
-	 * @return dsl property
-	 */
-	fun rawHeader(key: String) = FromRequestDslProperty(template.header(key))
+    /**
+     * Unescaped first value of a request header e.g. request.headers.X-Request-Id.
+     * @param key header key
+     * @return dsl property
+     */
+    fun rawHeader(key: String) = FromRequestDslProperty(template.header(key))
 
-	/**
-	 * Unescaped nth value of a request header (zero indexed) e.g.
-	 * request.headers.X-Request-Id.
-	 * @param key header key
-	 * @param index header index
-	 * @return dsl property
-	 */
-	fun rawHeader(key: String, index: Int) = FromRequestDslProperty(template.header(key, index))
+    /**
+     * Unescaped nth value of a request header (zero indexed) e.g.
+     * request.headers.X-Request-Id.
+     * @param key header key
+     * @param index header index
+     * @return dsl property
+     */
+    fun rawHeader(key: String, index: Int) = FromRequestDslProperty(template.header(key, index))
 
-	/**
-	 * Unescaped Returns the template for retrieving the first value of a cookie with
-	 * certain key.
-	 * @param key cookie key
-	 * @return dsl property
-	 */
-	fun rawCookie(key: String) = FromRequestDslProperty(template.cookie(key))
+    /**
+     * Unescaped Returns the template for retrieving the first value of a cookie with
+     * certain key.
+     * @param key cookie key
+     * @return dsl property
+     */
+    fun rawCookie(key: String) = FromRequestDslProperty(template.cookie(key))
 
-	/**
-	 * Unescaped Request body text (avoid for non-text bodies).
-	 * @return dsl property
-	 */
-	fun rawBody() = FromRequestDslProperty(template.body())
+    /**
+     * Unescaped Request body text (avoid for non-text bodies).
+     * @return dsl property
+     */
+    fun rawBody() = FromRequestDslProperty(template.body())
 
-	/**
-	 * Unescaped Request body text for the given JsonPath.
-	 * @param jsonPath json path body
-	 * @return dsl property
-	 */
-	fun rawBody(jsonPath: String) = FromRequestDslProperty(template.body(jsonPath))
+    /**
+     * Unescaped Request body text for the given JsonPath.
+     * @param jsonPath json path body
+     * @return dsl property
+     */
+    fun rawBody(jsonPath: String) = FromRequestDslProperty(template.body(jsonPath))
 
 }
 
 class FromRequestDslProperty(private val content: String) : DslProperty<String>(content) {
-	// Overridden to support String interpolation
-	override fun toString(): String = content
+    // Overridden to support String interpolation
+    override fun toString(): String = content
 }

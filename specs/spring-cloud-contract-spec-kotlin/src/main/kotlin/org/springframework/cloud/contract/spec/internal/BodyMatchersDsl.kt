@@ -26,59 +26,59 @@ import java.util.regex.Pattern
  */
 open class BodyMatchersDsl {
 
-	private val jsonPathMatchers = LinkedHashMap<String, MatchingTypeValue>()
-	private val xPathMatchers = LinkedHashMap<String, MatchingTypeValue>()
+    private val jsonPathMatchers = LinkedHashMap<String, MatchingTypeValue>()
+    private val xPathMatchers = LinkedHashMap<String, MatchingTypeValue>()
 
-	/**
-	 * Adds a JSON path matcher.
-	 *
-	 * @param path The path.
-	 * @param matcher The matcher.
-	 */
-	fun jsonPath(path: String, matcher: MatchingTypeValue) {
-		this.jsonPathMatchers[path] = matcher
-	}
+    /**
+     * Adds a JSON path matcher.
+     *
+     * @param path The path.
+     * @param matcher The matcher.
+     */
+    fun jsonPath(path: String, matcher: MatchingTypeValue) {
+        this.jsonPathMatchers[path] = matcher
+    }
 
-	/**
-	 * Adds an xPath matcher.
-	 *
-	 * @param path The path.
-	 * @param matcher The matcher.
-	 */
-	fun xPath(path: String, matcher: MatchingTypeValue) {
-		this.xPathMatchers[path] = matcher
-	}
+    /**
+     * Adds an xPath matcher.
+     *
+     * @param path The path.
+     * @param matcher The matcher.
+     */
+    fun xPath(path: String, matcher: MatchingTypeValue) {
+        this.xPathMatchers[path] = matcher
+    }
 
-	/* HELPER VARIABLES */
+    /* HELPER VARIABLES */
 
-	val byDate
-		get() = MatchingTypeValue(MatchingType.DATE, RegexPatterns.isoDate())
+    val byDate
+        get() = MatchingTypeValue(MatchingType.DATE, RegexPatterns.isoDate())
 
-	val byTime
-		get() = MatchingTypeValue(MatchingType.TIME, RegexPatterns.isoTime())
+    val byTime
+        get() = MatchingTypeValue(MatchingType.TIME, RegexPatterns.isoTime())
 
-	val byTimestamp
-		get() = MatchingTypeValue(MatchingType.TIMESTAMP, RegexPatterns.isoDateTime())
+    val byTimestamp
+        get() = MatchingTypeValue(MatchingType.TIMESTAMP, RegexPatterns.isoDateTime())
 
-	val byEquality
-		get() = MatchingTypeValue(MatchingType.EQUALITY)
+    val byEquality
+        get() = MatchingTypeValue(MatchingType.EQUALITY)
 
-	/* HELPER FUNCTIONS */
+    /* HELPER FUNCTIONS */
 
-	fun byRegex(regex: String) = byRegex(Pattern.compile(regex))
+    fun byRegex(regex: String) = byRegex(Pattern.compile(regex))
 
-	fun byRegex(regex: RegexProperty) = RegexMatchingTypeValue(MatchingType.REGEX, regex)
+    fun byRegex(regex: RegexProperty) = RegexMatchingTypeValue(MatchingType.REGEX, regex)
 
-	fun byRegex(regex: Pattern) = RegexMatchingTypeValue(MatchingType.REGEX, RegexProperty(regex))
+    fun byRegex(regex: Pattern) = RegexMatchingTypeValue(MatchingType.REGEX, RegexProperty(regex))
 
-	fun byType(configurer: MatchingTypeValueHolder.() -> Unit): MatchingTypeValue = MatchingTypeValueHolder().apply(configurer).matchingTypeValue
+    fun byType(configurer: MatchingTypeValueHolder.() -> Unit): MatchingTypeValue = MatchingTypeValueHolder().apply(configurer).matchingTypeValue
 
-	internal open fun get(): BodyMatchers = configureBodyMatchers(BodyMatchers())
+    internal open fun get(): BodyMatchers = configureBodyMatchers(BodyMatchers())
 
-	internal fun <T: BodyMatchers> configureBodyMatchers(bodyMatchers: T): T {
-		this.jsonPathMatchers.forEach(bodyMatchers::jsonPath)
-		this.xPathMatchers.forEach(bodyMatchers::xPath)
-		return bodyMatchers
-	}
+    internal fun <T : BodyMatchers> configureBodyMatchers(bodyMatchers: T): T {
+        this.jsonPathMatchers.forEach(bodyMatchers::jsonPath)
+        this.xPathMatchers.forEach(bodyMatchers::xPath)
+        return bodyMatchers
+    }
 
 }

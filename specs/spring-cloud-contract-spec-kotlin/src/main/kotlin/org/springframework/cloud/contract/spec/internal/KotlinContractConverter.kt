@@ -28,7 +28,7 @@ import javax.script.ScriptEngineManager
  * @author Tim Ysewyn
  * @since 2.2.0
  */
-class KotlinContractConverter: ContractConverter<List<Contract>> {
+class KotlinContractConverter : ContractConverter<List<Contract>> {
 
     private val ext = "kts"
 

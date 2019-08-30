@@ -91,7 +91,7 @@ open class CommonDsl {
         get() = RegexPatterns.nonBlank()
 
     /* HELPER FUNCTIONS */
-    
+
     /**
      * Helper method to provide a better name for the consumer side.
      * @param clientValue client value
@@ -228,7 +228,7 @@ open class CommonDsl {
               contentType: DslProperty<Any>) = NamedProperty(name, value, contentType)
 
     fun named(namedMap: Map<String, DslProperty<Any>>) = NamedProperty(namedMap)
-    
+
     /* REGEX FUNCTIONS */
 
     fun regexProperty(value: Any) = RegexProperty(value)

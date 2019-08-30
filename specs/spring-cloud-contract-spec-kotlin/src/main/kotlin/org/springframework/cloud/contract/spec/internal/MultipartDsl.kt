@@ -26,14 +26,14 @@ import org.springframework.cloud.contract.spec.toDslProperty
  */
 class MultipartDsl {
 
-	private val fields = LinkedHashMap<String, DslProperty<Any>>()
+    private val fields = LinkedHashMap<String, DslProperty<Any>>()
 
-	fun field(name: String, content: Any) {
-		this.fields[name] = content.toDslProperty()
-	}
+    fun field(name: String, content: Any) {
+        this.fields[name] = content.toDslProperty()
+    }
 
-	internal fun get(): Multipart {
-		return Multipart(fields)
-	}
+    internal fun get(): Multipart {
+        return Multipart(fields)
+    }
 
 }

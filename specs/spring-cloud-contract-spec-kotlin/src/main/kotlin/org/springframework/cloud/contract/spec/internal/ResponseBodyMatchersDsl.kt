@@ -22,19 +22,19 @@ package org.springframework.cloud.contract.spec.internal
  * @author Tim Ysewyn
  * @since 2.2.0
  */
-class ResponseBodyMatchersDsl: BodyMatchersDsl() {
+class ResponseBodyMatchersDsl : BodyMatchersDsl() {
 
-	val byType
+    val byType
         get() = MatchingTypeValue(MatchingType.TYPE)
 
-	val byNull
+    val byNull
         get() = MatchingTypeValue(MatchingType.NULL)
 
-	fun byCommand(execute: String) = MatchingTypeValue().apply {
-		type = MatchingType.COMMAND
-		value = ExecutionProperty(execute)
-	}
+    fun byCommand(execute: String) = MatchingTypeValue().apply {
+        type = MatchingType.COMMAND
+        value = ExecutionProperty(execute)
+    }
 
-	override fun get() = configureBodyMatchers(ResponseBodyMatchers())
+    override fun get() = configureBodyMatchers(ResponseBodyMatchers())
 
 }
