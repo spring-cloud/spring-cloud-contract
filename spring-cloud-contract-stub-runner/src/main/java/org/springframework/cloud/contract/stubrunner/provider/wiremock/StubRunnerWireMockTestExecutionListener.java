@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestContext;
@@ -37,9 +38,11 @@ public final class StubRunnerWireMockTestExecutionListener
 
 	@Override
 	public void afterTestClass(TestContext testContext) {
-		if (testContext.getTestClass().getAnnotationsByType(AutoConfigureStubRunner.class).length == 0) {
+		if (testContext.getTestClass()
+				.getAnnotationsByType(AutoConfigureStubRunner.class).length == 0) {
 			if (log.isDebugEnabled()) {
-				log.debug("No @AutoConfigureStubRunner annotation found on [" + testContext.getTestClass() + "]. Skipping");
+				log.debug("No @AutoConfigureStubRunner annotation found on ["
+						+ testContext.getTestClass() + "]. Skipping");
 			}
 			return;
 		}
@@ -50,7 +53,8 @@ public final class StubRunnerWireMockTestExecutionListener
 						+ "as possible. Your tests will be faster and more reliable and this "
 						+ "warning will go away");
 			}
-			testContext.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
+			testContext
+					.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
 		}
 		// potential race condition
 		WireMockHttpServerStub.SERVERS.clear();
