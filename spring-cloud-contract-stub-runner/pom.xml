@@ -119,7 +119,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
+			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
 			<optional>true</optional>
 		</dependency>
