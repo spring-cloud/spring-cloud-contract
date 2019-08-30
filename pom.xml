@@ -60,7 +60,6 @@
 		<xpath2.processor.version>2.1.100</xpath2.processor.version>
 		<xerces.version>2.11.0</xerces.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
-		<jersey-client.version>1.19.4</jersey-client.version>
 	</properties>
 
 	<modules>
