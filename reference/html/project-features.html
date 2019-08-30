@@ -671,6 +671,65 @@ the <code>Contract</code> class (<code>import org.springframework.cloud.spec.Con
 Just like the with the Java DSL you can put your contracts in any directory of your choice.
 The Maven and Gradle plugins will look at the <code>src/test/resources/contracts</code> directory by default.</p>
 </div>
+<div class="paragraph">
+<p>You need to explicitly pass the the <code>spring-cloud-contract-spec-kotlin</code> dependency to your project plugin setup.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- some config --&gt;
+    &lt;/configuration&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-spec-kotlin&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;
+
+&lt;dependencies&gt;
+        &lt;!-- Remember to add this for the DSL support in the IDE and on the consumer side --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-spec-kotlin&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">buildscript {
+    repositories {
+        // ...
+    }
+    dependencies {
+        classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${scContractVersion}"
+        // remember to add this:
+        classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${scContractVersion}"
+    }
+}
+
+dependencies {
+    // ...
+
+    // Remember to add this for the DSL support in the IDE and on the consumer side
+    testImplementation "org.springframework.cloud:spring-cloud-contract-spec-kotlin"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 <div class="admonitionblock important">
 <table>
 <tr>
