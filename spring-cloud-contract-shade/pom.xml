@@ -4,7 +4,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<org.eclipse.sisu.inject.version>0.1.1</org.eclipse.sisu.inject.version>
+		<org.eclipse.sisu.inject.version>0.3.3</org.eclipse.sisu.inject.version>
 		<org.eclipse.sisu.plexus.version>0.1.1</org.eclipse.sisu.plexus.version>
 		<sisu-guice.version>4.2.0</sisu-guice.version>
 		<guice.version>4.2.2</guice.version>
