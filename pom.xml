@@ -54,7 +54,7 @@
 		<gmavenplus-plugin.version>1.6.3</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>2.5.7</groovy.version>
+		<groovy.version>2.5.8</groovy.version>
 		<!-- For Takari plugin -->
 		<maven.version>3.3.9</maven.version>
 		<aether.version>1.1.0</aether.version>
