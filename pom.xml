@@ -438,6 +438,29 @@
 				<artifactId>xercesImpl</artifactId>
 				<version>${xerces.version}</version>
 			</dependency>
+			<!-- Kotlin versions aligned with Gradle -->
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-bom</artifactId>
+				<version>${contract.kotlin.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-scripting-compiler-embeddable</artifactId>
+				<version>${contract.kotlin.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-daemon-embeddable</artifactId>
+				<version>${contract.kotlin.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-compiler-embeddable</artifactId>
+				<version>${contract.kotlin.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
