@@ -699,7 +699,7 @@ The following example shows how it works in the <code>contracts</code> closure:<
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">packageWithBaseClasses.set('com.example.base')</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">packageWithBaseClasses = 'com.example.base'</code></pre>
 </div>
 </div>
 </div>
@@ -717,7 +717,7 @@ name of the base class for the matched contract. You have to provide a list call
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">baseClassForTests.set("com.example.FooBase")
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">baseClassForTests = "com.example.FooBase"
 baseClassMappings {
     baseClassMapping('.*/com/.*', 'com.example.ComBase')
     baseClassMapping('.*/bar/.*': 'com.example.BarBase')
