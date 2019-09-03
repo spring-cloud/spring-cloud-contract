@@ -14,6 +14,26 @@
  * limitations under the License.
  */
 
+pluginManagement {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven(url = "https://repo.spring.io/snapshot")
+        maven(url = "https://repo.spring.io/milestone")
+        maven(url = "https://repo.spring.io/release")
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "org.springframework.boot") {
+                val bootVersion: String by extra
+                useModule("org.springframework.boot:spring-boot-gradle-plugin:$bootVersion")
+            } else if (requested.id.id == "org.springframework.cloud.contract") {
+                val verifierVersion: String by extra
+                useModule("org.springframework.cloud:spring-cloud-contract-gradle-plugin:$verifierVersion")
+            }
+        }
+    }
+}
 
 include(":fraudDetectionService")
 include(":loanApplicationService")

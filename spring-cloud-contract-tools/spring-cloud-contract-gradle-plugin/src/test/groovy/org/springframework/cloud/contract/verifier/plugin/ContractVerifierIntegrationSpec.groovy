@@ -51,21 +51,6 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	protected void setupForProject(String projectRoot) {
 		copyResourcesToRoot(projectRoot)
-		Properties pluginClasspathProperties = new Properties()
-		pluginClasspathProperties.load(this.class.getResourceAsStream("/plugin-under-test-metadata.properties"))
-		List<String> classpath = pluginClasspathProperties.getProperty("implementation-classpath").split(";").collect { it.replaceAll("\\\\", "/") }
-
-		initFile.write """
-			allprojects {
-				buildscript {
-					dependencies {
-						classpath(files(\"${classpath.join("\",\"")}\"))
-					}
-				}
-			}
-		"""
-		// Extending buildscript is required when 'apply' is used.
-		// 'GradleRunner#withPluginClasspath' can be used when plugin is added using 'plugins { id...'
 	}
 
 	protected void switchToJunitTestFramework() {
@@ -105,13 +90,10 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	}
 
 	protected BuildResult run(String... tasks) {
-		List<String> arguments = new ArrayList<>()
-		arguments.addAll(tasks)
-		arguments.add("-I" + getInitFile().absolutePath)
-
 		return GradleRunner.create()
 						   .withProjectDir(testProjectDir)
-						   .withArguments(arguments)
+						   .withArguments(tasks)
+						   .withPluginClasspath()
 //						   .withDebug(true)
 						   .forwardOutput()
 						   .build()
@@ -149,10 +131,6 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	protected File getBuildFile() {
 		return new File(testProjectDir, 'build.gradle')
-	}
-
-	protected File getInitFile() {
-		return new File(testProjectDir, 'init.gradle')
 	}
 
 	protected boolean jarContainsContractVerifierContracts(String path) {

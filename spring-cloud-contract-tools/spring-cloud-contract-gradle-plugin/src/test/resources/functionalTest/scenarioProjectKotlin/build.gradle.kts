@@ -14,21 +14,6 @@
  * limitations under the License.
  */
 
-buildscript {
-	val bootVersion: String by extra
-
-	repositories {
-		mavenCentral()
-		mavenLocal()
-		maven(url = "https://repo.spring.io/snapshot")
-		maven(url = "https://repo.spring.io/milestone")
-		maven(url = "https://repo.spring.io/release")
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:$bootVersion")
-	}
-}
-
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
@@ -36,7 +21,8 @@ import org.springframework.cloud.contract.verifier.plugin.ContractVerifierExtens
 
 plugins {
 	groovy
-//	id("org.springframework.cloud.contract")
+	id("org.springframework.boot") apply false
+	id("org.springframework.cloud.contract") apply false
 }
 
 val restAssuredVersion by extra("3.0.7")
@@ -78,7 +64,7 @@ subprojects {
 configure(listOf(project(":fraudDetectionService"), project(":loanApplicationService"))) {
 	apply(plugin = "org.springframework.boot")
 	apply(plugin = "io.spring.dependency-management")
-	apply(plugin = "spring-cloud-contract")
+	apply(plugin = "org.springframework.cloud.contract")
 	apply(plugin = "maven-publish")
 
 	configure<ContractVerifierExtension> {
