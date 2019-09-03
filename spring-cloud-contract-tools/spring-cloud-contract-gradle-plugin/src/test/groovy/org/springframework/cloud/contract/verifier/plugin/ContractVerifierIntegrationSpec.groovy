@@ -51,18 +51,6 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	protected void setupForProject(String projectRoot) {
 		copyResourcesToRoot(projectRoot)
-		String gradlePluginSysProp = System.getProperty("contract-gradle-plugin-libs-dir")
-		String gradlePluginLibsDir = (gradlePluginSysProp ?: new File("build/").absolutePath.toString()).replace('\\', '\\\\')
-
-		buildFile.write """
-			buildscript {
-				dependencies {
-					classpath fileTree(dir: '$gradlePluginLibsDir', include: '*.jar')
-				}
-			}
-		""" + buildFile.text
-		// Extending buildscript is required when 'apply' is used.
-		// 'GradleRunner#withPluginClasspath' can be used when plugin is added using 'plugins { id...'
 	}
 
 	protected void switchToJunitTestFramework() {
@@ -105,7 +93,8 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		return GradleRunner.create()
 						   .withProjectDir(testProjectDir)
 						   .withArguments(tasks)
-						   .withDebug(true)
+						   .withPluginClasspath()
+//						   .withDebug(true)
 						   .forwardOutput()
 						   .build()
 	}

@@ -151,7 +151,7 @@ class GenerateServerTestsTask extends DefaultTask {
 				staticImports: extension.staticImports,
 				testMode: extension.testMode,
 				testFramework: extension.testFramework,
-				baseClassMappings: extension.baseClassMappings,
+				baseClassMappings: extension.baseClassMappings.getBaseClassMappings(),
 				assertJsonSize: extension.assertJsonSize,
 				failOnInProgress: extension.failOnInProgress,
 

@@ -18,20 +18,22 @@ pluginManagement {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://repo.spring.io/release" }
+        maven(url = "https://repo.spring.io/snapshot")
+        maven(url = "https://repo.spring.io/milestone")
+        maven(url = "https://repo.spring.io/release")
     }
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "org.springframework.boot") {
-                useModule("org.springframework.boot:spring-boot-gradle-plugin:${bootVersion}")
+                val bootVersion: String by extra
+                useModule("org.springframework.boot:spring-boot-gradle-plugin:$bootVersion")
             } else if (requested.id.id == "org.springframework.cloud.contract") {
-                useModule("org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}")
+                val verifierVersion: String by extra
+                useModule("org.springframework.cloud:spring-cloud-contract-gradle-plugin:$verifierVersion")
             }
         }
     }
 }
 
-include ':fraudDetectionService'
-include ':loanApplicationService'
+include(":fraudDetectionService")
+include(":loanApplicationService")

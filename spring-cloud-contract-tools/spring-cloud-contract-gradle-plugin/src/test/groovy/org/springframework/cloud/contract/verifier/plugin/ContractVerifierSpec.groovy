@@ -1,5 +1,7 @@
 package org.springframework.cloud.contract.verifier.plugin
 
+import org.gradle.api.Project
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.project.DefaultProject
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.GroovyPlugin
@@ -89,16 +91,16 @@ class ContractVerifierSpec extends Specification {
 
 	def "should compile"() {
 		given:
-			ObjectFactory objectFactory = Stub(ObjectFactory)
-			ContractVerifierExtension extension = new ContractVerifierExtension(objectFactory)
+			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
+			ContractVerifierExtension extension = project.getExtensions().findByType(ContractVerifierExtension)
 			extension.with {
 
 				// tag::package_with_base_classes[]
-				packageWithBaseClasses.set('com.example.base')
+				packageWithBaseClasses = 'com.example.base'
 				// end::package_with_base_classes[]
 
 				// tag::base_class_mappings[]
-				baseClassForTests.set("com.example.FooBase")
+				baseClassForTests = "com.example.FooBase"
 				baseClassMappings {
 					baseClassMapping('.*/com/.*', 'com.example.ComBase')
 					baseClassMapping('.*/bar/.*': 'com.example.BarBase')
