@@ -5,6 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<dependency-management-plugin.version>1.0.8.RELEASE</dependency-management-plugin.version>
+		<plexus-archiver.version>4.1.0</plexus-archiver.version>
 	</properties>
 
 	<parent>
@@ -132,7 +133,7 @@
 					<dependency>
 						<groupId>org.codehaus.plexus</groupId>
 						<artifactId>plexus-archiver</artifactId>
-						<version>3.4</version>
+						<version>${plexus-archiver.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>

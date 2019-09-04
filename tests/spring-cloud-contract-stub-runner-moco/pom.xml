@@ -15,6 +15,7 @@
 	<description>Spring Cloud Contract Stub Runner Moco</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<moco-runner.version>1.0.0</moco-runner.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -24,7 +25,7 @@
 		<dependency>
 			<groupId>com.github.dreamhead</groupId>
 			<artifactId>moco-runner</artifactId>
-			<version>0.11.1</version>
+			<version>${moco-runner.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
