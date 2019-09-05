@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,13 +40,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AutoConfigureWireMockRandomPortApplicationTests {
 
 	@Autowired
+	private WireMockServer wireMockServer;
+
+	@Autowired
 	private Service service;
 
 	@Test
 	public void contextLoads() throws Exception {
+		wireMockServer.verify(0, RequestPatternBuilder.allRequests());
+
 		stubFor(get(urlEqualTo("/test")).willReturn(aResponse()
 				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
+
+
+		wireMockServer.verify(1, RequestPatternBuilder.allRequests());
 	}
 
 }
