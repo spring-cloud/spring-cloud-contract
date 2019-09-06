@@ -18,6 +18,7 @@
 		<main.basedir>${basedir}/..</main.basedir>
 		<maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
 		<docs.whitelisted.branches>1.0.x,1.1.x,2.0.x,2.1.x</docs.whitelisted.branches>
+		<configprops.inclusionPattern>stubrunner.*|wiremock.*|</configprops.inclusionPattern>
 	</properties>
 	<build>
 		<plugins>
@@ -30,6 +31,16 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+		</dependency>
+	</dependencies>
 	<profiles>
 		<profile>
 			<id>docs</id>
@@ -46,6 +57,10 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
 					</plugin>
 					<plugin>
 						<groupId>org.asciidoctor</groupId>

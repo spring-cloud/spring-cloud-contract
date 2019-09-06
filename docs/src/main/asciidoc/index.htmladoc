@@ -14,3 +14,4 @@ The reference documentation consists of the following sections:
 <<project-features.adoc#features,{project-full-name} Features>> :: Contract DSL, Messaging, Spring Cloud Contract Stub Runner, and Spring Cloud Contract WireMock.
 <<project-features.adoc#features-build-tools,Build Tools>> :: Maven Plugin, Gradle Plugin, and Docker.
 <<howto.adoc#howto,"`How-to`" Guides>> :: Stubs versioning, Pact integration, Debugging, and more.
+<<appendix.adoc#appendix,Appendices>> :: Properties, Metadata, Configuration, Dependencies, and more.
