@@ -255,6 +255,7 @@ class StubRunnerExecutor implements StubFinder {
 		OutputMessage outputMessage = groovyDsl.getOutputMessage();
 		DslProperty<?> body = outputMessage.getBody();
 		Headers headers = outputMessage.getHeaders();
+		// TODO: Json is harcoded here
 		this.contractVerifierMessaging.send(
 				JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(
 						body == null ? null : body.getClientValue())),

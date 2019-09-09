@@ -5,4 +5,5 @@ org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifi
 org.springframework.cloud.contract.verifier.messaging.amqp.ContractVerifierAmqpAutoConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.amqp.RabbitMockConnectionFactoryAutoConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.camel.ContractVerifierCamelConfiguration,\
+org.springframework.cloud.contract.verifier.messaging.jms.ContractVerifierJmsConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration

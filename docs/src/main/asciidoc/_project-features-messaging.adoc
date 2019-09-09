@@ -101,6 +101,7 @@ You can use one of the following four integration configurations:
 * Spring Integration
 * Spring Cloud Stream
 * Spring AMQP
+* Spring JMS
 
 Since we use Spring Boot, if you have added one of these libraries to the classpath, all
 the messaging configuration is automatically set up.
@@ -1011,5 +1012,142 @@ To disable the mocked `ConnectionFactory`, set the following property:
 stubrunner:
   amqp:
     mockConnection: false
+----
+====
+
+[[features-messaging-stub-runner-jms]]
+=== Consumer Side Messaging With Spring JMS
+
+Spring Cloud Contract Stub Runner's messaging module provides an easy way to
+integrate with Spring JMS.
+
+The integration assumes that you have a running instance of a JMS broker (e.g. `activemq` embedded broker).
+
+[[features-messaging-stub-runner-jms-adding]]
+==== Adding the Runner to the Project
+
+You need to have both Spring JMS and Spring Cloud Contract Stub Runner on the classpath. Remember to annotate your test class
+with `@AutoConfigureStubRunner`.
+
+:input_name: input
+:output_name: output
+
+[[features-messaging-stub-runner-jms-example]]
+==== Examples
+
+Assume that the stub structure looks as follows:
+
+====
+[source,bash,indent=0]
+----
+├── stubs
+    ├── bookDeleted.groovy
+    ├── bookReturned1.groovy
+    └── bookReturned2.groovy
+
+----
+====
+
+Further assume the following test configuration:
+
+====
+[source,yml,indent=0]
+----
+stubrunner:
+  repository-root: stubs:classpath:/stubs/
+  ids: my:stubs
+  stubs-mode: remote
+spring:
+  activemq:
+    send-timeout: 1000
+  jms:
+    template:
+      receive-timeout: 1000
+----
+====
+
+Now consider the following contracts (we number them 1 and 2):
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
+----
+
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
+----
+====
+
+[[features-messaging-stub-runner-jms-scenario1]]
+===== Scenario 1 (No Input Message)
+
+To trigger a message from the `return_book_1` label, we use the `StubTigger` interface, as follows:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+----
+====
+
+Next, we want to listen to the output of the message sent to `{output_name}`:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
+----
+====
+
+The received message would then pass the following assertions:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
+----
+====
+
+[[features-messaging-stub-runner-jms-scenario2]]
+===== Scenario 2 (Output Triggered by Input)
+
+Since the route is set for you, you can send a message to the `{output_name}` destination.
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_send,indent=0]
+----
+====
+
+Next, we want to listen to the output of the message sent to `{output_name}`, as follows:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_receive,indent=0]
+----
+====
+
+The received message would pass the following assertions:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
+----
+====
+
+[[features-messaging-stub-runner-jms-scenario3]]
+===== Scenario 3 (Input with No Output)
+
+Since the route is set for you, you can send a message to the `{output_name}` destination, as follows:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
 ----
 ====

@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.messaging.camel
+package org.springframework.cloud.contract.stubrunner.messaging.jms
+
+import javax.jms.JMSException
+import javax.jms.Message
+import javax.jms.TextMessage
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import org.apache.activemq.camel.component.ActiveMQComponent
-import org.apache.activemq.spring.ActiveMQConnectionFactory
-import org.apache.camel.CamelContext
-import org.apache.camel.ConsumerTemplate
-import org.apache.camel.Exchange
-import org.apache.camel.ProducerTemplate
-import org.apache.camel.component.jms.JmsConfiguration
-import org.apache.camel.impl.DefaultShutdownStrategy
+import org.apache.activemq.ActiveMQConnectionFactory
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -40,67 +37,52 @@ import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRun
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.annotation.DirtiesContext
+import org.springframework.jms.annotation.EnableJms
+import org.springframework.jms.core.JmsTemplate
+import org.springframework.jms.core.MessagePostProcessor
 import org.springframework.test.context.ContextConfiguration
 
 /**
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = "debug=true")
+@SpringBootTest(properties = ["debug=true"])
 @AutoConfigureStubRunner
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @IgnoreIf({ os.windows })
-class CamelStubRunnerSpec extends Specification {
+class JmsStubRunnerSpec extends Specification {
 
 	@Autowired
 	StubFinder stubFinder
 	@Autowired
-	CamelContext camelContext
-	ConsumerTemplate consumerTemplate
-	ProducerTemplate producerTemplate
-
-	def setup() {
-		consumerTemplate = camelContext.createConsumerTemplate()
-		producerTemplate = camelContext.createProducerTemplate()
-	}
+	JmsTemplate jmsTemplate
 
 	def cleanup() {
 		// ensure that message were taken from the queue
-		consumerTemplate.receive('jms:output', 100)
-		consumerTemplate.receive('jms:input', 100)
-		this.producerTemplate.stop()
-		this.consumerTemplate.stop()
-		def strategy = new DefaultShutdownStrategy(this.camelContext)
-		strategy.timeout = 1
-		this.camelContext.shutdownStrategy = strategy
-	}
-
-	def 'should not trigger a message that does not match input'() {
-		when:
-			producerTemplate.
-					sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
-		then:
-			Exchange receivedMessage = consumerTemplate.receive('jms:output', 100)
-		and:
-			receivedMessage == null
+		jmsTemplate.receive('output')
+		jmsTemplate.receive('input')
 	}
 
 	def 'should download the stub and register a route for it'() {
 		when:
 			// tag::client_send[]
-			producerTemplate.
-					sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])
+			jmsTemplate.
+					convertAndSend('input', new BookReturned('foo'), new MessagePostProcessor() {
+						@Override
+						Message postProcessMessage(Message message) throws JMSException {
+							message.setStringProperty("sample", "header")
+							return message
+						}
+					})
 			// end::client_send[]
 		then:
 			// tag::client_receive[]
-			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
+			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 			// end::client_receive[]
 		and:
 			// tag::client_receive_message[]
 			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
 			// end::client_receive_message[]
 	}
 
@@ -111,13 +93,13 @@ class CamelStubRunnerSpec extends Specification {
 			// end::client_trigger[]
 		then:
 			// tag::client_trigger_receive[]
-			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
+			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 			// end::client_trigger_receive[]
 		and:
 			// tag::client_trigger_message[]
 			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
 			// end::client_trigger_message[]
 	}
 
@@ -125,27 +107,27 @@ class CamelStubRunnerSpec extends Specification {
 		when:
 			// tag::trigger_group_artifact[]
 			stubFinder.
-					trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')
+					trigger('my:stubs', 'return_book_1')
 			// end::trigger_group_artifact[]
 		then:
-			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
+			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 		and:
 			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
 	}
 
 	def 'should trigger a label for the existing artifactId'() {
 		when:
 			// tag::trigger_artifact[]
-			stubFinder.trigger('camelService', 'return_book_1')
+			stubFinder.trigger('stubs', 'return_book_1')
 			// end::trigger_artifact[]
 		then:
-			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
+			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 		and:
 			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
 	}
 
 	def 'should throw an exception when missing label is passed'() {
@@ -168,21 +150,43 @@ class CamelStubRunnerSpec extends Specification {
 			stubFinder.trigger()
 			// end::trigger_all[]
 		then:
-			Exchange receivedMessage = consumerTemplate.receive('jms:output', 5000)
+			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 		and:
 			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
 	}
 
 	def 'should trigger a label with no output message'() {
 		when:
 			// tag::trigger_no_output[]
-			producerTemplate.
-					sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])
+			jmsTemplate.
+					convertAndSend('delete', new BookReturned('foo'), new MessagePostProcessor() {
+						@Override
+						Message postProcessMessage(Message message) throws JMSException {
+							message.setStringProperty("sample", "header")
+							return message
+						}
+					})
 			// end::trigger_no_output[]
 		then:
 			noExceptionThrown()
+	}
+
+	def 'should not trigger a message that does not match input'() {
+		when:
+			jmsTemplate.
+					convertAndSend('input', new BookReturned('notmatching'), new MessagePostProcessor() {
+						@Override
+						Message postProcessMessage(Message message) throws JMSException {
+							message.setStringProperty("wrong", "header")
+							return message
+						}
+					})
+		then:
+			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
+		and:
+			receivedMessage == null
 	}
 
 	private boolean assertThatBodyContainsBookNameFoo(Object payload) {
@@ -195,8 +199,8 @@ class CamelStubRunnerSpec extends Specification {
 	@Configuration
 	@ComponentScan
 	@EnableAutoConfiguration
+	@EnableJms
 	static class Config {
-
 		@Bean
 		ActiveMQConnectionFactory activeMQConnectionFactory(@Value('${activemq.url:vm://localhost?broker.persistent=false}') String url) {
 			ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerURL: url)
@@ -207,18 +211,7 @@ class CamelStubRunnerSpec extends Specification {
 			}
 			return factory
 		}
-
-		@Bean
-		JmsConfiguration jmsConfiguration(ActiveMQConnectionFactory activeMQConnectionFactory) {
-			return new JmsConfiguration(connectionFactory: activeMQConnectionFactory)
-		}
-
-		@Bean
-		ActiveMQComponent activeMQComponent(JmsConfiguration jmsConfiguration) {
-			return new ActiveMQComponent(configuration: jmsConfiguration)
-		}
 	}
-
 
 	Contract dsl =
 			// tag::sample_dsl[]
@@ -228,7 +221,7 @@ class CamelStubRunnerSpec extends Specification {
 					triggeredBy('bookReturnedTriggered()')
 				}
 				outputMessage {
-					sentTo('jms:output')
+					sentTo('output')
 					body('''{ "bookName" : "foo" }''')
 					headers {
 						header('BOOK-NAME', 'foo')
@@ -242,7 +235,7 @@ class CamelStubRunnerSpec extends Specification {
 			Contract.make {
 				label 'return_book_2'
 				input {
-					messageFrom('jms:input')
+					messageFrom('input')
 					messageBody([
 							bookName: 'foo'
 					])
@@ -251,7 +244,7 @@ class CamelStubRunnerSpec extends Specification {
 					}
 				}
 				outputMessage {
-					sentTo('jms:output')
+					sentTo('output')
 					body([
 							bookName: 'foo'
 					])
@@ -267,7 +260,7 @@ class CamelStubRunnerSpec extends Specification {
 			Contract.make {
 				label 'delete_book'
 				input {
-					messageFrom('jms:delete')
+					messageFrom('delete')
 					messageBody([
 							bookName: 'foo'
 					])

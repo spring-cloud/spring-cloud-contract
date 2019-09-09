@@ -30,12 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Marcin Grzejszczak
  */
-@Component
 public class CamelStubMessages implements MessageVerifier<Message> {
 
 	private static final Logger log = LoggerFactory.getLogger(CamelStubMessages.class);

@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.jms.ContractVerifierJmsConfiguration;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,9 +39,9 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ConditionalOnClass(Message.class)
 @Import(CamelAutoConfiguration.class)
-@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
-		matchIfMissing = true)
-@AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
+@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true", matchIfMissing = true)
+@AutoConfigureBefore({ NoOpContractVerifierAutoConfiguration.class,
+		ContractVerifierJmsConfiguration.class })
 public class ContractVerifierCamelConfiguration {
 
 	@Bean
