@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationConfiguration;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
@@ -47,9 +48,9 @@ import org.springframework.jms.core.JmsTemplate;
  */
 @Configuration
 @ConditionalOnClass(JmsTemplate.class)
-@ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true",
-		matchIfMissing = true)
-@AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
+@ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true", matchIfMissing = true)
+@AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class,
+		NoOpContractVerifierAutoConfiguration.class })
 public class ContractVerifierJmsConfiguration {
 
 	@Bean
@@ -62,7 +63,7 @@ public class ContractVerifierJmsConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<Message> contractVerifierJmsMessaging(
+	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(
 			MessageVerifier<Message> exchange) {
 		return new ContractVerifierJmsHelper(exchange);
 	}

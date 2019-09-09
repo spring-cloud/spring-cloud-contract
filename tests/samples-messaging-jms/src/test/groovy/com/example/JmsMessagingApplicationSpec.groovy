@@ -60,6 +60,7 @@ class JmsMessagingApplicationSpec extends Specification {
 	@BeforeClass
 	static void init() {
 		System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES", "*")
+		System.setProperty("debug", "true")
 	}
 
 	def "should work for triggered based messaging"() {
