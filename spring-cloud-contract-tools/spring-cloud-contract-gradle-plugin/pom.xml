@@ -21,7 +21,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<gradle.task>build</gradle.task>
 		<build-helper-maven-plugin.phase>package</build-helper-maven-plugin.phase>
-		<gradle-exec-maven-plugin.version>1.5.0</gradle-exec-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -115,7 +114,7 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<!-- we need a different version so as not to inherit from parent -->
-						<version>${gradle-exec-maven-plugin.version}</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -150,7 +149,7 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<!-- we need a different version so as not to inherit from parent -->
-						<version>${gradle-exec-maven-plugin.version}</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -183,7 +182,7 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<!-- we need a different version so as not to inherit from parent -->
-						<version>${gradle-exec-maven-plugin.version}</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -217,7 +216,7 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<!-- we need a different version so as not to inherit from parent -->
-						<version>${gradle-exec-maven-plugin.version}</version>
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
