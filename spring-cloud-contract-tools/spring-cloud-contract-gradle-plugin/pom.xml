@@ -224,6 +224,8 @@
 										<argument>-Pcentral</argument>
 										<argument>-PsonatypeUsername=${env.SONATYPE_USER}</argument>
 										<argument>-PsonatypePassword=${env.SONATYPE_PASSWORD}</argument>
+										<argument>-PsigningKey=${env.FOO_SEC}</argument>
+										<argument>-PsigningPassword=${env.FOO_PASSPHRASE}</argument>
 										<argument>publishPlugins</argument>
 									</arguments>
 								</configuration>
