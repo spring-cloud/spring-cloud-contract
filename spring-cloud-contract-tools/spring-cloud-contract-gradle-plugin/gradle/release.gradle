@@ -1,5 +1,5 @@
 apply plugin: 'maven'
-apply plugin: 'signing'
+//apply plugin: 'signing'
 
 uploadArchives.dependsOn { [check] }
 
@@ -53,12 +53,9 @@ ext {
 }
 
 if (isReleaseToCentral) {
-	signing {
-		def signingKey = findProperty("signingKey")
-		def signingPassword = findProperty("signingPassword")
-		useInMemoryPgpKeys(signingKey, signingPassword)
+	/*signing {
 		sign configurations.archives
-	}
+	}*/
 
 	apply plugin: 'com.gradle.plugin-publish'
 
