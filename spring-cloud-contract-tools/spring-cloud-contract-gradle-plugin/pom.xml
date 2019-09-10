@@ -222,6 +222,8 @@
 										<argument>build</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
 										<argument>-Pcentral</argument>
+										<argument>-PsonatypeUsername=${env.SONATYPE_USER}</argument>
+										<argument>-PsonatypePassword=${env.SONATYPE_PASSWORD}</argument>
 										<argument>publishPlugins</argument>
 									</arguments>
 								</configuration>
