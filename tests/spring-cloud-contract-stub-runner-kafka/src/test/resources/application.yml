@@ -1,0 +1,21 @@
+stubrunner:
+  repository-root: stubs:classpath:/stubs/
+  ids: my:stubs
+  stubs-mode: remote
+spring:
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+    producer:
+      properties:
+        "key.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
+        "key.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+      group-id: groupId
+    consumer:
+      properties:
+        "key.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+        "key.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
+      group-id: groupId
+server:
+  port: 0
+debug: true
+logging.level.org.springframework.cloud.contract: debug

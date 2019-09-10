@@ -58,6 +58,7 @@
 				<module>spring-cloud-contract-stub-runner-stream</module>
 				<module>spring-cloud-contract-stub-runner-amqp</module>
 				<module>spring-cloud-contract-stub-runner-jms</module>
+				<module>spring-cloud-contract-stub-runner-kafka</module>
 			</modules>
 		</profile>
 		<profile>
@@ -83,6 +84,7 @@
 				<module>spring-cloud-contract-stub-runner-stream</module>
 				<module>spring-cloud-contract-stub-runner-amqp</module>
 				<module>spring-cloud-contract-stub-runner-jms</module>
+				<module>spring-cloud-contract-stub-runner-kafka</module>
 			</modules>
 		</profile>
 	</profiles>
