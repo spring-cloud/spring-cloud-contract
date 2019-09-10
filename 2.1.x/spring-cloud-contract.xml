@@ -10,7 +10,7 @@
 <title></title>
 <simpara><emphasis>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant</emphasis></simpara>
-<simpara>2.1.3.BUILD-SNAPSHOT</simpara>
+<simpara>2.1.4.BUILD-SNAPSHOT</simpara>
 </preface>
 <chapter xml:id="_spring_cloud_contract">
 <title>Spring Cloud Contract</title>
@@ -1626,14 +1626,14 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;2.1.6.RELEASE&lt;/version&gt;
+		&lt;version&gt;2.1.7.RELEASE&lt;/version&gt;
 		&lt;relativePath/&gt;
 	&lt;/parent&gt;
 
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;2.1.3.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-contract.version&gt;2.1.4.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
 		&lt;spring-cloud-release.version&gt;Greenwich.BUILD-SNAPSHOT
 		&lt;/spring-cloud-release.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
