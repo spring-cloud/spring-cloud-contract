@@ -224,6 +224,8 @@
 										<argument>-Pcentral</argument>
 										<argument>-PsonatypeUsername=${env.SONATYPE_USER}</argument>
 										<argument>-PsonatypePassword=${env.SONATYPE_PASSWORD}</argument>
+										<argument>-Dgradle.publish.key=${env.GRADLE_PUBLISH_KEY}</argument>
+										<argument>-Dgradle.publish.secret=${env.GRADLE_PUBLISH_SECRET}</argument>
 										<argument>publishPlugins</argument>
 									</arguments>
 								</configuration>
