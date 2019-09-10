@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-public class AutoConfigureWireMockRandomPortInheretedApplicationTests
-		extends AutoConfigureWireMockRandomPortApplicationTests {
+public class AutoConfigureWireMockRandomPortInheretedApplicationTests extends AutoConfigureWireMockRandomPortApplicationTests {
 
 }
