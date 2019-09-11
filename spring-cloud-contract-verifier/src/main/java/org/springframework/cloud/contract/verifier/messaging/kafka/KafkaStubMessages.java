@@ -21,14 +21,17 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.messaging.Message;
@@ -41,9 +44,12 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	private final EmbeddedKafkaBroker broker;
 
-	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker) {
+	private final KafkaProperties kafkaProperties;
+
+	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties) {
 		this.kafkaTemplate = kafkaTemplate;
 		this.broker = broker;
+		this.kafkaProperties = kafkaProperties;
 	}
 
 	@Override
@@ -67,8 +73,21 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	private Message<?> withConsumer(
 			java.util.function.Function<Consumer, Message<?>> lambda) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(
+				ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+				broker.getBrokersAsString());
+		props.put(
+				ConsumerConfig.GROUP_ID_CONFIG,
+				kafkaProperties.getConsumer().getGroupId());
+		props.put(
+				ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+				JsonDeserializer.class);
+		props.put(
+				ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+				JsonDeserializer.class);
 		ConsumerFactory<Integer, String> cf = new DefaultKafkaConsumerFactory<>(
-				new HashMap<>());
+				props);
 		try (Consumer<Integer, String> consumer = cf.createConsumer()) {
 			this.broker.consumeFromAllEmbeddedTopics(consumer);
 			return lambda.apply(consumer);
@@ -87,11 +106,11 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	private MessageHeaders headers(Headers headers) {
-		MessageHeaders messageHeaders = new MessageHeaders(new HashMap<>());
+		Map<String, Object> map = new HashMap();
 		for (Header header : headers) {
-			messageHeaders.put(header.key(), header.value());
+			map.put(header.key(), header.value());
 		}
-		return messageHeaders;
+		return new MessageHeaders(map);
 	}
 
 	@Override

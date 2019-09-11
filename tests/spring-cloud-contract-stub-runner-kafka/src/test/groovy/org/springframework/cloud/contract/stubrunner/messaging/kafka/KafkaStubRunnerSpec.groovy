@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.kafka
 
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
 import groovy.json.JsonOutput
@@ -24,7 +26,6 @@ import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.header.Headers
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -45,14 +46,20 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
+import org.springframework.kafka.listener.ContainerProperties
+import org.springframework.kafka.listener.KafkaMessageListenerContainer
+import org.springframework.kafka.listener.MessageListener
+import org.springframework.kafka.support.DefaultKafkaHeaderMapper
 import org.springframework.kafka.support.serializer.JsonDeserializer
 import org.springframework.kafka.support.serializer.JsonSerializer
 import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
+import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
 import org.springframework.messaging.support.MessageBuilder
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 
 /**
@@ -63,6 +70,7 @@ import org.springframework.test.context.ContextConfiguration
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
 @EmbeddedKafka(topics = ["input", "output", "delete"])
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class KafkaStubRunnerSpec extends Specification {
 
 	@Autowired
@@ -73,10 +81,16 @@ class KafkaStubRunnerSpec extends Specification {
 	EmbeddedKafkaBroker broker
 	@Value('${spring.embedded.kafka.brokers}')
 	String brokers
+	Receiver receiver
+
+	def setup() {
+		receiver = new Receiver(broker)
+	}
 
 	def cleanup() {
 		// ensure that message were taken from the queue
 		withConsumer({ return null })
+		receiver.clear()
 	}
 
 	private Message<?> withConsumer(
@@ -106,23 +120,13 @@ class KafkaStubRunnerSpec extends Specification {
 		}
 	}
 
-	private MessageHeaders messageHeaders(Headers headers) {
-		Map map = []
-		headers.each { map.put(it.key(), it.value()) }
-		return new MessageHeaders(map)
-	}
-
 	private Message receive(String destination) {
-		return withConsumer({ consumer ->
-			ConsumerRecord<Integer, String> reply = KafkaTestUtils
-					.getSingleRecord(consumer, destination);
-			Headers headers = reply.headers();
-			String payload = reply.value();
-			return MessageBuilder.createMessage(payload, messageHeaders(headers));
-		});
+		return receiver.receive(destination)
 	}
 
 	def 'should download the stub and register a route for it'() {
+		setup:
+			receiver.prepareListener('output')
 		when:
 			// tag::client_send[]
 			Message message = MessageBuilder.createMessage(new BookReturned('foo'), new MessageHeaders([sample: "header",]))
@@ -142,6 +146,8 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger a message by label'() {
+		setup:
+			receiver.prepareListener('output')
 		when:
 			// tag::client_trigger[]
 			stubFinder.trigger('return_book_1')
@@ -159,6 +165,8 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
+		setup:
+			receiver.prepareListener('output')
 		when:
 			// tag::trigger_group_artifact[]
 			stubFinder.
@@ -173,6 +181,8 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger a label for the existing artifactId'() {
+		setup:
+			receiver.prepareListener('output')
 		when:
 			// tag::trigger_artifact[]
 			stubFinder.trigger('stubs', 'return_book_1')
@@ -200,6 +210,8 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger messages by running all triggers'() {
+		setup:
+			receiver.prepareListener('output')
 		when:
 			// tag::trigger_all[]
 			stubFinder.trigger()
@@ -224,6 +236,8 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should not trigger a message that does not match input'() {
+		setup:
+			receiver.prepareListener('output')
 		when:
 			Message message = MessageBuilder.createMessage(new BookReturned('notmatching'), new MessageHeaders([wrong: "header",]))
 			kafkaTemplate.setDefaultTopic('input')
@@ -268,6 +282,11 @@ class KafkaStubRunnerSpec extends Specification {
 		@Bean
 		KafkaTemplate myKafkaTemplate() {
 			return new KafkaTemplate<>(customProducerFactory());
+		}
+
+		@Bean
+		DefaultKafkaHeaderMapper headerMapper(){
+			return new DefaultKafkaHeaderMapper();
 		}
 	}
 
@@ -329,4 +348,95 @@ class KafkaStubRunnerSpec extends Specification {
 				}
 			}
 	// end::sample_dsl_3[]
+}
+
+class Record {
+	private final ConsumerRecord record
+
+	Record(ConsumerRecord record) {
+		this.record = record
+	}
+
+	Message toMessage() {
+		String textPayload = record.value()
+		// sometimes it's a message sometimes just payload
+		MessageHeaders headers = new MessageHeaders(record.headers().collectEntries { [(it.key()): unquoted(it.value())] })
+		if (textPayload.contains("payload") && textPayload.contains("headers")) {
+			def slurped = new JsonSlurper().parseText(textPayload)
+			textPayload = slurped.payload
+			Map newHeaders = slurped.headers
+			Map mergedMap = new HashMap(newHeaders.collectEntries { [(it.key) : unquoted(it.value)]})
+			mergedMap.putAll(headers)
+			headers = new MessageHeaders(mergedMap)
+		}
+		textPayload = unquoted(textPayload)
+		return MessageBuilder.createMessage(textPayload, headers)
+	}
+
+	private Object unquoted(Object value) {
+		String textPayload = value instanceof byte[] ? new String(value) : value.toString()
+		if (textPayload.startsWith("\"") && textPayload.endsWith("\"")) {
+			return textPayload
+					.substring(1, textPayload.size() - 1)
+					.replace("\\\"", "\"")
+		}
+		return textPayload
+	}
+
+}
+
+class Receiver {
+
+	private final EmbeddedKafkaBroker broker
+
+	private static final Map<String, Queue> CACHE = new HashMap<>()
+
+	Receiver(EmbeddedKafkaBroker broker) {
+		this.broker = broker
+	}
+
+	void prepareListener(String destination) {
+		Map<String, Object> consumerProperties =
+				KafkaTestUtils.consumerProps("sender", "false", broker);
+		DefaultKafkaConsumerFactory<String, String> consumerFactory =
+				new DefaultKafkaConsumerFactory<String, String>(
+						consumerProperties);
+		ContainerProperties containerProperties =
+				new ContainerProperties(destination);
+		KafkaMessageListenerContainer container = new KafkaMessageListenerContainer<>(consumerFactory,
+				containerProperties);
+		LinkedBlockingQueue<Message> records = records(destination)
+		container
+				.setupMessageListener(new MessageListener<String, String>() {
+					@Override
+					void onMessage(
+							ConsumerRecord<String, String> record) {
+						println("received message= [" +
+								record.toString() + "]")
+						records.add(new Record(record).toMessage())
+					}
+				})
+		container.start()
+		ContainerTestUtils.waitForAssignment(container,
+				broker.getPartitionsPerTopic());
+	}
+
+	private LinkedBlockingQueue<Message> records(String destination) {
+		LinkedBlockingQueue queue = CACHE.get(destination)
+		if (queue != null) {
+			return queue
+		}
+		queue = new LinkedBlockingQueue<>()
+		CACHE.put(destination, queue)
+		return queue
+	}
+
+	void clear() {
+		CACHE.clear()
+	}
+
+	Message receive(String topic) {
+		Queue<Message> queue = records(topic)
+		return queue.poll(1, TimeUnit.SECONDS)
+	}
 }
