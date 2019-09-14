@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,8 +49,6 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 @CompileStatic
 @PackageScope
 class MessagingSCContractCreator {
-
-	RegexPatterns regexPatterns = new RegexPatterns()
 
 	private static final String FULL_BODY = '$'
 	private static final String DESTINATION_KEY = "sentTo"
@@ -124,15 +122,15 @@ class MessagingSCContractCreator {
 														switch (rule.numberType) {
 														case NumberTypeMatcher.NumberType.NUMBER:
 															jsonPath(key,
-																	byRegex(regexPatterns.number()))
+																	byRegex(RegexPatterns.number()))
 															break
 														case NumberTypeMatcher.NumberType.INTEGER:
 															jsonPath(key,
-																	byRegex(regexPatterns.anInteger()))
+																	byRegex(RegexPatterns.anInteger()))
 															break
 														case NumberTypeMatcher.NumberType.DECIMAL:
 															jsonPath(key,
-																	byRegex(regexPatterns.aDouble()))
+																	byRegex(RegexPatterns.aDouble()))
 															break
 														default:
 															throw new RuntimeException("Unsupported number type!")
@@ -167,11 +165,11 @@ class MessagingSCContractCreator {
 
 	private String getTriggeredBy(Message message) {
 		return message.providerStates.first().name
-					  .replace(':', ' ')
-					  .replace(' ', '_')
-					  .replace('(', '')
-					  .replace(')', '')
-					  .uncapitalize() + "()"
+				.replace(':', ' ')
+				.replace(' ', '_')
+				.replace('(', '')
+				.replace(')', '')
+				.uncapitalize() + "()"
 	}
 
 	private String findDestination(Message message) {

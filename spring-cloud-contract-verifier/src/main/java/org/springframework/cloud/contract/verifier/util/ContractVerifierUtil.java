@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -103,6 +107,97 @@ public final class ContractVerifierUtil {
 			LOG.error("Incorrect xpath provided: " + path, exception);
 			throw new IllegalArgumentException();
 		}
+	}
+
+	/**
+	 * @return a builder for map
+	 */
+	public static ContractVerifierMap map() {
+		return new ContractVerifierMap();
+	}
+
+	/**
+	 * A map with a fluent interface.
+	 */
+	public static class ContractVerifierMap implements Map<Object, Object> {
+
+		private final Map<Object, Object> delegate = new HashMap<>();
+
+		public ContractVerifierMap entry(String key, Object value) {
+			put(key, value);
+			return this;
+		}
+
+		@Override
+		public int size() {
+			return this.delegate.size();
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return this.delegate.isEmpty();
+		}
+
+		@Override
+		public boolean containsKey(Object key) {
+			return this.delegate.containsKey(key);
+		}
+
+		@Override
+		public boolean containsValue(Object value) {
+			return this.delegate.containsValue(value);
+		}
+
+		@Override
+		public Object get(Object key) {
+			return this.delegate.get(key);
+		}
+
+		@Override
+		public Object put(Object key, Object value) {
+			return this.delegate.put(key, value);
+		}
+
+		@Override
+		public Object remove(Object key) {
+			return this.delegate.remove(key);
+		}
+
+		@Override
+		public void putAll(Map<? extends Object, ?> m) {
+			this.delegate.putAll(m);
+		}
+
+		@Override
+		public void clear() {
+			this.delegate.clear();
+		}
+
+		@Override
+		public Set<Object> keySet() {
+			return this.delegate.keySet();
+		}
+
+		@Override
+		public Collection<Object> values() {
+			return this.delegate.values();
+		}
+
+		@Override
+		public Set<Entry<Object, Object>> entrySet() {
+			return this.delegate.entrySet();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return this.delegate.equals(o);
+		}
+
+		@Override
+		public int hashCode() {
+			return this.delegate.hashCode();
+		}
+
 	}
 
 }

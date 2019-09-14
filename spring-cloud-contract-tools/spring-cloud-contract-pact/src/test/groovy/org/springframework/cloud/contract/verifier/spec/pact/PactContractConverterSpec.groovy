@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -78,7 +78,7 @@ class PactContractConverterSpec extends Specification {
 						}
 					}
 					headers {
-						contentType(applicationJson())
+						header(contentType(), applicationJson())
 					}
 					body(id: "123", method: "create")
 					bodyMatchers {
@@ -88,7 +88,7 @@ class PactContractConverterSpec extends Specification {
 				response {
 					status(200)
 					headers {
-						contentType(applicationJson())
+						header(contentType(), applicationJson())
 					}
 					body([[
 							  [email   : "rddtGwwWMEhnkAPEmsyE",
@@ -121,20 +121,20 @@ class PactContractConverterSpec extends Specification {
 					method(POST())
 					url("/user-service/users")
 					headers {
-						contentType(applicationJson())
+						header(contentType(), applicationJson())
 					}
 					body(firstName: "Arthur", lastName: "Dent")
 				}
 				response {
 					status(201)
 					headers {
-						contentType(applicationJson())
+						header(contentType(), applicationJsonUtf8())
 					}
 					body(id: 42, firstName: "Arthur", lastName: "Dent")
 					bodyMatchers {
 						jsonPath('''$.['id']''', byType())
-						jsonPath('''$.['lastName']''', byType())
 						jsonPath('''$.['firstName']''', byType())
+						jsonPath('''$.['lastName']''', byType())
 					}
 				}
 			}
@@ -338,11 +338,8 @@ class PactContractConverterSpec extends Specification {
     }
   ],
   "metadata": {
-    "pact-specification": {
-      "version": "3.0.0"
-    },
     "pact-jvm": {
-      "version": "3.5.13"
+      "version": "3.6.12"
     }
   }
 }
@@ -475,7 +472,7 @@ class PactContractConverterSpec extends Specification {
 					response {
 						status(200)
 						headers {
-							contentType(applicationJson())
+							header(contentType(), applicationJsonUtf8())
 						}
 						body([[
 								  [email   : "rddtGwwWMEhnkAPEmsyE",
@@ -502,7 +499,7 @@ class PactContractConverterSpec extends Specification {
 					response {
 						status(200)
 						headers {
-							contentType(applicationJson())
+							header(contentType(), applicationJsonUtf8())
 						}
 						body([[
 								  [email   : "DPvAfkCZpOBZWzKYiDMC",
@@ -536,7 +533,7 @@ class PactContractConverterSpec extends Specification {
 						method(GET())
 						url("/")
 						headers {
-							contentType(applicationJsonUtf8())
+							header(contentType(), applicationJsonUtf8())
 							header("Some-Header",
 								$(c(regex("[a-zA-Z]{9}")), p("someValue")))
 							header("someHeaderWithJsonContent", '{"issue":"#595"}')
@@ -545,7 +542,7 @@ class PactContractConverterSpec extends Specification {
 					response {
 						status(200)
 						headers {
-							contentType(applicationJsonUtf8())
+							header(contentType(), applicationJsonUtf8())
 							header("Some-Header",
 								$(c("someValue"), p(regex("[a-zA-Z]{9}"))))
 							header("someHeaderWithJsonContent", '{"issue":"#595"}')
@@ -597,7 +594,7 @@ class PactContractConverterSpec extends Specification {
 					response {
 						status(200)
 						headers {
-							contentType(applicationJsonUtf8())
+							header(contentType(), applicationJsonUtf8())
 						}
 						body([
 							[
@@ -636,7 +633,7 @@ class PactContractConverterSpec extends Specification {
 					response {
 						status(200)
 						headers {
-							contentType(applicationJsonUtf8())
+							header(contentType(), applicationJsonUtf8())
 						}
 						body([
 							"data": [
@@ -680,7 +677,7 @@ class PactContractConverterSpec extends Specification {
 		when:
 			Collection<Contract> contracts = converter.convertFrom(pactv3Json)
 		then:
-			contracts == expectedContracts
+ 			contracts == expectedContracts
 	}
 
 	@Issue("#889")
@@ -707,7 +704,7 @@ class PactContractConverterSpec extends Specification {
 						])
 						headers {
 							header('BOOK-NAME', 'foo')
-							messagingContentType(applicationJson())
+							header(messagingContentType(), applicationJson())
 						}
 						bodyMatchers {
 							jsonPath('$.bookName', byType())

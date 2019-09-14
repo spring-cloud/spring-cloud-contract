@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -249,6 +249,18 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	@Override
 	public StubRunnerExtension withDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
 		builder().withDeleteStubsAfterTest(deleteStubsAfterTest);
+		return new PortStubRunnerExtension(this.delegate);
+	}
+
+	@Override
+	public StubRunnerExtension withGenerateStubs(boolean generateStubs) {
+		builder().withGenerateStubs(generateStubs);
+		return new PortStubRunnerExtension(this.delegate);
+	}
+
+	@Override
+	public StubRunnerExtension failOnNoStubs(boolean failOnNoStubs) {
+		builder().withFailOnNoStubs(failOnNoStubs);
 		return new PortStubRunnerExtension(this.delegate);
 	}
 

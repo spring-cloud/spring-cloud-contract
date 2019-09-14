@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,8 @@
  */
 
 package org.springframework.cloud.contract.verifier.util
+
+import java.util.function.Function
 
 import groovy.json.JsonSlurper
 
@@ -40,6 +42,9 @@ class MapConverter {
 	public static final Closure JSON_PARSING_CLOSURE = { String value ->
 		new JsonSlurper().parseText(value)
 	}
+	public static final Function<String, Object> JSON_PARSING_FUNCTION = { String value ->
+		new JsonSlurper().parseText(value)
+	} as Function
 
 	private final TemplateProcessor templateProcessor
 
@@ -60,6 +65,12 @@ class MapConverter {
 		}
 	}
 
+	static Closure fromFunction(Function function) {
+		return {
+			function.apply(it)
+		}
+	}
+
 	/**
 	 * Iterates over the structure of the object and executes the closure
 	 * on each element of that structure.
@@ -70,12 +81,12 @@ class MapConverter {
 			Closure parsingClosure = JSON_PARSING_CLOSURE) {
 		if (value instanceof String && value) {
 			try {
-				def json = parsingClosure(value)
-				if (json instanceof Map) {
-					return convert(json, closure, parsingClosure)
+				def parsed = parsingClosure(value)
+				if (parsed instanceof Map) {
+					return convert(parsed, closure, parsingClosure)
 				}
-				else if (json instanceof List) {
-					return transformValues(json, closure, parsingClosure)
+				else if (parsed instanceof List) {
+					return transformValues(parsed, closure, parsingClosure)
 				}
 			}
 			catch (Exception ignore) {
@@ -161,7 +172,23 @@ class MapConverter {
 		return getClientOrServerSideValues(json, STUB_SIDE, parsingClosure)
 	}
 
+	static Object getTestSideValues(json, Function function) {
+		return getClientOrServerSideValues(json, TEST_SIDE, { function.apply(it) })
+	}
+
 	static Object getTestSideValues(json, Closure parsingClosure = JSON_PARSING_CLOSURE) {
 		return getClientOrServerSideValues(json, TEST_SIDE, parsingClosure)
+	}
+
+	static Object getTestSideValuesForText(json) {
+		return getClientOrServerSideValues(json, TEST_SIDE, Closure.IDENTITY)
+	}
+
+	static Object getStubSideValuesForNonBody(object) {
+		return getClientOrServerSideValues(object, STUB_SIDE, Closure.IDENTITY)
+	}
+
+	static Object getTestSideValuesForNonBody(object) {
+		return getClientOrServerSideValues(object, TEST_SIDE, Closure.IDENTITY)
 	}
 }

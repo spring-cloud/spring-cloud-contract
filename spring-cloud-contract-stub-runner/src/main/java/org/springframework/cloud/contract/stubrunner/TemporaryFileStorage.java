@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,8 +29,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static java.nio.file.Files.createTempDirectory;
-
 /**
  * Stores all generated temporary folders with stubs.
  *
@@ -40,6 +38,8 @@ import static java.nio.file.Files.createTempDirectory;
 final class TemporaryFileStorage {
 
 	private static final Log log = LogFactory.getLog(TemporaryFileStorage.class);
+
+	private static final int TEMP_DIR_ATTEMPTS = 10000;
 
 	/**
 	 * There are problems with removal of stubs unpacked to a temporary folder. That's why
@@ -104,14 +104,19 @@ final class TemporaryFileStorage {
 		}
 	}
 
+	// taken from Guava
 	static File createTempDir(String tempDirPrefix) {
-		try {
-			return createTempDirectory(tempDirPrefix).toFile();
+		File baseDir = new File(System.getProperty("java.io.tmpdir"));
+		String baseName = tempDirPrefix + "-" + System.currentTimeMillis() + "-";
+		for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
+			File tempDir = new File(baseDir, baseName + counter);
+			if (tempDir.mkdir()) {
+				return tempDir;
+			}
 		}
-		catch (IOException e) {
-			throw new IllegalStateException(
-					"Cannot create tmp dir with prefix: [" + tempDirPrefix + "]", e);
-		}
+		throw new IllegalStateException("Failed to create directory within "
+				+ TEMP_DIR_ATTEMPTS + " attempts (tried " + baseName + "0 to " + baseName
+				+ (TEMP_DIR_ATTEMPTS - 1) + ")");
 	}
 
 }

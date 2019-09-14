@@ -56,6 +56,27 @@ if (isReleaseToCentral) {
 	signing {
 		sign configurations.archives
 	}
+
+	apply plugin: 'com.gradle.plugin-publish'
+
+	pluginBundle {
+		website = 'https://github.com/spring-cloud/spring-cloud-contract'
+		vcsUrl = 'https://github.com/spring-cloud/spring-cloud-contract'
+
+		plugins {
+			plugin {
+				id = 'org.springframework.cloud.contract'
+				displayName = 'spring-cloud-contract'
+				description = 'Spring Cloud Contract Gradle Plugin'
+				tags = ['spring', 'spring-framework', 'spring-cloud', 'spring-cloud-contract']
+			}
+		}
+
+		mavenCoordinates {
+			groupId = project.group
+			artifactId = project.name
+		}
+	}
 }
 
 afterEvaluate {
@@ -88,7 +109,7 @@ afterEvaluate {
 					licenses {
 						license {
 							name 'The Apache License, Version 2.0'
-							url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+							url 'https://www.apache.org/licenses/LICENSE-2.0.txt'
 						}
 					}
 

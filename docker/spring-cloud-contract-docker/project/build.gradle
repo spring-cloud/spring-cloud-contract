@@ -3,14 +3,14 @@ buildscript {
 		mavenLocal()
 		mavenCentral()
 		if (!"${verifierVersion}".contains("RELEASE")) {
-			maven { url "http://repo.spring.io/snapshot" }
-			maven { url "http://repo.spring.io/milestone" }
-			maven { url "http://repo.spring.io/release" }
+			maven { url "https://repo.spring.io/snapshot" }
+			maven { url "https://repo.spring.io/milestone" }
+			maven { url "https://repo.spring.io/release" }
 		}
 	}
 
 	dependencies {
-		classpath "io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE"
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}"
 	}
 }
@@ -22,9 +22,9 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	if (!"${verifierVersion}".contains("RELEASE")) {
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}
 }
 
@@ -60,6 +60,7 @@ test {
 contracts {
 	baseClassForTests = "contracts.RestBase"
 	testMode = "EXPLICIT"
+	stubsSuffix = getProp("PRODUCER_STUBS_CLASSIFIER") ?: "stubs"
 	if (getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
 		logger.
 				lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
@@ -69,6 +70,10 @@ contracts {
 			contractRepository {
 				repositoryUrl = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
 						getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+				username = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME') ?:
+						getProp('REPO_WITH_BINARIES_USERNAME') ?: 'admin'
+				password = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD') ?:
+						getProp('REPO_WITH_BINARIES_PASSWORD') ?: 'password'
 			}
 		}
 		contractDependency {
@@ -85,10 +90,6 @@ contracts {
 		// tests - contracts in this repo
 		contractsDslDir = new File("/contracts")
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.9'
 }
 
 task cleanOutput(type: Delete) {
@@ -142,4 +143,18 @@ String getProp(String propName) {
 	return hasProperty(propName) ?
 			(getProperty(propName) ?: System.properties[propName]) : System.properties[propName] ?:
 			System.getenv(propName)
+}
+
+task resolveDependencies {
+	description "Pre-downloads *most* dependencies"
+	doLast {
+		configurations.getAsMap().each { name, config ->
+			println "Retrieving dependencies for $name"
+			try {
+				config.files
+			} catch (e) {
+				project.logger.info e.message // some cannot be resolved, silentlyish skip them
+			}
+		}
+	}
 }

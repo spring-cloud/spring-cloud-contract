@@ -1,0 +1,38 @@
+:doctype: book
+:idprefix:
+:idseparator: -
+:toc: left
+:toclevels: 4
+:tabsize: 4
+:numbered:
+:sectanchors:
+:sectnums:
+:icons: font
+:hide-uri-scheme:
+:docinfo: shared,private
+
+:sc-ext: java
+:project-full-name: Spring Cloud Contract
+
+// project-specific attributes
+:core_path: {project-root}
+:plugins_path: {project-root}/spring-cloud-contract-tools
+:converters_path: {plugins_path}/spring-cloud-contract-converters
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:contract_spec_path: {core_path}/specs/spring-cloud-contract-spec-java
+:contract_spec_tests_path: {core_path}/specs/spring-cloud-contract-spec
+:contract_kotlin_spec_path: {core_path}/specs/spring-cloud-contract-spec-kotlin
+:samples_path: {core_path}/samples
+:verifier_core_path: {verifier_root_path}
+:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
+:standalone_samples_path: {samples_path}/standalone/dsl
+:standalone_messaging_samples_path: {samples_path}/standalone/dsl
+:standalone_pact_path: {samples_path}/standalone/dsl
+:standalone_restdocs_path: {samples_path}/standalone/restdocs
+:tests_path: {core_path}/tests
+:samples_branch: 2.2.x
+:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/{samples_branch}
+:samples_code: https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/
+:doc_samples: {core_path}/samples/wiremock-jetty
+:wiremock_tests: {core_path}/spring-cloud-contract-wiremock
+:introduction_url: {core_path}

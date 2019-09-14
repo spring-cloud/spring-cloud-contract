@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package com.example.fraud;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,9 +46,29 @@ public class FraudStatsController {
 		return new Response(this.statsProvider.count(FraudType.ALL));
 	}
 
+	@GetMapping(value = "/pactfrauds")
+	public Response countAllPactFrauds() {
+		return countAllFrauds();
+	}
+
+	@GetMapping(value = "/yamlfrauds")
+	public Response countAllYamlFrauds() {
+		return countAllFrauds();
+	}
+
 	@GetMapping(value = "/drunks")
 	public Response countAllDrunks() {
 		return new Response(this.statsProvider.count(FraudType.DRUNKS));
+	}
+
+	@GetMapping(value = "/pactdrunks")
+	public Response countAllPactDrunks() {
+		return countAllDrunks();
+	}
+
+	@GetMapping(value = "/yamldrunks")
+	public Response countAllYamlDrunks() {
+		return countAllDrunks();
 	}
 
 }
@@ -71,4 +92,13 @@ class Response {
 		this.count = count;
 	}
 
+}
+
+@Component
+class DefaultStatsProvider implements StatsProvider {
+
+	@Override
+	public int count(FraudType fraudType) {
+		return 0;
+	}
 }

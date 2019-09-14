@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,8 +44,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Mariusz Smykula
  */
-@SuppressWarnings("FieldCanBeLocal")
-@Mojo(name = "run", requiresProject = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo(name = "run", requiresProject = false,
+		requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class RunMojo extends AbstractMojo {
 
 	private final LocalStubRunner localStubRunner;
@@ -64,7 +64,8 @@ public class RunMojo extends AbstractMojo {
 	/**
 	 * HTTP port for the WireMock server that serves stubs.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.http.port", defaultValue = "8080")
+	@Parameter(property = "spring.cloud.contract.verifier.http.port",
+			defaultValue = "8080")
 	private int httpPort;
 
 	/**
@@ -76,7 +77,8 @@ public class RunMojo extends AbstractMojo {
 	/**
 	 * Set this to "true" to bypass verifier test generation.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.skipTestOnly", defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.skipTestOnly",
+			defaultValue = "false")
 	private boolean skipTestOnly;
 
 	/**
@@ -88,19 +90,22 @@ public class RunMojo extends AbstractMojo {
 	/**
 	 * Minimal port at which the stub should start.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.http.minPort", defaultValue = "10000")
+	@Parameter(property = "spring.cloud.contract.verifier.http.minPort",
+			defaultValue = "10000")
 	private int minPort;
 
 	/**
 	 * Maximal port at which the stub should start.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.http.maxPort", defaultValue = "15000")
+	@Parameter(property = "spring.cloud.contract.verifier.http.maxPort",
+			defaultValue = "15000")
 	private int maxPort;
 
 	/**
 	 * Should the plugin wait for the user to press the key after starting the stubs.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.wait-for-key-pressed", defaultValue = "true")
+	@Parameter(property = "spring.cloud.contract.verifier.wait-for-key-pressed",
+			defaultValue = "true")
 	private boolean waitForKeyPressed;
 
 	/**
@@ -118,6 +123,7 @@ public class RunMojo extends AbstractMojo {
 		this.remoteStubRunner = remoteStubRunner;
 	}
 
+	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.skipTestOnly) {
 			getLog().info(

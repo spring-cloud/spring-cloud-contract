@@ -1,4 +1,0 @@
-stubrunner:
-  work-offline: true
-  ids: 'com.example:stream-source'
-server.port: 0

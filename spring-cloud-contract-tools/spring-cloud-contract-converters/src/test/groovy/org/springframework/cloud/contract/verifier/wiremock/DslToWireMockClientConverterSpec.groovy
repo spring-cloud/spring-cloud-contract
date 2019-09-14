@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -289,7 +289,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 							"id":"01fbe706f872cb32",
 							"name":"Washington",
 							"place_type":"city",
-							"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+							"url": "https://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
 						}
 					}]
 				'''
@@ -329,7 +329,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 	}, {
 	  "matchesJsonPath" : "$[*].['place'].['bounding_box'][?(@.['type'] == 'Polygon')]"
 	}, {
-	  "matchesJsonPath" : "$[*].['place'][?(@.['url'] == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
+	  "matchesJsonPath" : "$[*].['place'][?(@.['url'] == 'https://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
 	}, {
 	  "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"
 	}, {
@@ -385,7 +385,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 									"id":"01fbe706f872cb32",
 									"name":"Washington",
 									"place_type":"city",
-									"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+									"url": "https://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
 								}
 							}]'''), String)
 	}
@@ -488,7 +488,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 					}
 					body(
 							email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+							callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 					)
 				}
 				response {
@@ -543,7 +543,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password".toURI())
 															  .header("Content-Type", "application/json")
-															  .body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+															  .body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
 					, String)
 			response.headers.get('Content-Type') == ['application/json']
 			response.statusCodeValue == 404
@@ -846,7 +846,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 						}
 						body(
 							email: 'abc@abc.com',
-							callback_url: 'http://partners.com'
+							callback_url: 'https://partners.com'
 						)
 						bodyMatchers {
 							jsonPath('$.[\\'email\\']', byRegex(email()))
@@ -908,7 +908,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
 															  .header("Content-Type", "application/json")
-															  .body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+															  .body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
 					, String)
 			response.headers.get('Content-Type') == ['application/json']
 			response.statusCodeValue == 404
@@ -932,7 +932,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 						}
 						body(
 							email: 'abc@abc.com',
-							callback_url: 'http://partners.com'
+							callback_url: 'https://partners.com'
 						)
 						bodyMatchers {
 							jsonPath('$.[\\'email\\']', byRegex(email()))
@@ -1006,9 +1006,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
 															  .header("Content-Type", "application/json")
-															  .body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+															  .body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
 					, String)
-			response.headers.get('Content-Type') == ['application/json;charset=UTF-8']
+			response.headers.get('Content-Type') == ['application/json;charset=utf-8']
 			response.statusCodeValue == 400
 			JSONAssert.assertEquals('''{"message":"[8.2 Profile/3.7 Bad Request]"}"''', response.body, false)
 	}

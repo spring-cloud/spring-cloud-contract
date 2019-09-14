@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,8 +43,6 @@ import org.springframework.cloud.contract.spec.internal.RegexPatterns
 @CompileStatic
 @PackageScope
 class MatchingRulesConverter {
-
-	private static final RegexPatterns regexPatterns = new RegexPatterns()
 
 	static Category matchingRulesForBody(BodyMatchers bodyMatchers) {
 		return matchingRulesFor("body", bodyMatchers)
@@ -89,15 +87,15 @@ class MatchingRulesConverter {
 				break
 			case MatchingType.REGEX:
 				String pattern = it.value().toString()
-				if (pattern == regexPatterns.number().pattern()) {
+				if (pattern == RegexPatterns.number().pattern()) {
 					category.
 							addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER))
 				}
-				else if (pattern == regexPatterns.anInteger().pattern()) {
+				else if (pattern == RegexPatterns.anInteger().pattern()) {
 					category.
 							addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
 				}
-				else if (pattern == regexPatterns.aDouble().pattern()) {
+				else if (pattern == RegexPatterns.aDouble().pattern()) {
 					category.
 							addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
 				}

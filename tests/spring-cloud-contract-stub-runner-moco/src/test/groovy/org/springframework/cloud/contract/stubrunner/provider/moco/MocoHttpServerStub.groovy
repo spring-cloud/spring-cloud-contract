@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,12 +19,14 @@ package org.springframework.cloud.contract.stubrunner.provider.moco
 import com.github.dreamhead.moco.bootstrap.arg.HttpArgs
 import com.github.dreamhead.moco.runner.JsonRunner
 import com.github.dreamhead.moco.runner.RunnerSetting
+import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.stubrunner.HttpServerStub
 import org.springframework.util.SocketUtils
 
 @Commons
+@CompileStatic
 class MocoHttpServerStub implements HttpServerStub {
 
 	private boolean started
@@ -70,7 +72,7 @@ class MocoHttpServerStub implements HttpServerStub {
 			.collect {
 			log.info("Trying to parse [${it.name}]")
 			try {
-				return RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).
+				return RunnerSetting.aRunnerSetting().addStream(it.newInputStream()).
 					build()
 			}
 			catch (Exception e) {

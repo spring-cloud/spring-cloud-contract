@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,8 +36,8 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import org.apache.commons.codec.binary.Base64;
 import wiremock.com.google.common.base.Optional;
-import wiremock.org.apache.commons.codec.binary.Base64;
 import wiremock.org.eclipse.jetty.server.handler.ContextHandler;
 
 import org.springframework.http.HttpHeaders;
@@ -263,7 +263,7 @@ class WireMockHttpRequestAdapter implements Request {
 				.request(this.result.getMethod(), this.result.getUriTemplate())
 				.contentType(this.result.getRequestHeaders().getContentType())
 				.content(this.result.getRequestBodyContent())
-				.buildRequest(new ContextHandler.NoContext());
+				.buildRequest(new ContextHandler.StaticContext());
 		try {
 			return new StandardMultipartHttpServletRequest(request).getParts().stream()
 					.map(part -> partFromServletPart(part)).collect(Collectors.toList());

@@ -1,6 +1,6 @@
 FROM ubuntu:18.10
 
-ARG SDKMAN_JAVA_INSTALLATION=8.0.202-zulu
+ARG SDKMAN_JAVA_INSTALLATION=8.0.222-zulu
 
 MAINTAINER Marcin Grzejszczak <mgrzejszczak@pivotal.io>
 
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y curl \
     && apt-get clean
 
 # Install sdkman and java
-RUN curl -s get.sdkman.io | bash
+RUN curl -s https://get.sdkman.io/ | bash
 COPY sdkman.config /.sdkman/etc/config
 COPY sdkman/ /usr/local/bin/
 RUN /bin/bash -c "chmod +x /usr/local/bin/sdkman-exec.sh && chmod +x /usr/local/bin/sdkman-wrapper.sh && chmod +x /root/.sdkman/bin/sdkman-init.sh"

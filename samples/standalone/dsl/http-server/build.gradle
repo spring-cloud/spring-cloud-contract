@@ -3,14 +3,18 @@ buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}
 // end::repos[]
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.2.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${findProperty('bootVersion') ?: bootVersion}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+		//tag::pact_dependency[]
+		// if additional dependencies are needed e.g. for Pact
+		classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"
+		//end::pact_dependency[]
 	}
 }
 
@@ -21,9 +25,9 @@ version = '0.0.1-SNAPSHOT'
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/release" }
 }
 // end::deps_repos[]
 
@@ -41,14 +45,16 @@ dependencyManagement {
 
 contracts {
 	packageWithBaseClasses = 'com.example.fraud'
-	convertToYaml = true
+//	convertToYaml = true
 }
 
 dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
+	compile("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
 
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
 }
 
 test {

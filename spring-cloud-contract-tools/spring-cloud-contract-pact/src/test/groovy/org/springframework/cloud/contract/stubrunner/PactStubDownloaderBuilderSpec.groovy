@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import java.nio.file.Files
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactSource
 import au.com.dius.pact.provider.junit.loader.PactLoader
-import au.com.dius.pact.provider.junit.sysprops.ValueResolver
+import au.com.dius.pact.support.expressions.ValueResolver
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.jetbrains.annotations.NotNull
 import spock.lang.Ignore

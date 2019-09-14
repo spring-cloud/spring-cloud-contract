@@ -1,6 +1,6 @@
 FROM ubuntu:18.10
 
-ARG SDKMAN_JAVA_INSTALLATION=8.0.202-zulu
+ARG SDKMAN_JAVA_INSTALLATION=8.0.222-zulu
 
 MAINTAINER Marcin Grzejszczak <mgrzejszczak@pivotal.io>
 
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y curl \
     && apt-get clean
 
 # Install sdkman and java
-RUN curl -s get.sdkman.io | bash
+RUN curl -s https://get.sdkman.io/ | bash
 COPY sdkman.config /.sdkman/etc/config
 COPY sdkman/ /usr/local/bin/
 RUN /bin/bash -c "chmod +x /usr/local/bin/sdkman-exec.sh && chmod +x /usr/local/bin/sdkman-wrapper.sh && chmod +x /root/.sdkman/bin/sdkman-init.sh"
@@ -26,5 +26,5 @@ WORKDIR /spring-cloud-contract/
 COPY target/maven_dependencies /root/.m2/repository/
 COPY target/gradle_dependencies /root/.gradle/
 # Let's download gradle wrapper if for some reason it hasn't been downloaded
-RUN ./gradlew clean build --stacktrace -x copyOutput || echo "Expected to fail"
+RUN ./gradlew clean resolveDependencies build --stacktrace -x copyOutput || echo "Expected to fail"
 CMD ["./build.sh"]

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,6 @@ import java.util.regex.Pattern
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.yaml.snakeyaml.Yaml
 
@@ -40,13 +39,12 @@ import org.springframework.util.StringUtils
 
 import static java.util.stream.Collectors.toSet
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
-
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateClientSideContentType
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
+ * @author Tim Ysewyn
  */
-@CompileStatic
 @PackageScope
 class YamlToContracts {
 
@@ -100,6 +98,9 @@ class YamlToContracts {
 				}
 				if (yamlContract.ignored) {
 					ignored()
+				}
+				if (yamlContract.inProgress) {
+					inProgress()
 				}
 				if (yamlContract.request?.method) {
 					request {
@@ -192,7 +193,7 @@ class YamlToContracts {
 							body(fileAsBytes(yamlContract.request.bodyFromFileAsBytes))
 						}
 						if (yamlContract.request.multipart) {
-							Map multipartMap = [:]
+							Map multipartMap = [:] as Map
 							Map<String, DslProperty> multiPartParams = yamlContract.request
 								.multipart.params.
 								collectEntries { String paramKey, String paramValue ->
@@ -253,7 +254,7 @@ class YamlToContracts {
 							yamlContract.request.matchers?.body?.
 								each { YamlContract.BodyStubMatcher matcher ->
 									ContentType contentType =
-										evaluateContentType(
+										evaluateClientSideContentType(
 											yamlHeadersToContractHeaders(yamlContract.request?.headers),
 											yamlContract.request?.body)
 									MatchingTypeValue value = null
@@ -370,7 +371,7 @@ class YamlToContracts {
 							yamlContract.response?.matchers?.body?.
 								each { YamlContract.BodyTestMatcher testMatcher ->
 									ContentType contentType =
-										evaluateContentType(
+										evaluateClientSideContentType(
 											yamlHeadersToContractHeaders(yamlContract.response?.headers),
 											yamlContract.response?.body)
 									MatchingTypeValue value = null
@@ -460,7 +461,7 @@ class YamlToContracts {
 							yamlContract.input.matchers.body?.
 								each { YamlContract.BodyStubMatcher matcher ->
 									ContentType contentType =
-										evaluateContentType(
+										evaluateClientSideContentType(
 											yamlHeadersToContractHeaders(yamlContract.input?.messageHeaders),
 											yamlContract.input?.messageBody)
 									MatchingTypeValue value = null
@@ -530,7 +531,7 @@ class YamlToContracts {
 								yamlContract.outputMessage?.matchers?.body?.
 									each { YamlContract.BodyTestMatcher testMatcher ->
 										ContentType contentType =
-											evaluateContentType(
+											evaluateClientSideContentType(
 												yamlHeadersToContractHeaders(yamlContract.outputMessage?.headers),
 												yamlContract.outputMessage?.body)
 										MatchingTypeValue value = null
@@ -594,7 +595,7 @@ class YamlToContracts {
 
 	private Headers yamlHeadersToContractHeaders(Map<String, Object> headers) {
 		Set<Header> convertedHeaders = headers.keySet().stream()
-			.map({ new Header(it, headers.get(it)) })
+			.map({ Header.build(it, headers.get(it)) })
 			.collect(toSet())
 		Headers contractHeaders = new Headers()
 		contractHeaders.headers(convertedHeaders)
@@ -685,19 +686,19 @@ class YamlToContracts {
 		}
 		switch (matcher.type) {
 		case YamlContract.MatchingType.equal_to:
-			return new DslProperty(request.equalTo(matcher.value), value)
+			return new DslProperty(request.equalTo(matcher.value) as Object, value)
 		case YamlContract.MatchingType.containing:
-			return new DslProperty(request.containing(matcher.value), value)
+			return new DslProperty(request.containing(matcher.value) as Object, value)
 		case YamlContract.MatchingType.matching:
-			return new DslProperty(request.matching(matcher.value), value)
+			return new DslProperty(request.matching(matcher.value) as Object, value)
 		case YamlContract.MatchingType.not_matching:
-			return new DslProperty(request.notMatching(matcher.value), value)
+			return new DslProperty(request.notMatching(matcher.value) as Object, value)
 		case YamlContract.MatchingType.equal_to_json:
-			return new DslProperty(request.equalToJson(matcher.value), value)
+			return new DslProperty(request.equalToJson(matcher.value) as Object, value)
 		case YamlContract.MatchingType.equal_to_xml:
-			return new DslProperty(request.equalToXml(matcher.value), value)
+			return new DslProperty(request.equalToXml(matcher.value) as Object, value)
 		case YamlContract.MatchingType.absent:
-			return new DslProperty(request.absent(), null)
+			return new DslProperty(request.absent() as Object, null)
 		default:
 			throw new UnsupportedOperationException("The provided matching type [" + matcher + "] is unsupported. Use on of "
 				+ YamlContract.MatchingType.
@@ -724,38 +725,37 @@ class YamlToContracts {
 	}
 
 	protected Pattern predefinedToPattern(YamlContract.PredefinedRegex predefinedRegex) {
-		RegexPatterns patterns = new RegexPatterns()
 		switch (predefinedRegex) {
 		case YamlContract.PredefinedRegex.only_alpha_unicode:
-			return patterns.onlyAlphaUnicode().pattern
+			return RegexPatterns.onlyAlphaUnicode().pattern
 		case YamlContract.PredefinedRegex.number:
-			return patterns.number().pattern
+			return RegexPatterns.number().pattern
 		case YamlContract.PredefinedRegex.any_double:
-			return patterns.aDouble().pattern
+			return RegexPatterns.aDouble().pattern
 		case YamlContract.PredefinedRegex.any_boolean:
-			return patterns.anyBoolean().pattern
+			return RegexPatterns.anyBoolean().pattern
 		case YamlContract.PredefinedRegex.ip_address:
-			return patterns.ipAddress().pattern
+			return RegexPatterns.ipAddress().pattern
 		case YamlContract.PredefinedRegex.hostname:
-			return patterns.hostname().pattern
+			return RegexPatterns.hostname().pattern
 		case YamlContract.PredefinedRegex.email:
-			return patterns.email().pattern
+			return RegexPatterns.email().pattern
 		case YamlContract.PredefinedRegex.url:
-			return patterns.url().pattern
+			return RegexPatterns.url().pattern
 		case YamlContract.PredefinedRegex.uuid:
-			return patterns.uuid().pattern
+			return RegexPatterns.uuid().pattern
 		case YamlContract.PredefinedRegex.iso_date:
-			return patterns.isoDate().pattern
+			return RegexPatterns.isoDate().pattern
 		case YamlContract.PredefinedRegex.iso_date_time:
-			return patterns.isoDateTime().pattern
+			return RegexPatterns.isoDateTime().pattern
 		case YamlContract.PredefinedRegex.iso_time:
-			return patterns.isoTime().pattern
+			return RegexPatterns.isoTime().pattern
 		case YamlContract.PredefinedRegex.iso_8601_with_offset:
-			return patterns.iso8601WithOffset().pattern
+			return RegexPatterns.iso8601WithOffset().pattern
 		case YamlContract.PredefinedRegex.non_empty:
-			return patterns.nonEmpty().pattern
+			return RegexPatterns.nonEmpty().pattern
 		case YamlContract.PredefinedRegex.non_blank:
-			return patterns.nonBlank().pattern
+			return RegexPatterns.nonBlank().pattern
 		default:
 			throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex + "] is unsupported. Use on of "
 				+ YamlContract.PredefinedRegex.

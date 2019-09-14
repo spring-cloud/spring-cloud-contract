@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,9 @@ import spock.lang.Unroll
 import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestMode
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 
 /**
@@ -36,17 +39,48 @@ class XmlMethodBodyBuilderSpec extends Specification {
 	OutputCapture capture = new OutputCapture()
 
 	@Shared
-	GeneratedClassDataForMethod classDataForMethod = new GeneratedClassDataForMethod(
-			new SingleTestGenerator.GeneratedClassData("ClassName", "com.example",
-					new File("target/test.java").toPath()),
-			"some_method"
-	)
-
-	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 			assertJsonSize: true, generatedTestSourcesDir: new File("."),
 			generatedTestResourcesDir: new File(".")
 	)
+
+	@Shared
+	GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
+			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
+
+	@Shared
+	SingleTestGenerator.GeneratedClassData generatedClassData =
+			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File(".").toPath())
+
+	def setup() {
+		properties = new ContractVerifierConfigProperties(
+				assertJsonSize: true
+		)
+	}
+
+	private String singleTestGenerator(Contract contractDsl) {
+		return new JavaTestGenerator() {
+			@Override
+			ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
+				return super.classBodyBuilder(builder, metaData, methodBuilder).field(new Field() {
+					@Override
+					boolean accept() {
+						return metaData.configProperties.testMode == TestMode.JAXRSCLIENT
+					}
+
+					@Override
+					Field call() {
+						builder.addLine("WebTarget webTarget")
+						return this
+					}
+				})
+			}
+		}.buildClass(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+	}
+
+	private ContractMetadata contractMetadata(Contract contractDsl) {
+		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsl)
+	}
 
 	@Unroll
 	def 'should generate correct verification from xml with body matchers  [#methodBuilderName]'() {
@@ -85,7 +119,7 @@ class XmlMethodBodyBuilderSpec extends Specification {
 </test>"""
 							bodyMatchers {
 								xPath('/test/duck/text()', byRegex("[0-9]{3}"))
-								xPath('/test/duck/text()', byCommand('test($it)'))
+								xPath('/test/duck/text()', byCommand('equals($it)'))
 								xPath('/test/duck/xxx', byNull())
 								xPath('/test/duck/text()', byEquality())
 								xPath('/test/alpha/text()', byRegex(onlyAlphaUnicode()))
@@ -100,11 +134,9 @@ class XmlMethodBodyBuilderSpec extends Specification {
 						}
 					}
 			// end::xmlgroovy[]
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(' ')
+			methodBuilder()
 		when:
-			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/list/elem/text()")).isEqualTo("abc")')
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/list/elem[2]/text()")).isEqualTo("def")')
@@ -112,7 +144,7 @@ class XmlMethodBodyBuilderSpec extends Specification {
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/aBoolean/text()")).isEqualTo("true")')
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/valueWithoutAMatcher/text()")).isEqualTo("foo")')
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/duck/text()")).matches("[0-9]{3}")')
-			test.contains('test("123")')
+			test.contains('equals("123")')
 			test.contains('assertThat(nodeFromXPath(parsedXml, "/test/duck/xxx")).isNull()')
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/duck/text()")).isEqualTo("123")')
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/alpha/text()")).matches("[\\\\p{L}]*")')
@@ -124,15 +156,27 @@ class XmlMethodBodyBuilderSpec extends Specification {
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/*/complex/text()")).isEqualTo("foo")')
 			test.contains('assertThat(valueFromXPath(parsedXml, "/test/duck/@type")).isEqualTo("xtype")')
 		and:
-			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.
-					toString())
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
-			methodBuilderName                                             | methodBuilder
-			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
-			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
-			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
-			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
-			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"testng"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+			"junit"           | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}
 	}
 
 	def 'should throw exception for verification by type'() {
@@ -159,11 +203,9 @@ class XmlMethodBodyBuilderSpec extends Specification {
 					}
 				}
 			}
-			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties, classDataForMethod)
-			BlockBuilder blockBuilder = new BlockBuilder(' ')
+			properties.testMode = TestMode.MOCKMVC
 		when:
-			builder.appendTo(blockBuilder)
-			blockBuilder.toString()
+			singleTestGenerator(contractDsl)
 		then:
 			thrown UnsupportedOperationException
 	}

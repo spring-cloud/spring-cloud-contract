@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,17 +32,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-@ConfigurationProperties("service")
 public class LoanApplicationService {
 
 	private static final String FRAUD_SERVICE_JSON_VERSION_1 = "application/vnd.fraud.v1+json";
 
 	private final RestTemplate restTemplate;
 
-	private int port = 8080;
+	private final ServiceConfiguration serviceConfiguration;
 
-	public LoanApplicationService() {
+	public LoanApplicationService(ServiceConfiguration serviceConfiguration) {
 		this.restTemplate = new RestTemplate();
+		this.serviceConfiguration = serviceConfiguration;
 	}
 
 	public LoanApplicationResult loanApplication(LoanApplication loanApplication) {
@@ -60,7 +60,7 @@ public class LoanApplicationService {
 
 		// tag::client_call_server[]
 		ResponseEntity<FraudServiceResponse> response = this.restTemplate.exchange(
-				"http://localhost:" + this.port + "/fraudcheck", HttpMethod.PUT,
+				"http://localhost:" + getPort() + "/fraudcheck", HttpMethod.PUT,
 				new HttpEntity<>(request, httpHeaders), FraudServiceResponse.class);
 		// end::client_call_server[]
 
@@ -81,8 +81,26 @@ public class LoanApplicationService {
 				response.getRejectionReason());
 	}
 
+	public int getPort() {
+		return this.serviceConfiguration.getPort();
+	}
+
+	public void setPort(int port) {
+		this.serviceConfiguration.setPort(port);
+	}
+
+}
+
+@ConfigurationProperties("service")
+class ServiceConfiguration {
+
+	private int port = 8080;
+
+	public int getPort() {
+		return port;
+	}
+
 	public void setPort(int port) {
 		this.port = port;
 	}
-
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.1.1.BUILD-SNAPSHOT</version>
+		<version>2.2.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-stub-runner</artifactId>
@@ -21,6 +21,10 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-shade</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-converters</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -59,6 +63,11 @@
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
 			<artifactId>jopt-simple</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -115,7 +124,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
+			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
 			<optional>true</optional>
 		</dependency>
@@ -185,10 +194,56 @@
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<!-- Will run JUnit 4 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<dependencies>
+					<!-- let JUnit vintage engine run JUnit 3 or JUnit 4 tests -->
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>${junit-jupiter.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.junit.vintage</groupId>
+						<artifactId>junit-vintage-engine</artifactId>
+						<version>${junit-vintage.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<junitPlatformArtifactName>
+						org.junit.jupiter:junit-vintage-engine
+					</junitPlatformArtifactName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Will run JUnit 5 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>${junit-jupiter.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<includes>
+						<include>**/*Test.*</include>
+						<include>**/*Tests.*</include>
+						<include>**/*Spec.*</include>
+					</includes>
+					<reportFormat>plain</reportFormat>
+					<failIfNoTests>true</failIfNoTests>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
-							<goal>compileTests</goal>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
 						</goals>
 					</execution>
 				</executions>

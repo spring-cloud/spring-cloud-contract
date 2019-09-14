@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,8 @@ import spock.lang.Issue
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
+import org.springframework.cloud.contract.verifier.util.ContentType
 
 class WireMockResponseStubStrategySpec extends Specification {
 
@@ -40,7 +42,9 @@ class WireMockResponseStubStrategySpec extends Specification {
 				}
 			}
 		when:
-			def subject = new WireMockResponseStubStrategy(contract)
+			SingleContractMetadata metadata = Stub()
+			metadata.evaluatedOutputStubContentType >> ContentType.JSON
+			def subject = new WireMockResponseStubStrategy(contract, metadata)
 			def content = subject.buildClientResponseContent()
 		then:
 			'{"value":1.5}' == content.body
@@ -66,7 +70,9 @@ class WireMockResponseStubStrategySpec extends Specification {
 				}
 			}
 		when:
-			def subject = new WireMockResponseStubStrategy(contract)
+			SingleContractMetadata metadata = Stub()
+			metadata.evaluatedOutputStubContentType >> ContentType.JSON
+			def subject = new WireMockResponseStubStrategy(contract, metadata)
 			def content = subject.buildClientResponseContent()
 		then:
 			Map body = new JsonSlurper().parseText(content.body) as Map
@@ -226,12 +232,22 @@ class WireMockResponseStubStrategySpec extends Specification {
 				}
 			}
 		when:
-			def subject = new WireMockRequestStubStrategy(contract)
+			def subject = new WireMockRequestStubStrategy(contract, null) {
+				@Override
+				protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
+					return ContentType.JSON
+				}
+			}
 			subject.buildClientRequestContent()
 		then:
 			noExceptionThrown()
 		when:
-			def response = new WireMockResponseStubStrategy(contract)
+			def response = new WireMockResponseStubStrategy(contract, null) {
+				@Override
+				protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
+					return ContentType.JSON
+				}
+			}
 			response.buildClientResponseContent()
 		then:
 			noExceptionThrown()

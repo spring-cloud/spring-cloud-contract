@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.assertj.core.api.IterableAssert;
+import org.assertj.core.util.Streams;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Extension to {@link Iterable} assertions.
@@ -36,7 +39,11 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 	}
 
 	public CollectionAssert(Iterator<? extends ELEMENT> actual) {
-		super(actual);
+		super(toIterable(actual));
+	}
+
+	private static <T> Iterable<T> toIterable(Iterator<T> iterator) {
+		return Streams.stream(iterator).collect(toList());
 	}
 
 	/**

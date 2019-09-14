@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -148,6 +148,20 @@ interface StubRunnerExtensionOptions {
 	 * @return the stub runner extension
 	 */
 	StubRunnerExtension withDeleteStubsAfterTest(boolean deleteStubsAfterTest);
+
+	/**
+	 * @param generateStubs If set to {@code true} will NOT load generated stubs but will
+	 * generate stubs from contract definitions at runtime.
+	 * @return the rule
+	 */
+	StubRunnerExtension withGenerateStubs(boolean generateStubs);
+
+	/**
+	 * @param failOnNoStubs when enabled, this flag will tell stub runner to throw an
+	 * exception when no stubs / contracts were found.
+	 * @return the rule
+	 */
+	StubRunnerExtension failOnNoStubs(boolean failOnNoStubs);
 
 	/**
 	 * @param properties Map of properties that can be passed to custom

@@ -23,7 +23,7 @@ bin/
 *.ear
 *.versionsBackup
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# virtual machine crash logs, see https://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
 *.class
@@ -41,3 +41,5 @@ hs_err_pid*
 interpolated-settings.xml
 interpolated-pom.xml
 dependency-reduced-pom.xml
+
+.vscode/

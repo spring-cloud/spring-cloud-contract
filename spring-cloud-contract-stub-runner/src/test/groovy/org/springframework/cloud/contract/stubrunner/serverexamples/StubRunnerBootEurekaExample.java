@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,7 +42,7 @@ public class StubRunnerBootEurekaExample {
 /*
  *
  * // tag::stubrunnereureka_args[]
- * -Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+ * -Dstubrunner.repositoryRoot=https://repo.spring.io/snapshot (1)
  * -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
  * -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.
  * springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.

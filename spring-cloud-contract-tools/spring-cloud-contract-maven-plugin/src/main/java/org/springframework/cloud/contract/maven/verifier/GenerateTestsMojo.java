@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -35,7 +33,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
 
-import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.TestGenerator;
@@ -49,21 +46,23 @@ import org.springframework.cloud.contract.verifier.config.TestMode;
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
+		requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
-
-	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
 
-	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
+			defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
 
-	@Parameter(defaultValue = "${project.build.directory}/generated-test-sources/contracts")
+	@Parameter(
+			defaultValue = "${project.build.directory}/generated-test-sources/contracts")
 	private File generatedTestSourcesDir;
 
-	@Parameter(defaultValue = "${project.build.directory}/generated-test-resources/contracts")
+	@Parameter(
+			defaultValue = "${project.build.directory}/generated-test-resources/contracts")
 	private File generatedTestResourcesDir;
 
 	@Parameter
@@ -112,7 +111,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 	 * Incubating feature. You can check the size of JSON arrays. If not turned on
 	 * explicitly will be disabled.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.assert.size", defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.assert.size",
+			defaultValue = "false")
 	private boolean assertJsonSize;
 
 	/**
@@ -229,11 +229,23 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
-	@Inject
-	public GenerateTestsMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
-		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
-	}
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	@Parameter(property = "failOnNoContracts", defaultValue = "true")
+	private boolean failOnNoContracts;
 
+	/**
+	 * If set to true then if any contracts that are in progress are found, will break the
+	 * build. On the producer side you need to be explicit about the fact that you have
+	 * contracts in progress and take into consideration that you might be causing false
+	 * positive test execution results on the consumer side.
+	 */
+	@Parameter(property = "failOnInProgress", defaultValue = "true")
+	private boolean failOnInProgress = true;
+
+	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.mavenTestSkip || this.skipTests) {
 			if (this.skip) {
@@ -256,14 +268,16 @@ public class GenerateTestsMojo extends AbstractMojo {
 		getLog().info(
 				"Generating server tests source code for Spring Cloud Contract Verifier contract verification");
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
+		config.setFailOnInProgress(this.failOnInProgress);
 		// download contracts, unzip them and pass as output directory
 		File contractsDirectory = new MavenContractsDownloader(this.project,
 				this.contractDependency, this.contractsPath, this.contractsRepositoryUrl,
 				this.contractsMode, getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
-						this.contractsDirectory);
+				this.contractsProperties, this.failOnNoContracts)
+						.downloadAndUnpackContractsIfRequired(config,
+								this.contractsDirectory);
 		getLog().info(
 				"Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);

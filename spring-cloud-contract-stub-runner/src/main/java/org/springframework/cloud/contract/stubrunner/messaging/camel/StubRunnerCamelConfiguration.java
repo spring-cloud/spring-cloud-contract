@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,7 +46,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass(RoutesBuilder.class)
-@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
+		matchIfMissing = true)
 public class StubRunnerCamelConfiguration {
 
 	static final String STUBRUNNER_DESTINATION_URL_HEADER_NAME = "STUBRUNNER_DESTINATION_URL";

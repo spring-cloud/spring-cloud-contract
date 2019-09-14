@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>2.1.1.BUILD-SNAPSHOT</version>
+		<version>2.2.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -34,38 +34,22 @@
 		<takari-plugin-testing.version>2.9.2</takari-plugin-testing.version>
 		<takari-plugin-integration-testing.version>2.9.2
 		</takari-plugin-integration-testing.version>
-		<jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
 		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0
 		</maven-project-info-reports-plugin.version>
 		<maven-plugin-annotations.version>3.5.2</maven-plugin-annotations.version>
-		<maven-archiver.version>3.2.0</maven-archiver.version>
-		<plexus-archiver.version>3.6.0</plexus-archiver.version>
+		<maven-archiver.version>3.4.0</maven-archiver.version>
+		<plexus-archiver.version>4.1.0</plexus-archiver.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
 		<maven-site-plugin.version>3.7.1</maven-site-plugin.version>
-		<plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
+		<plexus-component-metadata.version>2.0.0</plexus-component-metadata.version>
 		<takari-lifecycle-plugin.version>1.13.7</takari-lifecycle-plugin.version>
 	</properties>
 
-	<version>2.1.1.BUILD-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>addSources</goal>
-							<goal>generateStubs</goal>
-							<goal>compile</goal>
-							<goal>removeStubs</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
@@ -97,7 +81,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>${maven-failsafe-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -205,6 +188,42 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-plugin-plugin
+										</artifactId>
+										<versionRange>
+											[3.5,)
+										</versionRange>
+										<goals>
+											<goal>descriptor</goal>
+											<goal>helpmojo</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<reporting>

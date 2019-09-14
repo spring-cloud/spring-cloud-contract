@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -72,7 +72,7 @@ class Service {
 
 	private static final Log log = LogFactory.getLog(Service.class);
 
-	@Value("${app.baseUrl:http://example.org}")
+	@Value("${app.baseUrl:https://example.org}")
 	String base;
 
 	private RestTemplate restTemplate;
@@ -83,6 +83,12 @@ class Service {
 
 	public String go() {
 		String requestUrl = this.base + "/test";
+		log.info("Will send a request to [" + requestUrl + "]");
+		return this.restTemplate.getForEntity(requestUrl, String.class).getBody();
+	}
+
+	public String link() {
+		String requestUrl = this.base + "/link";
 		log.info("Will send a request to [" + requestUrl + "]");
 		return this.restTemplate.getForEntity(requestUrl, String.class).getBody();
 	}

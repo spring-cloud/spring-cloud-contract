@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.C
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.config.TestFramework.TESTNG
 import static org.springframework.cloud.contract.verifier.config.TestMode.EXPLICIT
 import static org.springframework.cloud.contract.verifier.config.TestMode.JAXRSCLIENT
 import static org.springframework.cloud.contract.verifier.config.TestMode.MOCKMVC
@@ -35,6 +36,7 @@ import static org.springframework.cloud.contract.verifier.config.TestMode.WEBTES
  *
  * @since 2.1.0
  */
+@Deprecated
 class HttpImportProvider {
 
 	private final Map<TestMode, ImportDefinitions> TEST_MODE_SPECIFIC_IMPORTS = [
@@ -46,6 +48,7 @@ class HttpImportProvider {
 	private final Map<Tuple2<TestFramework, TestMode>, ImportDefinitions> FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS = [
 			(new Tuple2(JUNIT, JAXRSCLIENT))   : new ImportDefinitions(['javax.ws.rs.core.Response']),
 			(new Tuple2(JUNIT5, JAXRSCLIENT))  : new ImportDefinitions(['javax.ws.rs.core.Response']),
+			(new Tuple2(TESTNG, JAXRSCLIENT))  : new ImportDefinitions(['javax.ws.rs.core.Response']),
 			(new Tuple2(JUNIT, MOCKMVC))       : new ImportDefinitions([
 					"${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification",
 					"${restAssuredPackage}.response.ResponseOptions"]),
@@ -58,9 +61,17 @@ class HttpImportProvider {
 			(new Tuple2(JUNIT5, WEBTESTCLIENT)): new ImportDefinitions([
 					'io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification',
 					'io.restassured.module.webtestclient.response.WebTestClientResponse']),
+			(new Tuple2(TESTNG, MOCKMVC))      : new ImportDefinitions([
+					"${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification",
+					"${restAssuredPackage}.response.ResponseOptions"]),
+			(new Tuple2(TESTNG, WEBTESTCLIENT)): new ImportDefinitions([
+					'io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification',
+					'io.restassured.module.webtestclient.response.WebTestClientResponse']),
 			(new Tuple2(JUNIT, EXPLICIT))      : new ImportDefinitions(["${restAssuredPackage}.specification.RequestSpecification",
 																		"${restAssuredPackage}.response.Response"]),
 			(new Tuple2(JUNIT5, EXPLICIT))     : new ImportDefinitions(["${restAssuredPackage}.specification.RequestSpecification",
+																		"${restAssuredPackage}.response.Response"]),
+			(new Tuple2(TESTNG, EXPLICIT))     : new ImportDefinitions(["${restAssuredPackage}.specification.RequestSpecification",
 																		"${restAssuredPackage}.response.Response"]),
 			(new Tuple2(SPOCK, JAXRSCLIENT))   : new ImportDefinitions([]),
 			(new Tuple2(CUSTOM, JAXRSCLIENT))  : new ImportDefinitions([]),

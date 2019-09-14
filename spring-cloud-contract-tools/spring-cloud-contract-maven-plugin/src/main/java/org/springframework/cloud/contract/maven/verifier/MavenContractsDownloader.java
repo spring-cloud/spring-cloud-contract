@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,12 +71,14 @@ class MavenContractsDownloader {
 
 	private final Map<String, String> contractsProperties;
 
+	private final boolean failOnNoStubs;
+
 	MavenContractsDownloader(MavenProject project, Dependency contractDependency,
 			String contractsPath, String contractsRepositoryUrl,
 			StubRunnerProperties.StubsMode stubsMode, Log log, String repositoryUsername,
 			String repositoryPassword, String repositoryProxyHost,
 			Integer repositoryProxyPort, boolean deleteStubsAfterTest,
-			Map<String, String> contractsProperties) {
+			Map<String, String> contractsProperties, boolean failOnNoContracts) {
 		this.project = project;
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
@@ -90,6 +92,7 @@ class MavenContractsDownloader {
 		this.stubDownloaderBuilderProvider = new StubDownloaderBuilderProvider();
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		this.contractsProperties = contractsProperties;
+		this.failOnNoStubs = failOnNoContracts;
 	}
 
 	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config,
@@ -103,15 +106,24 @@ class MavenContractsDownloader {
 			this.log.info(
 					"Another mojo has downloaded the contracts - will reuse them from ["
 							+ downloadedContractsDir + "]");
-			contractDownloader().updatePropertiesWithInclusion(downloadedContractsDir,
-					config);
+			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader()
+					.createNewInclusionProperties(downloadedContractsDir);
+			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
+			config.setIncludedRootFolderAntPattern(
+					inclusionProperties.getIncludedRootFolderAntPattern());
 			return downloadedContractsDir;
 		}
 		else if (shouldDownloadContracts()) {
 			this.log.info(
 					"Download dependency is provided - will retrieve contracts from a remote location");
-			File downloadedContracts = contractDownloader()
-					.unpackedDownloadedContracts(config);
+			final ContractDownloader contractDownloader = contractDownloader();
+			final File downloadedContracts = contractDownloader
+					.unpackAndDownloadContracts();
+			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader
+					.createNewInclusionProperties(downloadedContracts);
+			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
+			config.setIncludedRootFolderAntPattern(
+					inclusionProperties.getIncludedRootFolderAntPattern());
 			this.project.getProperties().setProperty(CONTRACTS_DIRECTORY_PROP,
 					downloadedContracts.getAbsolutePath());
 			return downloadedContracts;
@@ -144,7 +156,8 @@ class MavenContractsDownloader {
 				.withStubsMode(this.stubsMode).withUsername(this.repositoryUsername)
 				.withPassword(this.repositoryPassword)
 				.withDeleteStubsAfterTest(this.deleteStubsAfterTest)
-				.withProperties(this.contractsProperties);
+				.withProperties(this.contractsProperties)
+				.withFailOnNoStubs(this.failOnNoStubs);
 		if (StringUtils.hasText(this.contractsRepositoryUrl)) {
 			builder.withStubRepositoryRoot(this.contractsRepositoryUrl);
 		}

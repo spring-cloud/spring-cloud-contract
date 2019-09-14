@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,6 @@ package com.example;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import org.apache.http.MalformedChunkCodingException;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.junit.ClassRule;
@@ -81,7 +80,7 @@ public class WiremockServerApplicationTests {
 	public void malformed() throws Exception {
 		stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
-		this.expected.expectCause(instanceOf(MalformedChunkCodingException.class));
+		this.expected.expectCause(instanceOf(ClientProtocolException.class));
 		assertThat(this.service.go()).isEqualTo("Oops!");
 	}
 

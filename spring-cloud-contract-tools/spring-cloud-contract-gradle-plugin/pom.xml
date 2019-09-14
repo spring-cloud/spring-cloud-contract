@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>2.1.1.BUILD-SNAPSHOT</version>
+		<version>2.2.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -19,6 +19,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<gradle.task>build</gradle.task>
+		<build-helper-maven-plugin.phase>package</build-helper-maven-plugin.phase>
 	</properties>
 
 	<dependencies>
@@ -63,11 +65,11 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.12</version>
+				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-artifacts</id>
-						<phase>package</phase>
+						<phase>${build-helper-maven-plugin.phase}</phase>
 						<goals>
 							<goal>attach-artifact</goal>
 						</goals>
@@ -111,7 +113,8 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<!-- we need a different version so as not to inherit from parent -->
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -119,7 +122,7 @@
 								<configuration>
 									<executable>./gradlew</executable>
 									<arguments>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
@@ -145,7 +148,8 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<!-- we need a different version so as not to inherit from parent -->
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -153,7 +157,7 @@
 								<configuration>
 									<executable>gradlew.bat</executable>
 									<arguments>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
@@ -177,7 +181,8 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<!-- we need a different version so as not to inherit from parent -->
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -185,7 +190,7 @@
 								<configuration>
 									<executable>./gradlew</executable>
 									<arguments>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<!--<argument>jacocoTestReport</argument>-->
 										<argument>-Pfast</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
@@ -210,7 +215,8 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
+						<!-- we need a different version so as not to inherit from parent -->
+						<version>${exec-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -219,8 +225,10 @@
 									<executable>./gradlew</executable>
 									<arguments>
 										<argument>clean</argument>
-										<argument>build</argument>
+										<argument>${gradle.task}</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
+										<argument>-Pcentral</argument>
+										<argument>publishPlugins</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -231,6 +239,16 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>java13</id>
+			<activation>
+				<jdk>13</jdk>
+			</activation>
+			<properties>
+				<gradle.task>assemble</gradle.task>
+				<build-helper-maven-plugin.phase>none</build-helper-maven-plugin.phase>
+			</properties>
 		</profile>
 	</profiles>
 

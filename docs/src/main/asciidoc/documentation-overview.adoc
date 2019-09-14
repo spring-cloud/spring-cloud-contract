@@ -1,0 +1,128 @@
+[[documentation]]
+= Spring Cloud Contract Documentation
+include::_attributes.adoc[]
+
+This section provides a brief overview of {project-full-name} reference documentation. It serves
+as a map for the rest of the document.
+
+
+
+[[contract-documentation-about]]
+== About the Documentation
+
+The {project-full-name} reference guide is available as
+
+* {docs-url}/reference/html[Multi-page HTML]
+* {docs-url}/reference/htmlsingle[Single-page HTML]
+* {docs-url}/reference/pdf/{project-name}.pdf[PDF]
+
+Copies of this document may be made for your own use and for distribution to others,
+provided that you do not charge any fee for such copies and further provided that each
+copy contains this Copyright Notice, whether distributed in print or electronically.
+
+
+
+[[documentation-getting-help]]
+== Getting Help
+If you have trouble with {project-full-name}, we would like to help.
+
+* Try the <<howto.adoc#howto, How-to documents>>. They provide solutions to the most
+common questions.
+* Learn the {project-full-name} basics. If you are
+starting out with {project-full-name}, try one of the https://spring.io/guides[guides].
+* Ask a question. We monitor https://stackoverflow.com[stackoverflow.com] for questions
+tagged with https://stackoverflow.com/tags/{project-name}[`{project-name}`].
+* Report bugs with {project-full-name} at https://github.com/spring-cloud/{project-name}/issues.
+* Chat with us at http://https://gitter.im/spring-cloud/{project-name}[{project-full-name} Gitter]
+
+NOTE: All of {project-full-name} is open source, including the documentation. If you find
+problems with the docs or if you want to improve them, please {github-code}[get
+involved].
+
+
+[[contract-documentation-first-steps]]
+== First Steps
+If you are getting started with {project-full-name} or 'Spring' in general, start with
+<<getting-started.adoc#getting-started, the following topics>>:
+
+* *From scratch:*
+<<getting-started.adoc#getting-started-introducing-{project-name}, Overview>> |
+<<getting-started.adoc#getting-started-three-second-tour, Three-second Tour>> |
+<<getting-started.adoc#getting-started-first-application, First application>>
+* *Tutorial:*
+<<getting-started.adoc#getting-started-cdc, Introduction>> |
+<<getting-started.adoc#consumer-side-loan-issuance, Consumer, Part 1>> |
+<<getting-started.adoc#producer-side-fraud-detection-server, Producer>> |
+<<getting-started.adoc#consumer-side-loan-issuance-final-step, Consumer, Part 2>>
+
+
+
+== Working with {project-full-name}
+Ready to actually start using {project-full-name}? <<using.adoc#using, We have
+you covered>>:
+
+* *Provider contract testing:*
+
+** <<using.adoc#flows-provider-nexus,Provider contract testing with stubs in Nexus or Artifactory>>
+** <<using.adoc#flows-provider-git,Provider contract testing with stubs in Git>>
+** <<using.adoc#flows-provider-non-spring,Provider contract testing with stubs in Artifactory for a non-Spring application>>
+** <<using.adoc#flows-provider-non-jvm,Provider contract testing with stubs in Artifactory in non JVM world>>
+** <<using.adoc#flows-provider-rest-docs,Provider contract testing with REST Docs and stubs in Nexus / Artifactory>>
+
+* *Consumer-Driven contract testing:*
+** <<using.adoc#flows-cdc-contracts-producer,Consumer Driven Contracts with contracts on the producer side>>
+** <<using.adoc#flows-cdc-contracts-external,Consumer Driven Contracts with contracts in external repo>>
+** <<using.adoc#flows-cdc-contracts-stubs-git,Consumer Driven Contracts with contracts on the producer side, pushed to git>>
+
+TIP: We talk about *Provider Contracts* when it is the producer of the API that defines the contracts and
+publishes it for all its consumers to use. This approach is useful for producers that cannot
+directly collaborate with their consumers -- for example, when there are too many consumers or
+the consumers are external (do not work within the same company).
+
+TIP: We use the term, *Consumer-Driven Contracts*, to refer to workflows where the consumers of an API
+play a vital role in the process of creating the contracts. We recommended this approach, because it is easy
+to implement when both producer and consumer teams work for the same organizations and the number
+of consumers is not extremely large.
+
+== Learning about {project-full-name} Features
+Need more details about {project-full-name}'s core features?
+<<project-features.adoc#features, The following content is for you>>:
+
+* *Core Features:*
+<<project-features.adoc#contract-dsl, Contract DSL>> |
+<<project-features.adoc#features-http, Contracts for HTTP>> |
+<<project-features.adoc#features-messaging, Contracts for Messaging>>
+* *Integrations:*
+<<project-features.adoc#features-jax-rs, JAX-RS>> |
+<<project-features.adoc#features-context-paths, Context Paths>> |
+<<project-features.adoc#features-rest-docs, RESTDocs>>
+<<howto.adoc#how-to-generate-pact-from-scc, Pact>>
+* *Modules:*
+<<project-features.adoc#features-stub-runner, Stub Runner>> |
+<<project-features.adoc#features-wiremock, WireMock>>
+// TODO: links don't work in "build Tools" section
+* *Build Tools:*
+link:maven-project.html[Contract Verifier - Maven] |
+link:gradle-project.html[Contract Verifier - Gradle] |
+link:docker-project.html[Docker]
+
+
+== Advanced Topics
+Finally, we have a few topics for more advanced users:
+
+* *Customizing the DSL:*
+<<advanced.adoc#contract-dsl-customization, DSL Customization>> |
+<<advanced.adoc#contract-dsl-extending-common-jar, Common JAR>> |
+<<advanced.adoc#contract-dsl-test-dep, Test Dependency>> |
+<<advanced.adoc#contract-dsl-plugin-dep, Plugin Dependency>> |
+<<advanced.adoc#contract-dsl-referencing, Referencing the DSL>>
+* *Customizing WireMock:*
+<<advanced.adoc#customization-wiremock-extension, Extensions>> |
+<<advanced.adoc#customization-wiremock-configuration, Configuration>>
+* *Customizing {project-full-name}:*
+<<advanced.adoc#contract-dsl-pluggable-architecture, Pluggable Architecture>> |
+<<advanced.adoc#contract-dsl-custom-contract-converter, Contract Converter>> |
+<<advanced.adoc#contract-dsl-custom-test-generator, Test Generator>> |
+<<advanced.adoc#contract-dsl-custom-stub-generator, Stub Generator>> |
+<<advanced.adoc#contract-dsl-custom-stub-runner, Stub Runner>> |
+<<advanced.adoc#contract-dsl-custom-stub-downloader, Stub Downloader>>

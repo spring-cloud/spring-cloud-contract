@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,12 +29,7 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.transform.CompileStatic
-import io.restassured.RestAssured
-import io.restassured.module.mockmvc.RestAssuredMockMvc
-import io.restassured.module.webtestclient.RestAssuredWebTestClient
-import io.restassured.module.webtestclient.response.WebTestClientResponse
-import io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification
-import io.restassured.response.ResponseOptions
+import groovy.util.logging.Commons
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 import org.codehaus.groovy.control.customizers.ImportCustomizer
@@ -50,19 +45,20 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil
+import org.springframework.cloud.function.compiler.java.RuntimeJavaCompiler
 import org.springframework.util.ReflectionUtils
-
 /**
  * checking the syntax of produced scripts
  */
 @CompileStatic
+@Commons
 class SyntaxChecker {
 
-	Entity entity
+	public static final RuntimeJavaCompiler COMPILER = new RuntimeJavaCompiler()
 
 	private static final String[] DEFAULT_IMPORTS = [
 			Contract.name,
-			ResponseOptions.name,
+			"io.restassured.response.ResponseOptions",
 			'io.restassured.module.mockmvc.specification.*',
 			'io.restassured.module.mockmvc.*',
 			Test.name,
@@ -75,8 +71,8 @@ class SyntaxChecker {
 			ContractVerifierMessaging.name,
 			WebTarget.name,
 			Response.name,
-			WebTestClientRequestSpecification.name,
-			WebTestClientResponse.name,
+			"io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification",
+			"io.restassured.module.webtestclient.response.WebTestClientResponse",
 			DocumentBuilder.name,
 			DocumentBuilderFactory.name,
 			Document.name,
@@ -89,9 +85,9 @@ class SyntaxChecker {
 	}.join("\n")
 
 	private static final String STATIC_IMPORTS = [
-			"${RestAssuredMockMvc.name}.given",
-			"${RestAssuredMockMvc.name}.when",
-			"${RestAssured.name}.*",
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.given",
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.when",
+			"io.restassured.RestAssured.*",
 			"${Entity.name}.*",
 			"${ContractVerifierUtil.name}.*",
 			"${ContractVerifierMessagingUtil.name}.headers",
@@ -100,7 +96,7 @@ class SyntaxChecker {
 	].collect { "import static ${it};" }.join("\n")
 
 	private static final String WEB_TEST_CLIENT_STATIC_IMPORTS = [
-			"${RestAssuredWebTestClient.name}.*",
+			"io.restassured.module.webtestclient.RestAssuredWebTestClient.*",
 			"${Entity.name}.*",
 			"${ContractVerifierUtil.name}.*",
 			"${ContractVerifierMessagingUtil.name}.headers",
@@ -114,23 +110,33 @@ private void test(String test) {
 \t}'''
 
 	static void tryToCompile(String builderName, String test) {
-		if (builderName.toLowerCase().contains("spock")) {
-			tryToCompileGroovy(builderName, test)
-		}
-		else {
-			tryToCompileJava(builderName, test)
+		try {
+			if (builderName.toLowerCase().contains("spock")) {
+				tryToCompileGroovy(builderName, test)
+			}
+			else {
+				tryToCompileJava(builderName, test)
+			}
+		} catch (Throwable t) {
+			log.error("Exception occurred while trying to compile the test [\n" + test + "\n]")
+			throw t
 		}
 	}
 
 	static void tryToRun(String builderName, String test) {
-		if (builderName.toLowerCase().contains("spock")) {
-			Script script = tryToCompileGroovy(builderName, test)
-			script.run()
-		}
-		else {
-			Class clazz = tryToCompileJava(builderName, test)
-			Method method = ReflectionUtils.findMethod(clazz, "method")
-			method.invoke(clazz.newInstance())
+		try {
+			if (builderName.toLowerCase().contains("spock")) {
+				Script script = tryToCompileGroovy(builderName, test)
+				script.invokeMethod("validate_method()", null)
+			}
+			else {
+				Class clazz = tryToCompileJava(builderName, test)
+				Method method = ReflectionUtils.findMethod(clazz, "validate_method")
+				method.invoke(clazz.newInstance())
+			}
+		} catch (Throwable t) {
+			log.error("Exception occurred while trying to run the test [\n" + test + "\n]")
+			throw t
 		}
 	}
 
@@ -144,7 +150,7 @@ private void test(String test) {
 		}
 	}
 
-	static Script tryToCompileGroovy(String builderName, String test, boolean compileStatic = true) {
+	static Script tryToCompileGroovy(String builderName, String test, boolean compileStatic = false) {
 		def imports = new ImportCustomizer()
 		CompilerConfiguration configuration = new CompilerConfiguration()
 		if (compileStatic) {
@@ -152,15 +158,14 @@ private void test(String test) {
 					new ASTTransformationCustomizer(CompileStatic))
 		}
 		configuration.addCompilationCustomizers(imports)
-		StringBuilder sourceCode = new StringBuilder()
-		sourceCode.append("${DEFAULT_IMPORTS_AS_STRING}\n")
-		sourceCode.append(getStaticImports(builderName))
-		sourceCode.append("\n")
-		sourceCode.append("WebTarget webTarget")
-		sourceCode.append("\n")
-		sourceCode.append(test)
-		sourceCode.append(dummyMethod)
-		return new GroovyShell(SyntaxChecker.classLoader, configuration).parse(sourceCode.toString())
+		String className = className(test)
+		test = updatedTest(test, className)
+		return new GroovyShell(SyntaxChecker.classLoader, configuration).parse(test)
+	}
+
+	private static String updatedTest(String test, String className) {
+		test.replaceAll("class FooTest", "class " + className)
+			.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
 	}
 
 	private static GString getStaticImports(String builderName) {
@@ -171,35 +176,40 @@ private void test(String test) {
 	}
 
 	static Class tryToCompileJava(String builderName, String test) {
+		String className = className(test)
+		String fqnClassName = "com.example.${className}"
+		test = test.replaceAll("class FooTest", "class " + className)
+		.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
+		return compileJava(fqnClassName, test)
+
+	}
+
+	private static Class<?> compileJava(String fqnClassName, String test) {
+		return InMemoryJavaCompiler.newInstance()
+							.ignoreWarnings()
+							.compile(fqnClassName, test)
+	}
+
+	private static String className(String test) {
 		Random random = new Random()
 		int first = Math.abs(random.nextInt())
 		int hashCode = Math.abs(test.hashCode())
-		StringBuffer sourceCode = new StringBuffer()
 		String className = "TestClass_${first}_${hashCode}"
-		String fqnClassName = "com.example.${className}"
-		sourceCode.append("package com.example;\n")
-		sourceCode.append("${DEFAULT_IMPORTS_AS_STRING}\n")
-		sourceCode.append(getStaticImports(builderName))
-		sourceCode.append("\n")
-		sourceCode.append("public class ${className} {\n")
-		sourceCode.append("\n")
-		sourceCode.append("   WebTarget webTarget;")
-		sourceCode.append("\n")
-		sourceCode.append("   public void method() throws Exception {\n")
-		sourceCode.append("   ${test}\n")
-		sourceCode.append("   }\n")
-		sourceCode.append(dummyMethod)
-		sourceCode.append("}")
-		return InMemoryJavaCompiler.compile(fqnClassName, sourceCode.toString())
+		return className
 	}
 
 	static boolean tryToCompileJavaWithoutImports(String fqn, String test) {
-		InMemoryJavaCompiler.compile(fqn, test)
+		compileJava(fqn, test)
 		return true
 	}
 
 	static boolean tryToCompileGroovyWithoutImports(String test) {
-		new GroovyShell(SyntaxChecker.classLoader).parse(test)
+		try {
+			new GroovyShell(SyntaxChecker.classLoader).parse(test)
+		} catch (Throwable t) {
+			log.error("Exception occurred while trying to parse [\n${test}\n]", t)
+			throw t
+		}
 		return true
 	}
 

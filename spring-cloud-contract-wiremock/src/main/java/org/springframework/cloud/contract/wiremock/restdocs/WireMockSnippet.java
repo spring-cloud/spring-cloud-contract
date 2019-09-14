@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -146,9 +146,14 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
-		return aResponse().withHeaders(responseHeaders(operation))
-				.withBody(operation.getResponse().getContentAsString())
-				.withStatus(operation.getResponse().getStatus().value());
+		String content = operation.getResponse().getContentAsString();
+		ResponseDefinitionBuilder response = aResponse()
+				.withHeaders(responseHeaders(operation)).withBody(content);
+		if (content != null
+				&& content.contains("localhost:{{request.requestLine.port}}")) {
+			response = response.withTransformers("response-template");
+		}
+		return response.withStatus(operation.getResponse().getStatus().value());
 	}
 
 	private MappingBuilder request(Operation operation) {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,12 +42,9 @@ import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-
 /**
  * Creator of {@link Contract} instances
  *
@@ -59,7 +56,6 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 class RequestResponseSCContractCreator {
 
 	private static final String FULL_BODY = '$'
-	private static final RegexPatterns regexPatterns = new RegexPatterns()
 
 	Collection<Contract> convertFrom(RequestResponsePact pact) {
 		return pact.interactions.collect { RequestResponseInteraction interaction ->
@@ -86,7 +82,7 @@ class RequestResponseSCContractCreator {
 						Category headerRules = request.matchingRules.
 								rulesForCategory('header')
 						headers {
-							request.headers.each { k, v ->
+							request.headers.each { String k, List<String> v ->
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -95,15 +91,19 @@ class RequestResponseSCContractCreator {
 									}
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
-										header(k, new DslProperty((Object) Pattern.
-												compile(rule.getRegex()), (Object) v))
+										v.each({
+											header(k, $(c(regex(((RegexMatcher) rule).getRegex())),
+													p(it)))
+										})
 									}
 									else {
 										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
 									}
 								}
 								else {
-									header(k, v)
+									v.each({
+										header(k, it)
+									})
 								}
 							}
 						}
@@ -146,15 +146,15 @@ class RequestResponseSCContractCreator {
 												switch (rule.numberType) {
 												case NumberTypeMatcher.NumberType.NUMBER:
 													jsonPath(key,
-															byRegex(regexPatterns.number()))
+															byRegex(RegexPatterns.number()))
 													break
 												case NumberTypeMatcher.NumberType.INTEGER:
-													jsonPath(key, byRegex(regexPatterns.
+													jsonPath(key, byRegex(RegexPatterns.
 															anInteger()))
 													break
 												case NumberTypeMatcher.NumberType.DECIMAL:
 													jsonPath(key,
-															byRegex(regexPatterns.aDouble()))
+															byRegex(RegexPatterns.aDouble()))
 													break
 												default:
 													throw new RuntimeException("Unsupported number type!")
@@ -191,7 +191,7 @@ class RequestResponseSCContractCreator {
 
 										if (FULL_BODY == key) {
 											JsonPaths jsonPaths = JsonToJsonPathsConverter.
-													transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value)
+													transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value instanceof byte[] ? new String(response.body.value) : response.body.value)
 											jsonPaths.each {
 												jsonPath(it.keyBeforeChecking(), byType())
 											}
@@ -236,17 +236,17 @@ class RequestResponseSCContractCreator {
 													switch (rule.numberType) {
 													case NumberTypeMatcher.NumberType.NUMBER:
 														jsonPath(key,
-																byRegex(regexPatterns.
+																byRegex(RegexPatterns.
 																		number()))
 														break
 													case NumberTypeMatcher.NumberType.INTEGER:
 														jsonPath(key,
-																byRegex(regexPatterns.
+																byRegex(RegexPatterns.
 																		anInteger()))
 														break
 													case NumberTypeMatcher.NumberType.DECIMAL:
 														jsonPath(key,
-																byRegex(regexPatterns.
+																byRegex(RegexPatterns.
 																		aDouble()))
 														break
 													default:
@@ -262,7 +262,7 @@ class RequestResponseSCContractCreator {
 						Category headerRules = response.matchingRules.
 								rulesForCategory('header')
 						headers {
-							response.headers.forEach({ String k, String v ->
+							response.headers.forEach({ String k, List<String> v ->
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -271,15 +271,21 @@ class RequestResponseSCContractCreator {
 									}
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
-										header(k, new DslProperty(new DslProperty(v), new NotToEscapePattern(Pattern.
-												compile(rule.getRegex()))))
+										v.each({
+											header(k, $(p(regex(Pattern.compile(
+													((RegexMatcher) rule).getRegex()))),
+													c(it)))
+										})
+
 									}
 									else {
 										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
 									}
 								}
 								else {
-									header(k, v)
+									v.each({
+										header(k, it)
+									})
 								}
 							})
 						}

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.converter
 
 import java.util.regex.Pattern
 
-import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
 import org.springframework.cloud.contract.spec.Contract
@@ -28,11 +27,13 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.Multipart
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.RegexProperty
+import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.converter.YamlContract.RegexType
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
@@ -40,14 +41,13 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentType.XML
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateClientSideContentType
 
 /**
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
  */
 @PackageScope
-@CompileStatic
 class ContractsToYaml {
 
 	List<YamlContract> convertTo(Collection<Contract> contracts) {
@@ -58,6 +58,7 @@ class ContractsToYaml {
 			}
 			yamlContract.name = contract.name
 			yamlContract.ignored = contract.ignored
+			yamlContract.inProgress = contract.inProgress
 			yamlContract.description = contract.description
 			yamlContract.label = contract.label
 			request(contract, yamlContract)
@@ -72,7 +73,7 @@ class ContractsToYaml {
 		if (!contract.outputMessage) {
 			return
 		}
-		ContentType contentType = evaluateContentType(contract.response?.headers,
+		ContentType contentType = evaluateClientSideContentType(contract.response?.headers,
 				contract.response?.body)
 		yamlContract.outputMessage = new YamlContract.OutputMessage()
 		yamlContract.outputMessage.sentTo = MapConverter.
@@ -102,7 +103,7 @@ class ContractsToYaml {
 		if (!contract.input) {
 			return
 		}
-		ContentType contentType = evaluateContentType(contract.input?.messageHeaders,
+		ContentType contentType = evaluateClientSideContentType(contract.input?.messageHeaders,
 				contract.input?.messageBody)
 		yamlContract.input = new YamlContract.Input()
 		yamlContract.input.assertThat = MapConverter.
@@ -132,16 +133,36 @@ class ContractsToYaml {
 		if (!contract.request) {
 			return
 		}
-		ContentType requestContentType = evaluateContentType(contract.request.headers,
+		ContentType requestContentType = evaluateClientSideContentType(contract.request.headers,
 				contract.request.body)
 		yamlContract.request = new YamlContract.Request()
 		yamlContract.request.with { YamlContract.Request request ->
 			request.method = contract.request?.method?.serverValue
 			request.url = contract.request?.url?.serverValue
 			request.urlPath = contract.request?.urlPath?.serverValue
+			request.matchers = new YamlContract.StubMatchers()
+			Url requestUrl = contract.request.url ?: contract.request.urlPath
+			if (requestUrl.queryParameters != null) {
+				request.queryParameters = requestUrl.queryParameters
+						.parameters.collectEntries {
+					def testSide = MapConverter.getTestSideValuesForNonBody(it)
+					def stubSide = it.clientValue
+					if (stubSide instanceof RegexProperty || stubSide instanceof Pattern) {
+						request.matchers.queryParameters.add(new YamlContract.QueryParameterMatcher(key: it.name, type: YamlContract.MatchingType.matching, value: new RegexProperty(stubSide).pattern()))
+					}
+					else if (stubSide instanceof MatchingStrategy) {
+						request.matchers.queryParameters.add(new YamlContract.QueryParameterMatcher(key: it.name, type: YamlContract.MatchingType.from(stubSide.getType().name), value: MapConverter.getStubSideValuesForNonBody(stubSide)))
+					}
+					return [(it.name): testSide]
+						}
+			}
 			request.headers = (contract.request?.headers as Headers)?.asMap {
 				String headerName, DslProperty prop ->
-					MapConverter.getTestSideValues(prop).toString()
+					def testSideValue = MapConverter.getTestSideValues(prop)
+					if (testSideValue instanceof ExecutionProperty) {
+						return MapConverter.getStubSideValuesForNonBody(prop).toString()
+					}
+					return testSideValue.toString()
 			}
 			request.cookies = (contract.request?.cookies as Cookies)?.asTestSideMap()
 			Object body = contract.request?.body?.serverValue
@@ -169,7 +190,7 @@ class ContractsToYaml {
 						request.multipart.named << new YamlContract.Named(paramName: key,
 								fileName: fileName instanceof String ? value.name?.serverValue as String : null,
 								fileContent: fileContent instanceof String ? fileContent as String : null,
-								fileContentAsBytes: fileContent instanceof String ? fileContent as String : null,
+								fileContentAsBytes: fileContent instanceof FromFileProperty ? fileContent.asBytes().toString() : null,
 								fileContentFromFileAsBytes: resolveFileNameAsBytes(fileContent),
 								contentType: contentType instanceof String ? contentType as String : null,
 								fileNameCommand: fileName instanceof ExecutionProperty ? fileName.toString() : null,
@@ -181,7 +202,6 @@ class ContractsToYaml {
 					}
 				}
 			}
-			request.matchers = new YamlContract.StubMatchers()
 			contract.request?.bodyMatchers?.matchers()?.each { BodyMatcher matcher ->
 				request.matchers.body << new YamlContract.BodyStubMatcher(
 						path: matcher.path(),
@@ -317,7 +337,7 @@ class ContractsToYaml {
 		if (!contract.response) {
 			return
 		}
-		ContentType contentType = evaluateContentType(contract.response?.headers,
+		ContentType contentType = evaluateClientSideContentType(contract.response?.headers,
 				contract.response?.body)
 		yamlContract.response = new YamlContract.Response()
 		yamlContract.response.with { YamlContract.Response response ->
@@ -413,6 +433,8 @@ class ContractsToYaml {
 			return YamlContract.TestMatcherType.by_timestamp
 		case MatchingType.REGEX:
 			return YamlContract.TestMatcherType.by_regex
+		case MatchingType.NULL:
+			return YamlContract.TestMatcherType.by_null
 		}
 		return null
 	}

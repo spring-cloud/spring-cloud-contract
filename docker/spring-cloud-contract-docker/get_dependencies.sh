@@ -2,7 +2,7 @@
 
 set -e
 
-WRAPPER_VERSION="4.10.2"
+WRAPPER_VERSION="5.5"
 GRADLE_BIN_DIR="gradle-${WRAPPER_VERSION}-bin"
 GRADLE_WRAPPER_DIR="${HOME}/.gradle/wrapper/dists/${GRADLE_BIN_DIR}"
 CURRENT_DIR="$( pwd )"
@@ -10,7 +10,7 @@ GRADLE_OUTPUT_DIR="${CURRENT_DIR}/target/gradle_dependencies/"
 pushd project
 rm -rf .gradle
 ./gradlew wrapper --gradle-version "${WRAPPER_VERSION}"
-./gradlew clean build -g "${GRADLE_OUTPUT_DIR}" -x copyOutput || echo "Expected to fail the build"
+./gradlew clean resolveDependencies build -g "${GRADLE_OUTPUT_DIR}" -x copyOutput || echo "Expected to fail the build"
 if [ -d "${GRADLE_WRAPPER_DIR}" ]; then
     echo "Copying Gradle Wrapper version [${WRAPPER_VERSION}]"
     mkdir -p "${GRADLE_OUTPUT_DIR}/wrapper/dists/"

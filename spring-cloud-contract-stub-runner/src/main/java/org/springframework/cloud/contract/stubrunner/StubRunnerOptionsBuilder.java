@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -68,6 +68,10 @@ public class StubRunnerOptionsBuilder {
 	private StubRunnerProperties.StubsMode stubsMode;
 
 	private boolean deleteStubsAfterTest = true;
+
+	private boolean generateStubs;
+
+	private boolean failOnNoStubs = true;
 
 	private Map<String, String> properties = new HashMap<>();
 
@@ -194,7 +198,10 @@ public class StubRunnerOptionsBuilder {
 		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null
 				? options.stubIdsToPortMapping : new LinkedHashMap<>();
 		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
+		this.generateStubs = options.isGenerateStubs();
+		this.failOnNoStubs = options.isFailOnNoStubs();
 		this.properties = options.getProperties();
+		this.httpServerStubConfigurer = options.getHttpServerStubConfigurer();
 		return this;
 	}
 
@@ -207,6 +214,16 @@ public class StubRunnerOptionsBuilder {
 	public StubRunnerOptionsBuilder withDeleteStubsAfterTest(
 			boolean deleteStubsAfterTest) {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withGenerateStubs(boolean generateStubs) {
+		this.generateStubs = generateStubs;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withFailOnNoStubs(boolean failOnNoStubs) {
+		this.failOnNoStubs = failOnNoStubs;
 		return this;
 	}
 
@@ -227,7 +244,8 @@ public class StubRunnerOptionsBuilder {
 				buildDependencies(), this.stubIdsToPortMapping, this.username,
 				this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer,
 				this.consumerName, this.mappingsOutputFolder, this.deleteStubsAfterTest,
-				this.properties, this.httpServerStubConfigurer);
+				this.generateStubs, this.failOnNoStubs, this.properties,
+				this.httpServerStubConfigurer);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

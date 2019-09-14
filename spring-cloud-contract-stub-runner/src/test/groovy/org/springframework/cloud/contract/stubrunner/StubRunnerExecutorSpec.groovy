@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -148,7 +148,7 @@ class StubRunnerExecutorSpec extends Specification {
 
 	def 'should generate regex values when message is to be set and it contains regex'() {
 		given:
-			MessageVerifier messageVerifier = Mock(MessageVerifier)
+			MockMessageVerifier messageVerifier = new MockMessageVerifier()
 			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, messageVerifier, [])
 		when:
 			def stubConf = new StubConfiguration('asd', 'asd', 'asd', '')
@@ -158,15 +158,38 @@ class StubRunnerExecutorSpec extends Specification {
 			boolean triggered = executor.trigger("trigger")
 		then:
 			triggered
-			1 * messageVerifier.send({ it ->
-				println "Body <${it}>"
-				!it.toString().contains("cursor")
-			}, { Map map ->
-				println "Headers <${map}>"
-				!map.values().any { it.toString().contains("cursor") }
-			}, _)
+			messageVerifier.called
 		cleanup:
 			executor.shutdown()
+	}
+
+	class MockMessageVerifier implements MessageVerifier {
+
+		boolean called
+
+		@Override
+		void send(Object message, String destination) {
+
+		}
+
+		@Override
+		Object receive(String destination, long timeout, TimeUnit timeUnit) {
+			return null
+		}
+
+		@Override
+		Object receive(String destination) {
+			return null
+		}
+
+		@Override
+		void send(Object payload, Map headers, String destination) {
+			this.called = true
+			println "Body <${payload}>"
+			assert !payload.toString().contains("cursor")
+			println "Headers <${headers}>"
+			assert headers.values().every { !it.toString().contains("cursor") }
+		}
 	}
 
 	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {

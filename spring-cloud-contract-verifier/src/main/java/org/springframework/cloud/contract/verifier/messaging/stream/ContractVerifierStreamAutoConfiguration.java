@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
@@ -36,23 +37,47 @@ import org.springframework.util.Assert;
  * @author Marcin Grzejszczak
  */
 @Configuration
-@ConditionalOnClass({ EnableBinding.class, MessageCollector.class })
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnClass(EnableBinding.class)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
+		matchIfMissing = true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 public class ContractVerifierStreamAutoConfiguration {
-
-	@Bean
-	@ConditionalOnMissingBean
-	MessageVerifier<Message<?>> contractVerifierMessageExchange(
-			ApplicationContext applicationContext) {
-		return new StreamStubMessages(applicationContext);
-	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(
 			MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
+	}
+
+	@Configuration
+	@ConditionalOnClass(MessageCollector.class)
+	static class MessageCollectorConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithMessageCollector(
+				ApplicationContext context) {
+			DestinationResolver resolver = new DestinationResolver(context);
+			return new StreamStubMessages(
+					new StreamFromBinderMappingMessageSender(context, resolver),
+					new StreamMessageCollectorMessageReceiver(resolver, context));
+		}
+
+	}
+
+	@Configuration
+	@ConditionalOnMissingClass("org.springframework.cloud.stream.test.binder.MessageCollector")
+	static class NoMessageCollectorClassConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithNoMessageCollector(
+				ApplicationContext applicationContext) {
+			return new StreamStubMessages(new StreamStubMessageSender(applicationContext),
+					new StreamPollableChannelMessageReceiver(applicationContext));
+		}
+
 	}
 
 }

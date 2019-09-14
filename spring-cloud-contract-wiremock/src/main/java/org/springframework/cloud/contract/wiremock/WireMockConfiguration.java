@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,8 @@
 package org.springframework.cloud.contract.wiremock;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -96,6 +98,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 			registerFiles(factory);
 			factory.notifier(new Slf4jNotifier(true));
+			if (this.wireMock.getPlaceholders().isEnabled()) {
+				factory.extensions(new ResponseTemplateTransformer(false));
+			}
 			this.options = factory;
 			if (this.customizer != null) {
 				this.customizer.customize(factory);
@@ -114,6 +119,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
+		if (isRunning()) {
+			updateCurrentServer();
+		}
 	}
 
 	private void logRegisteredMappings() {
@@ -125,6 +133,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	void resetMappings() {
 		this.server.resetAll();
+		WireMock.reset();
 		logRegisteredMappings();
 	}
 
@@ -137,18 +146,20 @@ public class WireMockConfiguration implements SmartLifecycle {
 			if (StringUtils.hasText(stubs)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
 						this.resourceLoader);
-				String pattern = stubs;
-				if (!pattern.contains("*")) {
-					if (!pattern.endsWith("/")) {
-						pattern = pattern + "/";
+				StringBuilder pattern = new StringBuilder(stubs);
+				if (!stubs.contains("*")) {
+					if (!stubs.endsWith("/")) {
+						pattern.append("/");
 					}
-					pattern = pattern + "**/*.json";
+					pattern.append("**/*.json");
 				}
-				for (Resource resource : resolver.getResources(pattern)) {
-					StubMapping stubMapping = WireMockStubMapping
-							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
-									Charset.forName("UTF-8")));
-					this.server.addStubMapping(stubMapping);
+				for (Resource resource : resolver.getResources(pattern.toString())) {
+					try (InputStream inputStream = resource.getInputStream()) {
+						StubMapping stubMapping = WireMockStubMapping
+								.buildFrom(StreamUtils.copyToString(inputStream,
+										StandardCharsets.UTF_8));
+						this.server.addStubMapping(stubMapping);
+					}
 				}
 			}
 		}
@@ -242,6 +253,8 @@ class WireMockProperties {
 
 	private Server server = new Server();
 
+	private Placeholders placeholders = new Placeholders();
+
 	private boolean restTemplateSslEnabled;
 
 	public boolean isRestTemplateSslEnabled() {
@@ -260,6 +273,32 @@ class WireMockProperties {
 		this.server = server;
 	}
 
+	public Placeholders getPlaceholders() {
+		return this.placeholders;
+	}
+
+	public void setPlaceholders(Placeholders placeholders) {
+		this.placeholders = placeholders;
+	}
+
+	public class Placeholders {
+
+		/**
+		 * Flag to indicate that http URLs in generated wiremock stubs should be filtered
+		 * to add or resolve a placeholder for a dynamic port.
+		 */
+		private boolean enabled = true;
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+	}
+
 	public static class Server {
 
 		private int port = 8080;
@@ -272,7 +311,7 @@ class WireMockProperties {
 
 		private boolean portDynamic = false;
 
-		private boolean httpsPortDynamic = true;
+		private boolean httpsPortDynamic = false;
 
 		public int getPort() {
 			return this.port;

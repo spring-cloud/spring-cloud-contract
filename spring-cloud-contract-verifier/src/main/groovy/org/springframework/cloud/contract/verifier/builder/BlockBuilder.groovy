@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -33,6 +33,8 @@ class BlockBuilder {
 	private final StringBuilder builder
 	private final String spacer
 	private int indents
+	private String lineEnding = ""
+	private String labelPrefix = ""
 
 	/**
 	 * @param spacer - char used for spacing
@@ -40,6 +42,34 @@ class BlockBuilder {
 	BlockBuilder(String spacer) {
 		this.spacer = spacer
 		builder = new StringBuilder()
+	}
+
+	/**
+	 * Setup line ending
+	 */
+	BlockBuilder setupLineEnding(String lineEnding) {
+		this.lineEnding = lineEnding
+		return this
+	}
+
+	/**
+	 * Setup label prefix
+	 */
+	BlockBuilder setupLabelPrefix(String labelPrefix) {
+		this.labelPrefix = labelPrefix
+		return this
+	}
+
+
+	String getLineEnding() {
+		return this.lineEnding
+	}
+
+	/**
+	 * Adds indents to start a new block
+	 */
+	BlockBuilder appendWithLabelPrefix(String label) {
+		return append(this.labelPrefix).append(label)
 	}
 
 	/**
@@ -75,8 +105,27 @@ class BlockBuilder {
 	}
 
 	BlockBuilder addLine(String line) {
+		return addIndented(line).append("\n")
+	}
+
+	BlockBuilder addIndented(String line) {
+		return addIndentation().append(line)
+	}
+
+	BlockBuilder addIndented(Runnable runnable) {
 		addIndentation()
-		builder << "$line\n"
+		runnable.run()
+		return this
+	}
+
+	BlockBuilder addLineWithEnding(String line) {
+		addIndentation()
+		append(line).addEndingIfNotPresent().addEmptyLine()
+		return this
+	}
+
+	BlockBuilder addEndingIfNotPresent() {
+		addAtTheEnd(lineEnding)
 		return this
 	}
 
@@ -85,19 +134,54 @@ class BlockBuilder {
 		return this
 	}
 
-	@CompileDynamic
-	private void addIndentation() {
+	BlockBuilder appendWithSpace(String text) {
+		return addAtTheEnd(" ").append(text)
+	}
+
+	BlockBuilder appendWithSpace(Runnable runnable) {
+		addAtTheEnd(" ")
+		runnable.run()
+		return this
+	}
+
+	// synactic sugar
+	BlockBuilder append(Runnable runnable) {
+		runnable.run()
+		return this
+	}
+
+	BlockBuilder append(String string) {
+		builder << string
+		return this
+	}
+
+	BlockBuilder addIndentation() {
 		indents.times {
 			builder << spacer
 		}
+		return this
 	}
 
 	@PackageScope
-	BlockBuilder addBlock(MethodBuilder methodBuilder) {
+	BlockBuilder inBraces(Runnable runnable) {
+		builder.append("{\n")
 		startBlock()
-		methodBuilder.appendTo(this)
+		runnable.run()
 		endBlock()
-		addEmptyLine()
+		addAtTheEnd('\n')
+		addLine("}")
+		return this
+	}
+
+	boolean endsWith(String text) {
+		return builder.toString().endsWith(text)
+	}
+
+	BlockBuilder addAtTheEndIfEndsWithAChar(String toAdd) {
+		char lastChar = builder.charAt(builder.length() - 1)
+		if (Character.isLetter(lastChar)) {
+			builder.append(toAdd)
+		}
 		return this
 	}
 
@@ -110,10 +194,23 @@ class BlockBuilder {
 		String lastChar = builder.charAt(builder.length() - 1) as String
 		String secondLastChar = builder.length() >= 2 ? builder.
 				charAt(builder.length() - 2) as String : ""
-		if (endsWithNewLine(lastChar) && aSpecialSign(secondLastChar, toAdd)) {
+		boolean isEndWithNewLine = endsWithNewLine(lastChar)
+		boolean lastCharSpecial = aSpecialSign(lastChar, toAdd)
+		boolean secondLastCharSpecial = aSpecialSign(secondLastChar, toAdd)
+		boolean lineEndingToAdd = toAdd == lineEnding
+		// lastChar = [;] , toAdd = [;]
+		if (lastChar == toAdd) {
 			return this
 		}
-		else if (endsWithNewLine(lastChar) && !aSpecialSign(secondLastChar, toAdd)) {
+		// secondLastChar = [ ], lastChar = [{] , toAdd = [;]
+		else if ((!isEndWithNewLine && lastCharSpecial) && lineEndingToAdd) {
+			return this
+		}
+		// secondLastChar = [{], lastChar = [\n] , toAdd = [;]
+		else if (isEndWithNewLine && secondLastCharSpecial) {
+			return this
+		}
+		else if (isEndWithNewLine && !secondLastCharSpecial) {
 			builder.replace(builder.length() - 1, builder.length(), toAdd)
 			builder << '\n'
 		}
@@ -131,7 +228,12 @@ class BlockBuilder {
 		if (!character) {
 			return false
 		}
-		return character == "{" || character == toAdd
+		return character == "{" ||
+				(character == spacer && toAdd == spacer) ||
+				(character == spacer && toAdd == " ") ||
+				character == toAdd ||
+				(endsWithNewLine(character) &&
+						(toAdd == '\n' || toAdd == " " || toAdd == lineEnding))
 	}
 
 	/**

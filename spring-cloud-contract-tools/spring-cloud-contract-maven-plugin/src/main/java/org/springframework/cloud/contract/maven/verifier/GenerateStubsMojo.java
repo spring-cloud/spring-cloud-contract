@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,13 +39,20 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true)
+@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE,
+		requiresProject = true)
 public class GenerateStubsMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
+			required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
+	@Parameter(defaultValue = "${project.build.finalName}", readonly = true,
+			required = true)
+	private String projectFinalName;
+
+	@Parameter(property = "stubsDirectory",
+			defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -57,7 +64,8 @@ public class GenerateStubsMojo extends AbstractMojo {
 	/**
 	 * Set this to "true" to bypass only JAR creation.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.jar.skip", defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.jar.skip",
+			defaultValue = "false")
 	private boolean jarSkip;
 
 	@Component
@@ -78,6 +86,13 @@ public class GenerateStubsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "stubs")
 	private String classifier;
 
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	@Parameter(property = "failOnNoContracts", defaultValue = "true")
+	private boolean failOnNoContracts;
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.jarSkip) {
 			getLog().info(
@@ -85,6 +100,16 @@ public class GenerateStubsMojo extends AbstractMojo {
 							+ this.skip + ", spring.cloud.contract.verifier.jar.skip="
 							+ this.jarSkip);
 			return;
+		}
+		else if (stubsOutputMissing(this.outputDirectory) && !this.failOnNoContracts) {
+			getLog().warn(
+					"The stubs output directory is missing, the flag to fail on no stubs if off - will continue without throwing an exception");
+			return;
+		}
+		else if (stubsOutputMissing(this.outputDirectory) && this.failOnNoContracts) {
+			throw new MojoExecutionException("Stubs could not be found: ["
+					+ this.outputDirectory.getAbsolutePath()
+					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
 		File stubsJarFile = createStubJar(this.outputDirectory);
 		this.projectHelper.attachArtifact(this.project, "jar", this.classifier,
@@ -98,8 +123,7 @@ public class GenerateStubsMojo extends AbstractMojo {
 					+ stubsOutputDir.getAbsolutePath()
 					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
-		String stubArchiveName = this.project.getBuild().getFinalName() + "-"
-				+ this.classifier + ".jar";
+		String stubArchiveName = this.projectFinalName + "-" + this.classifier + ".jar";
 		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
 		String[] excludes = excludes();
 		getLog().info("Files matching this pattern will be excluded from "
@@ -118,6 +142,10 @@ public class GenerateStubsMojo extends AbstractMojo {
 					"Exception while packaging " + this.classifier + " jar.", e);
 		}
 		return stubsJarFile;
+	}
+
+	private boolean stubsOutputMissing(File stubsOutputDir) {
+		return !stubsOutputDir.exists();
 	}
 
 	private String[] excludes() {

@@ -1,3 +1,0 @@
-stubrunner:
-  work-offline: true
-  stubs.ids: 'com.example:pact-http-server-gradle:+:stubs'

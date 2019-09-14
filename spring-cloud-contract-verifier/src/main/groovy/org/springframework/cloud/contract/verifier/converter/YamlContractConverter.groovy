@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,16 +18,18 @@ package org.springframework.cloud.contract.verifier.converter
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
-
+import groovy.util.logging.Slf4j
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 
 /**
  * Simple converter from and to a {@link YamlContract} to a collection of {@link Contract}
  *
- * @since 1.2.1* @author Marcin Grzejszczak
+ * @since 1.2.1
+ * @author Marcin Grzejszczak
  * @author Tim Ysewyn
  */
+@Slf4j
 @CompileStatic
 class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 
@@ -39,7 +41,16 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 	@Override
 	boolean isAccepted(File file) {
 		String name = file.getName()
-		return name.endsWith(".yml") || name.endsWith(".yaml")
+		boolean acceptFile = name.endsWith(".yml") || name.endsWith(".yaml")
+		if (acceptFile){
+			try {
+				this.yamlToContracts.convertFrom(file)
+			} catch (e) {
+				log.warn("Error Processing yaml file. Skipping Contract Generation ", e)
+				acceptFile = false
+			}
+		}
+		return acceptFile
 	}
 
 	@Override

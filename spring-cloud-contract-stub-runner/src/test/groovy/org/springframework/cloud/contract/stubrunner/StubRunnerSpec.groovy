@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,20 @@
 
 package org.springframework.cloud.contract.stubrunner
 
+
 import spock.lang.Specification
+
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages
+import org.springframework.util.SocketUtils
 
 class StubRunnerSpec extends Specification {
 
-	private static final int MIN_PORT = 8111
-	private static final int MAX_PORT = 8111
+	private static final int MIN_PORT = SocketUtils.findAvailableTcpPort()
+	private static final int MAX_PORT = MIN_PORT
 	private static final URL EXPECTED_STUB_URL = new URL("http://localhost:$MIN_PORT")
+
+	private static final URL generateStubs = StubRunnerSpec.getResource('/generateStubs/')
 
 	def 'should provide stub URL for provided groupid and artifactId'() {
 		given:
@@ -50,10 +57,42 @@ class StubRunnerSpec extends Specification {
 			runner.close()
 	}
 
+
+	def 'should generate stubs at runtime'() {
+		given:
+			Arguments args = argumentsWithGenerateStubs()
+			StubDownloader downloader = new FileStubDownloader().build(args.stubRunnerOptions);
+			StubRunner runner = new StubRunnerFactory(args.stubRunnerOptions,
+					downloader, new NoOpStubMessages()).createStubsFromServiceConfiguration().first()
+		when:
+			runner.runStubs()
+		then:
+			URL url = runner.findStubUrl("groupId2", "artifactId2")
+			new URL(url.toString() + "/goodbye").text
+		when:
+			new URL(url.toString() + "/hello").text
+		then:
+			thrown(FileNotFoundException)
+		cleanup:
+			runner.close()
+	}
+
 	Arguments argumentsWithProjectDefinition() {
 		StubConfiguration stubConfiguration = new StubConfiguration("groupId", "artifactId", "classifier")
 		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder().withMinMaxPort(MIN_PORT, MAX_PORT).build()
 		return new Arguments(stubRunnerOptions, 'src/test/resources/repository', stubConfiguration)
+	}
+
+	Arguments argumentsWithGenerateStubs() {
+		StubConfiguration stubConfiguration = new StubConfiguration("groupId2", "artifactId2", "classifier2")
+		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+				.withMinMaxPort(MIN_PORT, MAX_PORT)
+				.withGenerateStubs(true)
+				.withStubs(stubConfiguration.toString())
+				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+				.withStubRepositoryRoot("stubs://file://" + generateStubs.path)
+				.build()
+		return new Arguments(stubRunnerOptions, 'src/test/resources/generateStubs', stubConfiguration)
 	}
 
 }

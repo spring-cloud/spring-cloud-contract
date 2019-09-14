@@ -10,6 +10,11 @@ indent_style = tab
 indent_size = 4
 continuation_indent_size = 8
 
+[*.kt]
+indent_style = tab
+indent_size = 4
+continuation_indent_size = 8
+
 [*.xml]
 indent_style = tab
 indent_size = 4

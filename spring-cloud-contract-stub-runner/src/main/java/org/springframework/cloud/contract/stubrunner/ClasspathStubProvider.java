@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,28 +16,15 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StringUtils;
 
 /**
  * Stub downloader that picks stubs and contracts from the provided resource. If
@@ -71,185 +58,37 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 
 	private static final Log log = LogFactory.getLog(ClasspathStubProvider.class);
 
-	private static final int TEMP_DIR_ATTEMPTS = 10000;
-
-	private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
-			new DefaultResourceLoader());
-
 	@Override
 	public StubDownloader build(final StubRunnerOptions stubRunnerOptions) {
 		if (stubRunnerOptions.stubsMode != StubRunnerProperties.StubsMode.CLASSPATH) {
 			return null;
 		}
 		log.info("Will download stubs from classpath");
-		return new StubDownloader() {
-			@Override
-			public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-					StubConfiguration config) {
-				List<RepoRoot> repoRoots = repoRoot(stubRunnerOptions, config);
-				List<String> paths = toPaths(repoRoots);
-				List<Resource> resources = resolveResources(paths);
-				if (log.isDebugEnabled()) {
-					log.debug("For paths " + paths + " found following resources "
-							+ resources);
-				}
-				if (resources.isEmpty()) {
-					throw new IllegalStateException(
-							"No stubs were found on classpath for [" + config.getGroupId()
-									+ ":" + config.getArtifactId() + "]");
-				}
-				final File tmp = createTempDir();
-				if (stubRunnerOptions.isDeleteStubsAfterTest()) {
-					tmp.deleteOnExit();
-				}
-				Pattern groupAndArtifactPattern = Pattern.compile("^(.*)("
-						+ config.getGroupId() + "." + config.getArtifactId() + ")(.*)$");
-				String version = config.getVersion();
-				for (Resource resource : resources) {
-					try {
-						String relativePath = relativePathPicker(resource,
-								groupAndArtifactPattern);
-						if (log.isDebugEnabled()) {
-							log.debug("Relative path for resource is [" + relativePath
-									+ "]");
-						}
-						// the relative path is OS agnostic and contains / only
-						int lastIndexOf = relativePath.lastIndexOf("/");
-						String relativePathWithoutFile = lastIndexOf > -1
-								? relativePath.substring(0, lastIndexOf) : relativePath;
-						if (log.isDebugEnabled()) {
-							log.debug("Relative path without file name is ["
-									+ relativePathWithoutFile + "]");
-						}
-						Path directory = Files.createDirectories(
-								new File(tmp, relativePathWithoutFile).toPath());
-						File newFile = new File(directory.toFile(),
-								resource.getFilename());
-						if (!newFile.exists() && !isDirectory(resource)) {
-							try (InputStream stream = resource.getInputStream()) {
-								Files.copy(stream, newFile.toPath());
-							}
-						}
-						if (log.isDebugEnabled()) {
-							log.debug("Stored file [" + newFile + "]");
-						}
-					}
-					catch (IOException e) {
-						log.error("Exception occurred while trying to create dirs", e);
-						throw new IllegalStateException(e);
-					}
-				}
-				log.info("Unpacked files for [" + config.getGroupId() + ":"
-						+ config.getArtifactId() + ":" + version + "] to folder [" + tmp
-						+ "]");
-				return new AbstractMap.SimpleEntry<>(
-						new StubConfiguration(config.getGroupId(), config.getArtifactId(),
-								version, config.getClassifier()),
-						tmp);
-			}
-
-			boolean isDirectory(Resource resource) {
-				try {
-					return resource.getFile().isDirectory();
-				}
-				catch (Exception e) {
-					if (log.isTraceEnabled()) {
-						log.trace(
-								"Exception occurred while trying to convert path to file for resource ["
-										+ resource + "]",
-								e);
-					}
-					return false;
-				}
-			}
-
-			String relativePathPicker(Resource resource, Pattern groupAndArtifactPattern)
-					throws IOException {
-				String uri = resource.getURI().toString();
-				Matcher groupAndArtifactMatcher = groupAndArtifactPattern.matcher(uri);
-				if (groupAndArtifactMatcher.matches()) {
-					MatchResult groupAndArtifactResult = groupAndArtifactMatcher
-							.toMatchResult();
-					return groupAndArtifactResult.group(2)
-							+ groupAndArtifactResult.group(3);
-				}
-				else {
-					throw new IllegalArgumentException("Illegal uri [" + uri + "]");
-				}
-			}
-		};
+		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
+				this::gavPattern);
 	}
 
-	private List<String> toPaths(List<RepoRoot> repoRoots) {
-		List<String> list = new ArrayList<>();
-		for (RepoRoot repoRoot : repoRoots) {
-			list.add(repoRoot.fullPath);
-		}
-		return list;
-	}
-
-	List<Resource> resolveResources(List<String> paths) {
-		List<Resource> resources = new ArrayList<>();
-		for (String path : paths) {
-			try {
-				List<Resource> list = Arrays.asList(this.resolver.getResources(path));
-				resources.addAll(list);
-			}
-			catch (IOException e) {
-				log.error("Exception occurred while trying to fetch resources from ["
-						+ path + "]");
-				throw new IllegalStateException(e);
-			}
-		}
-		return resources;
-	}
-
-	private List<RepoRoot> repoRoot(StubRunnerOptions stubRunnerOptions,
+	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions,
 			StubConfiguration configuration) {
-		if (stubRunnerOptions.getStubRepositoryRoot() != null) {
-			return Collections.singletonList(
-					new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
-		}
-		else {
-			String path = "/**/" + configuration.getGroupId() + "/"
-					+ configuration.getArtifactId();
-			return Arrays.asList(new RepoRoot("classpath*:/META-INF" + path, "/**/*.*"),
-					new RepoRoot("classpath*:/contracts" + path, "/**/*.*"),
-					new RepoRoot("classpath*:/mappings" + path, "/**/*.*"));
-		}
-	}
-
-	// Taken from Guava
-	private File createTempDir() {
-		File baseDir = new File(System.getProperty("java.io.tmpdir"));
-		String baseName = System.currentTimeMillis() + "-";
-		for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
-			File tempDir = new File(baseDir, baseName + counter);
-			if (tempDir.mkdir()) {
-				return tempDir;
+		Resource repositoryRoot = stubRunnerOptions.getStubRepositoryRoot();
+		if (repositoryRoot instanceof ClassPathResource) {
+			ClassPathResource classPathResource = (ClassPathResource) repositoryRoot;
+			String path = classPathResource.getPath();
+			if (StringUtils.hasText(path)) {
+				return RepoRoots.asList(
+						new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
 			}
 		}
-		throw new IllegalStateException("Failed to create directory within "
-				+ TEMP_DIR_ATTEMPTS + " attempts (tried " + baseName + "0 to " + baseName
-				+ (TEMP_DIR_ATTEMPTS - 1) + ")");
+		String path = "/**/" + configuration.getGroupId() + "/"
+				+ configuration.getArtifactId();
+		return RepoRoots.asList(new RepoRoot("classpath*:/META-INF" + path, "/**/*.*"),
+				new RepoRoot("classpath*:/contracts" + path, "/**/*.*"),
+				new RepoRoot("classpath*:/mappings" + path, "/**/*.*"));
 	}
 
-	private static class RepoRoot {
-
-		final String repoRoot;
-
-		final String fullPath;
-
-		RepoRoot(String repoRoot) {
-			this.repoRoot = repoRoot;
-			this.fullPath = repoRoot + "";
-		}
-
-		RepoRoot(String repoRoot, String suffix) {
-			this.repoRoot = repoRoot;
-			this.fullPath = repoRoot + suffix;
-		}
-
+	private Pattern gavPattern(StubConfiguration config) {
+		String ga = config.getGroupId() + "." + config.getArtifactId();
+		return Pattern.compile("^(.*)(" + ga + ")(.*)$");
 	}
 
 }

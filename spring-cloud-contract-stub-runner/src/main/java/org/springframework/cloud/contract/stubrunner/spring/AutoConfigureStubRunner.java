@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -136,6 +136,19 @@ public @interface AutoConfigureStubRunner {
 	 * running tests
 	 */
 	boolean deleteStubsAfterTest() default true;
+
+	/**
+	 * @return When enabled, this flag will tell stub runner to not load the generated
+	 * stubs, but convert the found contracts at runtime to a stub format and run those
+	 * stubs.
+	 */
+	boolean generateStubs() default false;
+
+	/**
+	 * @return when enabled, this flag will tell stub runner to throw an exception when no
+	 * stubs / contracts were found.
+	 */
+	boolean failOnNoStubs() default true;
 
 	/**
 	 * Configuration for an HTTP server stub.

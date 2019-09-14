@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,6 @@ import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.spec.Contract
@@ -46,6 +45,7 @@ import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
@@ -59,6 +59,7 @@ import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUA
 import static org.springframework.cloud.contract.spec.internal.MatchingType.NULL
 import static org.springframework.cloud.contract.spec.internal.MatchingType.TYPE
 import static org.springframework.cloud.contract.verifier.util.ContentType.FORM
+import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getEqualsTypeFromContentType
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
@@ -80,11 +81,14 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private final Request request
 	private final ContentType contentType
 
-	WireMockRequestStubStrategy(Contract groovyDsl) {
+	WireMockRequestStubStrategy(Contract groovyDsl, SingleContractMetadata singleContractMetadata) {
 		super(groovyDsl)
 		this.request = groovyDsl.request
-		this.contentType =
-				tryToGetContentType(request?.body?.clientValue, request?.headers)
+		this.contentType = contentType(singleContractMetadata)
+	}
+
+	protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.evaluatedInputStubContentType
 	}
 
 	@PackageScope
@@ -115,24 +119,31 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (!request.body) {
 			return
 		}
+		boolean bodyHasMatchingStrategy = request.body.clientValue instanceof MatchingStrategy
 		MatchingStrategy matchingStrategy = getMatchingStrategyFromBody(request.body)
 		if (contentType == ContentType.JSON) {
 			def originalBody = matchingStrategy?.clientValue
-			def body = JsonToJsonPathsConverter.
-					removeMatchingJsonPaths(originalBody, request.bodyMatchers)
-			JsonPaths values = JsonToJsonPathsConverter.
-					transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
-			if ((values.empty && !request.bodyMatchers?.hasMatchers())
-					||
-					onlySizeAssertionsArePresent(values)) {
-				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
-						getMatchingStrategy(request.body.clientValue).clientValue),
-						false, false))
+			if (bodyHasMatchingStrategy) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(matchingStrategy))
 			}
 			else {
-				values.findAll { !it.assertsSize() }.each {
-					requestPattern.withRequestBody(WireMock.
-							matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+				def body = JsonToJsonPathsConverter.
+						removeMatchingJsonPaths(originalBody, request.bodyMatchers)
+				JsonPaths values = JsonToJsonPathsConverter.
+						transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
+				if ((values.empty && !request.bodyMatchers?.hasMatchers())
+						||
+						onlySizeAssertionsArePresent(values)) {
+					requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(
+							getMatchingStrategy(request.body.clientValue).clientValue),
+							false, false))
+				}
+				else {
+					values.findAll { !it.assertsSize() }.each {
+						requestPattern.withRequestBody(WireMock.
+								matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+					}
 				}
 			}
 			request.bodyMatchers?.matchers()?.each {
@@ -144,12 +155,18 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		else if (contentType == ContentType.XML) {
 			Object originalBody = matchingStrategy?.clientValue
-			Object body = XmlToXPathsConverter
-					.removeMatchingXPaths(originalBody, request.bodyMatchers)
-			List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
-					.mapToMatchers(body)
-			byEqualityMatchersFromXml.each {
-				addWireMockStubMatchingSection(it, requestPattern, originalBody)
+			if (bodyHasMatchingStrategy) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(matchingStrategy))
+			}
+			else {
+				Object body = XmlToXPathsConverter
+						.removeMatchingXPaths(originalBody, request.bodyMatchers)
+				List<BodyMatcher> byEqualityMatchersFromXml = new XmlToXPathsConverter()
+						.mapToMatchers(body)
+				byEqualityMatchersFromXml.each {
+					addWireMockStubMatchingSection(it, requestPattern, originalBody)
+				}
 			}
 			request.bodyMatchers?.matchers()?.each {
 				addWireMockStubMatchingSection(it, requestPattern, originalBody)
@@ -191,7 +208,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		requestPattern.withRequestBody(WireMock.matchingXPath(pathMatcher.path(),
 				XPathBodyMatcherToWireMockValuePatternConverter
 						.mapToPattern(pathMatcher.matchingType(),
-						String.valueOf(retrievedValue))))
+								String.valueOf(retrievedValue))))
 	}
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {
@@ -212,7 +229,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 										(it.value as NamedProperty).value.clientValue,
 										(it.value as NamedProperty).contentType?.clientValue))
 								: WireMock.
-								matching(RegexPatterns.multipartParam(it.key, it.value)))
+								matching(RegexPatterns.multipartParam(it.key, MapConverter.getStubSideValuesForNonBody(it.value))))
 					}
 			multipartPatterns.each {
 				requestPattern.withRequestBody(it)
@@ -298,8 +315,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	@TypeChecked(TypeCheckingMode.SKIP)
-	private ContentPattern convertToValuePattern(Object object) {
+	protected ContentPattern convertToValuePattern(Object object) {
 		switch (object) {
 		case Pattern:
 		case RegexProperty:
@@ -314,22 +330,27 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 				return WireMock.notMatching(value.clientValue.toString())
 			case MatchingStrategy.Type.ABSENT:
 				return WireMock.absent()
+			case MatchingStrategy.Type.EQUAL_TO:
+				return WireMock.equalTo(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.CONTAINS:
+				return WireMock.containing(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.MATCHING:
+				return WireMock.matching(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.EQUAL_TO_JSON:
+				return WireMock.equalToJson(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.EQUAL_TO_XML:
+				return WireMock.equalToXml(clientBody(value.clientValue, contentType).toString())
+			case MatchingStrategy.Type.BINARY_EQUAL_TO:
+				return WireMock.binaryEqualTo(clientBody(value.clientValue, contentType) as byte[])
 			default:
-				try {
-					return WireMock."${value.type.name}"(
-							clientBody(value.clientValue, contentType))
-				}
-				catch (Throwable t) {
-					log.error("Exception occurred while trying to call WireMock.${value.type.name}(${value.clientValue})", t)
-					throw t
-				}
+				throw new UnsupportedOperationException("Unknown matching strategy " + value.type)
 			}
 		default:
-			return WireMock.equalTo(object.toString())
+			return WireMock.equalTo(clientBody(object, contentType).toString())
 		}
 	}
 
-	protected static Object clientBody(Object bodyValue, ContentType contentType) {
+	protected Object clientBody(Object bodyValue, ContentType contentType) {
 		if (FORM == contentType) {
 			if (bodyValue instanceof Map) {
 				// [a:3, b:4] == "a=3&b=4"
@@ -347,6 +368,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		else if (bodyValue instanceof FromFileProperty) {
 			return bodyValue.isByte() ? bodyValue.asBytes() : bodyValue.asString()
+		}
+		else if (JSON == contentType) {
+			return parseBody(bodyValue, contentType)
 		}
 		return bodyValue
 	}

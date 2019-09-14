@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -32,6 +33,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Header;
+import org.springframework.cloud.contract.spec.internal.QueryParameter;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +45,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -106,8 +109,8 @@ public class ContractDslSnippetTests {
 		then(headerNames(parsedContract.getResponse().getHeaders().getEntries()))
 				.doesNotContain(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrl().getClientValue().toString())
+		then(parsedContract.getRequest().getUrlPath().getClientValue()).isNotNull();
+		then(parsedContract.getRequest().getUrlPath().getClientValue().toString())
 				.startsWith("/");
 		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getBodyMatchers().hasMatchers()).isTrue();
@@ -150,8 +153,8 @@ public class ContractDslSnippetTests {
 		then(headerNames(parsedContract.getResponse().getHeaders().getEntries()))
 				.doesNotContain(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrl().getClientValue().toString())
+		then(parsedContract.getRequest().getUrlPath().getClientValue()).isNotNull();
+		then(parsedContract.getRequest().getUrlPath().getClientValue().toString())
 				.startsWith("/");
 		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getBodyMatchers().hasMatchers()).isTrue();
@@ -163,7 +166,9 @@ public class ContractDslSnippetTests {
 	@Test
 	public void should_create_contract_template_and_doc_without_body_and_headers()
 			throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/foo"))
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/foo").param("one", "newValueOne")
+						.param("two", "newValueTwo"))
 				.andExpect(status().isOk()).andDo(document("empty", dslContract()));
 
 		then(file("/contracts/empty.groovy")).exists();
@@ -173,14 +178,26 @@ public class ContractDslSnippetTests {
 		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders()).isNull();
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrl().getClientValue().toString())
+		then(parsedContract.getRequest().getUrlPath().getClientValue()).isNotNull();
+		then(parsedContract.getRequest().getUrlPath().getClientValue().toString())
 				.startsWith("/");
+		List<QueryParameter> parameters = parsedContract.getRequest().getUrlPath()
+				.getQueryParameters().getParameters();
+		QueryParameter one = parameter(parameters, "one");
+		QueryParameter two = parameter(parameters, "two");
+		then(one.getClientValue()).isEqualTo("newValueOne");
+		then(two.getClientValue()).isEqualTo("newValueTwo");
 		then(parsedContract.getRequest().getBody()).isNull();
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders()).isNull();
 		then(parsedContract.getResponse().getBody()).isNull();
 		then(parsedContract.getResponse().getBodyMatchers()).isNull();
+	}
+
+	private QueryParameter parameter(List<QueryParameter> parameters, String name) {
+		return parameters.stream()
+				.filter(queryParameter -> queryParameter.getName().equals(name))
+				.findFirst().orElseThrow(() -> new AssertionError("Missing entry"));
 	}
 
 	private Set<String> headerNames(Set<Header> headers) {
@@ -206,7 +223,8 @@ public class ContractDslSnippetTests {
 		}
 
 		@GetMapping("/foo")
-		void getFoo() {
+		void getFoo(@RequestParam(name = "one", defaultValue = "valueOne") String one,
+				@RequestParam(name = "two", defaultValue = "valueTwo") String two) {
 		}
 
 	}

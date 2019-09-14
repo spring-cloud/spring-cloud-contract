@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.1.1.BUILD-SNAPSHOT</version>
+		<version>2.2.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -16,22 +16,6 @@
 
 	<name>Spring Cloud Contract Tests</name>
 	<description>Spring Cloud Contract Tests</description>
-
-	<modules>
-		<module>samples-messaging-camel</module>
-		<module>samples-messaging-stream</module>
-		<module>samples-messaging-integration</module>
-		<module>samples-messaging-amqp</module>
-		<module>spring-cloud-contract-stub-runner-camel</module>
-		<module>spring-cloud-contract-stub-runner-boot-eureka</module>
-		<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
-		<module>spring-cloud-contract-stub-runner-context-path</module>
-		<module>spring-cloud-contract-stub-runner-moco-contract-jar</module>
-		<module>spring-cloud-contract-stub-runner-moco</module>
-		<module>spring-cloud-contract-stub-runner-integration</module>
-		<module>spring-cloud-contract-stub-runner-stream</module>
-		<module>spring-cloud-contract-stub-runner-amqp</module>
-	</modules>
 
 	<build>
 		<plugins>
@@ -51,5 +35,56 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>CI</id>
+			<activation>
+				<property>
+					<name>env.CI</name>
+				</property>
+			</activation>
+			<modules>
+				<module>samples-messaging-camel</module>
+				<module>samples-messaging-stream</module>
+				<module>samples-messaging-integration</module>
+				<module>samples-messaging-amqp</module>
+				<module>samples-messaging-jms</module>
+				<module>spring-cloud-contract-stub-runner-camel</module>
+				<module>spring-cloud-contract-stub-runner-boot-eureka</module>
+				<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
+				<module>spring-cloud-contract-stub-runner-context-path</module>
+				<module>spring-cloud-contract-stub-runner-integration</module>
+				<module>spring-cloud-contract-stub-runner-stream</module>
+				<module>spring-cloud-contract-stub-runner-amqp</module>
+				<module>spring-cloud-contract-stub-runner-jms</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>default</id>
+			<activation>
+				<property>
+					<name>!env.CI</name>
+				</property>
+			</activation>
+			<modules>
+				<module>samples-messaging-camel</module>
+				<module>samples-messaging-stream</module>
+				<module>samples-messaging-integration</module>
+				<module>samples-messaging-amqp</module>
+				<module>samples-messaging-jms</module>
+				<module>spring-cloud-contract-stub-runner-camel</module>
+				<module>spring-cloud-contract-stub-runner-boot-eureka</module>
+				<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
+				<module>spring-cloud-contract-stub-runner-context-path</module>
+				<module>spring-cloud-contract-stub-runner-moco-contract-jar</module>
+				<module>spring-cloud-contract-stub-runner-moco</module>
+				<module>spring-cloud-contract-stub-runner-integration</module>
+				<module>spring-cloud-contract-stub-runner-stream</module>
+				<module>spring-cloud-contract-stub-runner-amqp</module>
+				<module>spring-cloud-contract-stub-runner-jms</module>
+			</modules>
+		</profile>
+	</profiles>
 
 </project>

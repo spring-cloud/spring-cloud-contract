@@ -1,0 +1,482 @@
+= Gradle Project
+include::_attributes.adoc[]
+
+To learn how to set up the Gradle project for Spring Cloud Contract Verifier, read the
+following sections:
+
+* <<gradle-prerequisites>>
+* <<gradle-add-gradle-plugin>>
+* <<gradle-and-rest-assured>>
+* <<gradle-snapshot-versions>>
+* <<gradle-add-stubs>>
+* <<gradle-default-setup>>
+* <<gradle-configure-plugin>>
+* <<gradle-configuration-options>>
+* <<gradle-single-base-class>>
+* <<gradle-different-base-classes>>
+* <<gradle-invoking-generated-tests>>
+* <<gradle-pushing-stubs-to-scm>>
+* <<gradle-consumer>>
+
+[[gradle-prerequisites]]
+== Prerequisites
+
+In order to use Spring Cloud Contract Verifier with WireMock, you must use either a
+Gradle or a Maven plugin.
+
+WARNING: If you want to use Spock in your projects, you must separately add the
+`spock-core` and `spock-spring` modules. See https://spockframework.github.io/[Spock's
+documnetation for more information]
+
+[[gradle-add-gradle-plugin]]
+== Add Gradle Plugin with Dependencies
+
+To add a Gradle plugin with dependencies, you can use code similar to the following:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Plugin DSL
+----
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-cloud-contract'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"
+	}
+}
+
+dependencies {
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	// example with adding Spock core and Spock Spring
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Legacy Plugin Application
+----
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+	}
+}
+
+apply plugin: 'groovy'
+
+plugins {
+  id "org.springframework.cloud.contract" version "${GAVerifierVersion}"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"
+	}
+}
+
+dependencies {
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	// example with adding Spock core and Spock Spring
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+----
+====
+
+IMPORTANT: The Plugin DSL option will only work for GA (General Availability) releases (i.e. `2.2.0.RELEASE` etc.).
+
+[[gradle-and-rest-assured]]
+== Gradle and Rest Assured 2.0
+
+By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x
+you can add it to the plugins classpath, as the following listing shows:
+
+====
+[source,groovy,indent=0]
+----
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+		classpath "com.jayway.restassured:rest-assured:2.5.0"
+		classpath "com.jayway.restassured:spring-mock-mvc:2.5.0"
+	}
+}
+
+depenendencies {
+    // all dependencies
+    // you can exclude rest-assured from spring-cloud-contract-verifier
+    testCompile "com.jayway.restassured:rest-assured:2.5.0"
+    testCompile "com.jayway.restassured:spring-mock-mvc:2.5.0"
+}
+----
+====
+
+That way, the plugin automatically sees that Rest Assured 2.x is present on the classpath
+and modifies the imports accordingly.
+
+[[gradle-snapshot-versions]]
+== Snapshot Versions for Gradle
+
+You can add the additional snapshot repository to your `build.gradle` to use snapshot versions,
+which are automatically uploaded after every successful build, as the following listing shows:
+
+====
+[source,groovy,indent=0]
+----
+include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
+}
+----
+====
+
+[[gradle-add-stubs]]
+== Add stubs
+
+By default, Spring Cloud Contract Verifier looks for stubs in the
+`src/test/resources/contracts` directory.
+
+The directory that contains stub definitions is treated as a class name, and each stub
+definition is treated as a single test. Spring Cloud Contract Verifier assumes that it
+contains at  least one level of directories that are to be used as the test class name.
+If more than  one level of nested directories is present, all except the last one is used
+as the package name. Consider the following structure:
+
+====
+[source,groovy,indent=0]
+----
+src/test/resources/contracts/myservice/shouldCreateUser.groovy
+src/test/resources/contracts/myservice/shouldReturnUser.groovy
+----
+====
+
+Given the preceding structure, Spring Cloud Contract Verifier creates a test class named
+`defaultBasePackage.MyService` with two methods:
+
+- `shouldCreateUser()`
+- `shouldReturnUser()`
+
+[[gradle-run-plugin]]
+== Running the Plugin
+
+The plugin registers itself to be invoked before a `check` task. If you want it to be
+part of your build process, you need do nothing more. If you just want to generate
+tests, invoke the `generateContractTests` task.
+
+[[gradle-default-setup]]
+== Default Setup
+
+The default Gradle Plugin setup creates the following Gradle part of the build (in
+pseudocode):
+
+====
+[source,groovy,indent=0]
+----
+contracts {
+    testFramework ='JUNIT'
+    testMode = 'MockMvc'
+    generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
+    contractsDslDir = project.file("${project.rootDir}/src/test/resources/contracts")
+    basePackageForTests = 'org.springframework.cloud.verifier.tests'
+    stubsOutputDir = project.file("${project.buildDir}/stubs")
+
+    // the following properties are used when you want to provide where the JAR with contract lays
+    contractDependency {
+        stringNotation = ''
+    }
+    contractsPath = ''
+    contractsWorkOffline = false
+    contractRepository {
+        cacheDownloadedContracts(true)
+    }
+}
+
+tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
+    baseName = project.name
+    classifier = contracts.stubsSuffix
+    from contractVerifier.stubsOutputDir
+}
+
+project.artifacts {
+    archives task
+}
+
+tasks.create(type: Copy, name: 'copyContracts') {
+    from contracts.contractsDslDir
+    into contracts.stubsOutputDir
+}
+
+verifierStubsJar.dependsOn 'copyContracts'
+
+publishing {
+    publications {
+        stubs(MavenPublication) {
+            artifactId project.name
+            artifact verifierStubsJar
+        }
+    }
+}
+----
+====
+
+[[gradle-configure-plugin]]
+== Configuring the Plugin
+
+To change the default configuration, you can add a `contracts` snippet to your Gradle
+configuration, as the following listing shows:
+
+====
+[source,groovy,indent=0]
+----
+contracts {
+	testMode = 'MockMvc'
+	baseClassForTests = 'org.mycompany.tests'
+	generatedTestSourcesDir = project.file('src/generatedContract')
+}
+----
+====
+
+[[gradle-configuration-options]]
+== Configuration Options
+
+* `testMode`: Defines the mode for acceptance tests. By default, the mode is MockMvc,
+which is based on Spring's MockMvc. It can also be changed to WebTestClient, JaxRsClient, or
+Explicit (for real HTTP calls).
+* `imports`: Creates an array with imports that should be included in the generated tests
+(for example, `['org.myorg.Matchers']`). By default, it creates an empty array.
+* `staticImports`: Creates an array with static imports that should be included in
+generated tests(for example, `['org.myorg.Matchers.*']`). By default, it creates an empty
+array.
+* `basePackageForTests`: Specifies the base package for all generated tests. If not set,
+the value is picked from the package of `baseClassForTests` and from `packageWithBaseClasses`.
+If neither of these values are set, the value is set to
+`org.springframework.cloud.contract.verifier.tests`.
+* `baseClassForTests`: Creates a base class for all generated tests. By default, if you
+use Spock classes, the class is `spock.lang.Specification`.
+* `packageWithBaseClasses`: Defines a package where all the base classes reside. This
+setting takes precedence over `baseClassForTests`.
+* `baseClassMappings`: Explicitly maps a contract package to a FQN of a base class. This
+setting takes precedence over `packageWithBaseClasses` and `baseClassForTests`.
+* `ruleClassForTests`: Specifies a rule that should be added to the generated test
+classes.
+* `ignoredFiles`: Uses an `Antmatcher` to allow defining stub files for which processing
+should be skipped. By default, it is an empty array.
+* `contractsDslDir`: Specifies the directory that contains contracts written by using the
+GroovyDSL. By default, its value is `$rootDir/src/test/resources/contracts`.
+* `generatedTestSourcesDir`: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default, its value is
+`$buildDir/generated-test-sources/contracts`.
+* `generatedTestResourcesDir`: Specifies the test resource directory where resources used by the tests generated
+from the Groovy DSL should be placed. By default, its value is
+`$buildDir/generated-test-resources/contracts`.
+* `stubsOutputDir`: Specifies the directory where the generated WireMock stubs from
+the Groovy DSL should be placed.
+* `testFramework`: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`), and
+JUnit 5 are supported, with JUnit 4 being the default framework.
+* `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
+components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
+
+You can use the following properties when you want to specify the location of the JAR
+that contains the contracts:
+
+* `contractDependency`: Specifies the Dependency that provides
+`groupid:artifactid:version:classifier` coordinates. You can use the `contractDependency`
+closure to set it up.
+* `contractsPath`: Specifies the path to the jar. If contract dependencies are
+ downloaded, the path defaults to `groupid/artifactid` where `groupid` is slash
+ separated. Otherwise, it scans contracts under the provided directory.
+* `contractsMode`: Specifies the mode for downloading contracts (whether the
+JAR is available offline, remotely, and so on).
+* `deleteStubsAfterTest`: If set to `false`, do not remove any downloaded
+contracts from temporary directories.
+* `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
+* `failOnInProgress`: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to `true`.
+
+There is also the `contractRepository { ... }` closure that contains the following properties
+
+* `repositoryUrl`: the URL to the repository with contract definitions
+* `username` : Repository username
+* `password` : Repository password
+* `proxyPort` : the port of the proxy
+* `proxyHost` : the host of the proxy
+* `cacheDownloadedContracts` : If set to `true` then will cache the folder where non snapshot contract artifacts got downloaded. Defaults to `true`.
+
+You can also turn on the following experimental features in the plugin:
+
+* `convertToYaml`: Converts all DSLs to the declarative YAML format. This can be extremely
+useful when you use external libraries in your Groovy DSLs. By turning this feature on
+(by setting it to `true`) you need not add the library dependency on the consumer side.
+* `assertJsonSize`: You can check the size of JSON arrays in the generated tests. This
+feature is disabled by default.
+
+[[gradle-single-base-class]]
+== Single Base Class for All Tests
+
+When using Spring Cloud Contract Verifier in default MockMvc, you need to create a base
+specification for all generated acceptance tests. In this class, you need to point to an
+endpoint, which should be verified. The following example shows how to do so:
+
+====
+[source,groovy,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+----
+====
+
+If you use `Explicit` mode, you can use a base class to initialize the whole tested application,
+as you might see in regular integration tests. If you use the `JAXRSCLIENT` mode, this
+base class should also contain a `protected WebTarget webTarget` field. Right now, the
+only option to test the JAX-RS API is to start a web server.
+
+[[gradle-different-base-classes]]
+== Different Base Classes for Contracts
+
+If your base classes differ between contracts, you can tell the Spring Cloud Contract
+plugin which class should get extended by the autogenerated tests. You have two options:
+
+* Follow a convention by providing the `packageWithBaseClasses`
+* Provide explicit mapping by using `baseClassMappings`
+
+=== By Convention
+
+The convention is such that if you have a contract in (for example)
+`src/test/resources/contract/foo/bar/baz/` and set the value of the
+`packageWithBaseClasses` property to `com.example.base`, then Spring Cloud Contract
+Verifier assumes that there is a `BarBazBase` class under the `com.example.base` package.
+In other words, the system takes the last two parts of the package, if they exist, and
+forms a class with a `Base` suffix. This rule takes precedence over `baseClassForTests`.
+The following example shows how it works in the `contracts` closure:
+
+====
+[source,groovy,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/springframework/cloud/contract/verifier/plugin/ContractVerifierSpec.groovy[tags=package_with_base_classes,indent=0]
+----
+====
+
+=== By Mapping
+
+You can manually map a regular expression of the contract's package to the fully qualified
+name of the base class for the matched contract. You have to provide a list called
+`baseClassMappings` that consists of `baseClassMapping` objects that take a
+`contractPackageRegex` to `baseClassFQN` mapping. Consider the following example:
+
+====
+[source,groovy,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/springframework/cloud/contract/verifier/plugin/ContractVerifierSpec.groovy[tags=base_class_mappings,indent=0]
+----
+====
+
+Let's assume that you have contracts in the following directories:
+ - `src/test/resources/contract/com/`
+ - `src/test/resources/contract/foo/`
+
+By providing `baseClassForTests`, we have a fallback in case mapping did not succeed.
+(You could also provide the `packageWithBaseClasses` as a fallback.) That way, the tests
+generated from `src/test/resources/contract/com/` contracts extend the
+`com.example.ComBase`, whereas the rest of the tests extend `com.example.FooBase`.
+
+[[gradle-invoking-generated-tests]]
+== Invoking Generated Tests
+
+To ensure that the provider side is compliant with your defined contracts, you need to run
+the following command:
+
+====
+[source,bash,indent=0]
+----
+./gradlew generateContractTests test
+----
+====
+
+[[gradle-pushing-stubs-to-scm]]
+== Pushing Stubs to SCM
+
+If you use the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, you can call the `pushStubsToScm`
+task by running the following command:
+
+====
+[source,bash,indent=0]
+----
+$ ./gradlew pushStubsToScm
+----
+====
+
+Under <<scm-stub-downloader>> you can find all possible
+configuration options that you can pass either through
+the `contractsProperties` field (for example, `contracts { contractsProperties = [foo:"bar"] }`),
+through the `contractsProperties` method (for example, `contracts { contractsProperties([foo:"bar"]) }`),
+or through a system property or an environment variable.
+
+[[gradle-consumer]]
+== Spring Cloud Contract Verifier on the Consumer Side
+
+In a consuming service, you need to configure the Spring Cloud Contract Verifier plugin
+in exactly the same way as in the case of a provider. If you do not want to use Stub Runner,
+you need to copy the contracts stored in `src/test/resources/contracts` and generate
+WireMock JSON stubs by using the following command:
+
+====
+[source,bash,indent=0]
+----
+./gradlew generateClientStubs
+----
+====
+
+NOTE: The `stubsOutputDir` option has to be set for stub generation to work.
+
+When present, JSON stubs can be used in automated tests to consume a service. The
+following example shows how to do so:
+
+====
+[source,groovy,indent=0]
+----
+@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)
+class LoanApplicationServiceSpec extends Specification {
+
+ @ClassRule
+ @Shared
+ WireMockClassRule wireMockRule == new WireMockClassRule()
+
+ @Autowired
+ LoanApplicationService sut
+
+ def 'should successfully apply for loan'() {
+   given:
+ 	LoanApplication application =
+			new LoanApplication(client: new Client(clientPesel: '12345678901'), amount: 123.123)
+   when:
+	LoanApplicationResult loanApplication == sut.loanApplication(application)
+   then:
+	loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLIED
+	loanApplication.rejectionReason == null
+ }
+}
+----
+====
+
+In the preceding example, `LoanApplication` makes a call to the `FraudDetection` service.
+This request is handled by a WireMock server configured with stubs that were generated by
+Spring Cloud Contract Verifier.

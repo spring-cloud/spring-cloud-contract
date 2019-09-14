@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,6 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
@@ -205,14 +204,6 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 	}
 
-	private boolean resolvedFromLocalRepo(ArtifactResult result) {
-		return result.getRepository() instanceof LocalRepository;
-	}
-
-	private boolean shouldDownloadFromRemote() {
-		return !remoteReposMissing() && !this.workOffline;
-	}
-
 	private String getVersion(String stubsGroup, String stubsModule, String version,
 			String classifier) {
 		if (StringUtils.isEmpty(version) || LATEST_VERSION_IN_IVY.equals(version)) {
@@ -228,20 +219,26 @@ public class AetherStubDownloader implements StubDownloader {
 	@Override
 	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
-		String version = getVersion(stubConfiguration.groupId,
-				stubConfiguration.artifactId, stubConfiguration.version,
-				stubConfiguration.classifier);
-		if (log.isDebugEnabled()) {
-			log.debug("Will download the stub for version [" + version + "]");
+		try {
+			String version = getVersion(stubConfiguration.groupId,
+					stubConfiguration.artifactId, stubConfiguration.version,
+					stubConfiguration.classifier);
+			if (log.isDebugEnabled()) {
+				log.debug("Will download the stub for version [" + version + "]");
+			}
+			File unpackedJar = unpackedJar(version, stubConfiguration.groupId,
+					stubConfiguration.artifactId, stubConfiguration.classifier);
+			if (unpackedJar == null) {
+				return null;
+			}
+			return new AbstractMap.SimpleEntry<>(new StubConfiguration(
+					stubConfiguration.groupId, stubConfiguration.artifactId, version,
+					stubConfiguration.classifier), unpackedJar);
 		}
-		File unpackedJar = unpackedJar(version, stubConfiguration.groupId,
-				stubConfiguration.artifactId, stubConfiguration.classifier);
-		if (unpackedJar == null) {
+		catch (Exception ex) {
+			log.warn("Exception occurred while trying to fetch the stubs", ex);
 			return null;
 		}
-		return new AbstractMap.SimpleEntry<>(new StubConfiguration(
-				stubConfiguration.groupId, stubConfiguration.artifactId, version,
-				stubConfiguration.classifier), unpackedJar);
 	}
 
 	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule,

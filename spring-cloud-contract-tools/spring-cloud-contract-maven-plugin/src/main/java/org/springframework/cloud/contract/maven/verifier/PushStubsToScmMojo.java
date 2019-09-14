@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,14 +37,15 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "pushStubsToScm")
 public class PushStubsToScmMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
+			required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
+	@Parameter(property = "stubsDirectory",
+			defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -56,7 +57,8 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	/**
 	 * Set this to "true" to bypass only JAR creation.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.publish-stubs-to-scm.skip", defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.publish-stubs-to-scm.skip",
+			defaultValue = "false")
 	private boolean taskSkip;
 
 	@Parameter(defaultValue = "${project}", readonly = true)
@@ -102,6 +104,7 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
+	@Override
 	public void execute() {
 		if (this.skip || this.taskSkip) {
 			getLog().info(

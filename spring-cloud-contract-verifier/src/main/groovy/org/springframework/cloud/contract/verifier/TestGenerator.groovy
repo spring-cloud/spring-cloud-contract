@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,7 +42,6 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeL
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.convertIllegalPackageChars
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.directoryToPackage
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastDot
-
 /**
  * @author Jakub Kubrynski, codearte.io
  */
@@ -61,8 +60,8 @@ class TestGenerator {
 
 	TestGenerator(ContractVerifierConfigProperties configProperties) {
 		this(configProperties, singleTestGenerator(),
-				new FileSaver(configProperties.generatedTestSourcesDir,
-						singleTestGenerator(), configProperties))
+				new FileSaver(configProperties.generatedTestSourcesDir, configProperties.testFramework.classExtension,
+						singleTestGenerator()))
 	}
 
 	private static SingleTestGenerator singleTestGenerator() {
@@ -90,6 +89,16 @@ class TestGenerator {
 				.build()
 	}
 
+	protected TestGenerator(ContractVerifierConfigProperties configProperties, SingleTestGenerator generator, FileSaver saver, ContractFileScanner contractFileScanner) {
+		this.configProperties = configProperties
+		if (configProperties.contractsDslDir == null) {
+			throw new ContractVerifierException("Stubs directory not found under " + configProperties.contractsDslDir)
+		}
+		this.generator = generator
+		this.saver = saver
+		this.contractFileScanner = contractFileScanner
+	}
+
 	int generate() {
 		generateTestClasses(basePackageName())
 		NamesUtil.recrusiveDirectoryToPackage(configProperties.generatedTestSourcesDir)
@@ -114,7 +123,21 @@ class TestGenerator {
 	void generateTestClasses(final String basePackageName) {
 		ListMultimap<Path, ContractMetadata> contracts = contractFileScanner.
 				findContracts()
-		contracts.asMap().entrySet().each {
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contracts " + contracts.keySet())
+		}
+		Set<Map.Entry<Path,Collection<ContractMetadata>>> inProgress = contracts.asMap().entrySet()
+				 .findAll { Map.Entry<Path, Collection<ContractMetadata>> entry -> entry.value.any { it.anyInProgress() }}
+		if (!inProgress.isEmpty() && configProperties.failOnInProgress) {
+			throw new IllegalStateException("In progress contracts found in paths [" + inProgress.collect { it.key.toString() }.join(",") + "] and the switch [failOnInProgress] is set to [true]. Either unmark those contracts as in progress, or set the switch to [false].")
+		}
+		processAllNotInProgress(contracts,basePackageName)
+	}
+
+	@PackageScope Set<Map.Entry<Path,Collection<ContractMetadata>>> processAllNotInProgress(ListMultimap<Path,ContractMetadata> contracts, String basePackageName) {
+		contracts.asMap().entrySet()
+		.findAll { Map.Entry<Path, Collection<ContractMetadata>> entry -> !entry.value.any { it.anyInProgress() }}
+		.each {
 			Map.Entry<Path, Collection<ContractMetadata>> entry ->
 				processIncludedDirectory(
 						relativizeContractPath(entry), (Collection<ContractMetadata>) entry.

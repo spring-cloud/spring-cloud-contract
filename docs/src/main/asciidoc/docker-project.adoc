@@ -1,0 +1,275 @@
+[[docker]]
+= Docker Project
+include::_attributes.adoc[]
+
+In this section, we publish a `springcloud/spring-cloud-contract` Docker image
+that contains a project that generates tests and runs them in `EXPLICIT` mode
+against a running application.
+
+TIP: The `EXPLICIT` mode means that the tests generated from contracts send
+real requests and not the mocked ones.
+
+We also publish a `spring-cloud/spring-cloud-contract-stub-runner` Docker image
+that starts the standalone version of Stub Runner.
+
+[[docker-intro]]
+== A Short Introduction to Maven, JARs and Binary storage
+
+Since non-JVM projects can use the Docker image, it is good to
+explain the basic terms behind Spring Cloud Contract packaging defaults.
+
+Parts of the following definitions were taken from the https://maven.apache.org/glossary.html[Maven Glossary]:
+
+- `Project`: Maven thinks in terms of projects. Projects
+are all you build. Those projects follow a well defined
+“Project Object Model”. Projects can depend on other projects,
+in which case the latter are called “dependencies”. A project may
+consistent of several subprojects. However, these subprojects are still
+treated equally as projects.
+- `Artifact`: An artifact is something that is either produced or used
+by a project. Examples of artifacts produced by Maven for a project
+include JAR files and source and binary distributions. Each artifact
+is uniquely identified by a group ID and an artifact ID that is
+unique within a group.
+- `JAR`: JAR stands for Java ARchive. Its format is based on
+the ZIP file format. Spring Cloud Contract packages the contracts and generated
+stubs in a JAR file.
+- `GroupId`: A group ID is a universally unique identifier for a project.
+While this is often just the project name (for example, `commons-collections`),
+it is helpful to use a fully-qualified package name to distinguish it
+from other projects with a similar name (for example, `org.apache.maven`).
+Typically, when published to the Artifact Manager, the `GroupId` gets
+slash separated and forms part of the URL. For example, for a group ID of `com.example`
+and an artifact ID of `application`, the result would be `/com/example/application/`.
+- `Classifier`: The Maven dependency notation looks as follows:
+`groupId:artifactId:version:classifier`. The classifier is an additional suffix
+passed to the dependency -- for example, `stubs` or `sources`. The same dependency
+(for example, `com.example:application`) can produce multiple artifacts that
+differ from each other with the classifier.
+- `Artifact manager`: When you generate binaries, sources, or packages, you would
+like them to be available for others to download, reference, or reuse. In the case
+of the JVM world, those artifacts are generally JARs. For Ruby, those artifacts are gems.
+For Docker, those artifacts are Docker images. You can store those artifacts
+in a manager. Examples of such managers include https://jfrog.com/artifactory/[Artifactory]
+or https://www.sonatype.org/nexus/[Nexus].
+
+[[docker-how-it-works]]
+== Generating Tests on the Producer Side
+
+The image searches for contracts under the `/contracts` folder.
+The output from running the tests is available in the
+`/spring-cloud-contract/build` folder (useful for debugging
+purposes).
+
+You can mount your contracts and pass the environment variables.
+The image then:
+
+- Generates the contract tests
+- Runs the tests against the provided URL
+- Generates the https://github.com/tomakehurst/wiremock[WireMock] stubs
+- Publishes the stubs to a Artifact Manager (optional - turned on by default)
+
+[[docker-env-vars]]
+=== Environment Variables
+
+The Docker image requires some environment variables to point to
+your running application, to the Artifact manager instance, and so on.
+The following list describes the environment variables:
+
+- `PROJECT_GROUP`: Your project's group ID. Defaults to `com.example`.
+- `PROJECT_VERSION`: Your project's version. Defaults to `0.0.1-SNAPSHOT`.
+- `PROJECT_NAME`: Your project's artifact id. Defaults to `example`.
+- `PRODUCER_STUBS_CLASSIFIER`: Archive classifier used for generated producer stubs. Defaults to `stubs`.
+- `REPO_WITH_BINARIES_URL`: URL of your Artifact Manager. Defaults to `http://localhost:8081/artifactory/libs-release-local`,
+which is the default URL of https://jfrog.com/artifactory/[Artifactory] running locally.
+- `REPO_WITH_BINARIES_USERNAME`: (optional) Username when the Artifact Manager is secured. Defaults to `admin`.
+- `REPO_WITH_BINARIES_PASSWORD`: (optional) Password when the Artifact Manager is secured. Defaults to `password`.
+- `PUBLISH_ARTIFACTS`: If set to `true`, publishes the artifact to binary storage. Defaults to `true`.
+
+These environment variables are used when contracts lay in an external repository. To enable
+this feature, you must set the `EXTERNAL_CONTRACTS_ARTIFACT_ID` environment variable.
+
+- `EXTERNAL_CONTRACTS_GROUP_ID`: Group ID of the project with contracts. Defaults to `com.example`
+- `EXTERNAL_CONTRACTS_ARTIFACT_ID`: Artifact ID of the project with contracts.
+- `EXTERNAL_CONTRACTS_CLASSIFIER`: Classifier of the project with contracts. Empty by default.
+- `EXTERNAL_CONTRACTS_VERSION`: Version of the project with contracts. Defaults to `+`, equivalent to picking the latest.
+- `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`: URL of your Artifact Manager. It defaults to
+the value of `REPO_WITH_BINARIES_URL` environment variable.
+If that is not set, it defaults to `http://localhost:8081/artifactory/libs-release-local`,
+which is the default URL of https://jfrog.com/artifactory/[Artifactory] running locally.
+- `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME`: (optional) Username if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`
+requires authentication. It defaults to `REPO_WITH_BINARIES_USERNAME`. If that is not set, it defaults to `admin`.
+- `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD`: (optional) Password if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`
+requires authentication. It defaults to `REPO_WITH_BINARIES_PASSWORD`. If that is not set, it defaults to `password`.
+- `EXTERNAL_CONTRACTS_PATH`: Path to contracts for the given project, inside the project with contracts.
+Defaults to slash-separated `EXTERNAL_CONTRACTS_GROUP_ID` concatenated with `/` and `EXTERNAL_CONTRACTS_ARTIFACT_ID`. For example,
+for group id `cat-server-side.dog` and artifact id `fish`, would result in `cat/dog/fish` for the contracts path.
+- `EXTERNAL_CONTRACTS_WORK_OFFLINE`; If set to `true`, retrieves the artifact with contracts
+from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path.
+
+WARNING: You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
+
+The following environment variables are used when tests are executed:
+
+- `APPLICATION_BASE_URL`: URL against which tests should be run.
+Remember that it has to be accessible from the Docker container (for example, `localhost`
+does not work)
+- `APPLICATION_USERNAME`: (optional) Username for basic authentication to your application.
+- `APPLICATION_PASSWORD`: (optional) Password for basic authentication to your application.
+
+[[docker-example-of-usage]]
+=== Example of Usage
+
+In this section, we explore a simple MVC application. To get started, clone the following
+git repository and cd to the resulting directory, by running the following commands:
+
+====
+[source,bash]
+----
+$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
+$ cd bookstore
+----
+====
+
+The contracts are available in the `/contracts` folder.
+
+Since we want to run tests, we can run the following command:
+
+====
+[source,bash]
+----
+$ npm test
+----
+====
+
+However, for learning purposes, we split it into pieces, as follows:
+
+====
+[source,bash]
+----
+# Stop docker infra (nodejs, artifactory)
+$ ./stop_infra.sh
+# Start docker infra (nodejs, artifactory)
+$ ./setup_infra.sh
+
+# Kill & Run app
+$ pkill -f "node app"
+$ nohup node app &
+
+# Prepare environment variables
+$ SC_CONTRACT_DOCKER_VERSION="..."
+$ APP_IP="192.168.0.100"
+$ APP_PORT="3000"
+$ ARTIFACTORY_PORT="8081"
+$ APPLICATION_BASE_URL="http://${APP_IP}:${APP_PORT}"
+$ ARTIFACTORY_URL="http://${APP_IP}:${ARTIFACTORY_PORT}/artifactory/libs-release-local"
+$ CURRENT_DIR="$( pwd )"
+$ CURRENT_FOLDER_NAME=${PWD##*/}
+$ PROJECT_VERSION="0.0.1.RELEASE"
+
+# Execute contract tests
+$ docker run  --rm -e "APPLICATION_BASE_URL=${APPLICATION_BASE_URL}" -e "PUBLISH_ARTIFACTS=true" -e "PROJECT_NAME=${CURRENT_FOLDER_NAME}" -e "REPO_WITH_BINARIES_URL=${ARTIFACTORY_URL}" -e "PROJECT_VERSION=${PROJECT_VERSION}" -v "${CURRENT_DIR}/contracts/:/contracts:ro" -v "${CURRENT_DIR}/node_modules/spring-cloud-contract/output:/spring-cloud-contract-output/" springcloud/spring-cloud-contract:"${SC_CONTRACT_DOCKER_VERSION}"
+
+# Kill app
+$ pkill -f "node app"
+----
+====
+
+Through bash scripts, the following happens:
+
+- The infrastructure (MongoDb and Artifactory) is set up.
+In a real-life scenario, you would run the NodeJS application
+with a mocked database. In this example, we want to show how we can
+benefit from Spring Cloud Contract in very little time.
+- Due to those constraints, the contracts also represent the
+stateful situation.
+** The first request is a `POST` that causes data to get inserted to the database.
+** The second request is a `GET` that returns a list of data with 1 previously inserted element.
+- The NodeJS application is started (on port `3000`).
+- The contract tests are generated through Docker, and tests
+are run against the running application.
+** The contracts are taken from `/contracts` folder.
+** The output of the test execution is available under
+`node_modules/spring-cloud-contract/output`.
+- The stubs are uploaded to Artifactory. You can find them in
+http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/ .
+The stubs are at http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar.
+
+[[docker-stubrunner]]
+== Running Stubs on the Consumer Side
+
+This section describes how to use Docker on the consumer side to fetch and run stubs.
+
+We publish a `spring-cloud/spring-cloud-contract-stub-runner` Docker image
+that starts the standalone version of Stub Runner.
+
+[[docker-stubrunner-env-vars]]
+=== Environment Variables
+
+You can run the docker image and pass any of the <<project-features.adoc#features-stub-runner-common-properties-junit-spring, Common Properties for JUnit and Spring>>
+as environment variables. The convention is that all the
+letters should be upper case.
+The dot (`.`) should be replaced with underscore (`_`) characters. For example,
+the `stubrunner.repositoryRoot` property should be represented
+as a `STUBRUNNER_REPOSITORY_ROOT` environment variable.
+
+[[docker-stubrunner-example]]
+=== Example of Usage
+
+We want to use the stubs created in this <<docker-server-side>> step.
+Assume that we want to run the stubs on port `9876`. You can see the NodeJS code
+by cloning the repository and changing to the directory indicated in the following commands:
+
+====
+[source,bash]
+----
+$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
+$ cd bookstore
+----
+====
+
+Now we can run the Stub Runner Boot application with the stubs, by running the following
+commands:
+
+====
+[source,bash]
+----
+# Provide the Spring Cloud Contract Docker version
+$ SC_CONTRACT_DOCKER_VERSION="..."
+# The IP at which the app is running and Docker container can reach it
+$ APP_IP="192.168.0.100"
+# Spring Cloud Contract Stub Runner properties
+$ STUBRUNNER_PORT="8083"
+# Stub coordinates 'groupId:artifactId:version:classifier:port'
+$ STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
+$ STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
+# Run the docker with Stub Runner Boot
+$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -e "STUBRUNNER_STUBS_MODE=REMOTE" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
+----
+====
+
+When the preceding commands run,
+
+- A standalone Stub Runner application gets started.
+- It downloads the stub with coordinates `com.example:bookstore:0.0.1.RELEASE:stubs` on port `9876`.
+- It gets downloads from Artifactory running at `http://192.168.0.100:8081/artifactory/libs-release-local`.
+- After a whil, Stub Runner is running on port `8083`.
+- The stubs are running at port `9876`.
+
+On the server side, we built a stateful stub. We can use curl to assert
+that the stubs are setup properly. To do so, run the following commands:
+
+====
+[source,bash]
+----
+# let's execute the first request (no response is returned)
+$ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "genre" : "Genre", "description" : "Description", "author" : "Author", "publisher" : "Publisher", "pages" : 100, "image_url" : "https://d213dhlpdb53mu.cloudfront.net/assets/pivotal-square-logo-41418bd391196c3022f3cd9f3959b3f6d7764c47873d858583384e759c7db435.svg", "buy_url" : "https://pivotal.io" }' http://localhost:9876/api/books
+# Now time for the second request
+$ curl -X GET http://localhost:9876/api/books
+# You will receive contents of the JSON
+----
+====
+
+IMPORTANT: If you want use the stubs that you have built locally, on your host,
+you should set the `-e STUBRUNNER_STUBS_MODE=LOCAL` environment variable and mount
+the volume of your local m2 (`-v "${HOME}/.m2/:/root/.m2:ro"`).

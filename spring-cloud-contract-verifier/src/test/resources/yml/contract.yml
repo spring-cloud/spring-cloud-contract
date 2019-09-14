@@ -10,6 +10,9 @@ priority: 8
 #tag::ignored[]
 ignored: true
 #end::ignored[]
+#tag::in_progress[]
+inProgress: true
+#end::in_progress[]
 #tag::request[]
 request:
   #end::request[]
@@ -21,7 +24,7 @@ request:
   queryParameters:
     a: b
     b: c
-  #tag::query_params[]
+  #end::query_params[]
   #tag::headers[]
   headers:
     foo: bar

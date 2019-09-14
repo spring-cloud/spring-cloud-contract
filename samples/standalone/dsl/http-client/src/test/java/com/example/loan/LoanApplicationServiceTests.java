@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +30,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.ResponseOptions;
 import io.restassured.specification.RequestSpecification;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerPort;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -50,13 +52,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {
-		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+		"com.example:http-server-dsl:+:stubs" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
 
 	// end::autoconfigure_stubrunner[]
 
+	@StubRunnerPort("com.example:http-server-dsl")
+	private int stubPort;
+
 	@Autowired
 	private LoanApplicationService service;
+
+	@Before
+	public void setup() {
+		this.service.setPort(this.stubPort);
+	}
 
 	@Test
 	public void shouldSuccessfullyApplyForLoan() {
@@ -114,7 +124,7 @@ public class LoanApplicationServiceTests {
 	public void shouldSuccessfullyWorkWithMultipart() {
 		// given:
 		RequestSpecification request = RestAssured.given()
-				.baseUri("http://localhost:6565/")
+				.baseUri("http://localhost:"+ stubPort + "/")
 				.header("Content-Type", "multipart/form-data")
 				.multiPart("file1", "filename1", "content1".getBytes())
 				.multiPart("file2", "filename1", "content2".getBytes()).multiPart("test",
@@ -143,7 +153,7 @@ public class LoanApplicationServiceTests {
 		// when:
 		ResponseEntity<byte[]> exchange = new RestTemplate()
 				.exchange(
-						RequestEntity.put(URI.create("http://localhost:6565/1"))
+						RequestEntity.put(URI.create("http://localhost:"+ stubPort + "/1"))
 								.header("Content-Type", "application/octet-stream")
 								.body(Files.readAllBytes(request.toPath())),
 						byte[].class);

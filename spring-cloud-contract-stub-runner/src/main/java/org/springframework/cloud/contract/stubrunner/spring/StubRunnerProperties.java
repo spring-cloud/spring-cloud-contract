@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +30,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * @author Dave Syer
- *
  */
 @ConfigurationProperties("stubrunner")
 public class StubRunnerProperties {
@@ -108,6 +107,18 @@ public class StubRunnerProperties {
 	 * tests.
 	 */
 	private boolean deleteStubsAfterTest = true;
+
+	/**
+	 * When enabled, this flag will tell stub runner to not load the generated stubs, but
+	 * convert the found contracts at runtime to a stub format and run those stubs.
+	 */
+	private boolean generateStubs;
+
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	private boolean failOnNoStubs = true;
 
 	/**
 	 * Map of properties that can be passed to custom
@@ -245,6 +256,22 @@ public class StubRunnerProperties {
 		for (String key : elements.stringPropertyNames()) {
 			this.properties.put(key, elements.getProperty(key));
 		}
+	}
+
+	public boolean isGenerateStubs() {
+		return this.generateStubs;
+	}
+
+	public void setGenerateStubs(boolean generateStubs) {
+		this.generateStubs = generateStubs;
+	}
+
+	public boolean isFailOnNoStubs() {
+		return this.failOnNoStubs;
+	}
+
+	public void setFailOnNoStubs(boolean failOnNoStubs) {
+		this.failOnNoStubs = failOnNoStubs;
 	}
 
 	public Class getHttpServerStubConfigurer() {

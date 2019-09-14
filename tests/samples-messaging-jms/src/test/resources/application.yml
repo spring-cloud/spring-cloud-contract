@@ -1,0 +1,2 @@
+activemq:
+  broker-url: vm://embedded-broker?broker.persistent=false

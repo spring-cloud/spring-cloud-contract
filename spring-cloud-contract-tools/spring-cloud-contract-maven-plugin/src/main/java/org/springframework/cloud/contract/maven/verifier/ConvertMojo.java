@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -34,29 +32,27 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.eclipse.aether.RepositorySystemSession;
 
-import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 
 /**
- * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
+ * Convert Spring Cloud Contract Verifier contracts into stubs mappings.
  * <p>
  * This goal allows you to generate `stubs-jar` or execute `spring-cloud-contract:run`
- * with generated WireMock mappings.
+ * with generated mappings.
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "convert", requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
+@Mojo(name = "convert", requiresProject = false,
+		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
 
 	static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
 	static final String MAPPINGS_PATH = "/mappings";
 	static final String CONTRACTS_PATH = "/contracts";
 	static final String ORIGINAL_PATH = "/original";
-
-	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -65,7 +61,8 @@ public class ConvertMojo extends AbstractMojo {
 	 * Directory containing Spring Cloud Contract Verifier contracts written using the
 	 * GroovyDSL.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
+			defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
 
 	/**
@@ -184,11 +181,14 @@ public class ConvertMojo extends AbstractMojo {
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
-	@Inject
-	public ConvertMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
-		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
-	}
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	@Parameter(property = "failOnNoContracts", defaultValue = "true")
+	private boolean failOnNoContracts;
 
+	@Override
 	public void execute() throws MojoExecutionException {
 		if (this.skip) {
 			getLog().info(String.format(
@@ -215,7 +215,10 @@ public class ConvertMojo extends AbstractMojo {
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		logSetup(config, contractsDslDir);
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(config);
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(
+				config.getStubsOutputDir(), config.getContractsDslDir(),
+				config.getExcludedFiles(), config.getIncludedContracts(),
+				config.isExcludeBuildFolders());
 		converter.processFiles();
 	}
 
@@ -278,8 +281,9 @@ public class ConvertMojo extends AbstractMojo {
 				getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
-						this.contractsDirectory);
+				this.contractsProperties, this.failOnNoContracts)
+						.downloadAndUnpackContractsIfRequired(config,
+								this.contractsDirectory);
 	}
 
 	private File stubsOutputDir(String rootPath) {

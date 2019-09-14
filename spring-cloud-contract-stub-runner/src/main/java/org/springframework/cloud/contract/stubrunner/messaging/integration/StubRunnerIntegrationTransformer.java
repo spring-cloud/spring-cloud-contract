@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,6 @@ import java.util.Map;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
-import org.springframework.integration.transformer.GenericTransformer;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
@@ -33,8 +32,7 @@ import org.springframework.messaging.support.MessageBuilder;
  *
  * @author Marcin Grzejszczak
  */
-class StubRunnerIntegrationTransformer
-		implements GenericTransformer<Message<?>, Message<?>> {
+class StubRunnerIntegrationTransformer {
 
 	private final StubRunnerIntegrationMessageSelector selector;
 
@@ -46,7 +44,6 @@ class StubRunnerIntegrationTransformer
 		this.selector = new StubRunnerIntegrationMessageSelector(groovyDsls);
 	}
 
-	@Override
 	public Message<?> transform(Message<?> source) {
 		Contract groovyDsl = matchingContract(source);
 		if (groovyDsl == null || groovyDsl.getOutputMessage() == null) {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,18 +37,14 @@ import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.dsl.FilterEndpointSpec;
-import org.springframework.integration.dsl.GenericEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.transformer.MessageTransformingHandler;
-import org.springframework.messaging.Message;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -61,7 +57,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass({ IntegrationFlows.class, EnableBinding.class })
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
+		matchIfMissing = true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
 
@@ -96,11 +93,6 @@ public class StubRunnerStreamConfiguration {
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
 				.getContracts();
-		IntegrationFlowBuilder dummyBuilder = IntegrationFlows
-				.from(DummyMessageHandler.CHANNEL_NAME)
-				.handle(new DummyMessageHandler(), "handle");
-		beanFactory.initializeBean(dummyBuilder.get(),
-				DummyMessageHandler.CHANNEL_NAME + ".flow");
 		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
 				.entrySet()) {
 			StubConfiguration key = entry.getKey();
@@ -118,15 +110,6 @@ public class StubRunnerStreamConfiguration {
 							dsl.getInput().getMessageFrom().getClientValue());
 					map.add(from, dsl);
 				}
-				else if (dsl.getOutputMessage() != null
-						&& dsl.getOutputMessage().getSentTo() != null
-						&& StringUtils.hasText(
-								dsl.getOutputMessage().getSentTo().getClientValue())) {
-					BinderAwareChannelResolver resolver = beanFactory
-							.getBean(BinderAwareChannelResolver.class);
-					resolver.resolveDestination(
-							dsl.getOutputMessage().getSentTo().getClientValue());
-				}
 			}
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
 				final String flowName = name + "_" + entries.getKey() + "_"
@@ -139,32 +122,15 @@ public class StubRunnerStreamConfiguration {
 										e.id(flowName + ".filter");
 									}
 								})
-						.transform(new StubRunnerStreamTransformer(entries.getValue()),
-								new Consumer<GenericEndpointSpec<MessageTransformingHandler>>() {
-									@Override
-									public void accept(
-											GenericEndpointSpec<MessageTransformingHandler> e) {
-										e.id(flowName + ".transformer");
-									}
-								})
+						.transform(new StubRunnerStreamTransformer(entries.getValue()))
 						.route(new StubRunnerMessageRouter(entries.getValue(),
 								beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
-				beanFactory.getBean(flowName + ".transformer", Lifecycle.class).start();
 			}
 
 		}
 		return new FlowRegistrar();
-	}
-
-	static class DummyMessageHandler {
-
-		static String CHANNEL_NAME = "stub_runner_dummy_channel";
-
-		public void handle(Message<?> message) {
-		}
-
 	}
 
 	static class FlowRegistrar {

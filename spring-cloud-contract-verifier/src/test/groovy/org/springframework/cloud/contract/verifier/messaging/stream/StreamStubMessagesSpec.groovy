@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamMessageCollectorMessageReceiver messages = new StreamMessageCollectorMessageReceiver(resolver, applicationContext)
 		when:
 			messages.receive("verifications")
 		then:
@@ -68,7 +69,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamFromBinderMappingMessageSender messages = new StreamFromBinderMappingMessageSender(applicationContext, resolver)
 		when:
 			messages.send("foo", [:], "verifications")
 		then:
@@ -89,7 +91,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamStubMessages messages = new StreamStubMessages(new StreamFromBinderMappingMessageSender(applicationContext, resolver), new StreamMessageCollectorMessageReceiver(resolver, applicationContext))
 		when:
 			messageInteraction(messages)
 		then:
@@ -113,7 +116,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamStubMessages messages = new StreamStubMessages(new StreamFromBinderMappingMessageSender(applicationContext, resolver), new StreamMessageCollectorMessageReceiver(resolver, applicationContext))
 		when:
 			messageInteraction(messages)
 		then:
@@ -138,7 +142,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamStubMessages messages = new StreamStubMessages(new StreamFromBinderMappingMessageSender(applicationContext, resolver), new StreamMessageCollectorMessageReceiver(resolver, applicationContext))
 		when:
 			messages.receive("verificationsChannel")
 		then:
@@ -161,7 +166,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamStubMessages messages = new StreamStubMessages(new StreamFromBinderMappingMessageSender(applicationContext, resolver), new StreamMessageCollectorMessageReceiver(resolver, applicationContext))
 		when:
 			messages.send("foo", [:], "verificationsChannel")
 		then:
@@ -182,7 +188,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamStubMessages messages = new StreamStubMessages(new StreamFromBinderMappingMessageSender(applicationContext, resolver), new StreamMessageCollectorMessageReceiver(resolver, applicationContext))
 		when:
 			messageInteraction(messages)
 		then:
@@ -206,7 +213,8 @@ class StreamStubMessagesSpec extends Specification {
 			applicationContext.getBean(BindingServiceProperties) >> properties
 			applicationContext.getBean(MessageCollector) >> collector
 		and:
-			StreamStubMessages messages = new StreamStubMessages(applicationContext)
+			DestinationResolver resolver = new DestinationResolver(applicationContext)
+			StreamStubMessages messages = new StreamStubMessages(new StreamFromBinderMappingMessageSender(applicationContext, resolver), new StreamMessageCollectorMessageReceiver(resolver, applicationContext))
 		when:
 			messageInteraction(messages)
 		then:

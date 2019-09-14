@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -120,6 +120,14 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		OperationRequest request = operation.getRequest();
 		model.put("request_method", request.getMethod());
 		model.put("request_url", prepareRequestUrl(request.getUri()));
+		String rawQuery = request.getUri().getRawQuery();
+		boolean urlPathPresent = StringUtils.hasText(rawQuery);
+		model.put("request_urlpath_present", urlPathPresent);
+		if (urlPathPresent) {
+			// TODO: Add support for multiple values
+			model.put("request_queryparams",
+					request.getParameters().toSingleValueMap().entrySet());
+		}
 		model.put("request_body_present", request.getContent().length > 0);
 		model.put("request_body", request.getContentAsString());
 		Map<String, String> headers = new HashMap<>(
@@ -144,12 +152,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	}
 
 	private String prepareRequestUrl(URI uri) {
-		String path = uri.getRawPath();
-		String query = uri.getRawQuery();
-		if (StringUtils.hasText(query)) {
-			path = path + "?" + query;
-		}
-		return path;
+		return uri.getRawPath();
 	}
 
 	private Map<String, Object> createModelForContract(Operation operation) {

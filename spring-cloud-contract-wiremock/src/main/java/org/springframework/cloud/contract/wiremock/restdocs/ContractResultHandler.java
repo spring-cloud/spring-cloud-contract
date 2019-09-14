@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,7 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -44,13 +42,10 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.servlet.WireMockHttpServletMultipartAdapter;
 import wiremock.com.google.common.base.Function;
-import wiremock.com.google.common.base.Joiner;
 import wiremock.com.google.common.base.Optional;
-import wiremock.com.google.common.collect.FluentIterable;
 import wiremock.com.google.common.collect.ImmutableList;
 import wiremock.com.google.common.collect.ImmutableMultimap;
 import wiremock.com.google.common.collect.Maps;
-import wiremock.org.eclipse.jetty.util.MultiPartInputStreamParser;
 
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -249,7 +244,6 @@ class WireMockHttpServletRequestAdapter implements Request {
 		return encodeBase64(getBody());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getHeader(String key) {
 		List<String> headerNames = list(this.request.getHeaderNames());
@@ -262,7 +256,6 @@ class WireMockHttpServletRequestAdapter implements Request {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public HttpHeader header(String key) {
 		List<String> headerNames = list(this.request.getHeaderNames());
 		for (String currentKey : headerNames) {
@@ -298,7 +291,6 @@ class WireMockHttpServletRequestAdapter implements Request {
 		return new HttpHeaders(headerList);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Set<String> getAllHeaderKeys() {
 		LinkedHashSet<String> headerKeys = new LinkedHashSet<>();
@@ -344,11 +336,6 @@ class WireMockHttpServletRequestAdapter implements Request {
 		}
 		if (this.cachedMultiparts == null) {
 			try {
-				String contentTypeHeaderValue = FluentIterable
-						.from(contentTypeHeader().values()).join(Joiner.on(" "));
-				InputStream inputStream = new ByteArrayInputStream(getBody());
-				MultiPartInputStreamParser inputStreamParser = new MultiPartInputStreamParser(
-						inputStream, contentTypeHeaderValue, null, null);
 				this.cachedMultiparts = from(safelyGetRequestParts()).transform(
 						(Function<javax.servlet.http.Part, Part>) WireMockHttpServletMultipartAdapter::from)
 						.toList();

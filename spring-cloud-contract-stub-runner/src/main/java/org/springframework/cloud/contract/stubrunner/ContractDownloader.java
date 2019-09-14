@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -70,14 +70,52 @@ public class ContractDownloader {
 	 * pattern
 	 * @return location of the unpacked downloaded stubs
 	 */
+	// Use unpackAndDownloadContracts() and createNewInclusionProperties() instead
+	@Deprecated
 	public File unpackedDownloadedContracts(ContractVerifierConfigProperties config) {
 		File contractsDirectory = unpackAndDownloadContracts();
 		updatePropertiesWithInclusion(contractsDirectory, config);
 		return contractsDirectory;
 	}
 
+	// Use createNewInclusionProperties() instead
+	@Deprecated
 	public ContractVerifierConfigProperties updatePropertiesWithInclusion(
 			File contractsDirectory, ContractVerifierConfigProperties config) {
+		final InclusionProperties newInclusionProperties = createNewInclusionProperties(
+				contractsDirectory);
+		config.setIncludedContracts(newInclusionProperties.getIncludedContracts());
+		config.setIncludedRootFolderAntPattern(
+				newInclusionProperties.getIncludedRootFolderAntPattern());
+		return config;
+	}
+
+	/**
+	 * Downloads JAR containing all the contracts. The JAR with the contracts contains all
+	 * the contracts for all the projects. We're interested only in its subset.
+	 * @return location of the unpacked downloaded stubs
+	 */
+	public File unpackAndDownloadContracts() {
+		if (log.isDebugEnabled()) {
+			log.debug("Will download contracts for [" + this.contractsJarStubConfiguration
+					+ "]");
+		}
+		Map.Entry<StubConfiguration, File> unpackedContractStubs = this.stubDownloader
+				.downloadAndUnpackStubJar(this.contractsJarStubConfiguration);
+		if (unpackedContractStubs == null) {
+			throw new IllegalStateException("The contracts failed to be downloaded!");
+		}
+		return unpackedContractStubs.getValue();
+	}
+
+	/**
+	 * After JAR with all the contracts is downloaded and unpacked - we need to get new
+	 * inclusion pattern for those contracts. The JAR with the contracts contains all the
+	 * contracts for all the projects. We're interested only in its subset.
+	 * @param contractsDirectory - location of the unpacked downloaded stubs.
+	 * @return new inclusion properties, calculated for those downloaded contracts.
+	 */
+	public InclusionProperties createNewInclusionProperties(File contractsDirectory) {
 		String pattern;
 		String includedAntPattern;
 		if (StringUtils.hasText(this.contractsPath)) {
@@ -107,9 +145,7 @@ public class ContractDownloader {
 		}
 		log.info("Pattern to pick contracts equals [" + pattern + "]");
 		log.info("Ant Pattern to pick files equals [" + includedAntPattern + "]");
-		config.setIncludedContracts(pattern);
-		config.setIncludedRootFolderAntPattern(includedAntPattern);
-		return config;
+		return new InclusionProperties(pattern, includedAntPattern);
 	}
 
 	private File contractsSubDirIfPresent(File contractsDirectory) {
@@ -162,19 +198,6 @@ public class ContractDownloader {
 				+ "**/";
 	}
 
-	private File unpackAndDownloadContracts() {
-		if (log.isDebugEnabled()) {
-			log.debug("Will download contracts for [" + this.contractsJarStubConfiguration
-					+ "]");
-		}
-		Map.Entry<StubConfiguration, File> unpackedContractStubs = this.stubDownloader
-				.downloadAndUnpackStubJar(this.contractsJarStubConfiguration);
-		if (unpackedContractStubs == null) {
-			throw new IllegalStateException("The contracts failed to be downloaded!");
-		}
-		return unpackedContractStubs.getValue();
-	}
-
 	private String groupArtifactToPattern(File contractsDirectory) {
 		return ("^" + contractsDirectory.getAbsolutePath() + "(" + File.separator + ")?"
 				+ ".*" + slashSeparatedGroupId() + File.separator + this.projectArtifactId
@@ -187,6 +210,38 @@ public class ContractDownloader {
 
 	private String slashSeparatedGroupId() {
 		return this.projectGroupId.replace(".", File.separator);
+	}
+
+	/**
+	 * Holder for updated inclusion properties, which are calculated after jar with
+	 * contracts was downloaded / unpacked.
+	 */
+	public static class InclusionProperties {
+
+		/**
+		 * @see ContractVerifierConfigProperties.includedContracts
+		 */
+		private final String includedContracts;
+
+		/**
+		 * @see ContractVerifierConfigProperties.includedRootFolderAntPattern
+		 */
+		private final String includedRootFolderAntPattern;
+
+		InclusionProperties(final String includedContracts,
+				final String includedRootFolderAntPattern) {
+			this.includedContracts = includedContracts;
+			this.includedRootFolderAntPattern = includedRootFolderAntPattern;
+		}
+
+		public String getIncludedContracts() {
+			return includedContracts;
+		}
+
+		public String getIncludedRootFolderAntPattern() {
+			return includedRootFolderAntPattern;
+		}
+
 	}
 
 }

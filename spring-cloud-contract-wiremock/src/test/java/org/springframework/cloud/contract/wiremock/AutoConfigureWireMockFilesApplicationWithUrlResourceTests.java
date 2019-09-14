@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class, properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+		classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class,
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
+		webEnvironment = SpringBootTest.WebEnvironment.NONE)
 // tag::load_all_stubs[]
 @AutoConfigureWireMock(port = 0, stubs = "classpath*:/META-INF/**/mappings/**/*.json")
 // end::load_all_stubs[]

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,8 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @WebMvcTest
 @AutoConfigureStubRunner(ids = {
 		"org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
-		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" }, minPort = 10001, maxPort = 10020, mappingsOutputFolder = "target/outputmappings/", properties = {
-				"hello=world", "foo=bar" })
+		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" },
+		minPort = 10001, maxPort = 10020, mappingsOutputFolder = "target/outputmappings/",
+		properties = { "hello=world", "foo=bar" })
 @ActiveProfiles("test")
 public class StubRunnerSliceTests {
 

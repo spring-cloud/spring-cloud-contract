@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,6 +74,16 @@ class CamelStubRunnerSpec extends Specification {
 		def strategy = new DefaultShutdownStrategy(this.camelContext)
 		strategy.timeout = 1
 		this.camelContext.shutdownStrategy = strategy
+	}
+
+	def 'should not trigger a message that does not match input'() {
+		when:
+			producerTemplate.
+					sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
+		then:
+			Exchange receivedMessage = consumerTemplate.receive('jms:output', 100)
+		and:
+			receivedMessage == null
 	}
 
 	def 'should download the stub and register a route for it'() {
@@ -173,16 +183,6 @@ class CamelStubRunnerSpec extends Specification {
 			// end::trigger_no_output[]
 		then:
 			noExceptionThrown()
-	}
-
-	def 'should not trigger a message that does not match input'() {
-		when:
-			producerTemplate.
-					sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
-		then:
-			Exchange receivedMessage = consumerTemplate.receive('jms:output', 100)
-		and:
-			receivedMessage == null
 	}
 
 	private boolean assertThatBodyContainsBookNameFoo(Object payload) {

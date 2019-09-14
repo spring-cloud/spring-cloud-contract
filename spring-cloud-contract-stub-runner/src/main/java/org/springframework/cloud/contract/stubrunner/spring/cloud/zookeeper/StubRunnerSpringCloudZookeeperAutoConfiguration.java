@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,7 +44,8 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(org.apache.curator.x.discovery.ServiceInstance.class)
 @ConditionalOnStubbedDiscoveryDisabled
 @ConditionalOnZookeeperDiscoveryEnabled
-@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled",
+		matchIfMissing = true)
 public class StubRunnerSpringCloudZookeeperAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")

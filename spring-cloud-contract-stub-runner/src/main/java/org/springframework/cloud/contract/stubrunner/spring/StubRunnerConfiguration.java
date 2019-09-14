@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @EnableConfigurationProperties(StubRunnerProperties.class)
-@ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
+@ConditionalOnMissingBean(
+		type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 @Import(StubRunnerPortBeanPostProcessor.class)
 public class StubRunnerConfiguration {
 
@@ -100,6 +101,7 @@ public class StubRunnerConfiguration {
 				.withConsumerName(consumerName())
 				.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
 				.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest())
+				.withGenerateStubs(this.props.isGenerateStubs())
 				.withProperties(this.props.getProperties())
 				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer());
 	}

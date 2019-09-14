@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -231,7 +231,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		given:
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), StubRunnerProperties.StubsMode.LOCAL,
 					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, [foo: "bar"], Foo))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, false, [foo: "bar"], Foo))
 			builder.withStubs("foo:bar:baz")
 		when:
 			StubRunnerOptions options = builder.build()
@@ -251,6 +251,8 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
 			options.deleteStubsAfterTest == false
+			options.generateStubs == true
+			options.failOnNoStubs == false
 			options.properties == [foo: "bar"]
 			options.httpServerStubConfigurer == Foo
 	}
@@ -260,7 +262,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"),
 					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, [:], Foo))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, true, [:], Foo))
 			builder.withStubs("foo:bar:baz")
 		when:
 			String options = builder.build().toString()
@@ -290,7 +292,10 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			System.setProperty("stubrunner.properties.foo-bar", "bar")
 			System.setProperty("stubrunner.properties.foo-baz", "baz")
 			System.setProperty("stubrunner.properties.bar.bar", "foo")
-			System.setProperty("stubrunner.httpServerStubConfigurer", "org.springframework.cloud.contract.stubrunner.Foo")
+			System.setProperty("stubrunner.delete-stubs-after-test", "false")
+			System.setProperty("stubrunner.generate-stubs", "true")
+			System.setProperty("stubrunner.fail-on-no-stubs", "false")
+			System.setProperty("stubrunner.http-server-stub-configurer", "org.springframework.cloud.contract.stubrunner.Foo")
 		when:
 			StubRunnerOptions options = StubRunnerOptions.fromSystemProps()
 		then:
@@ -305,6 +310,9 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.proxyOptions.proxyHost == "host"
 			options.proxyOptions.proxyPort == 4
 			options.stubsPerConsumer == true
+			options.deleteStubsAfterTest == false
+			options.generateStubs == true
+			options.failOnNoStubs == false
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
 			options.properties == ["foo-bar": "bar", "foo-baz": "baz", "bar.bar": "foo"]

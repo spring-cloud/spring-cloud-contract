@@ -1,10 +1,12 @@
 package org.springframework.cloud.contract.verifier.builder
 
+
 import spock.lang.Issue
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 
 class MethodBuilderSpec extends Specification {
 
@@ -24,13 +26,15 @@ class MethodBuilderSpec extends Specification {
 					}
 				}
 			}
-			ContractMetadata metadata = new ContractMetadata(null, false, 0, null, contractDsl)
-		when:
 			File stubFile = new File("invalid-method:name.groovy")
 
-			String methodName = MethodBuilder.methodName(metadata, stubFile, contractDsl)
+			ContractMetadata metadata = new ContractMetadata(stubFile.toPath(), false, 0, null, contractDsl)
+			SingleContractMetadata singleContractMetadata = new SingleContractMetadata(contractDsl, metadata)
+		when:
+
+			String methodName = new NameProvider().methodName(singleContractMetadata)
 		then:
-			methodName == "invalid_method_name"
+			methodName == "validate_invalid_method_name"
 	}
 
 }

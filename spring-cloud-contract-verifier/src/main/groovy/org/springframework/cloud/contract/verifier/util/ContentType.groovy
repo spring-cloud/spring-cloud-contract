@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,8 @@ enum ContentType {
 	XML("application/xml"),
 	TEXT("text/plain"),
 	FORM("application/x-www-form-urlencoded"),
+	// the content-type was defined and we don't want to override it
+	DEFINED(""),
 	UNKNOWN("application/octet-stream")
 
 	final String mimeType

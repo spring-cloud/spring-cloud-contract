@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -70,6 +70,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 			stubMappingIsValidWireMockStub(wireMockStub)
 			wireMockStub
 					.replaceAll("\n", "")
+					.replaceAll("\r", "")
 					.replaceAll(' ', '')
 					.contains(
 					"""
@@ -158,7 +159,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
         "equalTo": "xtype"
       }
       }]
-""".replaceAll("\n", "").replaceAll(' ', ''))
+""".replaceAll("\n", "").replaceAll("\r", "").replaceAll(' ', ''))
 	}
 
 	def 'should generate stubs with request body matchers'() {
@@ -210,7 +211,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 					.toWireMockClientStub()
 		then:
 			stubMappingIsValidWireMockStub(wireMockStub)
-			wireMockStub.replaceAll("\n", '').replaceAll(' ', '')
+			wireMockStub.replaceAll("\n", '').replaceAll("\r", "").replaceAll(' ', '')
 						.contains("""
       matchesXPath" : {
         "expression" : "/test/duck/text()",
@@ -266,8 +267,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
         "expression" : "/test/duck/@type",
         "equalTo" : "xtype"
       }
-    }""".replaceAll("\n",
-					"").replaceAll(' ', ''))
+    }""".replaceAll("\n","").replaceAll("\r", "").replaceAll(' ', ''))
 	}
 
 	def 'should generate stubs with both xml and body matchers in request'() {
@@ -304,6 +304,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
 		then:
 			stubMappingIsValidWireMockStub(wireMockStub)
 			wireMockStub.replaceAll("\n", "")
+		                .replaceAll("\r", "")
 						.replaceAll(' ', '')
 						.contains("""
    "bodyPatterns" : [ {
@@ -324,7 +325,7 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
     } 
     ]
 }
-""".replaceAll("\n", "").replaceAll(' ', ''))
+""".replaceAll("\n", "").replaceAll("\r", "").replaceAll(' ', ''))
 	}
 
 

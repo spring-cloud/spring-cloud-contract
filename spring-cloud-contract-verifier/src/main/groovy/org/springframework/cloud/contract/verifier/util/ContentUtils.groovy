@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+
+import java.util.function.Function
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -26,6 +28,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.runtime.GStringImpl
+import org.xml.sax.helpers.DefaultHandler
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -35,12 +38,13 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
-import org.xml.sax.helpers.DefaultHandler
+import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
 import static org.apache.commons.text.StringEscapeUtils.escapeXml11
 import static org.apache.commons.text.StringEscapeUtils.unescapeXml
+import static org.springframework.cloud.contract.verifier.util.ContentType.DEFINED
 import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNOWN
 
@@ -64,6 +68,20 @@ class ContentUtils {
 
 	public static final Closure GET_TEST_SIDE = {
 		it instanceof DslProperty ? it.serverValue : it
+	}
+
+	public static final Function GET_STUB_SIDE_FUNCTION = new Function() {
+		@Override
+		Object apply(Object it) {
+			return it instanceof DslProperty ? it.clientValue : it
+		}
+	}
+
+	public static final Function GET_TEST_SIDE_FUNCTION = new Function() {
+		@Override
+		Object apply(Object it) {
+			return it instanceof DslProperty ? it.serverValue : it
+		}
 	}
 
 	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.
@@ -119,6 +137,10 @@ class ContentUtils {
 		}
 	}
 
+	static Object extractValue(GString bodyAsValue, ContentType contentType, Function valueProvider) {
+		return extractValue(bodyAsValue, contentType, { valueProvider.apply(it) })
+	}
+
 	static ContentType getClientContentType(GString bodyAsValue) {
 		try {
 			extractValueForJSON(bodyAsValue, GET_STUB_SIDE)
@@ -127,7 +149,8 @@ class ContentUtils {
 		catch (JsonException e) {
 			try {
 				getXmlSlurperWithDefaultErrorHandler()
-						.parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+						.parseText(
+						extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
 				return ContentType.XML
 			}
 			catch (Exception ignored) {
@@ -144,7 +167,7 @@ class ContentUtils {
 		}
 		catch (JsonException e) {
 			try {
-                getXmlSlurperWithDefaultErrorHandler()
+				getXmlSlurperWithDefaultErrorHandler()
 						.parseText(bodyAsValue)
 				return ContentType.XML
 			}
@@ -224,8 +247,12 @@ class ContentUtils {
 				bodyAsValue.values.collect {
 					it instanceof DslProperty ? valueProvider(it) : it
 				} as String[],
-				bodyAsValue.strings.clone() as String[]
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
+	}
+
+	static Object extractValue(GString bodyAsValue, Function valueProvider) {
+		return extractValue(bodyAsValue, UNKNOWN, { valueProvider.apply(it) })
 	}
 
 	static Object extractValue(GString bodyAsValue, Closure valueProvider) {
@@ -235,7 +262,7 @@ class ContentUtils {
 	private static String extractValueForText(GString bodyAsValue, Closure valueProvider) {
 		GString transformedString = new GStringImpl(
 				bodyAsValue.values.collect { valueProvider(it) } as String[],
-				bodyAsValue.strings.clone() as String[]
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
 		return transformedString.toString()
 	}
@@ -243,8 +270,10 @@ class ContentUtils {
 	private static Object extractValueForJSON(GString bodyAsValue, Closure valueProvider) {
 		GString transformedString = new GStringImpl(
 				bodyAsValue.values.
-						collect { transformJSONStringValue(it, valueProvider) } as String[],
-				bodyAsValue.strings.clone() as String[]
+						collect {
+							transformJSONStringValue(it, valueProvider)
+						} as String[],
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
 		def parsedJson = new JsonSlurper().
 				parseText(transformedString.toString().replace('\\', '\\\\'))
@@ -254,8 +283,10 @@ class ContentUtils {
 	private static GStringImpl extractValueForXML(GString bodyAsValue, Closure valueProvider) {
 		GStringImpl impl = new GStringImpl(
 				bodyAsValue.values.
-						collect { transformXMLStringValue(it, valueProvider) } as String[],
-				bodyAsValue.strings.clone() as String[]
+						collect {
+							transformXMLStringValue(it, valueProvider)
+						} as String[],
+				CloneUtils.clone(bodyAsValue.strings) as String[]
 		)
 		// try to convert it to XML
 		getXmlSlurperWithDefaultErrorHandler()
@@ -392,23 +423,31 @@ class ContentUtils {
 		if (content?.contains("form-urlencoded")) {
 			return ContentType.FORM
 		}
+		if (content?.contains("octet-stream")) {
+			return UNKNOWN
+		}
+		if (content && isNotTemplate(content)) {
+			return DEFINED
+		}
 		return UNKNOWN
 	}
 
 	static ContentType recognizeContentTypeFromHeader(Headers headers) {
-		return recognizeContentTypeFromHeader(headers, { Header header -> header?.clientValue })
+		return recognizeContentTypeFromHeader(headers,
+				{ Header header -> header?.clientValue })
 	}
 
 	static ContentType recognizeContentTypeFromTestHeader(Headers headers) {
-		return recognizeContentTypeFromHeader(headers, { Header header -> header?.serverValue })
+		return recognizeContentTypeFromHeader(headers,
+				{ Header header -> header?.serverValue })
 	}
 
 	static MatchingStrategy.Type getEqualsTypeFromContentType(ContentType contentType) {
 		switch (contentType) {
-		case JSON:
-			return MatchingStrategy.Type.EQUAL_TO_JSON
-		case ContentType.XML:
-			return MatchingStrategy.Type.EQUAL_TO_XML
+			case JSON:
+				return MatchingStrategy.Type.EQUAL_TO_JSON
+			case ContentType.XML:
+				return MatchingStrategy.Type.EQUAL_TO_XML
 		}
 		return MatchingStrategy.Type.EQUAL_TO
 	}
@@ -483,7 +522,7 @@ class ContentUtils {
 					it instanceof String || it instanceof GString ? it.toString() :
 							escapeJson(it.toString())
 				}) as Object[],
-				gstring.strings.clone() as String[]
+				CloneUtils.clone(gstring.strings) as String[]
 		)
 		try {
 			new JsonSlurper().parseText(stringWithoutValues.toString())
@@ -501,7 +540,7 @@ class ContentUtils {
 					it instanceof String || it instanceof GString ? it.toString() :
 							escapeXml11(it.toString())
 				}) as Object[],
-				gString.strings.clone() as String[]
+				CloneUtils.clone(gString.strings) as String[]
 		)
 		try {
 			getXmlSlurperWithDefaultErrorHandler()
@@ -516,10 +555,10 @@ class ContentUtils {
 
 	static ContentType recognizeContentTypeFromMatchingStrategy(MatchingStrategy.Type type) {
 		switch (type) {
-		case MatchingStrategy.Type.EQUAL_TO_XML:
-			return ContentType.XML
-		case MatchingStrategy.Type.EQUAL_TO_JSON:
-			return JSON
+			case MatchingStrategy.Type.EQUAL_TO_XML:
+				return ContentType.XML
+			case MatchingStrategy.Type.EQUAL_TO_JSON:
+				return JSON
 		}
 		return UNKNOWN
 	}
@@ -529,6 +568,18 @@ class ContentUtils {
 		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
 				"${groovyNamedPropertyValue(propertyValue, "'", bytesFromFile)}" +
 				namedContentTypeNameIfPresent(propertyValue, "'")
+	}
+
+	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Function<FromFileProperty, String> bytesFromFile) {
+		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
+				"${groovyNamedPropertyValue(propertyValue, "'", { FromFileProperty property -> bytesFromFile.apply(property) })}" +
+				namedContentTypeNameIfPresent(propertyValue, "'")
+	}
+
+	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+			Function<FromFileProperty, String> bytesFromFile) {
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty property -> bytesFromFile.apply(property) })
 	}
 
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
@@ -572,7 +623,8 @@ class ContentUtils {
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
-			return "[" + fromFileProperty.asBytes().collect { it }.join(", ") + "] as byte[]"
+			return "[" + fromFileProperty.asBytes().collect { it }.
+					join(", ") + "] as byte[]"
 		}
 		return quote +
 				escapeJava(property.value.serverValue.toString()) + quote + ".bytes"
@@ -591,13 +643,23 @@ class ContentUtils {
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
-			return "new byte[] {" + fromFileProperty.asBytes().collect { it }.join(", ") + "}"
+			return "new byte[] {" + fromFileProperty.asBytes().collect { it }.
+					join(", ") + "}"
 		}
-		return quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
+		return quote +
+				escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}
 
-	static ContentType evaluateContentType(Headers contractHeaders, Object body) {
+	static ContentType evaluateClientSideContentType(Headers contractHeaders, Object body) {
 		ContentType contentType = recognizeContentTypeFromHeader(contractHeaders)
+		if (UNKNOWN == contentType) {
+			contentType = recognizeContentTypeFromContent(body)
+		}
+		return contentType
+	}
+
+	static ContentType evaluateServerSideContentType(Headers contractHeaders, Object body) {
+		ContentType contentType = recognizeContentTypeFromTestHeader(contractHeaders)
 		if (UNKNOWN == contentType) {
 			contentType = recognizeContentTypeFromContent(body)
 		}
@@ -613,6 +675,11 @@ class ContentUtils {
 		XmlSlurper xmlSlurper = new XmlSlurper()
 		xmlSlurper.setErrorHandler(new DefaultHandler())
 		return xmlSlurper
-    }
+	}
+
+	private static boolean isNotTemplate(String content) {
+		return !new HandlebarsTemplateProcessor().containsTemplateEntry(content)
+	}
+
 
 }

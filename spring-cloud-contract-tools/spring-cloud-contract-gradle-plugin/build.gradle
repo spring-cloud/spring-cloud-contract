@@ -1,5 +1,3 @@
-import org.gradle.api.JavaVersion
-
 buildscript {
 	repositories {
 		mavenCentral()
@@ -8,10 +6,13 @@ buildscript {
 		if (project.hasProperty('fatJar')) {
 			jcenter()
 		}
+		//For plugin-publish-plugin. Could be limited only to that dependency with Gradle 5.1+ - https://docs.gradle.org/5.1.1/release-notes.html#repository-to-dependency-matching
+		gradlePluginPortal()
 	}
 	dependencies {
 		classpath "com.bmuschko:gradle-nexus-plugin:2.3"
 		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+		classpath 'com.gradle.publish:plugin-publish-plugin:0.9.10'
 		if (project.hasProperty('fatJar')) {
 			classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
 		}
@@ -22,9 +23,7 @@ ext {
 	repoUser = System.getenv('REPO_USERNAME') ?: project.findProperty('REPO_USERNAME') ?: ''
 	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
 
-	contractVerifierGradlePluginLibsDir = "$buildDir/contractVerifier-gradle-plugin-libs"
 	testSystemProperties = [
-			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
 			"WORK_OFFLINE"                   : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
 	JavaVersion javaVer = JavaVersion.current()
@@ -35,10 +34,9 @@ ext {
 
 project.version = findProperty('verifierVersion')
 apply plugin: 'groovy'
+apply plugin: "java-gradle-plugin"
 apply from: "$rootDir/gradle/release.gradle"
-apply plugin: 'eclipse'
 //apply plugin: "jacoco"
-apply plugin: 'checkstyle'
 
 group = 'org.springframework.cloud'
 
@@ -49,21 +47,19 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	jcenter()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/libs-release-local" }
-	maven { url "http://repo.spring.io/libs-staging-local/" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/libs-release-local" }
+	maven { url "https://repo.spring.io/libs-staging-local/" }
 }
 
-//Dependencies in all subprojects - http://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
+//Dependencies in all subprojects - https://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
 task allDeps(type: DependencyReportTask) {}
 task allInsight(type: DependencyInsightReportTask) {}
 
 configurations {
-	// fixing the groovydoc issue http://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
+	// fixing the groovydoc issue https://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
 	jansi.extendsFrom(runtime)
-
-	contractVerifierGradlePluginLibs
 }
 
 dependencies {
@@ -80,13 +76,11 @@ dependencies {
 	compile("org.springframework.cloud:spring-cloud-starter-contract-verifier:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+	testCompile('org.spockframework:spock-core:1.3-groovy-2.5') {
 		exclude(group: 'org.codehaus.groovy')
 	}
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
-	checkstyle "org.springframework.cloud:spring-cloud-build:${springCloudBuildVersion}"
-
 }
 
 task libtest() {
@@ -118,18 +112,8 @@ groovydoc {
 }
 
 dependencies {
-	contractVerifierGradlePluginLibs project
 	jansi 'org.fusesource.jansi:jansi:1.11'
 }
-
-task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
-	enabled = !incompatibleJdk
-	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
-	into contractVerifierGradlePluginLibsDir
-}
-
-archiveContractVerifierGradlePluginLibsDependencies.dependsOn project.tasks.jar
-test.dependsOn archiveContractVerifierGradlePluginLibsDependencies
 
 /*jacoco {
 	toolVersion = "0.7.7.201606060606"
@@ -152,8 +136,4 @@ task resolveDependencies {
 			}
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.10.2'
 }

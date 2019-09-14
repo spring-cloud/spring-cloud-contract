@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -117,6 +117,18 @@ public class StubRunnerOptions {
 	private boolean deleteStubsAfterTest;
 
 	/**
+	 * When enabled, this flag will tell stub runner to not load the generated stubs, but
+	 * convert the found contracts at runtime to a stub format and run those stubs.
+	 */
+	private boolean generateStubs;
+
+	/**
+	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
+	 * contracts were found.
+	 */
+	private boolean failOnNoStubs = true;
+
+	/**
 	 * Map of properties that can be passed to custom
 	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 	 */
@@ -128,7 +140,8 @@ public class StubRunnerOptions {
 			Map<StubConfiguration, Integer> stubIdsToPortMapping, String username,
 			String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
 			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder,
-			boolean deleteStubsAfterTest, Map<String, String> properties,
+			boolean deleteStubsAfterTest, boolean generateStubs, boolean failOnNoStubs,
+			Map<String, String> properties,
 			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
@@ -145,6 +158,8 @@ public class StubRunnerOptions {
 		this.consumerName = consumerName;
 		this.mappingsOutputFolder = mappingsOutputFolder;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+		this.generateStubs = generateStubs;
+		this.failOnNoStubs = failOnNoStubs;
 		this.properties = properties;
 		this.httpServerStubConfigurer = httpServerStubConfigurer;
 	}
@@ -169,13 +184,33 @@ public class StubRunnerOptions {
 						System.getProperty("stubrunner.mappings-output-folder"))
 				.withDeleteStubsAfterTest(Boolean.parseBoolean(
 						System.getProperty("stubrunner.delete-stubs-after-test", "true")))
+				.withGenerateStubs(Boolean.parseBoolean(
+						System.getProperty("stubrunner.generate-stubs", "false")))
+				.withFailOnNoStubs(Boolean.parseBoolean(
+						System.getProperty("stubrunner.fail-on-no-stubs", "false")))
 				.withProperties(stubRunnerProps());
+		builder = httpStubConfigurer(builder);
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost,
 					Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
 		}
 		return builder.build();
+	}
+
+	private static StubRunnerOptionsBuilder httpStubConfigurer(
+			StubRunnerOptionsBuilder builder) {
+		String classProperty = System.getProperty(
+				"stubrunner.http-server-stub-configurer",
+				HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class.getName());
+		try {
+			Class clazz = Class.forName(classProperty);
+			return builder.withHttpServerStubConfigurer(clazz);
+		}
+		catch (ClassNotFoundException ex) {
+			throw new IllegalStateException("Class [" + classProperty + "] not found",
+					ex);
+		}
 	}
 
 	private static Map<String, String> stubRunnerProps() {
@@ -221,6 +256,9 @@ public class StubRunnerOptions {
 	}
 
 	public String getStubRepositoryRootAsString() {
+		if (this.stubRepositoryRoot == null) {
+			return "";
+		}
 		try {
 			return this.stubRepositoryRoot.getURI().toString();
 		}
@@ -297,6 +335,14 @@ public class StubRunnerOptions {
 	@Deprecated
 	public void setDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+	}
+
+	public boolean isGenerateStubs() {
+		return this.generateStubs;
+	}
+
+	public boolean isFailOnNoStubs() {
+		return this.failOnNoStubs;
 	}
 
 	public Map<String, String> getProperties() {

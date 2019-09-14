@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.wiremock
 
 import java.nio.charset.StandardCharsets
+import java.util.regex.Pattern
 
 import groovy.io.FileType
 import groovy.json.JsonOutput
@@ -25,6 +26,8 @@ import groovy.json.JsonSlurper
 import groovy.transform.CompileDynamic
 import groovy.xml.XmlUtil
 import repackaged.nl.flotsam.xeger.Xeger
+
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 
 import org.springframework.cloud.contract.spec.Contract
@@ -79,7 +82,7 @@ class WireMockToDslConverter {
 					String headerName = it.key as String
 					def entry = assertion.entrySet().first()
 					"""header(\"\"\"$headerName\"\"\", ${
-						buildHeader(entry.key, entry.value)
+						buildRequestHeader(entry.key, entry.value)
 					})\n"""
 				}.join('')
 			}
@@ -116,15 +119,23 @@ class WireMockToDslConverter {
 	}
 
 	private Object parseStubDefinition(String wireMockStringStub) {
-		new JsonSlurper().setType(JsonParserType.LAX).parseText(wireMockStringStub)
+		return new JsonSlurper().setType(JsonParserType.LAX).parseText(wireMockStringStub)
 	}
 
-	private String buildHeader(String method, Object value) {
+	private String buildRequestHeader(String method, Object value) {
 		switch (method) {
 		case 'equalTo':
 			return wrapWithMultilineGString(value)
+		case 'contains':
+			String regex = '^.*' + value.toString() + '.*$'
+			String escapedRegex = escapeJava(regex)
+			String wrappedRegex = wrapWithMultilineGString(escapedRegex)
+			return 'c(regex(' + wrappedRegex + '))'
 		default:
-			return "regex(${wrapWithMultilineGString(escapeJava(value as String))})"
+			String regex = value.toString()
+			String escapedRegex = escapeJava(regex)
+			String wrappedRegex = wrapWithMultilineGString(escapedRegex)
+			return 'c(regex(' + wrappedRegex + '))'
 		}
 	}
 
@@ -159,7 +170,7 @@ class WireMockToDslConverter {
 	}
 
 	private String wrapWithMultilineGString(String string) {
-		return """\"\"\"$string\"\"\""""
+		return """'''$string'''"""
 	}
 
 	private Closure withQuotedMapStringElements() {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,11 +46,11 @@ public final class StubRunnerWireMockTestExecutionListener
 			}
 			return;
 		}
-		if (WireMockHttpServerStub.SERVERS.values().stream().anyMatch(p -> !p.random)) {
+		if (WireMockHttpServerStub.SERVERS.values().stream().noneMatch(p -> p.random)) {
 			if (log.isWarnEnabled()) {
 				log.warn("You've used fixed ports for WireMock setup - "
 						+ "will mark context as dirty. Please use random ports, as much "
-						+ "as possible. Your tests will be faster and more reliable and this"
+						+ "as possible. Your tests will be faster and more reliable and this "
 						+ "warning will go away");
 			}
 			testContext

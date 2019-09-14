@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,7 +47,15 @@ public class WireMockApplicationListener
 	}
 
 	private void registerPort(ConfigurableEnvironment environment) {
-		if (environment.getProperty("wiremock.server.port", Integer.class, 0) == 0) {
+		Integer httpPortProperty = environment.getProperty("wiremock.server.port",
+				Integer.class);
+		// If the httpPortProperty is not found it means the AutoConfigureWireMock hasn't
+		// been initialised.
+		if (httpPortProperty == null) {
+			return;
+		}
+
+		if (httpPortProperty.equals(0)) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
@@ -56,8 +64,9 @@ public class WireMockApplicationListener
 					SocketUtils.findAvailableTcpPort(10000, 12500));
 			source.put("wiremock.server.port-dynamic", true);
 		}
-		if (environment.getProperty("wiremock.server.https-port", Integer.class,
-				0) == 0) {
+		int httpsPortProperty = environment.getProperty("wiremock.server.https-port",
+				Integer.class, 0);
+		if (httpsPortProperty == 0) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
@@ -66,13 +75,12 @@ public class WireMockApplicationListener
 					SocketUtils.findAvailableTcpPort(12500, 15000));
 			source.put("wiremock.server.https-port-dynamic", true);
 		}
-		else if (environment.getProperty("wiremock.server.https-port", Integer.class,
-				0) != -1) {
+		else if (httpsPortProperty == -1) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
 					.get("wiremock")).getSource();
-			source.put("wiremock.server.https-port-dynamic", false);
+			source.put("wiremock.server.https-port-dynamic", true);
 		}
 
 	}

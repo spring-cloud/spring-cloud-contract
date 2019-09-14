@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,63 +16,83 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-import org.gradle.api.Task
-import org.gradle.api.internal.ConventionTask
+import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
+import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.gradle.api.tasks.TaskProvider
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter
-
-import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
 
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
- * Generates stubs from the contracts. The name is WireMock related but the implementation
- * can differ
+ * Generates stubs from the contracts.
  *
+ * @author Marcin Grzejszczak
+ * @author Anatoliy Balakirev
  * @since 2.0.0
  */
-class GenerateClientStubsFromDslTask extends ConventionTask {
+@CompileStatic
+class GenerateClientStubsFromDslTask extends DefaultTask {
 
-	File stubsOutputDir
+	static final String TASK_NAME = 'generateClientStubs'
+	private static final String DEFAULT_MAPPINGS_FOLDER = 'mappings'
+	@Nested
+	Config config
 
-	ContractVerifierExtension configProperties
-	GradleContractsDownloader downloader
+	static class Config {
+		@InputDirectory
+		Provider<Directory> contractsDslDir
+		@Input
+		ListProperty<String> excludedFiles
+		@Input
+		Provider<Boolean> excludeBuildFolders
+
+		@OutputDirectory
+		Provider<Directory> stubsOutputDir
+	}
 
 	@TaskAction
 	void generate() {
-		logger.info("Stubs output dir [${getStubsOutputDir()}")
-		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
-		ContractVerifierConfigProperties props = props(copyContractsTask)
-		File contractsDslDir = contractsDslDir(copyContractsTask, props)
+		File output = config.stubsOutputDir.get().asFile
+		logger.info("Stubs output dir [${output}")
 		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion")
-		props.contractsDslDir = contractsDslDir
-		props.includedContracts = ".*"
-		File outMappingsDir = OutputFolderBuilder.outputMappingsDir(project, getStubsOutputDir())
-		logger.info("Contracts dir is [${contractsDslDir}] output stubs dir is [${outMappingsDir}]")
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(props, outMappingsDir)
+		logger.info("Contracts dir is [${config.contractsDslDir.get().asFile}] output stubs dir is [${output}]")
+		List<String> excludedFiles = config.excludedFiles.get()
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(output,
+				config.contractsDslDir.get().asFile, excludedFiles, ".*", config.excludeBuildFolders.get())
 		converter.processFiles()
 	}
 
-	private ContractVerifierConfigProperties props(Task task) {
-		try {
-			return task.ext.contractVerifierConfigProperties
-		}
-		catch (Exception e) {
-			project.logger.error("Couldn't retrieve the configuration property set by the copy contracts task", e)
-			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
-			getDownloader().downloadAndUnpackContractsIfRequired(getConfigProperties(), props)
-			return props
-		}
+	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContracts,
+								String root, Project project) {
+		return new Config(
+				contractsDslDir: copyContracts.flatMap { it.config.copiedContractsFolder },
+				excludedFiles: extension.excludedFiles,
+				excludeBuildFolders: extension.excludeBuildFolders,
+
+				stubsOutputDir: createTaskOutput(root, extension.stubsOutputDir, project)
+		)
 	}
 
-	private File contractsDslDir(Task task, ContractVerifierConfigProperties props) {
-		try {
-			return task.ext.contractsDslDir
+	private static DirectoryProperty createTaskOutput(String root, DirectoryProperty stubsOutputDir, Project project) {
+		Provider<Directory> provider = stubsOutputDir.flatMap {
+			Directory dir = it
+			File output = new File(dir.asFile, "${root}/${DEFAULT_MAPPINGS_FOLDER}")
+
+			DirectoryProperty property = project.objects.directoryProperty();
+			property.set(output)
+			return property
 		}
-		catch (Exception e) {
-			project.logger.error("Couldn't retrieve the contract dsl property set by the copy contracts task", e)
-			return props.contractsDslDir
-		}
+		DirectoryProperty property = project.objects.directoryProperty();
+		property.set(provider)
+		return property
 	}
 }

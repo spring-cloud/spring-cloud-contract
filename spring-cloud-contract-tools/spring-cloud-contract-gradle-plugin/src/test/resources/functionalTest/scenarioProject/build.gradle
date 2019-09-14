@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-
-buildscript {
-	repositories {
-		mavenCentral()
-		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${bootVersion}")
-	}
+plugins {
+	id("org.springframework.boot") apply false
+	id("org.springframework.cloud.contract") apply false
 }
 
 ext {
@@ -43,13 +34,14 @@ subprojects {
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
+	version = "1.0.0"
 
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/release" }
 	}
 
 	dependencies {
@@ -68,7 +60,7 @@ subprojects {
 configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
-	apply plugin: 'spring-cloud-contract'
+	apply plugin: 'org.springframework.cloud.contract'
 
 	// tag::jar_setup[]
 	ext {
@@ -154,9 +146,5 @@ configure(project(':loanApplicationService')) {
 		into "src/test/resources/mappings"
 	}
 
-	generateContractTests.dependsOn('copyCollaboratorStubs')
-}
-
-wrapper {
-	gradleVersion '4.10.2'
+	project.tasks.named("generateContractTests").get().dependsOn('copyCollaboratorStubs')
 }

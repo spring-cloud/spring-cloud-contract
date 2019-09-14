@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,6 +66,15 @@ class RegexpBuilders {
 	 * Converts the {@link Object} passed values into their stub side String representations
 	 */
 	static String buildGStringRegexpForStubSide(Object o) {
+		if (o instanceof DslProperty) {
+			return buildGStringRegexpForStubSide((DslProperty) o)
+		}
+		else if (o instanceof Pattern) {
+			return buildGStringRegexpForStubSide((Pattern) o)
+		}
+		else if (o instanceof GString) {
+			return buildGStringRegexpForStubSide((GString) o)
+		}
 		return escapeSpecialRegexChars(o.toString())
 	}
 

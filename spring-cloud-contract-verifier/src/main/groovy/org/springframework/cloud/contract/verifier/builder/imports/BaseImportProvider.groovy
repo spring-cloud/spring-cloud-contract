@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.C
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.config.TestFramework.TESTNG
 
 /**
  * Provides imports based on test framework.
@@ -31,8 +32,10 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.S
  * @author Olga Maciaszek-Sharma
  *
  * @since 2.1.0
+ * @deprecated
  */
 @CompileStatic
+@Deprecated
 class BaseImportProvider {
 
 	private static final ImportDefinitions GENERAL_IMPORTS = new ImportDefinitions([], [
@@ -45,12 +48,14 @@ class BaseImportProvider {
 			(JUNIT) : new ImportDefinitions(['org.junit.Test']),
 			(JUNIT5): new ImportDefinitions(['org.junit.jupiter.api.Test']),
 			(SPOCK) : new ImportDefinitions([]),
+			(TESTNG): new ImportDefinitions(['org.testng.annotations.Test']),
 			(CUSTOM): new ImportDefinitions([])]
 
 	private static final Map<TestFramework, String> RULE_IMPORT = [
 			(JUNIT) : 'org.junit.Rule',
 			(JUNIT5): 'org.junit.jupiter.api.extension.ExtendWith',
 			(SPOCK) : 'org.junit.Rule',
+			(TESTNG): 'org.junit.Rule',
 			(CUSTOM): 'org.junit.Rule'
 	]
 

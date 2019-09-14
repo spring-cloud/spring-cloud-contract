@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  */
 
 package org.springframework.cloud.contract.verifier.builder
+
 
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -32,6 +33,7 @@ import org.springframework.util.StringUtils
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.config.TestFramework.TESTNG
 import static org.springframework.cloud.contract.verifier.config.TestMode.EXPLICIT
 import static org.springframework.cloud.contract.verifier.config.TestMode.JAXRSCLIENT
 import static org.springframework.cloud.contract.verifier.config.TestMode.MOCKMVC
@@ -44,23 +46,11 @@ class SingleTestGeneratorSpec extends Specification {
 	File file
 	File tmp
 
-	private static final List<String> mockMvcJUnitRestAssured2ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
-																			  'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
-																			  'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*;',
-																			  '@FixMethodOrder(MethodSorters.NAME_ASCENDING)', '@Test', '@Ignore', 'import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
-																			  'import com.jayway.restassured.response.ResponseOptions;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
-
 	private static final List<String> mockMvcJUnitRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
 																			  'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
 																			  'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;',
 																			  '@FixMethodOrder(MethodSorters.NAME_ASCENDING)', '@Test', '@Ignore', 'import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
 																			  'import io.restassured.response.ResponseOptions;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
-
-	private static final List<String> explicitJUnitRestAssured2ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
-																			   'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
-																			   'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static com.jayway.restassured.RestAssured.*;',
-																			   '@FixMethodOrder(MethodSorters.NAME_ASCENDING)', '@Test', '@Ignore', 'import com.jayway.restassured.specification.RequestSpecification;',
-																			   'import com.jayway.restassured.response.Response;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
 
 	private static final List<String> explicitJUnitRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
 																			   'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
@@ -69,37 +59,34 @@ class SingleTestGeneratorSpec extends Specification {
 																			   'import io.restassured.response.Response;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
 
 	private static
-	final List<String> mockMvcJUnit5RestAssured2ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
-																'import org.junit.jupiter.api.Disabled;', 'import org.junit.jupiter.api.Test;',
-																'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*;',
-																'@Test', '@Disabled', 'import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
-																'import com.jayway.restassured.response.ResponseOptions;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
-	private static
 	final List<String> mockMvcJUnit5RestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
 																'import org.junit.jupiter.api.Disabled;', 'import org.junit.jupiter.api.Test;',
 																'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;',
 																'@Test', '@Disabled', 'import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
-																'import io.restassured.response.ResponseOptions;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
-
-	private static
-	final List<String> explicitJUnit5RestAssured2ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
-																 'import org.junit.jupiter.api.Disabled;', 'import org.junit.jupiter.api.Test;',
-																 'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static com.jayway.restassured.RestAssured.*;',
-																 '@Test', '@Disabled', 'import com.jayway.restassured.specification.RequestSpecification;',
-																 'import com.jayway.restassured.response.Response;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
+																'import io.restassured.response.ResponseOptions;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat',
+																'import org.junit.jupiter.api.TestMethodOrder', 'import org.junit.jupiter.api.MethodOrderer', '@TestMethodOrder(MethodOrderer.Alphanumeric.class)']
 
 	private static
 	final List<String> explicitJUnit5RestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
 																 'import org.junit.jupiter.api.Disabled;', 'import org.junit.jupiter.api.Test;',
 																 'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.RestAssured.*;',
 																 '@Test', '@Disabled', 'import io.restassured.specification.RequestSpecification;',
+																 'import io.restassured.response.Response;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat',
+																 'org.junit.jupiter.api.TestMethodOrder', 'org.junit.jupiter.api.MethodOrderer', '@TestMethodOrder(MethodOrderer.Alphanumeric.class)']
+
+	private static
+	final List<String> mockMvcTestNGRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
+																'import org.testng.annotations.Test;',
+																'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;',
+																'@Test', 'import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
+																'import io.restassured.response.ResponseOptions;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
+
+	private static
+	final List<String> explicitTestNGRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
+																 'import org.testng.annotations.Test;',
+																 'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.RestAssured.*;',
+																 '@Test', 'import io.restassured.specification.RequestSpecification;',
 																 'import io.restassured.response.Response;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
-
-
-	private static final List<String> spockClassRestAssured2Strings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
-																	   'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
-																	   'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*',
-																	   '@Stepwise', '@Ignore', 'org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
 
 	private static final List<String> spockClassRestAssured3Strings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
 																	   'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
@@ -152,7 +139,7 @@ class SingleTestGeneratorSpec extends Specification {
 		FileSystemUtils.copyRecursively(classpath, tmp)
 	}
 
-	private writeContract(File file) {
+	private static writeContract(File file) {
 		file.write('''
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
@@ -161,35 +148,38 @@ class SingleTestGeneratorSpec extends Specification {
 					}
 					response {
 						status OK()
+						body(["foo" : "bar"])
 					}
 				}
 ''')
 	}
 
-	def 'should build test class for #testFramework'() {
+	def 'should build test class for #testFramework and mode #mode'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
 			properties.testMode = mode
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
-			contract.ignored >> true
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2,
+					convertAsCollection(new File('/'), file))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { assert clazz.contains(it) }
 		and:
 			asserter(clazz)
 		where:
-			testFramework | order | mode     | classStrings                           | asserter
-			JUNIT         | 2     | MOCKMVC  | mockMvcJUnitRestAssured3ClassStrings   | JAVA_ASSERTER
-			JUNIT         | 2     | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER
-			JUNIT5        | null  | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER
-			JUNIT5        | null  | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER
-			SPOCK         | 2     | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER
-			SPOCK         | 2     | EXPLICIT | explicitSpockRestAssured3ClassStrings  | GROOVY_ASSERTER
+			testFramework | mode     | classStrings                           | asserter
+			JUNIT         | MOCKMVC  | mockMvcJUnitRestAssured3ClassStrings   | JAVA_ASSERTER
+			JUNIT         | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER
+			JUNIT5        | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER
+			JUNIT5        | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER
+			TESTNG        | MOCKMVC  | mockMvcTestNGRestAssured3ClassStrings  | JAVA_ASSERTER
+			TESTNG        | EXPLICIT | explicitTestNGRestAssured3ClassStrings | JAVA_ASSERTER
+			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER
+			SPOCK         | EXPLICIT | explicitSpockRestAssured3ClassStrings  | GROOVY_ASSERTER
 	}
 
 	def 'should build test class for #testFramework when the path contains bizarre signs'() {
@@ -218,41 +208,10 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT         | EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
 			JUNIT5        | MOCKMVC  | JAVA_ASSERTER   | 'ContractsTest.java'
 			JUNIT5        | EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
+			TESTNG        | MOCKMVC  | JAVA_ASSERTER   | 'ContractsTest.java'
+			TESTNG        | EXPLICIT | JAVA_ASSERTER   | 'ContractsTest.java'
 			SPOCK         | MOCKMVC  | GROOVY_ASSERTER | 'ContractsSpec.groovy'
 			SPOCK         | EXPLICIT | GROOVY_ASSERTER | 'ContractsSpec.groovy'
-	}
-
-	def "should build test class for #testFramework with Rest Assured 2x"() {
-		given:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testFramework = testFramework
-			properties.testMode = mode
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order,
-					convertAsCollection(new File('/'), file))
-			contract.ignored >> true
-			JavaTestGenerator testGenerator = new JavaTestGenerator(checker: new ClassPresenceChecker() {
-				@Override
-				boolean isClassPresent(String className) {
-					return true
-				}
-			})
-
-		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
-
-		then:
-			classStrings.each { assert clazz.contains(it) }
-			clazz.contains('com.jayway.restassured')
-			!clazz.contains('io.restassured')
-
-		where:
-			testFramework | order | mode     | classStrings
-			JUNIT         | 2     | MOCKMVC  | mockMvcJUnitRestAssured2ClassStrings
-			JUNIT         | 2     | EXPLICIT | explicitJUnitRestAssured2ClassStrings
-			JUNIT5        | null  | MOCKMVC  | mockMvcJUnit5RestAssured2ClassStrings
-			JUNIT5        | null  | EXPLICIT | explicitJUnit5RestAssured2ClassStrings
-			SPOCK         | 2     | MOCKMVC  | spockClassRestAssured2Strings
-			SPOCK         | 2     | EXPLICIT | explicitSpockRestAssured2ClassStrings
 	}
 
 	def 'should build test class for #testFramework and mode #mode with two files'() {
@@ -310,7 +269,7 @@ class SingleTestGeneratorSpec extends Specification {
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -324,8 +283,10 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT         | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
 			JUNIT5        | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
 			JUNIT5        | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2 }
-			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tdef request') == 2 }
+			TESTNG        | MOCKMVC  | mockMvcTestNGRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			TESTNG        | EXPLICIT | explicitTestNGRestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification request') == 2 }
 	}
 
 	def 'should build JaxRs test class for #testFramework'() {
@@ -335,10 +296,10 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, null, convertAsCollection(new File('/'), file))
 			contract.ignored >> true
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
+			SingleTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -350,6 +311,7 @@ class SingleTestGeneratorSpec extends Specification {
 			testFramework | classStrings                                                                      | asserter
 			JUNIT         | ['import static javax.ws.rs.client.Entity.*', 'import javax.ws.rs.core.Response'] | JAVA_JAXRS_ASSERTER
 			JUNIT5        | ['import static javax.ws.rs.client.Entity.*', 'import javax.ws.rs.core.Response'] | JAVA_JAXRS_ASSERTER
+			TESTNG        | ['import static javax.ws.rs.client.Entity.*', 'import javax.ws.rs.core.Response'] | JAVA_JAXRS_ASSERTER
 			SPOCK         | ['import static javax.ws.rs.client.Entity.*']                                     | GROOVY_ASSERTER
 	}
 
@@ -375,16 +337,18 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2,
+					convertAsCollection(new File('/'), file))
 			contract.ignored >> true
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, order, convertAsCollection(new File('/'), secondFile))
+			ContractMetadata contract2 = new ContractMetadata(secondFile.
+					toPath(), true, 1, 2, convertAsCollection(new File('/'), secondFile))
 			contract2.ignored >> true
 		and:
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -394,10 +358,11 @@ class SingleTestGeneratorSpec extends Specification {
 			asserter(clazz)
 
 		where:
-			testFramework | order | classStrings                          | asserter
-			JUNIT         | 2     | mockMvcJUnitRestAssured3ClassStrings  | JAVA_ASSERTER
-			JUNIT5        | null  | mockMvcJUnit5RestAssured3ClassStrings | JAVA_ASSERTER
-			SPOCK         | 2     | spockClassRestAssured3Strings         | GROOVY_ASSERTER
+			testFramework | classStrings                          | asserter
+			JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | JAVA_ASSERTER
+			JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | JAVA_ASSERTER
+			TESTNG        | mockMvcTestNGRestAssured3ClassStrings | JAVA_ASSERTER
+			SPOCK         | spockClassRestAssured3Strings         | GROOVY_ASSERTER
 	}
 
 	@Issue('#30')
@@ -420,13 +385,14 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, order, convertAsCollection(new File('/'), file))
+			ContractMetadata contract2 = new ContractMetadata(secondFile.
+					toPath(), true, 1, 2, convertAsCollection(new File('/'), file))
 			contract2.ignored >> false
 		and:
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract2], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract2], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -436,10 +402,26 @@ class SingleTestGeneratorSpec extends Specification {
 			asserter(clazz)
 
 		where:
-			testFramework | order | classStrings                          | ignoreAnnotation | asserter
-			JUNIT         | 2     | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'        | JAVA_ASSERTER
-			JUNIT5        | null  | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'      | JAVA_ASSERTER
-			SPOCK         | 2     | spockClassRestAssured3Strings         | '@Ignore'        | GROOVY_ASSERTER
+			testFramework | classStrings                          | ignoreAnnotation         | asserter
+			JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'                | JAVA_ASSERTER
+			JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
+			TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
+			SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
+	def 'should not allow the usage of ignore annotations for TestNG '() {
+		given:
+			TestFramework testNG = TESTNG
+
+		when:
+			testNG.getIgnoreClass()
+		then:
+			thrown UnsupportedOperationException
+
+		when:
+			testNG.getIgnoreAnnotation()
+		then:
+			thrown UnsupportedOperationException
 	}
 
 	@Issue('#117')
@@ -492,13 +474,13 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			SingleTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('RequestSpecification request = given();')
 			clazz.contains('Response response = given().spec(request)')
 	}
 
-	def "should pick the contract's name as the test method"() {
+	def "should pick the contract's name as the test method for #testFramework"() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -519,14 +501,14 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('validate_mySuperMethod()')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
-	def "should pick the contract's name as the test method when there are multiple contracts"() {
+	def "should pick the contract's name as the test method when there are multiple contracts for #testFramework"() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -551,15 +533,15 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('validate_shouldHaveIndex1()')
 			clazz.contains('validate_shouldHaveIndex2()')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
-	def 'should generate the test method when there are multiple contracts without name field'() {
+	def 'should generate the test method when there are multiple contracts without name field for #testFramework'() {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write('''
@@ -583,12 +565,12 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
 		then:
 			clazz.contains('_0() throws Exception')
 			clazz.contains('_1() throws Exception')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
 	@Issue('#359')
@@ -614,7 +596,7 @@ class SingleTestGeneratorSpec extends Specification {
 			test.contains('readFromFile_request_request.json')
 			test.contains('RESPONSE')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
 	@Issue('#260')
@@ -639,7 +621,7 @@ class SingleTestGeneratorSpec extends Specification {
 			test.contains('readFromFile_request_request.json')
 			test.contains('RESPONSE')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
 	@Issue('#260')
@@ -664,7 +646,7 @@ class SingleTestGeneratorSpec extends Specification {
 			test.contains('readFromFile_request_request.json')
 			test.contains('RESPONSE')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
 	@Issue('#260')
@@ -689,7 +671,7 @@ class SingleTestGeneratorSpec extends Specification {
 			test.contains('readFromFile_request_request.json')
 			test.contains('RESPONSE')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
 	@Issue('#260')
@@ -713,22 +695,7 @@ class SingleTestGeneratorSpec extends Specification {
 			test.contains('readFromFile_request_request.json')
 			test.contains('RESPONSE')
 		where:
-			testFramework << [JUNIT, JUNIT5, SPOCK]
-	}
-
-	def 'should throw exception in JUnit5 when contract belongs to scenario'() {
-		given:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
-			properties.testFramework = JUNIT5
-			properties.testMode = mode
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 1, convertAsCollection(new File('/'), file))
-			JavaTestGenerator testGenerator = new JavaTestGenerator()
-		when:
-			testGenerator.buildClass(properties, [contract], 'test', 'test', 'com/foo')
-		then:
-			thrown(UnsupportedOperationException)
-		where:
-			mode << [MOCKMVC, EXPLICIT, JAXRSCLIENT]
+			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
 	private static String getTestName(TestFramework testFramework) {

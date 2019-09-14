@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,11 +43,10 @@ class AetherStubDownloaderSpec extends Specification {
 			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		when:
-			aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("non.existing.group", "missing-artifact-id", "1.0-SNAPSHOT"))
+			def entry = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("non.existing.group", "missing-artifact-id", "1.0-SNAPSHOT"))
 
 		then:
-			IllegalStateException e = thrown(IllegalStateException)
-			e.message.contains("Exception occurred while trying to download a stub for group")
+			entry == null
 	}
 
 	def 'should throw an exception when local m2 gets replaced with a temp dir and a jar is not found in remote'() {
@@ -65,11 +64,10 @@ class AetherStubDownloaderSpec extends Specification {
 			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		when:
-			aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
+			def entry = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
 
 		then:
-			IllegalArgumentException e = thrown(IllegalArgumentException)
-			e.message.contains("Could not find metadata org.springframework.cloud:spring-cloud-contract-spec/maven-metadata.xml in remote0")
+			entry == null
 	}
 
 	@RestoreSystemProperties

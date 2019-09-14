@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,12 @@ package org.springframework.cloud.contract.verifier.builder
 import spock.lang.Shared
 import spock.lang.Specification
 
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestMode
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 
 /**
  * Tests used for the documentation
@@ -30,6 +35,44 @@ class ContractHttpDocsSpec extends Specification {
 
 	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
+
+	@Shared
+	GeneratedClassDataForMethod generatedClassDataForMethod = new GeneratedClassDataForMethod(
+			new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method")
+
+	@Shared
+	SingleTestGenerator.GeneratedClassData generatedClassData =
+			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File(".").toPath())
+
+	def setup() {
+		properties = new ContractVerifierConfigProperties(
+				assertJsonSize: true
+		)
+	}
+
+	private String singleTestGenerator(Contract contractDsl) {
+		return new JavaTestGenerator() {
+			@Override
+			ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
+				return super.classBodyBuilder(builder, metaData, methodBuilder).field(new Field() {
+					@Override
+					boolean accept() {
+						return metaData.configProperties.testMode == TestMode.JAXRSCLIENT
+					}
+
+					@Override
+					Field call() {
+						builder.addLine("WebTarget webTarget")
+						return this
+					}
+				})
+			}
+		}.buildClass(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+	}
+
+	private ContractMetadata contractMetadata(Contract contractDsl) {
+		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsl)
+	}
 
 	org.springframework.cloud.contract.spec.Contract httpDsl =
 			// tag::http_dsl[]
@@ -57,6 +100,22 @@ class ContractHttpDocsSpec extends Specification {
 				priority 1
 			}
 	// end::http_dsl[]
+
+	org.springframework.cloud.contract.spec.Contract methodDsl =
+			org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					// tag::method[]
+					method GET()
+					// end::method[]
+					url "/foo"
+				}
+
+				response {
+					status 200
+				}
+
+				priority 1
+			}
 
 	org.springframework.cloud.contract.spec.Contract request =
 			// tag::request[]
@@ -279,6 +338,7 @@ class ContractHttpDocsSpec extends Specification {
 			// tag::optionals[]
 			org.springframework.cloud.contract.spec.Contract.make {
 				priority 1
+				name "optionals"
 				request {
 					method 'POST'
 					url '/users/password'
@@ -287,7 +347,7 @@ class ContractHttpDocsSpec extends Specification {
 					}
 					body(
 							email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
-							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+							callback_url: $(consumer(regex(hostname())), producer('https://partners.com'))
 					)
 				}
 				response {
@@ -304,36 +364,57 @@ class ContractHttpDocsSpec extends Specification {
 
 	def 'should convert dsl with optionals to proper Spock test'() {
 		given:
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-			new HttpSpockMethodRequestProcessingBodyBuilder(optionals, properties, new GeneratedClassDataForMethod(
-					new SingleTestGenerator.GeneratedClassData("foo", "bar", new File(".").toPath()), "method"))
-					.appendTo(blockBuilder)
+			properties.testFramework = TestFramework.SPOCK
+			String test = singleTestGenerator(optionals)
 		expect:
 			String expectedTest =
 // tag::optionals_test[]
-					"""
- given:
-  def request = given()
-    .header("Content-Type", "application/json")
-    .body('''{"email":"abc@abc.com","callback_url":"http://partners.com"}''')
+					"""\
+package com.example
 
- when:
-  def response = given().spec(request)
-    .post("/users/password")
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification
+import io.restassured.response.ResponseOptions
 
- then:
-  response.statusCode == 404
-  response.header('Content-Type')  == 'application/json'
- and:
-  DocumentContext parsedJson = JsonPath.parse(response.body.asString())
-  assertThatJson(parsedJson).field("['code']").matches("(123123)?")
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.*
+
+@SuppressWarnings("rawtypes")
+class FooSpec extends Specification {
+
+\tdef validate_optionals() throws Exception {
+\t\tgiven:
+\t\t\tMockMvcRequestSpecification request = given()
+\t\t\t\t\t.header("Content-Type", "application/json")
+\t\t\t\t\t.body('''{"email":"abc@abc.com","callback_url":"https://partners.com"}''')
+
+\t\twhen:
+\t\t\tResponseOptions response = given().spec(request)
+\t\t\t\t\t.post("/users/password")
+
+\t\tthen:
+\t\t\tresponse.statusCode() == 404
+\t\t\tresponse.header("Content-Type") == 'application/json'
+
+\t\tand:
+\t\t\tDocumentContext parsedJson = JsonPath.parse(response.body.asString())
+\t\t\tassertThatJson(parsedJson).field("['code']").matches("(123123)?")
+\t}
+
+}
 """
 // end::optionals_test[]
-			stripped(blockBuilder.toString()) == stripped(expectedTest)
+			test.trim() == expectedTest.trim()
+		and:
+			SyntaxChecker.tryToCompile("spock", test)
 	}
 
 	org.springframework.cloud.contract.spec.Contract method =
-			// tag::method[]
+			// tag::methodBuilder[]
 			org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'PUT'
@@ -355,9 +436,5 @@ class ContractHttpDocsSpec extends Specification {
 					status OK()
 				}
 			}
-	// end::method[]
-
-	private String stripped(String string) {
-		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '').replace(' ', '')
-	}
+	// end::methodBuilder[]
 }

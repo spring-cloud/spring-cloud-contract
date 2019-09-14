@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +31,7 @@ class StubServerSpec extends Specification {
 		given:
 			List<File> mappingDescriptors = new StubRepository(repository).getStubs()
 			StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
-					new WireMockHttpServerStub()).start(STUB_SERVER_PORT)
+					new WireMockHttpServerStub()).start(new HttpServerStubConfiguration(new HttpServerStubConfigurer.NoOpHttpServerStubConfigurer(), StubRunnerOptions.fromSystemProps(), new StubConfiguration("a:b:c:d"), STUB_SERVER_PORT))
 		when:
 			pingStubServer.start()
 		then:
@@ -43,7 +43,7 @@ class StubServerSpec extends Specification {
 		given:
 			List<File> mappingDescriptors = new StubRepository(repository).getStubs()
 			StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
-					new WireMockHttpServerStub()).start(STUB_SERVER_PORT)
+					new WireMockHttpServerStub()).start(new HttpServerStubConfiguration(new HttpServerStubConfigurer.NoOpHttpServerStubConfigurer(), StubRunnerOptions.fromSystemProps(), new StubConfiguration("a:b:c:d"), STUB_SERVER_PORT))
 		when:
 			pingStubServer.start()
 		then:

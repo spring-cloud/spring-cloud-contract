@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,6 +41,7 @@ class ToYamlConverter {
 	}
 
 	private static YamlContractConverter yamlContractConverter = new YamlContractConverter()
+
 	private static final List<ContractConverter> CONTRACT_CONVERTERS = converters()
 
 	protected static void doReplaceContractWithYaml(ContractConverter converter, File file) {
@@ -105,27 +106,7 @@ class ToYamlConverter {
 		List<ContractConverter> converters =
 				SpringFactoriesLoader.loadFactories(ContractConverter, null)
 		converters.add(YamlContractConverter.INSTANCE)
-		converters.add(GroovyContractConverter.INSTANCE)
+		converters.add(ContractVerifierDslConverter.INSTANCE)
 		return converters
-	}
-}
-
-class GroovyContractConverter implements ContractConverter<Collection<Contract>> {
-
-	static final GroovyContractConverter INSTANCE = new GroovyContractConverter()
-
-	@Override
-	boolean isAccepted(File file) {
-		return file.name.endsWith(".groovy")
-	}
-
-	@Override
-	Collection<Contract> convertFrom(File file) {
-		return ContractVerifierDslConverter.convertAsCollection(file)
-	}
-
-	@Override
-	Collection<Contract> convertTo(Collection<Contract> contract) {
-		return contract
 	}
 }

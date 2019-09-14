@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,12 +28,10 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
-
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.evaluateContentType
-
 /**
  * Converts a {@link Request} into {@link ResponseDefinition}
  *
@@ -47,10 +45,16 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.eval
 class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private final Response response
+	private final ContentType contentType
 
-	WireMockResponseStubStrategy(Contract groovyDsl) {
+	WireMockResponseStubStrategy(Contract groovyDsl, SingleContractMetadata singleContractMetadata) {
 		super(groovyDsl)
 		this.response = groovyDsl.response
+		this.contentType = contentType(singleContractMetadata)
+	}
+
+	protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
+		return singleContractMetadata.evaluatedOutputStubContentType
 	}
 
 	@PackageScope
@@ -91,7 +95,6 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 	private void appendBody(ResponseDefinitionBuilder builder) {
 		if (response.body) {
 			Object body = MapConverter.getStubSideValues(response.body)
-			ContentType contentType = evaluateContentType(response.headers, body)
 			if (body instanceof byte[]) {
 				builder.withBody(body)
 			}

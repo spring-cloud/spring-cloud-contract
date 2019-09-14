@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,14 +57,14 @@ public class WiremockServerRestAssuredApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 		given().port(this.port).when().get("/resource").then().assertThat()
-				.statusCode(is(200)).content(equalTo("Hello World"));
+				.statusCode(is(200)).body(equalTo("Hello World"));
 	}
 
 	@Test
 	public void statusIsMaintained() throws Exception {
 		given(this.documentationSpec.port(this.port)).filter(document("status")).when()
 				.get("/status").then().assertThat().statusCode(is(202))
-				.content(equalTo("Hello World"));
+				.body(equalTo("Hello World"));
 	}
 
 	@Configuration

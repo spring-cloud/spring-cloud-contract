@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,8 +37,8 @@ import au.com.dius.pact.provider.junit.loader.PactBroker;
 import au.com.dius.pact.provider.junit.loader.PactBrokerAuth;
 import au.com.dius.pact.provider.junit.loader.PactBrokerLoader;
 import au.com.dius.pact.provider.junit.loader.PactLoader;
-import au.com.dius.pact.provider.junit.sysprops.SystemPropertyResolver;
-import au.com.dius.pact.provider.junit.sysprops.ValueResolver;
+import au.com.dius.pact.support.expressions.SystemPropertyResolver;
+import au.com.dius.pact.support.expressions.ValueResolver;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
@@ -47,9 +47,6 @@ import org.jetbrains.annotations.NotNull;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.verifier.converter.StubGenerator;
-import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
-import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
@@ -216,32 +213,16 @@ class PactStubDownloader implements StubDownloader {
 			log.debug("Converted pact file [" + file + "] to [" + contracts.size()
 					+ "] contracts");
 		}
-		StubGeneratorProvider provider = new StubGeneratorProvider();
-		Collection<StubGenerator> stubGenerators = provider
-				.converterForName(ARTIFICIAL_NAME_ENDING_WITH_GROOVY);
-		if (log.isDebugEnabled()) {
-			log.debug("Found following matching stub generators " + stubGenerators);
-		}
-		for (StubGenerator stubGenerator : stubGenerators) {
-			Map<Contract, String> map = stubGenerator.convertContents(file.getName(),
-					new ContractMetadata(file.toPath(), false, contracts.size(), null,
-							contracts));
-			for (Map.Entry<Contract, String> entry : map.entrySet()) {
-				String value = entry.getValue();
-				File mapping = new File(mappingsFolder,
-						StringUtils.stripFilenameExtension(file.getName()) + "_"
-								+ Math.abs(entry.getKey().hashCode()) + ".json");
-				storeFile(mapping.toPath(), value.getBytes());
-			}
-		}
+		MappingGenerator.toMappings(file, contracts, mappingsFolder);
 	}
 
-	private void storeFile(Path path, byte[] contents) {
+	private Path storeFile(Path path, byte[] contents) {
 		try {
-			Files.write(path, contents);
+			Path storedPath = Files.write(path, contents);
 			if (log.isDebugEnabled()) {
 				log.debug("Stored file [" + path.toString() + "]");
 			}
+			return storedPath;
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
@@ -288,6 +269,11 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String protocol() {
+				return scheme();
+			}
+
+			@Override
+			public String scheme() {
 				return resolver
 						.resolveValue("pactbroker.protocol:" + pactBrokerUrl.getScheme());
 			}
@@ -295,6 +281,11 @@ class PactStubDownloader implements StubDownloader {
 			@Override
 			public String[] tags() {
 				return tags.toArray(new String[0]);
+			}
+
+			@Override
+			public String[] consumers() {
+				return new String[] { resolver.resolveValue("pactbroker.consumers:") };
 			}
 
 			@Override

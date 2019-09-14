@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner;
 import java.io.File;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,33 @@ public class CompositeStubDownloaderBuilderTests {
 		StubDownloader downloader = builder.build(new StubRunnerOptionsBuilder().build());
 
 		BDDAssertions.then(downloader).isNull();
+	}
+
+	@Test
+	public void should_return_null_when_no_entries_were_found() {
+		EmptyStubDownloaderBuilder emptyStubDownloaderBuilder = new EmptyStubDownloaderBuilder();
+		CompositeStubDownloaderBuilder builder = new CompositeStubDownloaderBuilder(
+				Collections.singletonList(emptyStubDownloaderBuilder));
+		StubDownloader downloader = builder
+				.build(new StubRunnerOptionsBuilder().withFailOnNoStubs(false).build());
+
+		Map.Entry<StubConfiguration, File> entry = downloader
+				.downloadAndUnpackStubJar(new StubConfiguration("a:b:v"));
+
+		BDDAssertions.then(entry).isNull();
+	}
+
+	@Test
+	public void should_throw_exception_when_no_entries_were_found_and_a_switch_to_throw_exception_was_set() {
+		EmptyStubDownloaderBuilder emptyStubDownloaderBuilder = new EmptyStubDownloaderBuilder();
+		CompositeStubDownloaderBuilder builder = new CompositeStubDownloaderBuilder(
+				Collections.singletonList(emptyStubDownloaderBuilder));
+		StubDownloader downloader = builder
+				.build(new StubRunnerOptionsBuilder().withFailOnNoStubs(true).build());
+
+		BDDAssertions.thenThrownBy(
+				() -> downloader.downloadAndUnpackStubJar(new StubConfiguration("a:b:v")))
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 }

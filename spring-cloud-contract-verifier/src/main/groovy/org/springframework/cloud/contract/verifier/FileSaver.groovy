@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,6 @@ import groovy.transform.PackageScope
 import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeLast
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize
@@ -39,12 +38,12 @@ class FileSaver {
 
 	private final File targetDirectory
 	private final SingleTestGenerator generator
-	private final ContractVerifierConfigProperties properties
+	private final String fileExtension
 
-	FileSaver(File targetDirectory, SingleTestGenerator generator, ContractVerifierConfigProperties properties) {
+	FileSaver(File targetDirectory, String fileExtension, SingleTestGenerator generator) {
 		this.targetDirectory = targetDirectory
 		this.generator = generator
-		this.properties = properties
+		this.fileExtension = fileExtension
 	}
 
 	void saveClassFile(Path classPath, byte[] classBytes) {
@@ -55,8 +54,7 @@ class FileSaver {
 
 	protected Path pathToClass(Path testBaseDir, String fileName) {
 		return Paths.get(testBaseDir.toString(),
-				capitalize(fileName) + generator.fileExtension(this.properties)).
-				toAbsolutePath()
+				capitalize(fileName) + fileExtension).toAbsolutePath()
 	}
 
 	protected Path generateTestBaseDir(String basePackageClass, String includedDirectoryRelativePath) {

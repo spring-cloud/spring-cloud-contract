@@ -3,7 +3,13 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
     request {
         method '{{request_method}}'
-        url '{{request_url}}'
+        urlPath('{{request_url}}') {{#request_urlpath_present}} {
+            queryParameters {
+                {{#request_queryparams}}
+                    parameter('''{{key}}''', '''{{value}}''')
+                {{/request_queryparams}}
+            }
+        } {{/request_urlpath_present}}
         {{#request_body_present}}
         body('''{{request_body}}''')
         {{/request_body_present}}
