@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationConfiguration;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
@@ -47,8 +48,15 @@ public class ContractVerifierKafkaConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	MessageVerifier<Message<?>> contractVerifierKafkaMessageExchange(
-			KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker) {
-		return new KafkaStubMessages(kafkaTemplate, broker);
+			KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker,
+			KafkaProperties kafkaProperties, KafkaStubMessagesInitializer initializer) {
+		return new KafkaStubMessages(kafkaTemplate, broker, kafkaProperties, initializer);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	KafkaStubMessagesInitializer contractVerifierKafkaStubMessagesInitializer() {
+		return new ContractVerifierKafkaStubMessagesInitializer();
 	}
 
 	@Bean

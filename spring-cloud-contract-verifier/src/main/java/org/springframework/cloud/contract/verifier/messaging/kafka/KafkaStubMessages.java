@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import net.minidev.json.JSONObject;
@@ -32,8 +30,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
@@ -47,18 +45,14 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	private final KafkaTemplate kafkaTemplate;
 
-	private final EmbeddedKafkaBroker broker;
+	private final Receiver receiver;
 
-	private final Map<String, Receiver> receivers = new HashMap<>();
-
-	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker) {
+	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker,
+			KafkaProperties kafkaProperties, KafkaStubMessagesInitializer initializer) {
 		this.kafkaTemplate = kafkaTemplate;
-		this.broker = broker;
-		for (String topic : this.broker.getTopics()) {
-			Receiver receiver = new Receiver(broker);
-			receiver.prepareListener(topic);
-			this.receivers.put(topic, receiver);
-		}
+		Map<String, Consumer> topicToConsumer = initializer.initialize(broker,
+				kafkaProperties);
+		this.receiver = new Receiver(topicToConsumer);
 	}
 
 	@Override
@@ -83,8 +77,7 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	@Override
 	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
-		return this.receivers.getOrDefault(destination, new Receiver(this.broker))
-				.receive(destination, timeout, timeUnit);
+		return this.receiver.receive(destination, timeout, timeUnit);
 	}
 
 	@Override
@@ -103,31 +96,16 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 class Receiver {
 
-	private final EmbeddedKafkaBroker broker;
-
-	private static final Map<String, Consumer> CONSUMER_CACHE = new ConcurrentHashMap<>();
+	private final Map<String, Consumer> consumers;
 
 	private static final Log log = LogFactory.getLog(Receiver.class);
 
-	Receiver(EmbeddedKafkaBroker broker) {
-		this.broker = broker;
-	}
-
-	void prepareListener(String destination) {
-		Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps("sender",
-				"false", broker);
-		DefaultKafkaConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory<>(
-				consumerProperties);
-		Consumer<String, String> consumer = consumerFactory.createConsumer();
-		consumer.subscribe(Collections.singleton(destination));
-		CONSUMER_CACHE.put(destination, consumer);
-		if (log.isDebugEnabled()) {
-			log.debug("Prepared consumer for destination [" + destination + "]");
-		}
+	Receiver(Map<String, Consumer> consumers) {
+		this.consumers = consumers;
 	}
 
 	Message receive(String topic, long timeout, TimeUnit timeUnit) {
-		Consumer consumer = CONSUMER_CACHE.get(topic);
+		Consumer consumer = this.consumers.get(topic);
 		if (consumer == null) {
 			throw new IllegalStateException(
 					"No consumer set up for topic [" + topic + "]");

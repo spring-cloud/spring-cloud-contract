@@ -64,6 +64,14 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 		return this.kafkaTemplate;
 	}
 
+	// CONSUMER:
+	// new KafkaTemplate().sendTo("topic0", payload);
+
+	// PRODUCER:
+	// input: message sent to topic0
+
+	// output: message sent to topic1
+
 	@Override
 	public void onMessage(ConsumerRecord<Object, Object> data) {
 		if (log.isDebugEnabled()) {
