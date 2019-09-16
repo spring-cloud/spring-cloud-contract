@@ -249,6 +249,18 @@ $(addBlockSwitches);
 </li>
 </ul>
 </li>
+<li><a href="#features-messaging-stub-runner-kafka">4.10. Consumer Side Messaging With Spring Kafka</a>
+<ul class="sectlevel3">
+<li><a href="#features-messaging-stub-runner-kafka-adding">4.10.1. Adding the Runner to the Project</a></li>
+<li><a href="#features-messaging-stub-runner-kafka-example">4.10.2. Examples</a>
+<ul class="sectlevel4">
+<li><a href="#features-messaging-stub-runner-kafka-scenario1">Scenario 1 (No Input Message)</a></li>
+<li><a href="#features-messaging-stub-runner-kafka-scenario2">Scenario 2 (Output Triggered by Input)</a></li>
+<li><a href="#features-messaging-stub-runner-kafka-scenario3">Scenario 3 (Input with No Output)</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#features-stub-runner">5. Spring Cloud Contract Stub Runner</a>
@@ -6022,7 +6034,10 @@ in the generated test.</p>
 <p>Spring AMQP</p>
 </li>
 <li>
-<p>Spring JMS</p>
+<p>Spring JMS (requires embedded broker)</p>
+</li>
+<li>
+<p>Spring Kafka (requires embedded broker)</p>
 </li>
 </ul>
 </div>
@@ -8017,6 +8032,222 @@ receivedMessage.getStringProperty('BOOK-NAME') == 'foo'</code></pre>
                 return message
             }
         })</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="features-messaging-stub-runner-kafka"><a class="anchor" href="#features-messaging-stub-runner-kafka"></a><a class="link" href="#features-messaging-stub-runner-kafka">4.10. Consumer Side Messaging With Spring Kafka</a></h3>
+<div class="paragraph">
+<p>Spring Cloud Contract Stub Runner&#8217;s messaging module provides an easy way to
+integrate with Spring Kafka.</p>
+</div>
+<div class="paragraph">
+<p>The integration assumes that you have a running instance of a embedded Kafka broker (via the <code>spring-kafka-test</code> dependency).</p>
+</div>
+<div class="sect3">
+<h4 id="features-messaging-stub-runner-kafka-adding"><a class="anchor" href="#features-messaging-stub-runner-kafka-adding"></a><a class="link" href="#features-messaging-stub-runner-kafka-adding">4.10.1. Adding the Runner to the Project</a></h4>
+<div class="paragraph">
+<p>You need to have both Spring Kafka, Spring Kafka Test (to run the <code>@EmbeddedBroker</code>) and Spring Cloud Contract Stub Runner on the classpath. Remember to annotate your test class
+with <code>@AutoConfigureStubRunner</code>.</p>
+</div>
+<div class="paragraph">
+<p>With Kafka integration, in order to poll for a single message we need to register a consumer upon Spring context startup. That may lead to a situation that, when you&#8217;re on the consumer side, Stub Runner can register an additional consumer for the same group id and topic. That could lead to a situation that only one of the components would actually poll for the message. Since on the consumer side you have both the Spring Cloud Contract Stub Runner and Spring Cloud Contract Verifier classpath, we need to be able to switch off such behaviour. That&#8217;s done automatically via the <code>stubrunner.kafka.initializer.enabled</code> flag, that will disable the Contact Verifier consumer registration. If your application is both the consumer and the producer of a kafka message, you might need to manually toggle that property to <code>false</code> in the base class of your generated tests.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="features-messaging-stub-runner-kafka-example"><a class="anchor" href="#features-messaging-stub-runner-kafka-example"></a><a class="link" href="#features-messaging-stub-runner-kafka-example">4.10.2. Examples</a></h4>
+<div class="paragraph">
+<p>Assume that the stub structure looks as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">├── stubs
+    ├── bookDeleted.groovy
+    ├── bookReturned1.groovy
+    └── bookReturned2.groovy</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Further assume the following test configuration (notice the <code>spring.kafka.bootstrap-servers</code> pointing to the embedded broker&#8217;s IP via <code>${spring.embedded.kafka.brokers}</code>):</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">stubrunner:
+  repository-root: stubs:classpath:/stubs/
+  ids: my:stubs
+  stubs-mode: remote
+spring:
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+    producer:
+      properties:
+        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+        "spring.json.trusted.packages": "*"
+    consumer:
+      properties:
+        "value.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
+        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+        "spring.json.trusted.packages": "*"
+      group-id: groupId</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Now consider the following contracts (we number them 1 and 2):</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Contract.make {
+    label 'return_book_1'
+    input {
+        triggeredBy('bookReturnedTriggered()')
+    }
+    outputMessage {
+        sentTo('output')
+        body('''{ "bookName" : "foo" }''')
+        headers {
+            header('BOOK-NAME', 'foo')
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Contract.make {
+    label 'return_book_2'
+    input {
+        messageFrom('input')
+        messageBody([
+                bookName: 'foo'
+        ])
+        messageHeaders {
+            header('sample', 'header')
+        }
+    }
+    outputMessage {
+        sentTo('output')
+        body([
+                bookName: 'foo'
+        ])
+        headers {
+            header('BOOK-NAME', 'foo')
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="features-messaging-stub-runner-kafka-scenario1"><a class="anchor" href="#features-messaging-stub-runner-kafka-scenario1"></a><a class="link" href="#features-messaging-stub-runner-kafka-scenario1">Scenario 1 (No Input Message)</a></h5>
+<div class="paragraph">
+<p>To trigger a message from the <code>return_book_1</code> label, we use the <code>StubTigger</code> interface, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, we want to listen to the output of the message sent to <code>output</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Message receivedMessage = receiveFromOutput()</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The received message would then pass the following assertions:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">assert receivedMessage != null
+assert assertThatBodyContainsBookNameFoo(receivedMessage.getPayload())
+assert receivedMessage.getHeaders().get('BOOK-NAME') == 'foo'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="features-messaging-stub-runner-kafka-scenario2"><a class="anchor" href="#features-messaging-stub-runner-kafka-scenario2"></a><a class="link" href="#features-messaging-stub-runner-kafka-scenario2">Scenario 2 (Output Triggered by Input)</a></h5>
+<div class="paragraph">
+<p>Since the route is set for you, you can send a message to the <code>output</code> destination.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Message message = MessageBuilder.createMessage(new BookReturned('foo'), new MessageHeaders([sample: "header",]))
+kafkaTemplate.setDefaultTopic('input')
+kafkaTemplate.send(message)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, we want to listen to the output of the message sent to <code>output</code>, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Message receivedMessage = receiveFromOutput()</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The received message would pass the following assertions:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">assert receivedMessage != null
+assert assertThatBodyContainsBookNameFoo(receivedMessage.getPayload())
+assert receivedMessage.getHeaders().get('BOOK-NAME') == 'foo'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="features-messaging-stub-runner-kafka-scenario3"><a class="anchor" href="#features-messaging-stub-runner-kafka-scenario3"></a><a class="link" href="#features-messaging-stub-runner-kafka-scenario3">Scenario 3 (Input with No Output)</a></h5>
+<div class="paragraph">
+<p>Since the route is set for you, you can send a message to the <code>output</code> destination, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Message message = MessageBuilder.createMessage(new BookReturned('foo'), new MessageHeaders([sample: "header",]))
+kafkaTemplate.setDefaultTopic('delete')
+kafkaTemplate.send(message)</code></pre>
 </div>
 </div>
 </div>
