@@ -75,14 +75,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		Assert.isTrue(
 				mockingDetails(rabbitTemplate).isSpy()
 						|| mockingDetails(rabbitTemplate).isMock(),
-				"StubRunner AMQP will work only if RabbiTemplate is a spy"); // we get
-																				// send
-																				// messages
-																				// by
-																				// capturing
-																				// arguments
-																				// on the
-																				// spy
+				"StubRunner AMQP will work only if RabbiTemplate is a spy");
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
 	}
@@ -95,14 +88,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		Assert.isTrue(
 				mockingDetails(rabbitTemplate).isSpy()
 						|| mockingDetails(rabbitTemplate).isMock(),
-				"StubRunner AMQP will work only if RabbiTemplate is a spy"); // we get
-																				// send
-																				// messages
-																				// by
-																				// capturing
-																				// arguments
-																				// on the
-																				// spy
+				"StubRunner AMQP will work only if RabbiTemplate is a spy");
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
 		this.rabbitProperties = rabbitProperties;
