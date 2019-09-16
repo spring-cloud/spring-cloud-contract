@@ -102,6 +102,7 @@ You can use one of the following four integration configurations:
 * Spring Cloud Stream
 * Spring AMQP
 * Spring JMS
+* Spring Kafka
 
 Since we use Spring Boot, if you have added one of these libraries to the classpath, all
 the messaging configuration is automatically set up.
@@ -1149,5 +1150,151 @@ Since the route is set for you, you can send a message to the `{output_name}` de
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
+----
+====
+
+[[features-messaging-stub-runner-kafka]]
+=== Consumer Side Messaging With Spring Kafka
+
+Spring Cloud Contract Stub Runner's messaging module provides an easy way to
+integrate with Spring Kafka.
+
+The integration assumes that you have a running instance of a embedded Kafka broker (via the `spring-kafka-test` dependency).
+
+[[features-messaging-stub-runner-kafka-adding]]
+==== Adding the Runner to the Project
+
+You need to have both Spring Kafka and Spring Cloud Contract Stub Runner on the classpath. Remember to annotate your test class
+with `@AutoConfigureStubRunner`.
+
+With Kafka integration, in order to poll for a single message we need to register a consumer upon Spring context startup. That may lead to a situation that, when you're on the consumer side, Stub Runner can register an additional consumer for the same group id and topic. That could lead to a situation that only one of the components would actually poll for the message. Since on the consumer side you have both the Spring Cloud Contract Stub Runner and Spring Cloud Contract Verifier classpath, we need to be able to switch off such behaviour. That's done automatically via the `stubrunner.kafka.initializer.enabled` flag, that will disable the Contact Verifier consumer registration. If your application is both the consumer and the producer of a kafka message, you might need to manually toggle that property to `false` in the base class of your generated tests.
+
+:input_name: input
+:output_name: output
+
+[[features-messaging-stub-runner-kafka-example]]
+==== Examples
+
+Assume that the stub structure looks as follows:
+
+====
+[source,bash,indent=0]
+----
+├── stubs
+    ├── bookDeleted.groovy
+    ├── bookReturned1.groovy
+    └── bookReturned2.groovy
+
+----
+====
+
+Further assume the following test configuration (notice the `spring.kafka.bootstrap-servers` pointing to the embedded broker's IP via `${spring.embedded.kafka.brokers}`):
+
+====
+[source,yml,indent=0]
+----
+stubrunner:
+  repository-root: stubs:classpath:/stubs/
+  ids: my:stubs
+  stubs-mode: remote
+spring:
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+    producer:
+      properties:
+        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+        "spring.json.trusted.packages": "*"
+    consumer:
+      properties:
+        "value.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
+        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+        "spring.json.trusted.packages": "*"
+      group-id: groupId
+----
+====
+
+Now consider the following contracts (we number them 1 and 2):
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
+----
+
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
+----
+====
+
+[[features-messaging-stub-runner-kafka-scenario1]]
+===== Scenario 1 (No Input Message)
+
+To trigger a message from the `return_book_1` label, we use the `StubTigger` interface, as follows:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+----
+====
+
+Next, we want to listen to the output of the message sent to `{output_name}`:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
+----
+====
+
+The received message would then pass the following assertions:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
+----
+====
+
+[[features-messaging-stub-runner-kafka-scenario2]]
+===== Scenario 2 (Output Triggered by Input)
+
+Since the route is set for you, you can send a message to the `{output_name}` destination.
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_send,indent=0]
+----
+====
+
+Next, we want to listen to the output of the message sent to `{output_name}`, as follows:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_receive,indent=0]
+----
+====
+
+The received message would pass the following assertions:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
+----
+====
+
+[[features-messaging-stub-runner-kafka-scenario3]]
+===== Scenario 3 (Input with No Output)
+
+Since the route is set for you, you can send a message to the `{output_name}` destination, as follows:
+
+====
+[source,groovy]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
 ----
 ====

@@ -50,7 +50,6 @@ import org.springframework.messaging.Message;
  * Passes through a message that matches the one defined in the DSL.
  *
  * @author Marcin Grzejszczak
- * @author Tim Ysewyn
  */
 class StubRunnerKafkaMessageSelector {
 

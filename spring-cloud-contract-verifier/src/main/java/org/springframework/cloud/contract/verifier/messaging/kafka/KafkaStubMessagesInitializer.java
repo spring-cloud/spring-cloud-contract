@@ -24,7 +24,10 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 
 /**
- * Logic used to initialize {@link KafkaStubMessages}.
+ * Logic used to initialize {@link KafkaStubMessages}. This interface
+ * might have a different implementation for the producer side and for
+ * the consumer side. That's because you can't poll for a single message
+ * by different consumers.
  *
  * @author Marcin Grzejszczak
  * @since 2.2.0
