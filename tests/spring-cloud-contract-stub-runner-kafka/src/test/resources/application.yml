@@ -7,13 +7,13 @@ spring:
     bootstrap-servers: ${spring.embedded.kafka.brokers}
     producer:
       properties:
-        "key.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
-        "key.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
-      group-id: groupId
+        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+        "spring.json.trusted.packages": "*"
     consumer:
       properties:
-        "key.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
-        "key.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
+        "value.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
+        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
+        "spring.json.trusted.packages": "*"
       group-id: groupId
 server:
   port: 0

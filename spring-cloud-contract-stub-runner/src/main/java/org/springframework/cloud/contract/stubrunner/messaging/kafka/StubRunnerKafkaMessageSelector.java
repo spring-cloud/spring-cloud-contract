@@ -57,7 +57,8 @@ class StubRunnerKafkaMessageSelector {
 	private static final Map<Message<?>, Contract> CACHE = Collections
 			.synchronizedMap(new WeakHashMap<>());
 
-	private static final Log log = LogFactory.getLog(StubRunnerKafkaMessageSelector.class);
+	private static final Log log = LogFactory
+			.getLog(StubRunnerKafkaMessageSelector.class);
 
 	private final List<Contract> groovyDsls;
 
@@ -221,8 +222,8 @@ class StubRunnerKafkaMessageSelector {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
-			valueInHeader = valueInHeader instanceof byte[] ?
-					fromByte((byte[]) valueInHeader) : valueInHeader;
+			valueInHeader = valueInHeader instanceof byte[]
+					? fromByte((byte[]) valueInHeader) : valueInHeader;
 			boolean matches;
 			if (value instanceof RegexProperty) {
 				Pattern pattern = ((RegexProperty) value).getPattern();

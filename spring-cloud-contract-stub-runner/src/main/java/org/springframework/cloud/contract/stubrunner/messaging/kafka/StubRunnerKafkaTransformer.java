@@ -43,7 +43,8 @@ class StubRunnerKafkaTransformer {
 		Object outputBody = outputBody(groovyDsl);
 		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders()
 				.asStubSideMap();
-		Message newMessage = MessageBuilder.createMessage(outputBody, new MessageHeaders(headers));
+		Message newMessage = MessageBuilder.createMessage(outputBody,
+				new MessageHeaders(headers));
 		this.selector.updateCache(newMessage, groovyDsl);
 		return newMessage;
 	}
@@ -57,4 +58,5 @@ class StubRunnerKafkaTransformer {
 		}
 		return BodyExtractor.extractStubValueFrom(outputBody);
 	}
+
 }

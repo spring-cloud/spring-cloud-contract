@@ -50,7 +50,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass({ KafkaTemplate.class, EmbeddedKafkaBroker.class })
-@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true",
+		matchIfMissing = true)
 @ConditionalOnBean(EmbeddedKafkaBroker.class)
 public class StubRunnerKafkaConfiguration {
 
@@ -107,8 +108,8 @@ public class StubRunnerKafkaConfiguration {
 					matchingContract.getInput().getMessageFrom()).toString();
 			ContainerProperties containerProperties = new ContainerProperties(
 					destination);
-			KafkaMessageListenerContainer container = listenerContainer(destination,
-					consumerFactory, containerProperties, listener);
+			KafkaMessageListenerContainer container = listenerContainer(consumerFactory,
+					containerProperties, listener);
 			String containerName = flowName + ".container";
 			Object initializedContainer = beanFactory.initializeBean(container,
 					containerName);
@@ -116,7 +117,7 @@ public class StubRunnerKafkaConfiguration {
 		}
 	}
 
-	private KafkaMessageListenerContainer listenerContainer(String queueName,
+	private KafkaMessageListenerContainer listenerContainer(
 			ConsumerFactory consumerFactory, ContainerProperties containerProperties,
 			GenericMessageListener listener) {
 		KafkaMessageListenerContainer container = new KafkaMessageListenerContainer(

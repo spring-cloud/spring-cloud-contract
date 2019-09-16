@@ -39,7 +39,8 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ConditionalOnClass(Message.class)
 @Import(CamelAutoConfiguration.class)
-@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
+		matchIfMissing = true)
 @AutoConfigureBefore({ NoOpContractVerifierAutoConfiguration.class,
 		ContractVerifierJmsConfiguration.class })
 public class ContractVerifierCamelConfiguration {

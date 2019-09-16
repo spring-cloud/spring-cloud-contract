@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
@@ -38,6 +40,8 @@ import org.springframework.messaging.support.MessageBuilder;
  * @author Marcin Grzejszczak
  */
 class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
+
+	private static final Log log = LogFactory.getLog(StubRunnerKafkaRouter.class);
 
 	private final StubRunnerKafkaMessageSelector selector;
 
@@ -62,14 +66,30 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 
 	@Override
 	public void onMessage(ConsumerRecord<Object, Object> data) {
+		if (log.isDebugEnabled()) {
+			log.debug("Received message [" + data + "]");
+		}
 		Message<?> message = MessageBuilder.createMessage(data.value(),
 				headers(data.headers()));
 		Contract dsl = this.selector.matchingContract(message);
 		if (dsl != null && dsl.getOutputMessage() != null
 				&& dsl.getOutputMessage().getSentTo() != null) {
 			String destination = dsl.getOutputMessage().getSentTo().getClientValue();
-			kafkaTemplate().send(destination,
-					new StubRunnerKafkaTransformer(this.contracts).transform(dsl));
+			if (log.isDebugEnabled()) {
+				log.debug(
+						"Found a matching contract with an output message. Will send it to the ["
+								+ destination + "] destination");
+			}
+			Message<?> transform = new StubRunnerKafkaTransformer(this.contracts)
+					.transform(dsl);
+			String defaultTopic = kafkaTemplate().getDefaultTopic();
+			try {
+				kafkaTemplate().setDefaultTopic(destination);
+				kafkaTemplate().send(transform);
+			}
+			finally {
+				kafkaTemplate().setDefaultTopic(defaultTopic);
+			}
 		}
 	}
 

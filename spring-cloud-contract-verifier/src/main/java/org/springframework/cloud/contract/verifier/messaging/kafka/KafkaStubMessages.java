@@ -16,22 +16,25 @@
 
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
-import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.messaging.Message;
@@ -40,77 +43,48 @@ import org.springframework.messaging.support.MessageBuilder;
 
 class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
+	private static final Log log = LogFactory.getLog(KafkaStubMessages.class);
+
 	private final KafkaTemplate kafkaTemplate;
 
 	private final EmbeddedKafkaBroker broker;
 
-	private final KafkaProperties kafkaProperties;
+	private final Map<String, Receiver> receivers = new HashMap<>();
 
-	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties) {
+	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker) {
 		this.kafkaTemplate = kafkaTemplate;
 		this.broker = broker;
-		this.kafkaProperties = kafkaProperties;
+		for (String topic : this.broker.getTopics()) {
+			Receiver receiver = new Receiver(broker);
+			receiver.prepareListener(topic);
+			this.receivers.put(topic, receiver);
+		}
 	}
 
 	@Override
 	public void send(Message<?> message, String destination) {
-		withConsumer(consumer -> {
-			String defaultTopic = this.kafkaTemplate.getDefaultTopic();
-			try {
-				this.kafkaTemplate.setDefaultTopic(destination);
-				this.kafkaTemplate.send(message).get(5, TimeUnit.SECONDS);
-				this.kafkaTemplate.flush();
-				return message;
+		String defaultTopic = this.kafkaTemplate.getDefaultTopic();
+		try {
+			this.kafkaTemplate.setDefaultTopic(destination);
+			if (log.isDebugEnabled()) {
+				log.debug("Will send a message [" + message + "] to destination ["
+						+ destination + "]");
 			}
-			catch (Exception ex) {
-				throw new IllegalStateException(ex);
-			}
-			finally {
-				this.kafkaTemplate.setDefaultTopic(defaultTopic);
-			}
-		});
-	}
-
-	private Message<?> withConsumer(
-			java.util.function.Function<Consumer, Message<?>> lambda) {
-		Map<String, Object> props = new HashMap<>();
-		props.put(
-				ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-				broker.getBrokersAsString());
-		props.put(
-				ConsumerConfig.GROUP_ID_CONFIG,
-				kafkaProperties.getConsumer().getGroupId());
-		props.put(
-				ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-				JsonDeserializer.class);
-		props.put(
-				ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-				JsonDeserializer.class);
-		ConsumerFactory<Integer, String> cf = new DefaultKafkaConsumerFactory<>(
-				props);
-		try (Consumer<Integer, String> consumer = cf.createConsumer()) {
-			this.broker.consumeFromAllEmbeddedTopics(consumer);
-			return lambda.apply(consumer);
+			this.kafkaTemplate.send(message).get(5, TimeUnit.SECONDS);
+			this.kafkaTemplate.flush();
+		}
+		catch (Exception ex) {
+			throw new IllegalStateException(ex);
+		}
+		finally {
+			this.kafkaTemplate.setDefaultTopic(defaultTopic);
 		}
 	}
 
 	@Override
 	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
-		return withConsumer(consumer -> {
-			ConsumerRecord<Integer, String> reply = KafkaTestUtils
-					.getSingleRecord(consumer, destination);
-			Headers headers = reply.headers();
-			String payload = reply.value();
-			return MessageBuilder.createMessage(payload, headers(headers));
-		});
-	}
-
-	private MessageHeaders headers(Headers headers) {
-		Map<String, Object> map = new HashMap();
-		for (Header header : headers) {
-			map.put(header.key(), header.value());
-		}
-		return new MessageHeaders(map);
+		return this.receivers.getOrDefault(destination, new Receiver(this.broker))
+				.receive(destination, timeout, timeUnit);
 	}
 
 	@Override
@@ -123,6 +97,99 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 		Message<?> message = MessageBuilder.createMessage(payload,
 				new MessageHeaders(headers));
 		send(message, destination);
+	}
+
+}
+
+class Receiver {
+
+	private final EmbeddedKafkaBroker broker;
+
+	private static final Map<String, Consumer> CONSUMER_CACHE = new ConcurrentHashMap<>();
+
+	private static final Log log = LogFactory.getLog(Receiver.class);
+
+	Receiver(EmbeddedKafkaBroker broker) {
+		this.broker = broker;
+	}
+
+	void prepareListener(String destination) {
+		Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps("sender",
+				"false", broker);
+		DefaultKafkaConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory<>(
+				consumerProperties);
+		Consumer<String, String> consumer = consumerFactory.createConsumer();
+		consumer.subscribe(Collections.singleton(destination));
+		CONSUMER_CACHE.put(destination, consumer);
+		if (log.isDebugEnabled()) {
+			log.debug("Prepared consumer for destination [" + destination + "]");
+		}
+	}
+
+	Message receive(String topic, long timeout, TimeUnit timeUnit) {
+		Consumer consumer = CONSUMER_CACHE.get(topic);
+		if (consumer == null) {
+			throw new IllegalStateException(
+					"No consumer set up for topic [" + topic + "]");
+		}
+		ConsumerRecord<String, String> record = KafkaTestUtils.getSingleRecord(consumer,
+				topic, timeUnit.toMillis(timeout));
+		if (log.isDebugEnabled()) {
+			log.debug("Got a single record for destination [" + topic + "]");
+		}
+		return new Record(record).toMessage();
+	}
+
+}
+
+class Record {
+
+	private final ConsumerRecord record;
+
+	Record(ConsumerRecord record) {
+		this.record = record;
+	}
+
+	private Map<String, Object> toMap(Headers headers) {
+		Map<String, Object> map = new HashMap<>();
+		for (Header header : headers) {
+			map.put(header.key(), header.value());
+		}
+		return map;
+	}
+
+	Message toMessage() {
+		Object textPayload = record.value();
+		// sometimes it's a message sometimes just payload
+		MessageHeaders headers = new MessageHeaders(toMap(record.headers()));
+		if (textPayload instanceof String && ((String) textPayload).contains("payload")
+				&& ((String) textPayload).contains("headers")) {
+			try {
+				Object object = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE)
+						.parse((String) textPayload);
+				JSONObject jo = (JSONObject) object;
+				String payload = (String) jo.get("payload");
+				JSONObject headersInJson = (JSONObject) jo.get("headers");
+				Map newHeaders = new HashMap(headers);
+				newHeaders.putAll(headersInJson);
+				return MessageBuilder.createMessage(unquoted(payload),
+						new MessageHeaders(newHeaders));
+			}
+			catch (ParseException ex) {
+				throw new IllegalStateException(ex);
+			}
+		}
+		return MessageBuilder.createMessage(unquoted(textPayload), headers);
+	}
+
+	private Object unquoted(Object value) {
+		String textPayload = value instanceof byte[] ? new String((byte[]) value)
+				: value.toString();
+		if (textPayload.startsWith("\"") && textPayload.endsWith("\"")) {
+			return textPayload.substring(1, textPayload.length() - 1).replace("\\\"",
+					"\"");
+		}
+		return textPayload;
 	}
 
 }

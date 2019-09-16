@@ -16,17 +16,19 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.kafka
 
-import com.fasterxml.jackson.annotation.JsonCreator
+
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 
 @CompileStatic
 @EqualsAndHashCode
 class BookReturned implements Serializable {
-	final String bookName
+	String bookName
 
-	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 	BookReturned(String bookName) {
 		this.bookName = bookName
+	}
+
+	BookReturned() {
 	}
 }
