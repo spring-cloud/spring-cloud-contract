@@ -1,5 +1,5 @@
 apply plugin: 'maven'
-apply plugin: 'signing'
+//apply plugin: 'signing'
 
 uploadArchives.dependsOn { [check] }
 
@@ -53,9 +53,9 @@ ext {
 }
 
 if (isReleaseToCentral) {
-	signing {
+	/*signing {
 		sign configurations.archives
-	}
+	}*/
 
 	apply plugin: 'com.gradle.plugin-publish'
 
