@@ -45,6 +45,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
 import org.springframework.messaging.support.MessageBuilder
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 /**
  * @author Marcin Grzejszczak

@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.spring;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,7 +79,7 @@ public class StubRunnerConfiguration {
 		if (this.props.getProxyHost() != null) {
 			builder.withProxy(this.props.getProxyHost(), this.props.getProxyPort());
 		}
-		StubRunnerOptions stubRunnerOptions = builder.build();
+		StubRunnerOptions stubRunnerOptions = stubRunnerOptions(builder);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
 				this.provider.get(stubRunnerOptions),
 				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
@@ -89,26 +90,54 @@ public class StubRunnerConfiguration {
 		return batchStubRunner;
 	}
 
+	private StubRunnerOptions stubRunnerOptions(StubRunnerOptionsBuilder builder) {
+		return builder.build();
+	}
+
 	private StubRunnerOptionsBuilder builder() {
 		return new StubRunnerOptionsBuilder()
-				.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
+				.withMinMaxPort(
+						Integer.valueOf(resolvePlaceholder(this.props.getMinPort(),
+								this.props.getMinPort())),
+						Integer.valueOf(resolvePlaceholder(this.props.getMaxPort(),
+								this.props.getMaxPort())))
 				.withStubRepositoryRoot(this.props.getRepositoryRoot())
-				.withStubsMode(this.props.getStubsMode())
-				.withStubsClassifier(this.props.getClassifier())
-				.withStubs(this.props.getIds()).withUsername(this.props.getUsername())
-				.withPassword(this.props.getPassword())
-				.withStubPerConsumer(this.props.isStubsPerConsumer())
+				.withStubsMode(resolvePlaceholder(this.props.getStubsMode()))
+				.withStubsClassifier(resolvePlaceholder(this.props.getClassifier()))
+				.withStubs(resolvePlaceholder(this.props.getIds()))
+				.withUsername(resolvePlaceholder(this.props.getUsername()))
+				.withPassword(resolvePlaceholder(this.props.getPassword()))
+				.withStubPerConsumer(Boolean.parseBoolean(
+						resolvePlaceholder(this.props.isStubsPerConsumer())))
 				.withConsumerName(consumerName())
-				.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
-				.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest())
-				.withGenerateStubs(this.props.isGenerateStubs())
+				.withMappingsOutputFolder(
+						resolvePlaceholder(this.props.getMappingsOutputFolder()))
+				.withDeleteStubsAfterTest(Boolean.parseBoolean(
+						resolvePlaceholder(this.props.isDeleteStubsAfterTest())))
+				.withGenerateStubs(Boolean
+						.parseBoolean(resolvePlaceholder(this.props.isGenerateStubs())))
 				.withProperties(this.props.getProperties())
 				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer());
 	}
 
+	private String[] resolvePlaceholder(String[] string) {
+		return Arrays.stream(string).map(this::resolvePlaceholder).toArray(String[]::new);
+	}
+
+	private String resolvePlaceholder(Object string) {
+		return resolvePlaceholder(string, null);
+	}
+
+	private String resolvePlaceholder(Object string, Object defaultValue) {
+		if (string == null) {
+			return defaultValue != null ? defaultValue.toString() : null;
+		}
+		return this.environment.resolvePlaceholders(string.toString());
+	}
+
 	private String consumerName() {
 		if (StringUtils.hasText(this.props.getConsumerName())) {
-			return this.props.getConsumerName();
+			return resolvePlaceholder(this.props.getConsumerName());
 		}
 		return this.environment.getProperty("spring.application.name");
 	}

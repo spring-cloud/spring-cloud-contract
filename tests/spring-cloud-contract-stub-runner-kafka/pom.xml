@@ -11,8 +11,8 @@
 	</parent>
 	<artifactId>spring-cloud-contract-stub-runner-kafka</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Stub Runner JMS</name>
-	<description>Spring Cloud Contract Stub Runner JMS</description>
+	<name>Spring Cloud Contract Stub Runner Kafka</name>
+	<description>Spring Cloud Contract Stub Runner Kafka</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

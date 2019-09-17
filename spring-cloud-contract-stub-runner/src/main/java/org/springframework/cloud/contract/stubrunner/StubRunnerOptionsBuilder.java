@@ -161,11 +161,17 @@ public class StubRunnerOptionsBuilder {
 
 	public StubRunnerOptionsBuilder withStubsMode(
 			StubRunnerProperties.StubsMode stubsMode) {
+		if (stubsMode == null) {
+			return this;
+		}
 		this.stubsMode = stubsMode;
 		return this;
 	}
 
 	public StubRunnerOptionsBuilder withStubsMode(String stubsMode) {
+		if (stubsMode == null) {
+			return this;
+		}
 		this.stubsMode = StubRunnerProperties.StubsMode.valueOf(stubsMode);
 		return this;
 	}
