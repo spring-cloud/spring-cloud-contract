@@ -19,6 +19,9 @@
 |stubrunner.ids | [] | The ids of the stubs to run in "ivy" notation ([groupId]:artifactId:[version]:[classifier][:port]). {@code groupId}, {@code classifier}, {@code version} and {@code port} can be optional.
 |stubrunner.ids-to-service-ids |  | Mapping of Ivy notation based ids to serviceIds inside your application. Example "a:b" -> "myService" "artifactId" -> "myOtherService"
 |stubrunner.integration.enabled | true | Whether to enable Stub Runner integration with Spring Integration.
+|stubrunner.jms.enabled | true | Whether to enable Stub Runner integration with Spring JMS.
+|stubrunner.kafka.enabled | true | Whether to enable Stub Runner integration with Spring Kafka.
+|stubrunner.kafka.initializer.enabled | true | Whether to allow Stub Runner to take care of polling for messages instead of the KafkaStubMessages component. The latter should be used only on the producer side.
 |stubrunner.mappings-output-folder |  | Dumps the mappings of each HTTP server to the selected folder.
 |stubrunner.max-port | 15000 | Max value of a port for the automatically started WireMock server.
 |stubrunner.min-port | 10000 | Min value of a port for the automatically started WireMock server.
