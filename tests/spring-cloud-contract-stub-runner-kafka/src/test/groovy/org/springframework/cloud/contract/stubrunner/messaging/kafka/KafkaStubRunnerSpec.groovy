@@ -45,9 +45,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
 import org.springframework.messaging.support.MessageBuilder
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -56,7 +54,6 @@ import org.springframework.test.context.ContextConfiguration
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
 @EmbeddedKafka(topics = ["input", "output", "delete"])
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class KafkaStubRunnerSpec extends Specification {
 
 	@Autowired
