@@ -14,7 +14,7 @@ spring:
         "value.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
         "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
         "spring.json.trusted.packages": "*"
-      group-id: groupId
+      group-id: ${random.value}
 server:
   port: 0
 debug: true
