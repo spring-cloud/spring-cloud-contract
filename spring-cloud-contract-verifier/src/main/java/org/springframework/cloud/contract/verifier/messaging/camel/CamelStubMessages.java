@@ -76,7 +76,7 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 			ConsumerTemplate consumerTemplate = this.context.createConsumerTemplate();
 			Exchange exchange = consumerTemplate.receive(destination,
 					timeUnit.toMillis(timeout));
-			return exchange.getIn();
+			return exchange != null ? exchange.getIn() : null;
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "
