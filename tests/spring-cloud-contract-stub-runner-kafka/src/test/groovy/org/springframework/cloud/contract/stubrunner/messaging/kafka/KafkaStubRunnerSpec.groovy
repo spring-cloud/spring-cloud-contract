@@ -21,8 +21,10 @@ import java.util.concurrent.TimeUnit
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import groovy.util.logging.Commons
 import spock.lang.IgnoreIf
 import spock.lang.Specification
+import spock.lang.Stepwise
 import spock.util.concurrent.PollingConditions
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,6 +56,8 @@ import org.springframework.test.context.ContextConfiguration
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
 @EmbeddedKafka(topics = ["input", "output", "delete"])
+@Commons
+@Stepwise
 class KafkaStubRunnerSpec extends Specification {
 
 	@Autowired
@@ -79,15 +83,19 @@ class KafkaStubRunnerSpec extends Specification {
 
 	def 'should download the stub and register a route for it'() {
 		when:
+			log.info("Sending the message")
 			// tag::client_send[]
 			Message message = MessageBuilder.createMessage(new BookReturned('foo'), new MessageHeaders([sample: "header",]))
 			kafkaTemplate.setDefaultTopic('input')
 			kafkaTemplate.send(message)
 			// end::client_send[]
+			log.info("Message sent")
 		then:
+			log.info("Receiving the message")
 			// tag::client_receive[]
 			Message receivedMessage = receiveFromOutput()
 			// end::client_receive[]
+			log.info("Message received [" + receivedMessage + "]")
 		and:
 			await.eventually {
 				// tag::client_receive_message[]

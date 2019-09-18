@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -38,12 +41,14 @@ import org.springframework.messaging.Message;
  */
 @Configuration
 @ConditionalOnClass({ KafkaTemplate.class, EmbeddedKafkaBroker.class })
-@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class,
 		NoOpContractVerifierAutoConfiguration.class })
 @ConditionalOnBean(EmbeddedKafkaBroker.class)
 public class ContractVerifierKafkaConfiguration {
+
+	private static final Log log = LogFactory
+			.getLog(ContractVerifierKafkaConfiguration.class);
 
 	@Bean
 	@ConditionalOnMissingBean
@@ -56,6 +61,9 @@ public class ContractVerifierKafkaConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	KafkaStubMessagesInitializer contractVerifierKafkaStubMessagesInitializer() {
+		if (log.isDebugEnabled()) {
+			log.debug("Registering contract verifier stub messages initializer");
+		}
 		return new ContractVerifierKafkaStubMessagesInitializer();
 	}
 

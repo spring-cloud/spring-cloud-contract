@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -60,11 +63,16 @@ import org.springframework.util.StringUtils;
 @AutoConfigureBefore(ContractVerifierKafkaConfiguration.class)
 public class StubRunnerKafkaConfiguration {
 
+	private static final Log log = LogFactory.getLog(StubRunnerKafkaConfiguration.class);
+
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(name = "stubrunner.kafka.initializer.enabled",
 			havingValue = "true", matchIfMissing = true)
 	KafkaStubMessagesInitializer stubRunnerKafkaStubMessagesInitializer() {
+		if (log.isDebugEnabled()) {
+			log.debug("Registering a noop kafka messages initializer");
+		}
 		return (broker, kafkaProperties) -> new HashMap<>();
 	}
 
@@ -100,6 +108,9 @@ public class StubRunnerKafkaConfiguration {
 						matchingContracts, beanFactory);
 				StubRunnerKafkaRouter listener = (StubRunnerKafkaRouter) beanFactory
 						.initializeBean(router, flowName);
+				if (log.isDebugEnabled()) {
+					log.debug("Initialized kafka router with name [" + flowName + "]");
+				}
 				beanFactory.registerSingleton(flowName, listener);
 				registerContainers(beanFactory, matchingContracts, flowName, listener);
 			}
@@ -127,6 +138,9 @@ public class StubRunnerKafkaConfiguration {
 			Object initializedContainer = beanFactory.initializeBean(container,
 					containerName);
 			beanFactory.registerSingleton(containerName, initializedContainer);
+			if (log.isDebugEnabled()) {
+				log.debug("Initialized kafka message container with name [" + containerName + "] listening to destination [" + destination + "]");
+			}
 		}
 	}
 
