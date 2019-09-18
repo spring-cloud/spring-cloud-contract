@@ -24,7 +24,6 @@ import groovy.json.JsonSlurper
 import groovy.util.logging.Commons
 import spock.lang.IgnoreIf
 import spock.lang.Specification
-import spock.lang.Stepwise
 import spock.util.concurrent.PollingConditions
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,6 +46,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
 import org.springframework.messaging.support.MessageBuilder
+import org.springframework.stereotype.Component
 import org.springframework.test.context.ContextConfiguration
 /**
  * @author Marcin Grzejszczak
@@ -57,7 +57,6 @@ import org.springframework.test.context.ContextConfiguration
 @IgnoreIf({ os.windows })
 @EmbeddedKafka(topics = ["input", "output", "delete"])
 @Commons
-@Stepwise
 class KafkaStubRunnerSpec extends Specification {
 
 	@Autowired
@@ -208,7 +207,7 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	private boolean assertThatBodyContainsBookNameFoo(Object payload) {
-		println "Got payload [" + payload + "]"
+		log.info("Got payload [" + payload + "]")
 		String objectAsString = payload instanceof String ? payload :
 				JsonOutput.toJson(payload)
 		def json = new JsonSlurper().parseText(objectAsString)
@@ -229,12 +228,10 @@ class KafkaStubRunnerSpec extends Specification {
 			return new DefaultKafkaHeaderMapper();
 		}
 
-		@Bean
-		MyMessageListener myMessageListener() {
-			return new MyMessageListener();
-		}
 	}
 
+	@Commons
+	@Component
 	static class MyMessageListener {
 
 		CountDownLatch latch = new CountDownLatch(1)
@@ -243,7 +240,7 @@ class KafkaStubRunnerSpec extends Specification {
 
 		@KafkaListener(topics = ["output"])
 		void output(Message message) {
-			println "I got the message [${message}]"
+			log.info("I got the message [${message}]")
 			this.output = message
 			this.latch.countDown()
 		}
@@ -254,7 +251,7 @@ class KafkaStubRunnerSpec extends Specification {
 		}
 
 		void await() {
-			this.latch.await(5, TimeUnit.SECONDS)
+			this.latch.await(15, TimeUnit.SECONDS)
 		}
 	}
 
