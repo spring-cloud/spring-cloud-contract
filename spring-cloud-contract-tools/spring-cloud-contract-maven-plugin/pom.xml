@@ -26,24 +26,21 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
-		<maven.plugin.plugin.version>3.5</maven.plugin.plugin.version>
+		<maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
 
-		<maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
+		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
 		<asciidoctor-maven-plugin.version>1.5.7.1</asciidoctor-maven-plugin.version>
 		<maven-filtering.version>3.1.1</maven-filtering.version>
-		<takari-plugin-testing.version>2.9.2</takari-plugin-testing.version>
-		<takari-plugin-integration-testing.version>2.9.2
-		</takari-plugin-integration-testing.version>
 		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0
 		</maven-project-info-reports-plugin.version>
-		<maven-plugin-annotations.version>3.5.2</maven-plugin-annotations.version>
+		<maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
 		<maven-archiver.version>3.4.0</maven-archiver.version>
 		<plexus-archiver.version>4.1.0</plexus-archiver.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-		<maven-site-plugin.version>3.7.1</maven-site-plugin.version>
+		<maven-site-plugin.version>3.8.2</maven-site-plugin.version>
 		<plexus-component-metadata.version>2.0.0</plexus-component-metadata.version>
-		<takari-lifecycle-plugin.version>1.13.7</takari-lifecycle-plugin.version>
+		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
 	</properties>
 
 	<inceptionYear>2016</inceptionYear>
@@ -59,21 +56,6 @@
 						<goals>
 							<goal>generate-metadata</goal>
 							<goal>generate-test-metadata</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>io.takari.maven.plugins</groupId>
-				<artifactId>takari-lifecycle-plugin</artifactId>
-				<version>${takari-lifecycle-plugin.version}</version>
-				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<id>testProperties</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>testProperties</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -285,33 +267,33 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-api</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-impl</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-impl</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-file</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-transport-file</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-http</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-transport-http</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-connector-basic</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-connector-basic</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-aether-provider</artifactId>
+			<artifactId>maven-resolver-provider</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -387,19 +369,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.takari.maven.plugins</groupId>
-			<artifactId>takari-plugin-testing</artifactId>
-			<version>${takari-plugin-testing.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.takari.maven.plugins</groupId>
-			<artifactId>takari-plugin-integration-testing</artifactId>
-			<version>${takari-plugin-integration-testing.version}</version>
-			<type>pom</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-compat</artifactId>
 			<version>${maven.version}</version>
@@ -418,6 +387,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-pact</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugin-testing</groupId>
+			<artifactId>maven-plugin-testing-harness</artifactId>
+			<version>${maven-plugin-testing-harness.version}</version>
 			<scope>test</scope>
 		</dependency>
 

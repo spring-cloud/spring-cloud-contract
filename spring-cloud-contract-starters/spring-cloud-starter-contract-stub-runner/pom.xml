@@ -55,8 +55,8 @@
 		</dependency>
 		<!-- for Stub Runner's Aether -->
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-api</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-api</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

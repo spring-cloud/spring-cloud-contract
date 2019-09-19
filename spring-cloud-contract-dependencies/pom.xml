@@ -18,7 +18,7 @@
 		<wiremock.version>2.24.1</wiremock.version>
 		<jsonassert.version>0.4.13</jsonassert.version>
 		<rest-assured.version>4.0.0</rest-assured.version>
-		<maven.version>3.3.9</maven.version>
+		<maven.version>3.6.2</maven.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

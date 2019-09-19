@@ -31,6 +31,7 @@
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+				<!--
 				<configuration>
 					<baseClassForTests>com.example.FooBase</baseClassForTests>
 					<baseClassMappings>
@@ -40,6 +41,7 @@
 						</baseClassMapping>
 					</baseClassMappings>
 				</configuration>
+				-->
 			</plugin>
 		</plugins>
 	</build>

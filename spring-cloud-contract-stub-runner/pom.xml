@@ -56,8 +56,8 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-api</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-api</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -98,6 +98,8 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>compile</scope>
+			<optional>true</optional>
 		</dependency>
 		<!-- Git Stub Downloader-->
 		<dependency>

@@ -55,9 +55,8 @@
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>2.5.8</groovy.version>
-		<!-- For Takari plugin -->
-		<maven.version>3.3.9</maven.version>
-		<aether.version>1.1.0</aether.version>
+		<maven.version>3.6.2</maven.version>
+		<maven.resolver.version>1.4.1</maven.resolver.version>
 		<xpath2.processor.version>2.1.100</xpath2.processor.version>
 		<xerces.version>2.11.0</xerces.version>
 		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
@@ -97,6 +96,16 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-function-compiler</artifactId>
 				<version>${spring-cloud-function.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.maven</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.eclipse.aether</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
@@ -390,7 +399,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-aether-provider</artifactId>
+				<artifactId>maven-resolver-provider</artifactId>
 				<version>${maven.version}</version>
 			</dependency>
 			<dependency>
@@ -404,29 +413,11 @@
 				<version>${maven.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-api</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-impl</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-transport-file</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-transport-http</artifactId>
-				<version>${aether.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.aether</groupId>
-				<artifactId>aether-connector-basic</artifactId>
-				<version>${aether.version}</version>
+				<groupId>org.apache.maven.resolver</groupId>
+				<artifactId>maven-resolver</artifactId>
+				<version>${maven.resolver.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>com.rackspace.eclipse.webtools.sourceediting</groupId>
