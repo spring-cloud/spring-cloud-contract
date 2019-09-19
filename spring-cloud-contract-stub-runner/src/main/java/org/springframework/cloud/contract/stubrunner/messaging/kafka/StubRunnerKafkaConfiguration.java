@@ -139,7 +139,9 @@ public class StubRunnerKafkaConfiguration {
 					containerName);
 			beanFactory.registerSingleton(containerName, initializedContainer);
 			if (log.isDebugEnabled()) {
-				log.debug("Initialized kafka message container with name [" + containerName + "] listening to destination [" + destination + "]");
+				log.debug(
+						"Initialized kafka message container with name [" + containerName
+								+ "] listening to destination [" + destination + "]");
 			}
 		}
 	}

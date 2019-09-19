@@ -41,7 +41,8 @@ import org.springframework.messaging.Message;
  */
 @Configuration
 @ConditionalOnClass({ KafkaTemplate.class, EmbeddedKafkaBroker.class })
-@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true",
+		matchIfMissing = true)
 @AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class,
 		NoOpContractVerifierAutoConfiguration.class })
 @ConditionalOnBean(EmbeddedKafkaBroker.class)
