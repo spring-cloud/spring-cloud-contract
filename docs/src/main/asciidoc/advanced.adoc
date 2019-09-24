@@ -245,7 +245,7 @@ own implementation of the `StubGenerator` interface. The following code listing 
 ====
 [source,groovy]
 ----
-include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/StubGenerator.java[indent=0,lines=16..-1]
+include::{converters_path}/src/main/java/org/springframework/cloud/contract/verifier/converter/StubGenerator.java[indent=0,lines=16..-1]
 ----
 ====
 
