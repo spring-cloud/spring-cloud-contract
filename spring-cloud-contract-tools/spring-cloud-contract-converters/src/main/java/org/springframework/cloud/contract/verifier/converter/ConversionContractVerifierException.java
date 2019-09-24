@@ -14,30 +14,19 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.wiremock
+package org.springframework.cloud.contract.verifier.converter;
 
-import groovy.transform.CompileStatic
-
-import org.springframework.cloud.contract.verifier.converter.StubGenerator
+import org.springframework.cloud.contract.spec.ContractVerifierException;
 
 /**
- * WireMock implementation of the {@link StubGenerator}
+ * Thrown when a a DSL can't be properly converted.
  *
  * @since 1.0.0
  */
-@CompileStatic
-abstract class DslToWireMockConverter implements StubGenerator {
+public class ConversionContractVerifierException extends ContractVerifierException {
 
-	@Override
-	String generateOutputFileNameForInput(String inputFileName) {
-		return inputFileName.replaceAll(extension(inputFileName), 'json')
+	public ConversionContractVerifierException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	private String extension(String inputFileName) {
-		int i = inputFileName.lastIndexOf('.')
-		if (i > 0) {
-			return inputFileName.substring(i + 1)
-		}
-		return ""
-	}
 }
