@@ -46,6 +46,7 @@ import org.springframework.messaging.MessageHeaders
 import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Component
 import org.springframework.test.context.ContextConfiguration
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -74,24 +75,22 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	private Message receiveFromOutput() {
-		Message m = this.myMessageListener.output
+		Message m = this.myMessageListener.output()
 		log.info("Received message [" + m + "]")
 		return m
 	}
 
 	// Skipping the test on Jenkins cause it's for some reason flakey only there
-	@IgnoreIf({  env["JENKINS_HOME"] != null })
 	def 'should download the stub and register a route for it'() {
-		when:
-			log.info("Sending the message")
-			// tag::client_send[]
-			Message message = MessageBuilder.createMessage(new BookReturned('foo'), new MessageHeaders([sample: "header",]))
-			kafkaTemplate.setDefaultTopic('input')
-			kafkaTemplate.send(message)
-			// end::client_send[]
-			log.info("Message sent")
-		then:
+		expect:
 			await.eventually {
+				log.info("Sending the message")
+				// tag::client_send[]
+				Message message = MessageBuilder.createMessage(new BookReturned('foo'), new MessageHeaders([sample: "header",]))
+				kafkaTemplate.setDefaultTopic('input')
+				kafkaTemplate.send(message)
+				// end::client_send[]
+				log.info("Message sent")
 				log.info("Receiving the message")
 				// tag::client_receive[]
 				Message receivedMessage = receiveFromOutput()
@@ -106,12 +105,11 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger a message by label'() {
-		when:
-			// tag::client_trigger[]
-			stubFinder.trigger('return_book_1')
-			// end::client_trigger[]
-		then:
+		expect:
 			await.eventually {
+				// tag::client_trigger[]
+				stubFinder.trigger('return_book_1')
+				// end::client_trigger[]
 				// tag::client_trigger_receive[]
 				Message receivedMessage = receiveFromOutput()
 				// end::client_trigger_receive[]
@@ -124,13 +122,12 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
-		when:
-			// tag::trigger_group_artifact[]
-			stubFinder.
-					trigger('my:stubs', 'return_book_1')
-			// end::trigger_group_artifact[]
-		then:
+		expect:
 			await.eventually {
+				// tag::trigger_group_artifact[]
+				stubFinder.
+						trigger('my:stubs', 'return_book_1')
+				// end::trigger_group_artifact[]
 				Message receivedMessage = receiveFromOutput()
 				assert receivedMessage != null
 				assert assertThatBodyContainsBookNameFoo(receivedMessage.getPayload())
@@ -139,12 +136,11 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger a label for the existing artifactId'() {
-		when:
-			// tag::trigger_artifact[]
-			stubFinder.trigger('stubs', 'return_book_1')
-			// end::trigger_artifact[]
-		then:
+		expect:
 			await.eventually {
+				// tag::trigger_artifact[]
+				stubFinder.trigger('stubs', 'return_book_1')
+				// end::trigger_artifact[]
 				Message receivedMessage = receiveFromOutput()
 				assert receivedMessage != null
 				assert assertThatBodyContainsBookNameFoo(receivedMessage.getPayload())
@@ -167,12 +163,11 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger messages by running all triggers'() {
-		when:
-			// tag::trigger_all[]
-			stubFinder.trigger()
-			// end::trigger_all[]
-		then:
+		expect:
 			await.eventually {
+				// tag::trigger_all[]
+				stubFinder.trigger()
+				// end::trigger_all[]
 				Message receivedMessage = receiveFromOutput()
 				assert receivedMessage != null
 				assert assertThatBodyContainsBookNameFoo(receivedMessage.getPayload())
@@ -207,9 +202,6 @@ class KafkaStubRunnerSpec extends Specification {
 		String objectAsString = payload instanceof String ? payload :
 				JsonOutput.toJson(payload)
 		def json = new JsonSlurper().parseText(objectAsString)
-		if (objectAsString.contains("payload")) {
-			return json.payload.bookName == 'foo'
-		}
 		return json.bookName == 'foo'
 	}
 
@@ -246,8 +238,9 @@ class KafkaStubRunnerSpec extends Specification {
 			this.latch = new CountDownLatch(1)
 		}
 
-		void await() {
-			this.latch.await(15, TimeUnit.SECONDS)
+		Message output() {
+			this.latch.await(2, TimeUnit.SECONDS)
+			return this.output
 		}
 	}
 
