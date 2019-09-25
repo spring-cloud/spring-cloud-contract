@@ -832,8 +832,8 @@ Social remarks
 discuss changes while going through the process
 * CDC is all about communication
 
-The https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-server[server-side
-code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-client[the client code  is available here].
+The {samples_code}/{standalone_samples_path}/http-server[server-side
+code is available here] and {samples_code}/{standalone_samples_path}/http-client[the client code  is available here].
 
 TIP: In this case, the producer owns the contracts. Physically, all of the contracts are
 in the producer's repository.
