@@ -40,6 +40,7 @@ class ScenarioProjectSpec extends ContractVerifierIntegrationSpec {
 			assert fileExists('build.gradle')
 		expect:
 			switchToJunitTestFramework()
+			emptySourceSet()
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
 	}

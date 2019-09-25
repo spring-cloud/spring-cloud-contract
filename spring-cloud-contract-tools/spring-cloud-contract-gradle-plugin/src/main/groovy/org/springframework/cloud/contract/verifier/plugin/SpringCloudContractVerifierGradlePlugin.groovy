@@ -26,6 +26,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+
 import org.springframework.cloud.contract.verifier.config.TestFramework
 
 /**
@@ -71,8 +72,10 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	// This must be called within afterEvaluate due to getting data from extension, which must be initialised first:
 	@CompileDynamic
 	private void applyDefaultSourceSets(ContractVerifierExtension extension) {
+		boolean sourceSetPresent = extension.getSourceSet().isPresent()
+		String sourceSet = sourceSet(sourceSetPresent, extension)
 		String sourceSetType = extension.testFramework.get() == TestFramework.SPOCK ? "groovy" : "java"
-		project.sourceSets.test."${sourceSetType}" {
+		project.sourceSets."${sourceSet}"."${sourceSetType}" {
 			project.logger.
 					info("Registering ${extension.generatedTestSourcesDir.get().asFile} as test source directory")
 			srcDir extension.generatedTestSourcesDir.get().asFile
@@ -82,6 +85,13 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 					info("Registering ${extension.generatedTestResourcesDir.get().asFile} as test resource directory")
 			srcDir extension.generatedTestResourcesDir.get().asFile
 		}
+	}
+
+	private String sourceSet(boolean sourceSetPresent, ContractVerifierExtension extension) {
+		if (sourceSetPresent) {
+			return extension.getSourceSet().get()
+		}
+		return "test"
 	}
 
 	// This must be called within afterEvaluate due to getting data from extension, which must be initialised first:
@@ -115,7 +125,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private void createAndConfigurePublishStubsToScmTask(ContractVerifierExtension extension,
-														 TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
+			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
 		TaskProvider<PublishStubsToScmTask> task = project.tasks.register(PublishStubsToScmTask.TASK_NAME, PublishStubsToScmTask)
 		task.configure {
 			it.description = "The generated stubs get committed to the SCM repo and pushed to origin"
@@ -127,7 +137,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private TaskProvider<GenerateClientStubsFromDslTask> createAndConfigureGenerateClientStubs(ContractVerifierExtension extension,
-																							   TaskProvider<ContractsCopyTask> copyContracts) {
+			TaskProvider<ContractsCopyTask> copyContracts) {
 		TaskProvider<GenerateClientStubsFromDslTask> task = project.tasks.register(GenerateClientStubsFromDslTask.TASK_NAME, GenerateClientStubsFromDslTask)
 		task.configure {
 			it.description = "Generate client stubs from the contracts"
@@ -140,13 +150,14 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private TaskProvider<Task> createAndConfigureStubsJarTasks(ContractVerifierExtension extension,
-															   TaskProvider<ContractsCopyTask> copyContracts,
-															   TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
+			TaskProvider<ContractsCopyTask> copyContracts,
+			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
 		TaskProvider<Task> task = stubsTask()
 		if (task) {
 			// How is this possible? Where can it come from?
 			project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!")
-		} else {
+		}
+		else {
 			task = createStubsJarTask(extension, generateClientStubs)
 		}
 		task.configure {
@@ -172,7 +183,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 				def publishingExtension = project.extensions.findByName('publishing')
 				if (hasStubsPublication(publishingExtension)) {
 					project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs publication was present - won't create a new one. Remember about passing stubs as artifact")
-				} else {
+				}
+				else {
 					project.logger.debug("Spring Cloud Contract Verifier Plugin: Stubs publication is not present - will create one")
 					setPublications(publishingExtension, stubsTask)
 				}
@@ -212,7 +224,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	// TODO: Can we define inputs / outputs and make it incremental?
 	@CompileDynamic
 	private TaskProvider<Task> createStubsJarTask(ContractVerifierExtension extension,
-												  TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
+			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
 		TaskProvider<Jar> task = project.tasks.register(VERIFIER_STUBS_JAR_TASK_NAME, Jar)
 		task.configure {
 			it.description = "Creates the stubs JAR task"

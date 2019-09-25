@@ -59,8 +59,13 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	protected void switchToJunitTestFramework(String from, String to) {
 		Path path = buildFile.toPath()
-		String content = new StringBuilder(new String(Files.readAllBytes(path), UTF_8)).replaceAll(SPOCK, JUNIT)
-																					   .replaceAll(from, to)
+		String content = new StringBuilder(new String(Files.readAllBytes(path), UTF_8)).replaceAll(SPOCK, JUNIT).replaceAll(from, to)
+		Files.write(path, content.getBytes(UTF_8))
+	}
+
+	protected void emptySourceSet() {
+		Path path = buildFile.toPath()
+		String content = new StringBuilder(new String(Files.readAllBytes(path), UTF_8)).replaceAll("sourceSet = \"java\"", "")
 		Files.write(path, content.getBytes(UTF_8))
 	}
 

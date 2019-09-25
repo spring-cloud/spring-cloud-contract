@@ -16,6 +16,15 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.gradle.api.Action;
@@ -28,18 +37,11 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
+
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 import org.springframework.util.Assert;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Marcin Grzejszczak
@@ -231,6 +233,11 @@ public class ContractVerifierExtension {
 	 */
 	private Property<Boolean> disableStubPublication;
 
+	/**
+	 * Source set where the contracts are stored. If not provided will assume {@code test}.
+	 */
+	private Property<String> sourceSet;
+
 	@Inject
 	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects) {
 		this.testFramework = objects.property(TestFramework.class).convention(TestFramework.JUNIT);
@@ -264,6 +271,7 @@ public class ContractVerifierExtension {
 		this.convertToYaml = objects.property(Boolean.class).convention(false);
 		this.contractsProperties = objects.mapProperty(String.class, String.class).convention(new HashMap<>());
 		this.disableStubPublication = objects.property(Boolean.class).convention(false);
+		this.sourceSet = objects.property(String.class);
 	}
 
 	@Deprecated
@@ -559,6 +567,14 @@ public class ContractVerifierExtension {
 
 	public void setDisableStubPublication(boolean disableStubPublication) {
 		this.disableStubPublication.set(disableStubPublication);
+	}
+
+	public Property<String> getSourceSet() {
+		return sourceSet;
+	}
+
+	public void setSourceSet(String sourceSet) {
+		this.sourceSet.set(sourceSet);
 	}
 
 	public static class Dependency {

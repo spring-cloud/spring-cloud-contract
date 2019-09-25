@@ -98,6 +98,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
 		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
 		stubsOutputDir = stubsOutputDirRoot
+		sourceSet = "test"
 	}
 
 	jar {

@@ -198,6 +198,7 @@ contracts {
     contractsDslDir = project.file("${project.rootDir}/src/test/resources/contracts")
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
+    sourceSet = null
 
     // the following properties are used when you want to provide where the JAR with contract lays
     contractDependency {
@@ -294,6 +295,7 @@ the Groovy DSL should be placed.
 JUnit 5 are supported, with JUnit 4 being the default framework.
 * `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
+* `sourceSet`: Source set where the contracts are stored. If not provided will assume `test` (e.g. `project.sourceSets.test.java` for JUnit or `project.sourceSets.test.groovy` for Spock).
 
 You can use the following properties when you want to specify the location of the JAR
 that contains the contracts:
