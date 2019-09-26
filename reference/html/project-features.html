@@ -2498,6 +2498,18 @@ See the <a href="https://github.com/spring-cloud/spring-cloud-contract/wiki/Spri
 <div class="paragraph">
 <p>For YAML, you can use only the <code>matchers</code> section.</p>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Entries inside the <code>matchers</code> must reference existing elements of the payload. For more information check this <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/722">issue</a>.
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
 <h4 id="contract-dsl-dynamic-properties-in-body"><a class="anchor" href="#contract-dsl-dynamic-properties-in-body"></a><a class="link" href="#contract-dsl-dynamic-properties-in-body">2.4.1. Dynamic Properties inside the Body</a></h4>
 <div class="admonitionblock important">
@@ -5769,7 +5781,7 @@ Contract.make {
             header('''Content-Type''', '''application/json;charset=UTF-8''')
             header('''Content-Length''', '''3''')
         }
-        testMatchers {
+        bodyMatchers {
             jsonPath('$[?(@.foo &gt;= 20)]', byType())
         }
     }
@@ -8338,7 +8350,28 @@ versions, which are automatically uploaded after every successful build, as foll
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */
+buildscript {
     repositories {
         mavenCentral()
         mavenLocal()

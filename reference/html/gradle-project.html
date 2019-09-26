@@ -202,15 +202,84 @@ documnetation for more information</a>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock primary">
-<div class="title">Plugin DSL</div>
+<div class="title">Plugin DSL GA versions</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// build.gradle
+plugins {
+  id "groovy"
+  // this will work only for GA versions of Spring Cloud Contract
+  id "org.springframework.cloud.contract" version "${GAVerifierVersion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${GAVerifierVersion}"
+    }
+}
+
+dependencies {
+    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    // example with adding Spock core and Spock Spring
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile "org.spockframework:spock-spring:${spockVersion}"
+    testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Plugin DSL non GA versions</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// settings.gradle
+pluginManagement {
+    plugins {
+        id "org.springframework.cloud.contract" version "${verifierVersion}"
+    }
+    repositories {
+        // to pick from local .m2
+        mavenLocal()
+        // for snapshots
+        maven { url "https://repo.spring.io/snapshot" }
+        // for milestones
+        maven { url "https://repo.spring.io/milestone" }
+        // for GA versions
+        gradlePluginPortal()
+    }
+}
+
+// build.gradle
+plugins {
+  id "groovy"
+  id "org.springframework.cloud.contract"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+    }
+}
+
+dependencies {
+    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    // example with adding Spock core and Spock Spring
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile "org.spockframework:spock-spring:${spockVersion}"
+    testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Legacy Plugin Application</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// build.gradle
+buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
         classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+        // here you can also pass additional dependencies such as Pact or Kotlin spec e.g.:
+        // classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${verifier_version}"
     }
 }
 
@@ -232,52 +301,7 @@ dependencies {
 }</code></pre>
 </div>
 </div>
-<div class="listingblock secondary">
-<div class="title">Legacy Plugin Application</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
-    }
-}
-
-apply plugin: 'groovy'
-
-plugins {
-  id "org.springframework.cloud.contract" version "${GAVerifierVersion}"
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"
-    }
-}
-
-dependencies {
-    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    // example with adding Spock core and Spock Spring
-    testCompile "org.spockframework:spock-core:${spockVersion}"
-    testCompile "org.spockframework:spock-spring:${spockVersion}"
-    testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
-}</code></pre>
 </div>
-</div>
-</div>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-The Plugin DSL option will only work for GA (General Availability) releases (i.e. <code>2.2.0.RELEASE</code> etc.).
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -331,7 +355,28 @@ which are automatically uploaded after every successful build, as the following 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */
+buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
