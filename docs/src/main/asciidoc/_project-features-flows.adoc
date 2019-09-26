@@ -413,7 +413,7 @@ Contract.make {
             header('''Content-Type''', '''application/json;charset=UTF-8''')
             header('''Content-Length''', '''3''')
         }
-        testMatchers {
+        bodyMatchers {
             jsonPath('$[?(@.foo >= 20)]', byType())
         }
     }

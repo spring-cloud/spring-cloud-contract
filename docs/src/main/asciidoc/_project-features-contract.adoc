@@ -808,6 +808,8 @@ See the https://github.com/spring-cloud/spring-cloud-contract/wiki/Spring-Cloud-
 
 For YAML, you can use only the `matchers` section.
 
+IMPORTANT: Entries inside the `matchers` must reference existing elements of the payload. For more information check this https://github.com/spring-cloud/spring-cloud-contract/issues/722[issue].
+
 [[contract-dsl-dynamic-properties-in-body]]
 ==== Dynamic Properties inside the Body
 
