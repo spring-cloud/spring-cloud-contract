@@ -34,10 +34,6 @@ dependencies {
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
 }
 
-contracts {
-	failOnNoContracts = false
-}
-
 test {
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {

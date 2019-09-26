@@ -22,7 +22,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
-import org.junit.Assert;
 
 import org.springframework.util.ClassUtils;
 
@@ -58,8 +57,8 @@ public abstract class WireMockSpring {
 							.build().getSocketFactory());
 				}
 				catch (Exception e) {
-					Assert.fail("Cannot install custom socket factory: [" + e.getMessage()
-							+ "]");
+					throw new AssertionError("Cannot install custom socket factory: ["
+							+ e.getMessage() + "]");
 				}
 			}
 			initialized = true;

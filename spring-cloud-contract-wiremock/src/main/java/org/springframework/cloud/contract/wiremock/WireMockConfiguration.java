@@ -109,8 +109,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 			this.server = new WireMockServer(this.options);
 		}
-		registerStubs();
-		logRegisteredMappings();
+		resetMappings();
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
@@ -125,10 +124,11 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	void resetMappings() {
 		this.server.resetAll();
+		registerStubs();
 		logRegisteredMappings();
 	}
 
-	private void registerStubs() throws IOException {
+	private void registerStubs() {
 		if (log.isDebugEnabled()) {
 			log.debug("Will register [" + this.wireMock.getServer().getStubs().length
 					+ "] stubs");
@@ -144,11 +144,16 @@ public class WireMockConfiguration implements SmartLifecycle {
 					}
 					pattern = pattern + "**/*.json";
 				}
-				for (Resource resource : resolver.getResources(pattern)) {
-					StubMapping stubMapping = WireMockStubMapping
-							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
-									Charset.forName("UTF-8")));
-					this.server.addStubMapping(stubMapping);
+				try {
+					for (Resource resource : resolver.getResources(pattern)) {
+						StubMapping stubMapping = WireMockStubMapping.buildFrom(
+								StreamUtils.copyToString(resource.getInputStream(),
+										Charset.forName("UTF-8")));
+						this.server.addStubMapping(stubMapping);
+					}
+				}
+				catch (IOException ex) {
+					throw new IllegalStateException(ex);
 				}
 			}
 		}
