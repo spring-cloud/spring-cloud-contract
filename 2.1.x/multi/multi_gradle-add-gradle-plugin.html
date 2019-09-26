@@ -1,0 +1,774 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>5.&nbsp;Add Gradle Plugin with Dependencies</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__spring_cloud_contract_verifier_setup.html" title="4.&nbsp;Spring Cloud Contract Verifier Setup"><link rel="next" href="multi__spring_cloud_contract_verifier_messaging.html" title="6.&nbsp;Spring Cloud Contract Verifier Messaging"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.&nbsp;Add Gradle Plugin with Dependencies</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_setup.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_verifier_messaging.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="gradle-add-gradle-plugin" href="#gradle-add-gradle-plugin"></a>5.&nbsp;Add Gradle Plugin with Dependencies</h1></div></div></div><p>To add a Gradle plugin with dependencies, you can use code similar to the following:</p><div class="informalexample"><p class="primary"><b>Plugin DSL GA versions.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// build.gradle</span>
+plugins {
+  id <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"groovy"</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// this will work only for GA versions of Spring Cloud Contract</span>
+  id <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract"</span> version <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${GAVerifierVersion}"</span>
+}
+
+dependencyManagement {
+	imports {
+		mavenBom <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-dependencies:${GAVerifierVersion}"</span>
+	}
+}
+
+dependencies {
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.codehaus.groovy:groovy-all:${groovyVersion}"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// example with adding Spock core and Spock Spring</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.spockframework:spock-core:${spockVersion}"</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.spockframework:spock-spring:${spockVersion}"</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud:spring-cloud-starter-contract-verifier'</span>
+}</pre><p class="primary">
+</p><p class="secondary"><b>Plugin DSL non GA versions.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// settings.gradle</span>
+pluginManagement {
+	plugins {
+		id <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract"</span> version <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${verifierVersion}"</span>
+	}
+    repositories {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// to pick from local .m2</span>
+        mavenLocal()
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// for snapshots</span>
+        maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// for milestones</span>
+        maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// for GA versions</span>
+        gradlePluginPortal()
+    }
+}
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// build.gradle</span>
+plugins {
+  id <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"groovy"</span>
+  id <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract"</span>
+}
+
+dependencyManagement {
+	imports {
+		mavenBom <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"</span>
+	}
+}
+
+dependencies {
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.codehaus.groovy:groovy-all:${groovyVersion}"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// example with adding Spock core and Spock Spring</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.spockframework:spock-core:${spockVersion}"</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.spockframework:spock-spring:${spockVersion}"</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud:spring-cloud-starter-contract-verifier'</span>
+}</pre><p class="secondary">
+</p><p class="secondary"><b>Legacy Plugin Application.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// build.gradle</span>
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"</span>
+		classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// here you can also pass additional dependencies such as Pact or Kotlin spec e.g.:</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${verifier_version}"</span>
+	}
+}
+
+apply plugin: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'groovy'</span>
+apply plugin: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'spring-cloud-contract'</span>
+
+dependencyManagement {
+	imports {
+		mavenBom <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"</span>
+	}
+}
+
+dependencies {
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.codehaus.groovy:groovy-all:${groovyVersion}"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// example with adding Spock core and Spock Spring</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.spockframework:spock-core:${spockVersion}"</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.spockframework:spock-spring:${spockVersion}"</span>
+	testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud:spring-cloud-starter-contract-verifier'</span>
+}</pre><p class="secondary">
+</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-and-rest-assured" href="#gradle-and-rest-assured"></a>5.1&nbsp;Gradle and Rest Assured 2.0</h2></div></div></div><p>By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x
+you can add it to the plugins classpath, as shown here:</p><pre class="programlisting">buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+	    classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"</span>
+		classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"</span>
+		classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.jayway.restassured:rest-assured:2.5.0"</span>
+		classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.jayway.restassured:spring-mock-mvc:2.5.0"</span>
+	}
+}
+
+depenendencies {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// all dependencies</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// you can exclude rest-assured from spring-cloud-contract-verifier</span>
+    testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.jayway.restassured:rest-assured:2.5.0"</span>
+    testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.jayway.restassured:spring-mock-mvc:2.5.0"</span>
+}</pre><p>That way, the plugin automatically sees that Rest Assured 2.x is present on the classpath
+and modifies the imports accordingly.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-snapshot-versions" href="#gradle-snapshot-versions"></a>5.2&nbsp;Snapshot Versions for Gradle</h2></div></div></div><p>Add the additional snapshot repository to your build.gradle to use snapshot versions,
+which are automatically uploaded after every successful build, as shown here:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */</span>
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/snapshot"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/milestone"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"https://repo.spring.io/release"</span> }
+	}
+}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-add-stubs" href="#gradle-add-stubs"></a>5.3&nbsp;Add stubs</h2></div></div></div><p>By default, Spring Cloud Contract Verifier is looking for stubs in the
+<code class="literal">src/test/resources/contracts</code> directory.</p><p>The directory containing stub definitions is treated as a class name, and each stub
+definition is treated as a single test. Spring Cloud Contract Verifier assumes that it
+contains at  least one level of directories that are to be used as the test class name.
+If more than  one level of nested directories is present, all except the last one is used
+as the package name. For example, with following structure:</p><pre class="programlisting">src/test/resources/contracts/myservice/shouldCreateUser.groovy
+src/test/resources/contracts/myservice/shouldReturnUser.groovy</pre><p>Spring Cloud Contract Verifier creates a test class named <code class="literal">defaultBasePackage.MyService</code>
+with two methods:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">shouldCreateUser()</code></li><li class="listitem"><code class="literal">shouldReturnUser()</code></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-run-plugin" href="#gradle-run-plugin"></a>5.4&nbsp;Run the Plugin</h2></div></div></div><p>The plugin registers itself to be invoked before a <code class="literal">check</code> task. If you want it to be
+part of your build process, you need to do nothing more. If you just want to generate
+tests, invoke the <code class="literal">generateContractTests</code> task.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-default-setup" href="#gradle-default-setup"></a>5.5&nbsp;Default Setup</h2></div></div></div><p>The default Gradle Plugin setup creates the following Gradle part of the build (in
+pseudocode):</p><pre class="programlisting">contracts {
+    testFramework =<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'JUNIT'</span>
+    testMode = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'MockMvc'</span>
+    generatedTestSourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/generated-test-sources/contracts"</span>)
+    generatedTestResourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/generated-test-resources/contracts"</span>)
+    contractsDslDir = file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.rootDir}/src/test/resources/contracts"</span>)
+    basePackageForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.verifier.tests'</span>
+    stubsOutputDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/stubs"</span>)
+
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the following properties are used when you want to provide where the JAR with contract lays</span>
+    contractDependency {
+        stringNotation = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>
+    }
+    contractsPath = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>
+    contractsWorkOffline = false
+    contractRepository {
+        cacheDownloadedContracts(true)
+    }
+}
+
+tasks.create(type: Jar, name: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'verifierStubsJar'</span>, dependsOn: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'generateClientStubs'</span>) {
+    baseName = project.name
+    classifier = contracts.stubsSuffix
+    from contractVerifier.stubsOutputDir
+}
+
+project.artifacts {
+    archives task
+}
+
+tasks.create(type: Copy, name: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'copyContracts'</span>) {
+    from contracts.contractsDslDir
+    into contracts.stubsOutputDir
+}
+
+verifierStubsJar.dependsOn <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'copyContracts'</span>
+
+publishing {
+    publications {
+        stubs(MavenPublication) {
+            artifactId project.name
+            artifact verifierStubsJar
+        }
+    }
+}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-configure-plugin" href="#gradle-configure-plugin"></a>5.6&nbsp;Configure Plugin</h2></div></div></div><p>To change the default configuration, add a <code class="literal">contracts</code> snippet to your Gradle config, as
+shown here:</p><pre class="programlisting">contracts {
+	testMode = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'MockMvc'</span>
+	baseClassForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.mycompany.tests'</span>
+	generatedTestSourcesDir = project.file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'src/generatedContract'</span>)
+}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-configuration-options" href="#gradle-configuration-options"></a>5.7&nbsp;Configuration Options</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>testMode</strong></span>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
+which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>WebTestClient</strong></span>, <span class="strong"><strong>JaxRsClient</strong></span> or to
+<span class="strong"><strong>Explicit</strong></span> for real HTTP calls.</li><li class="listitem"><span class="strong"><strong>imports</strong></span>: Creates an array with imports that should be included in generated tests
+(for example ['org.myorg.Matchers']). By default, it creates an empty array.</li><li class="listitem"><span class="strong"><strong>staticImports</strong></span>: Creates an array with static imports that should be included in
+generated tests(for example ['org.myorg.Matchers.*']). By default, it creates an empty
+array.</li><li class="listitem"><span class="strong"><strong>basePackageForTests</strong></span>: Specifies the base package for all generated tests. If not set,
+the value is picked from <code class="literal">baseClassForTests&#8217;s package and from `packageWithBaseClasses</code>.
+If neither of these values are set, then the value is set to
+<code class="literal">org.springframework.cloud.contract.verifier.tests</code>.</li><li class="listitem"><span class="strong"><strong>baseClassForTests</strong></span>: Creates a base class for all generated tests. By default, if you
+use Spock classes, the class is <code class="literal">spock.lang.Specification</code>.</li><li class="listitem"><span class="strong"><strong>packageWithBaseClasses</strong></span>: Defines a package where all the base classes reside. This
+setting takes precedence over <span class="strong"><strong>baseClassForTests</strong></span>.</li><li class="listitem"><span class="strong"><strong>baseClassMappings</strong></span>: Explicitly maps a contract package to a FQN of a base class. This
+setting takes precedence over <span class="strong"><strong>packageWithBaseClasses</strong></span> and <span class="strong"><strong>baseClassForTests</strong></span>.</li><li class="listitem"><span class="strong"><strong>ruleClassForTests</strong></span>: Specifies a rule that should be added to the generated test
+classes.</li><li class="listitem"><span class="strong"><strong>ignoredFiles</strong></span>: Uses an <code class="literal">Antmatcher</code> to allow defining stub files for which processing
+should be skipped. By default, it is an empty array.</li><li class="listitem"><span class="strong"><strong>contractsDslDir</strong></span>: Specifies the directory containing contracts written using the
+GroovyDSL. By default, its value is <code class="literal">$rootDir/src/test/resources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>generatedTestSourcesDir</strong></span>: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default its value is
+<code class="literal">$buildDir/generated-test-sources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>generatedTestResourcesDir</strong></span>: Specifies the test resource directory where resources used by the tests generated
+from the Groovy DSL should be placed. By default its value is
+<code class="literal">$buildDir/generated-test-resources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>stubsOutputDir</strong></span>: Specifies the directory where the generated WireMock stubs from
+the Groovy DSL should be placed.</li><li class="listitem"><span class="strong"><strong>testFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code>) and
+JUnit 5 are supported with JUnit 4 being the default framework.</li><li class="listitem"><span class="strong"><strong>contractsProperties</strong></span>: a map containing properties to be passed to Spring Cloud Contract
+components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.</li></ul></div><p>The following properties are used when you want to specify the location of the JAR
+containing the contracts:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>contractDependency</strong></span>: Specifies the Dependency that provides
+<code class="literal">groupid:artifactid:version:classifier</code> coordinates. You can use the <code class="literal">contractDependency</code>
+closure to set it up.</li><li class="listitem"><span class="strong"><strong>contractsPath</strong></span>: Specifies the path to the jar. If contract dependencies are
+downloaded, the path defaults to <code class="literal">groupid/artifactid</code> where <code class="literal">groupid</code> is slash
+separated. Otherwise, it scans contracts under the provided directory.</li><li class="listitem"><span class="strong"><strong>contractsMode</strong></span>: Specifies the mode of downloading contracts (whether the
+JAR is available offline, remotely etc.)</li><li class="listitem"><span class="strong"><strong>deleteStubsAfterTest</strong></span>: If set to <code class="literal">false</code> will not remove any downloaded
+contracts from temporary directories</li></ul></div><p>Below you can find a list of experimental features you can turn on via the plugin:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>convertToYaml</strong></span>: converts all DSLs to the declarative, YAML format. This can be extremely useful when you&#8217;re using external libraries in your Groovy DSLs. By turning this feature on (by setting it to <code class="literal">true</code>) you will not need to add the library dependency on the consumer side.</li><li class="listitem"><span class="strong"><strong>assertJsonSize</strong></span>: You can check the size of JSON arrays in the generated tests. This feature is disabled by default.</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-single-base-class" href="#gradle-single-base-class"></a>5.8&nbsp;Single Base Class for All Tests</h2></div></div></div><p>When using Spring Cloud Contract Verifier in default MockMvc, you need to create a base
+specification for all generated acceptance tests. In this class, you need to point to an
+endpoint, which should be verified.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseMockMvcSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+
+	def setup() {
+		RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> PairIdController())
+	}
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> isProperCorrelationId(Integer correlationId) {
+		assert correlationId == <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123456</xslthl:number>
+	}
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> isEmpty(String value) {
+		assert value == null
+	}
+
+}</pre><p>If you use <code class="literal">Explicit</code> mode, you can use a base class to initialize the whole tested app
+as you might see in regular integration tests. If you use the <code class="literal">JAXRSCLIENT</code> mode, this
+base class should also contain a <code class="literal">protected WebTarget webTarget</code> field. Right now, the
+only option to test the JAX-RS API is to start a web server.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-different-base-classes" href="#gradle-different-base-classes"></a>5.9&nbsp;Different Base Classes for Contracts</h2></div></div></div><p>If your base classes differ between contracts, you can tell the Spring Cloud Contract
+plugin which class should get extended by the autogenerated tests. You have two options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Follow a convention by providing the <code class="literal">packageWithBaseClasses</code></li><li class="listitem">Provide explicit mapping via <code class="literal">baseClassMappings</code></li></ul></div><p><span class="strong"><strong>By Convention</strong></span></p><p>The convention is such that if you have a contract under (for example)
+<code class="literal">src/test/resources/contract/foo/bar/baz/</code> and set the value of the
+<code class="literal">packageWithBaseClasses</code> property to <code class="literal">com.example.base</code>, then Spring Cloud Contract
+Verifier assumes that there is a <code class="literal">BarBazBase</code> class under the <code class="literal">com.example.base</code> package.
+In other words, the system takes the last two parts of the package, if they exist, and
+forms a class with a <code class="literal">Base</code> suffix. This rule takes precedence over <span class="strong"><strong>baseClassForTests</strong></span>.
+Here is an example of how it works in the <code class="literal">contracts</code> closure:</p><pre class="programlisting">packageWithBaseClasses = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.base'</span></pre><p><span class="strong"><strong>By Mapping</strong></span></p><p>You can manually map a regular expression of the contract&#8217;s package to fully qualified
+name of the base class for the matched contract. You have to provide a list called
+<code class="literal">baseClassMappings</code> that consists <code class="literal">baseClassMapping</code> objects that takes a
+<code class="literal">contractPackageRegex</code> to <code class="literal">baseClassFQN</code> mapping. Consider the following example:</p><pre class="programlisting">baseClassForTests = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example.FooBase"</span>
+baseClassMappings {
+	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/com/.*'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.ComBase'</span>)
+	baseClassMapping(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.*/bar/.*'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example.BarBase'</span>)
+}</pre><p>Let&#8217;s assume that you have contracts under
+ - <code class="literal">src/test/resources/contract/com/</code>
+ - <code class="literal">src/test/resources/contract/foo/</code></p><p>By providing the <code class="literal">baseClassForTests</code>, we have a fallback in case mapping did not succeed.
+(You could also provide the <code class="literal">packageWithBaseClasses</code> as a fallback.) That way, the tests
+generated from <code class="literal">src/test/resources/contract/com/</code> contracts extend the
+<code class="literal">com.example.ComBase</code>, whereas the rest of the tests extend <code class="literal">com.example.FooBase</code>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-invoking-generated-tests" href="#gradle-invoking-generated-tests"></a>5.10&nbsp;Invoking Generated Tests</h2></div></div></div><p>To ensure that the provider side is compliant with defined contracts, you need to invoke:</p><pre class="programlisting">./gradlew generateContractTests <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span></pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-pushing-stubs-to-scm" href="#gradle-pushing-stubs-to-scm"></a>5.11&nbsp;Pushing stubs to SCM</h2></div></div></div><p>If you&#8217;re using the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, it&#8217;s enough to call the <code class="literal">pushStubsToScm</code>
+task. Example:</p><pre class="programlisting">$ ./gradlew pushStubsToScm</pre><p>Under <a class="xref" href="multi__using_the_pluggable_architecture.html#scm-stub-downloader" title="11.6&nbsp;Using the SCM Stub Downloader">Section&nbsp;11.6, &#8220;Using the SCM Stub Downloader&#8221;</a> you can find all possible
+configuration options that you can pass either via
+the <code class="literal">contractsProperties</code> field e.g. <code class="literal">contracts { contractsProperties = [foo:"bar"] }</code>,
+via <code class="literal">contractsProperties</code> method e.g. <code class="literal">contracts { contractsProperties([foo:"bar"]) }</code>,
+a system property or an environment variable.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gradle-consumer" href="#gradle-consumer"></a>5.12&nbsp;Spring Cloud Contract Verifier on the Consumer Side</h2></div></div></div><p>In a consuming service, you need to configure the Spring Cloud Contract Verifier plugin
+in exactly the same way as in case of provider. If you do not want to use Stub Runner
+then you need to copy contracts stored in <code class="literal">src/test/resources/contracts</code> and generate
+WireMock JSON stubs using:</p><pre class="programlisting">./gradlew generateClientStubs</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The <code class="literal">stubsOutputDir</code> option has to be set for stub generation to work.</p></td></tr></table></div><p>When present, JSON stubs can be used in automated tests of consuming a service.</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)</xslthl:annotation>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+
+ <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@ClassRule</xslthl:annotation>
+ <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Shared</xslthl:annotation>
+ WireMockClassRule wireMockRule == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule()
+
+ <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Autowired</xslthl:annotation>
+ LoanApplicationService sut
+
+ def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should successfully apply for loan'</span>() {
+   given:
+ 	LoanApplication application =
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> LoanApplication(client: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Client(clientPesel: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'12345678901'</span>), amount: <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">123.123</xslthl:number>)
+   when:
+	LoanApplicationResult loanApplication == sut.loanApplication(application)
+   then:
+	loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLIED
+	loanApplication.rejectionReason == null
+ }
+}</pre><p><code class="literal">LoanApplication</code> makes a call to <code class="literal">FraudDetection</code> service. This request is handled by a
+WireMock server configured with stubs generated by Spring Cloud Contract Verifier.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="maven-project" href="#maven-project"></a>5.13&nbsp;Maven Project</h2></div></div></div><p>To learn how to set up the Maven project for Spring Cloud Contract Verifier, read the
+following sections:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-add-plugin" title="5.13.1&nbsp;Add maven plugin">Section&nbsp;5.13.1, &#8220;Add maven plugin&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-rest-assured" title="5.13.2&nbsp;Maven and Rest Assured 2.0">Section&nbsp;5.13.2, &#8220;Maven and Rest Assured 2.0&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-snapshot-versions" title="5.13.3&nbsp;Snapshot versions for Maven">Section&nbsp;5.13.3, &#8220;Snapshot versions for Maven&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-add-stubs" title="5.13.4&nbsp;Add stubs">Section&nbsp;5.13.4, &#8220;Add stubs&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-run-plugin" title="5.13.5&nbsp;Run plugin">Section&nbsp;5.13.5, &#8220;Run plugin&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-configure-plugin" title="5.13.6&nbsp;Configure plugin">Section&nbsp;5.13.6, &#8220;Configure plugin&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-configuration-options" title="5.13.7&nbsp;Configuration Options">Section&nbsp;5.13.7, &#8220;Configuration Options&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-single-base" title="5.13.8&nbsp;Single Base Class for All Tests">Section&nbsp;5.13.8, &#8220;Single Base Class for All Tests&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-different-base" title="5.13.9&nbsp;Different base classes for contracts">Section&nbsp;5.13.9, &#8220;Different base classes for contracts&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-invoking-generated-tests" title="5.13.10&nbsp;Invoking generated tests">Section&nbsp;5.13.10, &#8220;Invoking generated tests&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-pushing-stubs-to-scm" title="5.13.11&nbsp;Pushing stubs to SCM">Section&nbsp;5.13.11, &#8220;Pushing stubs to SCM&#8221;</a></li><li class="listitem"><a class="xref" href="multi_gradle-add-gradle-plugin.html#maven-sts" title="5.13.12&nbsp;Maven Plugin and STS">Section&nbsp;5.13.12, &#8220;Maven Plugin and STS&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-add-plugin" href="#maven-add-plugin"></a>5.13.1&nbsp;Add maven plugin</h3></div></div></div><p>Add the Spring Cloud Contract BOM in a fashion similar to this:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencyManagement&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-dependencies<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-release.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;type&gt;</span>pom<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/type&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>import<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencyManagement&gt;</span></pre><p>Next, add the <code class="literal">Spring Cloud Contract Verifier</code> Maven plugin:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>com.example.fraud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;convertToYaml&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/convertToYaml&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>You can read more in the
+<a class="link" href="https://cloud.spring.io/spring-cloud-static/spring-cloud-contract/2.0.0.RELEASE/spring-cloud-contract-maven-plugin/" target="_top">Spring
+Cloud Contract Maven Plugin Documentation (example for <code class="literal">2.0.0.RELEASE</code> version)</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-rest-assured" href="#maven-rest-assured"></a>5.13.2&nbsp;Maven and Rest Assured 2.0</h3></div></div></div><p>By default, Rest Assured 3.x is added to the classpath. However, you can use Rest
+Assured 2.x by adding it to the plugins classpath, as shown here:</p><pre class="programlisting">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+    &lt;/configuration&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-verifier&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+           &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+           &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+           &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+           &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- all dependencies --&gt;
+    &lt;!-- you can exclude rest-assured from spring-cloud-contract-verifier --&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+       &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+       &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+       &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+       &lt;version&gt;<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2.5</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</pre><p>That way, the plugin automatically sees that Rest Assured 3.x is present on the classpath
+and modifies the imports accordingly.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-snapshot-versions" href="#maven-snapshot-versions"></a>5.13.3&nbsp;Snapshot versions for Maven</h3></div></div></div><p>For Snapshot and Milestone versions, you have to add the following section to your
+<code class="literal">pom.xml</code>, as shown here:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repositories&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/snapshot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/milestone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/release<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repositories&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepositories&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/snapshot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/milestone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/release<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepositories&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-add-stubs" href="#maven-add-stubs"></a>5.13.4&nbsp;Add stubs</h3></div></div></div><p>By default, Spring Cloud Contract Verifier is looking for stubs in the
+<code class="literal">src/test/resources/contracts</code> directory. The directory containing stub definitions is
+treated as a class name, and each stub definition is treated as a single test. We assume
+that it contains at least one directory to be used as test class name. If there is more
+than one level of nested directories, all except the last one is used as package name.
+For example, with following structure:</p><pre class="programlisting">src/test/resources/contracts/myservice/shouldCreateUser.groovy
+src/test/resources/contracts/myservice/shouldReturnUser.groovy</pre><p>Spring Cloud Contract Verifier creates a test class named <code class="literal">defaultBasePackage.MyService</code>
+with two methods</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">shouldCreateUser()</code></li><li class="listitem"><code class="literal">shouldReturnUser()</code></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-run-plugin" href="#maven-run-plugin"></a>5.13.5&nbsp;Run plugin</h3></div></div></div><p>The plugin goal <code class="literal">generateTests</code> is assigned to be invoked in the phase called
+<code class="literal">generate-test-sources</code>. If you want it to be part of your build process, you need not do
+anything. If you just want to generate tests, invoke the <code class="literal">generateTests</code> goal.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-configure-plugin" href="#maven-configure-plugin"></a>5.13.6&nbsp;Configure plugin</h3></div></div></div><p>To change the default configuration, just add a <code class="literal">configuration</code> section to the plugin
+definition or the <code class="literal">execution</code> definition, as shown here:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>convert<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>generateStubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>generateTests<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;basePackageForTests&gt;</span>org.springframework.cloud.verifier.twitter.place<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/basePackageForTests&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassForTests&gt;</span>org.springframework.cloud.verifier.twitter.place.BaseMockMvcSpec<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassForTests&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-configuration-options" href="#maven-configuration-options"></a>5.13.7&nbsp;Configuration Options</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>testMode</strong></span>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
+which is based on Spring&#8217;s MockMvc. It can also be changed to <span class="strong"><strong>WebTestClient</strong></span>, <span class="strong"><strong>JaxRsClient</strong></span> or to
+<span class="strong"><strong>Explicit</strong></span> for real HTTP calls.</li><li class="listitem"><span class="strong"><strong>basePackageForTests</strong></span>: Specifies the base package for all generated tests. If not set,
+the value is picked from <code class="literal">baseClassForTests&#8217;s package and from `packageWithBaseClasses</code>.
+If neither of these values are set, then the value is set to
+<code class="literal">org.springframework.cloud.contract.verifier.tests</code>.</li><li class="listitem"><span class="strong"><strong>ruleClassForTests</strong></span>: Specifies a rule that should be added to the generated test
+classes.</li><li class="listitem"><span class="strong"><strong>baseClassForTests</strong></span>: Creates a base class for all generated tests. By default, if you
+use Spock classes, the class is <code class="literal">spock.lang.Specification</code>.</li><li class="listitem"><span class="strong"><strong>contractsDirectory</strong></span>: Specifies a directory containing contracts written with the
+GroovyDSL. The default directory is <code class="literal">/src/test/resources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>generatedTestSourcesDir</strong></span>: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default its value is
+<code class="literal">$buildDir/generated-test-sources/contracts</code>.</li><li class="listitem"><span class="strong"><strong>generatedTestResourcesDir</strong></span>: Specifies the test resource directory where resources used by the tests generated</li><li class="listitem"><span class="strong"><strong>testFramework</strong></span>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code class="literal">TestFramework.JUNIT</code>) and
+JUnit 5 are supported with JUnit 4 being the default framework.</li><li class="listitem"><span class="strong"><strong>packageWithBaseClasses</strong></span>: Defines a package where all the base classes reside. This
+setting takes precedence over <span class="strong"><strong>baseClassForTests</strong></span>. The convention is such that, if you
+have a contract under (for example) <code class="literal">src/test/resources/contract/foo/bar/baz/</code> and set
+the value of the <code class="literal">packageWithBaseClasses</code> property to <code class="literal">com.example.base</code>, then Spring
+Cloud Contract Verifier assumes that there is a <code class="literal">BarBazBase</code> class under the
+<code class="literal">com.example.base</code> package. In other words, the system takes the last two parts of the
+package, if they exist, and forms a class with a <code class="literal">Base</code> suffix.</li><li class="listitem"><span class="strong"><strong>baseClassMappings</strong></span>: Specifies a list of base class mappings that provide
+<code class="literal">contractPackageRegex</code>, which is checked against the package where the contract is
+located, and <code class="literal">baseClassFQN</code>, which maps to the fully qualified name of the base class for
+the matched contract. For example, if you have a contract under
+<code class="literal">src/test/resources/contract/foo/bar/baz/</code> and map the property
+<code class="literal">.* &#8594; com.example.base.BaseClass</code>, then the test class generated from these contracts
+extends <code class="literal">com.example.base.BaseClass</code>. This setting takes precedence over
+<span class="strong"><strong>packageWithBaseClasses</strong></span> and <span class="strong"><strong>baseClassForTests</strong></span>.</li><li class="listitem"><span class="strong"><strong>contractsProperties</strong></span>: a map containing properties to be passed to Spring Cloud Contract
+components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.</li></ul></div><p>If you want to download your contract definitions from a Maven repository, you can use
+the following options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>contractDependency</strong></span>: The contract dependency that contains all the packaged contracts.</li><li class="listitem"><span class="strong"><strong>contractsPath</strong></span>: The path to the concrete contracts in the JAR with packaged contracts.
+Defaults to <code class="literal">groupid/artifactid</code> where <code class="literal">gropuid</code> is slash separated.</li><li class="listitem"><span class="strong"><strong>contractsMode</strong></span>: Picks the mode in which stubs will be found and registered</li><li class="listitem"><span class="strong"><strong>deleteStubsAfterTest</strong></span>: If set to <code class="literal">false</code> will not remove any downloaded
+contracts from temporary directories</li><li class="listitem"><span class="strong"><strong>contractsRepositoryUrl</strong></span>: URL to a repo with the artifacts that have contracts. If it is not provided,
+use the current Maven ones.</li><li class="listitem"><span class="strong"><strong>contractsRepositoryUsername</strong></span>: The user name to be used to connect to the repo with contracts.</li><li class="listitem"><span class="strong"><strong>contractsRepositoryPassword</strong></span>: The password to be used to connect to the repo with contracts.</li><li class="listitem"><span class="strong"><strong>contractsRepositoryProxyHost</strong></span>: The proxy host to be used to connect to the repo with contracts.</li><li class="listitem"><span class="strong"><strong>contractsRepositoryProxyPort</strong></span>: The proxy port to be used to connect to the repo with contracts.</li></ul></div><p>We cache only non-snapshot, explicitly provided versions (for example
+<code class="literal">+</code> or <code class="literal">1.0.0.BUILD-SNAPSHOT</code> won&#8217;t get cached). By default, this feature is turned on.</p><p>Below you can find a list of experimental features you can turn on via the plugin:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="strong"><strong>convertToYaml</strong></span>: converts all DSLs to the declarative, YAML format. This can be extremely useful when you&#8217;re using external libraries in your Groovy DSLs. By turning this feature on (by setting it to <code class="literal">true</code>) you will not need to add the library dependency on the consumer side.</li><li class="listitem"><span class="strong"><strong>assertJsonSize</strong></span>: You can check the size of JSON arrays in the generated tests. This feature is disabled by default.</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-single-base" href="#maven-single-base"></a>5.13.8&nbsp;Single Base Class for All Tests</h3></div></div></div><p>When using Spring Cloud Contract Verifier in default MockMvc, you need to create a base
+specification for all generated acceptance tests. In this class, you need to point to an
+endpoint, which should be verified.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.mycompany.tests
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.mycompany.ExampleSpringController
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> spock.lang.Specification
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> MvcSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+  def setup() {
+   RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ExampleSpringController())
+  }
+}</pre><p>You can also setup the whole context if necessary.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.runner.RunWith;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.context.junit4.SpringRunner;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.web.context.WebApplicationContext;
+
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RunWith(SpringRunner.class)</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</xslthl:annotation>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseTestClass {
+
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Autowired</xslthl:annotation>
+	WebApplicationContext context;
+
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+		RestAssuredMockMvc.webAppContextSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.context);
+	}
+}</pre><p>If you use <code class="literal">EXPLICIT</code> mode, you can use a base class to initialize the whole tested app
+similarly, as you might find in regular integration tests.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.RestAssured;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.runner.RunWith;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.web.server.LocalServerPort
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.context.junit4.SpringRunner;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.web.context.WebApplicationContext;
+
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RunWith(SpringRunner.class)</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</xslthl:annotation>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseTestClass {
+
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@LocalServerPort</xslthl:annotation>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port;
+
+	<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Before</xslthl:annotation>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+		RestAssured.baseURI = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port;
+	}
+}</pre><p>If you use the <code class="literal">JAXRSCLIENT</code> mode, this base class should also contain a <code class="literal">protected WebTarget webTarget</code> field. Right
+now, the only option to test the JAX-RS API is to start a web server.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-different-base" href="#maven-different-base"></a>5.13.9&nbsp;Different base classes for contracts</h3></div></div></div><p>If your base classes differ between contracts, you can tell the Spring Cloud Contract
+plugin which class should get extended by the autogenerated tests. You have two options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Follow a convention by providing the <code class="literal">packageWithBaseClasses</code></li><li class="listitem">provide explicit mapping via <code class="literal">baseClassMappings</code></li></ul></div><p><span class="strong"><strong>By Convention</strong></span></p><p>The convention is such that if you have a contract under (for example)
+<code class="literal">src/test/resources/contract/foo/bar/baz/</code> and set the value of the
+<code class="literal">packageWithBaseClasses</code> property to <code class="literal">com.example.base</code>, then Spring Cloud Contract
+Verifier assumes that there is a <code class="literal">BarBazBase</code> class under the <code class="literal">com.example.base</code> package.
+In other words, the system takes the last two parts of the package, if they exist, and
+forms a class with a <code class="literal">Base</code> suffix. This rule takes precedence over <span class="strong"><strong>baseClassForTests</strong></span>.
+Here is an example of how it works in the <code class="literal">contracts</code> closure:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>hello<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p><span class="strong"><strong>By Mapping</strong></span></p><p>You can manually map a regular expression of the contract&#8217;s package to fully qualified
+name of the base class for the matched contract. You have to provide a list called
+<code class="literal">baseClassMappings</code> that consists <code class="literal">baseClassMapping</code> objects that takes a
+<code class="literal">contractPackageRegex</code> to <code class="literal">baseClassFQN</code> mapping. Consider the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassForTests&gt;</span>com.example.FooBase<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassForTests&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMappings&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMapping&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractPackageRegex&gt;</span>.*com.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractPackageRegex&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassFQN&gt;</span>com.example.TestBase<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassFQN&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMapping&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMappings&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>Assume that you have contracts under these two locations:
+* <code class="literal">src/test/resources/contract/com/</code>
+* <code class="literal">src/test/resources/contract/foo/</code></p><p>By providing the <code class="literal">baseClassForTests</code>, we have a fallback in case mapping did not succeed.
+(You can also provide the <code class="literal">packageWithBaseClasses</code> as a fallback.) That way, the tests
+generated from <code class="literal">src/test/resources/contract/com/</code> contracts extend the
+<code class="literal">com.example.ComBase</code>, whereas the rest of the tests extend <code class="literal">com.example.FooBase</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-invoking-generated-tests" href="#maven-invoking-generated-tests"></a>5.13.10&nbsp;Invoking generated tests</h3></div></div></div><p>The Spring Cloud Contract Maven Plugin generates verification code in a directory called
+<code class="literal">/generated-test-sources/contractVerifier</code> and attaches this directory to <code class="literal">testCompile</code>
+goal.</p><p>For Groovy Spock code, use the following:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.codehaus.gmavenplus<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>gmavenplus-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>1.5<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>testCompile<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;testSources&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;testSource&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.basedir}/src/test/groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/testSource&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;testSource&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.build.directory}/generated-test-sources/contractVerifier<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/testSource&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/testSources&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>To ensure that provider side is compliant with defined contracts, you need to invoke
+<code class="literal">mvn generateTest test</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-pushing-stubs-to-scm" href="#maven-pushing-stubs-to-scm"></a>5.13.11&nbsp;Pushing stubs to SCM</h3></div></div></div><p>If you&#8217;re using the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, it&#8217;s enough to add the <code class="literal">pushStubsToScm</code>
+goal. Example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Base class mappings etc. --&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- We want to pick contracts from a Git repository --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsRepositoryUrl&gt;</span>git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsRepositoryUrl&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractDependency&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>${project.groupId}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>${project.artifactId}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${project.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractDependency&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- The contracts mode can't be classpath --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsMode&gt;</span>REMOTE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsMode&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>package<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>pushStubsToScm<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>Under <a class="xref" href="multi__using_the_pluggable_architecture.html#scm-stub-downloader" title="11.6&nbsp;Using the SCM Stub Downloader">Section&nbsp;11.6, &#8220;Using the SCM Stub Downloader&#8221;</a> you can find all possible
+configuration options that you can pass either via
+the <code class="literal">&lt;configuration&gt;&lt;contractProperties&gt;</code> map, a system property
+or an environment variable.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-sts" href="#maven-sts"></a>5.13.12&nbsp;Maven Plugin and STS</h3></div></div></div><p>If you see the following exception while using STS:</p><div class="informalfigure"><div class="mediaobject"><img src="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.1.x/docs/src/main/asciidoc/images/sts_exception.png" alt="STS Exception"></div></div><p>When you click on the error marker you should see something like this:</p><pre class="programlisting"> plugin:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.1</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.</xslthl:number>M1:convert:default-convert:process-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span>-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
+ cloud-contract-maven-plugin:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.1</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.</xslthl:number>M1:convert failed. at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">145</xslthl:number>) at
+ org.eclipse.m2e.core.internal.embedder.MavenImpl.execute(MavenImpl.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">331</xslthl:number>) at org.eclipse.m2e.core.internal.embedder.MavenImpl$<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">11.</xslthl:number>call(MavenImpl.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1362</xslthl:number>) at
+...
+ org.eclipse.core.internal.jobs.Worker.run(Worker.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">55</xslthl:number>) Caused by: java.lang.NullPointerException at
+ org.eclipse.m2e.core.internal.builder.plexusbuildapi.EclipseIncrementalBuildContext.hasDelta(EclipseIncrementalBuildContext.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">53</xslthl:number>) at
+ org.sonatype.plexus.build.incremental.ThreadBuildContext.hasDelta(ThreadBuildContext.java:<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">59</xslthl:number>) at</pre><p>In order to fix this issue, provide the following section in your <code class="literal">pom.xml</code>:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;build&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginManagement&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugins&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!--This plugin's configuration is used to store Eclipse m2e settings
+                only. It has no influence on the Maven build itself. --&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.eclipse.m2e<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>lifecycle-mapping<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>1.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;lifecycleMappingMetadata&gt;</span>
+                        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginExecutions&gt;</span>
+                             <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginExecution&gt;</span>
+                                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginExecutionFilter&gt;</span>
+                                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+                                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+                                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;versionRange&gt;</span>[1.0,)<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/versionRange&gt;</span>
+                                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+                                        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>convert<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+                                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+                                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginExecutionFilter&gt;</span>
+                                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;action&gt;</span>
+                                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execute /&gt;</span>
+                                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/action&gt;</span>
+                             <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginExecution&gt;</span>
+                        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginExecutions&gt;</span>
+                    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/lifecycleMappingMetadata&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugins&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginManagement&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/build&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_maven_plugin_with_spock_tests" href="#_maven_plugin_with_spock_tests"></a>5.13.13&nbsp;Maven Plugin with Spock Tests</h3></div></div></div><p>You can select the <a class="link" href="http://spockframework.org/" target="_top">Spock Framework</a> for creating and executing the auto-generated contract
+verification tests with both Maven and Gradle plugin. However, whereas with Gradle its really straightforward,
+in Maven you will require some additional setup in order to make the tests compile and execute properly.</p><p>First of all, you will have to use a plugin, such as <a class="link" href="https://github.com/groovy/GMavenPlus" target="_top">GMavenPlus</a> plugin,
+to add Groovy to your project. In GMavenPlus plugin, you will need to explicitly set test sources, including both the
+path where your base test classes are defined and the path were the generated contract tests are added.
+Please refer to the example below:</p><pre class="programlisting"></pre><p>If you uphold to the Spock convention of ending the test class names with <code class="literal">Spec</code>, you will also need to adjust your Maven
+Surefire plugin setup, like in the following example:</p><pre class="programlisting"></pre></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stubs_and_transitive_dependencies" href="#_stubs_and_transitive_dependencies"></a>5.14&nbsp;Stubs and Transitive Dependencies</h2></div></div></div><p>The Maven and Gradle plugin that add the tasks that create the stubs jar for you. One
+problem that arises is that, when reusing the stubs, you can mistakenly import all of
+that stub&#8217;s dependencies. When building a Maven artifact, even though you have a couple
+of different jars, all of them share one pom:</p><pre class="programlisting">&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075506</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>-stubs.jar
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075506</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1</xslthl:number>-stubs.jar.sha1
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075655</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>-stubs.jar
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">20160903.075655</xslthl:number>-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">2</xslthl:number>-stubs.jar.sha1
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-SNAPSHOT.jar
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-SNAPSHOT.pom
+&#9500;&#9472;&#9472; github-webhook-<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0.0</xslthl:number>.<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">1.</xslthl:number>BUILD-SNAPSHOT-stubs.jar
+&#9500;&#9472;&#9472; ...
+&#9492;&#9472;&#9472; ...</pre><p>There are three possibilities of working with those dependencies so as not to have any
+issues with transitive dependencies:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Mark all application dependencies as optional</li><li class="listitem">Create a separate artifactid for the stubs</li><li class="listitem">Exclude dependencies on the consumer side</li></ul></div><p><span class="strong"><strong>Mark all application dependencies as optional</strong></span></p><p>If, in the <code class="literal">github-webhook</code> application, you mark all of your dependencies as optional,
+when you include the <code class="literal">github-webhook</code> stubs in another application (or when that
+dependency gets downloaded by Stub Runner) then, since all of the dependencies are
+optional, they will not get downloaded.</p><p><span class="strong"><strong>Create a separate <code class="literal">artifactid</code> for the stubs</strong></span></p><p>If you create a separate <code class="literal">artifactid</code>, then you can set it up in whatever way you wish.
+For example, you might decide to have no dependencies at all.</p><p><span class="strong"><strong>Exclude dependencies on the consumer side</strong></span></p><p>As a consumer, if you add the stub dependency to your classpath, you can explicitly
+exclude the unwanted dependencies.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_scenarios" href="#_scenarios"></a>5.15&nbsp;Scenarios</h2></div></div></div><p>You can handle scenarios with Spring Cloud Contract Verifier. All you need to do is to
+stick to the proper naming convention while creating your contracts. The convention
+requires including an order number followed by an underscore. This will work regardles
+ of whether you&#8217;re working with YAML or Groovy. Example:</p><pre class="screen">my_contracts_dir\
+  scenario1\
+    1_login.groovy
+    2_showCart.groovy
+    3_logout.groovy</pre><p>Such a tree causes Spring Cloud Contract Verifier to generate WireMock&#8217;s scenario with a
+name of <code class="literal">scenario1</code> and the three following steps:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">login marked as <code class="literal">Started</code> pointing to&#8230;&#8203;</li><li class="listitem">showCart marked as <code class="literal">Step1</code> pointing to&#8230;&#8203;</li><li class="listitem">logout marked as <code class="literal">Step2</code> which will close the scenario.</li></ol></div><p>More details about WireMock scenarios can be found at
+<a class="link" href="https://wiremock.org/docs/stateful-behaviour/" target="_top">https://wiremock.org/docs/stateful-behaviour/</a></p><p>Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="docker-project" href="#docker-project"></a>5.16&nbsp;Docker Project</h2></div></div></div><p>We&#8217;re publishing a <code class="literal">springcloud/spring-cloud-contract</code> Docker image
+that contains a project that will generate tests and execute them in <code class="literal">EXPLICIT</code> mode
+against a running application.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>The <code class="literal">EXPLICIT</code> mode means that the tests generated from contracts will send
+real requests and not the mocked ones.</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_short_intro_to_maven_jars_and_binary_storage" href="#_short_intro_to_maven_jars_and_binary_storage"></a>5.16.1&nbsp;Short intro to Maven, JARs and Binary storage</h3></div></div></div><p>Since the Docker image can be used by non JVM projects, it&#8217;s good to
+explain the basic terms behind Spring Cloud Contract packaging defaults.</p><p>Part of the following definitions were taken from the <a class="link" href="https://maven.apache.org/glossary.html" target="_top">Maven Glossary</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">Project</code>: Maven thinks in terms of projects. Everything that you
+will build are projects. Those projects follow a well defined
+&#8220;Project Object Model&#8221;. Projects can depend on other projects,
+in which case the latter are called &#8220;dependencies&#8221;. A project may
+consistent of several subprojects, however these subprojects are still
+treated equally as projects.</li><li class="listitem"><code class="literal">Artifact</code>: An artifact is something that is either produced or used
+by a project. Examples of artifacts produced by Maven for a project
+include: JARs, source and binary distributions. Each artifact
+is uniquely identified by a group id and an artifact ID which is
+unique within a group.</li><li class="listitem"><code class="literal">JAR</code>: JAR stands for Java ARchive. It&#8217;s a format based on
+the ZIP file format. Spring Cloud Contract packages the contracts and generated
+stubs in a JAR file.</li><li class="listitem"><code class="literal">GroupId</code>: A group ID is a universally unique identifier for a project.
+While this is often just the project name (eg. commons-collections),
+it is helpful to use a fully-qualified package name to distinguish it
+from other projects with a similar name (eg. org.apache.maven).
+Typically, when published to the Artifact Manager, the <code class="literal">GroupId</code> will get
+slash separated and form part of the URL. E.g. for group id <code class="literal">com.example</code>
+and artifact id <code class="literal">application</code> would be <code class="literal">/com/example/application/</code>.</li><li class="listitem"><code class="literal">Classifier</code>: The Maven dependency notation looks as follows:
+<code class="literal">groupId:artifactId:version:classifier</code>. The classifier is additional suffix
+passed to the dependency. E.g. <code class="literal">stubs</code>, <code class="literal">sources</code>. The same dependency
+e.g. <code class="literal">com.example:application</code> can produce multiple artifacts that
+differ from each other with the classifier.</li><li class="listitem"><code class="literal">Artifact manager</code>: When you generate binaries / sources / packages, you would
+like them to be available for others to download / reference or reuse. In case
+of the JVM world those artifacts would be JARs, for Ruby these are gems
+and for Docker those would be Docker images. You can store those artifacts
+in a manager. Examples of such managers can be <a class="link" href="https://jfrog.com/artifactory/" target="_top">Artifactory</a>
+or <a class="link" href="https://www.sonatype.org/nexus/" target="_top">Nexus</a>.</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_it_works_2" href="#_how_it_works_2"></a>5.16.2&nbsp;How it works</h3></div></div></div><p>The image searches for contracts under the <code class="literal">/contracts</code> folder.
+The output from running the tests will be available under
+<code class="literal">/spring-cloud-contract/build</code> folder (it&#8217;s useful for debugging
+purposes).</p><p>It&#8217;s enough for you to mount your contracts, pass the environment variables
+ and the image will:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">generate the contract tests</li><li class="listitem">execute the tests against the provided URL</li><li class="listitem">generate the <a class="link" href="https://github.com/tomakehurst/wiremock" target="_top">WireMock</a> stubs</li><li class="listitem">(optional - turned on by default) publish the stubs to a Artifact Manager</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_environment_variables" href="#_environment_variables"></a>Environment Variables</h4></div></div></div><p>The Docker image requires some environment variables to point to
+your running application, to the Artifact manager instance etc.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">PROJECT_GROUP</code> - your project&#8217;s group id. Defaults to <code class="literal">com.example</code></li><li class="listitem"><code class="literal">PROJECT_VERSION</code> - your project&#8217;s version. Defaults to <code class="literal">0.0.1-SNAPSHOT</code></li><li class="listitem"><code class="literal">PROJECT_NAME</code> - artifact id. Defaults to <code class="literal">example</code></li><li class="listitem"><code class="literal">REPO_WITH_BINARIES_URL</code> - URL of your Artifact Manager. Defaults to <code class="literal"><a class="link" href="http://localhost:8081/artifactory/libs-release-local" target="_top">http://localhost:8081/artifactory/libs-release-local</a></code>
+which is the default URL of <a class="link" href="https://jfrog.com/artifactory/" target="_top">Artifactory</a> running locally</li><li class="listitem"><code class="literal">REPO_WITH_BINARIES_USERNAME</code> - (optional) username when the Artifact Manager is secured</li><li class="listitem"><code class="literal">REPO_WITH_BINARIES_PASSWORD</code> - (optional) password when the Artifact Manager is secured</li><li class="listitem"><code class="literal">PUBLISH_ARTIFACTS</code> - if set to <code class="literal">true</code> then will publish artifact to binary storage. Defaults to <code class="literal">true</code>.</li></ul></div><p>These environment variables are used when contracts lay in an external repository. To enable
+this feature you must set the <code class="literal">EXTERNAL_CONTRACTS_ARTIFACT_ID</code> environment variable.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">EXTERNAL_CONTRACTS_GROUP_ID</code> - group id of the project with contracts. Defaults to <code class="literal">com.example</code></li><li class="listitem"><code class="literal">EXTERNAL_CONTRACTS_ARTIFACT_ID</code>- artifact id of the project with contracts.</li><li class="listitem"><code class="literal">EXTERNAL_CONTRACTS_CLASSIFIER</code>- classifier of the project with contracts. Empty by default</li><li class="listitem"><code class="literal">EXTERNAL_CONTRACTS_VERSION</code> - version of the project with contracts. Defaults to <code class="literal">+</code>, equivalent to picking the latest</li><li class="listitem"><code class="literal">EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</code> - URL of your Artifact Manager. Defaults to value of <code class="literal">REPO_WITH_BINARIES_URL</code> env var.
+If that&#8217;s not set, defaults to <code class="literal"><a class="link" href="http://localhost:8081/artifactory/libs-release-local" target="_top">http://localhost:8081/artifactory/libs-release-local</a></code>
+which is the default URL of <a class="link" href="https://jfrog.com/artifactory/" target="_top">Artifactory</a> running locally</li><li class="listitem"><code class="literal">EXTERNAL_CONTRACTS_PATH</code> - path to contracts for the given project, inside the project with contracts.
+Defaults to slash separated <code class="literal">EXTERNAL_CONTRACTS_GROUP_ID</code> concatenated with <code class="literal">/</code> and <code class="literal">EXTERNAL_CONTRACTS_ARTIFACT_ID</code>. E.g.
+for group id <code class="literal">foo.bar</code> and artifact id <code class="literal">baz</code>, would result in <code class="literal">foo/bar/baz</code> contracts path.</li><li class="listitem"><code class="literal">EXTERNAL_CONTRACTS_WORK_OFFLINE</code> - if set to <code class="literal">true</code> then will retrieve artifact with contracts
+from the container&#8217;s <code class="literal">.m2</code>. Mount your local <code class="literal">.m2</code> as a volume available at the container&#8217;s <code class="literal">/root/.m2</code> path.
+You must not set both <code class="literal">EXTERNAL_CONTRACTS_WORK_OFFLINE</code> and <code class="literal">EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</code>.</li></ul></div><p>These environment variables are used when tests are executed:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">APPLICATION_BASE_URL</code> - url against which tests should be executed.
+Remember that it has to be accessible from the Docker container (e.g. <code class="literal">localhost</code>
+will not work)</li><li class="listitem"><code class="literal">APPLICATION_USERNAME</code> - (optional) username for basic authentication to your application</li><li class="listitem"><code class="literal">APPLICATION_PASSWORD</code> - (optional) password for basic authentication to your application</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_example_of_usage" href="#_example_of_usage"></a>5.16.3&nbsp;Example of usage</h3></div></div></div><p>Let&#8217;s take a look at a simple MVC application</p><pre class="programlisting">$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
+$ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">cd</span> bookstore</pre><p>The contracts are available under <code class="literal">/contracts</code> folder.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="docker-server-side" href="#docker-server-side"></a>5.16.4&nbsp;Server side (nodejs)</h3></div></div></div><p>Since we want to run tests, we could just execute:</p><pre class="programlisting">$ npm <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span></pre><p>however, for learning purposes, let&#8217;s split it into pieces:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Stop docker infra (nodejs, artifactory)</span>
+$ ./stop_infra.sh
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Start docker infra (nodejs, artifactory)</span>
+$ ./setup_infra.sh
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Kill &amp; Run app</span>
+$ pkill -f <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"node app"</span>
+$ nohup node app &amp;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Prepare environment variables</span>
+$ SC_CONTRACT_DOCKER_VERSION=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"..."</span>
+$ APP_IP=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"192.168.0.100"</span>
+$ APP_PORT=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"3000"</span>
+$ ARTIFACTORY_PORT=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"8081"</span>
+$ APPLICATION_BASE_URL=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://${APP_IP}:${APP_PORT}"</span>
+$ ARTIFACTORY_URL=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://${APP_IP}:${ARTIFACTORY_PORT}/artifactory/libs-release-local"</span>
+$ CURRENT_DIR=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$( pwd )"</span>
+$ CURRENT_FOLDER_NAME=${PWD<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">##*/}</span>
+$ PROJECT_VERSION=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"0.0.1.RELEASE"</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Execute contract tests</span>
+$ docker run  --rm -e <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"APPLICATION_BASE_URL=${APPLICATION_BASE_URL}"</span> -e <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUBLISH_ARTIFACTS=true"</span> -e <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PROJECT_NAME=${CURRENT_FOLDER_NAME}"</span> -e <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"REPO_WITH_BINARIES_URL=${ARTIFACTORY_URL}"</span> -e <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PROJECT_VERSION=${PROJECT_VERSION}"</span> -v <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${CURRENT_DIR}/contracts/:/contracts:ro"</span> -v <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${CURRENT_DIR}/node_modules/spring-cloud-contract/output:/spring-cloud-contract-output/"</span> springcloud/spring-cloud-contract:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${SC_CONTRACT_DOCKER_VERSION}"</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Kill app</span>
+$ pkill -f <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"node app"</span></pre><p>What will happen is that via bash scripts:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">infrastructure will be set up (MongoDb, Artifactory).
+In real life scenario you would just run the NodeJS application
+with mocked database. In this example we want to show how we can
+benefit from Spring Cloud Contract in no time.</li><li class="listitem"><p class="simpara">due to those constraints the contracts also represent the
+stateful situation</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">first request is a <code class="literal">POST</code> that causes data to get inserted to the database</li><li class="listitem">second request is a <code class="literal">GET</code> that returns a list of data with 1 previously inserted element</li></ul></div></li><li class="listitem">the NodeJS application will be started (on port <code class="literal">3000</code>)</li><li class="listitem"><p class="simpara">contract tests will be generated via Docker and tests
+will be executed against the running application</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">the contracts will be taken from <code class="literal">/contracts</code> folder.</li><li class="listitem">the output of the test execution is available under
+<code class="literal">node_modules/spring-cloud-contract/output</code>.</li></ul></div></li><li class="listitem">the stubs will be uploaded to Artifactory. You can check them out
+under <a class="link" href="http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/" target="_top">http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/</a> .
+The stubs will be here <a class="link" href="http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar" target="_top">http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar</a>.</li></ul></div><p>To see how the client side looks like check out the <a class="xref" href="multi__spring_cloud_contract_stub_runner.html#stubrunner-docker" title="7.9&nbsp;Stub Runner Docker">Section&nbsp;7.9, &#8220;Stub Runner Docker&#8221;</a> section.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_setup.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_verifier_messaging.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.&nbsp;Spring Cloud Contract Verifier Setup&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;6.&nbsp;Spring Cloud Contract Verifier Messaging</td></tr></table></div></body></html>

@@ -2603,16 +2603,91 @@ Gradle or a Maven plugin.</simpara>
 docs for more information</link></simpara>
 </warning>
 </section>
-<section xml:id="gradle-add-gradle-plugin">
+</section>
+</chapter>
+<chapter xml:id="gradle-add-gradle-plugin">
 <title>Add Gradle Plugin with Dependencies</title>
-<simpara>To add a Gradle plugin with dependencies, use code similar to this:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">buildscript {
+<simpara>To add a Gradle plugin with dependencies, you can use code similar to the following:</simpara>
+<informalexample>
+<formalpara role="primary">
+<title>Plugin DSL GA versions</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">// build.gradle
+plugins {
+  id "groovy"
+  // this will work only for GA versions of Spring Cloud Contract
+  id "org.springframework.cloud.contract" version "${GAVerifierVersion}"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${GAVerifierVersion}"
+	}
+}
+
+dependencies {
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	// example with adding Spock core and Spock Spring
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}</programlisting>
+</para>
+</formalpara>
+<formalpara role="secondary">
+<title>Plugin DSL non GA versions</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">// settings.gradle
+pluginManagement {
+	plugins {
+		id "org.springframework.cloud.contract" version "${verifierVersion}"
+	}
+    repositories {
+        // to pick from local .m2
+        mavenLocal()
+        // for snapshots
+        maven { url "https://repo.spring.io/snapshot" }
+        // for milestones
+        maven { url "https://repo.spring.io/milestone" }
+        // for GA versions
+        gradlePluginPortal()
+    }
+}
+
+// build.gradle
+plugins {
+  id "groovy"
+  id "org.springframework.cloud.contract"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+	}
+}
+
+dependencies {
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	// example with adding Spock core and Spock Spring
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}</programlisting>
+</para>
+</formalpara>
+<formalpara role="secondary">
+<title>Legacy Plugin Application</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">// build.gradle
+buildscript {
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
-	    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+        // here you can also pass additional dependencies such as Pact or Kotlin spec e.g.:
+        // classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${verifier_version}"
 	}
 }
 
@@ -2626,13 +2701,15 @@ dependencyManagement {
 }
 
 dependencies {
-	testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }</programlisting>
-</section>
+</para>
+</formalpara>
+</informalexample>
 <section xml:id="gradle-and-rest-assured">
 <title>Gradle and Rest Assured 2.0</title>
 <simpara>By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x
@@ -2662,7 +2739,28 @@ and modifies the imports accordingly.</simpara>
 <title>Snapshot Versions for Gradle</title>
 <simpara>Add the additional snapshot repository to your build.gradle to use snapshot versions,
 which are automatically uploaded after every successful build, as shown here:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">buildscript {
+<programlisting language="groovy" linenumbering="unnumbered">/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */
+buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
@@ -2978,7 +3076,6 @@ class LoanApplicationServiceSpec extends Specification {
 }</programlisting>
 <simpara><literal>LoanApplication</literal> makes a call to <literal>FraudDetection</literal> service. This request is handled by a
 WireMock server configured with stubs generated by Spring Cloud Contract Verifier.</simpara>
-</section>
 </section>
 <section xml:id="maven-project">
 <title>Maven Project</title>
@@ -4347,7 +4444,28 @@ versions, which are automatically uploaded after every successful build:</simpar
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">buildscript {
+<programlisting language="groovy" linenumbering="unnumbered">/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */
+buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
