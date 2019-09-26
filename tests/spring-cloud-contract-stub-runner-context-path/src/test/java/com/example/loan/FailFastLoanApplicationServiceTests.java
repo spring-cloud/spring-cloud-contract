@@ -46,9 +46,8 @@ public class FailFastLoanApplicationServiceTests {
 
 		// Then
 		assertThat(throwable).isInstanceOf(BeanCreationException.class);
-		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
 		assertThat(throwable.getCause().getCause())
-				.isInstanceOf(IllegalArgumentException.class).hasMessageContaining(
+				.isInstanceOf(BeanInstantiationException.class).hasMessageContaining(
 						"No stubs or contracts were found for [org.springframework.cloud.contract.verifier.stubs:should-not-be-found:+:stubs] and the switch to fail on no stubs was set.");
 	}
 
@@ -65,9 +64,8 @@ public class FailFastLoanApplicationServiceTests {
 
 		// Then
 		assertThat(throwable).isInstanceOf(BeanCreationException.class);
-		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
 		assertThat(throwable.getCause().getCause())
-				.isInstanceOf(IllegalStateException.class)
+				.isInstanceOf(BeanInstantiationException.class)
 				.hasMessageContaining("No stubs were found on classpath ");
 	}
 

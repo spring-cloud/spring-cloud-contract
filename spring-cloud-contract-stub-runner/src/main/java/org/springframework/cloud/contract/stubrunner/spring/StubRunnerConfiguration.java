@@ -19,8 +19,12 @@ package org.springframework.cloud.contract.stubrunner.spring;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
@@ -56,9 +60,6 @@ public class StubRunnerConfiguration {
 
 	static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
 
-	@Autowired(required = false)
-	private MessageVerifier<?> contractVerifierMessaging;
-
 	private StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
 
 	@Autowired
@@ -71,10 +72,11 @@ public class StubRunnerConfiguration {
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its
 	 * instantiation JAR with stubs is downloaded and unpacked to a temporary folder and
 	 * WireMock server are started for each of those stubs
+	 * @param beanFactory bean factory
 	 * @return the batch stub runner bean
 	 */
 	@Bean
-	public BatchStubRunner batchStubRunner() {
+	public BatchStubRunner batchStubRunner(BeanFactory beanFactory) {
 		StubRunnerOptionsBuilder builder = builder();
 		if (this.props.getProxyHost() != null) {
 			builder.withProxy(this.props.getProxyHost(), this.props.getProxyPort());
@@ -82,8 +84,7 @@ public class StubRunnerConfiguration {
 		StubRunnerOptions stubRunnerOptions = stubRunnerOptions(builder);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
 				this.provider.get(stubRunnerOptions),
-				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
-						: new NoOpStubMessages()).buildBatchStubRunner();
+				new LazyMessageVerifier(beanFactory)).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		RunningStubs runningStubs = batchStubRunner.runStubs();
 		registerPort(runningStubs);
@@ -92,6 +93,12 @@ public class StubRunnerConfiguration {
 
 	private StubRunnerOptions stubRunnerOptions(StubRunnerOptionsBuilder builder) {
 		return builder.build();
+	}
+
+	@Bean
+	public BeanPostProcessor batchStubRunnerBeanPostProcessor(BatchStubRunner runner) {
+		return new BeanPostProcessor() {
+		};
 	}
 
 	private StubRunnerOptionsBuilder builder() {
@@ -159,6 +166,50 @@ public class StubRunnerConfiguration {
 			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "."
 					+ entry.getKey().getArtifactId() + ".port", entry.getValue());
 		}
+	}
+
+}
+
+class LazyMessageVerifier implements MessageVerifier {
+
+	private MessageVerifier<?> messageVerifier;
+
+	private final BeanFactory beanFactory;
+
+	LazyMessageVerifier(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+
+	private MessageVerifier messageVerifier() {
+		if (this.messageVerifier == null) {
+			try {
+				this.messageVerifier = this.beanFactory.getBean(MessageVerifier.class);
+			}
+			catch (BeansException ex) {
+				this.messageVerifier = new NoOpStubMessages();
+			}
+		}
+		return this.messageVerifier;
+	}
+
+	@Override
+	public void send(Object message, String destination) {
+		messageVerifier().send(message, destination);
+	}
+
+	@Override
+	public Object receive(String destination, long timeout, TimeUnit timeUnit) {
+		return messageVerifier().receive(destination, timeout, timeUnit);
+	}
+
+	@Override
+	public Object receive(String destination) {
+		return messageVerifier().receive(destination);
+	}
+
+	@Override
+	public void send(Object payload, Map headers, String destination) {
+		messageVerifier().send(payload, headers, destination);
 	}
 
 }
