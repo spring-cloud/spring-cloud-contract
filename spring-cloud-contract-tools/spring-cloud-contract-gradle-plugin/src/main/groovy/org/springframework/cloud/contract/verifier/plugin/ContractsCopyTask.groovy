@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import java.time.Instant
 
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
@@ -40,6 +41,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.WorkResult
+
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubDownloader
@@ -47,8 +49,6 @@ import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvid
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter
 import org.springframework.util.StringUtils
-
-import java.time.Instant
 
 // TODO: Convert to incremental task: https://docs.gradle.org/current/userguide/custom_tasks.html#incremental_tasks
 /**
@@ -77,6 +77,7 @@ class ContractsCopyTask extends DefaultTask {
 		Provider<Boolean> excludeBuildFolders
 		@Input
 		Provider<Boolean> failOnNoContracts
+		String contractsDirectoryPath
 		Provider<Directory> contractsDirectory
 		// All fields inside `@Nested` one are properly marked as an `@Input` to work with incremental build:
 		@Nested
@@ -95,24 +96,33 @@ class ContractsCopyTask extends DefaultTask {
 		@Input
 		@Optional
 		Property<String> contractsPath
+
 		@Input
 		@Optional
 		Instant getForceDownloadOfTheLatestContracts() {
 			// If we have `dynamic` version (`+` or `SNAPSHOT`) - we should mark this task as out of date for every run:
 			if (shouldDownloadContracts() && getStubConfiguration().isVersionChanging()) {
 				return Instant.now() // This will trigger re-download of contracts
-			} else {
+			}
+			else {
 				return null // This will not trigger re-download of contracts
 			}
 		}
+
 		@Optional
 		@InputDirectory
 		Provider<Directory> getContractsDirectory() {
-			if (shouldDownloadContracts()) {
+			contractsDirectoryPath = contractsDirectory.get().asFile.absolutePath
+			if (shouldDownloadContracts() || contractFolderMissing()) {
 				return null
-			} else {
+			}
+			else {
 				return contractsDirectory
 			}
+		}
+
+		private boolean contractFolderMissing() {
+			contractsDirectory.isPresent() && !contractsDirectory.get().asFile.exists()
 		}
 
 		@Internal
@@ -121,6 +131,7 @@ class ContractsCopyTask extends DefaultTask {
 					StringUtils.hasText(contractDependency.getStringNotation().getOrNull()) ||
 					StringUtils.hasText(contractRepository.repositoryUrl.getOrNull())
 		}
+
 		@Internal
 		StubConfiguration getStubConfiguration() {
 			return GradleContractsDownloaderHelper.stubConfiguration(contractDependency)
@@ -141,14 +152,22 @@ class ContractsCopyTask extends DefaultTask {
 		if (downloadedData) {
 			contractsDirectory = downloadedData.downloadedContracts
 			antPattern = "${downloadedData.inclusionProperties.includedRootFolderAntPattern}*.*"
-		} else {
+			logger.info("Contracts got downloaded to [" + contractsDirectory + "]")
+		}
+		else if (config.contractsDirectory != null && config.contractsDirectory.isPresent()) {
 			contractsDirectory = config.contractsDirectory.get().asFile
 			antPattern = "**/"
+		}
+		else {
+			contractsDirectory = null
 		}
 		logger.info("For project [{}] will use contracts provided in the folder [{}]", project.name, contractsDirectory)
 		final String contractsRepository = config.contractRepository.repositoryUrl.isPresent() ? config.contractRepository.repositoryUrl : ""
 		throwExceptionWhenFailOnNoContracts(contractsDirectory, contractsRepository)
-
+		if (contractsDirectory == null) {
+			logger.info("Contracts directory not set and contracts weren't downloaded. There's nothing to copy")
+			return
+		}
 		final String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		final String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
 		final File output = config.copiedContractsFolder.get().asFile
@@ -225,7 +244,8 @@ class ContractsCopyTask extends DefaultTask {
 					downloadedContracts: contractsSubDirIfPresent(downloadedContracts, logger),
 					inclusionProperties: inclusionProperties
 			)
-		} else {
+		}
+		else {
 			return null
 		}
 	}
@@ -251,10 +271,9 @@ class ContractsCopyTask extends DefaultTask {
 			}
 			return
 		}
-		if (config.failOnNoContracts.get() && (!file.exists() || file.listFiles().length == 0)) {
-			throw new GradleException("Contracts could not be found: ["
-					+ file.getAbsolutePath()
-					+ "] .\nPlease make sure that the contracts were defined, or set the [failOnNoContracts] flag to [false]")
+		if (config.failOnNoContracts.get() && (file == null || !file.exists() || file.listFiles().length == 0)) {
+			String path = file != null ? file.getAbsolutePath() : config.contractsDirectoryPath
+			throw new GradleException("Contracts could not be found: [" + path + "]\nPlease make sure that the contracts were defined, or set the [failOnNoContracts] flag to [false]")
 		}
 	}
 

@@ -1,4 +1,25 @@
 // tag::repos[]
+/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */
 buildscript {
 	repositories {
 		mavenCentral()
