@@ -1,17 +1,10 @@
-buildscript {
-	repositories {
-		mavenCentral()
-		mavenLocal()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
-		maven { url "https://repo.spring.io/release" }
-		maven { url 'https://repo.spring.io/plugins-snapshot' }
-		maven { url "https://repo.spring.io/plugins-release-local" }
-		maven { url "https://repo.spring.io/plugins-staging-local/" }
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.2.RELEASE"
-	}
+plugins {
+	id "groovy"
+	id "org.springframework.boot"
+	id "io.spring.dependency-management"
+	id "maven-publish"
+	id "maven"
+	id "org.springframework.cloud.contract"
 }
 
 group = 'com.example'
@@ -24,12 +17,6 @@ repositories {
 	maven { url "https://repo.spring.io/milestone" }
 	maven { url "https://repo.spring.io/release" }
 }
-
-apply plugin: 'groovy'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'maven-publish'
-apply plugin: 'maven'
 
 dependencyManagement {
 	imports {
@@ -45,6 +32,10 @@ dependencies {
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'org.springframework.restdocs:spring-restdocs-webtestclient'
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
+}
+
+contracts {
+	failOnNoContracts = false
 }
 
 test {

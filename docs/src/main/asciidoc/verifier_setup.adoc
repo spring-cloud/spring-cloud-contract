@@ -37,19 +37,90 @@ WARNING: If you want to use Spock in your projects, you must add separately the
 docs for more information]
 
 [[gradle-add-gradle-plugin]]
-==== Add Gradle Plugin with Dependencies
+== Add Gradle Plugin with Dependencies
 
-To add a Gradle plugin with dependencies, use code similar to this:
+To add a Gradle plugin with dependencies, you can use code similar to the following:
 
-[source,groovy,indent=0]
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Plugin DSL GA versions
 ----
+// build.gradle
+plugins {
+  id "groovy"
+  // this will work only for GA versions of Spring Cloud Contract
+  id "org.springframework.cloud.contract" version "${GAVerifierVersion}"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${GAVerifierVersion}"
+	}
+}
+
+dependencies {
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	// example with adding Spock core and Spock Spring
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Plugin DSL non GA versions
+----
+// settings.gradle
+pluginManagement {
+	plugins {
+		id "org.springframework.cloud.contract" version "${verifierVersion}"
+	}
+    repositories {
+        // to pick from local .m2
+        mavenLocal()
+        // for snapshots
+        maven { url "https://repo.spring.io/snapshot" }
+        // for milestones
+        maven { url "https://repo.spring.io/milestone" }
+        // for GA versions
+        gradlePluginPortal()
+    }
+}
+
+// build.gradle
+plugins {
+  id "groovy"
+  id "org.springframework.cloud.contract"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+	}
+}
+
+dependencies {
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	// example with adding Spock core and Spock Spring
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Legacy Plugin Application
+----
+// build.gradle
 buildscript {
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
-	    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+        // here you can also pass additional dependencies such as Pact or Kotlin spec e.g.:
+        // classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${verifier_version}"
 	}
 }
 
@@ -63,13 +134,14 @@ dependencyManagement {
 }
 
 dependencies {
-	testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+	testCompile "org.spockframework:spock-core:${spockVersion}"
+	testCompile "org.spockframework:spock-spring:${spockVersion}"
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
+====
 
 [[gradle-and-rest-assured]]
 ==== Gradle and Rest Assured 2.0
