@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-import org.gradle.api.Project
-import org.gradle.api.file.ProjectLayout
+
 import org.gradle.api.internal.project.DefaultProject
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
