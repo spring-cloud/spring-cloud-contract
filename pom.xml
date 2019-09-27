@@ -55,7 +55,7 @@
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>2.5.8</groovy.version>
-		<maven.version>3.6.2</maven.version>
+		<maven.version>3.5.4</maven.version>
 		<maven.resolver.version>1.4.1</maven.resolver.version>
 		<xpath2.processor.version>2.1.100</xpath2.processor.version>
 		<xerces.version>2.11.0</xerces.version>
