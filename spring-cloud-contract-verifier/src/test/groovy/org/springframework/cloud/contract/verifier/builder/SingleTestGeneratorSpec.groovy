@@ -25,6 +25,7 @@ import spock.lang.Specification
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestLanguage
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import org.springframework.util.FileSystemUtils
@@ -33,7 +34,11 @@ import org.springframework.util.StringUtils
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
 import static org.springframework.cloud.contract.verifier.config.TestFramework.TESTNG
+import static org.springframework.cloud.contract.verifier.config.TestLanguage.GROOVY
+import static org.springframework.cloud.contract.verifier.config.TestLanguage.JAVA
+import static org.springframework.cloud.contract.verifier.config.TestLanguage.KOTLIN
 import static org.springframework.cloud.contract.verifier.config.TestMode.EXPLICIT
 import static org.springframework.cloud.contract.verifier.config.TestMode.JAXRSCLIENT
 import static org.springframework.cloud.contract.verifier.config.TestMode.MOCKMVC
@@ -186,6 +191,7 @@ class SingleTestGeneratorSpec extends Specification {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testFramework = testFramework
+			properties.testLanguage = testFramework == SPOCK ? GROOVY : JAVA
 			properties.basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
 		and:
 			File newFolder = tmpFolder.newFolder('META_INF')
@@ -580,11 +586,11 @@ class SingleTestGeneratorSpec extends Specification {
 			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
+			TestLanguage testLanguage = testFramework == SPOCK ? GROOVY : JAVA
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-					testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					basePackageForTests: 'a.b',
-					generatedTestSourcesDir: temp,
-					generatedTestResourcesDir: tmpFolder.newFolder()
+					testLanguage: testLanguage, testFramework: testFramework,
+					contractsDslDir: contractLocation.parentFile, basePackageForTests: 'a.b',
+					generatedTestSourcesDir: temp, generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -606,10 +612,11 @@ class SingleTestGeneratorSpec extends Specification {
 			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
+			TestLanguage testLanguage = testFramework == SPOCK ? GROOVY : JAVA
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-					testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					basePackageForTests: 'a.b', generatedTestSourcesDir: temp,
-					generatedTestResourcesDir: tmpFolder.newFolder()
+					testLanguage: testLanguage, testFramework: testFramework,
+					contractsDslDir: contractLocation.parentFile, basePackageForTests: 'a.b',
+					generatedTestSourcesDir: temp, generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -631,10 +638,11 @@ class SingleTestGeneratorSpec extends Specification {
 			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
+			TestLanguage testLanguage = testFramework == SPOCK ? GROOVY : JAVA
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-					testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					baseClassForTests: 'a.b.SomeClass', generatedTestSourcesDir: temp,
-					generatedTestResourcesDir: tmpFolder.newFolder()
+					testLanguage: testLanguage, testFramework: testFramework,
+					contractsDslDir: contractLocation.parentFile, baseClassForTests: 'a.b.SomeClass',
+					generatedTestSourcesDir: temp, generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -656,10 +664,11 @@ class SingleTestGeneratorSpec extends Specification {
 			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
+			TestLanguage testLanguage = testFramework == SPOCK ? GROOVY : JAVA
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-					testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					packageWithBaseClasses: 'a.b', generatedTestSourcesDir: temp,
-					generatedTestResourcesDir: tmpFolder.newFolder()
+					testLanguage: testLanguage, testFramework: testFramework,
+					contractsDslDir: contractLocation.parentFile, packageWithBaseClasses: 'a.b',
+					generatedTestSourcesDir: temp, generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -681,9 +690,11 @@ class SingleTestGeneratorSpec extends Specification {
 			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
+			TestLanguage testLanguage = testFramework == SPOCK ? GROOVY : JAVA
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-					testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
-					generatedTestSourcesDir: temp, generatedTestResourcesDir: tmpFolder.newFolder()
+					testLanguage: testLanguage, testFramework: testFramework,
+					contractsDslDir: contractLocation.parentFile, generatedTestSourcesDir: temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
 			)
 			TestGenerator testGenerator = new TestGenerator(properties)
 		when:
@@ -696,6 +707,48 @@ class SingleTestGeneratorSpec extends Specification {
 			test.contains('RESPONSE')
 		where:
 			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
+	}
+
+	def 'should throw an exception for incompatibility between Groovy and #testFramework'() {
+		given:
+			File output = new File(tmp, 'readFromFile.groovy')
+			File contractLocation = output
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+					testLanguage: GROOVY, testFramework: testFramework,
+					contractsDslDir: contractLocation.parentFile, generatedTestSourcesDir: temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			testGenerator.generate()
+		then:
+			UnsupportedOperationException ex = thrown()
+			ex.message == 'Tests can only be generated in Groovy when using Spock as testing framework'
+		where:
+			testFramework << [JUNIT, JUNIT5, TESTNG]
+	}
+
+	def 'should throw an exception for incompatibility between Spock and #testLanguage'() {
+		given:
+			File output = new File(tmp, 'readFromFile.groovy')
+			File contractLocation = output
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+					testLanguage: testLanguage, testFramework: SPOCK,
+					contractsDslDir: contractLocation.parentFile, generatedTestSourcesDir: temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			testGenerator.generate()
+		then:
+			UnsupportedOperationException ex = thrown()
+			ex.message == 'Spock tests can only be generated in Groovy'
+		where:
+			testLanguage << [JAVA, KOTLIN]
 	}
 
 	private static String getTestName(TestFramework testFramework) {

@@ -30,6 +30,8 @@ import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestLanguage
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
@@ -100,10 +102,20 @@ class TestGenerator {
 	}
 
 	int generate() {
+		validateTestLanguageAndMode()
 		generateTestClasses(basePackageName())
 		NamesUtil.recrusiveDirectoryToPackage(configProperties.generatedTestSourcesDir)
 		NamesUtil.recrusiveDirectoryToPackage(configProperties.generatedTestResourcesDir)
 		return counter.get()
+	}
+
+	private void validateTestLanguageAndMode() {
+		if (configProperties.testFramework == TestFramework.SPOCK && configProperties.testLanguage != TestLanguage.GROOVY) {
+			throw new UnsupportedOperationException("Spock tests can only be generated in Groovy")
+		}
+		if (configProperties.testLanguage == TestLanguage.GROOVY && configProperties.testFramework != TestFramework.SPOCK) {
+			throw new UnsupportedOperationException("Tests can only be generated in Groovy when using Spock as testing framework")
+		}
 	}
 
 	private String basePackageName() {
