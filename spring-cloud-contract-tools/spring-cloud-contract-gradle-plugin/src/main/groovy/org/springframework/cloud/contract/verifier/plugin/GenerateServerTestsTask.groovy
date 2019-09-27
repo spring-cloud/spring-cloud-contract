@@ -35,6 +35,7 @@ import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestLanguage
 import org.springframework.cloud.contract.verifier.config.TestMode
 
 /**
@@ -42,6 +43,7 @@ import org.springframework.cloud.contract.verifier.config.TestMode
  *
  * @author Marcin Grzejszczak
  * @author Anatoliy Balakirev
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 @CompileStatic
@@ -80,6 +82,8 @@ class GenerateServerTestsTask extends DefaultTask {
 		@Input
 		Provider<TestFramework> testFramework
 		@Input
+		Provider<TestLanguage> testLanguage
+		@Input
 		MapProperty<String, String> baseClassMappings
 		@Input
 		Provider<Boolean> assertJsonSize
@@ -103,6 +107,7 @@ class GenerateServerTestsTask extends DefaultTask {
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${includedContracts}]")
+		project.logger.info("Tests will be generated in ${config.testLanguage.get()}")
 		try {
 			List<String> excludedFiles = config.excludedFiles.get()
 			List<String> ignoredFiles = config.ignoredFiles.get()
@@ -125,6 +130,7 @@ class GenerateServerTestsTask extends DefaultTask {
 					staticImports: staticImports,
 					testMode: config.testMode.get(),
 					testFramework: config.testFramework.get(),
+					testLanguage: config.testLanguage.get(),
 					baseClassMappings: config.baseClassMappings.get(),
 					assertJsonSize: config.assertJsonSize.get(),
 					failOnInProgress: config.failOnInProgress.get()
@@ -151,6 +157,7 @@ class GenerateServerTestsTask extends DefaultTask {
 				staticImports: extension.staticImports,
 				testMode: extension.testMode,
 				testFramework: extension.testFramework,
+				testLanguage: extension.testLanguage,
 				baseClassMappings: extension.baseClassMappings.getBaseClassMappings(),
 				assertJsonSize: extension.assertJsonSize,
 				failOnInProgress: extension.failOnInProgress,

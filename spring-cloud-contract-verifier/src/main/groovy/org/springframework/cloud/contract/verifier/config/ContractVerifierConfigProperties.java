@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * Represents Contract Verifier configuration properties.
  *
  * @author Jakub Kubrynski, codearte.io
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 public class ContractVerifierConfigProperties {
@@ -51,6 +52,11 @@ public class ContractVerifierConfigProperties {
 	 * Which mechanism should be used to invoke REST calls during. tests
 	 */
 	private TestMode testMode = TestMode.MOCKMVC;
+
+	/**
+	 * In which language should the tests be generated.
+	 */
+	private TestLanguage testLanguage = TestLanguage.JAVA;
 
 	/**
 	 * Base package for generated tests.
@@ -208,6 +214,14 @@ public class ContractVerifierConfigProperties {
 
 	public void setTestMode(TestMode testMode) {
 		this.testMode = testMode;
+	}
+
+	public TestLanguage getTestLanguage() {
+		return testLanguage;
+	}
+
+	public void setTestLanguage(TestLanguage testLanguage) {
+		this.testLanguage = testLanguage;
 	}
 
 	public String getBasePackageForTests() {

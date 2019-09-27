@@ -38,6 +38,7 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
+import org.springframework.cloud.contract.verifier.config.TestLanguage;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
 /**
@@ -45,6 +46,7 @@ import org.springframework.cloud.contract.verifier.config.TestMode;
  * producer side.
  *
  * @author Mariusz Smykula
+ * @author Tim Ysewyn
  */
 @Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
 		requiresDependencyResolution = ResolutionScope.TEST)
@@ -76,6 +78,9 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "JUNIT")
 	private TestFramework testFramework;
+
+	@Parameter
+	private TestLanguage testLanguage;
 
 	@Parameter
 	private String ruleClassForTests;
@@ -280,6 +285,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 								this.contractsDirectory);
 		getLog().info(
 				"Directory with contract is present at [" + contractsDirectory + "]");
+		testLanguage = detectTestLanguage();
+		getLog().info("Tests will be generated in " + testLanguage);
 		setupConfig(config, contractsDirectory);
 		this.project
 				.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
@@ -316,6 +323,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setGeneratedTestResourcesDir(this.generatedTestResourcesDir);
 		config.setTestFramework(this.testFramework);
 		config.setTestMode(this.testMode);
+		config.setTestLanguage(this.testLanguage);
 		config.setBasePackageForTests(this.basePackageForTests);
 		config.setBaseClassForTests(this.baseClassForTests);
 		config.setRuleClassForTests(this.ruleClassForTests);
@@ -341,6 +349,19 @@ public class GenerateTestsMojo extends AbstractMojo {
 			map.put(mapping.getContractPackageRegex(), mapping.getBaseClassFQN());
 		}
 		return map;
+	}
+
+	private TestLanguage detectTestLanguage() {
+		if (testLanguage != null) {
+			return testLanguage;
+		}
+		if (TestFramework.SPOCK == testFramework) {
+			return TestLanguage.GROOVY;
+		}
+		if (KotlinAvailabilityChecker.hasKotlinSupport()) {
+			return TestLanguage.KOTLIN;
+		}
+		return TestLanguage.JAVA;
 	}
 
 	public List<String> getExcludedFiles() {

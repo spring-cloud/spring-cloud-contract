@@ -40,6 +40,7 @@ import org.gradle.api.tasks.Optional;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
+import org.springframework.cloud.contract.verifier.config.TestLanguage;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 import org.springframework.util.Assert;
 
@@ -47,6 +48,7 @@ import org.springframework.util.Assert;
  * @author Marcin Grzejszczak
  * @author Anatoliy Balakirev
  * @author Shannon Pamperl
+ * @author Tim Ysewyn
  */
 public class ContractVerifierExtension {
 
@@ -61,6 +63,11 @@ public class ContractVerifierExtension {
 	 * Which mechanism should be used to invoke REST calls during tests
 	 */
 	private Property<TestMode> testMode;
+
+	/**
+	 * In which language should the tests be generated.
+	 */
+	private Property<TestLanguage> testLanguage;
 
 	/**
 	 * Base package for generated tests
@@ -242,6 +249,7 @@ public class ContractVerifierExtension {
 	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects) {
 		this.testFramework = objects.property(TestFramework.class).convention(TestFramework.JUNIT);
 		this.testMode = objects.property(TestMode.class).convention(TestMode.MOCKMVC);
+		this.testLanguage = objects.property(TestLanguage.class).convention(detectTestLanguage());
 		this.basePackageForTests = objects.property(String.class);
 		this.baseClassForTests = objects.property(String.class);
 		this.nameSuffixForTests = objects.property(String.class);
@@ -272,6 +280,16 @@ public class ContractVerifierExtension {
 		this.contractsProperties = objects.mapProperty(String.class, String.class).convention(new HashMap<>());
 		this.disableStubPublication = objects.property(Boolean.class).convention(false);
 		this.sourceSet = objects.property(String.class);
+	}
+
+	private TestLanguage detectTestLanguage() {
+		if (TestFramework.SPOCK == testFramework.get()) {
+			return TestLanguage.GROOVY;
+		}
+		if (KotlinAvailabilityChecker.hasKotlinSupport()) {
+			return TestLanguage.KOTLIN;
+		}
+		return TestLanguage.JAVA;
 	}
 
 	@Deprecated
@@ -310,6 +328,20 @@ public class ContractVerifierExtension {
 	public void setTestMode(String testMode) {
 		if (testMode != null) {
 			this.testMode.set(TestMode.valueOf(testMode.toUpperCase()));
+		}
+	}
+
+	public Property<TestLanguage> getTestLanguage() {
+		return testLanguage;
+	}
+
+	public void setTestLanguage(TestLanguage testLanguage) {
+		this.testLanguage.set(testLanguage);
+	}
+
+	public void setTestLanguage(String testLanguage) {
+		if (testMode != null) {
+			this.testLanguage.set(TestLanguage.valueOf(testLanguage.toUpperCase()));
 		}
 	}
 
