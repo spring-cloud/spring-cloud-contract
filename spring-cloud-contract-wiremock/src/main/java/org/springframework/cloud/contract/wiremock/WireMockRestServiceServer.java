@@ -83,6 +83,8 @@ public final class WireMockRestServiceServer {
 
 	private String baseUrl = "";
 
+	private boolean bufferContent = false;
+
 	private MockRestServiceServerBuilder builder;
 
 	private List<String> locations = new ArrayList<String>();
@@ -113,6 +115,15 @@ public final class WireMockRestServiceServer {
 	 */
 	public WireMockRestServiceServer ignoreExpectOrder(boolean ignoreExpectOrder) {
 		this.ignoreExpectOrder = ignoreExpectOrder;
+		return this;
+	}
+
+	/**
+	 * Flag to tell the server to buffer the contents of the response.
+	 * @return this
+	 */
+	public WireMockRestServiceServer bufferContent() {
+		this.bufferContent = true;
 		return this;
 	}
 
@@ -179,6 +190,9 @@ public final class WireMockRestServiceServer {
 	public MockRestServiceServer build() {
 		if (this.ignoreExpectOrder) {
 			this.builder.ignoreExpectOrder(true); // default is false
+		}
+		if (this.bufferContent) {
+			this.builder.bufferContent();
 		}
 		MockRestServiceServer server = this.builder.build();
 		List<StubMapping> mappings = new ArrayList<>();
