@@ -158,7 +158,3 @@ task resolveDependencies {
 		}
 	}
 }
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.10.2'
-}
