@@ -55,6 +55,7 @@
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>2.5.8</groovy.version>
+		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.5.4</maven.version>
 		<maven.resolver.version>1.4.1</maven.resolver.version>
 		<xpath2.processor.version>2.1.100</xpath2.processor.version>
