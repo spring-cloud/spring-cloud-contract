@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,6 @@ import java.util.Set;
 import groovy.json.JsonOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import wiremock.org.eclipse.jetty.util.ConcurrentHashSet;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
@@ -47,7 +47,7 @@ import org.springframework.cloud.contract.verifier.util.BodyExtractor;
  */
 class StubRunnerExecutor implements StubFinder {
 
-	static final Set<StubServer> STUB_SERVERS = new ConcurrentHashSet<>();
+	static final Set<StubServer> STUB_SERVERS = Collections.synchronizedSet(new HashSet<>());
 
 	private static final Log log = LogFactory.getLog(StubRunnerExecutor.class);
 

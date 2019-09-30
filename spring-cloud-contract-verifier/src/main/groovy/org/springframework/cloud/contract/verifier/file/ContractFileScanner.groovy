@@ -24,15 +24,18 @@ import java.util.regex.Pattern
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
-import wiremock.com.google.common.collect.ArrayListMultimap
+import wiremock.com.google.common.collect.HashMultiset
 import wiremock.com.google.common.collect.ListMultimap
+import wiremock.com.google.common.collect.Multimap
+import wiremock.com.google.common.collect.Multiset
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
-
+import org.springframework.util.CollectionUtils
+import org.springframework.util.MultiValueMap
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -85,9 +88,136 @@ class ContractFileScanner {
 
 	/**
 	 * @return for a map of paths for which a list of matching contracts has been found
+	 * @deprecated use the {@link ContractFileScanner#findContractsRecursively} version
 	 */
+	@Deprecated
 	ListMultimap<Path, ContractMetadata> findContracts() {
-		ListMultimap<Path, ContractMetadata> result = ArrayListMultimap.create()
+		MultiValueMap<Path, ContractMetadata> contracts = findContractsRecursively();
+		return new ListMultimap<Path, ContractMetadata>() {
+			@Override
+			List<ContractMetadata> get(Path key) {
+				return contracts.get(key)
+			}
+
+			@Override
+			List<ContractMetadata> removeAll(Object key) {
+				return contracts.remove(key)
+			}
+
+			@Override
+			List<ContractMetadata> replaceValues(Path key, Iterable<? extends ContractMetadata> values) {
+				return contracts.put(key, asList(values))
+			}
+
+			private static List<? extends ContractMetadata> asList(Iterable<? extends ContractMetadata> self) {
+				if (self instanceof List) {
+					return (List<? extends ContractMetadata>) self;
+				} else {
+					return toList(self.iterator());
+				}
+			}
+
+			private static List<? extends ContractMetadata> toList(Iterator<? extends ContractMetadata> self) {
+				List<? extends ContractMetadata> answer = new ArrayList<>();
+				while (self.hasNext()) {
+					answer.add(self.next());
+				}
+				return answer;
+			}
+
+			@Override
+			Map<Path, Collection<ContractMetadata>> asMap() {
+				return contracts.collectEntries {
+					[(it.key): (Collection<ContractMetadata>) it.value]
+				} as Map<Path, Collection<ContractMetadata>>
+			}
+
+			@Override
+			int size() {
+				return contracts.size()
+			}
+
+			@Override
+			boolean isEmpty() {
+				return contracts.isEmpty()
+			}
+
+			@Override
+			boolean containsKey(Object key) {
+				return contracts.containsKey(key)
+			}
+
+			@Override
+			boolean containsValue(Object value) {
+				return contracts.findResult { it.value.contains(value) }
+			}
+
+			@Override
+			boolean containsEntry(Object key, Object value) {
+				return contracts.findResult { it.key == key && it.value.contains(value) }
+			}
+
+			@Override
+			boolean put(Path key, ContractMetadata value) {
+				return contracts.add(key, value)
+			}
+
+			@Override
+			boolean remove(Object key, Object value) {
+				return contracts.getOrDefault(key, new ArrayList<ContractMetadata>()).remove(value)
+			}
+
+			@Override
+			boolean putAll(Path key, Iterable<? extends ContractMetadata> values) {
+				return contracts.getOrDefault(key, new ArrayList<ContractMetadata>()).addAll(values)
+			}
+
+			@Override
+			boolean putAll(Multimap<? extends Path, ? extends ContractMetadata> multimap) {
+				multimap.entries().each {
+					contracts.add(it.key, it.value)
+				}
+				return true
+			}
+
+			@Override
+			void clear() {
+				contracts.clear()
+			}
+
+			@Override
+			Set<Path> keySet() {
+				return contracts.keySet()
+			}
+
+			@Override
+			Multiset<Path> keys() {
+				return HashMultiset.create(contracts.keySet())
+			}
+
+			@Override
+			Collection<ContractMetadata> values() {
+				return (Collection<ContractMetadata>) contracts.values().flatten()
+			}
+
+			@Override
+			Collection<Map.Entry<Path, ContractMetadata>> entries() {
+				Collection<Map.Entry<Path, ContractMetadata>> entries = new LinkedList<>()
+				contracts.each {
+					Path path = it.key
+					List<ContractMetadata> list = it.value
+					list.each {
+						entries.add(new AbstractMap.SimpleEntry<Path, ContractMetadata>(path, it))
+					}
+				}
+				return entries
+			}
+		}
+	}
+
+
+	MultiValueMap<Path, ContractMetadata> findContractsRecursively() {
+		MultiValueMap<Path, ContractMetadata> result = CollectionUtils.toMultiValueMap(new LinkedHashMap<>());
 		appendRecursively(baseDir, result)
 		return result
 	}
@@ -96,7 +226,7 @@ class ContractFileScanner {
 	 * We iterate over found contracts, filter out those that should be excluded
 	 * and try to convert via pluggable Contract Converters any possible contracts
 	 */
-	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
+	private void appendRecursively(File baseDir, MultiValueMap<Path, ContractMetadata> result) {
 		List<ContractConverter> converters = convertersWithYml()
 		if (log.isTraceEnabled()) {
 			log.trace("Found the following contract converters ${converters}")
@@ -148,7 +278,7 @@ class ContractFileScanner {
 		return SpringFactoriesLoader.loadFactories(ContractConverter, null)
 	}
 
-	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
+	private void addContractToTestGeneration(List<ContractConverter> converters, MultiValueMap<Path, ContractMetadata> result,
 			File[] files, File file, int index) {
 		boolean converted = false
 		if (!file.isDirectory()) {
@@ -182,7 +312,7 @@ class ContractFileScanner {
 		}
 	}
 
-	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
+	private void addContractToTestGeneration(MultiValueMap<Path, ContractMetadata> result, File[] files, File file,
 			int index, Collection<Contract> convertedContract) {
 		Path path = file.toPath()
 		Integer order = null
@@ -196,7 +326,7 @@ class ContractFileScanner {
 		if (log.isDebugEnabled()) {
 			log.debug("Creating a contract entry for path [" + path + "] and metadata [" + metadata + "]")
 		}
-		result.put(parent, metadata)
+		result.add(parent, metadata)
 	}
 
 	private boolean hasScenarioFilenamePattern(Path path) {
