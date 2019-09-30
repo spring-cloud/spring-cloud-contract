@@ -64,6 +64,7 @@ public class JavaTestGenerator implements SingleTestGenerator {
 		return GeneratedTestClassBuilder.builder(builder, metaData)
 				.classBodyBuilder(bodyBuilder)
 					.metaData()
+						.kotlin()
 						.java()
 						.groovy()
 						.build()

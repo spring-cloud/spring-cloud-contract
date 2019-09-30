@@ -22,6 +22,7 @@ import spock.lang.Specification
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestLanguage
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
@@ -365,6 +366,7 @@ class ContractHttpDocsSpec extends Specification {
 	def 'should convert dsl with optionals to proper Spock test'() {
 		given:
 			properties.testFramework = TestFramework.SPOCK
+			properties.testLanguage = TestLanguage.GROOVY
 			String test = singleTestGenerator(optionals)
 		expect:
 			String expectedTest =

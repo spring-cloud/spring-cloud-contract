@@ -111,12 +111,16 @@ private void test(String test) {
 
 	static void tryToCompile(String builderName, String test) {
 		try {
-			if (builderName.toLowerCase().contains("spock")) {
+			if (builderName.toLowerCase().contains("spock") || builderName.toLowerCase().contains("groovy")) {
 				tryToCompileGroovy(builderName, test)
+				return
 			}
-			else {
-				tryToCompileJava(builderName, test)
+			if (builderName.toLowerCase().contains("kotlin")) {
+//				TODO
+//				tryToCompileKotlin(builderName, test)
+				return
 			}
+			tryToCompileJava(builderName, test)
 		} catch (Throwable t) {
 			log.error("Exception occurred while trying to compile the test [\n" + test + "\n]")
 			throw t

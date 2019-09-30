@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.verifier.builder;
 import org.springframework.cloud.contract.verifier.config.TestLanguage;
 import org.springframework.util.StringUtils;
 
-class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
+class KotlinClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	private final BlockBuilder blockBuilder;
 
@@ -27,7 +27,7 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JavaClassMetaData(BlockBuilder blockBuilder,
+	KotlinClassMetaData(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -35,7 +35,6 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public ClassMetaData modifier() {
-		this.blockBuilder.append("public");
 		return this;
 	}
 
@@ -49,12 +48,14 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 		if (!this.blockBuilder.endsWith(suffix)) {
 			this.blockBuilder.addAtTheEnd(suffix);
 		}
+		if (StringUtils.hasText(fqnBaseClass())) {
+			this.blockBuilder.addAtTheEnd("()");
+		}
 		return this;
 	}
 
 	@Override
 	public ClassMetaData setupLineEnding() {
-		this.blockBuilder.setupLineEnding(";");
 		return this;
 	}
 
@@ -87,14 +88,14 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 			if (lastIndexOf > 0) {
 				baseClass = baseClass.substring(lastIndexOf + 1);
 			}
-			blockBuilder().append("extends ").append(baseClass).append(" ");
+			blockBuilder().append(": ").append(baseClass).append(" ");
 		}
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return TestLanguage.JAVA == this.generatedClassMetaData.configProperties
+		return TestLanguage.KOTLIN == this.generatedClassMetaData.configProperties
 				.getTestLanguage();
 	}
 

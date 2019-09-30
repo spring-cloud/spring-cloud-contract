@@ -40,6 +40,11 @@ class MetaDataBuilder {
 		return this;
 	}
 
+	MetaDataBuilder kotlin() {
+		this.parentBuilder.metaData(new KotlinClassMetaData(this.builder, this.metaData));
+		return this;
+	}
+
 	GeneratedTestClassBuilder build() {
 		return this.parentBuilder;
 	}
