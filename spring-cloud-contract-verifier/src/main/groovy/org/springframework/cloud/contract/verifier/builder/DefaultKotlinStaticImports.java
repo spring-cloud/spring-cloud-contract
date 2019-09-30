@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2019-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,17 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
 
-import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
-
-class DefaultJsonStaticImports implements Imports {
+class DefaultKotlinStaticImports implements Imports, KotlinLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] IMPORTS = {
-			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson" };
+			"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat",
+			"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*" };
 
-	DefaultJsonStaticImports(BlockBuilder blockBuilder,
+	DefaultKotlinStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -37,16 +36,13 @@ class DefaultJsonStaticImports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLine("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isJson));
+		return acceptLanguage(generatedClassMetaData);
 	}
 
 }

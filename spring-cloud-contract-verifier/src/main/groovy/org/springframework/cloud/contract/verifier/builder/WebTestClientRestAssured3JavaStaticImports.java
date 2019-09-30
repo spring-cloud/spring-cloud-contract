@@ -18,9 +18,12 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
 
+import org.apache.kafka.common.utils.Java;
+
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class WebTestClientRestAssured3StaticImports implements Imports {
+class WebTestClientRestAssured3JavaStaticImports
+		implements Imports, JavaLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -29,7 +32,7 @@ class WebTestClientRestAssured3StaticImports implements Imports {
 	private static final String[] IMPORTS = {
 			"io.restassured.module.webtestclient.RestAssuredWebTestClient.*" };
 
-	WebTestClientRestAssured3StaticImports(BlockBuilder blockBuilder,
+	WebTestClientRestAssured3JavaStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -44,8 +47,9 @@ class WebTestClientRestAssured3StaticImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.WEBTESTCLIENT
+		return acceptLanguage(generatedClassMetaData)
+				&& this.generatedClassMetaData.configProperties
+						.getTestMode() == TestMode.WEBTESTCLIENT
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

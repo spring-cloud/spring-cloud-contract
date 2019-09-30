@@ -32,19 +32,27 @@ class ImportsBuilder {
 
 	ImportsBuilder defaultImports() {
 		this.parentBuilder.imports(new DefaultImports(builder, metaData));
-		this.parentBuilder.staticImports(new DefaultStaticImports(builder));
+		this.parentBuilder.staticImports(
+				new DefaultGroovyStaticImports(builder, metaData),
+				new DefaultJavaStaticImports(builder, metaData),
+				new DefaultKotlinStaticImports(builder, metaData));
 		return this;
 	}
 
 	ImportsBuilder custom() {
 		this.parentBuilder.imports(new CustomImports(builder, metaData));
-		this.parentBuilder.staticImports(new CustomStaticImports(builder, metaData));
+		this.parentBuilder.staticImports(new CustomGroovyStaticImports(builder, metaData),
+				new CustomJavaStaticImports(builder, metaData),
+				new CustomKotlinStaticImports(builder, metaData));
 		return this;
 	}
 
 	ImportsBuilder json() {
 		this.parentBuilder.imports(new JsonPathImports(builder, metaData));
-		this.parentBuilder.staticImports(new DefaultJsonStaticImports(builder, metaData));
+		this.parentBuilder.staticImports(
+				new DefaultJsonGroovyStaticImports(builder, metaData),
+				new DefaultJsonJavaStaticImports(builder, metaData),
+				new DefaultJsonKotlinStaticImports(builder, metaData));
 		return this;
 	}
 
@@ -81,7 +89,10 @@ class ImportsBuilder {
 
 	ImportsBuilder messaging() {
 		this.parentBuilder.imports(new MessagingImports(builder, metaData));
-		this.parentBuilder.staticImports(new MessagingStaticImports(builder, metaData));
+		this.parentBuilder.staticImports(
+				new MessagingGroovyStaticImports(builder, metaData),
+				new MessagingJavaStaticImports(builder, metaData),
+				new MessagingKotlinStaticImports(builder, metaData));
 		return this;
 	}
 
@@ -90,15 +101,23 @@ class ImportsBuilder {
 				new ExplicitRestAssuredImports(builder, metaData),
 				new WebTestClientRestAssuredImports(builder, metaData));
 		this.parentBuilder.staticImports(
-				new MockMvcRestAssuredStaticImports(builder, metaData),
-				new ExplicitRestAssuredStaticImports(builder, metaData),
-				new WebTestClientRestAssured3StaticImports(builder, metaData));
+				new MockMvcRestAssuredGroovyStaticImports(builder, metaData),
+				new MockMvcRestAssuredJavaStaticImports(builder, metaData),
+				new MockMvcRestAssuredKotlinStaticImports(builder, metaData),
+				new ExplicitRestAssuredGroovyStaticImports(builder, metaData),
+				new ExplicitRestAssuredJavaStaticImports(builder, metaData),
+				new ExplicitRestAssuredKotlinStaticImports(builder, metaData),
+				new WebTestClientRestAssured3GroovyStaticImports(builder, metaData),
+				new WebTestClientRestAssured3JavaStaticImports(builder, metaData),
+				new WebTestClientRestAssured3KotlinStaticImports(builder, metaData));
 		return this;
 	}
 
 	ImportsBuilder jaxRs() {
 		this.parentBuilder.imports(new JaxRsImports(builder, metaData));
-		this.parentBuilder.staticImports(new JaxRsStaticImports(builder, metaData));
+		this.parentBuilder.staticImports(new JaxRsGroovyStaticImports(builder, metaData),
+				new JaxRsJavaStaticImports(builder, metaData),
+				new JaxRsKotlinStaticImports(builder, metaData));
 		return this;
 	}
 

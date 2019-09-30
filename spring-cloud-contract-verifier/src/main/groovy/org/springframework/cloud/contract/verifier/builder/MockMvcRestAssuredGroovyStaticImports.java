@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2019-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,22 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
 
-class CustomStaticImports implements Imports {
+import org.springframework.cloud.contract.verifier.config.TestMode;
+
+class MockMvcRestAssuredGroovyStaticImports
+		implements Imports, GroovyLanguageAcceptor, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	CustomStaticImports(BlockBuilder blockBuilder,
+	private static final String[] REST_ASSURED_2_IMPORTS = {
+			"com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*" };
+
+	private static final String[] REST_ASSURED_3_IMPORTS = {
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.*" };
+
+	MockMvcRestAssuredGroovyStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -32,16 +41,18 @@ class CustomStaticImports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(this.generatedClassMetaData.configProperties.getStaticImports())
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(
+				isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
+				.forEach(s -> this.blockBuilder.addLine("import static " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties.getStaticImports() != null
+		return acceptLanguage(generatedClassMetaData)
 				&& this.generatedClassMetaData.configProperties
-						.getStaticImports().length > 0;
+						.getTestMode() == TestMode.MOCKMVC
+				&& this.generatedClassMetaData.isAnyHttp();
 	}
 
 }

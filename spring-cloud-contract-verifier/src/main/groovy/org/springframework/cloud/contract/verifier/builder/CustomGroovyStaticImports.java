@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2019-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,13 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
 
-import org.springframework.cloud.contract.verifier.config.TestMode;
-
-class ExplicitRestAssuredStaticImports implements Imports, RestAssuredVerifier {
+class CustomGroovyStaticImports implements Imports, GroovyLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] REST_ASSURED_2_IMPORTS = {
-			"com.jayway.restassured.RestAssured.*" };
-
-	private static final String[] REST_ASSURED_3_IMPORTS = {
-			"io.restassured.RestAssured.*" };
-
-	ExplicitRestAssuredStaticImports(BlockBuilder blockBuilder,
+	CustomGroovyStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -40,17 +32,17 @@ class ExplicitRestAssuredStaticImports implements Imports, RestAssuredVerifier {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(
-				isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(this.generatedClassMetaData.configProperties.getStaticImports())
+				.forEach(s -> this.blockBuilder.addLine("import static " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.EXPLICIT
-				&& this.generatedClassMetaData.isAnyHttp();
+		return acceptLanguage(generatedClassMetaData)
+				&& this.generatedClassMetaData.configProperties.getStaticImports() != null
+				&& this.generatedClassMetaData.configProperties
+						.getStaticImports().length > 0;
 	}
 
 }

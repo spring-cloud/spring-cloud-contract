@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2019-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,31 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
 
-class DefaultStaticImports implements Imports {
+class CustomJavaStaticImports implements Imports, JavaLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
-	private static final String[] IMPORTS = {
-			"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat",
-			"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*" };
+	private final GeneratedClassMetaData generatedClassMetaData;
 
-	DefaultStaticImports(BlockBuilder blockBuilder) {
+	CustomJavaStaticImports(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
+		Arrays.stream(this.generatedClassMetaData.configProperties.getStaticImports())
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return true;
+		return acceptLanguage(generatedClassMetaData)
+				&& this.generatedClassMetaData.configProperties.getStaticImports() != null
+				&& this.generatedClassMetaData.configProperties
+						.getStaticImports().length > 0;
 	}
 
 }

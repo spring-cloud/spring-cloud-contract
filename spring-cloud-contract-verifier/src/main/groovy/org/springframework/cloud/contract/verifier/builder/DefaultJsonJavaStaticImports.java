@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2019-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,16 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class MessagingStaticImports implements Imports {
+class DefaultJsonJavaStaticImports implements Imports, JavaLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] IMPORTS = {
-			"org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers",
-			"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes" };
+			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson" };
 
-	MessagingStaticImports(BlockBuilder blockBuilder,
+	DefaultJsonJavaStaticImports(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -45,9 +44,10 @@ class MessagingStaticImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isMessaging));
+		return acceptLanguage(generatedClassMetaData)
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(metadata -> metadata.getConvertedContractWithMetadata()
+								.stream().anyMatch(SingleContractMetadata::isJson));
 	}
 
 }

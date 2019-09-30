@@ -156,11 +156,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -333,11 +333,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -508,11 +508,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -668,11 +668,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -840,11 +840,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -1006,11 +1006,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -1271,11 +1271,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -1431,11 +1431,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -1593,11 +1593,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -1753,10 +1753,10 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
@@ -1944,11 +1944,11 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
-import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
-import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
-import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
-import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
 
 @SuppressWarnings("rawtypes")
 class FooTest {
