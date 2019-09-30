@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class MessagingFields implements Field {
+class MessagingJavaFields implements Field, JavaLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -30,7 +30,7 @@ class MessagingFields implements Field {
 			"@Inject ContractVerifierMessaging contractVerifierMessaging",
 			"@Inject ContractVerifierObjectMapper contractVerifierObjectMapper" };
 
-	MessagingFields(BlockBuilder blockBuilder,
+	MessagingJavaFields(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -44,9 +44,10 @@ class MessagingFields implements Field {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isMessaging));
+		return acceptLanguage(generatedClassMetaData)
+				&& this.generatedClassMetaData.listOfFiles.stream()
+						.anyMatch(metadata -> metadata.getConvertedContractWithMetadata()
+								.stream().anyMatch(SingleContractMetadata::isMessaging));
 	}
 
 }

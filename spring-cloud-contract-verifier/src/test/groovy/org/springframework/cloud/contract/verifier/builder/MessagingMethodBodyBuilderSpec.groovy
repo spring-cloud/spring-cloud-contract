@@ -164,8 +164,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -341,8 +341,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -516,8 +516,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -676,8 +676,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -848,8 +848,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -1014,8 +1014,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -1279,8 +1279,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -1439,8 +1439,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -1601,8 +1601,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -1760,8 +1760,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {
@@ -1952,8 +1952,8 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fil
 
 @SuppressWarnings("rawtypes")
 class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+\t@Inject lateinit var contractVerifierMessaging: ContractVerifierMessaging<Any>
+\t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
 \tpublic void validate_foo() throws Exception {

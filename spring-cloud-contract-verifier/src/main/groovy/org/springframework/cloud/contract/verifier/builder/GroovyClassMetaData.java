@@ -19,7 +19,8 @@ package org.springframework.cloud.contract.verifier.builder;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.util.StringUtils;
 
-class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata, GroovyLanguageAcceptor {
+class GroovyClassMetaData
+		implements ClassMetaData, DefaultClassMetadata, GroovyLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 

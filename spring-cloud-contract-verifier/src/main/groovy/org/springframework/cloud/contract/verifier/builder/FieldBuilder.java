@@ -31,7 +31,9 @@ class FieldBuilder {
 	}
 
 	FieldBuilder messaging() {
-		this.parentBuilder.field(new MessagingFields(this.builder, this.metaData));
+		this.parentBuilder.field(new MessagingGroovyFields(this.builder, this.metaData));
+		this.parentBuilder.field(new MessagingJavaFields(this.builder, this.metaData));
+		this.parentBuilder.field(new MessagingKotlinFields(this.builder, this.metaData));
 		return this;
 	}
 

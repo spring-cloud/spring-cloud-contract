@@ -18,7 +18,8 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import org.springframework.util.StringUtils;
 
-class KotlinClassMetaData implements ClassMetaData, DefaultClassMetadata, KotlinLanguageAcceptor {
+class KotlinClassMetaData
+		implements ClassMetaData, DefaultClassMetadata, KotlinLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
