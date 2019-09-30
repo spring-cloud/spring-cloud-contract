@@ -20,7 +20,8 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class WebTestClientRestAssuredImports implements Imports, RestAssuredVerifier {
+class WebTestClientRestAssuredImports
+		implements Imports, WebTestClientAcceptor, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
@@ -50,8 +51,7 @@ class WebTestClientRestAssuredImports implements Imports, RestAssuredVerifier {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.WEBTESTCLIENT
+		return acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

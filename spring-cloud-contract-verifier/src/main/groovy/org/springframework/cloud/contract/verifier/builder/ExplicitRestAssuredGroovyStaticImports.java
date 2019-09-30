@@ -20,8 +20,8 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class ExplicitRestAssuredGroovyStaticImports
-		implements Imports, GroovyLanguageAcceptor, RestAssuredVerifier {
+class ExplicitRestAssuredGroovyStaticImports implements Imports, GroovyLanguageAcceptor,
+		ExplicitAcceptor, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
@@ -50,8 +50,7 @@ class ExplicitRestAssuredGroovyStaticImports
 	@Override
 	public boolean accept() {
 		return acceptLanguage(generatedClassMetaData)
-				&& this.generatedClassMetaData.configProperties
-						.getTestMode() == TestMode.EXPLICIT
+				&& acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

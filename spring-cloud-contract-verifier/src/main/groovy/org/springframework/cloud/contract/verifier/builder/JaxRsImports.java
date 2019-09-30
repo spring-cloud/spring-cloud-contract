@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class JaxRsImports implements Imports {
+class JaxRsImports implements Imports, JaxRsAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -44,8 +44,7 @@ class JaxRsImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.JAXRSCLIENT;
+		return acceptType(generatedClassMetaData);
 	}
 
 }

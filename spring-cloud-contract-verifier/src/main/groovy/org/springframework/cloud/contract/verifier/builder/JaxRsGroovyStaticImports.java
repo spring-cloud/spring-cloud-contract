@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class JaxRsGroovyStaticImports implements Imports, GroovyLanguageAcceptor {
+class JaxRsGroovyStaticImports implements Imports, GroovyLanguageAcceptor, JaxRsAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -44,8 +44,7 @@ class JaxRsGroovyStaticImports implements Imports, GroovyLanguageAcceptor {
 	@Override
 	public boolean accept() {
 		return acceptLanguage(generatedClassMetaData)
-				&& this.generatedClassMetaData.configProperties
-						.getTestMode() == TestMode.JAXRSCLIENT;
+				&& acceptType(generatedClassMetaData);
 	}
 
 }

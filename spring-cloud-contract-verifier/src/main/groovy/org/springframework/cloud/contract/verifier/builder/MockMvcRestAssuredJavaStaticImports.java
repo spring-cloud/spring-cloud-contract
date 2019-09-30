@@ -21,7 +21,7 @@ import java.util.Arrays;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
 class MockMvcRestAssuredJavaStaticImports
-		implements Imports, JavaLanguageAcceptor, RestAssuredVerifier {
+		implements Imports, JavaLanguageAcceptor, MockMvcAcceptor, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
@@ -50,8 +50,7 @@ class MockMvcRestAssuredJavaStaticImports
 	@Override
 	public boolean accept() {
 		return acceptLanguage(generatedClassMetaData)
-				&& this.generatedClassMetaData.configProperties
-						.getTestMode() == TestMode.MOCKMVC
+				&& acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

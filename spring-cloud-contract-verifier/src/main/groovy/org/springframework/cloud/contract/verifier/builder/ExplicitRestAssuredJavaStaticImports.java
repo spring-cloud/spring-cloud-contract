@@ -21,7 +21,7 @@ import java.util.Arrays;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
 class ExplicitRestAssuredJavaStaticImports
-		implements Imports, JavaLanguageAcceptor, RestAssuredVerifier {
+		implements Imports, JavaLanguageAcceptor, ExplicitAcceptor, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
@@ -50,8 +50,7 @@ class ExplicitRestAssuredJavaStaticImports
 	@Override
 	public boolean accept() {
 		return acceptLanguage(generatedClassMetaData)
-				&& this.generatedClassMetaData.configProperties
-						.getTestMode() == TestMode.EXPLICIT
+				&& acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

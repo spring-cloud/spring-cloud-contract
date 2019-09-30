@@ -23,7 +23,7 @@ import org.apache.kafka.common.utils.Java;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
 class WebTestClientRestAssured3JavaStaticImports
-		implements Imports, JavaLanguageAcceptor {
+		implements Imports, JavaLanguageAcceptor, WebTestClientAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -48,8 +48,7 @@ class WebTestClientRestAssured3JavaStaticImports
 	@Override
 	public boolean accept() {
 		return acceptLanguage(generatedClassMetaData)
-				&& this.generatedClassMetaData.configProperties
-						.getTestMode() == TestMode.WEBTESTCLIENT
+				&& acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

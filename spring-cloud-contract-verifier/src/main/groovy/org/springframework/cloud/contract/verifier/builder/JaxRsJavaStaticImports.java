@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class JaxRsJavaStaticImports implements Imports, JavaLanguageAcceptor {
+class JaxRsJavaStaticImports implements Imports, JavaLanguageAcceptor, JaxRsAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -44,8 +44,7 @@ class JaxRsJavaStaticImports implements Imports, JavaLanguageAcceptor {
 	@Override
 	public boolean accept() {
 		return acceptLanguage(generatedClassMetaData)
-				&& this.generatedClassMetaData.configProperties
-						.getTestMode() == TestMode.JAXRSCLIENT;
+				&& acceptType(generatedClassMetaData);
 	}
 
 }

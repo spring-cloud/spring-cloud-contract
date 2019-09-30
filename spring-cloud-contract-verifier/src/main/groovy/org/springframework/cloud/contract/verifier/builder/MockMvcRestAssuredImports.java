@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class MockMvcRestAssuredImports implements Imports, RestAssuredVerifier {
+class MockMvcRestAssuredImports implements Imports, MockMvcAcceptor, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
@@ -51,8 +51,7 @@ class MockMvcRestAssuredImports implements Imports, RestAssuredVerifier {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.MOCKMVC
+		return acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

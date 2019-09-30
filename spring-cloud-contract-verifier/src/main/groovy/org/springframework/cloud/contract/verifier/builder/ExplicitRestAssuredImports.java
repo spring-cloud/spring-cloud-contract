@@ -20,7 +20,8 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class ExplicitRestAssuredImports implements Imports, RestAssuredVerifier {
+class ExplicitRestAssuredImports
+		implements Imports, ExplicitAcceptor, RestAssuredVerifier {
 
 	private final BlockBuilder blockBuilder;
 
@@ -50,8 +51,7 @@ class ExplicitRestAssuredImports implements Imports, RestAssuredVerifier {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.EXPLICIT
+		return acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

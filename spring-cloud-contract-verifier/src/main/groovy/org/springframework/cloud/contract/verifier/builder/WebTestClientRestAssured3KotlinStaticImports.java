@@ -21,7 +21,7 @@ import java.util.Arrays;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
 class WebTestClientRestAssured3KotlinStaticImports
-		implements Imports, KotlinLanguageAcceptor {
+		implements Imports, KotlinLanguageAcceptor, WebTestClientAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -45,8 +45,7 @@ class WebTestClientRestAssured3KotlinStaticImports
 	@Override
 	public boolean accept() {
 		return acceptLanguage(generatedClassMetaData)
-				&& this.generatedClassMetaData.configProperties
-						.getTestMode() == TestMode.WEBTESTCLIENT
+				&& acceptType(generatedClassMetaData)
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 
