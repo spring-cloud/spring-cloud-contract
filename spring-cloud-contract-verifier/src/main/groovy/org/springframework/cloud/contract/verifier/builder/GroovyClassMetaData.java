@@ -17,10 +17,9 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
-import org.springframework.cloud.contract.verifier.config.TestLanguage;
 import org.springframework.util.StringUtils;
 
-class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
+class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata, GroovyLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -102,8 +101,7 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public boolean accept() {
-		return TestLanguage.GROOVY == this.generatedClassMetaData.configProperties
-				.getTestLanguage();
+		return acceptLanguage(generatedClassMetaData);
 	}
 
 }

@@ -16,10 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-import org.springframework.cloud.contract.verifier.config.TestLanguage;
 import org.springframework.util.StringUtils;
 
-class KotlinClassMetaData implements ClassMetaData, DefaultClassMetadata {
+class KotlinClassMetaData implements ClassMetaData, DefaultClassMetadata, KotlinLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -95,8 +94,7 @@ class KotlinClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public boolean accept() {
-		return TestLanguage.KOTLIN == this.generatedClassMetaData.configProperties
-				.getTestLanguage();
+		return acceptLanguage(generatedClassMetaData);
 	}
 
 }
