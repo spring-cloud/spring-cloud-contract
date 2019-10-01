@@ -34,6 +34,8 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
@@ -245,8 +247,11 @@ public class ContractVerifierExtension {
 	 */
 	private Property<String> sourceSet;
 
+	private ProviderFactory providerFactory;
+
 	@Inject
-	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects) {
+	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects, ProviderFactory providerFactory) {
+		this.providerFactory = providerFactory;
 		this.testFramework = objects.property(TestFramework.class).convention(TestFramework.JUNIT);
 		this.testMode = objects.property(TestMode.class).convention(TestMode.MOCKMVC);
 		this.testLanguage = objects.property(TestLanguage.class).convention(detectTestLanguage());
@@ -282,14 +287,17 @@ public class ContractVerifierExtension {
 		this.sourceSet = objects.property(String.class);
 	}
 
-	private TestLanguage detectTestLanguage() {
-		if (TestFramework.SPOCK == testFramework.get()) {
-			return TestLanguage.GROOVY;
-		}
-		if (KotlinAvailabilityChecker.hasKotlinSupport()) {
-			return TestLanguage.KOTLIN;
-		}
-		return TestLanguage.JAVA;
+	private Provider<TestLanguage> detectTestLanguage() {
+		return providerFactory.provider(() -> {
+			log.info("Detecting test language");
+			if (TestFramework.SPOCK == testFramework.get()) {
+				return TestLanguage.GROOVY;
+			}
+			if (KotlinAvailabilityChecker.hasKotlinSupport()) {
+				return TestLanguage.KOTLIN;
+			}
+			return TestLanguage.JAVA;
+		});
 	}
 
 	@Deprecated
@@ -340,7 +348,7 @@ public class ContractVerifierExtension {
 	}
 
 	public void setTestLanguage(String testLanguage) {
-		if (testMode != null) {
+		if (testLanguage != null) {
 			this.testLanguage.set(TestLanguage.valueOf(testLanguage.toUpperCase()));
 		}
 	}
