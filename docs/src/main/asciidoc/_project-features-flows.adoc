@@ -14,7 +14,7 @@ In order to use JAX-RS mode, use the following settings:
 
 [source,groovy,indent=0]
 ----
-testMode == 'JAXRSCLIENT'
+testMode = 'JAXRSCLIENT'
 ----
 
 The following example shows a generated test API:
