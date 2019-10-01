@@ -33,7 +33,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import wiremock.com.google.common.collect.ListMultimap;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
@@ -42,6 +41,7 @@ import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuild
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 /**
@@ -117,12 +117,12 @@ public class RecursiveFilesConverter {
 				.baseDir(contractsDslDir).excluded(new HashSet<>(excludedFiles))
 				.ignored(new HashSet<>()).included(new HashSet<>())
 				.includeMatcher(includedContracts).build();
-		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts();
+		MultiValueMap<Path, ContractMetadata> contracts = scanner
+				.findContractsRecursively();
 		if (log.isDebugEnabled()) {
 			log.debug("Found the following contracts " + contracts);
 		}
-		for (Map.Entry<Path, Collection<ContractMetadata>> entry : contracts.asMap()
-				.entrySet()) {
+		for (Map.Entry<Path, List<ContractMetadata>> entry : contracts.entrySet()) {
 			for (ContractMetadata contract : entry.getValue()) {
 				if (log.isDebugEnabled()) {
 					log.debug("Will create a stub for contract [" + contract + "]");

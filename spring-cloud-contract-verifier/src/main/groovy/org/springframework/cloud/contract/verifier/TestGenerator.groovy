@@ -20,11 +20,11 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import wiremock.com.google.common.collect.ListMultimap
 
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
@@ -35,6 +35,7 @@ import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuild
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.NamesUtil
 import org.springframework.core.io.support.SpringFactoriesLoader
+import org.springframework.util.MultiValueMap
 import org.springframework.util.StringUtils
 
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.afterLast
@@ -121,31 +122,38 @@ class TestGenerator {
 
 	@PackageScope
 	void generateTestClasses(final String basePackageName) {
-		ListMultimap<Path, ContractMetadata> contracts = contractFileScanner.
-				findContracts()
+		MultiValueMap<Path, ContractMetadata> contracts = contractFileScanner.
+				findContractsRecursively()
 		if (log.isDebugEnabled()) {
 			log.debug("Found the following contracts " + contracts.keySet())
 		}
-		Set<Map.Entry<Path,Collection<ContractMetadata>>> inProgress = contracts.asMap().entrySet()
-				 .findAll { Map.Entry<Path, Collection<ContractMetadata>> entry -> entry.value.any { it.anyInProgress() }}
+		Set<Map.Entry<Path,List<ContractMetadata>>> inProgress = inProgress(contracts)
 		if (!inProgress.isEmpty() && configProperties.failOnInProgress) {
 			throw new IllegalStateException("In progress contracts found in paths [" + inProgress.collect { it.key.toString() }.join(",") + "] and the switch [failOnInProgress] is set to [true]. Either unmark those contracts as in progress, or set the switch to [false].")
 		}
 		processAllNotInProgress(contracts,basePackageName)
 	}
 
-	@PackageScope Set<Map.Entry<Path,Collection<ContractMetadata>>> processAllNotInProgress(ListMultimap<Path,ContractMetadata> contracts, String basePackageName) {
-		contracts.asMap().entrySet()
-		.findAll { Map.Entry<Path, Collection<ContractMetadata>> entry -> !entry.value.any { it.anyInProgress() }}
+	@CompileDynamic
+	private Set<Map.Entry<Path,List<ContractMetadata>>> inProgress(MultiValueMap<Path,ContractMetadata> contracts) {
+		return contracts.entrySet()
+					 .findAll { Map.Entry<Path, List<ContractMetadata>> entry -> entry.getValue().any { it.anyInProgress() }}
+	}
+
+	@PackageScope
+	@CompileDynamic
+	Set<Map.Entry<Path,List<ContractMetadata>>> processAllNotInProgress(MultiValueMap<Path,ContractMetadata> contracts, String basePackageName) {
+		contracts.entrySet()
+		.findAll { Map.Entry<Path, List<ContractMetadata>> entry -> !entry.value.any { it.anyInProgress() }}
 		.each {
-			Map.Entry<Path, Collection<ContractMetadata>> entry ->
+			Map.Entry<Path, List<ContractMetadata>> entry ->
 				processIncludedDirectory(
 						relativizeContractPath(entry), (Collection<ContractMetadata>) entry.
 						getValue(), basePackageName)
 		}
 	}
 
-	private String relativizeContractPath(Map.Entry<Path, Collection<ContractMetadata>> entry) {
+	private String relativizeContractPath(Map.Entry<Path, List<ContractMetadata>> entry) {
 		Path relativePath = configProperties.contractsDslDir.toPath().
 				relativize(entry.getKey())
 		if (StringUtils.isEmpty(relativePath.toString())) {

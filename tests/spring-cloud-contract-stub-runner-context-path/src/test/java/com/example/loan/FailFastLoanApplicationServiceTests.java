@@ -17,7 +17,7 @@
 package com.example.loan;
 
 import org.junit.Test;
-import wiremock.com.google.common.collect.ImmutableMap;
+import shaded.com.google.common.collect.ImmutableMap;
 
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.BeanCreationException;

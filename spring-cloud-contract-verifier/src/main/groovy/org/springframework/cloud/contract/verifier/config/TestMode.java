@@ -40,6 +40,6 @@ public enum TestMode {
 	/**
 	 * Uses Spring's reactive WebTestClient.
 	 */
-	WEBTESTCLIENT;
+	WEBTESTCLIENT
 
 }

@@ -18,8 +18,8 @@ package org.springframework.cloud.contract.verifier.messaging.amqp
 
 import com.rabbitmq.client.Channel
 import org.mockito.exceptions.verification.WantedButNotInvoked
+import shaded.com.google.common.collect.ImmutableMap
 import spock.lang.Specification
-import wiremock.com.google.common.collect.ImmutableMap
 
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
