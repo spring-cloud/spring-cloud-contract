@@ -57,7 +57,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.trace;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 /**
  * Represents a snippet for a WireMock stub.
@@ -241,7 +241,7 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private UrlPattern requestPattern(Operation operation) {
-		return urlEqualTo(operation.getRequest().getUri().getPath());
+		return urlPathEqualTo(operation.getRequest().getUri().getPath());
 	}
 
 	private HttpHeaders responseHeaders(Operation operation) {
