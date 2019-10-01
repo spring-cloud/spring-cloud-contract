@@ -16,10 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class JUnitMethodMetadata implements MethodMetadata {
+class GroovyMethodMetadata implements MethodMetadata, GroovyLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -27,32 +26,22 @@ class JUnitMethodMetadata implements MethodMetadata {
 
 	private final NameProvider nameProvider = new NameProvider();
 
-	JUnitMethodMetadata(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+	GroovyMethodMetadata(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
 		this.metaData = metaData;
 	}
 
 	@Override
-	public MethodMetadata name(SingleContractMetadata metaData) {
-		this.blockBuilder.addAtTheEnd(this.nameProvider.methodName(metaData));
-		return this;
-	}
-
-	@Override
-	public MethodMetadata modifier() {
-		this.blockBuilder.addIndented("public");
-		return this;
-	}
-
-	@Override
-	public MethodMetadata returnType() {
-		this.blockBuilder.append("void");
+	public MethodMetadata methodSignature(SingleContractMetadata metaData) {
+		this.blockBuilder.addIndented("def")
+				.appendWithSpace(this.nameProvider.methodName(metaData))
+				.append("() throws Exception ");
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.metaData.configProperties.getTestFramework() != TestFramework.SPOCK;
+		return acceptLanguage(metaData);
 	}
 
 }

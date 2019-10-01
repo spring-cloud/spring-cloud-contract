@@ -18,11 +18,29 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-/**
- * Describes metadata of a single method.
- */
-interface MethodMetadata extends Acceptor {
+class KotlinMethodMetadata implements MethodMetadata, KotlinLanguageAcceptor {
 
-	MethodMetadata methodSignature(SingleContractMetadata metaData);
+	private final BlockBuilder blockBuilder;
+
+	private final GeneratedClassMetaData metaData;
+
+	private final NameProvider nameProvider = new NameProvider();
+
+	KotlinMethodMetadata(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+		this.blockBuilder = blockBuilder;
+		this.metaData = metaData;
+	}
+
+	@Override
+	public MethodMetadata methodSignature(SingleContractMetadata metaData) {
+		this.blockBuilder.addIndented("fun")
+				.appendWithSpace(this.nameProvider.methodName(metaData)).append("() ");
+		return this;
+	}
+
+	@Override
+	public boolean accept() {
+		return acceptLanguage(metaData);
+	}
 
 }

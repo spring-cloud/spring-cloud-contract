@@ -16,10 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class SpockMethodMetadata implements MethodMetadata {
+class JavaMethodMetadata implements MethodMetadata, JavaLanguageAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -27,31 +26,22 @@ class SpockMethodMetadata implements MethodMetadata {
 
 	private final NameProvider nameProvider = new NameProvider();
 
-	SpockMethodMetadata(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+	JavaMethodMetadata(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
 		this.metaData = metaData;
 	}
 
 	@Override
-	public MethodMetadata name(SingleContractMetadata metaData) {
-		this.blockBuilder.addAtTheEnd(this.nameProvider.methodName(metaData));
-		return this;
-	}
-
-	@Override
-	public MethodMetadata modifier() {
-		return this;
-	}
-
-	@Override
-	public MethodMetadata returnType() {
-		this.blockBuilder.addIndented("def");
+	public MethodMetadata methodSignature(SingleContractMetadata metaData) {
+		this.blockBuilder.addIndented("public void")
+				.appendWithSpace(this.nameProvider.methodName(metaData))
+				.append("() throws Exception ");
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.metaData.configProperties.getTestFramework() == TestFramework.SPOCK;
+		return acceptLanguage(metaData);
 	}
 
 }

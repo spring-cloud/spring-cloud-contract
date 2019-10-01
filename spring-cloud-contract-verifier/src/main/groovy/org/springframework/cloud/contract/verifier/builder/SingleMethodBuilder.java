@@ -138,7 +138,7 @@ class SingleMethodBuilder {
 	 * @return block builder with contents of a single methodBuilder
 	 */
 	BlockBuilder build() {
-		MethodMetadata methodMetadatum = pickMetadatum();
+		MethodMetadata methodMetadata = pickMethodMetadata();
 		// \n
 		this.blockBuilder.addEmptyLine();
 		this.generatedClassMetaData.toSingleContractMetadata().forEach(metaData -> {
@@ -148,10 +148,7 @@ class SingleMethodBuilder {
 			}
 			// @formatter:off
 			// public void validate_foo()
-			this.blockBuilder.append(methodMetadatum::modifier)
-					.appendWithSpace(methodMetadatum::returnType)
-					.appendWithSpace(() -> methodMetadatum.name(metaData))
-					.append("() throws Exception ");
+			this.blockBuilder.append(() -> methodMetadata.methodSignature(metaData));
 			// (space) {
 			this.blockBuilder.inBraces(() -> {
 				// (indent) given
@@ -171,7 +168,7 @@ class SingleMethodBuilder {
 		return this.blockBuilder;
 	}
 
-	private MethodMetadata pickMetadatum() {
+	private MethodMetadata pickMethodMetadata() {
 		return this.methodMetadata.stream().filter(Acceptor::accept).findFirst()
 				.orElseThrow(() -> new IllegalStateException(
 						"No matching method metadata found"));

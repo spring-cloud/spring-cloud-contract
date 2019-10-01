@@ -30,15 +30,21 @@ class MethodMetadataBuilder {
 		this.metaData = singleMethodBuilder.generatedClassMetaData;
 	}
 
-	MethodMetadataBuilder jUnit() {
+	MethodMetadataBuilder java() {
 		this.singleMethodBuilder
-				.methodMetadata(new JUnitMethodMetadata(this.builder, this.metaData));
+				.methodMetadata(new JavaMethodMetadata(this.builder, this.metaData));
 		return this;
 	}
 
-	MethodMetadataBuilder spock() {
+	MethodMetadataBuilder groovy() {
 		this.singleMethodBuilder
-				.methodMetadata(new SpockMethodMetadata(this.builder, this.metaData));
+				.methodMetadata(new GroovyMethodMetadata(this.builder, this.metaData));
+		return this;
+	}
+
+	MethodMetadataBuilder kotlin() {
+		this.singleMethodBuilder
+				.methodMetadata(new KotlinMethodMetadata(this.builder, this.metaData));
 		return this;
 	}
 

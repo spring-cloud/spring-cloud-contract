@@ -168,7 +168,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// when:
 \t\t\tbookReturnedTriggered()
 
@@ -345,7 +345,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// given:
 \t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 \t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
@@ -520,7 +520,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// given:
 \t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 \t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
@@ -680,7 +680,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// given:
 \t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 \t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
@@ -852,7 +852,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// given:
 \t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 \t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
@@ -1018,7 +1018,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// when:
 \t\t\trequestIsCalled()
 
@@ -1283,7 +1283,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// when:
 \t\t\trequestIsCalled()
 
@@ -1443,7 +1443,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// when:
 \t\t\trequestIsCalled()
 
@@ -1605,7 +1605,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// when:
 \t\t\tfoo()
 
@@ -1764,7 +1764,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// given:
 \t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 \t\t\t\t\tfileToBytes(this, "foo_request_request.pdf")
@@ -1956,7 +1956,7 @@ class FooTest {
 \t@Inject lateinit var contractVerifierObjectMapper: ContractVerifierObjectMapper
 
 \t@Test
-\tpublic void validate_foo() throws Exception {
+\tfun validate_foo() {
 \t\t// when:
 \t\t\tcreateNewPerson()
 
