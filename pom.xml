@@ -26,7 +26,7 @@
 		<activemq.version>5.15.9</activemq.version>
 		<camel.version>2.24.2</camel.version>
 		<checkstyle.version>2.17</checkstyle.version>
-		<pact.version>3.6.12</pact.version>
+		<pact.version>3.6.14</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>2.2.0.BUILD-SNAPSHOT
