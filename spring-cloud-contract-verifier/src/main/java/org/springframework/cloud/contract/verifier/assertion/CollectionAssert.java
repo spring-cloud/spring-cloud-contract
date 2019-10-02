@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.assertion;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
