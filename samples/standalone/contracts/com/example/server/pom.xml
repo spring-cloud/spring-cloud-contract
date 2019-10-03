@@ -6,7 +6,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>Server Stubs</name>
 	<description>POM used to install locally stubs for consumer side</description>

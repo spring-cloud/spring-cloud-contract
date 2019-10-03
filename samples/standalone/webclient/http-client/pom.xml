@@ -6,7 +6,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-client-webclient</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>Spring Cloud Contract RestDocs Http WebClient Sample</name>
 	<description>Spring Cloud Contract RestDocs Http WebClient Sample</description>
@@ -54,7 +54,7 @@
 			<groupId>com.example</groupId>
 			<artifactId>http-server-webclient</artifactId>
 			<classifier>stubs</classifier>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
