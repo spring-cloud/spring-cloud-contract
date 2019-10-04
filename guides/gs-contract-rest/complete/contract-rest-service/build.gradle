@@ -21,7 +21,7 @@ apply plugin: 'spring-cloud-contract'
 
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 bootJar {
 	baseName = 'contract-rest-service'
 }
