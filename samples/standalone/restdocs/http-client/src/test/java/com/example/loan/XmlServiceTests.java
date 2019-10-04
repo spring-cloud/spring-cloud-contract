@@ -42,10 +42,10 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfigureWireMock(port = 0)
 public class XmlServiceTests {
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/should_return_empty_content.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/should_return_empty_content.json")
 	private Resource empty;
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/should_return_full_content.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/should_return_full_content.json")
 	private Resource full;
 
 	@Autowired

@@ -45,10 +45,10 @@ public class LoanApplicationServiceTests {
 	@Autowired
 	private LoanApplicationService service;
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/standalone/shouldMarkClientAsFraud.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/standalone/shouldMarkClientAsFraud.json")
 	private Resource markClientAsFraud;
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/webapp/shouldMarkClientAsNotFraud.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/webapp/shouldMarkClientAsNotFraud.json")
 	private Resource markClientAsNotFraud;
 
 	@Autowired
