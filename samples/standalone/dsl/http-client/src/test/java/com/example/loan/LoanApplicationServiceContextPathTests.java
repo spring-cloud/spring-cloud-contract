@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE, properties = "server.context-path=/app")
 @AutoConfigureStubRunner(ids = {
-		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+		"com.example:http-server-dsl:0.0.1:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceContextPathTests {
 
 	@Autowired
