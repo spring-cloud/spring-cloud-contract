@@ -22,5 +22,5 @@ pluginManagement {
 		}
 	}
 }
-rootProject.name = 'http-server-webclient-gradle'
+rootProject.name = 'http-server-webclient'
 
