@@ -34,13 +34,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureStubRunner(ids = "com.example:http-server-webclient-gradle")
+@AutoConfigureStubRunner(ids = "com.example:http-server-webclient")
 public class LoanApplicationServiceusingStubRunnerGradleTests {
 
 	@Autowired
 	LoanApplicationService service;
 
-	@Value("${stubrunner.runningstubs.http-server-webclient-gradle.port}")
+	@Value("${stubrunner.runningstubs.http-server-webclient.port}")
 	int port;
 
 	@Before
