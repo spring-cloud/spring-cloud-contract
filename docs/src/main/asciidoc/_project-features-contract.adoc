@@ -164,6 +164,11 @@ IMPORTANT: Remember that, inside the Kotlin Script file, you have to provide the
 Generally you would use its contract function like this: `org.springframework.cloud.contract.spec.ContractDsl.contract { ... }`.
 You can also provide an import to the `contract` function (`import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract`) and then call `contract { ... }`.
 
+[[contract-yml]]
+=== Contract DSL in YML
+
+In order to see a schema of a YAML contract, you can check out the link:yml-schema.html[YML Schema] page.
+
 [[contract-limitations]]
 === Limitations
 

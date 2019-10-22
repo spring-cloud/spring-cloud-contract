@@ -14,6 +14,7 @@
 	<name>Spring Cloud Contract Docs</name>
 	<description>Spring Cloud Docs</description>
 	<properties>
+		<jackson-module-jsonSchema.version>2.10.0</jackson-module-jsonSchema.version>
 		<docs.main>spring-cloud-contract</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
 		<maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
@@ -29,6 +30,40 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>schema-test-compilation</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>schema-generation</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/*Tests.*</include>
+								<include>**/*Test.*</include>
+							</includes>
+							<reportFormat>plain</reportFormat>
+							<failIfNoTests>true</failIfNoTests>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -39,6 +74,12 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jsonSchema</artifactId>
+			<version>${jackson-module-jsonSchema.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<profiles>
