@@ -51,7 +51,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(StubRunnerProperties.class)
 @ConditionalOnMissingBean(
 		type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")

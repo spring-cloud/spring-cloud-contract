@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class StubRunnerBackupAutoConfiguration {
 
 	@Bean

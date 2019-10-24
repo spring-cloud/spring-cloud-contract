@@ -55,7 +55,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ IntegrationFlows.class, EnableBinding.class })
 @ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
 		matchIfMissing = true)

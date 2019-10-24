@@ -35,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Dave Syer
  *
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class WireMockRestTemplateConfiguration {
 
 	@Bean

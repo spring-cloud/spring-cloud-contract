@@ -38,7 +38,7 @@ import org.springframework.core.env.Environment;
  * @since 1.0.0
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(StubMapperProperties.class)
 @ConditionalOnClass(DiscoveryClient.class)
 @ConditionalOnProperty(value = "stubrunner.cloud.enabled", matchIfMissing = true)

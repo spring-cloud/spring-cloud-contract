@@ -33,7 +33,7 @@ import org.springframework.messaging.Message;
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Message.class)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)

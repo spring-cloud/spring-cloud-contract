@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
  * @author Mathias Düsterhöft
  * @since 1.0.2
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnBean(ContractVerifierAmqpAutoConfiguration.class)
 @ConditionalOnProperty(value = "stubrunner.amqp.mockConnection", havingValue = "true",
 		matchIfMissing = true)

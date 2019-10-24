@@ -55,7 +55,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ KafkaTemplate.class, EmbeddedKafkaBroker.class })
 @ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true",
 		matchIfMissing = true)

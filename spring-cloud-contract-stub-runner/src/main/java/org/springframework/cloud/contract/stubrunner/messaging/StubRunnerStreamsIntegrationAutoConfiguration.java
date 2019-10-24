@@ -33,10 +33,10 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Biju Kunjummen
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class StubRunnerStreamsIntegrationAutoConfiguration {
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(TestSupportBinderAutoConfiguration.class)
 	@ConditionalOnBean(TestSupportBinder.class)
 	@ImportAutoConfiguration(classes = { TestSupportBinderAutoConfiguration.class,
@@ -45,7 +45,7 @@ public class StubRunnerStreamsIntegrationAutoConfiguration {
 
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(IntegrationAutoConfiguration.class)
 	@ImportAutoConfiguration(classes = { IntegrationAutoConfiguration.class })
 	static class IntegrationRelatedAutoConfiguration {

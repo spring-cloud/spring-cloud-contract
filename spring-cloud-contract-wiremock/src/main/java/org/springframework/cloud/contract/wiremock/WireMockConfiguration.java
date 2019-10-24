@@ -58,7 +58,7 @@ import org.springframework.util.StringUtils;
  * @author Matt Garner
  *
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(WireMockProperties.class)
 public class WireMockConfiguration implements SmartLifecycle {
 

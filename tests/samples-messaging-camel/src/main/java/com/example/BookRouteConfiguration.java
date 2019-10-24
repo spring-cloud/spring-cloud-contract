@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class BookRouteConfiguration {
 
 	@Bean

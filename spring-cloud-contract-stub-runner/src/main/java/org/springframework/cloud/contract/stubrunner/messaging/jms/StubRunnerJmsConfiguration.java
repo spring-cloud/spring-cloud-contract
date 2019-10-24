@@ -47,7 +47,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(JmsTemplate.class)
 @ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true",
 		matchIfMissing = true)

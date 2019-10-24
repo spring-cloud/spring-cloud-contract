@@ -65,7 +65,7 @@ public class AmqpMessagingApplication {
 		return rabbitTemplate;
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@Profile("!listener")
 	static class MessageListenerAdapterConfig {
 
@@ -105,7 +105,7 @@ public class AmqpMessagingApplication {
 
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@EnableRabbit
 	@Profile("listener")
 	static class RabbitListenerConfig {

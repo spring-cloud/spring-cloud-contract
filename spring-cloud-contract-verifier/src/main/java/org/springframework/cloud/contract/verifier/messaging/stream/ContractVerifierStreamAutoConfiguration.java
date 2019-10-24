@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(EnableBinding.class)
 @ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
 		matchIfMissing = true)
@@ -50,7 +50,7 @@ public class ContractVerifierStreamAutoConfiguration {
 		return new ContractVerifierHelper(exchange);
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(MessageCollector.class)
 	static class MessageCollectorConfiguration {
 
@@ -66,7 +66,7 @@ public class ContractVerifierStreamAutoConfiguration {
 
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnMissingClass("org.springframework.cloud.stream.test.binder.MessageCollector")
 	static class NoMessageCollectorClassConfiguration {
 

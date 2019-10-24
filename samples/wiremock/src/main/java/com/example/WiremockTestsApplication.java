@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableAutoConfiguration
 @Import({ Service.class, Controller.class })
 public class WiremockTestsApplication {

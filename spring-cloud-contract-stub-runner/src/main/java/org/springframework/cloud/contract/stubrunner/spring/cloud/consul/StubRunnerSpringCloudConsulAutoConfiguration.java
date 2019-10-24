@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter({ StubRunnerConfiguration.class,
 		ConsulServiceRegistryAutoConfiguration.class })
 @ConditionalOnClass(ConsulClient.class)

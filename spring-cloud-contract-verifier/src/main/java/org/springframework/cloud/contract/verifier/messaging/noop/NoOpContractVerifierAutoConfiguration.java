@@ -33,7 +33,7 @@ import org.springframework.core.Ordered;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class NoOpContractVerifierAutoConfiguration {
 

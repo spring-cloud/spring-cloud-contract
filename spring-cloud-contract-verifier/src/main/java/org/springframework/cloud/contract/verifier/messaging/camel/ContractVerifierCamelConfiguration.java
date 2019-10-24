@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Import;
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Message.class)
 @Import(CamelAutoConfiguration.class)
 @ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",

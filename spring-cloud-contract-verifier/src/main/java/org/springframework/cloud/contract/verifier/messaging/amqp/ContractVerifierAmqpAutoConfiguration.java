@@ -51,7 +51,7 @@ import static java.util.Collections.emptyList;
  * @author Mathias Düsterhöft
  * @since 1.0.2
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RabbitTemplate.class)
 @ConditionalOnProperty(name = "stubrunner.amqp.enabled", havingValue = "true")
 @AutoConfigureBefore(ContractVerifierIntegrationConfiguration.class)

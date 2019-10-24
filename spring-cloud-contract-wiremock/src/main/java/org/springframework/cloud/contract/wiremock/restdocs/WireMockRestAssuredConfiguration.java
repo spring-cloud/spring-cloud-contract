@@ -32,7 +32,7 @@ import org.springframework.restdocs.restassured3.RestAssuredRestDocumentationCon
  * stub behaviour
  * @author Eddú Meléndez
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RestAssuredRestDocumentationConfigurer.class)
 public class WireMockRestAssuredConfiguration
 		implements RestDocsRestAssuredConfigurationCustomizer {

@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RoutesBuilder.class)
 @ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
 		matchIfMissing = true)

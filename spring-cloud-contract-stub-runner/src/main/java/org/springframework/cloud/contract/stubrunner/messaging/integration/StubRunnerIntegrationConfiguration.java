@@ -46,7 +46,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(IntegrationFlowBuilder.class)
 @ConditionalOnProperty(name = "stubrunner.integration.enabled", havingValue = "true",
 		matchIfMissing = true)

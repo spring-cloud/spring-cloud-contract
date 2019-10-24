@@ -34,7 +34,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
  * @author Dave Syer
  *
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(MockMvcRestDocumentationConfigurer.class)
 public class WireMockRestDocsConfiguration
 		implements RestDocsMockMvcConfigurationCustomizer {

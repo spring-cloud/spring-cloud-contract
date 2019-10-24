@@ -34,7 +34,7 @@ import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation
  * @author Dave Syer
  *
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(WebTestClientRestDocumentationConfigurer.class)
 public class WireMockWebTestClientConfiguration
 		implements RestDocsWebTestClientConfigurationCustomizer {

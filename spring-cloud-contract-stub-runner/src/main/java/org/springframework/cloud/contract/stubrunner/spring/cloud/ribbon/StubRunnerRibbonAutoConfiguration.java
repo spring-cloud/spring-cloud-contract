@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(ServerList.class)
 @ConditionalOnBean(StubMapperProperties.class)
 @AutoConfigureAfter(RibbonAutoConfiguration.class)

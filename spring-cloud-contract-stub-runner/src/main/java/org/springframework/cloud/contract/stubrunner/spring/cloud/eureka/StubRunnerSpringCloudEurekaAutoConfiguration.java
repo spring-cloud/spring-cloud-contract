@@ -50,7 +50,7 @@ import org.springframework.core.env.Environment;
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter({ StubRunnerConfiguration.class,
 		EurekaClientAutoConfiguration.class })
 @ConditionalOnClass(CloudEurekaClient.class)
@@ -60,7 +60,7 @@ import org.springframework.core.env.Environment;
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
 	@Profile("!cloud")
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	protected static class NonCloudConfig {
 
 		@Bean(initMethod = "registerStubs")
@@ -77,7 +77,7 @@ public class StubRunnerSpringCloudEurekaAutoConfiguration {
 	}
 
 	@Profile("cloud")
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	protected static class CloudConfig {
 
 		private static final int DEFAULT_PORT = 80;
