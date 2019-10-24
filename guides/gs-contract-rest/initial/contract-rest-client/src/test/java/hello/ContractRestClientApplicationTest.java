@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureStubRunner(
-		ids = "com.example:contract-rest-service:0.0.1-SNAPSHOT:stubs:8100",
+		ids = "com.example:contract-rest-service:0.0.1:stubs:8100",
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL
 )
 public class ContractRestClientApplicationTest {
