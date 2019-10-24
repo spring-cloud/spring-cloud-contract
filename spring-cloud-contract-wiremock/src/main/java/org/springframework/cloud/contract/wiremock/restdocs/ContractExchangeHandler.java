@@ -42,6 +42,7 @@ import wiremock.com.google.common.base.Optional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentationConfigurer;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -49,8 +50,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
-
-import static org.eclipse.jetty.server.handler.ContextHandler.StaticContext;
 
 /**
  * @author Dave Syer
@@ -264,7 +263,7 @@ class WireMockHttpRequestAdapter implements Request {
 				.request(this.result.getMethod(), this.result.getUriTemplate())
 				.contentType(this.result.getRequestHeaders().getContentType())
 				.content(this.result.getRequestBodyContent())
-				.buildRequest(new StaticContext());
+				.buildRequest(new MockServletContext());
 		try {
 			return new StandardMultipartHttpServletRequest(request).getParts().stream()
 					.map(part -> partFromServletPart(part)).collect(Collectors.toList());
