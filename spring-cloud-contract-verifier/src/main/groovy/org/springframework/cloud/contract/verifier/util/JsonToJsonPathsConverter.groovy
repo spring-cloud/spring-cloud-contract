@@ -154,7 +154,11 @@ class JsonToJsonPathsConverter {
 					removeTrailingContainers(pathToDelete, context)
 		}
 		else {
-			String lastParent = matcherPath.substring(0, matcherPath.lastIndexOf("."))
+			int lastIndexOfDot = matcherPath.lastIndexOf(".")
+			if (lastIndexOfDot == -1) {
+				return false
+			}
+			String lastParent = matcherPath.substring(0, lastIndexOfDot)
 			def lastParentObject = context.read(lastParent)
 			if (isIterable(lastParentObject)
 					&&
@@ -229,9 +233,9 @@ class JsonToJsonPathsConverter {
 			return path
 		}
 		int lastIndexOfDot = lastIndexOfDot(path)
-		String toLastDot = path.substring(0, lastIndexOfDot)
 		String fromLastDot = path.substring(lastIndexOfDot + 1)
-		String propertyName = "@.${fromLastDot}"
+		String toLastDot = lastIndexOfDot == -1 ? '$' : path.substring(0, lastIndexOfDot)
+		String propertyName = lastIndexOfDot == -1 ? '@' : "@.${fromLastDot}"
 		String comparison = createComparison(propertyName, bodyMatcher, value, body)
 		return "${toLastDot}[?(${comparison})]"
 	}
