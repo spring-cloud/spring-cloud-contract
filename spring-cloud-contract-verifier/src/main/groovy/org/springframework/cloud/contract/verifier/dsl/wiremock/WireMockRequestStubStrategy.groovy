@@ -98,6 +98,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			if (bodyHasMatchingStrategy) {
 				requestPattern.withRequestBody(
 						convertToValuePattern(matchingStrategy))
+			} else if (containsPattern(request?.body)) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(appendBodyRegexpMatchPattern(request.body)))
 			} else {
 				def body = JsonToJsonPathsConverter.
 						removeMatchingJsonPaths(originalBody, request.bodyMatchers)
@@ -148,6 +151,13 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		else {
 			requestBodyGuessedFromMatchingStrategy(requestPattern)
 		}
+	}
+
+	private Object generateConcreteValue(Object originalBody) {
+		if (originalBody instanceof Pattern || originalBody instanceof RegexProperty) {
+			return new RegexProperty(originalBody).generate()
+		}
+		return originalBody
 	}
 
 	private RequestPatternBuilder requestBodyGuessedFromMatchingStrategy(RequestPatternBuilder requestPattern) {

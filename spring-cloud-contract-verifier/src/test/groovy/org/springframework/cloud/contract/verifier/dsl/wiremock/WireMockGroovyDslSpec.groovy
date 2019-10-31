@@ -2644,6 +2644,31 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
+	@Issue("#94")
+	def "should not produce any cursors in the stub"() {
+		given:
+			Contract contractDsl =  Contract.make {
+				request {
+					method 'POST'
+					urlPath $(test('/resource/resourceId/another-resource/another-resource-id/sth'), stub(regex('/resource/[\\w\\.]+/another-resource/([\\w+\\.-]|%[a-fA-F0-9]{2})+/sth')))
+					body($(stub(regex(".+")), test(execute("encrypt('a lot of code')"))))
+				}
+				response {
+					status 201
+				}
+				// 1 is the highest
+				priority 1000
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+
+		then:
+			stubMappingIsValidWireMockStub(wireMockStub)
+
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
