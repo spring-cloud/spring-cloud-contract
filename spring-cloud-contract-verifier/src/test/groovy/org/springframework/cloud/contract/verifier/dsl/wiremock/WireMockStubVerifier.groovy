@@ -32,6 +32,7 @@ trait WireMockStubVerifier {
 			Pattern.compile(it.getValue())
 		}
 		assert !mappingDefinition.contains('org.springframework.cloud.contract.spec.internal')
+		assert !mappingDefinition.contains('cursor')
 	}
 
 	void stubMappingIsValidWireMockStub(Contract contractDsl) {
