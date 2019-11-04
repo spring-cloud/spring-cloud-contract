@@ -121,14 +121,15 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		boolean bodyHasMatchingStrategy = request.body.clientValue instanceof MatchingStrategy
 		MatchingStrategy matchingStrategy = getMatchingStrategyFromBody(request.body)
+		Object clientSideBody = MapConverter.transformToClientValues(request.body)
 		if (contentType == ContentType.JSON) {
 			def originalBody = matchingStrategy?.clientValue
 			if (bodyHasMatchingStrategy) {
 				requestPattern.withRequestBody(
 						convertToValuePattern(matchingStrategy))
-			} else if (containsPattern(request?.body)) {
+			} else if (clientSideBody instanceof Pattern || clientSideBody instanceof RegexProperty) {
 				requestPattern.withRequestBody(
-						convertToValuePattern(appendBodyRegexpMatchPattern(request.body)))
+						convertToValuePattern(appendBodyRegexpMatchPattern(request.body, contentType)))
 			}
 			else {
 				def body = JsonToJsonPathsConverter.
@@ -437,13 +438,14 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private MatchingStrategy appendBodyRegexpMatchPattern(Object value, ContentType contentType) {
+		Object clientValue = MapConverter.transformToClientValues(value)
 		switch (contentType) {
 		case ContentType.JSON:
 			return new MatchingStrategy(
-					buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
+					buildJSONRegexpMatch(clientValue), MatchingStrategy.Type.MATCHING)
 		case ContentType.UNKNOWN:
 			return new MatchingStrategy(
-					buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
+					buildGStringRegexpForStubSide(clientValue), MatchingStrategy.Type.MATCHING)
 		case ContentType.XML:
 			throw new IllegalStateException("XML pattern matching is not implemented yet")
 		}

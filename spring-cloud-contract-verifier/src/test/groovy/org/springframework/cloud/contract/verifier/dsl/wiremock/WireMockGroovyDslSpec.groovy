@@ -2818,6 +2818,32 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	}
 
+	@Issue("#894")
+	def "should not fail when matchers don't have dots"() {
+		given:
+			Contract contractDsl =  Contract.make {
+				request {
+					method 'POST'
+					url "/example"
+					body([ "123", "234"])
+					bodyMatchers {
+						jsonPath('$[*]', byRegex(nonEmpty()))
+					}
+				}
+				response {
+					status 201
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+
+		then:
+			stubMappingIsValidWireMockStub(wireMockStub)
+
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
