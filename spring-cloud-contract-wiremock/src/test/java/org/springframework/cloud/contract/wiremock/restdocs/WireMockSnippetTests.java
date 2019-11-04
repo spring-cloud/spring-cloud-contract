@@ -177,8 +177,7 @@ public class WireMockSnippetTests {
 
 	@Test
 	public void should_accept_query_params() throws IOException {
-		this.operation = operation(requestGetWithQueryParam(), response(),
-				this.context);
+		this.operation = operation(requestGetWithQueryParam(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -188,9 +187,8 @@ public class WireMockSnippetTests {
 		StubMapping stubMapping = WireMockStubMapping
 				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getRequest().getUrlPath()).isEqualTo("/bar");
-		assertThat(stubMapping.getRequest()
-				.getQueryParameters())
-				.containsOnly(Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
+		assertThat(stubMapping.getRequest().getQueryParameters()).containsOnly(
+				Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
 	}
 
 	private Operation operation(OperationRequest request, OperationResponse response,
