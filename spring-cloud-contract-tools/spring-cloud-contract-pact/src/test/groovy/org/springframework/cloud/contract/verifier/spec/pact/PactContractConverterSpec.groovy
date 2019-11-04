@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.spec.pact
 
+import java.nio.file.Files
+
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactSpecVersion
 import groovy.json.JsonOutput
@@ -25,6 +27,8 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.TestGenerator
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -49,6 +53,8 @@ class PactContractConverterSpec extends Specification {
 		getResource("/pact/pact_v3_messaging.json").toURI())
 	File pactv3UnsupportedRuleLogicJson = new File(PactContractConverterSpec.
 		getResource("/pact/pact_v3_unsupported_rule_logic.json").toURI())
+	File pact1043Json = new File(PactContractConverterSpec.
+			getResource("/pact/for-test-generation/pact_1043.json").toURI())
 	@Subject
 	PactContractConverter converter = new PactContractConverter()
 
@@ -728,6 +734,20 @@ class PactContractConverterSpec extends Specification {
 			def e = thrown(UnsupportedOperationException)
 			e.message.
 				contains("Currently only the AND combination rule logic is supported")
+	}
+
+	@Issue("1043")
+	def "should generate a test from pact and not contain a check for an empty array"() {
+		given:
+			File output = Files.createTempDirectory("pact").toFile()
+			output.mkdirs()
+		when:
+			new TestGenerator(new ContractVerifierConfigProperties(contractsDslDir: pact1043Json.parentFile, generatedTestSourcesDir: output, generatedTestResourcesDir: output, basePackageForTests: "example")).generate()
+		then:
+			File generatedTest = new File(output, "example/ContractVerifierTest.java")
+			String generatedTestText = generatedTest.text
+			!generatedTestText.contains('''assertThatJson(parsedJson).array().array("['authors']").isEmpty()''')
+
 	}
 }
 
