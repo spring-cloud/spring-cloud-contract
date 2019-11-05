@@ -290,7 +290,7 @@ public class ApplicationTests {
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
 				.andExpect(status().isOk())
 				.andDo(verify().jsonPath("$.id")
-                        .stub("resource"));
+				.andDo(document("resource"));
 	}
 }
 ----
@@ -317,7 +317,7 @@ following example shows:
 						.wiremock(WireMock.post(
 							urlPathEquals("/resource"))
 							.withRequestBody(matchingJsonPath("$.id"))
-                        .stub("post-resource"));
+							.andDo(document("post-resource"));
 	}
 ----
 

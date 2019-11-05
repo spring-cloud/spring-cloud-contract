@@ -29,6 +29,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
@@ -78,7 +79,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			  },
 			  "response" : {
 				"status" : 200,
-				"body" : "{\\"surname\\":\\"Kowalsky\\",\\"created\\":\\"2014-02-02 12:23:43\\",\\"name\\":\\"Jan\\",\\"id\\":\\"123\\"}",
+				"body" : "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
 				"headers" : {
 				  "Content-Type" : "application/json"
 				},
@@ -131,7 +132,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   },
   "response" : {
 	"status" : 200,
-	"body" : "{\\"ingredients\\":[{\\"quantity\\":100,\\"type\\":\\"MALT\\"},{\\"quantity\\":200,\\"type\\":\\"WATER\\"},{\\"quantity\\":300,\\"type\\":\\"HOP\\"},{\\"quantity\\":400,\\"type\\":\\"YIEST\\"}]}",
+	"body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}",
 	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
@@ -191,7 +192,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	},
 	"response": {
 		"status": 204,
-		"body": "{\\"foundExistingPayment\\":false,\\"paymentId\\":\\"4\\"}",
+		"body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}",
 		"transformers" : [ "response-template", "foo-transformer" ]
 	}
 }
@@ -1968,7 +1969,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  },
 				  "response" : {
 					"status" : 200,
-					"body" : "{\\"number\\":0,\\"last\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"totalPages\\":1,\\"sort\\":[{\\"nullHandling\\":\\"NATIVE\\",\\"ignoreCase\\":false,\\"property\\":\\"id\\",\\"ascending\\":true,\\"direction\\":\\"ASC\\"}],\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"state\\":\\"ACTIVE\\",\\"type\\":\\"Extraordinary\\"}],\\"first\\":true,\\"totalElements\\":1}",
+					"body" : "{\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"type\\":\\"Extraordinary\\",\\"state\\":\\"ACTIVE\\"}],\\"totalPages\\":1,\\"totalElements\\":1,\\"last\\":true,\\"sort\\":[{\\"direction\\":\\"ASC\\",\\"property\\":\\"id\\",\\"ignoreCase\\":false,\\"nullHandling\\":\\"NATIVE\\",\\"ascending\\":true}],\\"first\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"number\\":0}",
 					"transformers" : [ "response-template", "foo-transformer" ]
 				  }
 				}
@@ -2216,7 +2217,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					  },
 					  "response" : {
 						"status" : 200,
-						"body" : "{\\"rawAuthorization2\\":\\"{{request.headers.Authorization.[1]}}\\",\\"responseBaz\\":{{{jsonPath request.body '$.baz'}}} ,\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"rawAuthorization\\":\\"{{request.headers.Authorization.[0]}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"rawParam\\":\\"{{request.query.foo.[0]}}\\",\\"url\\":\\"{{{request.url}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"rawUrl\\":\\"{{request.url}}\\",\\"rawPath\\":\\"{{request.path}}\\",\\"rawResponseBaz2\\":\\"Bla bla {{jsonPath request.body '$.foo'}} bla bla\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"rawResponseBaz\\":{{jsonPath request.body '$.baz'}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonPath request.body '$.foo'}}} bla bla\\",\\"rawResponseFoo\\":\\"{{jsonPath request.body '$.foo'}}\\",\\"responseFoo\\":\\"{{{jsonPath request.body '$.foo'}}}\\",\\"rawPathIndex\\":\\"{{request.path.[1]}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"rawParamIndex\\":\\"{{request.query.foo.[1]}}\\"}",
+						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonPath request.body '$.foo'}}}\\",\\"responseBaz\\":{{{jsonPath request.body '$.baz'}}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonPath request.body '$.foo'}}} bla bla\\",\\"rawUrl\\":\\"{{request.url}}\\",\\"rawPath\\":\\"{{request.path}}\\",\\"rawPathIndex\\":\\"{{request.path.[1]}}\\",\\"rawParam\\":\\"{{request.query.foo.[0]}}\\",\\"rawParamIndex\\":\\"{{request.query.foo.[1]}}\\",\\"rawAuthorization\\":\\"{{request.headers.Authorization.[0]}}\\",\\"rawAuthorization2\\":\\"{{request.headers.Authorization.[1]}}\\",\\"rawResponseFoo\\":\\"{{jsonPath request.body '$.foo'}}\\",\\"rawResponseBaz\\":{{jsonPath request.body '$.baz'}} ,\\"rawResponseBaz2\\":\\"Bla bla {{jsonPath request.body '$.foo'}} bla bla\\"}",
 						"headers" : {
 						  "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
 						},
@@ -2327,7 +2328,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				},
 				"response" : {
 					"status" : 200,
-					"body" : "{\\"access_token\\":\\"RANDOM_ACCESS_TOKEN\\",\\"refresh_token\\":\\"RANDOM_REFRESH_TOKEN\\",\\"scope\\":[\\"task\\"],\\"token_type\\":\\"bearer\\",\\"expires_in\\":3600,\\"user\\":{\\"name\\":\\"User\\",\\"id\\":1,\\"username\\":\\"user\\"}}",
+					"body" : "{\\"refresh_token\\":\\"RANDOM_REFRESH_TOKEN\\",\\"access_token\\":\\"RANDOM_ACCESS_TOKEN\\",\\"token_type\\":\\"bearer\\",\\"expires_in\\":3600,\\"scope\\":[\\"task\\"],\\"user\\":{\\"id\\":1,\\"username\\":\\"user\\",\\"name\\":\\"User\\"}}",
 					"headers" : {
 					  "Content-Type" : "application/json"
 					},
@@ -2570,7 +2571,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  },
 				  "response" : {
 					"status" : 200,
-					"body" : "{\\"code\\":91015,\\"payload\\":null,\\"description\\":\\"订单已失效\\",\\"lastUpdateTime\\":\\"0\\"}",
+					"body" : "{\\"code\\":91015,\\"description\\":\\"订单已失效\\",\\"lastUpdateTime\\":\\"0\\",\\"payload\\":null}",
 					"transformers" : [ "response-template", "foo-transformer" ]
 				  }
 				}
@@ -2641,7 +2642,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  },
 				  "response" : {
 					"status" : 200,
-					"body" : "{\\"access_token\\":\\"RANDOM_ACCESS_TOKEN\\",\\"refresh_token\\":\\"RANDOM_REFRESH_TOKEN\\",\\"scope\\":[\\"task\\"],\\"token_type\\":\\"bearer\\",\\"expires_in\\":3600,\\"user\\":{\\"name\\":\\"User\\",\\"id\\":1,\\"username\\":\\"user\\"}}",
+					"body" : "{\\"refresh_token\\":\\"RANDOM_REFRESH_TOKEN\\",\\"access_token\\":\\"RANDOM_ACCESS_TOKEN\\",\\"token_type\\":\\"bearer\\",\\"expires_in\\":3600,\\"scope\\":[\\"task\\"],\\"user\\":{\\"id\\":1,\\"username\\":\\"user\\",\\"name\\":\\"User\\"}}",
 					"headers" : {
 					  "Content-Type" : "application/json;charset=UTF-8"
 					},
@@ -2840,6 +2841,23 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					.toWireMockClientStub()
 
 		then:
+			stubMappingIsValidWireMockStub(wireMockStub)
+
+	}
+
+	@Issue("#1038")
+	def "should deal with unicode strings"() {
+		given:
+			File file = new File(WireMockGroovyDslSpec.getResource("/yml/issue1038.yml").
+					toURI())
+			Contract contractDsl =  new YamlContractConverter().convertFrom(file).first()
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+
+		then:
+			wireMockStub.contains('''\\"country\\":\\"日本\\"''')
 			stubMappingIsValidWireMockStub(wireMockStub)
 
 	}

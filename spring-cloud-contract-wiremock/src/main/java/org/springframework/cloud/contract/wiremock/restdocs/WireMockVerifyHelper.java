@@ -42,18 +42,17 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 
 	private MediaType contentType;
 
-	private String name;
-
 	private MappingBuilder builder;
 
+	/**
+	 * @param name the stub name (ignored)
+	 * @return this
+	 * @deprecated in favour of explicitly calling <code>andDo(document(name))</code>
+	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public S stub(String name) {
-		this.name = name;
 		return (S) this;
-	}
-
-	protected String getName() {
-		return this.name;
 	}
 
 	public void configure(T result) {

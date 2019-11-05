@@ -44,17 +44,33 @@ public final class HttpServerStubConfiguration {
 	 */
 	public final Integer port;
 
+	/**
+	 * Is port a random one or was it fixed.
+	 */
+	public boolean randomPort;
+
 	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer,
 			StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
 			Integer port) {
+		this(configurer, stubRunnerOptions, stubConfiguration, port, randomPort(port));
+	}
+
+	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer,
+			StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
+			Integer port, boolean randomPort) {
 		this.configurer = configurer;
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubConfiguration = stubConfiguration;
 		this.port = port;
+		this.randomPort = randomPort;
+	}
+
+	private static boolean randomPort(Integer port) {
+		return port == null || port == 0;
 	}
 
 	public boolean isRandomPort() {
-		return this.port == null || this.port == 0;
+		return randomPort(this.port);
 	}
 
 	public String toColonSeparatedDependencyNotation() {

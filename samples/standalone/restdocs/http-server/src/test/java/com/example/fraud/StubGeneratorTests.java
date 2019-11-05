@@ -36,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
@@ -69,8 +70,8 @@ public class StubGeneratorTests {
 				.andExpect(jsonPath("$.rejectionReason").value("Amount too high"))
 				.andDo(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount > 1000)]")
-						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsFraud"));
+						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json")))
+				.andDo(document("markClientAsFraud"));
 	}
 
 	@Test
@@ -85,8 +86,8 @@ public class StubGeneratorTests {
 				.andExpect(jsonPath("$.rejectionReason").doesNotExist())
 				.andDo(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount <= 1000)]")
-						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsNotFraud"));
+						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json")))
+				.andDo(document("markClientAsNotFraud"));
 	}
 
 }

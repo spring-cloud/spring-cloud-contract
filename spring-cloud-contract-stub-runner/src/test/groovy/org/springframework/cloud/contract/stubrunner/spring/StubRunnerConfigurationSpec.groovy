@@ -33,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.StubNotFoundException
+import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubAccessor
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
@@ -73,6 +74,11 @@ class StubRunnerConfigurationSpec extends Specification {
 	void setupProps() {
 		System.clearProperty("stubrunner.repository.root")
 		System.clearProperty("stubrunner.classifier")
+	}
+
+	def 'should mark all ports as random'() {
+		expect:
+			WireMockHttpServerStubAccessor.everyPortRandom()
 	}
 
 	def 'should start WireMock servers'() {
