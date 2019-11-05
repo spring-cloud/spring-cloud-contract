@@ -269,8 +269,8 @@ public class ApplicationTests {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
 				.andExpect(status().isOk())
-				.andDo(verify().jsonPath("$.id")
-                        .stub("resource"));
+				.andDo(verify().jsonPath("$.id"))
+                .andDo(document("resource"));
 	}
 }
 ----
@@ -295,8 +295,8 @@ following example:
 				.andDo(verify()
 						.wiremock(WireMock.post(
 							urlPathEquals("/resource"))
-							.withRequestBody(matchingJsonPath("$.id"))
-                        .stub("post-resource"));
+							.withRequestBody(matchingJsonPath("$.id")))
+                        .andDo(document("post-resource"));
 	}
 ----
 

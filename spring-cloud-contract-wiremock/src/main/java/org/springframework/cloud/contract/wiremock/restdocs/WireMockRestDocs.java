@@ -33,7 +33,8 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  * 	public void contextLoads() throws Exception {
  * 		mockMvc.perform(get("/resource"))
  * 				.andExpect(content().string("Hello World"))
- * 				.andDo(verify().stub("resource"));
+ * 				.andDo(verify())
+ * 				.andDo(document("resource"));
  * 	}
  * </pre> which creates a file "target/snippets/stubs/resource.json" matching any GET
  * request to "/resource". To match POST and PUT, you can also specify the content type
