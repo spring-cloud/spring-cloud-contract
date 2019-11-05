@@ -748,7 +748,7 @@ class DslToWireMockClientConverterSpec extends Specification {
   },
   "response" : {
     "status" : 200,
-    "body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"aBoolean\\":true,\\"valueWithMax\\":[1,2,3],\\"valueWithOccurrence\\":[1,2,3,4],\\"number\\":123,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
+    "body" : "{\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"number\\":123,\\"aBoolean\\":true,\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"time\\":\\"01:02:34\\",\\"valueWithoutAMatcher\\":\\"foo\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMin\\":[1,2,3],\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3],\\"valueWithOccurrence\\":[1,2,3,4]}",
     "headers" : {
       "Content-Type" : "application/json"
     },
@@ -987,7 +987,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 	  },
 	  "response" : {
 		"status" : 400,
-		"body" : "{\\"reason\\":{\\"@type\\":\\"ErrorReason\\",\\"description\\":\\"Bad Request\\",\\"oid\\":\\"3.7\\",\\"httpCode\\":\\"400\\"},\\"subject\\":{\\"@type\\":\\"ErrorSubject\\",\\"description\\":\\"Profile\\",\\"oid\\":\\"8.2\\"},\\"message\\":\\"[8.2 Profile/3.7 Bad Request]\\"}",
+		"body" : "{\\"subject\\":{\\"@type\\":\\"ErrorSubject\\",\\"oid\\":\\"8.2\\",\\"description\\":\\"Profile\\"},\\"reason\\":{\\"@type\\":\\"ErrorReason\\",\\"oid\\":\\"3.7\\",\\"description\\":\\"Bad Request\\",\\"httpCode\\":\\"400\\"},\\"message\\":\\"[8.2 Profile/3.7 Bad Request]\\"}",
 		"headers" : {
 		  "CorrelationID" : "11111111-1111-1111-1111-111111111111",
 		  "Content-Type" : "application/json;charset=UTF-8"
