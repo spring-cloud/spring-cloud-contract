@@ -228,6 +228,35 @@ following sections:</p>
 spring-cloud-contract-maven-plugin/index.html[Spring
 Cloud Contract Maven Plugin Documentation].</p>
 </div>
+<div class="paragraph">
+<p>Sometimes, regardless of the picked IDE, you can see that the <code>target/generated-test-source</code> folder is not visible on the IDE&#8217;s classpath. To ensure that it&#8217;s always there, you can add the following entry to your <code>pom.xml</code></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+                &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+                &lt;artifactId&gt;build-helper-maven-plugin&lt;/artifactId&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;id&gt;add-source&lt;/id&gt;
+                        &lt;phase&gt;generate-test-sources&lt;/phase&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;add-test-source&lt;/goal&gt;
+                        &lt;/goals&gt;
+                        &lt;configuration&gt;
+                            &lt;sources&gt;
+                                &lt;source&gt;${project.build.directory}/generated-test-sources/contracts/&lt;/source&gt;
+                            &lt;/sources&gt;
+                        &lt;/configuration&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">

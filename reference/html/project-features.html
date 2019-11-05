@@ -9280,6 +9280,7 @@ class StubRunnerConfigurationSpec extends Specification {
     void setupProps() {
         System.clearProperty("stubrunner.repository.root")
         System.clearProperty("stubrunner.classifier")
+        WireMockHttpServerStubAccessor.clear()
     }
 
     def 'should mark all ports as random'() {
