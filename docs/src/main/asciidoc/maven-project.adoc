@@ -44,6 +44,33 @@ You can read more in the
 spring-cloud-contract-maven-plugin/index.html[Spring
 Cloud Contract Maven Plugin Documentation].
 
+Sometimes, regardless of the picked IDE, you can see that the `target/generated-test-source` folder is not visible on the IDE's classpath. To ensure that it's always there, you can add the following entry to your `pom.xml`
+
+====
+[source,xml,indent=0]
+----
+<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-test-sources/contracts/</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+----
+====
+
+
 [[maven-rest-assured]]
 == Maven and Rest Assured 2.0
 
