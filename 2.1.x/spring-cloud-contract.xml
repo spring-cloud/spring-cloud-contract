@@ -5115,6 +5115,11 @@ class StubRunnerConfigurationSpec extends Specification {
 		System.clearProperty("stubrunner.classifier")
 	}
 
+	def 'should mark all ports as random'() {
+		expect:
+			WireMockHttpServerStubAccessor.everyPortRandom()
+	}
+
 	def 'should start WireMock servers'() {
 		expect: 'WireMocks are running'
 			stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance') != null

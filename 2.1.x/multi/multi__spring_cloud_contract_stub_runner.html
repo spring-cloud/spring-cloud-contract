@@ -527,6 +527,11 @@ its methods as presented below:</p><pre class="programlisting"><xslthl:annotatio
 		System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.classifier"</span>)
 	}
 
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should mark all ports as random'</span>() {
+		expect:
+			WireMockHttpServerStubAccessor.everyPortRandom()
+	}
+
 	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should start WireMock servers'</span>() {
 		expect: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'WireMocks are running'</span>
 			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) != null
