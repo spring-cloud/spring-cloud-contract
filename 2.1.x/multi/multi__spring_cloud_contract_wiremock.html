@@ -227,8 +227,8 @@ public class ApplicationTests {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
 				.andExpect(status().isOk())
-				.andDo(verify().jsonPath("$.id")
-                        .stub("resource"));
+				.andDo(verify().jsonPath("$.id"))
+                .andDo(document("resource"));
 	}
 }</pre><p>This contract specifies that any valid POST with an "id" field receives the response
 defined in this test. You can chain together calls to <code class="literal">.jsonPath()</code> to add additional
@@ -244,8 +244,8 @@ following example:</p><pre class="programlisting"><xslthl:annotation xmlns:xslth
 			.andDo(verify()
 					.wiremock(WireMock.post(
 						urlPathEquals(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
-						.withRequestBody(matchingJsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.id"</span>))
-                       .stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"post-resource"</span>));
+						.withRequestBody(matchingJsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.id"</span>)))
+                       .andDo(document(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"post-resource"</span>));
 }</pre><p>The WireMock API is rich. You can match headers, query parameters, and request body by
 regex as well as by JSON path. These features can be used to create stubs with a wider
 range of parameters. The above example generates a stub resembling the following example:</p><p><b>post-resource.json.&nbsp;</b>
@@ -288,8 +288,7 @@ is there because it makes sense to generate both the contracts and the stubs.</p
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// first WireMock</span>
 				.andDo(WireMockRestDocs.verify().jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
 						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.bar in ['baz','bazz','bazzz'])]"</span>)
-						.contentType(MediaType.valueOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>))
-						.stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"shouldGrantABeerIfOldEnough"</span>))
+						.contentType(MediaType.valueOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>)))
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then Contract DSL documentation</span>
 				.andDo(document(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"index"</span>, SpringCloudContractRestDocs.dslContract()));</pre><p>The preceding test creates the stub presented in the previous section, generating both
 the contract and a documentation file.</p><p>The contract is called <code class="literal">index.groovy</code> and might look like the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
