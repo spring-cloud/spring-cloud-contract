@@ -87,6 +87,7 @@ class CopyContracts {
 		execution.setOverwrite(true);
 		execution.setIncludeEmptyDirs(false);
 		execution.setFilterFilenames(false);
+		execution.setFilters(Collections.emptyList());
 		try {
 			this.mavenResourcesFiltering.filterResources(execution);
 		}
