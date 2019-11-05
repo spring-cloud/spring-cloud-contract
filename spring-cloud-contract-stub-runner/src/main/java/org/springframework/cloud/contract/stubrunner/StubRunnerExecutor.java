@@ -272,8 +272,9 @@ class StubRunnerExecutor implements StubFinder {
 		final List<File> mappings = repository.getStubs();
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
+		boolean randomPort = randomPort(port);
 		HttpServerStubConfiguration configuration = new HttpServerStubConfiguration(
-				configurer, stubRunnerOptions, stubConfiguration, port);
+				configurer, stubRunnerOptions, stubConfiguration, port, randomPort);
 		if (!hasRequest(contracts) && mappings.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
@@ -282,7 +283,7 @@ class StubRunnerExecutor implements StubFinder {
 					new NoOpHttpServerStub()).start(configuration);
 			return this.stubServer;
 		}
-		if (port != null && port >= 0) {
+		if (!randomPort) {
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
 					httpServerStub()).start(configuration);
 		}
@@ -295,12 +296,16 @@ class StubRunnerExecutor implements StubFinder {
 									httpServerStub()).start(
 											new HttpServerStubConfiguration(configurer,
 													stubRunnerOptions, stubConfiguration,
-													availablePort));
+													availablePort, true));
 						}
 					});
 		}
 		STUB_SERVERS.add(this.stubServer);
 		return this.stubServer;
+	}
+
+	private boolean randomPort(Integer port) {
+		return port == null || port == 0;
 	}
 
 	private boolean hasRequest(Collection<Contract> contracts) {
