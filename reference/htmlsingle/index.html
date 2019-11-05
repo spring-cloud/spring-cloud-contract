@@ -8396,7 +8396,7 @@ the method name and passed the proper JSON path as a parameter to it.
   },
   "response" : {
     "status" : 200,
-    "body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"aBoolean\\":true,\\"valueWithMax\\":[1,2,3],\\"valueWithOccurrence\\":[1,2,3,4],\\"number\\":123,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
+    "body" : "{\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"number\\":123,\\"aBoolean\\":true,\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"time\\":\\"01:02:34\\",\\"valueWithoutAMatcher\\":\\"foo\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMin\\":[1,2,3],\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3],\\"valueWithOccurrence\\":[1,2,3,4]}",
     "headers" : {
       "Content-Type" : "application/json"
     },
@@ -9509,7 +9509,7 @@ public class ApplicationTests {
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
                 .andExpect(status().isOk())
                 .andDo(verify().jsonPath("$.id")
-                        .stub("resource"));
+                .andDo(document("resource"));
     }
 }</code></pre>
 </div>
@@ -9539,7 +9539,7 @@ public void contextLoads() throws Exception {
                     .wiremock(WireMock.post(
                         urlPathEquals("/resource"))
                         .withRequestBody(matchingJsonPath("$.id"))
-                    .stub("post-resource"));
+                        .andDo(document("post-resource"));
 }</code></pre>
 </div>
 </div>
@@ -9634,8 +9634,7 @@ is there because it makes sense to generate both the contracts and the stubs.
                 // first WireMock
                 .andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo &gt;= 20)]")
                         .jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
-                        .contentType(MediaType.valueOf("application/json"))
-                        .stub("shouldGrantABeerIfOldEnough"))
+                        .contentType(MediaType.valueOf("application/json")))
                 // then Contract DSL documentation
                 .andDo(document("index", SpringCloudContractRestDocs.dslContract()));</code></pre>
 </div>
@@ -13165,6 +13164,11 @@ class StubRunnerConfigurationSpec extends Specification {
     void setupProps() {
         System.clearProperty("stubrunner.repository.root")
         System.clearProperty("stubrunner.classifier")
+    }
+
+    def 'should mark all ports as random'() {
+        expect:
+            WireMockHttpServerStubAccessor.everyPortRandom()
     }
 
     def 'should start WireMock servers'() {
