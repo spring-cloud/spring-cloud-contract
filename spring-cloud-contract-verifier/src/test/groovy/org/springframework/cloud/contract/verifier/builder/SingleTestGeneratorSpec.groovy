@@ -624,6 +624,38 @@ class SingleTestGeneratorSpec extends Specification {
 			testFramework << [JUNIT, JUNIT5, TESTNG, SPOCK]
 	}
 
+	@Issue('#1199')
+	def 'should generate tests with body from file with custom charset [#testFramework]'() {
+		given:
+			file = tmpFolder.newFile()
+			writeContract(file)
+			tmp = tmpFolder.newFolder()
+			File classpath = new File(SingleTestGeneratorSpec.class.getResource('/charset/').toURI())
+			FileSystemUtils.copyRecursively(classpath, tmp)
+		and:
+			File output = new File(tmp, 'readFromFileWithCharset.groovy')
+			File contractLocation = output
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+					testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+					basePackageForTests: 'a.b', generatedTestSourcesDir: temp,
+					generatedTestResourcesDir: tmpFolder.newFolder()
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			int count = testGenerator.generate()
+		then:
+			count == 1
+		and:
+			String test = new File(temp, "a/b/ContractVerifier${getTestName(testFramework)}").text
+			test.contains('readFromFileWithCharset_request_request.json')
+			test.contains('RESPONSE')
+			test.contains('body(new String(fileToBytes(this, "readFromFileWithCharset_request_request.json"), "US-ASCII"))')
+		where:
+			testFramework << [JUNIT, JUNIT5, SPOCK]
+	}
+
 	@Issue('#260')
 	def "should generate tests in a folder taken from baseClassForTests's package when it is set for [#testFramework]"() {
 		given:
