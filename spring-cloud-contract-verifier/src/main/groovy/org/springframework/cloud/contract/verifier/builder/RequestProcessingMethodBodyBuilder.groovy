@@ -220,12 +220,18 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 			bb.endBlock()
 			bb.addLine(addCommentSignIfRequired('and:')).startBlock()
 			validateResponseBodyBlock(bb, response.bodyMatchers, response.body.serverValue)
+		} else if (this.templateProcessor.containsTemplateEntry(bb.toString())) {
+			updateTemplatedEntries(bb)
 		}
 	}
 
 	@Override
 	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
 		super.validateResponseBodyBlock(bb, bodyMatchers, responseBody)
+		updateTemplatedEntries(bb)
+	}
+
+	private void updateTemplatedEntries(BlockBuilder bb) {
 		String newBody = this.templateProcessor.transform(request, bb.toString())
 		bb.updateContents(newBody)
 	}
