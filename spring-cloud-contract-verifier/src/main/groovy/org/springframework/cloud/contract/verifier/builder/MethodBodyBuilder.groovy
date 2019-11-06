@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.nio.charset.Charset
 import java.util.regex.Pattern
 
 import groovy.transform.PackageScope
@@ -119,6 +120,9 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 	}
 
 	protected String readStringFromFileString(FromFileProperty property, CommunicationType side) {
+		if (property.charset != Charset.defaultCharset().toString()) {
+			return "new String(" + readBytesFromFileString(property, side) + ", \"" + property.charset + "\")"
+		}
 		return "new String(" + readBytesFromFileString(property, side) + ")"
 	}
 
