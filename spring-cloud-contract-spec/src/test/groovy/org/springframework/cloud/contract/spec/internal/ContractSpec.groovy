@@ -398,4 +398,28 @@ then:
 			assertThat(contract.request.bodyMatchers.hasMatchers()).isTrue()
 			assertThat(contract.response.bodyMatchers.hasMatchers()).isTrue()
 	}
+
+	def 'should work with optional and null value of a field'() {
+		given:
+			def contract = Contract.make {
+				description("Creating user")
+				name("Create user")
+				request {
+					method 'POST'
+					url '/api/user'
+					body(
+						address: $(consumer(optional(regex(alphaNumeric()))), producer(null)),
+						name: $(consumer(optional(regex(alphaNumeric()))), producer(''))
+					)
+					headers {
+						contentType(applicationJson())
+					}
+				}
+				response {
+					status 201
+				}
+			}
+		expect:
+			contract != null
+	}
 }

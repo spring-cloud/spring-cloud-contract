@@ -233,7 +233,7 @@ class Common {
 	}
 
 	void assertThatSidesMatch(OptionalProperty stubSide, Object testSide) {
-		assert testSide ==~ Pattern.compile(stubSide.optionalPattern())
+		assert testSide == null || testSide ==~ Pattern.compile(stubSide.optionalPattern())
 	}
 
 	void assertThatSidesMatch(Pattern pattern, String value) {
@@ -245,7 +245,7 @@ class Common {
 	}
 
 	void assertThatSidesMatch(MatchingStrategy firstSide, MatchingStrategy secondSide) {
-		if (firstSide.type == MatchingStrategy.Type.ABSENT && secondSide != MatchingStrategy.Type.ABSENT) {
+		if (firstSide.type == MatchingStrategy.Type.ABSENT && secondSide.type != MatchingStrategy.Type.ABSENT) {
 			throwAbsentError()
 		}
 	}
