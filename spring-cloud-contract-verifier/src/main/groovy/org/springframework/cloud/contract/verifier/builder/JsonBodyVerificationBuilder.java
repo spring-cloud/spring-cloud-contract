@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -178,7 +179,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		else {
 			String comparisonMethod = bodyMatcher.matchingType() == MatchingType.EQUALITY
 					? "isEqualTo" : "matches";
-			String classToCastTo = retrievedValue.getClass().getSimpleName() + ".class";
+			String classToCastTo = className(retrievedValue) + ".class";
 			String method = "assertThat(parsedJson.read(" + path + ", " + classToCastTo
 					+ "))." + comparisonMethod + "(" + valueAsParam + ")";
 			bb.addLine(postProcessJsonPathCall.apply(method));
@@ -186,9 +187,20 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		addColonIfRequired(lineSuffix, bb);
 	}
 
+	private String className(Object retrievedValue) {
+		return retrievedValue.getClass().getName().startsWith("java.lang") ?
+				retrievedValue.getClass().getSimpleName() : retrievedValue.getClass().getName();
+	}
+
 	private String objectToString(Object value) {
-		return value instanceof Long ? String.valueOf(value).concat("L")
-				: String.valueOf(value);
+		if (value instanceof Long) {
+			return String.valueOf(value).concat("L");
+		} else if (value instanceof Double) {
+			return String.valueOf(value).concat("D");
+		} else if (value instanceof BigDecimal) {
+			return quotedAndEscaped(value.toString());
+		}
+		return String.valueOf(value);
 	}
 
 	protected String processIfTemplateIsPresent(String method,

@@ -32,7 +32,6 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
-
 /**
  * @author Jakub Kubrynski, codearte.io
  * @author Tim Ysewyn
@@ -2950,6 +2949,56 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 			test.contains('''assertThatJson(parsedJson).field("['aMap']").field("['foo']").isEqualTo("bar")''')
 			test.contains('''assertThatJson(parsedJson).field("['anEmptyMap']").isEmpty()''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1139')
+	def 'should have a big decimal import for [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'POST'
+					url '/crystals/create'
+					headers {
+						header 'Content-Type' : 'application/json'
+					}
+					body(
+							amount: 200
+					)
+					bodyMatchers {
+						jsonPath('$.amount', byRegex('^[0-9]{1,3}$'))
+					}
+				}
+				response {
+					status 201
+					body(
+							amount: fromRequest().body('$.amount'),
+							price: 10100.0
+					)
+					bodyMatchers {
+						jsonPath('$.amount', byRegex('^\\d*$'))
+						jsonPath('$.price', byEquality())
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			test.contains('''$.price", java.math.BigDecimal.class)).isEqualTo("10100.0")''')
 		where:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
