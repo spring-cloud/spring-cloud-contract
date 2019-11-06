@@ -37,6 +37,8 @@ class SingleMethodBuilder {
 
 	private List<MethodMetadata> methodMetadata = new LinkedList<>();
 
+	private List<MethodPostProcessor> methodPostProcessors = new LinkedList<>();
+
 	private List<Given> givens = new LinkedList<>();
 
 	private List<When> whens = new LinkedList<>();
@@ -93,7 +95,9 @@ class SingleMethodBuilder {
 						.then(new JavaRestAssuredThen(this.blockBuilder,
 								this.generatedClassMetaData))
 						.then(new SpockRestAssuredThen(this.blockBuilder,
-								this.generatedClassMetaData));
+								this.generatedClassMetaData))
+						.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(
+								this.blockBuilder));
 	}
 
 	SingleMethodBuilder jaxRs() {
@@ -101,7 +105,9 @@ class SingleMethodBuilder {
 				.when(new JavaJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
 				.when(new SpockJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
 				.then(new JavaJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new SpockJaxRsThen(this.blockBuilder, this.generatedClassMetaData));
+				.then(new SpockJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
+				.methodPostProcessor(
+						new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
 	}
 
 	SingleMethodBuilder messaging() {
@@ -114,7 +120,8 @@ class SingleMethodBuilder {
 				.then(new SpockMessagingWithBodyThen(this.blockBuilder,
 						this.generatedClassMetaData))
 				.then(new SpockMessagingEmptyThen(this.blockBuilder,
-						this.generatedClassMetaData));
+						this.generatedClassMetaData))
+				.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
 		// @formatter:on
 	}
 
@@ -130,6 +137,11 @@ class SingleMethodBuilder {
 
 	SingleMethodBuilder then(Then... then) {
 		this.thens.addAll(Arrays.asList(then));
+		return this;
+	}
+
+	SingleMethodBuilder methodPostProcessor(MethodPostProcessor methodPostProcessor) {
+		this.methodPostProcessors.add(methodPostProcessor);
 		return this;
 	}
 
@@ -165,6 +177,10 @@ class SingleMethodBuilder {
 				visit(this.thens, metaData);
 			});
 			this.blockBuilder.addEmptyLine();
+			this.methodPostProcessors
+				.stream()
+				.filter(m -> m.accept(metaData))
+				.forEach(m -> m.apply(metaData));
 			// }
 		});
 		// @formatter:on

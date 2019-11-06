@@ -3012,4 +3012,46 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			}
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
 	}
+
+	@Issue('#1163')
+	def 'should resolve from request evaluation even if there is no response body [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method PUT()
+					url '/frauds/name'
+					body([
+							name: $(anyAlphaUnicode())
+					])
+					headers {
+						contentType("application/json")
+					}
+				}
+				response {
+					status OK()
+					headers {
+						header(contentType(), "${fromRequest().header(contentType())}")
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		and:
+			!test.contains('''{{{request.headers.Content-Type.[0]}}}''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
 }

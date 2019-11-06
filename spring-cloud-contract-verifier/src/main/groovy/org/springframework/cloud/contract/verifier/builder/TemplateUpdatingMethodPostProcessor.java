@@ -16,56 +16,34 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor;
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor;
 
-class GenericHttpBodyThen implements Then, BodyMethodVisitor {
+class TemplateUpdatingMethodPostProcessor implements MethodPostProcessor {
 
 	private final BlockBuilder blockBuilder;
 
-	private final BodyParser bodyParser;
-
 	private final TemplateProcessor templateProcessor;
 
-	private final ComparisonBuilder comparisonBuilder;
-
-	private final List<Then> thens = new LinkedList<>();
-
-	GenericHttpBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			BodyParser bodyParser, ComparisonBuilder comparisonBuilder) {
+	TemplateUpdatingMethodPostProcessor(BlockBuilder blockBuilder) {
 		this.blockBuilder = blockBuilder;
-		this.bodyParser = bodyParser;
-		this.comparisonBuilder = comparisonBuilder;
 		this.templateProcessor = new HandlebarsTemplateProcessor();
-		this.thens.addAll(Arrays.asList(
-				new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser,
-						comparisonBuilder),
-				new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser,
-						this.comparisonBuilder),
-				new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser,
-						this.comparisonBuilder),
-				new GenericXmlBodyThen(blockBuilder, this.bodyParser)));
 	}
 
 	@Override
-	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
-		endBodyBlock(this.blockBuilder);
-		this.blockBuilder.addEmptyLine();
-		startBodyBlock(this.blockBuilder, "and:");
-		this.thens.stream().filter(then -> then.accept(metadata))
-				.forEach(then -> then.apply(metadata));
+	public MethodVisitor<MethodPostProcessor> apply(SingleContractMetadata metadata) {
+		Request request = metadata.getContract().getRequest();
+		String newBody = this.templateProcessor.transform(request,
+				this.blockBuilder.toString());
+		this.blockBuilder.updateContents(newBody);
 		return this;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		return metadata.getContract().getResponse().getBody() != null;
+		return this.templateProcessor.containsTemplateEntry(this.blockBuilder.toString());
 	}
 
 }

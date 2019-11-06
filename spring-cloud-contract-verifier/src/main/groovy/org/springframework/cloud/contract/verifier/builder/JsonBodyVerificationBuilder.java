@@ -188,16 +188,19 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	private String className(Object retrievedValue) {
-		return retrievedValue.getClass().getName().startsWith("java.lang") ?
-				retrievedValue.getClass().getSimpleName() : retrievedValue.getClass().getName();
+		return retrievedValue.getClass().getName().startsWith("java.lang")
+				? retrievedValue.getClass().getSimpleName()
+				: retrievedValue.getClass().getName();
 	}
 
 	private String objectToString(Object value) {
 		if (value instanceof Long) {
 			return String.valueOf(value).concat("L");
-		} else if (value instanceof Double) {
+		}
+		else if (value instanceof Double) {
 			return String.valueOf(value).concat("D");
-		} else if (value instanceof BigDecimal) {
+		}
+		else if (value instanceof BigDecimal) {
 			return quotedAndEscaped(value.toString());
 		}
 		return String.valueOf(value);
