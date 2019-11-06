@@ -30,7 +30,6 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
-
 /**
  * @author Jakub Kubrynski, codearte.io
  * @author Tim Ysewyn
@@ -2909,6 +2908,53 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		then:
 			test.contains('''assertThatJson(parsedJson).field("['aMap']").field("['foo']").isEqualTo("bar")''')
 			test.contains('''assertThatJson(parsedJson).field("['anEmptyMap']").isEmpty()''')
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
+
+	@Issue('#1139')
+	def 'should have a big decimal import for [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'POST'
+					url '/crystals/create'
+					headers {
+						header 'Content-Type' : 'application/json'
+					}
+					body(
+							amount: 200
+					)
+					bodyMatchers {
+						jsonPath('$.amount', byRegex('^[0-9]{1,3}$'))
+					}
+				}
+				response {
+					status 201
+					body(
+							amount: fromRequest().body('$.amount'),
+							price: 10100.0
+					)
+					bodyMatchers {
+						jsonPath('$.amount', byRegex('^\\d*$'))
+						jsonPath('$.price', byEquality())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToRun(methodBuilderName, test.join("\n"))
+		then:
+			test.contains('''$.price", java.math.BigDecimal.class)).isEqualTo("10100.0")''')
 		where:
 			methodBuilderName                                             | methodBuilder
 			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
