@@ -2862,6 +2862,47 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	}
 
+	@Issue("#1257")
+	def "should work with null request element on the client side and optional stub entry"() {
+		given:
+			Contract contractDsl =  Contract.make {
+				description("Creating user")
+				name("Create user")
+				request {
+					method 'POST'
+					url '/api/user'
+					body(
+							address: $(consumer(optional(regex(alphaNumeric()))), producer(null)),
+							name: $(consumer(optional(regex(alphaNumeric()))), producer(''))
+					)
+					headers {
+						contentType(applicationJson())
+					}
+				}
+				response {
+					status 201
+				}
+			}
+		and:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+
+		and:
+			int port = SocketUtils.findAvailableTcpPort()
+			WireMockServer server = new WireMockServer(config().port(port))
+			server.start()
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+			server.addStubMapping(WireMockStubMapping.buildFrom(wireMockStub))
+		when:
+			ResponseEntity<String> entity = callWithOptionalAndEmpty(port)
+		then:
+			entity.statusCodeValue == 201
+		cleanup:
+			server?.shutdown()
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
@@ -2880,6 +2921,13 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						.header("Authorization", "secret2")
 						.header("Cookie", "foo=bar")
 						.body("{\"foo\":\"bar\",\"baz\":5}"), String.class)
+	}
+
+	ResponseEntity<String> callWithOptionalAndEmpty(int port) {
+		return new TestRestTemplate().exchange(
+				RequestEntity.post(URI.create("http://localhost:" + port + "/api/user"))
+						.header("Content-Type", "application/json")
+						.body("{\"foo\":null,\"name\":\"\"}"), String.class)
 	}
 
 	ResponseEntity<byte[]> callBytes(int port, File request) {

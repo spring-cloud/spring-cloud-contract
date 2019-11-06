@@ -275,6 +275,9 @@ public class Common {
 
 	public void assertThatSidesMatch(Object firstSide, Object secondSide) {
 		if (firstSide instanceof OptionalProperty) {
+			if (secondSide == null) {
+				return;
+			}
 			assertThat(
 					secondSide.toString()
 							.matches(((OptionalProperty) firstSide).optionalPattern()),
