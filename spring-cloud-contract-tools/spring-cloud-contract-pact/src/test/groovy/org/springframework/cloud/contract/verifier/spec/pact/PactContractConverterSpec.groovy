@@ -55,6 +55,8 @@ class PactContractConverterSpec extends Specification {
 		getResource("/pact/pact_v3_unsupported_rule_logic.json").toURI())
 	File pact1043Json = new File(PactContractConverterSpec.
 			getResource("/pact/for-test-generation/pact_1043.json").toURI())
+	File pact1134Json = new File(PactContractConverterSpec.
+			getResource("/pact/1134/pact_1134.json").toURI())
 	@Subject
 	PactContractConverter converter = new PactContractConverter()
 
@@ -744,7 +746,59 @@ class PactContractConverterSpec extends Specification {
 			File generatedTest = new File(output, "example/ContractVerifierTest.java")
 			String generatedTestText = generatedTest.text
 			!generatedTestText.contains('''assertThatJson(parsedJson).array().array("['authors']").isEmpty()''')
+	}
 
+	@Issue("1134")
+	def "should work properly with cookies when reading a pact file as contract"() {
+		given:
+			File output = Files.createTempDirectory("pact").toFile()
+			output.mkdirs()
+		when:
+			new TestGenerator(new ContractVerifierConfigProperties(contractsDslDir: pact1134Json.parentFile, generatedTestSourcesDir: output, generatedTestResourcesDir: output, basePackageForTests: "example")).generate()
+		then:
+			File generatedTest = new File(output, "example/ContractVerifierTest.java")
+			String generatedTestText = generatedTest.text
+			generatedTestText.contains('''cookie("a", "1")''')
+			generatedTestText.contains('''cookie("b", "2")''')
+			generatedTestText.contains('''assertThat(response.cookie("c")).isNotNull()''')
+			generatedTestText.contains('''assertThat(response.cookie("c")).isEqualTo("1")''')
+			generatedTestText.contains('''assertThat(response.cookie("d")).isNotNull()''')
+			generatedTestText.contains('''assertThat(response.cookie("d")).isEqualTo("2")''')
+	}
+
+	@Issue("1134")
+	def "should work properly with cookies when converting contract to pact"() {
+		given:
+			Collection<Contract> expectedContracts = [
+					Contract.make {
+						description("A successful Api GET call get")
+						request {
+							method(GET())
+							url("/books")
+							// cause Pact stores cookies in headers
+							headers {
+							}
+							cookies {
+								cookie("a", "1")
+								cookie("b", "2")
+							}
+						}
+						response {
+							status(200)
+							// cause Pact stores cookies in headers
+							headers {
+							}
+							cookies {
+								cookie("c", "1")
+								cookie("d", "2")
+							}
+						}
+					}
+			]
+		when:
+			Collection<Contract> contracts = converter.convertFrom(pact1134Json)
+		then:
+			contracts == expectedContracts
 	}
 }
 

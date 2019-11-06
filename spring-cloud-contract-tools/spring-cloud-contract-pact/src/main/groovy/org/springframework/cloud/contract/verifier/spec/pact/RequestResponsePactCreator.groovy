@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.spec.pact
 
+import java.util.regex.Pattern
+
 import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.consumer.dsl.DslPart
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
@@ -27,10 +29,12 @@ import groovy.transform.PackageScope
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
+import org.springframework.cloud.contract.spec.internal.Cookies
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.QueryParameters
+import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 
@@ -109,6 +113,9 @@ class RequestResponsePactCreator {
 				pactDslRequest = processHeader(pactDslRequest, header)
 			}
 		}
+		if (request.cookies) {
+			pactDslRequest = processCookies(pactDslRequest, request.cookies)
+		}
 		if (request.body) {
 			DslPart pactRequestBody = BodyConverter.
 					toPactBody(request.body, { DslProperty property -> property.serverValue })
@@ -160,6 +167,9 @@ class RequestResponsePactCreator {
 			response.headers.entries.each { Header header ->
 				pactDslResponse = processHeader(pactDslResponse, header)
 			}
+		}
+		if (response.cookies) {
+			pactDslResponse = processCookies(pactDslResponse, response.cookies)
 		}
 		if (response.body) {
 			DslPart pactResponseBody = BodyConverter.
@@ -223,6 +233,22 @@ class RequestResponsePactCreator {
 		}
 	}
 
+	private PactDslRequestWithPath processCookies(PactDslRequestWithPath pactDslRequest, Cookies cookies) {
+		Map<String, Object> stubSideCookies = cookies.asStubSideMap()
+		Collection<RegexProperty> regexProperties = stubSideCookies.values().findAll { it instanceof Pattern || it instanceof RegexProperty }.collect { new RegexProperty(it)}
+		if (!regexProperties.empty) {
+			String regex = regexProperties.collect { it.pattern() }.join("|")
+			return pactDslRequest.matchHeader("Cookie", regex, testSideCookieExample(cookies))
+		}
+		else {
+			return pactDslRequest.headers("Cookie", testSideCookieExample(cookies))
+		}
+	}
+
+	private String testSideCookieExample(Cookies cookies) {
+		return cookies.asTestSideMap().collect { it.key + "=" + it.value.toString() }.join(";")
+	}
+
 	private PactDslResponse processHeader(PactDslResponse pactDslResponse, Header header) {
 		if (header.isSingleValue()) {
 			String value = getDslPropertyClientValue(header).toString()
@@ -233,6 +259,22 @@ class RequestResponsePactCreator {
 			String example = getDslPropertyClientValue(header).toString()
 			return pactDslResponse.matchHeader(header.name, regex, example)
 		}
+	}
+
+	private PactDslResponse processCookies(PactDslResponse pactDslResponse, Cookies cookies) {
+		Map<String, Object> testSideCookies = cookies.asTestSideMap()
+		Collection<RegexProperty> regexProperties = testSideCookies.values().findAll { it instanceof Pattern || it instanceof RegexProperty }.collect { new RegexProperty(it)}
+		if (!regexProperties.empty) {
+			String regex = regexProperties.collect { it.pattern() }.join("|")
+			return pactDslResponse.matchHeader("Cookie", regex, stubSideCookieExample(cookies))
+		}
+		else {
+			return pactDslResponse.headers(["Cookie": stubSideCookieExample(cookies)])
+		}
+	}
+
+	private String stubSideCookieExample(Cookies cookies) {
+		return cookies.asStubSideMap().collect { it.key + "=" + it.value.toString() }.join(";")
 	}
 
 	private Object getDslPropertyClientValue(Object o) {
