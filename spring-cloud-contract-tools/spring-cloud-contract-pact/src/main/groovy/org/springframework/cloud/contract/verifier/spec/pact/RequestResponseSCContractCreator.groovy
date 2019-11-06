@@ -87,6 +87,9 @@ class RequestResponseSCContractCreator {
 								rulesForCategory('header')
 						headers {
 							request.headers.each { k, v ->
+								if (k.equalsIgnoreCase("Cookie")) {
+									return
+								}
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -104,6 +107,37 @@ class RequestResponseSCContractCreator {
 								}
 								else {
 									header(k, v)
+								}
+							}
+						}
+					}
+					if (request.headers.containsKey("Cookie")) {
+						Category headerRules = request.matchingRules.
+								rulesForCategory('header')
+						String[] splitHeader = request.headers.get("Cookie").split(";")
+						Map<String, String> foundCookies = splitHeader.collectEntries {
+							String[] keyValue = it.split("=")
+							return [(keyValue[0]): keyValue[1]]
+						}
+						cookies {
+							foundCookies.each { k, v ->
+								if (headerRules.matchingRules.containsKey("Cookie")) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
+											get("Cookie")
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										cookie(k, new DslProperty((Object) Pattern.
+												compile(rule.getRegex()), (Object) v))
+									}
+									else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								}
+								else {
+									cookie(k, v)
 								}
 							}
 						}
@@ -263,6 +297,9 @@ class RequestResponseSCContractCreator {
 								rulesForCategory('header')
 						headers {
 							response.headers.forEach({ String k, String v ->
+								if (k.equalsIgnoreCase("Cookie")) {
+									return
+								}
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -282,6 +319,37 @@ class RequestResponseSCContractCreator {
 									header(k, v)
 								}
 							})
+						}
+					}
+					if (response.headers.containsKey("Cookie")) {
+						Category headerRules = response.matchingRules.
+								rulesForCategory('header')
+						String[] splitHeader = response.headers.get("Cookie").split(";")
+						Map<String, String> foundCookies = splitHeader.collectEntries {
+							String[] keyValue = it.split("=")
+							return [(keyValue[0]): keyValue[1]]
+						}
+						cookies {
+							foundCookies.each { k, v ->
+								if (headerRules.matchingRules.containsKey("Cookie")) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
+											get("Cookie")
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										cookie(k, new DslProperty(new DslProperty(v), new NotToEscapePattern(Pattern.
+												compile(rule.getRegex()))))
+									}
+									else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								}
+								else {
+									cookie(k, v)
+								}
+							}
 						}
 					}
 				}
