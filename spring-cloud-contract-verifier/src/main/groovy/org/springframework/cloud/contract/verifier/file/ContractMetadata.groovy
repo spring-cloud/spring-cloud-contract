@@ -29,7 +29,6 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
-import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.util.NamesUtil
 import org.springframework.util.Assert
 
