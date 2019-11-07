@@ -46,20 +46,6 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.GenerateTestsMojo.java">org/springframework/cloud/contract/maven/verifier/GenerateTestsMojo.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  102
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.MavenContractsDownloader.java">org/springframework/cloud/contract/maven/verifier/MavenContractsDownloader.java</a>
                 </td>
                 <td>
@@ -69,7 +55,21 @@ under the License.
                   0
                 </td>
                 <td>
-                  93
+                  94
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.GenerateTestsMojo.java">org/springframework/cloud/contract/maven/verifier/GenerateTestsMojo.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  101
                 </td>
               </tr>
                           <tr>
@@ -125,35 +125,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  23
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.RemoteStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/RemoteStubRunner.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  19
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  44
+                  24
                 </td>
               </tr>
                           <tr>
@@ -168,6 +140,34 @@ under the License.
                 </td>
                 <td>
                   35
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.RemoteStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/RemoteStubRunner.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  18
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  44
                 </td>
               </tr>
                           <tr>
