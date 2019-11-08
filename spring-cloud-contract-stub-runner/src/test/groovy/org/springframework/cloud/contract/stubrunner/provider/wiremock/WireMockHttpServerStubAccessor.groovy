@@ -22,4 +22,8 @@ class WireMockHttpServerStubAccessor {
 		assert WireMockHttpServerStub.SERVERS.every { it.value.random }
 		return true
 	}
+
+	static void clear() {
+		WireMockHttpServerStub.SERVERS.clear()
+	}
 }
