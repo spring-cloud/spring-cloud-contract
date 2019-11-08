@@ -244,6 +244,14 @@ class Common {
 		assert value ==~ pattern
 	}
 
+	void assertThatSidesMatch(RegexProperty pattern, String value) {
+		assert value ==~ pattern.pattern
+	}
+
+	void assertThatSidesMatch(String value, RegexProperty pattern) {
+		assert value ==~ pattern.pattern
+	}
+
 	void assertThatSidesMatch(MatchingStrategy firstSide, MatchingStrategy secondSide) {
 		if (firstSide.type == MatchingStrategy.Type.ABSENT && secondSide.type != MatchingStrategy.Type.ABSENT) {
 			throwAbsentError()

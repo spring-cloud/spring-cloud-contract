@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import spock.lang.Issue
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
@@ -421,5 +422,24 @@ then:
 			}
 		expect:
 			contract != null
+	}
+
+	@Issue("1200")
+	def 'should fail when regex do not match the concrete value'() {
+		when:
+			Contract.make {
+				request {
+					method 'GET'
+					url '/any'
+				}
+				response {
+					status OK()
+					body([
+							time: $(p(regex(iso8601WithOffset())),c( "thisIsNotADate"))
+					])
+				}
+			}
+		then:
+			thrown(AssertionError)
 	}
 }
