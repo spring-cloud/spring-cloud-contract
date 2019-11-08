@@ -97,7 +97,8 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number value) {
-		blockBuilder.addLine("response.getHeader('$property') == ${value}")
+		String valueToSet = value instanceof Long ? value.toString() + "L" : value.toString()
+		blockBuilder.addLine("response.getHeader('$property') == ${valueToSet}")
 	}
 
 	@Override

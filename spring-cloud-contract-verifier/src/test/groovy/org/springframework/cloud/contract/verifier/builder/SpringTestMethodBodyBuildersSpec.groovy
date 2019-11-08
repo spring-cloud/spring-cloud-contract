@@ -3002,4 +3002,35 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 	}
+
+	@Issue('#1052')
+	def 'should work with large numbers [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				label 'storage_object_created'
+				input {
+					triggeredBy('createStorageObject()')
+				}
+
+				outputMessage {
+					sentTo('document_uploads')
+					headers {
+						header('objectGeneration', 23094823904823)
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToRun(methodBuilderName, test.join("\n"))
+		then:
+			test.contains('''23094823904823L''')
+		where:
+			methodBuilderName                                             | methodBuilder
+			SpockMessagingMethodBodyBuilder.simpleName        | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JUnitMessagingMethodBodyBuilder.simpleName                      | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
 }
