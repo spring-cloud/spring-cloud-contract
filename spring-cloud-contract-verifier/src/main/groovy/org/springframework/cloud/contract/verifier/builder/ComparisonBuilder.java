@@ -74,7 +74,9 @@ interface ComparisonBuilder {
 	}
 
 	default String isEqualTo(Number number) {
-		return ".isEqualTo(" + number.toString() + ")";
+		String numberString = number instanceof Long ? number.toString() + "L"
+				: number.toString();
+		return ".isEqualTo(" + numberString + ")";
 	}
 
 	default String isNotNull() {

@@ -3130,4 +3130,35 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			}
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
 	}
+
+	@Issue('#1052')
+	def 'should work with large numbers [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				label 'storage_object_created'
+				input {
+					triggeredBy('toString()')
+				}
+
+				outputMessage {
+					sentTo('document_uploads')
+					headers {
+						header('objectGeneration', 23094823904823)
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		and:
+			test.contains('''23094823904823L''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"junit"           | { properties.testFramework = TestFramework.JUNIT }
+			"junit5"          | { properties.testFramework = TestFramework.JUNIT5 }
+	}
 }
