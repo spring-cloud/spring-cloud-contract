@@ -138,8 +138,11 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		return ContentType.UNKNOWN
 	}
 
-	protected String quotedAndEscaped(String string) {
-		return '"' + StringEscapeUtils.escapeJava(string) + '"'
+	protected String quotedAndEscaped(Object object) {
+		if (object instanceof ExecutionProperty) {
+			return object.executionCommand
+		}
+		return '"' + StringEscapeUtils.escapeJava(object.toString()) + '"'
 	}
 
 	/**

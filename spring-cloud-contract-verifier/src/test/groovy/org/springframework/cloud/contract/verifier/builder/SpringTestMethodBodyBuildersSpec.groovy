@@ -3033,4 +3033,42 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SpockMessagingMethodBodyBuilder.simpleName        | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 			JUnitMessagingMethodBodyBuilder.simpleName                      | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 	}
+
+	@Issue('#1252')
+	def 'should call execute in headers instead of quoting it [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method PUT()
+					url '/frauds/name'
+					headers {
+						header(authorization(), value(client(anyNonBlankString()), server(execute("authToken()"))))
+
+					}
+				}
+				response {
+					status OK()
+					headers {
+						header(contentType(), "${fromRequest().header(contentType())}")
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToRun(methodBuilderName, test.join("\n"))
+		then:
+			!test.contains('''"authToken()"''')
+			!test.contains("""'authToken()'""")
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
 }

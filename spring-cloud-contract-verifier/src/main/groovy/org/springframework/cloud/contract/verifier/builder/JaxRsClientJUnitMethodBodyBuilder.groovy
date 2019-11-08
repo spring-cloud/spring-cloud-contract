@@ -154,7 +154,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 			if (header.name == 'Content-Type' || header.name == 'Accept') {
 				return
 			}
-			bb.addLine(".header(\"${header.name}\", ${quotedAndEscaped(header.serverValue as String)})")
+			bb.addLine(".header(\"${header.name}\", ${quotedAndEscaped(header.serverValue)})")
 		}
 	}
 

@@ -20,6 +20,7 @@ import java.util.regex.Pattern
 
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+import org.apache.commons.text.StringEscapeUtils
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
@@ -160,7 +161,7 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 			if (header.name == 'Content-Type' || header.name == 'Accept') {
 				return
 			} // Particular headers are set via 'request' / 'entity' methods
-			bb.addLine(".header('${header.name}', '${header.serverValue}')")
+			bb.addLine(".header('${header.name}', ${quotedAndEscaped(header.serverValue)})".toString())
 		}
 	}
 
@@ -172,6 +173,14 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 
 			bb.addLine(".cookie('${cookie.key}', '${cookie.serverValue}')")
 		}
+	}
+
+	@Override
+	protected String quotedAndEscaped(Object object) {
+		if (object instanceof ExecutionProperty) {
+			return object.executionCommand
+		}
+		return "'" + StringEscapeUtils.escapeJava(object.toString()) + "'"
 	}
 
 	protected String getHeader(String name) {
