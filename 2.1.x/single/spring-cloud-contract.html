@@ -3101,6 +3101,7 @@ its methods as presented below:</p><pre class="programlisting"><xslthl:annotatio
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setupProps() {
 		System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.repository.root"</span>)
 		System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.classifier"</span>)
+		WireMockHttpServerStubAccessor.clear()
 	}
 
 	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should mark all ports as random'</span>() {
