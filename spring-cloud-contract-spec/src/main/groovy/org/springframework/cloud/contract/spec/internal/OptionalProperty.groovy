@@ -45,8 +45,16 @@ class OptionalProperty implements Serializable, CanBeDynamic {
 	}
 
 	String value() {
-		return this.value instanceof RegexProperty ?
-				((RegexProperty) this.value).pattern.pattern() : this.value
+		Object valueToCheck = valueToCheck()
+		return (valueToCheck instanceof RegexProperty || valueToCheck instanceof Pattern) ?
+				new RegexProperty(valueToCheck).pattern.pattern() : valueToCheck
+	}
+
+	private Object valueToCheck() {
+		if (this.value instanceof ClientDslProperty) {
+			return ((ClientDslProperty) this.value).getClientValue()
+		}
+		return this.value
 	}
 
 	protected Pattern optionalPatternValue() {

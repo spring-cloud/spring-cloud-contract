@@ -442,4 +442,23 @@ then:
 		then:
 			thrown(AssertionError)
 	}
+
+	@Issue("1215")
+	def 'should work fine when dealing with anyOf'() {
+		when:
+			Contract.make {
+				request {
+					method 'GET'
+					url '/any'
+					body (
+							foo: $(consumer(optional(anyOf('WORKS','MIGHTY', 'DESPAIR'))), producer('DESPAIR'))
+					)
+				}
+				response {
+					status OK()
+				}
+			}
+		then:
+			noExceptionThrown()
+	}
 }
