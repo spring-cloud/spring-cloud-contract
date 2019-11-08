@@ -181,6 +181,10 @@ class SingleContractMetadata {
 		return this.http
 	}
 
+	boolean isInProgress() {
+		return this.contract.isInProgress()
+	}
+
 	boolean isMessaging() {
 		return !isHttp()
 	}

@@ -43,3 +43,4 @@ interpolated-pom.xml
 dependency-reduced-pom.xml
 
 .vscode/
+.flattened-pom.xml

@@ -22,6 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
 /**
@@ -33,9 +36,13 @@ import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
  */
 class SingleMethodBuilder {
 
+	private static final Log log = LogFactory.getLog(SingleMethodBuilder.class);
+
 	private List<MethodAnnotations> methodAnnotations = new LinkedList<>();
 
 	private List<MethodMetadata> methodMetadata = new LinkedList<>();
+
+	private List<MethodPreProcessor> methodPreProcessors = new LinkedList<>();
 
 	private List<MethodPostProcessor> methodPostProcessors = new LinkedList<>();
 
@@ -86,6 +93,7 @@ class SingleMethodBuilder {
 	SingleMethodBuilder restAssured() {
 		return given(
 				new JavaRestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
+						.methodPreProcessor(new InProgressContractMethodPreProcessor())
 						.given(new SpockRestAssuredGiven(this.blockBuilder,
 								this.generatedClassMetaData))
 						.when(new JavaRestAssuredWhen(this.blockBuilder,
@@ -101,7 +109,8 @@ class SingleMethodBuilder {
 	}
 
 	SingleMethodBuilder jaxRs() {
-		return given(new JaxRsGiven(this.generatedClassMetaData))
+		return methodPreProcessor(new InProgressContractMethodPreProcessor())
+				.given(new JaxRsGiven(this.generatedClassMetaData))
 				.when(new JavaJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
 				.when(new SpockJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
 				.then(new JavaJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
@@ -112,7 +121,8 @@ class SingleMethodBuilder {
 
 	SingleMethodBuilder messaging() {
 		// @formatter:off
-		return given(new JavaMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
+		return methodPreProcessor(new InProgressContractMethodPreProcessor())
+				.given(new JavaMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
 				.given(new SpockMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
 				.when(new MessagingWhen(this.blockBuilder, this.generatedClassMetaData))
 				.then(new JavaMessagingWithBodyThen(this.blockBuilder,
@@ -140,6 +150,11 @@ class SingleMethodBuilder {
 		return this;
 	}
 
+	SingleMethodBuilder methodPreProcessor(MethodPreProcessor methodPreProcessor) {
+		this.methodPreProcessors.add(methodPreProcessor);
+		return this;
+	}
+
 	SingleMethodBuilder methodPostProcessor(MethodPostProcessor methodPostProcessor) {
 		this.methodPostProcessors.add(methodPostProcessor);
 		return this;
@@ -154,6 +169,14 @@ class SingleMethodBuilder {
 		// \n
 		this.blockBuilder.addEmptyLine();
 		this.generatedClassMetaData.toSingleContractMetadata().forEach(metaData -> {
+			boolean stopProcessing = shouldStopProcessing(metaData);
+			if (stopProcessing) {
+				if (log.isDebugEnabled()) {
+					log.debug("The method for meta data [" + metaData
+							+ "] will not be processed further. At least one method pre-processor declared that this method should be skipped.");
+				}
+				return;
+			}
 			// @Test
 			if (visit(this.methodAnnotations, metaData, false)) {
 				this.blockBuilder.addEmptyLine();
@@ -185,6 +208,14 @@ class SingleMethodBuilder {
 		});
 		// @formatter:on
 		return this.blockBuilder;
+	}
+
+	private boolean shouldStopProcessing(SingleContractMetadata metaData) {
+		List<MethodPreProcessor> matchingPreProcessors = this.methodPreProcessors.stream()
+				.filter(m -> m.accept(metaData))
+				.collect(Collectors.toCollection(LinkedList::new));
+		matchingPreProcessors.forEach(m -> m.apply(metaData));
+		return matchingPreProcessors.stream().anyMatch(m -> !m.shouldContinue());
 	}
 
 	private MethodMetadata pickMetadatum() {

@@ -219,6 +219,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 	}
 
 	private String singleTestGenerator(Contract contractDsl) {
+		return singleTestGenerator([contractDsl])
+	}
+
+	private String singleTestGenerator(Collection<Contract> contractDsls) {
 		return new JavaTestGenerator() {
 			@Override
 			ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
@@ -235,15 +239,15 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 					}
 				})
 			}
-		}.buildClass(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+		}.buildClass(properties, [contractMetadata(contractDsls)], "foo", generatedClassData)
 	}
 
 	private GeneratedClassMetaData generatedClassMetaData(Contract contractDsl) {
-		new GeneratedClassMetaData(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+		new GeneratedClassMetaData(properties, [contractMetadata([contractDsl])], "foo", generatedClassData)
 	}
 
-	ContractMetadata contractMetadata(Contract contractDsl) {
-		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsl)
+	ContractMetadata contractMetadata(Collection<Contract> contractDsls) {
+		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsls)
 	}
 
 	@Issue('#187')
@@ -3041,6 +3045,78 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		and:
 			!test.contains('''{{{request.headers.Content-Type.[0]}}}''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1260')
+	def 'should generate test methods for not in progress contracts [#methodBuilderName]'() {
+		given:
+			List<Contract> contractDsl = [
+					Contract.make {
+						name("httpContractNotInProgress")
+						request {
+							method PUT()
+							url '/httpContractNotInProgress'
+						}
+						response {
+							status OK()
+						}
+					},
+					Contract.make {
+						name("httpContractInProgress")
+						inProgress()
+						request {
+							method PUT()
+							url '/httpContractInProgress'
+						}
+						response {
+							status OK()
+						}
+					},
+					Contract.make {
+						name("messagingContractNotInProgress")
+						input {
+							triggeredBy("toString()")
+						}
+						outputMessage {
+							sentTo("messagingContractNotInProgress")
+							body([type: "messagingContractNotInProgress"])
+						}
+					},
+					Contract.make {
+						name("messagingContractInProgress")
+						inProgress()
+						input {
+							triggeredBy("toString()")
+						}
+						outputMessage {
+							sentTo("messagingContractNotInProgress")
+							body([type: "messagingContractNotInProgress"])
+						}
+					}
+			]
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		and:
+			test.contains('''httpContractNotInProgress''')
+			test.contains('''messagingContractNotInProgress''')
+		and:
+			!test.contains('''httpContractInProgress''')
+			!test.contains('''messagingContractInProgress''')
 		where:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
