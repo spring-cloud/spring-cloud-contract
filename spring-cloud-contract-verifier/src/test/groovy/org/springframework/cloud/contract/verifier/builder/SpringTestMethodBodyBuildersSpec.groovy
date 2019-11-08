@@ -3161,4 +3161,45 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"junit"           | { properties.testFramework = TestFramework.JUNIT }
 			"junit5"          | { properties.testFramework = TestFramework.JUNIT5 }
 	}
+
+	@Issue('#1252')
+	def 'should call execute in headers instead of quoting it [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method PUT()
+					url '/frauds/name'
+					headers {
+						header(authorization(), value(client(anyNonBlankString()), server(execute("toString()"))))
+
+					}
+				}
+				response {
+					status OK()
+					headers {
+						header(contentType(), "${fromRequest().header(contentType())}")
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			!test.contains('''"toString()"''')
+			!test.contains("""'toString()'""")
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
 }
