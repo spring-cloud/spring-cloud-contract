@@ -246,9 +246,50 @@
 				<jdk>13</jdk>
 			</activation>
 			<properties>
-				<gradle.task>assemble</gradle.task>
 				<build-helper-maven-plugin.phase>none</build-helper-maven-plugin.phase>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<!-- we need a different version so as not to inherit from parent -->
+						<version>${exec-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>gradle-update-to-6</id>
+								<phase>package</phase>
+								<configuration>
+									<executable>./gradlew</executable>
+									<arguments>
+										<argument>wrapper</argument>
+										<argument>--gradle-version</argument>
+										<argument>6.0</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>gradle</id>
+								<phase>package</phase>
+								<configuration>
+									<executable>./gradlew</executable>
+									<arguments>
+										<argument>${gradle.task}</argument>
+										<!--<argument>jacocoTestReport</argument>-->
+										<argument>-PverifierVersion=${project.version}</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 
