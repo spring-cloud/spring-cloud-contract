@@ -34,19 +34,16 @@ class MockMvcAsyncWhen implements When, MockMvcAcceptor {
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
-		if (response.getAsync()) {
-			this.blockBuilder.addIndented(".when().async()");
-		}
+		addAsync();
 		if (response.getDelay() != null) {
 			String delay = ".timeout(" + response.getDelay().getServerValue() + ")";
-			if (response.getAsync()) {
-				this.blockBuilder.append(delay);
-			}
-			else {
-				this.blockBuilder.addIndented(delay);
-			}
+			this.blockBuilder.append(delay);
 		}
 		return this;
+	}
+
+	private void addAsync() {
+		this.blockBuilder.addIndented(".when().async()");
 	}
 
 	@Override
