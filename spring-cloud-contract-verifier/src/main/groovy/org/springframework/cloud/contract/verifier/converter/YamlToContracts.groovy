@@ -364,6 +364,7 @@ class YamlToContracts {
 							async()
 						}
 						if (yamlContract.response.fixedDelayMilliseconds) {
+							async()
 							fixedDelayMilliseconds(yamlContract.response.fixedDelayMilliseconds)
 						}
 						bodyMatchers {

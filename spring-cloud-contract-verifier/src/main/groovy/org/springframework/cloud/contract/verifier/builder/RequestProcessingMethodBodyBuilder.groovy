@@ -175,6 +175,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 			bb.addLine('.when().async()')
 		}
 		if (response.delay) {
+			bb.addLine('.when().async()')
 			bb.addLine(".timeout(${response.delay.serverValue})")
 		}
 	}

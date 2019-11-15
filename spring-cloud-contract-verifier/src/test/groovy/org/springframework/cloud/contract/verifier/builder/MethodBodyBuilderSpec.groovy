@@ -1473,6 +1473,71 @@ response:
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
 	}
 
+	@Issue("#1262")
+	def "should work with the timeout flag for groovy [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method(GET())
+					url("/hello")
+				}
+				response {
+					status(200)
+					fixedDelayMilliseconds(5000)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains('''timeout''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+	}
+
+	@Issue("#1262")
+	def "should work with the timeout flag for yaml [#methodBuilderName]"() {
+		given:
+			String yaml = '''\
+request:
+  method: GET
+  url: /hello
+  queryParameters:
+    name: LuLu
+response:
+  status: 200
+  fixedDelayMilliseconds: 5000
+  body: "Hello LuLu"
+  async: true
+'''
+			File tmpFile = File.createTempFile("foo", ".yml")
+			tmpFile.createNewFile()
+			tmpFile.text = yaml
+			Contract contractDsl = new YamlContractConverter().convertFrom(tmpFile).
+					first()
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains('''timeout''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, classDataForMethod) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, classDataForMethod) }
+	}
+
 	@Issue("#1049")
 	def "should work with body having new lines [#methodBuilderName]"() {
 		given:
