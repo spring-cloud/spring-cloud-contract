@@ -456,7 +456,7 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 		Object convertedResponseBody = jsonBodyVerificationBuilder
 				.addJsonResponseBodyCheck(bb, responseBody,
 				bodyMatchers, getResponseAsString(), shouldCommentOutBDDBlocks())
-		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
+		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List) && !(convertedResponseBody instanceof ExecutionProperty)) {
 			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
 		processBodyElement(bb, "", "", convertedResponseBody)

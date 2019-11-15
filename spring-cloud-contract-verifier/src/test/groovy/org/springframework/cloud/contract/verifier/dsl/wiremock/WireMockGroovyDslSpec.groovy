@@ -2713,6 +2713,46 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	}
 
+	@Issue("#1263")
+	def "should work with complex objects in the body"() {
+		given:
+			Contract contractDsl = Contract.make {
+				description "should migrate spaceship"
+				request {
+					method POST()
+					url('/api/migration')
+					headers {
+						accept('application/json')
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+				response {
+					status OK()
+					headers {
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+
+		then:
+			wireMockStub.contains('''$[?(@.['whatever'] == 'hello')]''')
+			wireMockStub.contains('''$[?(@.['id'] == 4)]''')
+			wireMockStub.contains('''$[?(@.['foo'] == 5)]''')
+			wireMockStub.contains('''"{\\"id\\":4,\\"foo\\":5,\\"whatever\\":\\"hello\\"}"''')
+			stubMappingIsValidWireMockStub(wireMockStub)
+
+	}
+
 	@Issue("#1257")
 	def "should work with null request element on the client side and optional stub entry"() {
 		given:

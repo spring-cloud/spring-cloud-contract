@@ -3071,4 +3071,49 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 	}
+
+	@Issue('#1263')
+	def 'should allow using execute in the request body [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description "should migrate spaceship"
+				request {
+					method POST()
+					url('/api/migration')
+					headers {
+						accept('application/json')
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+				response {
+					status OK()
+					headers {
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToRun(methodBuilderName, test.join("\n"))
+		then:
+			// 1 in the request and 1 in the response
+			test.findAll("hashCode()").size() == 2
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
 }

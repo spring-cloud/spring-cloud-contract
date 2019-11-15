@@ -171,7 +171,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	private void addAsyncIfRequired(BlockBuilder bb) {
-		if (response.async) {
+		if (response.async && !response.delay) {
 			bb.addLine('.when().async()')
 		}
 		if (response.delay) {
