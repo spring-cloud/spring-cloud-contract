@@ -1,13 +1,1 @@
-[[spring-cloud-contract-reference-documentation]]
-= Spring Cloud Contract Reference Documentation
-Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant
-:docinfo: shared
-include::_attributes.adoc[]
-
-include::legal.adoc[leveloffset=+1]
-include::documentation-overview.adoc[leveloffset=+1]
-include::getting-started.adoc[leveloffset=+1]
-include::using.adoc[leveloffset=+1]
-include::project-features.adoc[leveloffset=+1]
-include::howto.adoc[leveloffset=+1]
-include::appendix.adoc[leveloffset=+1]
+include::_index_single.adoc[]
