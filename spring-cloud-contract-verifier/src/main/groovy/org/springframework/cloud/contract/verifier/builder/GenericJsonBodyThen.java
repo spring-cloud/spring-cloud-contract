@@ -104,7 +104,8 @@ class GenericJsonBodyThen implements Then {
 						this.generatedClassMetaData.configProperties
 								.getTestFramework() != TestFramework.SPOCK);
 		if (!(convertedResponseBody instanceof Map
-				|| convertedResponseBody instanceof List)) {
+				|| convertedResponseBody instanceof List
+				|| convertedResponseBody instanceof ExecutionProperty)) {
 			simpleTextResponseBodyCheck(contractMetadata, convertedResponseBody);
 		}
 		processBodyElement("", "", convertedResponseBody);

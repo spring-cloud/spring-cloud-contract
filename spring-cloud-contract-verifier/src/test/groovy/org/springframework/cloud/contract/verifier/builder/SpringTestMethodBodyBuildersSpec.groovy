@@ -3202,4 +3202,52 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			}
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
 	}
+
+	@Issue('#1263')
+	def 'should allow using execute in the request body [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description "should migrate spaceship"
+				request {
+					method POST()
+					url('/api/migration')
+					headers {
+						accept('application/json')
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+				response {
+					status OK()
+					headers {
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			// 1 in the request and 1 in the response
+			test.findAll("hashCode()").size() == 2
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
 }
