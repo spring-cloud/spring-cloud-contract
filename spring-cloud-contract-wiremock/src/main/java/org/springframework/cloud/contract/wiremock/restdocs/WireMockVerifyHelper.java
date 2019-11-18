@@ -57,10 +57,13 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 
 	public void configure(T result) {
 		Map<String, Object> configuration = getConfiguration(result);
-		String actual = new String(getRequestBodyContent(result),
-				Charset.forName("UTF-8"));
-		for (JsonPath jsonPath : this.jsonPaths.values()) {
-			new JsonPathValue(jsonPath, actual).assertHasValue(Object.class, "an object");
+		byte[] requestBodyContent = getRequestBodyContent(result);
+		if (requestBodyContent != null) {
+			String actual = new String(requestBodyContent,
+					Charset.forName("UTF-8"));
+			for (JsonPath jsonPath : this.jsonPaths.values()) {
+				new JsonPathValue(jsonPath, actual).assertHasValue(Object.class, "an object");
+			}
 		}
 		configuration.put("contract.jsonPaths", this.jsonPaths.keySet());
 		if (this.contentType != null) {
