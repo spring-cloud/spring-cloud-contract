@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.spec.internal
 
 import org.springframework.cloud.contract.spec.toDslProperty
+import java.util.regex.Pattern
 
 /**
  * Represents an input for messaging.
@@ -140,6 +141,30 @@ class InputDsl : CommonDsl() {
         get() = delegate.anyNonEmptyString()
 
     /* HELPER FUNCTIONS */
+
+	fun value(value: DslProperty<Any>): DslProperty<Any> = delegate.value(value)
+
+	fun v(value: DslProperty<Any>): DslProperty<Any> = delegate.value(value)
+
+	fun value(value: Pattern): DslProperty<Any> = delegate.value(value)
+
+	fun v(value: Pattern): DslProperty<Any> = delegate.value(value)
+
+	fun value(value: RegexProperty): DslProperty<Any> = delegate.value(value)
+
+	fun v(value: RegexProperty): DslProperty<Any> = delegate.value(value)
+
+	fun value(value: Any?): DslProperty<Any> = delegate.value(value)
+
+	fun v(value: Any?): DslProperty<Any> = delegate.value(value)
+
+	fun value(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = delegate.value(client, server)
+
+	fun v(client: ClientDslProperty, server: ServerDslProperty): DslProperty<Any> = delegate.value(client, server)
+
+	fun value(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = delegate.value(client, server)
+
+	fun v(server: ServerDslProperty, client: ClientDslProperty): DslProperty<Any> = delegate.value(client, server)
 
     fun anyOf(vararg values: String?) = delegate.anyOf(*values)
 
