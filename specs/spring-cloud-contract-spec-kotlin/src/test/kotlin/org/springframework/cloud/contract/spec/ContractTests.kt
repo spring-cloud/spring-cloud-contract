@@ -150,13 +150,15 @@ class ContractTests {
 				messageBody = messageBody("foo" to "bar")
 				headers {
 					header("foo", "bar")
+					header("X-Custom-Header", value(consumer(regex("^.*2134.*\$")), producer("121345")))
 				}
 			}
 			outputMessage {
 				sentTo = sentTo("output")
-				body = body("foo2" to "bar")
+				body = body("foo" to "bar", "foo2" to "bar2")
 				headers {
 					header("foo2", "bar")
+					header("X-Custom-Header", value(consumer("121345"), producer(regex("^.*2134.*\$"))))
 				}
 			}
 		}
@@ -170,21 +172,33 @@ class ContractTests {
 			assertThat(input.messageBody.clientValue).isEqualTo(mapOf("foo" to "bar"))
 			assertThat(input.messageBody.serverValue).isEqualTo(mapOf("foo" to "bar"))
 			val headers = input.messageHeaders.entries
-			assertThat(headers).hasSize(1)
+			assertThat(headers).hasSize(2)
 			assertThat(headers.elementAt(0).name).isEqualTo("foo")
 			assertThat(headers.elementAt(0).clientValue).isEqualTo("bar")
 			assertThat(headers.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(headers.elementAt(1).name).isEqualTo("X-Custom-Header")
+			assertThat(headers.elementAt(1).clientValue).isInstanceOf(RegexProperty::class.java)
+			assertThat((headers.elementAt(1).clientValue as RegexProperty).pattern()).isEqualTo("^.*2134.*\$")
+			assertThat(headers.elementAt(1).serverValue).isEqualTo("121345")
 		}.also {
 			val output = contract.outputMessage
 			assertThat(output.sentTo.clientValue).isEqualTo("output")
 			assertThat(output.sentTo.serverValue).isEqualTo("output")
-			assertThat(output.body.clientValue).isEqualTo("foo2" to "bar")
-			assertThat(output.body.serverValue).isEqualTo("foo2" to "bar")
+			assertThat(output.body.clientValue).isEqualTo(mapOf("foo" to "bar",
+					"foo2" to "bar2"
+			))
+			assertThat(output.body.serverValue).isEqualTo(mapOf("foo" to "bar",
+					"foo2" to "bar2"
+			))
 			val headers = output.headers.entries
-			assertThat(headers).hasSize(1)
+			assertThat(headers).hasSize(2)
 			assertThat(headers.elementAt(0).name).isEqualTo("foo2")
 			assertThat(headers.elementAt(0).clientValue).isEqualTo("bar")
 			assertThat(headers.elementAt(0).serverValue).isEqualTo("bar")
+			assertThat(headers.elementAt(1).name).isEqualTo("X-Custom-Header")
+			assertThat(headers.elementAt(1).clientValue).isEqualTo("121345")
+			assertThat(headers.elementAt(1).serverValue).isInstanceOf(RegexProperty::class.java)
+			assertThat((headers.elementAt(1).serverValue as RegexProperty).pattern()).isEqualTo("^.*2134.*\$")
 		}
 	}
 
@@ -440,6 +454,12 @@ then:
 				)
 				headers {
 					header("Content-Type", "text/plain")
+					header("X-Custom-Header",
+							value(
+									stub("121345"),
+									test(regex("^.*2134.*$"))
+							)
+					)
 				}
 			}
 		}
@@ -471,6 +491,12 @@ then:
 				)
 				headers {
 					header("Content-Type", "text/plain")
+					header("X-Custom-Header",
+							value(
+								stub("121345"),
+								test(regex("^.*2134.*$"))
+							)
+					)
 				}
 			}
 		}
@@ -500,10 +526,14 @@ then:
 			assertThat(response.status.clientValue).isEqualTo(200)
 			assertThat(response.status.serverValue).isEqualTo(200)
 			val headers = response.headers.entries
-			assertThat(headers).hasSize(1)
+			assertThat(headers).hasSize(2)
 			assertThat(headers.elementAt(0).name).isEqualTo("Content-Type")
 			assertThat(headers.elementAt(0).clientValue).isEqualTo("text/plain")
 			assertThat(headers.elementAt(0).serverValue).isEqualTo("text/plain")
+			assertThat(headers.elementAt(1).name).isEqualTo("X-Custom-Header")
+			assertThat(headers.elementAt(1).clientValue).isEqualTo("121345")
+			assertThat(headers.elementAt(1).serverValue).isInstanceOf(RegexProperty::class.java)
+			assertThat((headers.elementAt(1).serverValue as RegexProperty).pattern()).isEqualTo("^.*2134.*\$")
 			assertThat(response.body.clientValue).isEqualTo(mapOf("id" to mapOf("value" to "132"),
 					"surname" to "Kowalsky",
 					"name" to "Jan",
