@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.2.0.RELEASE</version>
 		<relativePath/>
 	</parent>
 
@@ -28,7 +28,7 @@
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>3.6.14</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
-		<spring-cloud-build.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-build.version>
+		<spring-cloud-build.version>2.2.0.RELEASE</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>2.2.0.BUILD-SNAPSHOT
 		</spring-cloud-zookeeper.version>
 		<spring-cloud-stream.version>Horsham.BUILD-SNAPSHOT</spring-cloud-stream.version>
