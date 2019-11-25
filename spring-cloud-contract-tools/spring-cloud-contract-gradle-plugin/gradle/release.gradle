@@ -88,8 +88,8 @@ afterEvaluate {
 					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 				}
 				// Target repository
-				String repoUserName = isReleaseToCentral ? sonatypeUsername : repoUser
-				String repoPass = isReleaseToCentral ? sonatypePassword : repoPass
+				String repoUserName = isReleaseToCentral ? getProp("SONATYPE_USER") : repoUser
+				String repoPass = isReleaseToCentral ? getProp("SONATYPE_PASSWORD") : repoPass
 				repository(url: repoUrl) {
 					authentication(userName: repoUserName, password: repoPass)
 				}
@@ -134,4 +134,10 @@ afterEvaluate {
 			}
 		}
 	}
+}
+
+String getProp(String propName) {
+	return hasProperty(propName) ?
+			(getProperty(propName) ?: System.properties[propName]) : System.properties[propName] ?:
+			System.getenv(propName)
 }
