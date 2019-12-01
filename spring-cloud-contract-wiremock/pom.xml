@@ -104,7 +104,7 @@
 			<groupId>com.example.github</groupId>
 			<artifactId>github-webhook</artifactId>
 			<classifier>stubs</classifier>
-			<version>1.0.0.M1-190120_193303-VERSION</version>
+			<version>1.0.0.M1-20180806_102441-VERSION</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
