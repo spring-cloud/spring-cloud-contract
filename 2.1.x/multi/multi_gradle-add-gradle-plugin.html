@@ -666,7 +666,46 @@ verification tests with both Maven and Gradle plugin. However, whereas with Grad
 in Maven you will require some additional setup in order to make the tests compile and execute properly.</p><p>First of all, you will have to use a plugin, such as <a class="link" href="https://github.com/groovy/GMavenPlus" target="_top">GMavenPlus</a> plugin,
 to add Groovy to your project. In GMavenPlus plugin, you will need to explicitly set test sources, including both the
 path where your base test classes are defined and the path were the generated contract tests are added.
-Please refer to the example below:</p><pre class="programlisting"></pre><p>If you uphold to the Spock convention of ending the test class names with <code class="literal">Spec</code>, you will also need to adjust your Maven
+Please refer to the example below:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.codehaus.gmavenplus<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>gmavenplus-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>1.6.1<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>compileTests<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>addTestSources<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;testSources&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;testSource&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.basedir}/src/test/groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/testSource&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;testSource&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>
+					${project.basedir}/target/generated-test-sources/contracts/com/example/beer
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.gvy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/testSource&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/testSources&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.codehaus.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>groovy-all<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.4.15<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>runtime<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;type&gt;</span>pom<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/type&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span></pre><p>If you uphold to the Spock convention of ending the test class names with <code class="literal">Spec</code>, you will also need to adjust your Maven
 Surefire plugin setup, like in the following example:</p><pre class="programlisting"></pre></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stubs_and_transitive_dependencies" href="#_stubs_and_transitive_dependencies"></a>5.14&nbsp;Stubs and Transitive Dependencies</h2></div></div></div><p>The Maven and Gradle plugin that add the tasks that create the stubs jar for you. One
 problem that arises is that, when reusing the stubs, you can mistakenly import all of
 that stub&#8217;s dependencies. When building a Maven artifact, even though you have a couple

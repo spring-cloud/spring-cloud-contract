@@ -3674,7 +3674,46 @@ in Maven you will require some additional setup in order to make the tests compi
 to add Groovy to your project. In GMavenPlus plugin, you will need to explicitly set test sources, including both the
 path where your base test classes are defined and the path were the generated contract tests are added.
 Please refer to the example below:</simpara>
-<programlisting language="xml" linenumbering="unnumbered"></programlisting>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+	&lt;groupId&gt;org.codehaus.gmavenplus&lt;/groupId&gt;
+	&lt;artifactId&gt;gmavenplus-plugin&lt;/artifactId&gt;
+	&lt;version&gt;1.6.1&lt;/version&gt;
+	&lt;executions&gt;
+		&lt;execution&gt;
+			&lt;goals&gt;
+				&lt;goal&gt;compileTests&lt;/goal&gt;
+				&lt;goal&gt;addTestSources&lt;/goal&gt;
+			&lt;/goals&gt;
+		&lt;/execution&gt;
+	&lt;/executions&gt;
+	&lt;configuration&gt;
+		&lt;testSources&gt;
+			&lt;testSource&gt;
+				&lt;directory&gt;${project.basedir}/src/test/groovy&lt;/directory&gt;
+				&lt;includes&gt;
+					&lt;include&gt;**/*.groovy&lt;/include&gt;
+				&lt;/includes&gt;
+			&lt;/testSource&gt;
+			&lt;testSource&gt;
+				&lt;directory&gt;
+					${project.basedir}/target/generated-test-sources/contracts/com/example/beer
+				&lt;/directory&gt;
+				&lt;includes&gt;
+					&lt;include&gt;**/*.groovy&lt;/include&gt;
+					&lt;include&gt;**/*.gvy&lt;/include&gt;
+				&lt;/includes&gt;
+			&lt;/testSource&gt;
+		&lt;/testSources&gt;
+	&lt;/configuration&gt;
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;
+			&lt;artifactId&gt;groovy-all&lt;/artifactId&gt;
+			&lt;version&gt;2.4.15&lt;/version&gt;
+			&lt;scope&gt;runtime&lt;/scope&gt;
+			&lt;type&gt;pom&lt;/type&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;</programlisting>
 <simpara>If you uphold to the Spock convention of ending the test class names with <literal>Spec</literal>, you will also need to adjust your Maven
 Surefire plugin setup, like in the following example:</simpara>
 <programlisting language="xml" linenumbering="unnumbered"></programlisting>
