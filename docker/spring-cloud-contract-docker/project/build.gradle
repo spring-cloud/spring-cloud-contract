@@ -109,11 +109,14 @@ test.finalizedBy("copyOutput")
 
 publishing {
 	repositories {
-		maven {
-			url getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
-			credentials {
-				username getProp('REPO_WITH_BINARIES_USERNAME') ?: 'admin'
-				password getProp('REPO_WITH_BINARIES_PASSWORD') ?: 'password'
+		mavenLocal()
+		if (!Boolean.parseBoolean(getProp("PUBLISH_ARTIFACTS_OFFLINE") ?: "false")) {
+			maven {
+				url getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+				credentials {
+					username getProp('REPO_WITH_BINARIES_USERNAME') ?: 'admin'
+					password getProp('REPO_WITH_BINARIES_PASSWORD') ?: 'password'
+				}
 			}
 		}
 	}
