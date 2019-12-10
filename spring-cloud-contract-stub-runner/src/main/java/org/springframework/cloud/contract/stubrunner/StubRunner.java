@@ -192,6 +192,7 @@ public class StubRunner implements StubRunning {
 		if (this.localStubRunner != null) {
 			this.localStubRunner.shutdown();
 		}
+		TemporaryFileStorage.cleanup(this.stubRunnerOptions.isDeleteStubsAfterTest());
 	}
 
 }
