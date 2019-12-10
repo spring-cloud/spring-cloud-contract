@@ -103,6 +103,7 @@ final class TemporaryFileStorage {
 					log.trace("Failed to remove temporary file", e);
 				}
 			}
+			TemporaryFileStorage.files().clear();
 		}
 	}
 
