@@ -13851,7 +13851,8 @@ server port can be bound in the test application context with the "wiremock.serv
 property. Using <code>@AutoConfigureWireMock</code> adds a bean of type <code>WiremockConfiguration</code> to
 your test application context, where it is cached between methods and classes
 having the same context. The same is true for Spring integration tests. Also, you can
-inject a bean of type <code>WireMockServer</code> into your test.</p>
+inject a bean of type <code>WireMockServer</code> into your test.
+The registered WireMock server is reset after each test class, however, if you need to reset it after each test method, just set the <code>wiremock.reset-mappings-after-each-test</code> property to <code>true</code>.</p>
 </div>
 <div class="sect3">
 <h4 id="features-wiremock-registering-stubs"><a class="anchor" href="#features-wiremock-registering-stubs"></a><a class="link" href="#features-wiremock-registering-stubs">3.6.1. Registering Stubs Automatically</a></h4>
@@ -19844,6 +19845,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">wiremock.placeholders.enabled</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Flag to indicate that http URLs in generated wiremock stubs should be filtered to add or resolve a placeholder for a dynamic port.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wiremock.reset-mappings-after-each-test</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">wiremock.rest-template-ssl-enabled</p></td>

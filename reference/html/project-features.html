@@ -10476,7 +10476,8 @@ server port can be bound in the test application context with the "wiremock.serv
 property. Using <code>@AutoConfigureWireMock</code> adds a bean of type <code>WiremockConfiguration</code> to
 your test application context, where it is cached between methods and classes
 having the same context. The same is true for Spring integration tests. Also, you can
-inject a bean of type <code>WireMockServer</code> into your test.</p>
+inject a bean of type <code>WireMockServer</code> into your test.
+The registered WireMock server is reset after each test class, however, if you need to reset it after each test method, just set the <code>wiremock.reset-mappings-after-each-test</code> property to <code>true</code>.</p>
 </div>
 <div class="sect2">
 <h3 id="features-wiremock-registering-stubs"><a class="anchor" href="#features-wiremock-registering-stubs"></a><a class="link" href="#features-wiremock-registering-stubs">6.1. Registering Stubs Automatically</a></h3>
