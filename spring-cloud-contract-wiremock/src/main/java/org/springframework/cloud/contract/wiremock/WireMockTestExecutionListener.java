@@ -73,7 +73,23 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 						"Resetting mappings for the next test to restart them. That's necessary when"
 								+ " reusing the same context with new servers running on random ports");
 			}
-			wireMockConfig(testContext).resetMappings();
+			wireMockConfig(testContext).reRegisterServerWithResetMappings();
+		}
+	}
+
+	@Override
+	public void afterTestMethod(TestContext testContext) throws Exception {
+		if (applicationContextBroken(testContext)
+				|| wireMockConfigurationMissing(testContext)
+				|| annotationMissing(testContext)) {
+			return;
+		}
+		WireMockConfiguration wireMockConfiguration = wireMockConfig(testContext);
+		if (wireMockConfiguration.wireMock.isResetMappingsAfterEachTest()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Resetting mappings for the next test.");
+			}
+			wireMockConfiguration.resetMappings();
 		}
 	}
 

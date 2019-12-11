@@ -29,6 +29,7 @@ property. Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfigurat
 your test application context, where it is cached between methods and classes
 having the same context. The same is true for Spring integration tests. Also, you can
 inject a bean of type `WireMockServer` into your test.
+The registered WireMock server is reset after each test class, however, if you need to reset it after each test method, just set the `wiremock.reset-mappings-after-each-test` property to `true`.
 
 [[features-wiremock-registering-stubs]]
 === Registering Stubs Automatically

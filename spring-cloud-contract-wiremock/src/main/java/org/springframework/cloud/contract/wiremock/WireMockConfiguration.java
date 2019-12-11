@@ -109,7 +109,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 				this.customizer.customize(factory);
 			}
 		}
-		resetMappings();
+		reRegisterServerWithResetMappings();
 		reRegisterBeans();
 		updateCurrentServer();
 	}
@@ -146,14 +146,20 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 	}
 
-	void resetMappings() {
+	void reRegisterServerWithResetMappings() {
 		reRegisterServer();
+		if (this.server.isRunning()) {
+			resetMappings();
+			updateCurrentServer();
+		}
+	}
+
+	void resetMappings() {
 		if (this.server.isRunning()) {
 			this.server.resetAll();
 			WireMock.reset();
 			registerStubs();
 			logRegisteredMappings();
-			updateCurrentServer();
 		}
 	}
 
@@ -282,12 +288,22 @@ class WireMockProperties {
 
 	private boolean restTemplateSslEnabled;
 
+	private boolean resetMappingsAfterEachTest;
+
 	public boolean isRestTemplateSslEnabled() {
 		return this.restTemplateSslEnabled;
 	}
 
 	public void setRestTemplateSslEnabled(boolean restTemplateSslEnabled) {
 		this.restTemplateSslEnabled = restTemplateSslEnabled;
+	}
+
+	public boolean isResetMappingsAfterEachTest() {
+		return this.resetMappingsAfterEachTest;
+	}
+
+	public void setResetMappingsAfterEachTest(boolean resetMappingsAfterEachTest) {
+		this.resetMappingsAfterEachTest = resetMappingsAfterEachTest;
 	}
 
 	public Server getServer() {
