@@ -438,7 +438,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/or
 [[features-messaging-stub-runner-camel-scenario1]]
 ===== Scenario 1 (No Input Message)
 
-To trigger a message from the `return_book_1` label, we use the `StubTigger` interface, as follows:
+To trigger a message from the `return_book_1` label, we use the `StubTrigger` interface, as follows:
 
 ====
 [source,groovy]
@@ -601,7 +601,7 @@ These examples lend themselves to three scenarios:
 [[features-messaging-stub-runner-integration-scenario1]]
 ===== Scenario 1 (No Input Message)
 
-To trigger a message from the `return_book_1` label, use the `StubTigger` interface, as
+To trigger a message from the `return_book_1` label, use the `StubTrigger` interface, as
 follows:
 
 ====
@@ -1084,7 +1084,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/
 [[features-messaging-stub-runner-jms-scenario1]]
 ===== Scenario 1 (No Input Message)
 
-To trigger a message from the `return_book_1` label, we use the `StubTigger` interface, as follows:
+To trigger a message from the `return_book_1` label, we use the `StubTrigger` interface, as follows:
 
 ====
 [source,groovy]
@@ -1230,7 +1230,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/or
 [[features-messaging-stub-runner-kafka-scenario1]]
 ===== Scenario 1 (No Input Message)
 
-To trigger a message from the `return_book_1` label, we use the `StubTigger` interface, as follows:
+To trigger a message from the `return_book_1` label, we use the `StubTrigger` interface, as follows:
 
 ====
 [source,groovy]
