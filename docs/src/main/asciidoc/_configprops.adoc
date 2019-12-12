@@ -34,6 +34,7 @@
 |stubrunner.stubs-per-consumer | false | Should only stubs for this particular consumer get registered in HTTP server stub.
 |stubrunner.username |  | Repository username.
 |wiremock.placeholders.enabled | true | Flag to indicate that http URLs in generated wiremock stubs should be filtered to add or resolve a placeholder for a dynamic port.
+|wiremock.reset-mappings-after-each-test | false | 
 |wiremock.rest-template-ssl-enabled | false | 
 |wiremock.server.files | [] | 
 |wiremock.server.https-port | -1 | 
