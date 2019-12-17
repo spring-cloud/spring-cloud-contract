@@ -26,6 +26,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -51,6 +52,22 @@ public class ContractVerifierStreamAutoConfiguration {
 	}
 
 	@Configuration(proxyBeanMethods = false)
+	@ConditionalOnClass(InputDestination.class)
+	@ConditionalOnMissingClass("org.springframework.cloud.stream.test.binder.MessageCollector")
+	static class InputDestinationConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithDestinations(
+				ApplicationContext context) {
+			return new StreamStubMessages(
+					new StreamInputDestinationMessageSender(context),
+					new StreamOutputDestinationMessageReceiver(context));
+		}
+
+	}
+
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(MessageCollector.class)
 	static class MessageCollectorConfiguration {
 
@@ -67,7 +84,9 @@ public class ContractVerifierStreamAutoConfiguration {
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnMissingClass("org.springframework.cloud.stream.test.binder.MessageCollector")
+	@ConditionalOnMissingClass({
+			"org.springframework.cloud.stream.test.binder.MessageCollector",
+			"org.springframework.cloud.stream.binder.test.InputDestination" })
 	static class NoMessageCollectorClassConfiguration {
 
 		@Bean
