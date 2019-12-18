@@ -85,8 +85,7 @@ which is the default URL of https://jfrog.com/artifactory/[Artifactory] running 
 - `REPO_WITH_BINARIES_USERNAME`: (optional) Username when the Artifact Manager is secured. Defaults to `admin`.
 - `REPO_WITH_BINARIES_PASSWORD`: (optional) Password when the Artifact Manager is secured. Defaults to `password`.
 - `PUBLISH_ARTIFACTS`: If set to `true`, publishes the artifact to binary storage. Defaults to `true`.
-- `PUBLISH_ARTIFACTS_OFFLINE`: If set to `true` and the publishing is enabled, it will publish the artifacts to local
-`.m2` only. Defaults to `false`.
+- `PUBLISH_ARTIFACTS_OFFLINE`: If set to `true`, it will publish the artifacts to local `.m2`. Defaults to `false`.
 
 These environment variables are used when contracts lay in an external repository. To enable
 this feature, you must set the `EXTERNAL_CONTRACTS_ARTIFACT_ID` environment variable.
