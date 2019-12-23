@@ -257,7 +257,7 @@ with your local changes.
 Assume that we have a producer with coordinates of `com.example:server` and three
 consumers: `client1`, `client2`, and `client3`. Then, in the repository with common
 contracts, you could have the following setup (which you can check out
-https://github.com/spring-cloud/spring-cloud-contract/tree/{samples_branch}/samples/standalone/contracts[here]).
+https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/contracts[here]).
 The following listing shows such a structure:
 
 ====
