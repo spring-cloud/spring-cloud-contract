@@ -1,10 +1,11 @@
+:branch: master
 [[features-wiremock]]
 == Spring Cloud Contract WireMock
 include::_attributes.adoc[]
 
 The Spring Cloud Contract WireMock modules let you use https://github.com/tomakehurst/wiremock[WireMock] in a
 Spring Boot application. Check out the
-https://github.com/spring-cloud/spring-cloud-contract/tree/{samples_branch}/samples[samples]
+https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples[samples]
 for more details.
 
 If you have a Spring Boot application that uses Tomcat as an embedded server (which is
