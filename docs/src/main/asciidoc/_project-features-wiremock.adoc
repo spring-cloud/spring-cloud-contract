@@ -4,7 +4,7 @@ include::_attributes.adoc[]
 
 The Spring Cloud Contract WireMock modules let you use https://github.com/tomakehurst/wiremock[WireMock] in a
 Spring Boot application. Check out the
-https://github.com/spring-cloud/spring-cloud-contract/tree/{samples_branch}/samples[samples]
+https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples[samples]
 for more details.
 
 If you have a Spring Boot application that uses Tomcat as an embedded server (which is
@@ -36,7 +36,7 @@ The registered WireMock server is reset after each test class, however, if you n
 
 If you use `@AutoConfigureWireMock`, it registers WireMock JSON stubs from the file
 system or classpath (by default, from `file:src/test/resources/mappings`). You can
-customize the locations by using the `stubs` attribute in the annotation, which can be an
+customize the locations byusing the `stubs` attribute in the annotation, which can be an
 Ant-style resource pattern or a directory. In the case of a directory, `**/*.json` is
 appended. The following code shows an example:
 
