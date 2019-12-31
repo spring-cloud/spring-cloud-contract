@@ -744,4 +744,47 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
 	}
+
+	@Issue('#880')
+	def 'should not generate a null statement when there is no content type in the response [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description 'Should return 200'
+				request {
+					method POST()
+					url("/get")
+					headers {
+						contentType("application/json;charset=UTF-8")
+					}
+				}
+				response {
+					status OK()
+					body(file("getBody.json"))
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('null')
+			test.contains('''.array("['array']")''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK;
+				properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT;
+				properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+	}
+
 }

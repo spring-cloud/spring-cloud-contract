@@ -54,6 +54,14 @@ public class FromFileProperty implements Serializable {
 		return byte[].class.equals(this.type) || Byte[].class.equals(this.type);
 	}
 
+	public boolean isJson() {
+		return this.fileName().endsWith(".json");
+	}
+
+	public boolean isXml() {
+		return this.fileName().endsWith(".xml");
+	}
+
 	public String asString() {
 		try {
 			return new String(asBytes(), this.charset);
