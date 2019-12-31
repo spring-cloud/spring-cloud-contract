@@ -423,6 +423,8 @@ abstract class MethodBodyBuilder implements ClassVerifier {
 				byteResponseBodyCheck(bb, convertedResponseBody)
 				return
 			}
+			contentType = convertedResponseBody.isJson() ? JSON :
+					convertedResponseBody.isXml() ? XML : contentType
 			convertedResponseBody = convertedResponseBody.asString()
 		}
 		if (convertedResponseBody instanceof GString) {

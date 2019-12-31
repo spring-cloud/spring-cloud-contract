@@ -661,4 +661,39 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
 	}
 
+	@Issue('#880')
+	def 'should not generate a null statement when there is no content type in the response [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description 'Should return 200'
+				request {
+					method POST()
+					url("/get")
+					headers {
+						contentType("application/json;charset=UTF-8")
+					}
+				}
+				response {
+					status OK()
+					body(file("getBody.json"))
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('null')
+		where:
+			methodBuilderName                                             | methodBuilder
+			HttpSpockMethodRequestProcessingBodyBuilder.simpleName        | { Contract dsl -> new HttpSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			MockMvcJUnitMethodBodyBuilder.simpleName                      | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientSpockMethodRequestProcessingBodyBuilder.simpleName | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			JaxRsClientJUnitMethodBodyBuilder.simpleName                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+			WebTestClientJUnitMethodBodyBuilder.simpleName                | { Contract dsl -> new WebTestClientJUnitMethodBodyBuilder(dsl, properties, generatedClassDataForMethod) }
+	}
+
 }

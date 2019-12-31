@@ -66,6 +66,14 @@ class FromFileProperty implements Serializable {
 		return this.file.bytes
 	}
 
+	boolean isJson() {
+		return this.fileName().endsWith(".json")
+	}
+
+	boolean isXml() {
+		return this.fileName().endsWith(".xml")
+	}
+
 	@Override
 	String toString() {
 		return asString()
