@@ -2753,6 +2753,64 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	}
 
+	@Issue("#1125")
+	def "should not generate assertions for [*] when all manual entries were passed"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method(GET())
+					url '/operations'
+					body(
+							channedlId: "UC",
+							operations: [
+									[
+											parameters     : [
+													[
+															name : "#POID",
+															value: '70000269814',
+															type : "DECIMAL"
+													],
+													[
+															name : "#OVID",
+															value: "3",
+															type : "DECIMAL"
+													],
+													[
+															name : "#CAMC",
+															value: "CC2PAY",
+															type : "CHAR"
+													]
+											]
+									]
+							]
+					)
+					bodyMatchers {
+						jsonPath('$.operations[0].parameters[0].name', byEquality())
+						jsonPath('$.operations[0].parameters[0].value', byRegex('[0-9]{11}'))
+						jsonPath('$.operations[0].parameters[0].type', byEquality())
+						jsonPath('$.operations[0].parameters[1].name', byEquality())
+						jsonPath('$.operations[0].parameters[1].value', byEquality())
+						jsonPath('$.operations[0].parameters[1].type', byEquality())
+						jsonPath('$.operations[0].parameters[2].name', byEquality())
+						jsonPath('$.operations[0].parameters[2].value', byEquality())
+						jsonPath('$.operations[0].parameters[2].type', byEquality())
+					}
+				}
+
+				response {
+					status 200
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+
+		then:
+			!wireMockStub.contains('''$.['operations'][*]''')
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	@Issue("#1257")
 	def "should work with null request element on the client side and optional stub entry"() {
 		given:
