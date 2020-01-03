@@ -24,7 +24,7 @@
 
 	<properties>
 		<activemq.version>5.15.11</activemq.version>
-		<camel.version>2.24.2</camel.version>
+		<camel.version>3.0.0</camel.version>
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>3.6.14</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
