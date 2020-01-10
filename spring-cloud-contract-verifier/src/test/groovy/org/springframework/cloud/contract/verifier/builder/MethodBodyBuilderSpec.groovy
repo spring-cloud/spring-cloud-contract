@@ -1927,4 +1927,48 @@ response:
 			}
 	}
 
+	def 'should work with an array of uuids'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description "TEST ARRAY"
+				request {
+					method POST()
+					urlPath($(c('/TEST'), p('/TEST')))
+					body([
+							$(c(anyUuid()), p("00000000-0000-0000-0000-000000000002")),
+							$(c(anyUuid()), p("00000000-0000-0000-0000-000000000001"))
+					])
+				}
+				response {
+					status OK()
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		and:
+			!test.contains('singleValue')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
 }

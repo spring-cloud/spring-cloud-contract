@@ -123,12 +123,14 @@ interface BodyParser extends BodyThen {
 			return extractValue((GString) bodyValue, contentType,
 					ContentUtils.GET_TEST_SIDE);
 		}
-		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
+		else if (bodyValue instanceof FromFileProperty) {
+			return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE);
+		}
+		else if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
 			boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
 			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
 					: MapConverter.JSON_PARSING_CLOSURE;
-			return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE,
-					parsingClosure);
+			return MapConverter.getTestSideValues(bodyValue, parsingClosure);
 		}
 		return bodyValue;
 	}
