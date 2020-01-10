@@ -314,10 +314,7 @@ public class OutputMessage extends Common
 	/**
 	 * The stub matchers part of the contract.
 	 * @param consumer function to manipulate the body matchers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
 	 */
-	@Deprecated
 	public void bodyMatchers(Consumer<ResponseBodyMatchers> consumer) {
 		this.bodyMatchers = new ResponseBodyMatchers();
 		consumer.accept(this.bodyMatchers);
@@ -348,10 +345,7 @@ public class OutputMessage extends Common
 	/**
 	 * The stub matchers part of the contract.
 	 * @param consumer function to manipulate the body matchers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
 	 */
-	@Deprecated
 	public void bodyMatchers(@DelegatesTo(ResponseBodyMatchers.class) Closure consumer) {
 		this.bodyMatchers = new ResponseBodyMatchers();
 		consumer.setDelegate(this.bodyMatchers);
