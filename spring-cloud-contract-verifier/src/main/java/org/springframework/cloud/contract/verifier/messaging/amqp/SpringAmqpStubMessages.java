@@ -29,7 +29,6 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
@@ -172,7 +171,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 			// backward compatibility
 			return true;
 		}
-		return this.rabbitProperties.getPublisherConfirmType() != CachingConnectionFactory.ConfirmType.NONE;
+		return !this.rabbitProperties.isPublisherConfirms();
 	}
 
 	@Override
