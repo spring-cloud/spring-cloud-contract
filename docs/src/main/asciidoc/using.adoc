@@ -631,8 +631,7 @@ In this flow, we assume that:
 * Spring Cloud Contract Docker (SCC Docker) and Spring Cloud Contract Stub Runner Docker
 (SCC Stub Runner Docker) images are used.
 
-You can read more about how to use Spring Cloud Contract with Docker
-<<docker-project.adoc,in this page>>.
+You can read more about how to use Spring Cloud Contract with Docker link:docker-project.html[in this page].
 
 https://spring.io/blog/2018/02/13/spring-cloud-contract-in-a-polyglot-world[Here], you can
 read a blog post about how to use Spring Cloud Contract in a polyglot world.
