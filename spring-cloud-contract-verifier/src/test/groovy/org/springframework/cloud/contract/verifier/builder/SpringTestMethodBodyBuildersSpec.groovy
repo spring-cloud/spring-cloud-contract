@@ -24,7 +24,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
-import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -32,6 +32,7 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
+
 /**
  * @author Jakub Kubrynski, codearte.io
  * @author Tim Ysewyn
@@ -39,7 +40,7 @@ import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 class SpringTestMethodBodyBuildersSpec extends Specification implements WireMockStubVerifier {
 
 	@Rule
-	OutputCapture capture = new OutputCapture()
+	OutputCaptureRule capture = new OutputCaptureRule()
 
 	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
