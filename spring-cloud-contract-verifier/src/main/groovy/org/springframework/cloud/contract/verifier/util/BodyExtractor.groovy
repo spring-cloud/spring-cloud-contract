@@ -90,7 +90,7 @@ class BodyExtractor {
 		else if (bodyValue instanceof DslProperty) {
 			return extractClientValueFromBody(bodyValue.clientValue)
 		}
-		else if (bodyValue instanceof FromFileProperty) {
+		else if (bodyValue instanceof FromFileProperty && bodyValue.isString()) {
 			return MapConverter.transformValues(bodyValue.asString(), Closure.IDENTITY)
 		}
 		else {
