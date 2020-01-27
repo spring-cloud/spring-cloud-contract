@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.boot.test.system.OutputCaptureRule;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -38,7 +38,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class ContractProjectUpdaterTest extends AbstractGitTest {
 
 	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
+	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	File originalProject;
 
