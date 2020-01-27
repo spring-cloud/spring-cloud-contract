@@ -9406,12 +9406,12 @@ The following example achieves the same result by setting values on the annotati
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@AutoConfigureStubRunner(
-        ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-                "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-                "org.springframework.cloud.contract.verifier.stubs:bootService"],
-        stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-        repositoryRoot = "classpath:m2repo/repository/")</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">//@AutoConfigureStubRunner(
+//      ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+//              "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+//              "org.springframework.cloud.contract.verifier.stubs:bootService"],
+//      stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+//      repositoryRoot = "classpath:m2repo/repository/")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9505,14 +9505,14 @@ instead of calling the real Service Discovery tool.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">def 'should make service discovery work'() {
-    expect: 'WireMocks are running'
-        "${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-        "${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
-    and: 'Stubs can be reached via load service discovery'
-        restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-        restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">//  def 'should make service discovery work'() {
+//      expect: 'WireMocks are running'
+//          "${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+//          "${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+//      and: 'Stubs can be reached via load service discovery'
+//          restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+//          restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+//  }</code></pre>
 </div>
 </div>
 </div>
