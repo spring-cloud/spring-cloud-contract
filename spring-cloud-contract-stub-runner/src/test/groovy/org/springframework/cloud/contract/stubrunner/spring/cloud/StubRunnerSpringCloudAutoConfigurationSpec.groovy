@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
-
 /**
  * @author Marcin Grzejszczak
  */

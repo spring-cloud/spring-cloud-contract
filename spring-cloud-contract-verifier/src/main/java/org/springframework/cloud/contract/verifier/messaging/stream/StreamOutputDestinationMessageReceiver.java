@@ -65,6 +65,9 @@ class StreamOutputDestinationMessageReceiver
 	private int indexOfDestination(StreamFunctionProperties streamFunctionProperties,
 			String destination) {
 		String[] split = streamFunctionProperties.getDefinition().split(";");
+		if (split.length == 1) {
+			return 0;
+		}
 		int indexOfDestination = Arrays.stream(split).map(String::toLowerCase)
 				.collect(Collectors.toList()).indexOf(destination.toLowerCase());
 		if (indexOfDestination == -1) {

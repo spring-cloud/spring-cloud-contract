@@ -63,33 +63,37 @@ public class SpringCloudLoadBalancerAutoConfiguration {
 
 	@Bean
 	@Primary
-	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(
-			StubFinder stubFinder, StubMapperProperties stubMapperProperties) {
+	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(StubFinder stubFinder,
+			StubMapperProperties stubMapperProperties) {
 		return new StubRunnerLoadBalancerClientFactory(stubFinder, stubMapperProperties);
 	}
 
 }
 
-class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory implements Closeable {
+class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory
+		implements Closeable {
+
 	private final StubFinder stubFinder;
 
 	private final StubMapperProperties stubMapperProperties;
 
-	public StubRunnerLoadBalancerClientFactory(StubFinder stubFinder, StubMapperProperties stubMapperProperties) {
+	StubRunnerLoadBalancerClientFactory(StubFinder stubFinder,
+			StubMapperProperties stubMapperProperties) {
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
 	}
 
 	@Override
 	public ReactiveLoadBalancer<ServiceInstance> getInstance(String serviceId) {
-		return request -> Mono.just(new DefaultResponse(new StubbedServiceInstance(stubFinder, stubMapperProperties, serviceId)));
+		return request -> Mono.just(new DefaultResponse(
+				new StubbedServiceInstance(stubFinder, stubMapperProperties, serviceId)));
 	}
-
 
 	@Override
 	public void close() {
 		StubbedServiceInstance.CACHE.clear();
 	}
+
 }
 
 class StubbedServiceInstance implements ServiceInstance {
@@ -115,9 +119,10 @@ class StubbedServiceInstance implements ServiceInstance {
 			return entry;
 		}
 		RunningStubs runningStubs = this.stubFinder.findAllRunningStubs();
-		String mappedServiceName = StringUtils
-				.hasText(this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId))
-						? this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId)
+		String mappedServiceName = StringUtils.hasText(
+				this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId))
+						? this.stubMapperProperties.fromServiceIdToIvyNotation(
+								this.serviceId)
 						: this.serviceId;
 		entry = runningStubs.getEntry(mappedServiceName);
 		CACHE.put(this.serviceId, entry);
