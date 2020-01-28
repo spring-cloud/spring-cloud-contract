@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,9 @@
 package org.springframework.cloud.contract.stubrunner.messaging;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
-import org.springframework.cloud.stream.test.binder.MessageCollectorAutoConfiguration;
-import org.springframework.cloud.stream.test.binder.TestSupportBinder;
-import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -37,10 +34,8 @@ import org.springframework.context.annotation.Configuration;
 public class StubRunnerStreamsIntegrationAutoConfiguration {
 
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnClass(TestSupportBinderAutoConfiguration.class)
-	@ConditionalOnBean(TestSupportBinder.class)
-	@ImportAutoConfiguration(classes = { TestSupportBinderAutoConfiguration.class,
-			MessageCollectorAutoConfiguration.class, IntegrationAutoConfiguration.class })
+	@ConditionalOnClass(TestChannelBinderConfiguration.class)
+	@ImportAutoConfiguration(classes = TestChannelBinderConfiguration.class)
 	static class StreamsRelatedAutoConfiguration {
 
 	}
