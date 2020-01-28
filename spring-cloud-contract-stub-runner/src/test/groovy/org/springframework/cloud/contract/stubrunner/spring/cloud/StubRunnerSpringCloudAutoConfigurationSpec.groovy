@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.consul.ConsulAutoConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -39,51 +40,51 @@ import org.springframework.web.client.RestTemplate
  * @author Marcin Grzejszczak
  */
 //TODO: Document that ribbon.eureka.enabled=false needs to be set or override it somehow
-//@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-//@ActiveProfiles("cloudtest")
-//// tag::autoconfigure[]
-//@AutoConfigureStubRunner(
-//		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-//				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-//				"org.springframework.cloud.contract.verifier.stubs:bootService"],
-//		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-//		repositoryRoot = "classpath:m2repo/repository/")
-//// end::autoconfigure[]
-//class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
-//
-//	@Autowired
-//	StubFinder stubFinder
-//	@Autowired
-//	@LoadBalanced
-//	RestTemplate restTemplate
-//
-//	@BeforeClass
-//	@AfterClass
-//	static void setupProps() {
-//		System.clearProperty("stubrunner.repository.root")
-//		System.clearProperty("stubrunner.classifier")
-//	}
-//
-//	// tag::test[]
-//	def 'should make service discovery work'() {
-//		expect: 'WireMocks are running'
-//			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-//			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
-//		and: 'Stubs can be reached via load service discovery'
-//			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-//			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
-//	}
-//	// end::test[]
-//
-//	@Configuration
-//	@EnableAutoConfiguration(exclude = [EurekaClientAutoConfiguration,
-//			ConsulAutoConfiguration, ZookeeperAutoConfiguration])
-//	static class Config {
-//
-//		@Bean
-//		@LoadBalanced
-//		RestTemplate restTemplate() {
-//			return new RestTemplate()
-//		}
-//	}
-//}
+@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@ActiveProfiles("cloudtest")
+// tag::autoconfigure[]
+@AutoConfigureStubRunner(
+		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+				"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		repositoryRoot = "classpath:m2repo/repository/")
+// end::autoconfigure[]
+class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
+
+	@Autowired
+	StubFinder stubFinder
+	@Autowired
+	@LoadBalanced
+	RestTemplate restTemplate
+
+	@BeforeClass
+	@AfterClass
+	static void setupProps() {
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
+	}
+
+	// tag::test[]
+	def 'should make service discovery work'() {
+		expect: 'WireMocks are running'
+			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+		and: 'Stubs can be reached via load service discovery'
+			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+	}
+	// end::test[]
+
+	@Configuration
+	@EnableAutoConfiguration(exclude = [EurekaClientAutoConfiguration,
+			ConsulAutoConfiguration, ZookeeperAutoConfiguration])
+	static class Config {
+
+		@Bean
+		@LoadBalanced
+		RestTemplate restTemplate() {
+			return new RestTemplate()
+		}
+	}
+}

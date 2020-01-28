@@ -37,9 +37,9 @@
       "defaultValue": true
     },
     {
-      "name": "stubrunner.cloud.ribbon.enabled",
+      "name": "stubrunner.cloud.loadbalancer.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable Stub Runner's Ribbon integration.",
+      "description": "Whether to enable Stub Runner's Spring Cloud Load Balancer integration.",
       "defaultValue": true
     },
     {
