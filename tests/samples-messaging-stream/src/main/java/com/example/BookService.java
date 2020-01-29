@@ -16,24 +16,27 @@
 
 package com.example;
 
+import java.util.function.Supplier;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.Flux;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
-@Service
-public class BookService {
+@Service("bookSender")
+public class BookService implements Supplier<Flux<Message<BookReturned>>> {
 
 	private static final Logger log = LoggerFactory.getLogger(BookService.class);
 
-	private final Source source;
+	private final EmitterProcessor<Message<BookReturned>> bookReturnedEmitterProcessor;
 
-	@Autowired
-	public BookService(Source source) {
-		this.source = source;
+	public BookService(
+			EmitterProcessor<Message<BookReturned>> bookReturnedEmitterProcessor) {
+		this.bookReturnedEmitterProcessor = bookReturnedEmitterProcessor;
 	}
 
 	/**
@@ -46,8 +49,13 @@ public class BookService {
 	 */
 	public void returnBook(BookReturned bookReturned) {
 		log.info("Returning book " + bookReturned);
-		this.source.output().send(MessageBuilder.withPayload(bookReturned)
+		this.bookReturnedEmitterProcessor.onNext(MessageBuilder.withPayload(bookReturned)
 				.setHeader("BOOK-NAME", bookReturned.bookName).build());
+	}
+
+	@Override
+	public Flux<Message<BookReturned>> get() {
+		return this.bookReturnedEmitterProcessor;
 	}
 
 }

@@ -20,20 +20,20 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
-import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -75,7 +75,7 @@ class MocoHttpServerStubSpec extends Specification {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableBinding(Sink.class)
+	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
 	static class MocoConfig {
 
 		@Bean

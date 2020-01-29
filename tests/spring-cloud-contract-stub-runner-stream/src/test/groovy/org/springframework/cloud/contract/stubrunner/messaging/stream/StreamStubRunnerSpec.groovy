@@ -25,6 +25,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
@@ -32,9 +33,7 @@ import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
-import org.springframework.cloud.stream.annotation.EnableBinding
-import org.springframework.cloud.stream.messaging.Sink
-import org.springframework.cloud.stream.messaging.Source
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
@@ -221,7 +220,7 @@ class StreamStubRunnerSpec extends Specification {
 	// end::sample_dsl_3[]
 
 
-	@EnableBinding([Sink, Source])
+	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
 	@Configuration
 	@EnableAutoConfiguration
 	protected static class Config {}
