@@ -43,8 +43,7 @@ class StreamOutputDestinationMessageReceiver
 		try {
 			OutputDestination outputDestination = this.context
 					.getBean(OutputDestination.class);
-			return outputDestination.receive(timeUnit.toMillis(timeout),
-					destination);
+			return outputDestination.receive(timeUnit.toMillis(timeout), destination);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "

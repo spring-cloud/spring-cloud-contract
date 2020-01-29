@@ -37,6 +37,7 @@ import org.springframework.cloud.stream.binder.test.TestChannelBinderConfigurati
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -51,11 +52,6 @@ class StreamStubRunnerSpec extends Specification {
 	StubFinder stubFinder
 	@Autowired
 	MessageVerifier<Message<?>> messaging
-
-	def setup() {
-		// ensure that message were taken from the queue
-		messaging.receive('returnBook', 100, TimeUnit.MILLISECONDS)
-	}
 
 	def 'should download the stub and register a route for it'() {
 		when:
@@ -219,10 +215,11 @@ class StreamStubRunnerSpec extends Specification {
 			}
 	// end::sample_dsl_3[]
 
-
 	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
 	@Configuration
 	@EnableAutoConfiguration
-	protected static class Config {}
+	protected static class Config {
+
+	}
 
 }

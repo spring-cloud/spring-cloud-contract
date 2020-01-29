@@ -42,7 +42,7 @@ class StreamStubMessagesWithDestinationsSpec extends Specification {
 		when:
 			messages.receive("verifications")
 		then:
-			1 * output.receive(5000, 0) >> null
+			1 * output.receive(5000, 'verifications') >> null
 	}
 
 	@Issue("694")
@@ -59,7 +59,7 @@ class StreamStubMessagesWithDestinationsSpec extends Specification {
 		when:
 			messages.send("foo", [:], "verifications")
 		then:
-			1 * input.send(_, 0)
+			1 * input.send(_, 'verifications')
 	}
 
 	def "should resolve channel via destination for send"() {
@@ -77,7 +77,7 @@ class StreamStubMessagesWithDestinationsSpec extends Specification {
 		when:
 			messages.send("foo", [:], "verifications")
 		then:
-			1 * input.send(_, 0)
+			1 * input.send(_, 'verifications')
 	}
 
 	def "should resolve channel via destination for receive"() {
@@ -95,6 +95,6 @@ class StreamStubMessagesWithDestinationsSpec extends Specification {
 		when:
 			messages.receive("verifications")
 		then:
-			1 * output.receive(5000, 0) >> null
+			1 * output.receive(5000, 'verifications') >> null
 	}
 }
