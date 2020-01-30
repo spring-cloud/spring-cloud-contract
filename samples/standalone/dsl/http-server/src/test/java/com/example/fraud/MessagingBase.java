@@ -21,8 +21,11 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -34,7 +37,7 @@ import org.springframework.web.context.WebApplicationContext;
  * @author Marius Bogoevici
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, properties = "spring.cloud.stream.bindings.output.destination=sensor-data")
+@SpringBootTest(classes = {MessagingBase.Config.class, Application.class})
 @AutoConfigureMessageVerifier
 public abstract class MessagingBase {
 
@@ -51,6 +54,12 @@ public abstract class MessagingBase {
 
 	public void createSensorData() {
 		poller.poll();
+	}
+
+	@Configuration
+	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
+	static class Config {
+
 	}
 
 }

@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,19 +32,16 @@ import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
-@Component
-class MyProcessorListener {
+@Component("my_output")
+class MyProcessorListener implements Function<byte[], byte[]> {
 
 	private static final Logger log = LoggerFactory.getLogger(MyProcessorListener.class);
-
-	private final MyProcessor processor;
 
 	private final byte[] expectedInput;
 
 	private final byte[] expectedOutput;
 
-	MyProcessorListener(MyProcessor processor) {
-		this.processor = processor;
+	MyProcessorListener() {
 		this.expectedInput = forFile("/contracts/messaging/input.pdf");
 		this.expectedOutput = forFile("/contracts/messaging/output.pdf");
 	}
@@ -58,15 +56,13 @@ class MyProcessorListener {
 		}
 	}
 
-	@StreamListener(Sink.INPUT)
-	void listen(byte[] payload) {
+	@Override
+	public byte[] apply(byte[] payload) {
 		log.info("Got the message!");
 		if (!Arrays.equals(payload, this.expectedInput)) {
 			log.error("Input payload size is [" + payload.length + "] and the expected one is [" + this.expectedInput.length + "]");
 			throw new IllegalStateException("Wrong input");
 		}
-		this.processor.output()
-				.send(MessageBuilder.withPayload(this.expectedOutput).build());
+		return this.expectedOutput;
 	}
-
 }

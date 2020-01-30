@@ -16,20 +16,27 @@
 
 package com.example.fraud;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.EmitterProcessor;
+
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
 class MessagePoller {
-	private final Source source;
 
-	MessagePoller(Source source) {
-		this.source = source;
+	private static final Logger log = LoggerFactory.getLogger(MessagePoller.class);
+
+	private final EmitterProcessor<String> emitterProcessor;
+
+	MessagePoller(EmitterProcessor<String> emitterProcessor) {
+		this.emitterProcessor = emitterProcessor;
 	}
 
 	public void poll() {
-		this.source.output().send(MessageBuilder
-				.withPayload("{\"id\":\"99\",\"temperature\":\"123.45\"}").build());
+		log.info("Emitting the message");
+		this.emitterProcessor.onNext("{\"id\":\"99\",\"temperature\":\"123.45\"}");
 	}
 }

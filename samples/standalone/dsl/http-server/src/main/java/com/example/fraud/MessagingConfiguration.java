@@ -16,15 +16,23 @@
 
 package com.example.fraud;
 
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.messaging.MessageChannel;
+import java.util.function.Supplier;
 
-interface MyProcessor extends Sink {
+import reactor.core.publisher.EmitterProcessor;
 
-	String MY_OUTPUT = "my_output";
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-	@Output("my_output")
-	MessageChannel output();
+@Configuration
+class MessagingConfiguration {
 
+	@Bean
+	EmitterProcessor<String> sensorDataEmitter() {
+		return EmitterProcessor.create();
+	}
+
+	@Bean(name = "sensor-data")
+	Supplier<String> sensorData() {
+		return () -> "{\"id\":\"99\",\"temperature\":\"123.45\"}";
+	}
 }
