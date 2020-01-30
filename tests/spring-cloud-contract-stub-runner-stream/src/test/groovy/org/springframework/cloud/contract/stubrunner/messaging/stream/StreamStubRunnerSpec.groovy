@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import spock.lang.IgnoreIf
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,7 +37,6 @@ import org.springframework.cloud.stream.binder.test.TestChannelBinderConfigurati
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -45,7 +44,8 @@ import org.springframework.test.context.ContextConfiguration
 @SpringBootTest(properties = "debug=true")
 @AutoConfigureStubRunner
 @AutoConfigureMessageVerifier
-@IgnoreIf({ os.windows })
+//@IgnoreIf({ os.windows })
+@Ignore("Wait until the feature of runtime message sending and polling is available")
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired
