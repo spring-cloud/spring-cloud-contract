@@ -42,7 +42,7 @@ import org.springframework.web.context.WebApplicationContext;
 public abstract class MessagingBase {
 
 	@Autowired
-	MessagePoller poller;
+	MessageSender poller;
 
 	@Autowired
 	WebApplicationContext context;
@@ -53,7 +53,7 @@ public abstract class MessagingBase {
 	}
 
 	public void createSensorData() {
-		poller.poll();
+		poller.emit();
 	}
 
 	@Configuration

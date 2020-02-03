@@ -20,22 +20,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.EmitterProcessor;
 
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-class MessagePoller {
+class MessageSender {
 
-	private static final Logger log = LoggerFactory.getLogger(MessagePoller.class);
+	private static final Logger log = LoggerFactory.getLogger(MessageSender.class);
 
 	private final EmitterProcessor<String> emitterProcessor;
 
-	MessagePoller(EmitterProcessor<String> emitterProcessor) {
+	MessageSender(EmitterProcessor<String> emitterProcessor) {
 		this.emitterProcessor = emitterProcessor;
 	}
 
-	public void poll() {
+	public void emit() {
 		log.info("Emitting the message");
 		this.emitterProcessor.onNext("{\"id\":\"99\",\"temperature\":\"123.45\"}");
 	}

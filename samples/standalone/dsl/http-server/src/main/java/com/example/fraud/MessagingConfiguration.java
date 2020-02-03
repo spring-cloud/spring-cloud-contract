@@ -19,6 +19,7 @@ package com.example.fraud;
 import java.util.function.Supplier;
 
 import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.Flux;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,8 +32,8 @@ class MessagingConfiguration {
 		return EmitterProcessor.create();
 	}
 
-	@Bean(name = "sensor-data")
-	Supplier<String> sensorData() {
-		return () -> "{\"id\":\"99\",\"temperature\":\"123.45\"}";
+	@Bean(name = "sensor_data")
+	Supplier<Flux<String>> sensorData(EmitterProcessor<String> processor) {
+		return () -> processor;
 	}
 }

@@ -19,7 +19,6 @@ package contracts
 org.springframework.cloud.contract.spec.Contract.make {
 	// Human readable description
 	description 'Should produce valid sensor data'
-	ignored()
 	// Label by means of which the output message can be triggered
 	label 'sensor1'
 	// input to the contract
@@ -30,7 +29,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	// output message of the contract
 	outputMessage {
 		// destination to which the output message will be sent
-		sentTo 'sensor-data'
+		sentTo 'sensor_data'
 		headers {
 			header('contentType': 'application/json')
 		}

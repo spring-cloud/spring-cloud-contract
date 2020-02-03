@@ -27,27 +27,24 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 @Component("my_output")
-class MyProcessorListener implements Function<byte[], byte[]> {
+class MyProcessor implements Function<byte[], byte[]> {
 
-	private static final Logger log = LoggerFactory.getLogger(MyProcessorListener.class);
+	private static final Logger log = LoggerFactory.getLogger(MyProcessor.class);
 
 	private final byte[] expectedInput;
 
 	private final byte[] expectedOutput;
 
-	MyProcessorListener() {
+	MyProcessor() {
 		this.expectedInput = forFile("/contracts/messaging/input.pdf");
 		this.expectedOutput = forFile("/contracts/messaging/output.pdf");
 	}
 
 	private byte[] forFile(String relative) {
-		URL resource = MyProcessorListener.class.getResource(relative);
+		URL resource = MyProcessor.class.getResource(relative);
 		try {
 			return Files.readAllBytes(new File(resource.toURI()).toPath());
 		}

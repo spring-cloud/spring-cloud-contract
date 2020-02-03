@@ -20,7 +20,6 @@ import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
 	label("positive")
-	ignored()
 	input {
 		messageFrom("bytes_input")
 		messageBody(fileAsBytes("input.pdf"))
