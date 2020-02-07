@@ -10445,8 +10445,7 @@ your test. The following code shows an example:</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 public class WiremockForDocsTests {
 
@@ -10454,7 +10453,7 @@ public class WiremockForDocsTests {
     @Autowired
     private Service service;
 
-    @Before
+    @BeforeEach
     public void setup() {
         this.service.setBase("http://localhost:"
                 + this.environment.getProperty("wiremock.server.port"));
@@ -10586,21 +10585,33 @@ instance, as the following example shows:</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class WiremockForDocsClassRuleTests {
 
     // Start WireMock on some dynamic port
     // for some reason `dynamicPort()` is not working properly
-    @ClassRule
-    public static WireMockClassRule wiremock = new WireMockClassRule(
-            WireMockSpring.options().dynamicPort());
+    public static WireMockServer wiremock = new WireMockServer(WireMockSpring.options().dynamicPort());
+
+    @BeforeAll
+    static void setupClass() {
+        wiremock.start();
+    }
+
+    @AfterEach
+    void after() {
+        wiremock.resetAll();
+    }
+
+    @AfterAll
+    static void clean() {
+        wiremock.shutdown();
+    }
 
     // A service that calls out over HTTP to wiremock's port
     @Autowired
     private Service service;
 
-    @Before
+    @BeforeEach
     public void setup() {
         this.service.setBase("http://localhost:" + wiremock.port());
     }
@@ -10698,8 +10709,7 @@ a Spring <code>MockRestServiceServer</code>. The following code shows an example
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class WiremockForDocsMockServerApplicationTests {
 
     @Autowired

@@ -2148,8 +2148,7 @@ can also provide the offline work switch (<code>StubRunnerProperties.StubsMode.L
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {
         "com.example:http-server-dsl:0.0.1:stubs" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {</code></pre>
@@ -2345,11 +2344,11 @@ start the server side <code>FraudDetectionController</code>. The following listi
 package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class FraudBase {
 
-    @Before
+    @BeforeEach
     public void setup() {
         RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
                 new FraudStatsController(stubbedStatsProvider()));
