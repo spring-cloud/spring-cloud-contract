@@ -17,11 +17,11 @@
 package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class BinaryBase {
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		RestAssuredMockMvc.standaloneSetup(new TestController());
 	}

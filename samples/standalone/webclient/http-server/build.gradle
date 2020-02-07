@@ -29,7 +29,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
 	testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
 	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
 }
@@ -39,6 +41,7 @@ contracts {
 }
 
 test {
+	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'

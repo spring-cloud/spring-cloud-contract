@@ -74,7 +74,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "MOCKMVC")
 	private TestMode testMode;
 
-	@Parameter(defaultValue = "JUNIT")
+	@Parameter(defaultValue = "JUNIT5")
 	private TestFramework testFramework;
 
 	@Parameter

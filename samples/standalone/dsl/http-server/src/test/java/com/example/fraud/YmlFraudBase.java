@@ -17,11 +17,11 @@
 package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class YmlFraudBase {
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
 				new FraudStatsController(stubbedStatsProvider()));

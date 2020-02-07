@@ -1,1 +1,7 @@
 server.port: 8090
+spring:
+  cloud:
+    function:
+      definition: listener
+    stream:
+      bindings.listener-in-0.destination: sensor_data
