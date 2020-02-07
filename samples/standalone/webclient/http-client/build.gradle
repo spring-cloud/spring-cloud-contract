@@ -40,11 +40,14 @@ dependencies {
 
 	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
-	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
 	testImplementation "com.example:http-server-webclient:0.0.1:stubs"
 }
 
 test {
+	useJUnitPlatform()
 	include '**/*GradleTests*'
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {

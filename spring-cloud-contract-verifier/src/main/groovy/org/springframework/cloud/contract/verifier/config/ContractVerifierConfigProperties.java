@@ -45,7 +45,7 @@ public class ContractVerifierConfigProperties {
 	/**
 	 * For which unit test library tests should be generated.
 	 */
-	private TestFramework testFramework = TestFramework.JUNIT;
+	private TestFramework testFramework = TestFramework.JUNIT5;
 
 	/**
 	 * Which mechanism should be used to invoke REST calls during. tests

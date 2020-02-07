@@ -16,9 +16,9 @@
 
 package com.example;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("docs")
 // tag::wiremock_test1[]
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 public class WiremockForDocsTests {
@@ -51,7 +51,7 @@ public class WiremockForDocsTests {
 	@Autowired
 	private Service service;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.service.setBase("http://localhost:"
 				+ this.environment.getProperty("wiremock.server.port"));

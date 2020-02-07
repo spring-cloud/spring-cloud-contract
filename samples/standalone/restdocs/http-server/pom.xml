@@ -148,6 +148,7 @@
 							</baseClassFQN>
 						</baseClassMapping>
 					</baseClassMappings>
+					<testFramework>JUNIT</testFramework>
 				</configuration>
 			</plugin>
 			<!-- end::plugin[] -->

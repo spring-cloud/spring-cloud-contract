@@ -45,7 +45,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	// tag::dependencies[]
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
@@ -73,6 +73,7 @@ contracts {
 		baseClassMapping('.*standalone.*', 'com.example.fraud.FraudBaseWithStandaloneSetup')
 		baseClassMapping('.*webapp.*', 'com.example.fraud.FraudBaseWithWebAppSetup')
 	}
+	testFramework("JUNIT")
 }
 
 generateClientStubs.enabled = false

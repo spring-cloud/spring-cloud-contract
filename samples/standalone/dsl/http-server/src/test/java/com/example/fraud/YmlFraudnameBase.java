@@ -17,7 +17,7 @@
 package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class YmlFraudnameBase {
 
@@ -25,7 +25,7 @@ public class YmlFraudnameBase {
 
 	FraudVerifier fraudVerifier = FRAUD_NAME::equals;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		RestAssuredMockMvc.standaloneSetup(new FraudNameController(this.fraudVerifier));
 	}

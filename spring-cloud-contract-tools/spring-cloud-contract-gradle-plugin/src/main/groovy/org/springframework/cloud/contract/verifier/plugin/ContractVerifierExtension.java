@@ -240,7 +240,7 @@ public class ContractVerifierExtension {
 
 	@Inject
 	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects) {
-		this.testFramework = objects.property(TestFramework.class).convention(TestFramework.JUNIT);
+		this.testFramework = objects.property(TestFramework.class).convention(TestFramework.JUNIT5);
 		this.testMode = objects.property(TestMode.class).convention(TestMode.MOCKMVC);
 		this.basePackageForTests = objects.property(String.class);
 		this.baseClassForTests = objects.property(String.class);
