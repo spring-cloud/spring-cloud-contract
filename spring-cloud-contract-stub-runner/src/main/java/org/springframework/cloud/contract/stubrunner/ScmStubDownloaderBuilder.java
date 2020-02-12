@@ -403,8 +403,6 @@ class FileWalker extends SimpleFileVisitor<Path> {
 
 class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersionWrapper> {
 
-	private static final String SNAPSHOT_SUBSTRING = "snapshot";
-
 	final DefaultArtifactVersion version;
 
 	final File file;
@@ -427,8 +425,7 @@ class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersion
 
 	@Override
 	public int compareTo(DefaultArtifactVersionWrapper o) {
-		return this.projectVersion.isMoreMature(o.projectVersion) ? 1
-				: this.projectVersion.version.equals(o.projectVersion.version) ? 0 : -1;
+		return this.projectVersion.isMoreMature(o.projectVersion);
 	}
 
 }

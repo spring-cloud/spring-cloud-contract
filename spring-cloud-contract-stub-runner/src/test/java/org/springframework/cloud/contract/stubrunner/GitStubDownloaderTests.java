@@ -136,6 +136,13 @@ public class GitStubDownloaderTests {
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "1.0.0.BUILD-SNAPSHOT");
+
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.issue1305:beer-api-producer-external:+"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.issue1305" + File.separator
+				+ "beer-api-producer-external" + File.separator + "0.0.11-SNAPSHOT");
 	}
 
 	@Test
