@@ -157,7 +157,11 @@ public class WireMockConfiguration implements SmartLifecycle {
 	void resetMappings() {
 		if (this.server.isRunning()) {
 			this.server.resetAll();
+			this.server.resetRequests();
+			this.server.resetScenarios();
 			WireMock.reset();
+			WireMock.resetAllRequests();
+			WireMock.resetAllScenarios();
 			registerStubs();
 			logRegisteredMappings();
 		}
