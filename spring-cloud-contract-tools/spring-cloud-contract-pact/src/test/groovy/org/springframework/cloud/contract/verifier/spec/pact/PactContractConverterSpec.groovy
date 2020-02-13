@@ -800,6 +800,42 @@ class PactContractConverterSpec extends Specification {
 		then:
 			contracts == expectedContracts
 	}
+
+	@Issue("1277")
+	def "should work properly with json body"() {
+		when:
+			converter.convertTo([
+					Contract.make {
+						request {
+							method 'PUT'
+							url '/api/admins/1'
+							body('''{
+  "username" : "username",
+  "password" : "password",
+  "roles" : [ "ADMIN" ]
+}''')
+							headers {
+								header('''Content-Type''', '''application/json;charset=UTF-8''')
+							}
+						}
+						response {
+							status 200
+							body('''{
+  "admin" : {
+    "adminId" : 1,
+    "username" : "username",
+    "roles" : [ "ADMIN" ]
+  }
+}''')
+							headers {
+								header('''Content-Type''', '''application/json;charset=UTF-8''')
+							}
+						}
+					}
+			])
+		then:
+			noExceptionThrown()
+	}
 }
 
 

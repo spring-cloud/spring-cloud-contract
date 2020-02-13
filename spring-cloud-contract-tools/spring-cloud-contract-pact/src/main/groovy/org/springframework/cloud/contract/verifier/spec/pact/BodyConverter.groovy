@@ -81,22 +81,10 @@ class BodyConverter {
 		}
 		DslPart p = isRoot ? createRootDslPart(v) : parent
 		if (v instanceof Map) {
-			if (!isRoot) {
-				p = p.object()
-			}
 			processMap(v as Map, p as PactDslJsonBody, dslPropertyValueExtractor)
-			if (!isRoot) {
-				p = p.closeObject()
-			}
 		}
 		else if (v instanceof Collection) {
-			if (!isRoot) {
-				p = p.array()
-			}
 			processCollection(v as Collection, p as PactDslJsonArray, dslPropertyValueExtractor)
-			if (!isRoot) {
-				p = p.closeArray()
-			}
 		}
 		return p
 	}
@@ -123,8 +111,15 @@ class BodyConverter {
 			else if (v instanceof Number) {
 				jsonArray.number(v)
 			}
-			else {
-				traverse(it, jsonArray, dslPropertyValueExtractor)
+			else if (v instanceof Map) {
+				PactDslJsonBody current = jsonArray.object()
+				traverse(v, current, dslPropertyValueExtractor)
+				current.closeObject()
+			}
+			else if (v instanceof Collection) {
+				PactDslJsonArray current = jsonArray.array()
+				traverse(v, current, dslPropertyValueExtractor)
+				current.closeArray()
 			}
 		})
 	}
@@ -146,10 +141,15 @@ class BodyConverter {
 			else if (v instanceof Number) {
 				jsonObject.numberValue(k, v)
 			}
-			else {
+			else if (v instanceof Map) {
 				PactDslJsonBody current = jsonObject.object(k)
 				traverse(v, current, dslPropertyValueExtractor)
 				current.closeObject()
+			}
+			else if (v instanceof Collection) {
+				PactDslJsonArray current = jsonObject.array(k)
+				traverse(v, current, dslPropertyValueExtractor)
+				current.closeArray()
 			}
 		})
 	}
