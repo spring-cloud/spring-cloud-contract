@@ -53,14 +53,14 @@ class BodyConverter {
 	private static final JsonSlurper jsonSlurper = new JsonSlurper()
 
 	static DslPart toPactBody(Body body, Closure dslPropertyValueExtractor) {
-		return traverse(body, null, dslPropertyValueExtractor)
+		return traverse(null, body, null, dslPropertyValueExtractor)
 	}
 
 	static DslPart toPactBody(DslProperty dslProperty, Closure dslPropertyValueExtractor) {
-		return traverse(dslProperty, null, dslPropertyValueExtractor)
+		return traverse(null, dslProperty, null, dslPropertyValueExtractor)
 	}
 
-	private static DslPart traverse(Object value, DslPart parent, Closure dslPropertyValueExtractor) {
+	private static DslPart traverse(String key, Object value, DslPart parent, Closure dslPropertyValueExtractor) {
 		boolean isRoot = parent == null
 		Object v = value
 		if (v instanceof DslProperty) {
@@ -84,7 +84,7 @@ class BodyConverter {
 			processMap(v as Map, p as PactDslJsonBody, dslPropertyValueExtractor)
 		}
 		else if (v instanceof Collection) {
-			processCollection(v as Collection, p as PactDslJsonArray, dslPropertyValueExtractor)
+			processCollection(key, v as Collection, p as PactDslJsonArray, dslPropertyValueExtractor)
 		}
 		return p
 	}
@@ -93,7 +93,7 @@ class BodyConverter {
 		return value instanceof Collection ? new PactDslJsonArray() : new PactDslJsonBody()
 	}
 
-	private static void processCollection(Collection values, PactDslJsonArray jsonArray, Closure dslPropertyValueExtractor) {
+	private static void processCollection(String key, Collection values, PactDslJsonArray jsonArray, Closure dslPropertyValueExtractor) {
 		values.forEach({
 			Object v = it
 			if (v instanceof DslProperty) {
@@ -113,12 +113,12 @@ class BodyConverter {
 			}
 			else if (v instanceof Map) {
 				PactDslJsonBody current = jsonArray.object()
-				traverse(v, current, dslPropertyValueExtractor)
+				traverse(key, v, current, dslPropertyValueExtractor)
 				current.closeObject()
 			}
 			else if (v instanceof Collection) {
 				PactDslJsonArray current = jsonArray.array()
-				traverse(v, current, dslPropertyValueExtractor)
+				traverse(key, v, current, dslPropertyValueExtractor)
 				current.closeArray()
 			}
 		})
@@ -143,12 +143,12 @@ class BodyConverter {
 			}
 			else if (v instanceof Map) {
 				PactDslJsonBody current = jsonObject.object(k)
-				traverse(v, current, dslPropertyValueExtractor)
+				traverse(k, v, current, dslPropertyValueExtractor)
 				current.closeObject()
 			}
 			else if (v instanceof Collection) {
 				PactDslJsonArray current = jsonObject.array(k)
-				traverse(v, current, dslPropertyValueExtractor)
+				traverse(k, v, current, dslPropertyValueExtractor)
 				current.closeArray()
 			}
 		})
