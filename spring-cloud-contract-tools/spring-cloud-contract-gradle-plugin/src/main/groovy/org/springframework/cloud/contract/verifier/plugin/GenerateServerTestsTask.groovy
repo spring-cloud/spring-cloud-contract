@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.CompileStatic
+import groovy.transform.builder.Builder
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.Directory
@@ -50,46 +51,136 @@ class GenerateServerTestsTask extends DefaultTask {
 	@Nested
 	Config config
 
+	@CompileStatic
+	@Builder
 	static class Config {
+
+		final Provider<Directory> contractsDslDir
+		final Provider<String> nameSuffixForTests
+		final Provider<String> basePackageForTests
+		final Provider<String> baseClassForTests
+		final Provider<String> packageWithBaseClasses
+		final ListProperty<String> excludedFiles
+		final ListProperty<String> ignoredFiles
+		final ListProperty<String> includedFiles
+		final ListProperty<String> imports
+		final ListProperty<String> staticImports
+		final Provider<TestMode> testMode
+		final Provider<TestFramework> testFramework
+		final MapProperty<String, String> baseClassMappings
+		final Provider<Boolean> assertJsonSize
+		final Provider<Boolean> failOnInProgress
+		final DirectoryProperty generatedTestSourcesDir
+		final DirectoryProperty generatedTestResourcesDir
+
+		Config(Provider<Directory> contractsDslDir, Provider<String> nameSuffixForTests, Provider<String> basePackageForTests, Provider<String> baseClassForTests, Provider<String> packageWithBaseClasses, ListProperty<String> excludedFiles, ListProperty<String> ignoredFiles, ListProperty<String> includedFiles, ListProperty<String> imports, ListProperty<String> staticImports, Provider<TestMode> testMode, Provider<TestFramework> testFramework, MapProperty<String, String> baseClassMappings, Provider<Boolean> assertJsonSize, Provider<Boolean> failOnInProgress, DirectoryProperty generatedTestSourcesDir, DirectoryProperty generatedTestResourcesDir) {
+			this.contractsDslDir = contractsDslDir
+			this.nameSuffixForTests = nameSuffixForTests
+			this.basePackageForTests = basePackageForTests
+			this.baseClassForTests = baseClassForTests
+			this.packageWithBaseClasses = packageWithBaseClasses
+			this.excludedFiles = excludedFiles
+			this.ignoredFiles = ignoredFiles
+			this.includedFiles = includedFiles
+			this.imports = imports
+			this.staticImports = staticImports
+			this.testMode = testMode
+			this.testFramework = testFramework
+			this.baseClassMappings = baseClassMappings
+			this.assertJsonSize = assertJsonSize
+			this.failOnInProgress = failOnInProgress
+			this.generatedTestSourcesDir = generatedTestSourcesDir
+			this.generatedTestResourcesDir = generatedTestResourcesDir
+		}
+
 		@InputDirectory
-		Provider<Directory> contractsDslDir
+		Provider<Directory> getContractsDslDir() {
+			return contractsDslDir
+		}
+
 		@Input
 		@Optional
-		Provider<String> nameSuffixForTests
+		Provider<String> getNameSuffixForTests() {
+			return nameSuffixForTests
+		}
+
 		@Input
 		@Optional
-		Provider<String> basePackageForTests
+		Provider<String> getBasePackageForTests() {
+			return basePackageForTests
+		}
+
 		@Input
 		@Optional
-		Provider<String> baseClassForTests
+		Provider<String> getBaseClassForTests() {
+			return baseClassForTests
+		}
+
 		@Input
 		@Optional
-		Provider<String> packageWithBaseClasses
+		Provider<String> getPackageWithBaseClasses() {
+			return packageWithBaseClasses
+		}
+
 		@Input
-		ListProperty<String> excludedFiles
+		ListProperty<String> getExcludedFiles() {
+			return excludedFiles
+		}
+
 		@Input
-		ListProperty<String> ignoredFiles
+		ListProperty<String> getIgnoredFiles() {
+			return ignoredFiles
+		}
+
 		@Input
-		ListProperty<String> includedFiles
+		ListProperty<String> getIncludedFiles() {
+			return includedFiles
+		}
+
 		@Input
-		ListProperty<String> imports
+		ListProperty<String> getImports() {
+			return imports
+		}
+
 		@Input
-		ListProperty<String> staticImports
+		ListProperty<String> getStaticImports() {
+			return staticImports
+		}
+
 		@Input
-		Provider<TestMode> testMode
+		Provider<TestMode> getTestMode() {
+			return testMode
+		}
+
 		@Input
-		Provider<TestFramework> testFramework
+		Provider<TestFramework> getTestFramework() {
+			return testFramework
+		}
+
 		@Input
-		MapProperty<String, String> baseClassMappings
+		MapProperty<String, String> getBaseClassMappings() {
+			return baseClassMappings
+		}
+
 		@Input
-		Provider<Boolean> assertJsonSize
+		Provider<Boolean> getAssertJsonSize() {
+			return assertJsonSize
+		}
+
 		@Input
-		Provider<Boolean> failOnInProgress
+		Provider<Boolean> getFailOnInProgress() {
+			return failOnInProgress
+		}
 
 		@OutputDirectory
-		DirectoryProperty generatedTestSourcesDir
+		DirectoryProperty getGeneratedTestSourcesDir() {
+			return generatedTestSourcesDir
+		}
+
 		@OutputDirectory
-		DirectoryProperty generatedTestResourcesDir
+		DirectoryProperty getGeneratedTestResourcesDir() {
+			return generatedTestResourcesDir
+		}
 	}
 
 	@TaskAction
@@ -139,24 +230,22 @@ class GenerateServerTestsTask extends DefaultTask {
 
 	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContractsTask) {
 		return new Config(
-				contractsDslDir: copyContractsTask.flatMap { it.config.copiedContractsFolder },
-				nameSuffixForTests: extension.nameSuffixForTests,
-				basePackageForTests: extension.basePackageForTests,
-				baseClassForTests: extension.baseClassForTests,
-				packageWithBaseClasses: extension.packageWithBaseClasses,
-				excludedFiles: extension.excludedFiles,
-				ignoredFiles: extension.ignoredFiles,
-				includedFiles: extension.includedFiles,
-				imports: extension.imports,
-				staticImports: extension.staticImports,
-				testMode: extension.testMode,
-				testFramework: extension.testFramework,
-				baseClassMappings: extension.baseClassMappings.getBaseClassMappings(),
-				assertJsonSize: extension.assertJsonSize,
-				failOnInProgress: extension.failOnInProgress,
-
-				generatedTestSourcesDir: extension.generatedTestSourcesDir,
-				generatedTestResourcesDir: extension.generatedTestResourcesDir,
-		)
+				copyContractsTask.flatMap { it.config.copiedContractsFolder },
+				extension.nameSuffixForTests,
+				extension.basePackageForTests,
+				extension.baseClassForTests,
+				extension.packageWithBaseClasses,
+				extension.excludedFiles,
+				extension.ignoredFiles,
+				extension.includedFiles,
+				extension.imports,
+				extension.staticImports,
+				extension.testMode,
+				extension.testFramework,
+				extension.baseClassMappings.getBaseClassMappings(),
+				extension.assertJsonSize,
+				extension.failOnInProgress,
+				extension.generatedTestSourcesDir,
+				extension.generatedTestResourcesDir)
 	}
 }

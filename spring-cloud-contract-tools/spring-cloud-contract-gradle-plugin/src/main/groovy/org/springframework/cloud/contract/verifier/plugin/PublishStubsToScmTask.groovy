@@ -23,6 +23,10 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.stubrunner.ContractProjectUpdater
 import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder
@@ -42,89 +46,52 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 class PublishStubsToScmTask extends DefaultTask {
 
 	static final String TASK_NAME = 'publishStubsToScm'
+	@Nested
 	Config config
 	private Closure customizationClosure = Closure.IDENTITY
 
+	@CompileStatic
 	static class Config {
-		private ObjectFactory objects
-		ContractVerifierExtension.ContractRepository contractRepository
-		Property<StubRunnerProperties.StubsMode> contractsMode
-		Property<Boolean> deleteStubsAfterTest
-		Property<Boolean> failOnNoContracts
-		MapProperty<String, String> contractsProperties
-		DirectoryProperty stubsOutputDir
+		@Input
+		final Property<ContractVerifierExtension.ContractRepository> contractRepository
+		@Input
+		final Property<StubRunnerProperties.StubsMode> contractsMode
+		@Input
+		final Property<Boolean> deleteStubsAfterTest
+		@Input
+		final Property<Boolean> failOnNoContracts
+		@Input
+		final MapProperty<String, String> contractsProperties
+		@OutputDirectory
+		final DirectoryProperty stubsOutputDir
 
-		void setContractsMode(Property<StubRunnerProperties.StubsMode> contractsMode) {
+		Config(ObjectFactory objects, ContractVerifierExtension extension) {
+			this.contractRepository = objects.property(ContractVerifierExtension.ContractRepository)
+			this.contractRepository.set(extension.contractRepository);
+			this.contractsMode = objects.property(StubRunnerProperties.StubsMode)
+			this.contractsMode.set(extension.contractsMode);
+			this.deleteStubsAfterTest = objects.property(Boolean)
+			this.deleteStubsAfterTest.set(extension.failOnNoContracts)
+			this.failOnNoContracts = objects.property(Boolean)
+			this.failOnNoContracts.set(extension.deleteStubsAfterTest)
+			this.contractsProperties = objects.mapProperty(String, String)
+			this.contractsProperties.set(extension.contractsProperties)
+			this.stubsOutputDir = objects.directoryProperty()
+			this.stubsOutputDir.set(extension.stubsOutputDir)
+		}
+
+		Config(Property<ContractVerifierExtension.ContractRepository> contractRepository, Property<StubRunnerProperties.StubsMode> contractsMode, Property<Boolean> deleteStubsAfterTest, Property<Boolean> failOnNoContracts, MapProperty<String, String> contractsProperties, DirectoryProperty stubsOutputDir) {
+			this.contractRepository = contractRepository
 			this.contractsMode = contractsMode
-		}
-
-		void setContractsMode(String contractsMode) {
-			if (contractsMode) {
-				this.contractsMode = objects.property(StubRunnerProperties.StubsMode).convention(StubRunnerProperties.StubsMode.valueOf(contractsMode.toUpperCase()))
-			}
-		}
-
-		void setDeleteStubsAfterTest(Property<Boolean> deleteStubsAfterTest) {
 			this.deleteStubsAfterTest = deleteStubsAfterTest
-		}
-
-		void setDeleteStubsAfterTest(Boolean deleteStubsAfterTest) {
-			if (deleteStubsAfterTest != null) {
-				this.deleteStubsAfterTest = objects.property(Boolean).convention(deleteStubsAfterTest)
-			}
-		}
-
-		void setFailOnNoContracts(Property<Boolean> failOnNoContracts) {
 			this.failOnNoContracts = failOnNoContracts
-		}
-
-		void setFailOnNoContracts(Boolean failOnNoContracts) {
-			if (failOnNoContracts != null) {
-				this.failOnNoContracts = objects.property(Boolean).convention(failOnNoContracts)
-			}
-		}
-
-		void setContractsProperties(MapProperty<String, String> contractsProperties) {
 			this.contractsProperties = contractsProperties
-		}
-
-		void setContractsProperties(Map<String, String> contractsProperties) {
-			if (contractsProperties) {
-				this.contractsProperties = objects.mapProperty(String, String).convention(contractsProperties)
-			}
-		}
-
-		void setStubsOutputDir(DirectoryProperty stubsOutputDir) {
 			this.stubsOutputDir = stubsOutputDir
-		}
-
-		void setStubsOutputDir(String stubsOutputDir) {
-			if (stubsOutputDir) {
-				this.stubsOutputDir = objects.directoryProperty()
-				this.stubsOutputDir.set(new File(stubsOutputDir))
-			}
-		}
-
-		void setStubsOutputDir(GString stubsOutputDir) {
-			if (stubsOutputDir) {
-				this.stubsOutputDir = objects.directoryProperty()
-				this.stubsOutputDir.set(new File(stubsOutputDir.toString()))
-			}
 		}
 
 		void contractRepository(@DelegatesTo(ContractVerifierExtension.ContractRepository) Closure closure) {
 			closure.delegate = contractRepository
 			closure.call()
-		}
-
-		@Deprecated
-		void contractDependency(Closure closure) {
-			// Here only to preserve backward compatibility. Was never used here.
-		}
-
-		@PackageScope
-		void setObjects(ObjectFactory objects) {
-			this.objects = objects
 		}
 	}
 
@@ -137,25 +104,17 @@ class PublishStubsToScmTask extends DefaultTask {
 		String projectName = project.group.toString() + ":" + project.name.toString() + ":" + this.project.version.toString()
 		project.logger.info("Pushing Stubs to SCM for project [" + projectName + "]")
 		StubRunnerOptions stubRunnerOptions = StubRunnerOptionsFactory.createStubRunnerOptions(
-				config.contractRepository, config.contractsMode.getOrNull(), config.deleteStubsAfterTest.get(),
+				config.contractRepository.get(), config.contractsMode.getOrNull(), config.deleteStubsAfterTest.get(),
 				config.contractsProperties.get(), config.failOnNoContracts.get())
 		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectName, config.stubsOutputDir.get().asFile.toPath())
 	}
 
 	static Config fromExtension(ContractVerifierExtension extension, ObjectFactory objects) {
-		return new Config(
-				contractRepository: extension.contractRepository,
-				contractsMode: extension.contractsMode,
-				failOnNoContracts: extension.failOnNoContracts,
-				deleteStubsAfterTest: extension.deleteStubsAfterTest,
-				contractsProperties: extension.contractsProperties,
-				stubsOutputDir: extension.stubsOutputDir,
-				objects: objects
-		)
+		return new Config(objects, extension)
 	}
 
 	private boolean shouldRun() {
-		String contractRepoUrl = config.contractRepository.repositoryUrl.getOrNull() ?: ""
+		String contractRepoUrl = config.contractRepository.get().repositoryUrl.getOrNull() ?: ""
 		if (!contractRepoUrl || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
 			project.logger.warn("Skipping pushing stubs to scm since your contracts repository URL [${contractRepoUrl}] doesn't match any of the accepted protocols for SCM stub downloader")
 			return false
@@ -172,7 +131,7 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	private void applyConfigCustomizations() {
 		// Needs to be copied, otherwise properties won't be updated:
-		config.contractRepository = copy(config.contractRepository, project.objects)
+		config.contractRepository.set(copy(config.contractRepository.get(), project.objects))
 		customizationClosure.delegate = config
 		customizationClosure.call()
 	}
