@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.plugin;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ import org.springframework.util.Assert;
  * @author Anatoliy Balakirev
  * @author Shannon Pamperl
  */
-public class ContractVerifierExtension {
+public class ContractVerifierExtension implements Serializable {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierExtension.class);
 
@@ -577,7 +578,7 @@ public class ContractVerifierExtension {
 		this.sourceSet.set(sourceSet);
 	}
 
-	public static class Dependency {
+	public static class Dependency implements Serializable {
 		private Property<String> groupId;
 		private Property<String> artifactId;
 		private Property<String> version;
@@ -655,7 +656,7 @@ public class ContractVerifierExtension {
 		}
 	}
 
-	public static class BaseClassMapping {
+	public static class BaseClassMapping implements Serializable {
 		private final MapProperty<String, String> baseClassMappings;
 
 		@Inject
@@ -677,7 +678,7 @@ public class ContractVerifierExtension {
 	}
 
 	// This class is used as an input to the tasks, so all fields are marked as `@Input` to allow incremental build
-	public static class ContractRepository {
+	public static class ContractRepository implements Serializable {
 		private Property<String> repositoryUrl;
 		private Property<String> username;
 		private Property<String> password;
