@@ -46,7 +46,7 @@ class JUnit5IgnoreMethodAnnotation implements MethodAnnotations {
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT5
-				&& this.generatedClassMetaData.isAnyIgnored();
+				&& singleContractMetadata.getContractMetadata().isIgnored();
 	}
 
 }

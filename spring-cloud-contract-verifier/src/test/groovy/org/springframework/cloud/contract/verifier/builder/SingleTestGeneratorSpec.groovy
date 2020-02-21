@@ -28,7 +28,6 @@ import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import org.springframework.util.FileSystemUtils
-import org.springframework.util.StringUtils
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
@@ -38,6 +37,7 @@ import static org.springframework.cloud.contract.verifier.config.TestMode.EXPLIC
 import static org.springframework.cloud.contract.verifier.config.TestMode.JAXRSCLIENT
 import static org.springframework.cloud.contract.verifier.config.TestMode.MOCKMVC
 import static org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter.convertAsCollection
+import static org.springframework.util.StringUtils.countOccurrencesOf
 
 class SingleTestGeneratorSpec extends Specification {
 
@@ -279,14 +279,14 @@ class SingleTestGeneratorSpec extends Specification {
 			textAssertion(clazz)
 		where:
 			testFramework | mode     | classStrings                           | asserter        | textAssertion
-			JUNIT         | MOCKMVC  | mockMvcJUnitRestAssured3ClassStrings   | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			JUNIT         | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			JUNIT5        | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			JUNIT5        | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			TESTNG        | MOCKMVC  | mockMvcTestNGRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			TESTNG        | EXPLICIT | explicitTestNGRestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
-			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification request') == 2 }
+			JUNIT         | MOCKMVC  | mockMvcJUnitRestAssured3ClassStrings   | JAVA_ASSERTER   | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			JUNIT         | EXPLICIT | explicitJUnitRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			JUNIT5        | MOCKMVC  | mockMvcJUnit5RestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			JUNIT5        | EXPLICIT | explicitJUnit5RestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			TESTNG        | MOCKMVC  | mockMvcTestNGRestAssured3ClassStrings  | JAVA_ASSERTER   | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			TESTNG        | EXPLICIT | explicitTestNGRestAssured3ClassStrings | JAVA_ASSERTER   | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			SPOCK         | MOCKMVC  | spockClassRestAssured3Strings          | GROOVY_ASSERTER | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification') == 2 }
+			SPOCK         | EXPLICIT | explicitSpockRestAssured2ClassStrings  | GROOVY_ASSERTER | { String test -> countOccurrencesOf(test, '\t\t\tMockMvcRequestSpecification request') == 2 }
 	}
 
 	def 'should build JaxRs test class for #testFramework'() {
@@ -407,6 +407,40 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
 			TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
 			SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
+	@Issue('#1326')
+	def 'should only ignore test for ignored contract if contract is ignored by configuration #testFramework'() {
+		given:
+		File fileToIgnore = tmpFolder.newFile("toIgnore.groovy")
+		writeContract(fileToIgnore)
+		ContractMetadata contractToIgnore = new ContractMetadata(fileToIgnore.toPath(),
+				true, 2, 1, convertAsCollection(new File('/'), fileToIgnore))
+		and:
+		File fileToCheck = tmpFolder.newFile("toCheck.groovy")
+		writeContract(fileToCheck)
+		ContractMetadata contractToCheck = new ContractMetadata(fileToCheck.toPath(),
+				false, 2, 2, convertAsCollection(new File('/'), fileToCheck))
+		and:
+		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+		properties.testFramework = testFramework
+		properties.ignoredFiles = [fileToIgnore.name]
+		and:
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
+
+		when:
+		String clazz = testGenerator.buildClass(properties, [contractToCheck, contractToIgnore], 'com/foo',
+				new SingleTestGenerator.GeneratedClassData('test', 'test', file.toPath()))
+
+		then:
+		countOccurrencesOf(clazz, ignoreAnnotation) == 1
+
+		where:
+		testFramework | ignoreAnnotation
+		JUNIT         | '@Ignore'
+		JUNIT5        | '@Disabled'
+		TESTNG        | '@Test(enabled = false)'
+		SPOCK         | '@Ignore'
 	}
 
 	def 'should not allow the usage of ignore annotations for TestNG '() {
