@@ -189,7 +189,7 @@ public class ContractVerifierExtension {
 	 * <p></p>
 	 * Example of a mapping
 	 * <p></p>
-	 * {@code .*.com.example.v1..*} -> {@code com.example.SomeBaseClass}
+	 * [.*.com.example.v1..*] -> [com.example.SomeBaseClass]
 	 * <p></p>
 	 * When a contract's package matches the provided regular expression then extending class will be the one
 	 * provided in the map - in this case {@code com.example.SomeBaseClass}
