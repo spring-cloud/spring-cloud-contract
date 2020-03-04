@@ -8,7 +8,7 @@
 |stubrunner.cloud.delegate.enabled | true | Whether to enable DiscoveryClient's Stub Runner implementation.
 |stubrunner.cloud.enabled | true | Whether to enable Spring Cloud support for Stub Runner.
 |stubrunner.cloud.eureka.enabled | true | Whether to enable stubs registration in Eureka.
-|stubrunner.cloud.loadbalancer.enabled | true | Whether to enable Stub Runner's Spring Cloud Load Balancer integration.
+|stubrunner.cloud.ribbon.enabled | true | Whether to enable Stub Runner's Ribbon integration.
 |stubrunner.cloud.stubbed.discovery.enabled | true | Whether Service Discovery should be stubbed for Stub Runner. If set to false, stubs will get registered in real service discovery.
 |stubrunner.cloud.zookeeper.enabled | true | Whether to enable stubs registration in Zookeeper.
 |stubrunner.consumer-name |  | You can override the default {@code spring.application.name} of this field by setting a value to this parameter.
