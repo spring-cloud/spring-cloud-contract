@@ -163,7 +163,7 @@ public class ContractVerifierExtension {
 	/**
 	 * The path in the JAR with all the contracts where contracts for this particular service lay.
 	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
-	 * </p>
+	 * <p></p>
 	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
 	 * {@code /com/example/artifactid}
 	 */
@@ -186,11 +186,11 @@ public class ContractVerifierExtension {
 	/**
 	 * A way to override any base class mappings. The keys are regular expressions on the package name
 	 * and the values FQN to a base class for that given expression.
-	 * </p>
+	 * <p></p>
 	 * Example of a mapping
-	 * </p>
+	 * <p></p>
 	 * {@code .*.com.example.v1..*} -> {@code com.example.SomeBaseClass}
-	 * </p>
+	 * <p></p>
 	 * When a contract's package matches the provided regular expression then extending class will be the one
 	 * provided in the map - in this case {@code com.example.SomeBaseClass}
 	 */
