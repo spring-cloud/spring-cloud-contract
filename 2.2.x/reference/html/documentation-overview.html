@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>Spring Cloud Contract Documentation</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+	$('.primary').each(function() {
+		primary = $(this);
+		createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+		primary.children('.title').remove();
+	});
+	$('.secondary').each(function(idx, node) {
+		secondary = $(node);
+		primary = findPrimary(secondary);
+		switchItem = createSwitchItem(secondary, primary.children('.switch'));
+		switchItem.content.addClass('hidden');
+		findPrimary(secondary).append(switchItem.content);
+		secondary.remove();
+	});
+}
+
+function createBlockSwitch(primary) {
+	blockSwitch = $('<div class="switch"></div>');
+	primary.prepend(blockSwitch);
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	candidate = secondary.prev();
+	while (!candidate.is('.primary')) {
+		candidate = candidate.prev();
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	blockName = block.children('.title').text();
+	content = block.children('.content').first().append(block.next('.colist'));
+	item = $('<div class="switch--item">' + blockName + '</div>');
+	item.on('click', '', content, function(e) {
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		e.data.siblings('.content').addClass('hidden');
+		e.data.removeClass('hidden');
+	});
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+</script>
+
+</head>
+<body id="documentation" class="book toc2 toc-left">
+<div id="header">
+<h1>Spring Cloud Contract Documentation</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#contract-documentation-about">1. About the Documentation</a></li>
+<li><a href="#documentation-getting-help">2. Getting Help</a></li>
+<li><a href="#contract-documentation-first-steps">3. First Steps</a></li>
+<li><a href="#working-with-spring-cloud-contract">4. Working with Spring Cloud Contract</a></li>
+<li><a href="#learning-about-spring-cloud-contract-features">5. Learning about Spring Cloud Contract Features</a></li>
+<li><a href="#advanced-topics">6. Advanced Topics</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section provides a brief overview of Spring Cloud Contract reference documentation. It serves
+as a map for the rest of the document.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contract-documentation-about"><a class="anchor" href="#contract-documentation-about"></a><a class="link" href="#contract-documentation-about">1. About the Documentation</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Spring Cloud Contract reference guide is available as</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://cloud.spring.io/spring-cloud-contract/2.2.x/reference/html">Multi-page HTML</a></p>
+</li>
+<li>
+<p><a href="https://cloud.spring.io/spring-cloud-contract/2.2.x/reference/htmlsingle">Single-page HTML</a></p>
+</li>
+<li>
+<p><a href="https://cloud.spring.io/spring-cloud-contract/2.2.x/reference/pdf/spring-cloud-contract.pdf">PDF</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Copies of this document may be made for your own use and for distribution to others,
+provided that you do not charge any fee for such copies and further provided that each
+copy contains this Copyright Notice, whether distributed in print or electronically.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="documentation-getting-help"><a class="anchor" href="#documentation-getting-help"></a><a class="link" href="#documentation-getting-help">2. Getting Help</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you have trouble with Spring Cloud Contract, we would like to help.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Try the <a href="howto.html#howto">How-to documents</a>. They provide solutions to the most
+common questions.</p>
+</li>
+<li>
+<p>Learn the Spring Cloud Contract basics. If you are
+starting out with Spring Cloud Contract, try one of the <a href="https://spring.io/guides">guides</a>.</p>
+</li>
+<li>
+<p>Ask a question. We monitor <a href="https://stackoverflow.com">stackoverflow.com</a> for questions
+tagged with <a href="https://stackoverflow.com/tags/spring-cloud-contract"><code>spring-cloud-contract</code></a>.</p>
+</li>
+<li>
+<p>Report bugs with Spring Cloud Contract at <a href="https://github.com/spring-cloud/spring-cloud-contract/issues" class="bare">github.com/spring-cloud/spring-cloud-contract/issues</a>.</p>
+</li>
+<li>
+<p>Chat with us at <a href="http://https://gitter.im/spring-cloud/spring-cloud-contract">Spring Cloud Contract Gitter</a></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+All of Spring Cloud Contract is open source, including the documentation. If you find
+problems with the docs or if you want to improve them, please <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.2.x">get
+involved</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contract-documentation-first-steps"><a class="anchor" href="#contract-documentation-first-steps"></a><a class="link" href="#contract-documentation-first-steps">3. First Steps</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you are getting started with Spring Cloud Contract or 'Spring' in general, start with
+<a href="getting-started.html#getting-started">the following topics</a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>From scratch:</strong>
+<a href="getting-started.html#getting-started-introducing-spring-cloud-contract">Overview</a> |
+<a href="getting-started.html#getting-started-three-second-tour">Three-second Tour</a> |
+<a href="getting-started.html#getting-started-first-application">First application</a></p>
+</li>
+<li>
+<p><strong>Tutorial:</strong>
+<a href="getting-started.html#getting-started-cdc">Introduction</a> |
+<a href="getting-started.html#consumer-side-loan-issuance">Consumer, Part 1</a> |
+<a href="getting-started.html#producer-side-fraud-detection-server">Producer</a> |
+<a href="getting-started.html#consumer-side-loan-issuance-final-step">Consumer, Part 2</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="working-with-spring-cloud-contract"><a class="anchor" href="#working-with-spring-cloud-contract"></a><a class="link" href="#working-with-spring-cloud-contract">4. Working with Spring Cloud Contract</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ready to actually start using Spring Cloud Contract? <a href="using.html#using">We have
+you covered</a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Provider contract testing:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="using.html#flows-provider-nexus">Provider contract testing with stubs in Nexus or Artifactory</a></p>
+</li>
+<li>
+<p><a href="using.html#flows-provider-git">Provider contract testing with stubs in Git</a></p>
+</li>
+<li>
+<p><a href="using.html#flows-provider-non-spring">Provider contract testing with stubs in Artifactory for a non-Spring application</a></p>
+</li>
+<li>
+<p><a href="using.html#flows-provider-non-jvm">Provider contract testing with stubs in Artifactory in non JVM world</a></p>
+</li>
+<li>
+<p><a href="using.html#flows-provider-rest-docs">Provider contract testing with REST Docs and stubs in Nexus / Artifactory</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Consumer-Driven contract testing:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="using.html#flows-cdc-contracts-producer">Consumer Driven Contracts with contracts on the producer side</a></p>
+</li>
+<li>
+<p><a href="using.html#flows-cdc-contracts-external">Consumer Driven Contracts with contracts in external repo</a></p>
+</li>
+<li>
+<p><a href="using.html#flows-cdc-contracts-stubs-git">Consumer Driven Contracts with contracts on the producer side, pushed to git</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+We talk about <strong>Provider Contracts</strong> when it is the producer of the API that defines the contracts and
+publishes it for all its consumers to use. This approach is useful for producers that cannot
+directly collaborate with their consumers&#8201;&#8212;&#8201;for example, when there are too many consumers or
+the consumers are external (do not work within the same company).
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+We use the term, <strong>Consumer-Driven Contracts</strong>, to refer to workflows where the consumers of an API
+play a vital role in the process of creating the contracts. We recommended this approach, because it is easy
+to implement when both producer and consumer teams work for the same organizations and the number
+of consumers is not extremely large.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="learning-about-spring-cloud-contract-features"><a class="anchor" href="#learning-about-spring-cloud-contract-features"></a><a class="link" href="#learning-about-spring-cloud-contract-features">5. Learning about Spring Cloud Contract Features</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Need more details about Spring Cloud Contract&#8217;s core features?
+<a href="project-features.html#features">The following content is for you</a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Core Features:</strong>
+<a href="project-features.html#contract-dsl">Contract DSL</a> |
+<a href="project-features.html#features-http">Contracts for HTTP</a> |
+<a href="project-features.html#features-messaging">Contracts for Messaging</a></p>
+</li>
+<li>
+<p><strong>Integrations:</strong>
+<a href="project-features.html#features-jax-rs">JAX-RS</a> |
+<a href="project-features.html#features-context-paths">Context Paths</a> |
+<a href="project-features.html#features-rest-docs">RESTDocs</a>
+<a href="howto.html#how-to-generate-pact-from-scc">Pact</a></p>
+</li>
+<li>
+<p><strong>Modules:</strong>
+<a href="project-features.html#features-stub-runner">Stub Runner</a> |
+<a href="project-features.html#features-wiremock">WireMock</a></p>
+</li>
+<li>
+<p><strong>Build Tools:</strong>
+<a href="maven-project.html">Contract Verifier - Maven</a> |
+<a href="gradle-project.html">Contract Verifier - Gradle</a> |
+<a href="docker-project.html">Docker</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="advanced-topics"><a class="anchor" href="#advanced-topics"></a><a class="link" href="#advanced-topics">6. Advanced Topics</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Finally, we have a few topics for more advanced users:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Customizing the DSL:</strong>
+<a href="advanced.html#contract-dsl-customization">DSL Customization</a> |
+<a href="advanced.html#contract-dsl-extending-common-jar">Common JAR</a> |
+<a href="advanced.html#contract-dsl-test-dep">Test Dependency</a> |
+<a href="advanced.html#contract-dsl-plugin-dep">Plugin Dependency</a> |
+<a href="advanced.html#contract-dsl-referencing">Referencing the DSL</a></p>
+</li>
+<li>
+<p><strong>Customizing WireMock:</strong>
+<a href="advanced.html#customization-wiremock-extension">Extensions</a> |
+<a href="advanced.html#customization-wiremock-configuration">Configuration</a></p>
+</li>
+<li>
+<p><strong>Customizing Spring Cloud Contract:</strong>
+<a href="advanced.html#contract-dsl-pluggable-architecture">Pluggable Architecture</a> |
+<a href="advanced.html#contract-dsl-custom-contract-converter">Contract Converter</a> |
+<a href="advanced.html#contract-dsl-custom-test-generator">Test Generator</a> |
+<a href="advanced.html#contract-dsl-custom-stub-generator">Stub Generator</a> |
+<a href="advanced.html#contract-dsl-custom-stub-runner">Stub Runner</a> |
+<a href="advanced.html#contract-dsl-custom-stub-downloader">Stub Downloader</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

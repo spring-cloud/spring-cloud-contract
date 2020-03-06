@@ -1,0 +1,2626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>Getting Started</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+	$('.primary').each(function() {
+		primary = $(this);
+		createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+		primary.children('.title').remove();
+	});
+	$('.secondary').each(function(idx, node) {
+		secondary = $(node);
+		primary = findPrimary(secondary);
+		switchItem = createSwitchItem(secondary, primary.children('.switch'));
+		switchItem.content.addClass('hidden');
+		findPrimary(secondary).append(switchItem.content);
+		secondary.remove();
+	});
+}
+
+function createBlockSwitch(primary) {
+	blockSwitch = $('<div class="switch"></div>');
+	primary.prepend(blockSwitch);
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	candidate = secondary.prev();
+	while (!candidate.is('.primary')) {
+		candidate = candidate.prev();
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	blockName = block.children('.title').text();
+	content = block.children('.content').first().append(block.next('.colist'));
+	item = $('<div class="switch--item">' + blockName + '</div>');
+	item.on('click', '', content, function(e) {
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		e.data.siblings('.content').addClass('hidden');
+		e.data.removeClass('hidden');
+	});
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+</script>
+
+</head>
+<body id="getting-started" class="book toc2 toc-left">
+<div id="header">
+<h1>Getting Started</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#getting-started-introducing-spring-cloud-contract">1. Introducing Spring Cloud Contract</a>
+<ul class="sectlevel2">
+<li><a href="#getting-started-introducing-spring-cloud-contract-history">1.1. History</a>
+<ul class="sectlevel3">
+<li><a href="#getting-started-introducing-spring-cloud-contract-why">1.1.1. Why Do You Need It?</a></li>
+<li><a href="#getting-started-introducing-spring-cloud-contract-testing-issues">1.1.2. Testing Issues</a></li>
+</ul>
+</li>
+<li><a href="#getting-started-introducing-spring-cloud-contract-purposes">1.2. Purposes</a></li>
+<li><a href="#getting-started-what-is-a-contract">1.3. What Is a Contract?</a></li>
+</ul>
+</li>
+<li><a href="#getting-started-three-second-tour">2. A Three-second Tour</a>
+<ul class="sectlevel2">
+<li><a href="#getting-started-three-second-tour-producer">2.1. On the Producer Side</a></li>
+<li><a href="#getting-started-three-second-tour-consumer">2.2. On the Consumer Side</a></li>
+</ul>
+</li>
+<li><a href="#getting-started-first-application">3. Developing Your First Spring Cloud Contract-based Application</a>
+<ul class="sectlevel2">
+<li><a href="#getting-started-first-application-producer">3.1. On the Producer Side</a></li>
+<li><a href="#getting-started-first-application-consumer">3.2. On the Consumer Side</a></li>
+</ul>
+</li>
+<li><a href="#getting-started-cdc">4. Step-by-step Guide to Consumer Driven Contracts (CDC) with Contracts on the Producer Side</a>
+<ul class="sectlevel2">
+<li><a href="#getting-started-cdc-technical-note">4.1. Technical Note</a></li>
+<li><a href="#getting-started-cdc-consumer">4.2. The Consumer Side (Loan Issuance)</a>
+<ul class="sectlevel3">
+<li><a href="#getting-started-cdc-consumer-start">4.2.1. Start Doing TDD by Writing a Test for Your Feature</a></li>
+<li><a href="#getting-started-cdc-consumer-write">4.2.2. Write the Missing Implementation</a></li>
+<li><a href="#getting-started-cdc-consumer-clone">4.2.3. Clone the Fraud Detection service repository locally</a></li>
+<li><a href="#getting-started-cdc-consumer-define">4.2.4. Define the Contract Locally in the Repository of the Fraud Detection Service</a></li>
+<li><a href="#getting-started-cdc-consumer-add">4.2.5. Add the Spring Cloud Contract Verifier Plugin</a></li>
+<li><a href="#getting-started-cdc-consumer-run">4.2.6. Running the Integration Tests</a></li>
+<li><a href="#getting-started-cdc-consumer-file">4.2.7. Filing a Pull Request</a></li>
+</ul>
+</li>
+<li><a href="#getting-started-cdc-producer">4.3. The Producer Side (Fraud Detection server)</a>
+<ul class="sectlevel3">
+<li><a href="#getting-started-cdc-producer-pr">4.3.1. Taking over the Pull Request</a></li>
+<li><a href="#getting-started-cdc-producer-impl">4.3.2. Write the Missing Implementation</a></li>
+<li><a href="#getting-started-cdc-producer-deploy">4.3.3. Deploying Your Application</a></li>
+</ul>
+</li>
+<li><a href="#getting-started-cdc-consumer-final">4.4. Consumer Side (Loan Issuance), Final Step</a>
+<ul class="sectlevel3">
+<li><a href="#getting-started-cdc-consumer-final-merge">4.4.1. Merging a Branch to Master</a></li>
+<li><a href="#getting-started-cdc-consumer-final-online">4.4.2. Working Online</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#getting-started-whats-next">5. Next Steps</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you are getting started with Spring Cloud Contract, or Spring in general, start by reading
+this section. It answers the basic &#8220;what?&#8221;, &#8220;how?&#8221; and &#8220;why?&#8221; questions. It
+includes an introduction to Spring Cloud Contract, along with installation instructions. We then
+walk you through building your first Spring Cloud Contract application, discussing some core
+principles as we go.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started-introducing-spring-cloud-contract"><a class="anchor" href="#getting-started-introducing-spring-cloud-contract"></a><a class="link" href="#getting-started-introducing-spring-cloud-contract">1. Introducing Spring Cloud Contract</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Cloud Contract moves TDD to the level of software architecture.
+It lets you perform consumer-driven and producer-driven contract testing.</p>
+</div>
+<div class="sect2">
+<h3 id="getting-started-introducing-spring-cloud-contract-history"><a class="anchor" href="#getting-started-introducing-spring-cloud-contract-history"></a><a class="link" href="#getting-started-introducing-spring-cloud-contract-history">1.1. History</a></h3>
+<div class="paragraph">
+<p>Before becoming Spring Cloud Contract, this project was called <a href="https://github.com/Codearte/accurest">Accurest</a>.
+It was created by <a href="https://twitter.com/mgrzejszczak">Marcin Grzejszczak</a> and <a href="https://twitter.com/jkubrynski">Jakub Kubrynski</a>
+from (<a href="https://github.com/Codearte">Codearte</a>).</p>
+</div>
+<div class="paragraph">
+<p>The <code>0.1.0</code> release took place on 26 Jan 2015 and it became stable with <code>1.0.0</code> release on 29 Feb 2016.</p>
+</div>
+<div class="sect3">
+<h4 id="getting-started-introducing-spring-cloud-contract-why"><a class="anchor" href="#getting-started-introducing-spring-cloud-contract-why"></a><a class="link" href="#getting-started-introducing-spring-cloud-contract-why">1.1.1. Why Do You Need It?</a></h4>
+<div class="paragraph">
+<p>Assume that we have a system that consists of multiple microservices, as the following
+image shows:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/Deps.png" alt="Microservices Architecture">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-introducing-spring-cloud-contract-testing-issues"><a class="anchor" href="#getting-started-introducing-spring-cloud-contract-testing-issues"></a><a class="link" href="#getting-started-introducing-spring-cloud-contract-testing-issues">1.1.2. Testing Issues</a></h4>
+<div class="paragraph">
+<p>If we want to test the application in the top left corner of the image in the preceding
+section to determine whether it can communicate with other services, we could do one of
+two things:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deploy all microservices and perform end-to-end tests.</p>
+</li>
+<li>
+<p>Mock other microservices in unit and integration tests.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Both have their advantages but also a lot of disadvantages.</p>
+</div>
+<div class="paragraph">
+<p><strong>Deploy all microservices and perform end to end tests</strong></p>
+</div>
+<div class="paragraph">
+<p>Advantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Simulates production.</p>
+</li>
+<li>
+<p>Tests real communication between services.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Disadvantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>To test one microservice, we have to deploy six microservices, a couple of databases,
+and other items.</p>
+</li>
+<li>
+<p>The environment where the tests run is locked for a single suite of tests (nobody else
+would be able to run the tests in the meantime).</p>
+</li>
+<li>
+<p>They take a long time to run.</p>
+</li>
+<li>
+<p>The feedback comes very late in the process.</p>
+</li>
+<li>
+<p>They are extremely hard to debug.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mock other microservices in unit and integration tests</strong></p>
+</div>
+<div class="paragraph">
+<p>Advantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>They provide very fast feedback.</p>
+</li>
+<li>
+<p>They have no infrastructure requirements.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Disadvantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The implementor of the service creates stubs that might have nothing to do with
+reality.</p>
+</li>
+<li>
+<p>You can go to production with passing tests and failing production.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To solve the aforementioned issues, Spring Cloud Contract was created. The main idea is to
+give you very fast feedback, without the need to set up the
+whole world of microservices. If you work on stubs, then the only applications you need
+are those that your application directly uses. The following image shows the relationship
+of stubs to an application:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/Stubs2.png" alt="Stubbed Services">
+</div>
+</div>
+<div class="paragraph">
+<p>Spring Cloud Contract gives you the certainty that the stubs that you use were
+created by the service that you call. Also, if you can use them, it means that they
+were tested against the producer&#8217;s side. In short, you can trust those stubs.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-introducing-spring-cloud-contract-purposes"><a class="anchor" href="#getting-started-introducing-spring-cloud-contract-purposes"></a><a class="link" href="#getting-started-introducing-spring-cloud-contract-purposes">1.2. Purposes</a></h3>
+<div class="paragraph">
+<p>The main purposes of Spring Cloud Contract are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>To ensure that HTTP and Messaging stubs (used when developing the client) do exactly
+what the actual server-side implementation does.</p>
+</li>
+<li>
+<p>To promote the ATDD (acceptance test-driven developement) method and the microservices architectural style.</p>
+</li>
+<li>
+<p>To provide a way to publish changes in contracts that are immediately visible on both sides.</p>
+</li>
+<li>
+<p>To generate boilerplate test code to be used on the server side.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>By default, Spring Cloud Contract integrates with <a href="http://wiremock.org">Wiremock</a> as the HTTP server stub.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Spring Cloud Contract&#8217;s purpose is NOT to start writing business
+features in the contracts. Assume that we have a business use case of fraud check. If a
+user can be a fraud for 100 different reasons, we would assume that you would create two
+contracts, one for the positive case and one for the negative case. Contract tests are
+used to test contracts between applications and not to simulate full behavior.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-what-is-a-contract"><a class="anchor" href="#getting-started-what-is-a-contract"></a><a class="link" href="#getting-started-what-is-a-contract">1.3. What Is a Contract?</a></h3>
+<div class="paragraph">
+<p>As consumers of services, we need to define what exactly we want to achieve. We need to
+formulate our expectations. That is why we write contracts. In other words, a contract is
+an agreement on how the API or message communication should look. Consider the following example:</p>
+</div>
+<div class="paragraph">
+<p>Assume that you want to send a request that contains the ID of a client company and the
+amount it wants to borrow from us. You also want to send it to the <code>/fraudcheck</code> URL via
+the <code>PUT</code> method. The following listing shows a contract to check whether a client should
+be marked as a fraud in both Groovy and YAML:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+    request { // (1)
+        method 'PUT' // (2)
+        url '/fraudcheck' // (3)
+        body([ // (4)
+               "client.id": $(regex('[0-9]{10}')),
+               loanAmount : 99999
+        ])
+        headers { // (5)
+            contentType('application/json')
+        }
+    }
+    response { // (6)
+        status OK() // (7)
+        body([ // (8)
+               fraudCheckStatus  : "FRAUD",
+               "rejection.reason": "Amount too high"
+        ])
+        headers { // (9)
+            contentType('application/json')
+        }
+    }
+}
+
+/*
+From the Consumer perspective, when shooting a request in the integration test:
+
+(1) - If the consumer sends a request
+(2) - With the "PUT" method
+(3) - to the URL "/fraudcheck"
+(4) - with the JSON body that
+ * has a field `client.id` that matches a regular expression `[0-9]{10}`
+ * has a field `loanAmount` that is equal to `99999`
+(5) - with header `Content-Type` equal to `application/json`
+(6) - then the response will be sent with
+(7) - status equal `200`
+(8) - and JSON body equal to
+ { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+(9) - with header `Content-Type` equal to `application/json`
+
+From the Producer perspective, in the autogenerated producer-side test:
+
+(1) - A request will be sent to the producer
+(2) - With the "PUT" method
+(3) - to the URL "/fraudcheck"
+(4) - with the JSON body that
+ * has a field `client.id` that will have a generated value that matches a regular expression `[0-9]{10}`
+ * has a field `loanAmount` that is equal to `99999`
+(5) - with header `Content-Type` equal to `application/json`
+(6) - then the test will assert if the response has been sent with
+(7) - status equal `200`
+(8) - and JSON body equal to
+ { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+(9) - with header `Content-Type` matching `application/json.*`
+ */</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">yaml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">request: # (1)
+  method: PUT # (2)
+  url: /yamlfraudcheck # (3)
+  body: # (4)
+    "client.id": 1234567890
+    loanAmount: 99999
+  headers: # (5)
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $.['client.id'] # (6)
+        type: by_regex
+        value: "[0-9]{10}"
+response: # (7)
+  status: 200 # (8)
+  body:  # (9)
+    fraudCheckStatus: "FRAUD"
+    "rejection.reason": "Amount too high"
+  headers: # (10)
+    Content-Type: application/json
+
+
+#From the Consumer perspective, when shooting a request in the integration test:
+#
+#(1) - If the consumer sends a request
+#(2) - With the "PUT" method
+#(3) - to the URL "/yamlfraudcheck"
+#(4) - with the JSON body that
+# * has a field `client.id`
+# * has a field `loanAmount` that is equal to `99999`
+#(5) - with header `Content-Type` equal to `application/json`
+#(6) - and a `client.id` json entry matches the regular expression `[0-9]{10}`
+#(7) - then the response will be sent with
+#(8) - status equal `200`
+#(9) - and JSON body equal to
+# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+#(10) - with header `Content-Type` equal to `application/json`
+#
+#From the Producer perspective, in the autogenerated producer-side test:
+#
+#(1) - A request will be sent to the producer
+#(2) - With the "PUT" method
+#(3) - to the URL "/yamlfraudcheck"
+#(4) - with the JSON body that
+# * has a field `client.id` `1234567890`
+# * has a field `loanAmount` that is equal to `99999`
+#(5) - with header `Content-Type` equal to `application/json`
+#(7) - then the test will assert if the response has been sent with
+#(8) - status equal `200`
+#(9) - and JSON body equal to
+# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+#(10) - with header `Content-Type` equal to `application/json`</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started-three-second-tour"><a class="anchor" href="#getting-started-three-second-tour"></a><a class="link" href="#getting-started-three-second-tour">2. A Three-second Tour</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This very brief tour walks through using Spring Cloud Contract. It consists of the
+following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#getting-started-three-second-tour-producer">On the Producer Side</a></p>
+</li>
+<li>
+<p><a href="#getting-started-three-second-tour-consumer">On the Consumer Side</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can find a somewhat longer tour
+<a href="#getting-started-first-application">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the relationship of the parts within Spring Cloud Contract:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/getting-started-three-second.png" alt="getting started three second" width="986" height="704">
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-three-second-tour-producer"><a class="anchor" href="#getting-started-three-second-tour-producer"></a><a class="link" href="#getting-started-three-second-tour-producer">2.1. On the Producer Side</a></h3>
+<div class="paragraph">
+<p>To start working with Spring Cloud Contract, you can add files with REST or messaging contracts
+expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
+<code>contractsDslDir</code> property. By default, it is <code>$rootDir/src/test/resources/contracts</code>.</p>
+</div>
+<div class="paragraph">
+<p>Then you can add the Spring Cloud Contract Verifier dependency and plugin to your build file, as
+the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following listing shows how to add the plugin, which should go in the build/plugins
+portion of the file:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Running <code>./mvnw clean install</code> automatically generates tests that verify the application
+compliance with the added contracts. By default, the tests get generated under
+<code>org.springframework.cloud.contract.verifier.tests.</code>.</p>
+</div>
+<div class="paragraph">
+<p>As the implementation of the functionalities described by the contracts is not yet
+present, the tests fail.</p>
+</div>
+<div class="paragraph">
+<p>To make them pass, you must add the correct implementation of either handling HTTP
+requests or messages. Also, you must add a base test class for auto-generated
+tests to the project. This class is extended by all the auto-generated tests, and it
+should contain all the setup information necessary to run them (for example <code>RestAssuredMockMvc</code>
+controller setup or messaging test setup).</p>
+</div>
+<div class="paragraph">
+<p>The following example, from <code>pom.xml</code>, shows how to specify the base test class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>&lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;2.1.2.RELEASE&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;baseClassForTests&gt;com.example.contractTest.BaseTestClass&lt;/baseClassForTests&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>baseClassForTests</code> element lets you specify your base test class. It must be a child
+of a <code>configuration</code> element within <code>spring-cloud-contract-maven-plugin</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the implementation and the test base class are in place, the tests pass, and both the
+application and the stub artifacts are built and installed in the local Maven repository.
+You can now merge the changes, and you can publish both the application and the stub artifacts
+in an online repository.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-three-second-tour-consumer"><a class="anchor" href="#getting-started-three-second-tour-consumer"></a><a class="link" href="#getting-started-three-second-tour-consumer">2.2. On the Consumer Side</a></h3>
+<div class="paragraph">
+<p>You can use <code>Spring Cloud Contract Stub Runner</code> in the integration tests to get a running
+WireMock instance or messaging route that simulates the actual service.</p>
+</div>
+<div class="paragraph">
+<p>To do so, add the dependency to <code>Spring Cloud Contract Stub Runner</code>, as the
+following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can get the Producer-side stubs installed in your Maven repository in either of two
+ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>By checking out the Producer side repository and adding contracts and generating the stubs
+by running the following commands:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The tests are being skipped because the producer-side contract implementation is not
+in place yet, so the automatically-generated contract tests fail.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>By getting already-existing producer service stubs from a remote repository. To do so,
+pass the stub artifact IDs and artifact repository URL as <code>Spring Cloud Contract
+Stub Runner</code> properties, as the following example shows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">stubrunner:
+  ids: 'com.example:http-server-dsl:+:stubs:8080'
+  repositoryRoot: https://repo.spring.io/libs-snapshot</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now you can annotate your test class with <code>@AutoConfigureStubRunner</code>. In the annotation,
+provide the <code>group-id</code> and <code>artifact-id</code> values for <code>Spring Cloud Contract Stub Runner</code> to
+run the collaborators' stubs for you, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+        stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+public class LoanApplicationServiceTests {</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use the <code>REMOTE</code> <code>stubsMode</code> when downloading stubs from an online repository and
+<code>LOCAL</code> for offline work.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now, in your integration test, you can receive stubbed versions of HTTP responses or
+messages that are expected to be emitted by the collaborator service.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started-first-application"><a class="anchor" href="#getting-started-first-application"></a><a class="link" href="#getting-started-first-application">3. Developing Your First Spring Cloud Contract-based Application</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This brief tour walks through using Spring Cloud Contract. It consists of the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#getting-started-first-application-producer">On the Producer Side</a></p>
+</li>
+<li>
+<p><a href="#getting-started-first-application-consumer">On the Consumer Side</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can find an even more brief tour
+<a href="#getting-started-three-second-tour">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>For the sake of this example, the <code>Stub Storage</code> is Nexus/Artifactory.</p>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the relationship of the parts of Spring Cloud Contract:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/getting-started-three-second.png" alt="Getting started first application">
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-first-application-producer"><a class="anchor" href="#getting-started-first-application-producer"></a><a class="link" href="#getting-started-first-application-producer">3.1. On the Producer Side</a></h3>
+<div class="paragraph">
+<p>To start working with <code>Spring Cloud Contract</code>, you can add Spring Cloud Contract Verifier
+dependency and plugin to your build file, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following listing shows how to add the plugin, which should go in the build/plugins
+portion of the file:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The easiest way to get started is to go to <a href="https://start.spring.io">the Spring Initializr</a>
+and add &#8220;Web&#8221; and &#8220;Contract Verifier&#8221; as dependencies. Doing so pulls in the previously
+mentioned dependencies and everything else you need in the <code>pom.xml</code> file (except for
+setting the base test class, which we cover later in this section). The following image
+shows the settings to use in <a href="https://start.spring.io">the Spring Initializr</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/start_spring_io_dependencies.png" alt="Spring Initializr with Web and Contract Verifier" width="800">
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now you can add files with <code>REST/</code> messaging contracts
+expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
+<code>contractsDslDir</code> property. By default, it is <code>$rootDir/src/test/resources/contracts</code>.
+Note that the file name does not matter. You can organize your contracts within this
+directory with whatever naming scheme you like.</p>
+</div>
+<div class="paragraph">
+<p>For the HTTP stubs, a contract defines what kind of response should be returned for a
+given request (taking into account the HTTP methods, URLs, headers, status codes, and so
+on). The following example shows an HTTP stub contract in both Groovy and YAML:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method 'PUT'
+        url '/fraudcheck'
+        body([
+               "client.id": $(regex('[0-9]{10}')),
+               loanAmount: 99999
+        ])
+        headers {
+            contentType('application/json')
+        }
+    }
+    response {
+        status OK()
+        body([
+               fraudCheckStatus: "FRAUD",
+               "rejection.reason": "Amount too high"
+        ])
+        headers {
+            contentType('application/json')
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">yaml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">request:
+  method: PUT
+  url: /fraudcheck
+  body:
+    "client.id": 1234567890
+    loanAmount: 99999
+  headers:
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $.['client.id']
+        type: by_regex
+        value: "[0-9]{10}"
+response:
+  status: 200
+  body:
+    fraudCheckStatus: "FRAUD"
+    "rejection.reason": "Amount too high"
+  headers:
+    Content-Type: application/json;charset=UTF-8</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you need to use messaging, you can define:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The input and output messages (taking into account from and where it
+was sent, the message body, and the header).</p>
+</li>
+<li>
+<p>The methods that should be called after the message is received.</p>
+</li>
+<li>
+<p>The methods that, when called, should trigger a message.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following example shows a Camel messaging contract:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">def contractDsl = Contract.make {
+    name "foo"
+    label 'some_label'
+    input {
+        messageFrom('jms:delete')
+        messageBody([
+                bookName: 'foo'
+        ])
+        messageHeaders {
+            header('sample', 'header')
+        }
+        assertThat('bookWasDeleted()')
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">yaml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">label: some_label
+input:
+  messageFrom: jms:delete
+  messageBody:
+    bookName: 'foo'
+  messageHeaders:
+    sample: header
+  assertThat: bookWasDeleted()</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Running <code>./mvnw clean install</code> automatically generates tests that verify the application
+compliance with the added contracts. By default, the generated tests are under
+<code>org.springframework.cloud.contract.verifier.tests.</code>.</p>
+</div>
+<div class="paragraph">
+<p>The generated tests may differ, depending on which framework and test type you have setup
+in your plugin.</p>
+</div>
+<div class="paragraph">
+<p>In the next listing, you can find:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The default test mode for HTTP contracts in <code>MockMvc</code></p>
+</li>
+<li>
+<p>A JAX-RS client with the <code>JAXRS</code> test mode</p>
+</li>
+<li>
+<p>A <code>WebTestClient</code>-based test (this is particularly recommended while working with
+Reactive, <code>Web-Flux</code>-based applications) set with the <code>WEBTESTCLIENT</code> test mode</p>
+</li>
+<li>
+<p>A Spock-based test with the <code>testFramework</code> property set to <code>SPOCK</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You need only one of these test frameworks. MockMvc is the default. To use one
+of the other frameworks, add its library to your classpath.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The following listing shows samples for all frameworks:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">mockmvc</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Test
+public void validate_shouldMarkClientAsFraud() throws Exception {
+    // given:
+        MockMvcRequestSpecification request = given()
+                .header("Content-Type", "application/vnd.fraud.v1+json")
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
+
+    // when:
+        ResponseOptions response = given().spec(request)
+                .put("/fraudcheck");
+
+    // then:
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
+    // and:
+        DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">jaxrs</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SuppressWarnings("rawtypes")
+public class FooTest {
+  WebTarget webTarget;
+
+  @Test
+  public void validate_() throws Exception {
+
+    // when:
+      Response response = webTarget
+              .path("/users")
+              .queryParam("limit", "10")
+              .queryParam("offset", "20")
+              .queryParam("filter", "email")
+              .queryParam("sort", "name")
+              .queryParam("search", "55")
+              .queryParam("age", "99")
+              .queryParam("name", "Denis.Stepanov")
+              .queryParam("email", "bob@email.com")
+              .request()
+              .build("GET")
+              .invoke();
+      String responseAsString = response.readEntity(String.class);
+
+    // then:
+      assertThat(response.getStatus()).isEqualTo(200);
+
+    // and:
+      DocumentContext parsedJson = JsonPath.parse(responseAsString);
+      assertThatJson(parsedJson).field("['property1']").isEqualTo("a");
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">webtestclient</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Test
+    public void validate_shouldRejectABeerIfTooYoung() throws Exception {
+        // given:
+            WebTestClientRequestSpecification request = given()
+                    .header("Content-Type", "application/json")
+                    .body("{\"age\":10}");
+
+        // when:
+            WebTestClientResponse response = given().spec(request)
+                    .post("/check");
+
+        // then:
+            assertThat(response.statusCode()).isEqualTo(200);
+            assertThat(response.header("Content-Type")).matches("application/json.*");
+        // and:
+            DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+            assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
+    }</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">spock</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">given:
+     ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+        \'\'\'{"bookName":"foo"}\'\'\',
+        ['sample': 'header']
+    )
+
+when:
+     contractVerifierMessaging.send(inputMessage, 'jms:delete')
+
+then:
+     noExceptionThrown()
+     bookWasDeleted()</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>As the implementation of the functionalities described by the contracts is not yet
+present, the tests fail.</p>
+</div>
+<div class="paragraph">
+<p>To make them pass, you must add the correct implementation of handling either HTTP
+requests or messages. Also, you must add a base test class for auto-generated
+tests to the project. This class is extended by all the auto-generated tests and should
+contain all the setup necessary information needed to run them (for example,
+<code>RestAssuredMockMvc</code> controller setup or messaging test setup).</p>
+</div>
+<div class="paragraph">
+<p>The following example, from <code>pom.xml</code>, shows how to specify the base test class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>&lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;2.1.2.RELEASE&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;baseClassForTests&gt;com.example.contractTest.BaseTestClass&lt;/baseClassForTests&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>baseClassForTests</code> element lets you specify your base test class. It must be a child
+of a <code>configuration</code> element within <code>spring-cloud-contract-maven-plugin</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example shows a minimal (but functional) base test class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>package com.example.contractTest;
+
+import org.junit.Before;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+
+public class BaseTestClass {
+
+    @Before
+    public void setup() {
+        RestAssuredMockMvc.standaloneSetup(new FraudController());
+    }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This minimal class really is all you need to get your tests to work. It serves as a
+starting place to which the automatically generated tests attach.</p>
+</div>
+<div class="paragraph">
+<p>Now we can move on to the implementation. For that, we first need a data class, which we
+then use in our controller. The following listing shows the data class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>package com.example.Test;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class LoanRequest {
+
+    @JsonProperty("client.id")
+    private String clientId;
+
+    private Long loanAmount;
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public Long getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanRequestAmount(Long loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The preceding class provides an object in which we can store the parameters. Because the
+client ID in the contract is called <code>client.id</code>, we need to use the
+<code>@JsonProperty("client.id")</code> parameter to map it to the <code>clientId</code> field.</p>
+</div>
+<div class="paragraph">
+<p>Now we can move along to the controller, which the following listing shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>package com.example.docTest;
+
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class FraudController {
+
+    @PutMapping(value = "/fraudcheck", consumes="application/json", produces="application/json")
+    public String check(@RequestBody LoanRequest loanRequest) { <i class="conum" data-value="1"></i><b>(1)</b>
+
+        if (loanRequest.getLoanAmount() &gt; 10000) { <i class="conum" data-value="2"></i><b>(2)</b>
+            return "{fraudCheckStatus: FRAUD, rejection.reason: Amount too high}"; <i class="conum" data-value="3"></i><b>(3)</b>
+        } else {
+            return "{fraudCheckStatus: OK, acceptance.reason: Amount OK}"; <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+    }
+}</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We map the incoming parameters to a <code>LoanRequest</code> object.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We check the requested loan amount to see if it is too much.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>If it is too much, we return the JSON (created with a simple string here) that the
+test expects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If we had a test to catch when the amount is allowable, we could match it to this output.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>FraudController</code> is about as simple as things get. You can do much more, including
+logging, validating the client ID, and so on.</p>
+</div>
+<div class="paragraph">
+<p>Once the implementation and the test base class are in place, the tests pass, and both the
+application and the stub artifacts are built and installed in the local Maven repository
+Information about installing the stubs jar to the local repository appears in the logs, as
+the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar
+[INFO]
+[INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar
+[INFO]
+[INFO] --- spring-boot-maven-plugin:1.5.5.BUILD-SNAPSHOT:repackage (default) @ http-server ---
+[INFO]
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ http-server ---
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.jar
+[INFO] Installing /some/path/http-server/pom.xml to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.pom
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can now merge the changes and publish both the application and the stub artifacts
+in an online repository.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-first-application-consumer"><a class="anchor" href="#getting-started-first-application-consumer"></a><a class="link" href="#getting-started-first-application-consumer">3.2. On the Consumer Side</a></h3>
+<div class="paragraph">
+<p>You can use Spring Cloud Contract Stub Runner in the integration tests to get a running
+WireMock instance or messaging route that simulates the actual service.</p>
+</div>
+<div class="paragraph">
+<p>To get started, add the dependency to <code>Spring Cloud Contract Stub Runner</code>, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can get the Producer-side stubs installed in your Maven repository in either of two
+ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>By checking out the Producer side repository and adding contracts and generating the
+stubs by running the following commands:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The tests are skipped because the Producer-side contract implementation is not yet
+in place, so the automatically-generated contract tests fail.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Getting already existing producer service stubs from a remote repository. To do so,
+pass the stub artifact IDs and artifact repository URl as <code>Spring Cloud Contract Stub
+Runner</code> properties, as the following example shows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">stubrunner:
+  ids: 'com.example:http-server-dsl:+:stubs:8080'
+  repositoryRoot: https://repo.spring.io/libs-snapshot</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now you can annotate your test class with <code>@AutoConfigureStubRunner</code>. In the annotation,
+provide the <code>group-id</code> and <code>artifact-id</code> for <code>Spring Cloud Contract Stub Runner</code> to run
+the collaborators' stubs for you, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+        stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+public class LoanApplicationServiceTests {</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use the <code>REMOTE</code> <code>stubsMode</code> when downloading stubs from an online repository and
+<code>LOCAL</code> for offline work.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In your integration test, you can receive stubbed versions of HTTP responses or messages
+that are expected to be emitted by the collaborator service. You can see entries similar
+to the following in the build logs:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
+2016-07-19 14:22:25.438  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is 0.0.1-SNAPSHOT
+2016-07-19 14:22:25.439  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT using remote repositories []
+2016-07-19 14:22:25.451  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+2016-07-19 14:22:25.465  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacking stub from JAR [URI: file:/path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar]
+2016-07-19 14:22:25.475  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacked file to [/var/folders/0p/xwq47sq106x1_g3dtv6qfm940000gq/T/contracts100276532569594265]
+2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started-cdc"><a class="anchor" href="#getting-started-cdc"></a><a class="link" href="#getting-started-cdc">4. Step-by-step Guide to Consumer Driven Contracts (CDC) with Contracts on the Producer Side</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Consider an example of fraud detection and the loan issuance process. The business
+scenario is such that we want to issue loans to people but do not want them to steal from
+us. The current implementation of our system grants loans to everybody.</p>
+</div>
+<div class="paragraph">
+<p>Assume that <code>Loan Issuance</code> is a client to the <code>Fraud Detection</code> server. In the current
+sprint, we must develop a new feature: if a client wants to borrow too much money,
+we mark the client as a fraud.</p>
+</div>
+<div class="paragraph">
+<p>Technical remarks</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Fraud Detection has an <code>artifact-id</code> of <code>http-server</code></p>
+</li>
+<li>
+<p>Loan Issuance has an artifact-id of <code>http-client</code></p>
+</li>
+<li>
+<p>Both have a <code>group-id</code> of <code>com.example</code></p>
+</li>
+<li>
+<p>For the sake of this example the <code>Stub Storage</code> is Nexus/Artifactory</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Social remarks</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Both the client and the server development teams need to communicate directly and
+discuss changes while going through the process</p>
+</li>
+<li>
+<p>CDC is all about communication</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x///opt/jenkins/data/workspace/spring-cloud-contract-2.2.x-ci/samples/standalone/dsl/http-server">server-side
+code is available here</a> and <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x///opt/jenkins/data/workspace/spring-cloud-contract-2.2.x-ci/samples/standalone/dsl/http-client">the client code  is available here</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+In this case, the producer owns the contracts. Physically, all of the contracts are
+in the producer&#8217;s repository.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="getting-started-cdc-technical-note"><a class="anchor" href="#getting-started-cdc-technical-note"></a><a class="link" href="#getting-started-cdc-technical-note">4.1. Technical Note</a></h3>
+<div class="paragraph">
+<p>If you use the SNAPSHOT, Milestone, or Release Candidate versions you need to add the
+following section to your build:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-snapshots&lt;/id&gt;
+        &lt;name&gt;Spring Snapshots&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-releases&lt;/id&gt;
+        &lt;name&gt;Spring Releases&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-snapshots&lt;/id&gt;
+        &lt;name&gt;Spring Snapshots&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/pluginRepository&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/pluginRepository&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-releases&lt;/id&gt;
+        &lt;name&gt;Spring Releases&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://repo.spring.io/release" }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For simplicity, we use the following acronyms:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Loan Issuance (LI): The HTTP client</p>
+</li>
+<li>
+<p>Fraud Detection (FD): The HTTP server</p>
+</li>
+<li>
+<p>Spring Cloud Contract (SCC)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-cdc-consumer"><a class="anchor" href="#getting-started-cdc-consumer"></a><a class="link" href="#getting-started-cdc-consumer">4.2. The Consumer Side (Loan Issuance)</a></h3>
+<div class="paragraph">
+<p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server), you might do the following steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start doing TDD by writing a test for your feature.</p>
+</li>
+<li>
+<p>Write the missing implementation.</p>
+</li>
+<li>
+<p>Clone the Fraud Detection service repository locally.</p>
+</li>
+<li>
+<p>Define the contract locally in the repo of the fraud detection service.</p>
+</li>
+<li>
+<p>Add the Spring Cloud Contract (SCC) plugin.</p>
+</li>
+<li>
+<p>Run the integration tests.</p>
+</li>
+<li>
+<p>File a pull request.</p>
+</li>
+<li>
+<p>Create an initial implementation.</p>
+</li>
+<li>
+<p>Take over the pull request.</p>
+</li>
+<li>
+<p>Write the missing implementation.</p>
+</li>
+<li>
+<p>Deploy your app.</p>
+</li>
+<li>
+<p>Work online.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>We start with the loan issuance flow, which the following UML diagram shows:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/getting-started-cdc-client.png" alt="getting started cdc client" width="1138" height="1223">
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-start"><a class="anchor" href="#getting-started-cdc-consumer-start"></a><a class="link" href="#getting-started-cdc-consumer-start">4.2.1. Start Doing TDD by Writing a Test for Your Feature</a></h4>
+<div class="paragraph">
+<p>The following listing shows a test that we might use to check whether a loan amount is too
+large:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@Test
+public void shouldBeRejectedDueToAbnormalLoanAmount() {
+    // given:
+    LoanApplication application = new LoanApplication(new Client("1234567890"),
+            99999);
+    // when:
+    LoanApplicationResult loanApplication = service.loanApplication(application);
+    // then:
+    assertThat(loanApplication.getLoanApplicationStatus())
+            .isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
+    assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Assume that you have written a test of your new feature. If a loan application for a big
+amount is received, the system should reject that loan application with some description.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-write"><a class="anchor" href="#getting-started-cdc-consumer-write"></a><a class="link" href="#getting-started-cdc-consumer-write">4.2.2. Write the Missing Implementation</a></h4>
+<div class="paragraph">
+<p>At some point in time, you need to send a request to the Fraud Detection service. Assume
+that you need to send the request containing the ID of the client and the amount the
+client wants to borrow. You want to send it to the <code>/fraudcheck</code> URL by using the <code>PUT</code> method.
+To do so, you might use code similar to the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">ResponseEntity&lt;FraudServiceResponse&gt; response = restTemplate.exchange(
+        "http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+        new HttpEntity&lt;&gt;(request, httpHeaders), FraudServiceResponse.class);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For simplicity, the port of the Fraud Detection service is set to <code>8080</code>, and the
+application runs on <code>8090</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you start the test at this point, it breaks, because no service currently runs on port
+<code>8080</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-clone"><a class="anchor" href="#getting-started-cdc-consumer-clone"></a><a class="link" href="#getting-started-cdc-consumer-clone">4.2.3. Clone the Fraud Detection service repository locally</a></h4>
+<div class="paragraph">
+<p>You can start by playing around with the server side contract. To do so, you must first
+clone it, by running the following command:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ git clone https://your-git-server.com/server-side.git local-http-server-repo</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-define"><a class="anchor" href="#getting-started-cdc-consumer-define"></a><a class="link" href="#getting-started-cdc-consumer-define">4.2.4. Define the Contract Locally in the Repository of the Fraud Detection Service</a></h4>
+<div class="paragraph">
+<p>As a consumer, you need to define what exactly you want to achieve. You need to formulate
+your expectations. To do so, write the following contract:</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Place the contract in the <code>src/test/resources/contracts/fraud</code> folder. The <code>fraud</code> folder
+is important because the producer&#8217;s test base class name references that folder.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The following example shows our contract, in both Groovy and YAML:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+    request { // (1)
+        method 'PUT' // (2)
+        url '/fraudcheck' // (3)
+        body([ // (4)
+               "client.id": $(regex('[0-9]{10}')),
+               loanAmount : 99999
+        ])
+        headers { // (5)
+            contentType('application/json')
+        }
+    }
+    response { // (6)
+        status OK() // (7)
+        body([ // (8)
+               fraudCheckStatus  : "FRAUD",
+               "rejection.reason": "Amount too high"
+        ])
+        headers { // (9)
+            contentType('application/json')
+        }
+    }
+}
+
+/*
+From the Consumer perspective, when shooting a request in the integration test:
+
+(1) - If the consumer sends a request
+(2) - With the "PUT" method
+(3) - to the URL "/fraudcheck"
+(4) - with the JSON body that
+ * has a field `client.id` that matches a regular expression `[0-9]{10}`
+ * has a field `loanAmount` that is equal to `99999`
+(5) - with header `Content-Type` equal to `application/json`
+(6) - then the response will be sent with
+(7) - status equal `200`
+(8) - and JSON body equal to
+ { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+(9) - with header `Content-Type` equal to `application/json`
+
+From the Producer perspective, in the autogenerated producer-side test:
+
+(1) - A request will be sent to the producer
+(2) - With the "PUT" method
+(3) - to the URL "/fraudcheck"
+(4) - with the JSON body that
+ * has a field `client.id` that will have a generated value that matches a regular expression `[0-9]{10}`
+ * has a field `loanAmount` that is equal to `99999`
+(5) - with header `Content-Type` equal to `application/json`
+(6) - then the test will assert if the response has been sent with
+(7) - status equal `200`
+(8) - and JSON body equal to
+ { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+(9) - with header `Content-Type` matching `application/json.*`
+ */</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">yaml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">request: # (1)
+  method: PUT # (2)
+  url: /yamlfraudcheck # (3)
+  body: # (4)
+    "client.id": 1234567890
+    loanAmount: 99999
+  headers: # (5)
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $.['client.id'] # (6)
+        type: by_regex
+        value: "[0-9]{10}"
+response: # (7)
+  status: 200 # (8)
+  body:  # (9)
+    fraudCheckStatus: "FRAUD"
+    "rejection.reason": "Amount too high"
+  headers: # (10)
+    Content-Type: application/json
+
+
+#From the Consumer perspective, when shooting a request in the integration test:
+#
+#(1) - If the consumer sends a request
+#(2) - With the "PUT" method
+#(3) - to the URL "/yamlfraudcheck"
+#(4) - with the JSON body that
+# * has a field `client.id`
+# * has a field `loanAmount` that is equal to `99999`
+#(5) - with header `Content-Type` equal to `application/json`
+#(6) - and a `client.id` json entry matches the regular expression `[0-9]{10}`
+#(7) - then the response will be sent with
+#(8) - status equal `200`
+#(9) - and JSON body equal to
+# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+#(10) - with header `Content-Type` equal to `application/json`
+#
+#From the Producer perspective, in the autogenerated producer-side test:
+#
+#(1) - A request will be sent to the producer
+#(2) - With the "PUT" method
+#(3) - to the URL "/yamlfraudcheck"
+#(4) - with the JSON body that
+# * has a field `client.id` `1234567890`
+# * has a field `loanAmount` that is equal to `99999`
+#(5) - with header `Content-Type` equal to `application/json`
+#(7) - then the test will assert if the response has been sent with
+#(8) - status equal `200`
+#(9) - and JSON body equal to
+# { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+#(10) - with header `Content-Type` equal to `application/json`</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The YML contract is quite straightforward. However, when you take a look at the Contract
+written with a statically typed Groovy DSL, you might wonder what the
+<code>value(client(&#8230;&#8203;), server(&#8230;&#8203;))</code> parts are. By using this notation, Spring Cloud
+Contract lets you define parts of a JSON block, a URL, or other structure that is dynamic. In case
+of an identifier or a timestamp, you need not hardcode a value. You want to allow some
+different ranges of values. To enable ranges of values, you can set regular expressions
+that match those values for the consumer side. You can provide the body by means of either
+a map notation or String with interpolations. We highly recommend using the map notation.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You must understand the map notation in order to set up contracts. See the
+<a href="https://groovy-lang.org/json.html">Groovy docs regarding JSON</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previously shown contract is an agreement between two sides that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If an HTTP request is sent with all of</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A <code>PUT</code> method on the <code>/fraudcheck</code> endpoint</p>
+</li>
+<li>
+<p>A JSON body with a <code>client.id</code> that matches the regular expression <code>[0-9]{10}</code> and
+<code>loanAmount</code> equal to <code>99999</code>,</p>
+</li>
+<li>
+<p>A <code>Content-Type</code> header with a value of <code>application/vnd.fraud.v1+json</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Then an HTTP response is sent to the consumer that</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Has status <code>200</code></p>
+</li>
+<li>
+<p>Contains a JSON body with the <code>fraudCheckStatus</code> field containing a value of <code>FRAUD</code> and
+the <code>rejectionReason</code> field having a value of <code>Amount too high</code></p>
+</li>
+<li>
+<p>Has a <code>Content-Type</code> header with a value of <code>application/vnd.fraud.v1+json</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Once you are ready to check the API in practice in the integration tests, you need to
+install the stubs locally.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-add"><a class="anchor" href="#getting-started-cdc-consumer-add"></a><a class="link" href="#getting-started-cdc-consumer-add">4.2.5. Add the Spring Cloud Contract Verifier Plugin</a></h4>
+<div class="paragraph">
+<p>We can add either a Maven or a Gradle plugin. In this example, we show how to add Maven.
+First, we add the <code>Spring Cloud Contract</code> BOM, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-release.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, add the <code>Spring Cloud Contract Verifier</code> Maven plugin, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
+&lt;!--                    &lt;convertToYaml&gt;true&lt;/convertToYaml&gt;--&gt;
+                &lt;/configuration&gt;
+                &lt;!-- if additional dependencies are needed e.g. for Pact --&gt;
+                &lt;dependencies&gt;
+                    &lt;dependency&gt;
+                        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                        &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
+                        &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+                    &lt;/dependency&gt;
+                &lt;/dependencies&gt;
+            &lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Since the plugin was added, you get the <code>Spring Cloud Contract Verifier</code> features, which,
+from the provided contracts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Generate and run tests</p>
+</li>
+<li>
+<p>Produce and install stubs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You do not want to generate tests, since you, as the consumer, want only to play with the
+stubs. You need to skip the test generation and execution. To do so, run the following commands:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Once you run those commands, you should you see something like the following content in the logs:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar
+[INFO]
+[INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar
+[INFO]
+[INFO] --- spring-boot-maven-plugin:1.5.5.BUILD-SNAPSHOT:repackage (default) @ http-server ---
+[INFO]
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ http-server ---
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.jar
+[INFO] Installing /some/path/http-server/pom.xml to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.pom
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following line is extremely important:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>It confirms that the stubs of the <code>http-server</code> have been installed in the local
+repository.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-run"><a class="anchor" href="#getting-started-cdc-consumer-run"></a><a class="link" href="#getting-started-cdc-consumer-run">4.2.6. Running the Integration Tests</a></h4>
+<div class="paragraph">
+<p>In order to profit from the Spring Cloud Contract Stub Runner functionality of automatic
+stub downloading, you must do the following in your consumer side project (<code>Loan
+Application service</code>):</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the <code>Spring Cloud Contract</code> BOM, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-release-train.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add the dependency to <code>Spring Cloud Contract Stub Runner</code>, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Annotate your test class with <code>@AutoConfigureStubRunner</code>. In the annotation, provide the
+<code>group-id</code> and <code>artifact-id</code> for the Stub Runner to download the stubs of your
+collaborators. (Optional step) Because you are playing with the collaborators offline, you
+can also provide the offline work switch (<code>StubRunnerProperties.StubsMode.LOCAL</code>).</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {
+        "com.example:http-server-dsl:0.0.1:stubs" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+public class LoanApplicationServiceTests {</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now, when you run your tests, you see something like the following output in the logs:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
+2016-07-19 14:22:25.438  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is 0.0.1-SNAPSHOT
+2016-07-19 14:22:25.439  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT using remote repositories []
+2016-07-19 14:22:25.451  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+2016-07-19 14:22:25.465  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacking stub from JAR [URI: file:/path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar]
+2016-07-19 14:22:25.475  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacked file to [/var/folders/0p/xwq47sq106x1_g3dtv6qfm940000gq/T/contracts100276532569594265]
+2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This output means that Stub Runner has found your stubs and started a server for your application
+with a group ID of <code>com.example</code> and an artifact ID of <code>http-server</code> with version <code>0.0.1-SNAPSHOT</code> of
+the stubs and with the <code>stubs</code> classifier on port <code>8080</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-file"><a class="anchor" href="#getting-started-cdc-consumer-file"></a><a class="link" href="#getting-started-cdc-consumer-file">4.2.7. Filing a Pull Request</a></h4>
+<div class="paragraph">
+<p>What you have done until now is an iterative process. You can play around with the
+contract, install it locally, and work on the consumer side until the contract works as
+you wish.</p>
+</div>
+<div class="paragraph">
+<p>Once you are satisfied with the results and the test passes, you can publish a pull request to
+the server side. Currently, the consumer side work is done.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-cdc-producer"><a class="anchor" href="#getting-started-cdc-producer"></a><a class="link" href="#getting-started-cdc-producer">4.3. The Producer Side (Fraud Detection server)</a></h3>
+<div class="paragraph">
+<p>As a developer of the Fraud Detection server (a server to the Loan Issuance service), you
+might want to do the following</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Take over the pull request</p>
+</li>
+<li>
+<p>Write the missing implementation</p>
+</li>
+<li>
+<p>Deploy the application</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the fraud detection flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/getting-started-cdc-server.png" alt="getting started cdc server" width="688" height="903">
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-producer-pr"><a class="anchor" href="#getting-started-cdc-producer-pr"></a><a class="link" href="#getting-started-cdc-producer-pr">4.3.1. Taking over the Pull Request</a></h4>
+<div class="paragraph">
+<p>As a reminder, the following listing shows the initial implementation:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RequestMapping(value = "/fraudcheck", method = PUT)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can run the following commands:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ git checkout -b contract-change-pr master
+$ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You must add the dependencies needed by the autogenerated tests, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In the configuration of the Maven plugin, you must pass the <code>packageWithBaseClasses</code> property, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
+&lt;!--                    &lt;convertToYaml&gt;true&lt;/convertToYaml&gt;--&gt;
+                &lt;/configuration&gt;
+                &lt;!-- if additional dependencies are needed e.g. for Pact --&gt;
+                &lt;dependencies&gt;
+                    &lt;dependency&gt;
+                        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                        &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
+                        &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+                    &lt;/dependency&gt;
+                &lt;/dependencies&gt;
+            &lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This example uses &#8220;convention-based&#8221; naming by setting the
+<code>packageWithBaseClasses</code> property. Doing so means that the two last packages combine to
+make the name of the base test class. In our case, the contracts were placed under
+<code>src/test/resources/contracts/fraud</code>. Since you do not have two packages starting from
+the <code>contracts</code> folder, pick only one, which should be <code>fraud</code>. Add the <code>Base</code> suffix and
+capitalize <code>fraud</code>. That gives you the <code>FraudBase</code> test class name.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>All the generated tests extend that class. Over there, you can set up your Spring Context
+or whatever is necessary. In this case, you should use <a href="https://github.com/rest-assured/rest-assured">Rest Assured MVC</a> to
+start the server side <code>FraudDetectionController</code>. The following listing shows the
+<code>FraudBase</code> class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.example.fraud;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
+
+public class FraudBase {
+
+    @Before
+    public void setup() {
+        RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
+                new FraudStatsController(stubbedStatsProvider()));
+    }
+
+    private StatsProvider stubbedStatsProvider() {
+        return fraudType -&gt; {
+            switch (fraudType) {
+            case DRUNKS:
+                return 100;
+            case ALL:
+                return 200;
+            }
+            return 0;
+        };
+    }
+
+    public void assertThatRejectionReasonIsNull(Object rejectionReason) {
+        assert rejectionReason == null;
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, if you run the <code>./mvnw clean install</code>, you get something like the following output:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Results :
+
+Tests in error:
+  ContractVerifierTest.validate_shouldMarkClientAsFraud:32 » IllegalState Parsed...</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This error occurs because you have a new contract from which a test was generated and it
+failed since you have not implemented the feature. The auto-generated test would look
+like the following test method:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Test
+public void validate_shouldMarkClientAsFraud() throws Exception {
+    // given:
+        MockMvcRequestSpecification request = given()
+                .header("Content-Type", "application/vnd.fraud.v1+json")
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
+
+    // when:
+        ResponseOptions response = given().spec(request)
+                .put("/fraudcheck");
+
+    // then:
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
+    // and:
+        DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you used the Groovy DSL, you can see that all of the <code>producer()</code> parts of the Contract that were present in the
+<code>value(consumer(&#8230;&#8203;), producer(&#8230;&#8203;))</code> blocks got injected into the test.
+In case of using YAML, the same applied for the <code>matchers</code> sections of the <code>response</code>.</p>
+</div>
+<div class="paragraph">
+<p>Note that, on the producer side, you are also doing TDD. The expectations are expressed
+in the form of a test. This test sends a request to our own application with the URL,
+headers, and body defined in the contract. It is also expecting precisely defined values
+in the response. In other words, you have the <code>red</code> part of <code>red</code>, <code>green</code>, and
+<code>refactor</code>. It is time to convert the <code>red</code> into the <code>green</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-producer-impl"><a class="anchor" href="#getting-started-cdc-producer-impl"></a><a class="link" href="#getting-started-cdc-producer-impl">4.3.2. Write the Missing Implementation</a></h4>
+<div class="paragraph">
+<p>Because you know the expected input and expected output, you can write the missing
+implementation as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RequestMapping(value = "/fraudcheck", method = PUT)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+if (amountGreaterThanThreshold(fraudCheck)) {
+    return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
+}
+return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>When you run <code>./mvnw clean install</code> again, the tests pass. Since the <code>Spring Cloud
+Contract Verifier</code> plugin adds the tests to the <code>generated-test-sources</code>, you can
+actually run those tests from your IDE.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-producer-deploy"><a class="anchor" href="#getting-started-cdc-producer-deploy"></a><a class="link" href="#getting-started-cdc-producer-deploy">4.3.3. Deploying Your Application</a></h4>
+<div class="paragraph">
+<p>Once you finish your work, you can deploy your changes. To do so, you must first merge the
+branch by running the following commands:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ git checkout master
+$ git merge --no-ff contract-change-pr
+$ git push origin master</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Your CI might run something a command such as <code>./mvnw clean deploy</code>, which would publish both the
+application and the stub artifacts.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-started-cdc-consumer-final"><a class="anchor" href="#getting-started-cdc-consumer-final"></a><a class="link" href="#getting-started-cdc-consumer-final">4.4. Consumer Side (Loan Issuance), Final Step</a></h3>
+<div class="paragraph">
+<p>As a developer of the loan issuance service (a consumer of the Fraud Detection server), I want to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Merge our feature branch to <code>master</code></p>
+</li>
+<li>
+<p>Switch to online mode of working</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the final state of the process:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/getting-started-cdc-client-final.png" alt="getting started cdc client final" width="590" height="685">
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-final-merge"><a class="anchor" href="#getting-started-cdc-consumer-final-merge"></a><a class="link" href="#getting-started-cdc-consumer-final-merge">4.4.1. Merging a Branch to Master</a></h4>
+<div class="paragraph">
+<p>The following commands show one way to merge a branch into master with Git:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ git checkout master
+$ git merge --no-ff contract-change-pr</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="getting-started-cdc-consumer-final-online"><a class="anchor" href="#getting-started-cdc-consumer-final-online"></a><a class="link" href="#getting-started-cdc-consumer-final-online">4.4.2. Working Online</a></h4>
+<div class="paragraph">
+<p>Now you can disable the offline work for Spring Cloud Contract Stub Runner and indicate
+where the repository with your stubs is located. At this moment, the stubs of the server
+side are automatically downloaded from Nexus/Artifactory. You can set the value of
+<code>stubsMode</code> to <code>REMOTE</code>. The following code shows an example of
+achieving the same thing by changing the properties:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">stubrunner:
+  ids: 'com.example:http-server-dsl:+:stubs:8080'
+  repositoryRoot: https://repo.spring.io/libs-snapshot</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>That&#8217;s it. You have finished the tutorial.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started-whats-next"><a class="anchor" href="#getting-started-whats-next"></a><a class="link" href="#getting-started-whats-next">5. Next Steps</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Hopefully, this section provided some of the Spring Cloud Contract basics and got you on your way
+to writing your own applications. If you are a task-oriented type of developer, you might
+want to jump over to <a href="https://spring.io" class="bare">spring.io</a> and check out some of the
+<a href="https://spring.io/guides/">getting started</a> guides that solve specific &#8220;How do I do that
+with Spring?&#8221; problems. We also have Spring Cloud Contract-specific
+&#8220;<a href="howto.html#howto">how-to</a>&#8221; reference documentation.</p>
+</div>
+<div class="paragraph">
+<p>Otherwise, the next logical step is to read <a href="using.html#using">Using Spring Cloud Contract</a>. If
+you are really impatient, you could also jump ahead and read about
+<a href="project-features.html#project-features">Spring Cloud Contract features</a>.</p>
+</div>
+<div class="paragraph">
+<p>In addition to that you can check out the following videos:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"Consumer Driven Contracts and Your Microservice Architecture" by Olga Maciaszek-Sharma and Marcin Grzejszczak</p>
+</li>
+</ul>
+</div>
+<div class="videoblock">
+<div class="content">
+<iframe width="640" height="480" src="https://www.youtube.com/embed/pDkC_00hhvA?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"Contract Tests in the Enterprise" by Marcin Grzejszczak</p>
+</li>
+</ul>
+</div>
+<div class="videoblock">
+<div class="content">
+<iframe width="640" height="480" src="https://www.youtube.com/embed/ZyHG-VOzPZg?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"Why Contract Tests Matter?" by Marcin Grzejszczak</p>
+</li>
+</ul>
+</div>
+<div class="videoblock">
+<div class="content">
+<iframe width="640" height="480" src="https://www.youtube.com/embed/TvpkZu1e2Dc?rel=0&amp;start=6262" frameborder="0" allowfullscreen></iframe>
+</div>
+</div>
+<div class="paragraph">
+<p>You can find the default project samples at
+<a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples">samples</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can find the Spring Cloud Contract workshops <a href="https://cloud-samples.spring.io/spring-cloud-contract-samples/">here</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

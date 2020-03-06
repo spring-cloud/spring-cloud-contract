@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>Maven Project</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+	$('.primary').each(function() {
+		primary = $(this);
+		createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+		primary.children('.title').remove();
+	});
+	$('.secondary').each(function(idx, node) {
+		secondary = $(node);
+		primary = findPrimary(secondary);
+		switchItem = createSwitchItem(secondary, primary.children('.switch'));
+		switchItem.content.addClass('hidden');
+		findPrimary(secondary).append(switchItem.content);
+		secondary.remove();
+	});
+}
+
+function createBlockSwitch(primary) {
+	blockSwitch = $('<div class="switch"></div>');
+	primary.prepend(blockSwitch);
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	candidate = secondary.prev();
+	while (!candidate.is('.primary')) {
+		candidate = candidate.prev();
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	blockName = block.children('.title').text();
+	content = block.children('.content').first().append(block.next('.colist'));
+	item = $('<div class="switch--item">' + blockName + '</div>');
+	item.on('click', '', content, function(e) {
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		e.data.siblings('.content').addClass('hidden');
+		e.data.removeClass('hidden');
+	});
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+</script>
+
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>Maven Project</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#maven-add-plugin">1. Adding the Maven Plugin</a></li>
+<li><a href="#maven-rest-assured">2. Maven and Rest Assured 2.0</a></li>
+<li><a href="#maven-snapshot-versions">3. Using Snapshot and Milestone Versions for Maven</a></li>
+<li><a href="#maven-add-stubs">4. Adding stubs</a></li>
+<li><a href="#maven-run-plugin">5. Run plugin</a></li>
+<li><a href="#maven-configure-plugin">6. Configure plugin</a></li>
+<li><a href="#maven-configuration-options">7. Configuration Options</a></li>
+<li><a href="#maven-single-base">8. Single Base Class for All Tests</a></li>
+<li><a href="#maven-different-base">9. Using Different Base Classes for Contracts</a>
+<ul class="sectlevel2">
+<li><a href="#by-convention">9.1. By Convention</a></li>
+<li><a href="#by-mapping">9.2. By Mapping</a></li>
+</ul>
+</li>
+<li><a href="#maven-invoking-generated-tests">10. Invoking Generated Tests</a></li>
+<li><a href="#maven-pushing-stubs-to-scm">11. Pushing Stubs to SCM</a></li>
+<li><a href="#maven-sts">12. Maven Plugin and STS</a></li>
+<li><a href="#maven-plugin-with-spock-tests">13. Maven Plugin with Spock Tests</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>To learn how to set up the Maven project for Spring Cloud Contract Verifier, read the
+following sections:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#maven-add-plugin">Adding the Maven Plugin</a></p>
+</li>
+<li>
+<p><a href="#maven-rest-assured">Maven and Rest Assured 2.0</a></p>
+</li>
+<li>
+<p><a href="#maven-snapshot-versions">Using Snapshot and Milestone Versions for Maven</a></p>
+</li>
+<li>
+<p><a href="#maven-add-stubs">Adding stubs</a></p>
+</li>
+<li>
+<p><a href="#maven-run-plugin">Run plugin</a></p>
+</li>
+<li>
+<p><a href="#maven-configure-plugin">Configure plugin</a></p>
+</li>
+<li>
+<p><a href="#maven-configuration-options">Configuration Options</a></p>
+</li>
+<li>
+<p><a href="#maven-single-base">Single Base Class for All Tests</a></p>
+</li>
+<li>
+<p><a href="#maven-different-base">Using Different Base Classes for Contracts</a></p>
+</li>
+<li>
+<p><a href="#maven-invoking-generated-tests">Invoking Generated Tests</a></p>
+</li>
+<li>
+<p><a href="#maven-pushing-stubs-to-scm">Pushing Stubs to SCM</a></p>
+</li>
+<li>
+<p><a href="#maven-sts">Maven Plugin and STS</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can also check the plugin&#8217;s documentation  <a href="../../spring-cloud-contract-maven-plugin/index.html">here</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-add-plugin"><a class="anchor" href="#maven-add-plugin"></a><a class="link" href="#maven-add-plugin">1. Adding the Maven Plugin</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Add the Spring Cloud Contract BOM in a fashion similar to the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-release.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, add the <code>Spring Cloud Contract Verifier</code> Maven plugin, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
+&lt;!--                    &lt;convertToYaml&gt;true&lt;/convertToYaml&gt;--&gt;
+                &lt;/configuration&gt;
+                &lt;!-- if additional dependencies are needed e.g. for Pact --&gt;
+                &lt;dependencies&gt;
+                    &lt;dependency&gt;
+                        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                        &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
+                        &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+                    &lt;/dependency&gt;
+                &lt;/dependencies&gt;
+            &lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can read more in the
+spring-cloud-contract-maven-plugin/index.html[Spring
+Cloud Contract Maven Plugin Documentation].</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, regardless of the picked IDE, you can see that the <code>target/generated-test-source</code> folder is not visible on the IDE&#8217;s classpath. To ensure that it&#8217;s always there, you can add the following entry to your <code>pom.xml</code></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+                &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+                &lt;artifactId&gt;build-helper-maven-plugin&lt;/artifactId&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;id&gt;add-source&lt;/id&gt;
+                        &lt;phase&gt;generate-test-sources&lt;/phase&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;add-test-source&lt;/goal&gt;
+                        &lt;/goals&gt;
+                        &lt;configuration&gt;
+                            &lt;sources&gt;
+                                &lt;source&gt;${project.build.directory}/generated-test-sources/contracts/&lt;/source&gt;
+                            &lt;/sources&gt;
+                        &lt;/configuration&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-rest-assured"><a class="anchor" href="#maven-rest-assured"></a><a class="link" href="#maven-rest-assured">2. Maven and Rest Assured 2.0</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, Rest Assured 3.x is added to the classpath. However, you can use Rest
+Assured 2.x by adding it to the plugins classpath, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+    &lt;/configuration&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-verifier&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+           &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+           &lt;version&gt;2.5.0&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+           &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+           &lt;version&gt;2.5.0&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- all dependencies --&gt;
+    &lt;!-- you can exclude rest-assured from spring-cloud-contract-verifier --&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+       &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+       &lt;version&gt;2.5.0&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
+       &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+       &lt;version&gt;2.5.0&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>That way, the plugin automatically sees that Rest Assured 2.x is present on the classpath
+and modifies the imports accordingly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-snapshot-versions"><a class="anchor" href="#maven-snapshot-versions"></a><a class="link" href="#maven-snapshot-versions">3. Using Snapshot and Milestone Versions for Maven</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To use Snapshot and Milestone versions, you have to add the following section to your
+<code>pom.xml</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-snapshots&lt;/id&gt;
+        &lt;name&gt;Spring Snapshots&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-releases&lt;/id&gt;
+        &lt;name&gt;Spring Releases&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-snapshots&lt;/id&gt;
+        &lt;name&gt;Spring Snapshots&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/pluginRepository&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/pluginRepository&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-releases&lt;/id&gt;
+        &lt;name&gt;Spring Releases&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-add-stubs"><a class="anchor" href="#maven-add-stubs"></a><a class="link" href="#maven-add-stubs">4. Adding stubs</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, Spring Cloud Contract Verifier looks for stubs in the
+<code>src/test/resources/contracts</code> directory. The directory containing stub definitions is
+treated as a class name, and each stub definition is treated as a single test. We assume
+that it contains at least one directory to be used as the test class name. If there is more
+than one level of nested directories, all except the last one is used as the package name.
+Consider the following structure:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">src/test/resources/contracts/myservice/shouldCreateUser.groovy
+src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Given that structure, Spring Cloud Contract Verifier creates a test class named
+<code>defaultBasePackage.MyService</code> with two methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>shouldCreateUser()</code></p>
+</li>
+<li>
+<p><code>shouldReturnUser()</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-run-plugin"><a class="anchor" href="#maven-run-plugin"></a><a class="link" href="#maven-run-plugin">5. Run plugin</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>generateTests</code> plugin goal is assigned to be invoked in the phase called
+<code>generate-test-sources</code>. If you want it to be part of your build process, you need not do
+anything. If you want only to generate tests, invoke the <code>generateTests</code> goal.</p>
+</div>
+<div class="paragraph">
+<p>If you want to run stubs via Maven it&#8217;s enough to call the <code>run</code> goal with the stubs to run as the <code>spring.cloud.contract.verifier.stubs</code> system property as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:run \
+-Dspring.cloud.contract.verifier.stubs="com.acme:service-name"</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-configure-plugin"><a class="anchor" href="#maven-configure-plugin"></a><a class="link" href="#maven-configure-plugin">6. Configure plugin</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To change the default configuration, you can add a <code>configuration</code> section to the plugin
+definition or the <code>execution</code> definition, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;convert&lt;/goal&gt;
+                &lt;goal&gt;generateStubs&lt;/goal&gt;
+                &lt;goal&gt;generateTests&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+    &lt;configuration&gt;
+        &lt;basePackageForTests&gt;org.springframework.cloud.verifier.twitter.place&lt;/basePackageForTests&gt;
+        &lt;baseClassForTests&gt;org.springframework.cloud.verifier.twitter.place.BaseMockMvcSpec&lt;/baseClassForTests&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-configuration-options"><a class="anchor" href="#maven-configuration-options"></a><a class="link" href="#maven-configuration-options">7. Configuration Options</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><code>testMode</code>: Defines the mode for acceptance tests. By default, the mode is <code>MockMvc</code>,
+which is based on Spring&#8217;s MockMvc. You can also change it to <code>WebTestClient</code>, <code>JaxRsClient</code>, or
+<code>Explicit</code> (for real HTTP calls).</p>
+</li>
+<li>
+<p><code>basePackageForTests</code>: Specifies the base package for all generated tests. If not set,
+the value is picked from the package of <code>baseClassForTests</code> and from <code>packageWithBaseClasses</code>.
+If neither of these values are set, the value is set to
+<code>org.springframework.cloud.contract.verifier.tests</code>.</p>
+</li>
+<li>
+<p><code>ruleClassForTests</code>: Specifies a rule that should be added to the generated test
+classes.</p>
+</li>
+<li>
+<p><code>baseClassForTests</code>: Creates a base class for all generated tests. By default, if you
+use Spock classes, the class is <code>spock.lang.Specification</code>.</p>
+</li>
+<li>
+<p>contractsDirectory: Specifies a directory that contains contracts written with the
+Groovyn DSL. The default directory is <code>/src/test/resources/contracts</code>.</p>
+</li>
+<li>
+<p><code>generatedTestSourcesDir</code>: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default, its value is
+<code>$buildDir/generated-test-sources/contracts</code>.</p>
+</li>
+<li>
+<p><code>generatedTestResourcesDir</code>: Specifies the test resource directory for resources used by the generated tests.</p>
+</li>
+<li>
+<p><code>testFramework</code>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code>TestFramework.JUNIT</code>), and
+JUnit 5 are supported, with JUnit 4 being the default framework.</p>
+</li>
+<li>
+<p><code>packageWithBaseClasses</code>: Defines a package where all the base classes reside. This
+setting takes precedence over <code>baseClassForTests</code>. The convention is such that, if you
+have a contract under (for example) <code>src/test/resources/contract/foo/bar/baz/</code> and set
+the value of the <code>packageWithBaseClasses</code> property to <code>com.example.base</code>, Spring
+Cloud Contract Verifier assumes that there is a <code>BarBazBase</code> class under the
+<code>com.example.base</code> package. In other words, the system takes the last two parts of the
+package, if they exist, and forms a class with <code>Base</code> as a suffix.</p>
+</li>
+<li>
+<p><code>baseClassMappings</code>: Specifies a list of base class mappings that provide
+<code>contractPackageRegex</code> (which is checked against the package where the contract is
+located) and <code>baseClassFQN</code>( which maps to the fully qualified name of the base class for
+the matched contract). For example, if you have a contract under
+<code>src/test/resources/contract/foo/bar/baz/</code> and map the
+<code>.* &#8594; com.example.base.BaseClass</code> property, the test class generated from these contracts
+extends <code>com.example.base.BaseClass</code>. This setting takes precedence over
+<code>packageWithBaseClasses</code> and <code>baseClassForTests</code>.</p>
+</li>
+<li>
+<p><code>contractsProperties</code>: A map that contains properties to be passed to Spring Cloud Contract
+components. Those properties might be used by (for example) built-in or custom Stub Downloaders.</p>
+</li>
+<li>
+<p><code>failOnNoContracts</code>: When enabled, will throw an exception when no contracts were found. Defaults to <code>true</code>.</p>
+</li>
+<li>
+<p><code>failOnInProgress</code>: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to <code>true</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you want to download your contract definitions from a Maven repository, you can use
+the following options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>contractDependency</code>: The contract dependency that contains all the packaged contracts.</p>
+</li>
+<li>
+<p><code>contractsPath</code>: The path to the concrete contracts in the JAR with packaged contracts.
+Defaults to <code>groupid/artifactid</code> where <code>gropuid</code> is slash separated.</p>
+</li>
+<li>
+<p><code>contractsMode</code>: Picks the mode in which stubs are found and registered.</p>
+</li>
+<li>
+<p><code>deleteStubsAfterTest</code>: If set to <code>false</code> will not remove any downloaded
+contracts from temporary directories.</p>
+</li>
+<li>
+<p><code>contractsRepositoryUrl</code>: URL to a repository with the artifacts that have contracts. If it is not provided,
+use the current Maven ones.</p>
+</li>
+<li>
+<p><code>contractsRepositoryUsername</code>: The user name to be used to connect to the repo with contracts.</p>
+</li>
+<li>
+<p><code>contractsRepositoryPassword</code>: The password to be used to connect to the repo with contracts.</p>
+</li>
+<li>
+<p><code>contractsRepositoryProxyHost</code>: The proxy host to be used to connect to the repo with contracts.</p>
+</li>
+<li>
+<p><code>contractsRepositoryProxyPort</code>: The proxy port to be used to connect to the repo with contracts.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We cache only non-snapshot, explicitly provided versions (for example
+<code>+</code> or <code>1.0.0.BUILD-SNAPSHOT</code> do not get cached). By default, this feature is turned on.</p>
+</div>
+<div class="paragraph">
+<p>The following list describes experimental features that you can turn on in the plugin:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>convertToYaml</code>: Converts all DSLs to the declarative YAML format. This can be extremely useful when you use external libraries in your Groovy DSLs. By turning this feature on (by setting it to <code>true</code>) you need not add the library dependency on the consumer side.</p>
+</li>
+<li>
+<p><code>assertJsonSize</code>: You can check the size of JSON arrays in the generated tests. This feature is disabled by default.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-single-base"><a class="anchor" href="#maven-single-base"></a><a class="link" href="#maven-single-base">8. Single Base Class for All Tests</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using Spring Cloud Contract Verifier in the default (<code>MockMvc</code>), you need to create a base
+specification for all generated acceptance tests. In this class, you need to point to an
+endpoint, which should be verified. The following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package org.mycompany.tests
+
+import org.mycompany.ExampleSpringController
+import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
+import spock.lang.Specification
+
+class MvcSpec extends Specification {
+  def setup() {
+   RestAssuredMockMvc.standaloneSetup(new ExampleSpringController())
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also setup the whole context if necessary, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")
+public abstract class BaseTestClass {
+
+    @Autowired
+    WebApplicationContext context;
+
+    @Before
+    public void setup() {
+        RestAssuredMockMvc.webAppContextSetup(this.context);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you use <code>EXPLICIT</code> mode, you can use a base class to initialize the whole tested app,
+similar to what you might do in regular integration tests. The following example shows
+how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.restassured.RestAssured;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")
+public abstract class BaseTestClass {
+
+    @LocalServerPort
+    int port;
+
+    @Before
+    public void setup() {
+        RestAssured.baseURI = "http://localhost:" + this.port;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you use the <code>JAXRSCLIENT</code> mode, this base class should also contain a <code>protected WebTarget webTarget</code> field. Right
+now, the only way to test the JAX-RS API is to start a web server.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-different-base"><a class="anchor" href="#maven-different-base"></a><a class="link" href="#maven-different-base">9. Using Different Base Classes for Contracts</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your base classes differ between contracts, you can tell the Spring Cloud Contract
+plugin which class should get extended by the autogenerated tests. You have two options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Follow a convention by providing a value for <code>packageWithBaseClasses</code></p>
+</li>
+<li>
+<p>Provide explicit mapping with <code>baseClassMappings</code></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="by-convention"><a class="anchor" href="#by-convention"></a><a class="link" href="#by-convention">9.1. By Convention</a></h3>
+<div class="paragraph">
+<p>The convention is such that if you have a contract under (for example)
+<code>src/test/resources/contract/foo/bar/baz/</code> and set the value of the
+<code>packageWithBaseClasses</code> property to <code>com.example.base</code>, then Spring Cloud Contract
+Verifier assumes that there is a <code>BarBazBase</code> class under the <code>com.example.base</code> package.
+In other words, the system takes the last two parts of the package, if they exist, and
+forms a class with a <code>Base</code> suffix. This rule takes precedence over <code>baseClassForTests</code>.
+The following example shows how it works in the <code>contracts</code> closure:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;packageWithBaseClasses&gt;hello&lt;/packageWithBaseClasses&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="by-mapping"><a class="anchor" href="#by-mapping"></a><a class="link" href="#by-mapping">9.2. By Mapping</a></h3>
+<div class="paragraph">
+<p>You can manually map a regular expression of the contract&#8217;s package to the fully qualified
+name of the base class for the matched contract. You have to provide a list called
+<code>baseClassMappings</code> that consists of <code>baseClassMapping</code> objects that each take a
+<code>contractPackageRegex</code> to <code>baseClassFQN</code> mapping. Consider the following example:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;baseClassForTests&gt;com.example.FooBase&lt;/baseClassForTests&gt;
+        &lt;baseClassMappings&gt;
+            &lt;baseClassMapping&gt;
+                &lt;contractPackageRegex&gt;.*com.*&lt;/contractPackageRegex&gt;
+                &lt;baseClassFQN&gt;com.example.TestBase&lt;/baseClassFQN&gt;
+            &lt;/baseClassMapping&gt;
+        &lt;/baseClassMappings&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Assume that you have contracts under these two locations:
+* <code>src/test/resources/contract/com/</code>
+* <code>src/test/resources/contract/foo/</code></p>
+</div>
+<div class="paragraph">
+<p>By providing the <code>baseClassForTests</code>, we have a fallback in case mapping did not succeed.
+(You can also provide the <code>packageWithBaseClasses</code> as a fallback.) That way, the tests
+generated from <code>src/test/resources/contract/com/</code> contracts extend the
+<code>com.example.ComBase</code>, whereas the rest of the tests extend <code>com.example.FooBase</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-invoking-generated-tests"><a class="anchor" href="#maven-invoking-generated-tests"></a><a class="link" href="#maven-invoking-generated-tests">10. Invoking Generated Tests</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Spring Cloud Contract Maven Plugin generates verification code in a directory called
+<code>/generated-test-sources/contractVerifier</code> and attaches this directory to <code>testCompile</code>
+goal.</p>
+</div>
+<div class="paragraph">
+<p>For Groovy Spock code, you can use the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.codehaus.gmavenplus&lt;/groupId&gt;
+    &lt;artifactId&gt;gmavenplus-plugin&lt;/artifactId&gt;
+    &lt;version&gt;1.5&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;testCompile&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+    &lt;configuration&gt;
+        &lt;testSources&gt;
+            &lt;testSource&gt;
+                &lt;directory&gt;${project.basedir}/src/test/groovy&lt;/directory&gt;
+                &lt;includes&gt;
+                    &lt;include&gt;**/*.groovy&lt;/include&gt;
+                &lt;/includes&gt;
+            &lt;/testSource&gt;
+            &lt;testSource&gt;
+                &lt;directory&gt;${project.build.directory}/generated-test-sources/contractVerifier&lt;/directory&gt;
+                &lt;includes&gt;
+                    &lt;include&gt;**/*.groovy&lt;/include&gt;
+                &lt;/includes&gt;
+            &lt;/testSource&gt;
+        &lt;/testSources&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>To ensure that the provider side is compliant with defined contracts, you need to invoke
+<code>mvn generateTest test</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-pushing-stubs-to-scm"><a class="anchor" href="#maven-pushing-stubs-to-scm"></a><a class="link" href="#maven-pushing-stubs-to-scm">11. Pushing Stubs to SCM</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you use the SCM (Source Control Management) repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, you can add the <code>pushStubsToScm</code>
+goal. The following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- Base class mappings etc. --&gt;
+
+        &lt;!-- We want to pick contracts from a Git repository --&gt;
+        &lt;contractsRepositoryUrl&gt;git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git&lt;/contractsRepositoryUrl&gt;
+
+        &lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+            &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;/contractDependency&gt;
+
+        &lt;!-- The contracts mode can't be classpath --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;
+                &lt;goal&gt;pushStubsToScm&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Under <a href="#scm-stub-downloader">[scm-stub-downloader]</a>, you can find all possible
+configuration options that you can pass through
+the <code>&lt;configuration&gt;&lt;contractProperties&gt;</code> map, a system property,
+or an environment variable.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-sts"><a class="anchor" href="#maven-sts"></a><a class="link" href="#maven-sts">12. Maven Plugin and STS</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following image shows an exception that you may see when you use STS:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.2.x/docs/src/main/asciidoc/images/sts_exception.png" alt="STS Exception">
+</div>
+</div>
+<div class="paragraph">
+<p>When you click on the error marker you should see something like the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> plugin:1.1.0.M1:convert:default-convert:process-test-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
+ cloud-contract-maven-plugin:1.1.0.M1:convert failed. at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:145) at
+ org.eclipse.m2e.core.internal.embedder.MavenImpl.execute(MavenImpl.java:331) at org.eclipse.m2e.core.internal.embedder.MavenImpl$11.call(MavenImpl.java:1362) at
+...
+ org.eclipse.core.internal.jobs.Worker.run(Worker.java:55) Caused by: java.lang.NullPointerException at
+ org.eclipse.m2e.core.internal.builder.plexusbuildapi.EclipseIncrementalBuildContext.hasDelta(EclipseIncrementalBuildContext.java:53) at
+ org.sonatype.plexus.build.incremental.ThreadBuildContext.hasDelta(ThreadBuildContext.java:59) at</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to fix this issue, provide the following section in your <code>pom.xml</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
+    &lt;pluginManagement&gt;
+        &lt;plugins&gt;
+            &lt;!--This plugin's configuration is used to store Eclipse m2e settings
+                only. It has no influence on the Maven build itself. --&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.eclipse.m2e&lt;/groupId&gt;
+                &lt;artifactId&gt;lifecycle-mapping&lt;/artifactId&gt;
+                &lt;version&gt;1.0.0&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;lifecycleMappingMetadata&gt;
+                        &lt;pluginExecutions&gt;
+                             &lt;pluginExecution&gt;
+                                &lt;pluginExecutionFilter&gt;
+                                    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                                    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                                    &lt;versionRange&gt;[1.0,)&lt;/versionRange&gt;
+                                    &lt;goals&gt;
+                                        &lt;goal&gt;convert&lt;/goal&gt;
+                                    &lt;/goals&gt;
+                                &lt;/pluginExecutionFilter&gt;
+                                &lt;action&gt;
+                                    &lt;execute /&gt;
+                                &lt;/action&gt;
+                             &lt;/pluginExecution&gt;
+                        &lt;/pluginExecutions&gt;
+                    &lt;/lifecycleMappingMetadata&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/pluginManagement&gt;
+&lt;/build&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-plugin-with-spock-tests"><a class="anchor" href="#maven-plugin-with-spock-tests"></a><a class="link" href="#maven-plugin-with-spock-tests">13. Maven Plugin with Spock Tests</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can select the <a href="http://spockframework.org/">Spock Framework</a> for creating and running the auto-generated contract
+verification tests with both Maven and Gradle. However, whereas using Gradle is straightforward,
+in Maven, you will require some additional setup in order to make the tests compile and execute properly.</p>
+</div>
+<div class="paragraph">
+<p>First of all, you must use a plugin, such as the <a href="https://github.com/groovy/GMavenPlus">GMavenPlus</a> plugin,
+to add Groovy to your project. In GMavenPlus plugin, you need to explicitly set test sources, including both the
+path where your base test classes are defined and the path were the generated contract tests are added.
+The following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.codehaus.gmavenplus&lt;/groupId&gt;
+    &lt;artifactId&gt;gmavenplus-plugin&lt;/artifactId&gt;
+    &lt;version&gt;1.6.1&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;compileTests&lt;/goal&gt;
+                &lt;goal&gt;addTestSources&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+    &lt;configuration&gt;
+        &lt;testSources&gt;
+            &lt;testSource&gt;
+                &lt;directory&gt;${project.basedir}/src/test/groovy&lt;/directory&gt;
+                &lt;includes&gt;
+                    &lt;include&gt;**/*.groovy&lt;/include&gt;
+                &lt;/includes&gt;
+            &lt;/testSource&gt;
+            &lt;testSource&gt;
+                &lt;directory&gt;
+                    ${project.basedir}/target/generated-test-sources/contracts/com/example/beer
+                &lt;/directory&gt;
+                &lt;includes&gt;
+                    &lt;include&gt;**/*.groovy&lt;/include&gt;
+                    &lt;include&gt;**/*.gvy&lt;/include&gt;
+                &lt;/includes&gt;
+            &lt;/testSource&gt;
+        &lt;/testSources&gt;
+    &lt;/configuration&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;
+            &lt;artifactId&gt;groovy-all&lt;/artifactId&gt;
+            &lt;version&gt;${groovy.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you uphold the Spock convention of ending the test class names with <code>Spec</code>, you also need to adjust your Maven
+Surefire plugin setup, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;includes&gt;
+            &lt;include&gt;**/*Test.java&lt;/include&gt;
+            &lt;include&gt;**/*Spec.java&lt;/include&gt;
+        &lt;/includes&gt;
+        &lt;failIfNoTests&gt;true&lt;/failIfNoTests&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>Using Spring Cloud Contract</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+	$('.primary').each(function() {
+		primary = $(this);
+		createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+		primary.children('.title').remove();
+	});
+	$('.secondary').each(function(idx, node) {
+		secondary = $(node);
+		primary = findPrimary(secondary);
+		switchItem = createSwitchItem(secondary, primary.children('.switch'));
+		switchItem.content.addClass('hidden');
+		findPrimary(secondary).append(switchItem.content);
+		secondary.remove();
+	});
+}
+
+function createBlockSwitch(primary) {
+	blockSwitch = $('<div class="switch"></div>');
+	primary.prepend(blockSwitch);
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	candidate = secondary.prev();
+	while (!candidate.is('.primary')) {
+		candidate = candidate.prev();
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	blockName = block.children('.title').text();
+	content = block.children('.content').first().append(block.next('.colist'));
+	item = $('<div class="switch--item">' + blockName + '</div>');
+	item.on('click', '', content, function(e) {
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		e.data.siblings('.content').addClass('hidden');
+		e.data.removeClass('hidden');
+	});
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+</script>
+
+</head>
+<body id="using" class="book toc2 toc-left">
+<div id="header">
+<h1>Using Spring Cloud Contract</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#flows-provider-nexus">1. Provider Contract Testing with Stubs in Nexus or Artifactory</a></li>
+<li><a href="#flows-provider-git">2. Provider Contract Testing with Stubs in Git</a>
+<ul class="sectlevel2">
+<li><a href="#prerequisites">2.1. Prerequisites</a></li>
+<li><a href="#flows-provider-git-flow">2.2. The Flow</a></li>
+<li><a href="#flows-provider-git-consumer">2.3. Consumer setup</a></li>
+<li><a href="#flows-provider-git-producer">2.4. Setting up the Producer</a></li>
+</ul>
+</li>
+<li><a href="#flows-cdc-contracts-producer">3. Consumer Driven Contracts with Contracts on the Producer Side</a></li>
+<li><a href="#flows-cdc-contracts-external">4. Consumer Driven Contracts with Contracts in an External Repository</a>
+<ul class="sectlevel2">
+<li><a href="#prerequisites-2">4.1. Prerequisites</a></li>
+<li><a href="#flows-cdc-contracts-external-consumer">4.2. Consumer Flow</a></li>
+<li><a href="#flows-cdc-contracts-external-producer">4.3. Producer Flow</a></li>
+</ul>
+</li>
+<li><a href="#flows-cdc-contracts-stubs-git">5. Consumer Driven Contracts with Contracts on the Producer Side, Pushed to Git</a></li>
+<li><a href="#flows-provider-non-spring">6. Provider Contract Testing with Stubs in Artifactory for a non-Spring Application</a>
+<ul class="sectlevel2">
+<li><a href="#flows-provider-non-spring-flow">6.1. The Flow</a></li>
+<li><a href="#flows-provider-non-spring-consumer">6.2. Setting up the Consumer</a></li>
+<li><a href="#flows-provider-non-spring-producer">6.3. Setting up the Producer</a></li>
+</ul>
+</li>
+<li><a href="#flows-provider-non-jvm">7. Provider Contract Testing with Stubs in Artifactory in a non-JVM World</a>
+<ul class="sectlevel2">
+<li><a href="#flows-provider-non-jvm-producer">7.1. Producer Flow</a></li>
+<li><a href="#flows-provider-non-jvm-consumer">7.2. Consumer Flow</a></li>
+</ul>
+</li>
+<li><a href="#flows-provider-rest-docs">8. Provider Contract Testing with REST Docs and Stubs in Nexus or Artifactory</a>
+<ul class="sectlevel2">
+<li><a href="#flows-provider-rest-docs-producer">8.1. Producer Flow</a></li>
+<li><a href="#flows-provider-rest-docs-consumer">8.2. Consumer Flow</a></li>
+</ul>
+</li>
+<li><a href="#using-whats-next">9. What to Read Next</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section goes into more detail about how you should use Spring Cloud Contract. It covers topics
+such as flows of how to work with Spring Cloud Contract. We also
+cover some Spring Cloud Contract best practices.</p>
+</div>
+<div class="paragraph">
+<p>If you are starting out with Spring Cloud Contract, you should probably read the
+<a href="getting-started.html#getting-started">Getting Started</a> guide before diving into this
+section.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-provider-nexus"><a class="anchor" href="#flows-provider-nexus"></a><a class="link" href="#flows-provider-nexus">1. Provider Contract Testing with Stubs in Nexus or Artifactory</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can check the <a href="getting-started.html#getting-started-first-application">Developing Your First Spring Cloud Contract based application</a> link to see the provider contract testing with stubs in the Nexus or Artifactory flow.</p>
+</div>
+<div class="paragraph">
+<p>You can also check the <a href="https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/contracts_on_the_producer_side.html">workshop page</a> for a step-by-step instruction on how to do this flow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-provider-git"><a class="anchor" href="#flows-provider-git"></a><a class="link" href="#flows-provider-git">2. Provider Contract Testing with Stubs in Git</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this flow, we perform the provider contract testing (the producer has no knowledge of how consumers use their API). The stubs are uploaded to a separate repository (they are not uploaded to Artifactory or Nexus).</p>
+</div>
+<div class="sect2">
+<h3 id="prerequisites"><a class="anchor" href="#prerequisites"></a><a class="link" href="#prerequisites">2.1. Prerequisites</a></h3>
+<div class="paragraph">
+<p>Before testing provider contracts with stubs in git, you must provide a git repository
+that contains all the stubs for each producer. For an example of such a project, see
+<a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x//contract_git">this samples </a> or <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x//contract_git">this sample</a>.
+As a result of pushing stubs there, the repository has the following structure:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>$ tree .
+└── META-INF
+   └── folder.with.group.id.as.its.name
+       └── folder-with-artifact-id
+           └── folder-with-version
+               ├── contractA.groovy
+               ├── contractB.yml
+               └── contractC.groovy</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You must also provide consumer code that has Spring Cloud Contract Stub Runner set up. For
+an example of such a project, see <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x//consumer">this sample</a> and search for a
+<code>BeerControllerGitTest</code> test. You must also provide producer code that has Spring Cloud
+Contract set up, together with a plugin. For an example of such a project, see
+<a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x//producer_with_empty_git">this sample</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-git-flow"><a class="anchor" href="#flows-provider-git-flow"></a><a class="link" href="#flows-provider-git-flow">2.2. The Flow</a></h3>
+<div class="paragraph">
+<p>The flow looks exactly as the one presented in
+<a href="getting-started.html#getting-started-first-application">Developing Your First Spring Cloud Contract based application</a>,
+but the <code>Stub Storage</code> implementation is a git repository.</p>
+</div>
+<div class="paragraph">
+<p>You can read more about setting up a git repository and setting consumer and producer side
+in the <a href="howto.html#how-to-use-git-as-storage">How To page</a> of the documentation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-git-consumer"><a class="anchor" href="#flows-provider-git-consumer"></a><a class="link" href="#flows-provider-git-consumer">2.3. Consumer setup</a></h3>
+<div class="paragraph">
+<p>In order to fetch the stubs from a git repository instead of Nexus or Artifactory, you
+need to use the <code>git</code> protocol in the URL of the <code>repositoryRoot</code> property in Stub Runner.
+The following example shows how to set it up:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Annotation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AutoConfigureStubRunner(
+stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+        repositoryRoot = "git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git",
+        ids = "com.example:artifact-id:0.0.1")</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">JUnit 4 Rule</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Rule
+    public StubRunnerRule rule = new StubRunnerRule()
+            .downloadStub("com.example","artifact-id", "0.0.1")
+            .repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+            .stubsMode(StubRunnerProperties.StubsMode.REMOTE);</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">JUnit 5 Extension</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RegisterExtension
+    public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+            .downloadStub("com.example","artifact-id", "0.0.1")
+            .repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+            .stubsMode(StubRunnerProperties.StubsMode.REMOTE);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-git-producer"><a class="anchor" href="#flows-provider-git-producer"></a><a class="link" href="#flows-provider-git-producer">2.4. Setting up the Producer</a></h3>
+<div class="paragraph">
+<p>In order to push the stubs to a git repository instead of Nexus or Artifactory, you need
+to use the <code>git</code> protocol in the URL of the plugin setup. Also you need to explicitly tell
+the plugin to push the stubs at the end of the build process. The following example shows
+how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- Base class mappings etc. --&gt;
+
+        &lt;!-- We want to pick contracts from a Git repository --&gt;
+        &lt;contractsRepositoryUrl&gt;git://git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git&lt;/contractsRepositoryUrl&gt;
+
+        &lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+            &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;/contractDependency&gt;
+
+        &lt;!-- The contracts mode can't be classpath --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;
+                &lt;goal&gt;pushStubsToScm&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    // We want to pick contracts from a Git repository
+    contractDependency {
+        stringNotation = "${project.group}:${project.name}:${project.version}"
+    }
+    /*
+    We reuse the contract dependency section to set up the path
+    to the folder that contains the contract definitions. In our case the
+    path will be /groupId/artifactId/version/contracts
+     */
+    contractRepository {
+        repositoryUrl = "git://git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git"
+    }
+    // The mode can't be classpath
+    contractsMode = "REMOTE"
+    // Base class mappings etc.
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publish.dependsOn("publishStubsToScm")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can read more about setting up a git repository in the
+<a href="howto.html#how-to-use-git-as-storage">How To page</a> of the documentation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-cdc-contracts-producer"><a class="anchor" href="#flows-cdc-contracts-producer"></a><a class="link" href="#flows-cdc-contracts-producer">3. Consumer Driven Contracts with Contracts on the Producer Side</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See <a href="getting-started.html#getting-started-cdc">Step-by-step Guide to Consumer Driven
+Contracts (CDC) with Contracts on the Producer Side</a> to see the Consumer Driven Contracts
+with contracts on the producer side flow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-cdc-contracts-external"><a class="anchor" href="#flows-cdc-contracts-external"></a><a class="link" href="#flows-cdc-contracts-external">4. Consumer Driven Contracts with Contracts in an External Repository</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this flow, we perform Consumer Driven Contract testing. The contract definitions are
+stored in a separate repository.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/contracts_on_the_producer_side.html">workshop page</a>
+for step-by-step instructions on how to do this flow.</p>
+</div>
+<div class="sect2">
+<h3 id="prerequisites-2"><a class="anchor" href="#prerequisites-2"></a><a class="link" href="#prerequisites-2">4.1. Prerequisites</a></h3>
+<div class="paragraph">
+<p>To use consumer-driven contracts with the contracts held in an external repository, you need to set up a git repository that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Contains all the contract definitions for each producer.</p>
+</li>
+<li>
+<p>Can package the contract definitions in a JAR.</p>
+</li>
+<li>
+<p>For each contract producer, contains a way (for example, <code>pom.xml</code>) to install stubs
+locally through the Spring Cloud Contract Plugin (SCC Plugin)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For more information, see the <a href="howto.html#how-to-common-repo-with-contracts">How To section</a>,
+where we describe how to set up such a repository
+For an example of such a project, see <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x//beer_contracts">this sample</a>.</p>
+</div>
+<div class="paragraph">
+<p>You also need consumer code that has Spring Cloud Contract Stub Runner set up.
+For an example of such a project, see <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x//consumer">this sample</a>.
+You also need producer code that has Spring Cloud Contract set up, together with a plugin.
+For an example of such a project, see <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x//producer_with_external_contracts">this sample</a>.
+The stub storage is Nexus or Artifactory</p>
+</div>
+<div class="paragraph">
+<p>At a high level, the flow looks as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The consumer works with the contract definitions from the separate repository</p>
+</li>
+<li>
+<p>Once the consumer&#8217;s work is done, a branch with working code is done on the consumer
+side and a pull request is made to the separate repository that holds the contract definitions.</p>
+</li>
+<li>
+<p>The producer takes over the pull request to the separate repository with contract
+definitions and installs the JAR with all contracts locally.</p>
+</li>
+<li>
+<p>The producer generates tests from the locally stored JAR and writes the missing
+implementation to make the tests pass.</p>
+</li>
+<li>
+<p>Once the producer&#8217;s work is done, the pull request to the repository that holds the
+contract definitions is merged.</p>
+</li>
+<li>
+<p>After the CI tool builds the repository with the contract definitions and the JAR with
+contract definitions gets uploaded to Nexus or Artifactory, the producer can merge its branch.</p>
+</li>
+<li>
+<p>Finally, the consumer can switch to working online to fetch stubs of the producer from a
+remote location, and the branch can be merged to master.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-cdc-contracts-external-consumer"><a class="anchor" href="#flows-cdc-contracts-external-consumer"></a><a class="link" href="#flows-cdc-contracts-external-consumer">4.2. Consumer Flow</a></h3>
+<div class="paragraph">
+<p>The consumer:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Writes a test that would send a request to the producer.</p>
+<div class="paragraph">
+<p>The test fails due to no server being present.</p>
+</div>
+</li>
+<li>
+<p>Clones the repository that holds the contract definitions.</p>
+</li>
+<li>
+<p>Set up the requirements as contracts under the folder with the consumer name as a subfolder of the producer.</p>
+<div class="paragraph">
+<p>For example, for a producer named <code>producer</code> and a consumer named <code>consumer</code>, the contracts would be stored under <code>src/main/resources/contracts/producer/consumer/</code>)</p>
+</div>
+</li>
+<li>
+<p>Once the contracts are defined, installs the producer stubs to local storage, as the following example shows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>$ cd src/main/resource/contracts/producer
+$ ./mvnw clean install</pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Sets up Spring Cloud Contract (SCC) Stub Runner in the consumer tests, to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fetch the producer stubs from local storage.</p>
+</li>
+<li>
+<p>Work in the stubs-per-consumer mode (this enables consumer driven contracts mode).</p>
+<div class="paragraph">
+<p>The SCC Stub Runner:</p>
+</div>
+</li>
+<li>
+<p>Fetches the producer stubs.</p>
+</li>
+<li>
+<p>Runs an in-memory HTTP server stub with the producer stubs.</p>
+</li>
+<li>
+<p>Now your test communicates with the HTTP server stub and your tests pass</p>
+</li>
+<li>
+<p>Create a pull request to the repository with contract definitions, with the new contracts for the producer</p>
+</li>
+<li>
+<p>Branch your consumer code, until the producer team has merged their code</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the consumer flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/flow-overview-consumer-cdc-external-consumer.png" alt="flow overview consumer cdc external consumer" width="886" height="676">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-cdc-contracts-external-producer"><a class="anchor" href="#flows-cdc-contracts-external-producer"></a><a class="link" href="#flows-cdc-contracts-external-producer">4.3. Producer Flow</a></h3>
+<div class="paragraph">
+<p>The producer:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Takes over the pull request to the repository with contract definitions. You can do it
+from the command line, as follows</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>$ git checkout -b the_branch_with_pull_request master
+git pull https://github.com/user_id/project_name.git the_branch_with_pull_request</pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Installs the contract definitions, as follows</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>$ ./mvnw clean install</pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Sets up the plugin to fetch the contract definitions from a JAR instead of from
+<code>src/test/resources/contracts</code>, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- We want to use the JAR with contracts with the following coordinates --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;com.example&lt;/groupId&gt;
+            &lt;artifactId&gt;beer-contracts&lt;/artifactId&gt;
+        &lt;/contractDependency&gt;
+        &lt;!-- The JAR with contracts should be taken from Maven local --&gt;
+        &lt;contractsMode&gt;LOCAL&lt;/contractsMode&gt;
+        &lt;!-- ... additional configuration --&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    // We want to use the JAR with contracts with the following coordinates
+    // group id `com.example`, artifact id `beer-contracts`, LATEST version and NO classifier
+    contractDependency {
+        stringNotation = 'com.example:beer-contracts:+:'
+    }
+    // The JAR with contracts should be taken from Maven local
+    contractsMode = "LOCAL"
+    // Additional configuration
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Runs the build to generate tests and stubs, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw clean install</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">./gradlew clean build</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Writes the missing implementation, to make the tests pass.</p>
+</li>
+<li>
+<p>Merges the pull request to the repository with contract definitions, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>$ git commit -am "Finished the implementation to make the contract tests pass"
+$ git checkout master
+$ git merge --no-ff the_branch_with_pull_request
+$ git push origin master</pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>The CI system builds the project with the contract definitions and uploads the JAR with
+the contract definitions to Nexus or Artifactory.</p>
+</li>
+<li>
+<p>Switches to working remotely.</p>
+</li>
+<li>
+<p>Sets up the plugin so that the contract definitions are no longer taken from the local
+storage but from a remote location, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- We want to use the JAR with contracts with the following coordinates --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;com.example&lt;/groupId&gt;
+            &lt;artifactId&gt;beer-contracts&lt;/artifactId&gt;
+        &lt;/contractDependency&gt;
+        &lt;!-- The JAR with contracts should be taken from a remote location --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+        &lt;!-- ... additional configuration --&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    // We want to use the JAR with contracts with the following coordinates
+    // group id `com.example`, artifact id `beer-contracts`, LATEST version and NO classifier
+    contractDependency {
+        stringNotation = 'com.example:beer-contracts:+:'
+    }
+    // The JAR with contracts should be taken from a remote location
+    contractsMode = "REMOTE"
+    // Additional configuration
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Merges the producer code with the new implementation.</p>
+</li>
+<li>
+<p>The CI system:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Builds the project</p>
+</li>
+<li>
+<p>Generates tests, stubs, and the stub JAR</p>
+</li>
+<li>
+<p>Uploads the artifact with the application and the stubs to Nexus or Artifactory.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the producer process:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/flow-overview-consumer-cdc-external-producer.png" alt="flow overview consumer cdc external producer" width="1213" height="1341">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-cdc-contracts-stubs-git"><a class="anchor" href="#flows-cdc-contracts-stubs-git"></a><a class="link" href="#flows-cdc-contracts-stubs-git">5. Consumer Driven Contracts with Contracts on the Producer Side, Pushed to Git</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can check <a href="getting-started.html#getting-started-cdc">Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side</a> to see the consumer driven contracts with contracts on the producer side flow.</p>
+</div>
+<div class="paragraph">
+<p>The stub storage implementation is a git repository. We describe its setup in the
+<a href="#flows-provider-git">Provider Contract Testing with Stubs in Git</a> section.</p>
+</div>
+<div class="paragraph">
+<p>You can read more about setting up a git repository for the consumer and producer sides in
+the <a href="howto.html#how-to-use-git-as-storage">How To page</a> of the documentation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-provider-non-spring"><a class="anchor" href="#flows-provider-non-spring"></a><a class="link" href="#flows-provider-non-spring">6. Provider Contract Testing with Stubs in Artifactory for a non-Spring Application</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="flows-provider-non-spring-flow"><a class="anchor" href="#flows-provider-non-spring-flow"></a><a class="link" href="#flows-provider-non-spring-flow">6.1. The Flow</a></h3>
+<div class="paragraph">
+<p>You can check <a href="getting-started.html#getting-started-first-application">Developing Your First Spring Cloud Contract based application</a> to see the flow for provider contract testing with stubs in Nexus or Artifactory.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-non-spring-consumer"><a class="anchor" href="#flows-provider-non-spring-consumer"></a><a class="link" href="#flows-provider-non-spring-consumer">6.2. Setting up the Consumer</a></h3>
+<div class="paragraph">
+<p>For the consumer side, you can use a JUnit rule. That way, you need not start a Spring context. The follwoing listing shows such a rule (in JUnit4 and JUnit 5);</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">JUnit 4 Rule</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Rule
+    public StubRunnerRule rule = new StubRunnerRule()
+            .downloadStub("com.example","artifact-id", "0.0.1")
+            .repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+            .stubsMode(StubRunnerProperties.StubsMode.REMOTE);</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">JUnit 5 Extension</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Rule
+    public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+            .downloadStub("com.example","artifact-id", "0.0.1")
+            .repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+            .stubsMode(StubRunnerProperties.StubsMode.REMOTE);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-non-spring-producer"><a class="anchor" href="#flows-provider-non-spring-producer"></a><a class="link" href="#flows-provider-non-spring-producer">6.3. Setting up the Producer</a></h3>
+<div class="paragraph">
+<p>By default, the Spring Cloud Contract Plugin uses Rest Assured&#8217;s <code>MockMvc</code> setup for the
+generated tests. Since non-Spring applications do not use <code>MockMvc</code>, you can change the
+<code>testMode</code> to <code>EXPLICIT</code> to send a real request to an application bound at a specific port.</p>
+</div>
+<div class="paragraph">
+<p>In this example, we use a framework called <a href="https://javalin.io">Javalin</a> to start a
+non-Spring HTTP server.</p>
+</div>
+<div class="paragraph">
+<p>Assume that we have the following application:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.example.demo;
+
+import io.javalin.Javalin;
+
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        new DemoApplication().run(7000);
+    }
+
+    public Javalin start(int port) {
+        return Javalin.create().start(port);
+    }
+
+    public Javalin registerGet(Javalin app) {
+        return app.get("/", ctx -&gt; ctx.result("Hello World"));
+    }
+
+    public Javalin run(int port) {
+        return registerGet(start(port));
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Given that application, we can set up the plugin to use the <code>EXPLICIT</code> mode (that is, to
+send out requests to a real port), as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;baseClassForTests&gt;com.example.demo.BaseClass&lt;/baseClassForTests&gt;
+        &lt;!-- This will setup the EXPLICIT mode for the tests --&gt;
+        &lt;testMode&gt;EXPLICIT&lt;/testMode&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    // This will setup the EXPLICIT mode for the tests
+    testMode = "EXPLICIT"
+    baseClassForTests = "com.example.demo.BaseClass"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The base class might resemble the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.javalin.Javalin;
+import io.restassured.RestAssured;
+import org.junit.After;
+import org.junit.Before;
+import org.springframework.util.SocketUtils;
+
+public class BaseClass {
+
+    Javalin app;
+
+    @Before
+    public void setup() {
+        // pick a random port
+        int port = SocketUtils.findAvailableTcpPort();
+        // start the application at a random port
+        this.app = start(port);
+        // tell Rest Assured where the started application is
+        RestAssured.baseURI = "http://localhost:" + port;
+    }
+
+    @After
+    public void close() {
+        // stop the server after each test
+        this.app.stop();
+    }
+
+    private Javalin start(int port) {
+        // reuse the production logic to start a server
+        return new DemoApplication().run(port);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With such a setup:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>We have setup the Spring Cloud Contract plugin to use the <code>EXPLICIT</code> mode to send real
+requests instead of mocked ones.</p>
+</li>
+<li>
+<p>We have defined a base class that:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Starts the HTTP server on a random port for each test.</p>
+</li>
+<li>
+<p>Sets Rest Assured to send requests to that port.</p>
+</li>
+<li>
+<p>Closes the HTTP server after each test.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-provider-non-jvm"><a class="anchor" href="#flows-provider-non-jvm"></a><a class="link" href="#flows-provider-non-jvm">7. Provider Contract Testing with Stubs in Artifactory in a non-JVM World</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this flow, we assume that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The API Producer and API Consumer are non-JVM applications.</p>
+</li>
+<li>
+<p>The contract definitions are written in YAML.</p>
+</li>
+<li>
+<p>The Stub Storage is Artifactory or Nexus.</p>
+</li>
+<li>
+<p>Spring Cloud Contract Docker (SCC Docker) and Spring Cloud Contract Stub Runner Docker
+(SCC Stub Runner Docker) images are used.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can read more about how to use Spring Cloud Contract with Docker <a href="docker-project.html">in this page</a>.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://spring.io/blog/2018/02/13/spring-cloud-contract-in-a-polyglot-world">Here</a>, you can
+read a blog post about how to use Spring Cloud Contract in a polyglot world.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs/">Here</a>, you can find
+a sample of a NodeJS application that uses Spring Cloud Contract both as a producer and a
+consumer.</p>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-non-jvm-producer"><a class="anchor" href="#flows-provider-non-jvm-producer"></a><a class="link" href="#flows-provider-non-jvm-producer">7.1. Producer Flow</a></h3>
+<div class="paragraph">
+<p>At a high level, the producer:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Writes contract definitions (for example, in YAML).</p>
+</li>
+<li>
+<p>Sets up the build tool to:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Start the application with mocked services on a given port.</p>
+<div class="paragraph">
+<p>If mocking is not possible, you can setup the infrastructure and define tests in a stateful way.</p>
+</div>
+</li>
+<li>
+<p>Run the Spring Cloud Contract Docker image and pass the port of a running application as an environment variable.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The SCC Docker image:
+* Generates the tests from the attached volume.
+* Runs the tests against the running application.</p>
+</div>
+<div class="paragraph">
+<p>Upon test completion, stubs get uploaded to a stub storage site (such as Artifactory or Git).</p>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the producer flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/flows-provider-non-jvm-producer.png" alt="flows provider non jvm producer" width="930" height="810">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-non-jvm-consumer"><a class="anchor" href="#flows-provider-non-jvm-consumer"></a><a class="link" href="#flows-provider-non-jvm-consumer">7.2. Consumer Flow</a></h3>
+<div class="paragraph">
+<p>At a high level, the consumer:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Sets up the build tool to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Start the Spring Cloud Contract Stub Runner Docker image and start the stubs.</p>
+<div class="paragraph">
+<p>The environment variables configure:</p>
+</div>
+</li>
+<li>
+<p>The stubs to fetch.</p>
+</li>
+<li>
+<p>The location of the repositories.</p>
+<div class="paragraph">
+<p>Note that:</p>
+</div>
+</li>
+<li>
+<p>To use the local storage, you can also attach it as a volume.</p>
+</li>
+<li>
+<p>The ports at which the stubs are running need to be exposed.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Run the application tests against the running stubs.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the consumer flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/flows-provider-non-jvm-consumer.png" alt="flows provider non jvm consumer" width="815" height="618">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flows-provider-rest-docs"><a class="anchor" href="#flows-provider-rest-docs"></a><a class="link" href="#flows-provider-rest-docs">8. Provider Contract Testing with REST Docs and Stubs in Nexus or Artifactory</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this flow, we do not use a Spring Cloud Contract plugin to generate tests and stubs. We write <a href="https://spring.io/projects/spring-restdocs">Spring RESTDocs</a> and, from them, we automatically generate stubs. Finally, we set up our builds to package the stubs and upload them to the stub storage site&#8201;&#8212;&#8201;in our case, Nexus or Artifactory.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/rest_docs.html">workshop page</a> for a step-by-step instruction on how to use this flow.</p>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-rest-docs-producer"><a class="anchor" href="#flows-provider-rest-docs-producer"></a><a class="link" href="#flows-provider-rest-docs-producer">8.1. Producer Flow</a></h3>
+<div class="paragraph">
+<p>As a producer, we:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>We write RESTDocs tests of our API.</p>
+</li>
+<li>
+<p>We add Spring Cloud Contract Stub Runner starter to our build (<code>spring-cloud-starter-contract-stub-runner</code>), as follows</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
+    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>We set up the build tool to package our stubs, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;!-- pom.xml --&gt;
+&lt;plugins&gt;
+    &lt;plugin&gt;
+        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+        &lt;executions&gt;
+            &lt;execution&gt;
+                &lt;id&gt;stub&lt;/id&gt;
+                &lt;phase&gt;prepare-package&lt;/phase&gt;
+                &lt;goals&gt;
+                    &lt;goal&gt;single&lt;/goal&gt;
+                &lt;/goals&gt;
+                &lt;inherited&gt;false&lt;/inherited&gt;
+                &lt;configuration&gt;
+                    &lt;attach&gt;true&lt;/attach&gt;
+                    &lt;descriptors&gt;
+                        ${basedir}/src/assembly/stub.xml
+                    &lt;/descriptors&gt;
+                &lt;/configuration&gt;
+            &lt;/execution&gt;
+        &lt;/executions&gt;
+    &lt;/plugin&gt;
+&lt;/plugins&gt;
+
+&lt;!-- src/assembly/stub.xml --&gt;
+&lt;assembly
+    xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+    &lt;id&gt;stubs&lt;/id&gt;
+    &lt;formats&gt;
+        &lt;format&gt;jar&lt;/format&gt;
+    &lt;/formats&gt;
+    &lt;includeBaseDirectory&gt;false&lt;/includeBaseDirectory&gt;
+    &lt;fileSets&gt;
+        &lt;fileSet&gt;
+            &lt;directory&gt;${project.build.directory}/generated-snippets/stubs&lt;/directory&gt;
+            &lt;outputDirectory&gt;META-INF/${project.groupId}/${project.artifactId}/${project.version}/mappings&lt;/outputDirectory&gt;
+            &lt;includes&gt;
+                &lt;include&gt;**/*&lt;/include&gt;
+            &lt;/includes&gt;
+        &lt;/fileSet&gt;
+    &lt;/fileSets&gt;
+&lt;/assembly&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">task stubsJar(type: Jar) {
+    classifier = "stubs"
+    into("META-INF/${project.group}/${project.name}/${project.version}/mappings") {
+        include('**/*.*')
+        from("${project.buildDir}/generated-snippets/stubs")
+    }
+}
+// we need the tests to pass to build the stub jar
+stubsJar.dependsOn(test)
+bootJar.dependsOn(stubsJar)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now, when we run the tests, stubs are automatically published and packaged.</p>
+</div>
+<div class="paragraph">
+<p>The following UML diagram shows the producer flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/flows-provider-rest-docs-producer.png" alt="flows provider rest docs producer" width="783" height="677">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flows-provider-rest-docs-consumer"><a class="anchor" href="#flows-provider-rest-docs-consumer"></a><a class="link" href="#flows-provider-rest-docs-consumer">8.2. Consumer Flow</a></h3>
+<div class="paragraph">
+<p>Since the consumer flow is not affected by the tool used to generate the stubs, you can check <a href="getting-started.html#getting-started-first-application-consumer">Developing Your First Spring Cloud Contract based application</a> to see the flow for consumer side of the provider contract testing with stubs in Nexus or Artifactory.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-whats-next"><a class="anchor" href="#using-whats-next"></a><a class="link" href="#using-whats-next">9. What to Read Next</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You should now understand how you can use Spring Cloud Contract and some best practices that you
+should follow. You can now go on to learn about specific
+<a href="project-features.html#project-features">Spring Cloud Contract features</a>, or you could
+skip ahead and read about the <a href="advanced.html">advanced features of Spring Cloud Contract</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

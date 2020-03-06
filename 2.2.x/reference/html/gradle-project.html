@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>Gradle Project</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+	$('.primary').each(function() {
+		primary = $(this);
+		createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+		primary.children('.title').remove();
+	});
+	$('.secondary').each(function(idx, node) {
+		secondary = $(node);
+		primary = findPrimary(secondary);
+		switchItem = createSwitchItem(secondary, primary.children('.switch'));
+		switchItem.content.addClass('hidden');
+		findPrimary(secondary).append(switchItem.content);
+		secondary.remove();
+	});
+}
+
+function createBlockSwitch(primary) {
+	blockSwitch = $('<div class="switch"></div>');
+	primary.prepend(blockSwitch);
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	candidate = secondary.prev();
+	while (!candidate.is('.primary')) {
+		candidate = candidate.prev();
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	blockName = block.children('.title').text();
+	content = block.children('.content').first().append(block.next('.colist'));
+	item = $('<div class="switch--item">' + blockName + '</div>');
+	item.on('click', '', content, function(e) {
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		e.data.siblings('.content').addClass('hidden');
+		e.data.removeClass('hidden');
+	});
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+</script>
+
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>Gradle Project</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#gradle-prerequisites">1. Prerequisites</a></li>
+<li><a href="#gradle-add-gradle-plugin">2. Add Gradle Plugin with Dependencies</a></li>
+<li><a href="#gradle-and-rest-assured">3. Gradle and Rest Assured 2.0</a></li>
+<li><a href="#gradle-snapshot-versions">4. Snapshot Versions for Gradle</a></li>
+<li><a href="#gradle-add-stubs">5. Add stubs</a></li>
+<li><a href="#gradle-run-plugin">6. Running the Plugin</a></li>
+<li><a href="#gradle-default-setup">7. Default Setup</a></li>
+<li><a href="#gradle-configure-plugin">8. Configuring the Plugin</a></li>
+<li><a href="#gradle-configuration-options">9. Configuration Options</a></li>
+<li><a href="#gradle-single-base-class">10. Single Base Class for All Tests</a></li>
+<li><a href="#gradle-different-base-classes">11. Different Base Classes for Contracts</a>
+<ul class="sectlevel2">
+<li><a href="#by-convention">11.1. By Convention</a></li>
+<li><a href="#by-mapping">11.2. By Mapping</a></li>
+</ul>
+</li>
+<li><a href="#gradle-invoking-generated-tests">12. Invoking Generated Tests</a></li>
+<li><a href="#gradle-pushing-stubs-to-scm">13. Pushing Stubs to SCM</a></li>
+<li><a href="#gradle-consumer">14. Spring Cloud Contract Verifier on the Consumer Side</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>To learn how to set up the Gradle project for Spring Cloud Contract Verifier, read the
+following sections:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#gradle-prerequisites">Prerequisites</a></p>
+</li>
+<li>
+<p><a href="#gradle-add-gradle-plugin">Add Gradle Plugin with Dependencies</a></p>
+</li>
+<li>
+<p><a href="#gradle-and-rest-assured">Gradle and Rest Assured 2.0</a></p>
+</li>
+<li>
+<p><a href="#gradle-snapshot-versions">Snapshot Versions for Gradle</a></p>
+</li>
+<li>
+<p><a href="#gradle-add-stubs">Add stubs</a></p>
+</li>
+<li>
+<p><a href="#gradle-default-setup">Default Setup</a></p>
+</li>
+<li>
+<p><a href="#gradle-configure-plugin">Configuring the Plugin</a></p>
+</li>
+<li>
+<p><a href="#gradle-configuration-options">Configuration Options</a></p>
+</li>
+<li>
+<p><a href="#gradle-single-base-class">Single Base Class for All Tests</a></p>
+</li>
+<li>
+<p><a href="#gradle-different-base-classes">Different Base Classes for Contracts</a></p>
+</li>
+<li>
+<p><a href="#gradle-invoking-generated-tests">Invoking Generated Tests</a></p>
+</li>
+<li>
+<p><a href="#gradle-pushing-stubs-to-scm">Pushing Stubs to SCM</a></p>
+</li>
+<li>
+<p><a href="#gradle-consumer">Spring Cloud Contract Verifier on the Consumer Side</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-prerequisites"><a class="anchor" href="#gradle-prerequisites"></a><a class="link" href="#gradle-prerequisites">1. Prerequisites</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to use Spring Cloud Contract Verifier with WireMock, you must use either a
+Gradle or a Maven plugin.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+If you want to use Spock in your projects, you must separately add the
+<code>spock-core</code> and <code>spock-spring</code> modules. See <a href="https://spockframework.github.io/">Spock&#8217;s
+documnetation for more information</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-add-gradle-plugin"><a class="anchor" href="#gradle-add-gradle-plugin"></a><a class="link" href="#gradle-add-gradle-plugin">2. Add Gradle Plugin with Dependencies</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To add a Gradle plugin with dependencies, you can use code similar to the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Plugin DSL GA versions</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// build.gradle
+plugins {
+  id "groovy"
+  // this will work only for GA versions of Spring Cloud Contract
+  id "org.springframework.cloud.contract" version "${GAVerifierVersion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${GAVerifierVersion}"
+    }
+}
+
+dependencies {
+    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    // example with adding Spock core and Spock Spring
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile "org.spockframework:spock-spring:${spockVersion}"
+    testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Plugin DSL non GA versions</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// settings.gradle
+pluginManagement {
+    plugins {
+        id "org.springframework.cloud.contract" version "${verifierVersion}"
+    }
+    repositories {
+        // to pick from local .m2
+        mavenLocal()
+        // for snapshots
+        maven { url "https://repo.spring.io/snapshot" }
+        // for milestones
+        maven { url "https://repo.spring.io/milestone" }
+        // for GA versions
+        gradlePluginPortal()
+    }
+}
+
+// build.gradle
+plugins {
+  id "groovy"
+  id "org.springframework.cloud.contract"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+    }
+}
+
+dependencies {
+    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    // example with adding Spock core and Spock Spring
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile "org.spockframework:spock-spring:${spockVersion}"
+    testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Legacy Plugin Application</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// build.gradle
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+        classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+        // here you can also pass additional dependencies such as Pact or Kotlin spec e.g.:
+        // classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${verifier_version}"
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-cloud-contract'
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"
+    }
+}
+
+dependencies {
+    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    // example with adding Spock core and Spock Spring
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile "org.spockframework:spock-spring:${spockVersion}"
+    testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-and-rest-assured"><a class="anchor" href="#gradle-and-rest-assured"></a><a class="link" href="#gradle-and-rest-assured">3. Gradle and Rest Assured 2.0</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x
+you can add it to the plugins classpath, as the following listing shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+        classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+        classpath "com.jayway.restassured:rest-assured:2.5.0"
+        classpath "com.jayway.restassured:spring-mock-mvc:2.5.0"
+    }
+}
+
+depenendencies {
+    // all dependencies
+    // you can exclude rest-assured from spring-cloud-contract-verifier
+    testCompile "com.jayway.restassured:rest-assured:2.5.0"
+    testCompile "com.jayway.restassured:spring-mock-mvc:2.5.0"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>That way, the plugin automatically sees that Rest Assured 2.x is present on the classpath
+and modifies the imports accordingly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-snapshot-versions"><a class="anchor" href="#gradle-snapshot-versions"></a><a class="link" href="#gradle-snapshot-versions">4. Snapshot Versions for Gradle</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can add the additional snapshot repository to your <code>build.gradle</code> to use snapshot versions,
+which are automatically uploaded after every successful build, as the following listing shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/release" }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-add-stubs"><a class="anchor" href="#gradle-add-stubs"></a><a class="link" href="#gradle-add-stubs">5. Add stubs</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, Spring Cloud Contract Verifier looks for stubs in the
+<code>src/test/resources/contracts</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>The directory that contains stub definitions is treated as a class name, and each stub
+definition is treated as a single test. Spring Cloud Contract Verifier assumes that it
+contains at  least one level of directories that are to be used as the test class name.
+If more than  one level of nested directories is present, all except the last one is used
+as the package name. Consider the following structure:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">src/test/resources/contracts/myservice/shouldCreateUser.groovy
+src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Given the preceding structure, Spring Cloud Contract Verifier creates a test class named
+<code>defaultBasePackage.MyService</code> with two methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>shouldCreateUser()</code></p>
+</li>
+<li>
+<p><code>shouldReturnUser()</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-run-plugin"><a class="anchor" href="#gradle-run-plugin"></a><a class="link" href="#gradle-run-plugin">6. Running the Plugin</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The plugin registers itself to be invoked before a <code>check</code> task. If you want it to be
+part of your build process, you need do nothing more. If you just want to generate
+tests, invoke the <code>generateContractTests</code> task.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-default-setup"><a class="anchor" href="#gradle-default-setup"></a><a class="link" href="#gradle-default-setup">7. Default Setup</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The default Gradle Plugin setup creates the following Gradle part of the build (in
+pseudocode):</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    testFramework ='JUNIT'
+    testMode = 'MockMvc'
+    generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
+    contractsDslDir = project.file("${project.rootDir}/src/test/resources/contracts")
+    basePackageForTests = 'org.springframework.cloud.verifier.tests'
+    stubsOutputDir = project.file("${project.buildDir}/stubs")
+    sourceSet = null
+
+    // the following properties are used when you want to provide where the JAR with contract lays
+    contractDependency {
+        stringNotation = ''
+    }
+    contractsPath = ''
+    contractsWorkOffline = false
+    contractRepository {
+        cacheDownloadedContracts(true)
+    }
+}
+
+tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
+    baseName = project.name
+    classifier = contracts.stubsSuffix
+    from contractVerifier.stubsOutputDir
+}
+
+project.artifacts {
+    archives task
+}
+
+tasks.create(type: Copy, name: 'copyContracts') {
+    from contracts.contractsDslDir
+    into contracts.stubsOutputDir
+}
+
+verifierStubsJar.dependsOn 'copyContracts'
+
+publishing {
+    publications {
+        stubs(MavenPublication) {
+            artifactId project.name
+            artifact verifierStubsJar
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-configure-plugin"><a class="anchor" href="#gradle-configure-plugin"></a><a class="link" href="#gradle-configure-plugin">8. Configuring the Plugin</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To change the default configuration, you can add a <code>contracts</code> snippet to your Gradle
+configuration, as the following listing shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    testMode = 'MockMvc'
+    baseClassForTests = 'org.mycompany.tests'
+    generatedTestSourcesDir = project.file('src/generatedContract')
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-configuration-options"><a class="anchor" href="#gradle-configuration-options"></a><a class="link" href="#gradle-configuration-options">9. Configuration Options</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><code>testMode</code>: Defines the mode for acceptance tests. By default, the mode is MockMvc,
+which is based on Spring&#8217;s MockMvc. It can also be changed to WebTestClient, JaxRsClient, or
+Explicit (for real HTTP calls).</p>
+</li>
+<li>
+<p><code>imports</code>: Creates an array with imports that should be included in the generated tests
+(for example, <code>['org.myorg.Matchers']</code>). By default, it creates an empty array.</p>
+</li>
+<li>
+<p><code>staticImports</code>: Creates an array with static imports that should be included in
+generated tests(for example, <code>['org.myorg.Matchers.*']</code>). By default, it creates an empty
+array.</p>
+</li>
+<li>
+<p><code>basePackageForTests</code>: Specifies the base package for all generated tests. If not set,
+the value is picked from the package of <code>baseClassForTests</code> and from <code>packageWithBaseClasses</code>.
+If neither of these values are set, the value is set to
+<code>org.springframework.cloud.contract.verifier.tests</code>.</p>
+</li>
+<li>
+<p><code>baseClassForTests</code>: Creates a base class for all generated tests. By default, if you
+use Spock classes, the class is <code>spock.lang.Specification</code>.</p>
+</li>
+<li>
+<p><code>packageWithBaseClasses</code>: Defines a package where all the base classes reside. This
+setting takes precedence over <code>baseClassForTests</code>.</p>
+</li>
+<li>
+<p><code>baseClassMappings</code>: Explicitly maps a contract package to a FQN of a base class. This
+setting takes precedence over <code>packageWithBaseClasses</code> and <code>baseClassForTests</code>.</p>
+</li>
+<li>
+<p><code>ruleClassForTests</code>: Specifies a rule that should be added to the generated test
+classes.</p>
+</li>
+<li>
+<p><code>ignoredFiles</code>: Uses an <code>Antmatcher</code> to allow defining stub files for which processing
+should be skipped. By default, it is an empty array.</p>
+</li>
+<li>
+<p><code>contractsDslDir</code>: Specifies the directory that contains contracts written by using the
+GroovyDSL. By default, its value is <code>$rootDir/src/test/resources/contracts</code>.</p>
+</li>
+<li>
+<p><code>generatedTestSourcesDir</code>: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default, its value is
+<code>$buildDir/generated-test-sources/contracts</code>.</p>
+</li>
+<li>
+<p><code>generatedTestResourcesDir</code>: Specifies the test resource directory where resources used by the tests generated
+from the Groovy DSL should be placed. By default, its value is
+<code>$buildDir/generated-test-resources/contracts</code>.</p>
+</li>
+<li>
+<p><code>stubsOutputDir</code>: Specifies the directory where the generated WireMock stubs from
+the Groovy DSL should be placed.</p>
+</li>
+<li>
+<p><code>testFramework</code>: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (<code>TestFramework.JUNIT</code>), and
+JUnit 5 are supported, with JUnit 4 being the default framework.</p>
+</li>
+<li>
+<p><code>contractsProperties</code>: A map that contains properties to be passed to Spring Cloud Contract
+components. Those properties might be used by (for example) built-in or custom Stub Downloaders.</p>
+</li>
+<li>
+<p><code>sourceSet</code>: Source set where the contracts are stored. If not provided will assume <code>test</code> (e.g. <code>project.sourceSets.test.java</code> for JUnit or <code>project.sourceSets.test.groovy</code> for Spock).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can use the following properties when you want to specify the location of the JAR
+that contains the contracts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>contractDependency</code>: Specifies the Dependency that provides
+<code>groupid:artifactid:version:classifier</code> coordinates. You can use the <code>contractDependency</code>
+closure to set it up.</p>
+</li>
+<li>
+<p><code>contractsPath</code>: Specifies the path to the jar. If contract dependencies are
+downloaded, the path defaults to <code>groupid/artifactid</code> where <code>groupid</code> is slash
+separated. Otherwise, it scans contracts under the provided directory.</p>
+</li>
+<li>
+<p><code>contractsMode</code>: Specifies the mode for downloading contracts (whether the
+JAR is available offline, remotely, and so on).</p>
+</li>
+<li>
+<p><code>deleteStubsAfterTest</code>: If set to <code>false</code>, do not remove any downloaded
+contracts from temporary directories.</p>
+</li>
+<li>
+<p><code>failOnNoContracts</code>: When enabled, will throw an exception when no contracts were found. Defaults to <code>true</code>.</p>
+</li>
+<li>
+<p><code>failOnInProgress</code>: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to <code>true</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>There is also the <code>contractRepository { &#8230;&#8203; }</code> closure that contains the following properties</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>repositoryUrl</code>: the URL to the repository with contract definitions</p>
+</li>
+<li>
+<p><code>username</code> : Repository username</p>
+</li>
+<li>
+<p><code>password</code> : Repository password</p>
+</li>
+<li>
+<p><code>proxyPort</code> : the port of the proxy</p>
+</li>
+<li>
+<p><code>proxyHost</code> : the host of the proxy</p>
+</li>
+<li>
+<p><code>cacheDownloadedContracts</code> : If set to <code>true</code> then will cache the folder where non snapshot contract artifacts got downloaded. Defaults to <code>true</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can also turn on the following experimental features in the plugin:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>convertToYaml</code>: Converts all DSLs to the declarative YAML format. This can be extremely
+useful when you use external libraries in your Groovy DSLs. By turning this feature on
+(by setting it to <code>true</code>) you need not add the library dependency on the consumer side.</p>
+</li>
+<li>
+<p><code>assertJsonSize</code>: You can check the size of JSON arrays in the generated tests. This
+feature is disabled by default.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-single-base-class"><a class="anchor" href="#gradle-single-base-class"></a><a class="link" href="#gradle-single-base-class">10. Single Base Class for All Tests</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using Spring Cloud Contract Verifier in default MockMvc, you need to create a base
+specification for all generated acceptance tests. In this class, you need to point to an
+endpoint, which should be verified. The following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
+
+    def setup() {
+        RestAssuredMockMvc.standaloneSetup(new PairIdController())
+    }
+
+    void isProperCorrelationId(Integer correlationId) {
+        assert correlationId == 123456
+    }
+
+    void isEmpty(String value) {
+        assert value == null
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you use <code>Explicit</code> mode, you can use a base class to initialize the whole tested application,
+as you might see in regular integration tests. If you use the <code>JAXRSCLIENT</code> mode, this
+base class should also contain a <code>protected WebTarget webTarget</code> field. Right now, the
+only option to test the JAX-RS API is to start a web server.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-different-base-classes"><a class="anchor" href="#gradle-different-base-classes"></a><a class="link" href="#gradle-different-base-classes">11. Different Base Classes for Contracts</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your base classes differ between contracts, you can tell the Spring Cloud Contract
+plugin which class should get extended by the autogenerated tests. You have two options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Follow a convention by providing the <code>packageWithBaseClasses</code></p>
+</li>
+<li>
+<p>Provide explicit mapping by using <code>baseClassMappings</code></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="by-convention"><a class="anchor" href="#by-convention"></a><a class="link" href="#by-convention">11.1. By Convention</a></h3>
+<div class="paragraph">
+<p>The convention is such that if you have a contract in (for example)
+<code>src/test/resources/contract/foo/bar/baz/</code> and set the value of the
+<code>packageWithBaseClasses</code> property to <code>com.example.base</code>, then Spring Cloud Contract
+Verifier assumes that there is a <code>BarBazBase</code> class under the <code>com.example.base</code> package.
+In other words, the system takes the last two parts of the package, if they exist, and
+forms a class with a <code>Base</code> suffix. This rule takes precedence over <code>baseClassForTests</code>.
+The following example shows how it works in the <code>contracts</code> closure:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">packageWithBaseClasses = 'com.example.base'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="by-mapping"><a class="anchor" href="#by-mapping"></a><a class="link" href="#by-mapping">11.2. By Mapping</a></h3>
+<div class="paragraph">
+<p>You can manually map a regular expression of the contract&#8217;s package to the fully qualified
+name of the base class for the matched contract. You have to provide a list called
+<code>baseClassMappings</code> that consists of <code>baseClassMapping</code> objects that take a
+<code>contractPackageRegex</code> to <code>baseClassFQN</code> mapping. Consider the following example:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">baseClassForTests = "com.example.FooBase"
+baseClassMappings {
+    baseClassMapping('.*/com/.*', 'com.example.ComBase')
+    baseClassMapping('.*/bar/.*': 'com.example.BarBase')
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s assume that you have contracts in the following directories:
+ - <code>src/test/resources/contract/com/</code>
+ - <code>src/test/resources/contract/foo/</code></p>
+</div>
+<div class="paragraph">
+<p>By providing <code>baseClassForTests</code>, we have a fallback in case mapping did not succeed.
+(You could also provide the <code>packageWithBaseClasses</code> as a fallback.) That way, the tests
+generated from <code>src/test/resources/contract/com/</code> contracts extend the
+<code>com.example.ComBase</code>, whereas the rest of the tests extend <code>com.example.FooBase</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-invoking-generated-tests"><a class="anchor" href="#gradle-invoking-generated-tests"></a><a class="link" href="#gradle-invoking-generated-tests">12. Invoking Generated Tests</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To ensure that the provider side is compliant with your defined contracts, you need to run
+the following command:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew generateContractTests test</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-pushing-stubs-to-scm"><a class="anchor" href="#gradle-pushing-stubs-to-scm"></a><a class="link" href="#gradle-pushing-stubs-to-scm">13. Pushing Stubs to SCM</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you use the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, you can call the <code>pushStubsToScm</code>
+task by running the following command:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ ./gradlew pushStubsToScm</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Under <a href="#scm-stub-downloader">[scm-stub-downloader]</a> you can find all possible
+configuration options that you can pass either through
+the <code>contractsProperties</code> field (for example, <code>contracts { contractsProperties = [foo:"bar"] }</code>),
+through the <code>contractsProperties</code> method (for example, <code>contracts { contractsProperties([foo:"bar"]) }</code>),
+or through a system property or an environment variable.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-consumer"><a class="anchor" href="#gradle-consumer"></a><a class="link" href="#gradle-consumer">14. Spring Cloud Contract Verifier on the Consumer Side</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a consuming service, you need to configure the Spring Cloud Contract Verifier plugin
+in exactly the same way as in the case of a provider. If you do not want to use Stub Runner,
+you need to copy the contracts stored in <code>src/test/resources/contracts</code> and generate
+WireMock JSON stubs by using the following command:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew generateClientStubs</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>stubsOutputDir</code> option has to be set for stub generation to work.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When present, JSON stubs can be used in automated tests to consume a service. The
+following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)
+class LoanApplicationServiceSpec extends Specification {
+
+ @ClassRule
+ @Shared
+ WireMockClassRule wireMockRule == new WireMockClassRule()
+
+ @Autowired
+ LoanApplicationService sut
+
+ def 'should successfully apply for loan'() {
+   given:
+    LoanApplication application =
+            new LoanApplication(client: new Client(clientPesel: '12345678901'), amount: 123.123)
+   when:
+    LoanApplicationResult loanApplication == sut.loanApplication(application)
+   then:
+    loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLIED
+    loanApplication.rejectionReason == null
+ }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In the preceding example, <code>LoanApplication</code> makes a call to the <code>FraudDetection</code> service.
+This request is handled by a WireMock server configured with stubs that were generated by
+Spring Cloud Contract Verifier.</p>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

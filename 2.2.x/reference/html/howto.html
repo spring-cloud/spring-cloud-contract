@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>&#8220;How-to&#8221; Guides</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+	$('.primary').each(function() {
+		primary = $(this);
+		createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+		primary.children('.title').remove();
+	});
+	$('.secondary').each(function(idx, node) {
+		secondary = $(node);
+		primary = findPrimary(secondary);
+		switchItem = createSwitchItem(secondary, primary.children('.switch'));
+		switchItem.content.addClass('hidden');
+		findPrimary(secondary).append(switchItem.content);
+		secondary.remove();
+	});
+}
+
+function createBlockSwitch(primary) {
+	blockSwitch = $('<div class="switch"></div>');
+	primary.prepend(blockSwitch);
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	candidate = secondary.prev();
+	while (!candidate.is('.primary')) {
+		candidate = candidate.prev();
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	blockName = block.children('.title').text();
+	content = block.children('.content').first().append(block.next('.colist'));
+	item = $('<div class="switch--item">' + blockName + '</div>');
+	item.on('click', '', content, function(e) {
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		e.data.siblings('.content').addClass('hidden');
+		e.data.removeClass('hidden');
+	});
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+</script>
+
+</head>
+<body id="howto" class="book toc2 toc-left">
+<div id="header">
+<h1>&#8220;How-to&#8221; Guides</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#why-spring-cloud-contract">1. Why use Spring Cloud Contract?</a></li>
+<li><a href="#how-to-not-write-contracts-in-groovy">2. How Can I Write Contracts in a Language Other than Groovy?</a></li>
+<li><a href="#how-to-provide-dynamic-values">3. How Can I Provide Dynamic Values to a Contract?</a></li>
+<li><a href="#how-to-do-stubs-versioning">4. How to Do Stubs versioning?</a>
+<ul class="sectlevel2">
+<li><a href="#how-to-api-versioning">4.1. API Versioning</a></li>
+<li><a href="#how-to-jar-versioning">4.2. JAR versioning</a></li>
+<li><a href="#how-to-dev-or-prod-stubs">4.3. Development or Production Stubs</a></li>
+</ul>
+</li>
+<li><a href="#how-to-common-repo-with-contracts">5. How Can I use a Common Repository with Contracts Instead of Storing Them with the Producer?</a>
+<ul class="sectlevel2">
+<li><a href="#how-to-repo-structure">5.1. Repo Structure</a></li>
+<li><a href="#how-to-workflow">5.2. Workflow</a></li>
+<li><a href="#how-to-workflow-consumer">5.3. Consumer</a></li>
+<li><a href="#how-to-workflow-producer">5.4. Producer</a></li>
+<li><a href="#how-to-define-messaging-contracts-per-topic">5.5. How Can I Define Messaging Contracts per Topic Rather than per Producer?</a>
+<ul class="sectlevel3">
+<li><a href="#how-to-define-messaging-contracts-per-topic-maven">5.5.1. For Maven Projects</a></li>
+<li><a href="#how-to-define-messaging-contracts-per-topic-gradle">5.5.2. For Gradle Projects</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#how-to-use-git-as-storage">6. How Can I Use Git as the Storage for Contracts and Stubs?</a>
+<ul class="sectlevel2">
+<li><a href="#how-to-protocol-convention">6.1. Protocol Convention</a></li>
+<li><a href="#how-to-protocol-convention-producer">6.2. Producer</a></li>
+<li><a href="#how-to-protocol-convention-producer-with-contracts-stored-locally">6.3. Producer with Contracts Stored Locally</a></li>
+<li><a href="#how-to-protocol-convention-contracts-producer-stubs-external">6.4. Keeping Contracts with the Producer and Stubs in an External Repository</a></li>
+<li><a href="#how-to-protocol-convention-contracts-producer-stubs-external-consumer">6.5. Consumer</a></li>
+</ul>
+</li>
+<li><a href="#how-to-use-pact-broker">7. How Can I Use the Pact Broker?</a>
+<ul class="sectlevel2">
+<li><a href="#how-to-use-pact-broker-pact">7.1. How to Work with Pact</a></li>
+<li><a href="#how-to-use-pact-broker-pact-converter">7.2. Pact Converter</a></li>
+<li><a href="#how-to-use-pact-broker-pact-contract">7.3. Pact Contract</a></li>
+<li><a href="#how-to-use-pact-broker-pact-for-producers">7.4. Pact for Producers</a></li>
+<li><a href="#how-to-use-pact-broker-pact-consumers">7.5. Pact for Consumers</a></li>
+<li><a href="#pact-stub-downloader">7.6. Communicating with the Pact Broker</a></li>
+<li><a href="#how-to-pact-consumer">7.7. Flow: Consumer Contract approach with Pact Broker | Consumer Side</a></li>
+<li><a href="#how-to-pact-producer">7.8. Flow: Consumer Contract Approach with Pact Broker on the Producer Side</a></li>
+<li><a href="#how-to-pact-consumer-producer-contract">7.9. Flow: Producer Contract approach with Pact on the Consumer Side</a></li>
+</ul>
+</li>
+<li><a href="#how-to-debug">8. How Can I Debug the Request/Response Being Sent by the Generated Tests Client?</a></li>
+<li><a href="#how-to-debug-wiremock">9. How Can I Debug the Mapping, Request, or Response Being Sent by WireMock?</a></li>
+<li><a href="#how-to-see-registered-stubs">10. How Can I See What Got Registered in the HTTP Server Stub?</a></li>
+<li><a href="#how-to-reference-text-from-file">11. How Can I Reference Text from File?</a></li>
+<li><a href="#how-to-generate-pact-from-scc">12. How Can I Generate Pact, YAML, or X files from Spring Cloud Contract Contracts?</a></li>
+<li><a href="#how-to-work-with-transitivie">13. How Can I Work with Transitive Dependencies?</a>
+<ul class="sectlevel2">
+<li><a href="#how-to-work-with-transitivie-optional">13.1. How Can I Mark All Application Dependencies as Optional?</a></li>
+<li><a href="#how-to-work-with-transitivie-separate">13.2. How can I Create a Separate <code>artifactid</code> for the Stubs?</a></li>
+<li><a href="#how-to-work-with-transitivie-exclude">13.3. How can I Exclude Dependencies on the Consumer Side?</a></li>
+</ul>
+</li>
+<li><a href="#contract-dsl-rest-docs">14. How can I Generate Spring REST Docs Snippets from the Contracts?</a></li>
+<li><a href="#how-to-use-stubs-from-a-location">15. How can I Use Stubs from a Location</a></li>
+<li><a href="#how-to-generate-stubs-at-runtime">16. How can I Generate Stubs at Runtime</a></li>
+<li><a href="#how-to-use-the-failonnostubs-feature">17. How can I Make The Build Pass if There Are No Contracts or Stubs</a></li>
+<li><a href="#how-to-mark-contract-in-progress">18. How can I Mark that a Contract Is in Progress</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section provides answers to some common &#8220;how do I do that&#8230;&#8203;&#8221; questions
+that often arise when using Spring Cloud Contract. Its coverage is not exhaustive, but it
+does cover quite a lot.</p>
+</div>
+<div class="paragraph">
+<p>If you have a specific problem that we do not cover here, you might want to check out
+<a href="https://stackoverflow.com/tags/spring-cloud-contract">stackoverflow.com</a> to see if someone has
+already provided an answer. Stack Overflow is also a great place to ask new questions (please use
+the <code>spring-cloud-contract</code> tag).</p>
+</div>
+<div class="paragraph">
+<p>We are also more than happy to extend this section. If you want to add a &#8220;how-to&#8221;,
+send us a <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.2.x">pull request</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="why-spring-cloud-contract"><a class="anchor" href="#why-spring-cloud-contract"></a><a class="link" href="#why-spring-cloud-contract">1. Why use Spring Cloud Contract?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Cloud Contract works great in a polyglot environment. This project has a lot of
+really interesting features. Quite a few of these features definitely make
+Spring Cloud Contract Verifier stand out on the market of Consumer Driven Contract
+(CDC) tooling. The most interesting features include the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Ability to do CDC with messaging.</p>
+</li>
+<li>
+<p>Clear and easy to use, statically typed DSL.</p>
+</li>
+<li>
+<p>Ability to copy-paste your current JSON file to the contract and only edit its elements.</p>
+</li>
+<li>
+<p>Automatic generation of tests from the defined Contract.</p>
+</li>
+<li>
+<p>Stub Runner functionality: The stubs are automatically downloaded at runtime from Nexus/Artifactory.</p>
+</li>
+<li>
+<p>Spring Cloud integration: No discovery service is needed for integration tests.</p>
+</li>
+<li>
+<p>Spring Cloud Contract integrates with Pact and provides easy hooks to extend its functionality.</p>
+</li>
+<li>
+<p>Ability to add support for any language &amp; framework through Docker.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-not-write-contracts-in-groovy"><a class="anchor" href="#how-to-not-write-contracts-in-groovy"></a><a class="link" href="#how-to-not-write-contracts-in-groovy">2. How Can I Write Contracts in a Language Other than Groovy?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can write a contract in YAML. See <a href="project-features.html#contract-dsl">this section</a> for more information.</p>
+</div>
+<div class="paragraph">
+<p>We are working on allowing more ways of describing the contracts. You can check the <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/">github-issues</a> for more information.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-provide-dynamic-values"><a class="anchor" href="#how-to-provide-dynamic-values"></a><a class="link" href="#how-to-provide-dynamic-values">3. How Can I Provide Dynamic Values to a Contract?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>One of the biggest challenges related to stubs is their reusability. Only if they can be widely used can they serve their purpose.
+The hard-coded values (such as dates and IDs) of request and response elements generally make that difficult.
+Consider the following JSON request:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "time" : "2016-10-10 20:10:15",
+    "id" : "9febab1c-6f36-4a0b-88d6-3b6a6d81cd4a",
+    "body" : "foo"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Now consider the following JSON response:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "time" : "2016-10-10 21:10:15",
+    "id" : "c4231e1f-3ca9-48d3-b7e7-567d55f0d051",
+    "body" : "bar"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Imagine the pain required to set the proper value of the <code>time</code> field (assume that this content is generated by the
+database) by changing the clock in the system or by providing stub implementations of data providers. The same is related
+to the field called <code>id</code>. You could create a stubbed implementation of UUID generator, but doing so makes little sense.</p>
+</div>
+<div class="paragraph">
+<p>So, as a consumer, you want to send a request that matches any form of a time or any UUID. That way, your system
+works as usual, generating data without you having to stub out anything. Assume that, in case of the aforementioned
+JSON, the most important part is the <code>body</code> field. You can focus on that and provide matching for other fields. In other words,
+you would like the stub to work as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "time" : "SOMETHING THAT MATCHES TIME",
+    "id" : "SOMETHING THAT MATCHES UUID",
+    "body" : "foo"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>As far as the response goes, as a consumer, you need a concrete value on which you can operate.
+Consequently, the following JSON is valid:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "time" : "2016-10-10 21:10:15",
+    "id" : "c4231e1f-3ca9-48d3-b7e7-567d55f0d051",
+    "body" : "bar"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous sections, we generated tests from contracts. So, from the producer&#8217;s side, the situation looks
+much different. We parse the provided contract, and, in the test, we want to send a real request to your endpoints.
+So, for the case of a producer for the request, we cannot have any sort of matching. We need concrete values on which the
+producer&#8217;s backend can work. Consequently, the following JSON would be valid:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "time" : "2016-10-10 20:10:15",
+    "id" : "9febab1c-6f36-4a0b-88d6-3b6a6d81cd4a",
+    "body" : "foo"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>On the other hand, from the point of view of the validity of the contract, the response does not necessarily have to
+contain concrete values for <code>time</code> or <code>id</code>. Suppose you generate those on the producer side. Again, you
+have to do a lot of stubbing to ensure that you always return the same values. That is why, from the producer&#8217;s side
+you might want the following response:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "time" : "SOMETHING THAT MATCHES TIME",
+    "id" : "SOMETHING THAT MATCHES UUID",
+    "body" : "bar"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>How can you then provide a matcher for the consumer and a concrete value for the producer (and the opposite at some other time)?
+Spring Cloud Contract lets you provide a dynamic value. That means that it can differ for both
+sides of the communication.</p>
+</div>
+<div class="paragraph">
+<p>You can read more about this in the <a href="project-features.html#contract-dsl">Contract DSL</a> section.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Read the <a href="https://groovy-lang.org/json.html">Groovy docs related to JSON</a> to understand how to
+properly structure the request and response bodies.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-do-stubs-versioning"><a class="anchor" href="#how-to-do-stubs-versioning"></a><a class="link" href="#how-to-do-stubs-versioning">4. How to Do Stubs versioning?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section covers version of the stubs, which you can handle in a number of different ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#how-to-api-versioning">API Versioning</a></p>
+</li>
+<li>
+<p><a href="#how-to-jar-versioning">JAR versioning</a></p>
+</li>
+<li>
+<p><a href="#how-to-dev-or-prod-stubs">Development or Production Stubs</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="how-to-api-versioning"><a class="anchor" href="#how-to-api-versioning"></a><a class="link" href="#how-to-api-versioning">4.1. API Versioning</a></h3>
+<div class="paragraph">
+<p>What does versioning really mean? If you refer to the API version, there are
+different approaches:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use hypermedia links and do not version your API by any means</p>
+</li>
+<li>
+<p>Pass the version through headers and URLs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We do not try to answer the question of which approach is better. You should pick whatever
+suits your needs and lets you generate business value.</p>
+</div>
+<div class="paragraph">
+<p>Assume that you do version your API. In that case, you should provide as many contracts with as many versions as you support.
+You can create a subfolder for every version or append it to the contract name&#8201;&#8212;&#8201;whatever suits you best.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-jar-versioning"><a class="anchor" href="#how-to-jar-versioning"></a><a class="link" href="#how-to-jar-versioning">4.2. JAR versioning</a></h3>
+<div class="paragraph">
+<p>If, by versioning, you mean the version of the JAR that contains the stubs, then there are essentially two main approaches.</p>
+</div>
+<div class="paragraph">
+<p>Assume that you do continuous delivery and deployment, which means that you generate a new version of
+the jar each time you go through the pipeline and that the jar can go to production at any time. For example, your jar version
+looks like the following (because it got built on the 20.10.2016 at 20:15:21) :</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">1.0.0.20161020-201521-RELEASE</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In that case your, generated stub jar should look like the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">1.0.0.20161020-201521-RELEASE-stubs.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In this case, you should, inside your <code>application.yml</code> or <code>@AutoConfigureStubRunner</code> when
+referencing stubs, provide the latest version of the stubs. You can do that by passing the
+<code>+</code> sign. the following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If the versioning, however, is fixed (for example, <code>1.0.4.RELEASE</code> or <code>2.1.1</code>), you have to set the concrete value of the jar
+version. The following example shows how to do so for version 2.1.1:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:2.1.1:stubs:8080"})</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-dev-or-prod-stubs"><a class="anchor" href="#how-to-dev-or-prod-stubs"></a><a class="link" href="#how-to-dev-or-prod-stubs">4.3. Development or Production Stubs</a></h3>
+<div class="paragraph">
+<p>You can manipulate the classifier to run the tests against current the development version
+of the stubs of other services or the ones that were deployed to production. If you alter
+your build to deploy the stubs with the <code>prod-stubs</code> classifier once you reach production
+deployment, you can run tests in one case with development stubs and one with production stubs.</p>
+</div>
+<div class="paragraph">
+<p>The following example works for tests that use the development version of the stubs:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example works for tests that use the production version of stubs:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:prod-stubs:8080"})</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also pass those values also in properties from your deployment pipeline.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-common-repo-with-contracts"><a class="anchor" href="#how-to-common-repo-with-contracts"></a><a class="link" href="#how-to-common-repo-with-contracts">5. How Can I use a Common Repository with Contracts Instead of Storing Them with the Producer?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Another way of storing contracts, rather than having them with the producer, is to keep
+them in a common place. This situation can be related to security issues (where the
+consumers cannot clone the producer&#8217;s code). Also if you keep contracts in a single place,
+then you, as a producer, know how many consumers you have and which consumer you may break
+with your local changes.</p>
+</div>
+<div class="sect2">
+<h3 id="how-to-repo-structure"><a class="anchor" href="#how-to-repo-structure"></a><a class="link" href="#how-to-repo-structure">5.1. Repo Structure</a></h3>
+<div class="paragraph">
+<p>Assume that we have a producer with coordinates of <code>com.example:server</code> and three
+consumers: <code>client1</code>, <code>client2</code>, and <code>client3</code>. Then, in the repository with common
+contracts, you could have the following setup (which you can check out
+<a href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.2.x/samples/standalone/contracts">here</a>).
+The following listing shows such a structure:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">├── com
+│   └── example
+│       └── server
+│           ├── client1
+│           │   └── expectation.groovy
+│           ├── client2
+│           │   └── expectation.groovy
+│           ├── client3
+│           │   └── expectation.groovy
+│           └── pom.xml
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+└── src
+    └── assembly
+        └── contracts.xml</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see under the slash-delimited <code>groupid/artifact id</code> folder (<code>com/example/server</code>) you have
+expectations of the three consumers (<code>client1</code>, <code>client2</code>, and <code>client3</code>). Expectations are the standard Groovy DSL
+contract files, as described throughout this documentation. This repository has to produce a JAR file that maps
+one-to-one to the contents of the repository.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows a <code>pom.xml</code> inside the <code>server</code> folder:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;server&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1&lt;/version&gt;
+
+    &lt;name&gt;Server Stubs&lt;/name&gt;
+    &lt;description&gt;POM used to install locally stubs for consumer side&lt;/description&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;2.2.5.RELEASE&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+        &lt;spring-cloud-contract.version&gt;2.2.3.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+        &lt;spring-cloud-release.version&gt;Hoxton.BUILD-SNAPSHOT&lt;/spring-cloud-release.version&gt;
+        &lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencyManagement&gt;
+        &lt;dependencies&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud-release.version}&lt;/version&gt;
+                &lt;type&gt;pom&lt;/type&gt;
+                &lt;scope&gt;import&lt;/scope&gt;
+            &lt;/dependency&gt;
+        &lt;/dependencies&gt;
+    &lt;/dependencyManagement&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+                &lt;extensions&gt;true&lt;/extensions&gt;
+                &lt;configuration&gt;
+                    &lt;!-- By default it would search under src/test/resources/ --&gt;
+                    &lt;contractsDirectory&gt;${project.basedir}&lt;/contractsDirectory&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+    &lt;repositories&gt;
+        &lt;repository&gt;
+            &lt;id&gt;spring-snapshots&lt;/id&gt;
+            &lt;name&gt;Spring Snapshots&lt;/name&gt;
+            &lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+            &lt;snapshots&gt;
+                &lt;enabled&gt;true&lt;/enabled&gt;
+            &lt;/snapshots&gt;
+        &lt;/repository&gt;
+        &lt;repository&gt;
+            &lt;id&gt;spring-milestones&lt;/id&gt;
+            &lt;name&gt;Spring Milestones&lt;/name&gt;
+            &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+            &lt;snapshots&gt;
+                &lt;enabled&gt;false&lt;/enabled&gt;
+            &lt;/snapshots&gt;
+        &lt;/repository&gt;
+        &lt;repository&gt;
+            &lt;id&gt;spring-releases&lt;/id&gt;
+            &lt;name&gt;Spring Releases&lt;/name&gt;
+            &lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+            &lt;snapshots&gt;
+                &lt;enabled&gt;false&lt;/enabled&gt;
+            &lt;/snapshots&gt;
+        &lt;/repository&gt;
+    &lt;/repositories&gt;
+    &lt;pluginRepositories&gt;
+        &lt;pluginRepository&gt;
+            &lt;id&gt;spring-snapshots&lt;/id&gt;
+            &lt;name&gt;Spring Snapshots&lt;/name&gt;
+            &lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+            &lt;snapshots&gt;
+                &lt;enabled&gt;true&lt;/enabled&gt;
+            &lt;/snapshots&gt;
+        &lt;/pluginRepository&gt;
+        &lt;pluginRepository&gt;
+            &lt;id&gt;spring-milestones&lt;/id&gt;
+            &lt;name&gt;Spring Milestones&lt;/name&gt;
+            &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+            &lt;snapshots&gt;
+                &lt;enabled&gt;false&lt;/enabled&gt;
+            &lt;/snapshots&gt;
+        &lt;/pluginRepository&gt;
+        &lt;pluginRepository&gt;
+            &lt;id&gt;spring-releases&lt;/id&gt;
+            &lt;name&gt;Spring Releases&lt;/name&gt;
+            &lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+            &lt;snapshots&gt;
+                &lt;enabled&gt;false&lt;/enabled&gt;
+            &lt;/snapshots&gt;
+        &lt;/pluginRepository&gt;
+    &lt;/pluginRepositories&gt;
+
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>There are no dependencies other than the Spring Cloud Contract Maven Plugin.
+Those pom files are necessary for the consumer side to run <code>mvn clean install -DskipTests</code> to locally install
+the stubs of the producer project.</p>
+</div>
+<div class="paragraph">
+<p>The <code>pom.xml</code> in the root folder can look like the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
+    &lt;artifactId&gt;contracts&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1&lt;/version&gt;
+
+    &lt;name&gt;Contracts&lt;/name&gt;
+    &lt;description&gt;Contains all the Spring Cloud Contracts, well, contracts. JAR used by the
+        producers to generate tests and stubs
+    &lt;/description&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;id&gt;contracts&lt;/id&gt;
+                        &lt;phase&gt;prepare-package&lt;/phase&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;single&lt;/goal&gt;
+                        &lt;/goals&gt;
+                        &lt;configuration&gt;
+                            &lt;attach&gt;true&lt;/attach&gt;
+                            &lt;descriptor&gt;${basedir}/src/assembly/contracts.xml&lt;/descriptor&gt;
+                            &lt;!-- If you want an explicit classifier remove the following line --&gt;
+                            &lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;
+                        &lt;/configuration&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>It uses the assembly plugin to build the JAR with all the contracts. The following example
+shows such a setup:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 https://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+    &lt;id&gt;project&lt;/id&gt;
+    &lt;formats&gt;
+        &lt;format&gt;jar&lt;/format&gt;
+    &lt;/formats&gt;
+    &lt;includeBaseDirectory&gt;false&lt;/includeBaseDirectory&gt;
+    &lt;fileSets&gt;
+        &lt;fileSet&gt;
+            &lt;directory&gt;${project.basedir}&lt;/directory&gt;
+            &lt;outputDirectory&gt;/&lt;/outputDirectory&gt;
+            &lt;useDefaultExcludes&gt;true&lt;/useDefaultExcludes&gt;
+            &lt;excludes&gt;
+                &lt;exclude&gt;**/${project.build.directory}/**&lt;/exclude&gt;
+                &lt;exclude&gt;mvnw&lt;/exclude&gt;
+                &lt;exclude&gt;mvnw.cmd&lt;/exclude&gt;
+                &lt;exclude&gt;.mvn/**&lt;/exclude&gt;
+                &lt;exclude&gt;src/**&lt;/exclude&gt;
+            &lt;/excludes&gt;
+        &lt;/fileSet&gt;
+    &lt;/fileSets&gt;
+&lt;/assembly&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-workflow"><a class="anchor" href="#how-to-workflow"></a><a class="link" href="#how-to-workflow">5.2. Workflow</a></h3>
+<div class="paragraph">
+<p>The workflow assumes that Spring Cloud Contract is set up both on the consumer and on the
+producer side. There is also the proper plugin setup in the common repository with
+contracts. The CI jobs are set for a common repository to build an artifact of all
+contracts and upload it to Nexus/Artifactory. The following image shows the UML for this
+workflow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/how-to-common-repo.png" alt="how to common repo" width="1588" height="1421">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-workflow-consumer"><a class="anchor" href="#how-to-workflow-consumer"></a><a class="link" href="#how-to-workflow-consumer">5.3. Consumer</a></h3>
+<div class="paragraph">
+<p>When the consumer wants to work on the contracts offline, instead of cloning the producer
+code, the consumer team clones the common repository, goes to the required producer&#8217;s
+folder (for example, <code>com/example/server</code>) and runs <code>mvn clean install -DskipTests</code> to
+locally install the stubs converted from the contracts.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You need to have <a href="https://maven.apache.org/download.cgi">Maven installed locally</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-workflow-producer"><a class="anchor" href="#how-to-workflow-producer"></a><a class="link" href="#how-to-workflow-producer">5.4. Producer</a></h3>
+<div class="paragraph">
+<p>As a producer, you can to alter the Spring Cloud Contract Verifier to provide the URL and
+the dependency of the JAR that contains the contracts, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+        &lt;contractsRepositoryUrl&gt;
+            https://link/to/your/nexus/or/artifactory/or/sth
+        &lt;/contractsRepositoryUrl&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
+            &lt;artifactId&gt;contracts&lt;/artifactId&gt;
+        &lt;/contractDependency&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With this setup, the JAR with a groupid of <code>com.example.standalone</code> and artifactid
+<code>contracts</code> is downloaded from <code><a href="https://link/to/your/nexus/or/artifactory/or/sth" class="bare">link/to/your/nexus/or/artifactory/or/sth</a></code>. It is
+then unpacked in a local temporary folder, and the contracts present in
+<code>com/example/server</code> are picked as the ones used to generate the tests and the stubs. Due
+to this convention, the producer team can know which consumer teams will be broken when
+some incompatible changes are made.</p>
+</div>
+<div class="paragraph">
+<p>The rest of the flow looks the same.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-define-messaging-contracts-per-topic"><a class="anchor" href="#how-to-define-messaging-contracts-per-topic"></a><a class="link" href="#how-to-define-messaging-contracts-per-topic">5.5. How Can I Define Messaging Contracts per Topic Rather than per Producer?</a></h3>
+<div class="paragraph">
+<p>To avoid messaging contracts duplication in the common repository, when a few producers write messages to one topic,
+we could create a structure in which the REST contracts are placed in a folder per producer and messaging
+contracts are placed in the folder per topic.</p>
+</div>
+<div class="sect3">
+<h4 id="how-to-define-messaging-contracts-per-topic-maven"><a class="anchor" href="#how-to-define-messaging-contracts-per-topic-maven"></a><a class="link" href="#how-to-define-messaging-contracts-per-topic-maven">5.5.1. For Maven Projects</a></h4>
+<div class="paragraph">
+<p>To make it possible to work on the producer side, we should specify an inclusion pattern for
+filtering common repository jar files by messaging topics we are interested in. The
+<code>includedFiles</code> property of the Maven Spring Cloud Contract plugin
+lets us do so. Also, <code>contractsPath</code> need to be specified, since the default path would be
+the common repository <code>groupid/artifactid</code>. The following example shows a Maven
+plugin for Spring Cloud Contract:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+   &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+   &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+   &lt;configuration&gt;
+      &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+      &lt;contractsRepositoryUrl&gt;https://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
+      &lt;contractDependency&gt;
+         &lt;groupId&gt;com.example&lt;/groupId&gt;
+         &lt;artifactId&gt;common-repo-with-contracts&lt;/artifactId&gt;
+         &lt;version&gt;+&lt;/version&gt;
+      &lt;/contractDependency&gt;
+      &lt;contractsPath&gt;/&lt;/contractsPath&gt;
+      &lt;baseClassMappings&gt;
+         &lt;baseClassMapping&gt;
+            &lt;contractPackageRegex&gt;.*messaging.*&lt;/contractPackageRegex&gt;
+            &lt;baseClassFQN&gt;com.example.services.MessagingBase&lt;/baseClassFQN&gt;
+         &lt;/baseClassMapping&gt;
+         &lt;baseClassMapping&gt;
+            &lt;contractPackageRegex&gt;.*rest.*&lt;/contractPackageRegex&gt;
+            &lt;baseClassFQN&gt;com.example.services.TestBase&lt;/baseClassFQN&gt;
+         &lt;/baseClassMapping&gt;
+      &lt;/baseClassMappings&gt;
+      &lt;includedFiles&gt;
+         &lt;includedFile&gt;**/${project.artifactId}/**&lt;/includedFile&gt;
+         &lt;includedFile&gt;**/${first-topic}/**&lt;/includedFile&gt;
+         &lt;includedFile&gt;**/${second-topic}/**&lt;/includedFile&gt;
+      &lt;/includedFiles&gt;
+   &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Many of the values in the preceding Maven plugin can be changed. We included it for
+illustration purposes rather than trying to provide a &#8220;typical&#8221; example.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-to-define-messaging-contracts-per-topic-gradle"><a class="anchor" href="#how-to-define-messaging-contracts-per-topic-gradle"></a><a class="link" href="#how-to-define-messaging-contracts-per-topic-gradle">5.5.2. For Gradle Projects</a></h4>
+<div class="paragraph">
+<p>To work with a Gradle project:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add a custom configuration for the common repository dependency, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">ext {
+    conractsGroupId = "com.example"
+    contractsArtifactId = "common-repo"
+    contractsVersion = "1.2.3"
+}
+
+configurations {
+    contracts {
+        transitive = false
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add the common repository dependency to your classpath, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
+    contracts "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+    testCompile "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Download the dependency to an appropriate folder, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">task getContracts(type: Copy) {
+    from configurations.contracts
+    into new File(project.buildDir, "downloadedContracts")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Unzip the JAR, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">task unzipContracts(type: Copy) {
+    def zipFile = new File(project.buildDir, "downloadedContracts/${contractsArtifactId}-${contractsVersion}.jar")
+    def outputDir = file("${buildDir}/unpackedContracts")
+
+    from zipTree(zipFile)
+    into outputDir
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Cleanup unused contracts, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">task deleteUnwantedContracts(type: Delete) {
+    delete fileTree(dir: "${buildDir}/unpackedContracts",
+        include: "**/*",
+        excludes: [
+            "**/${project.name}/**"",
+            "**/${first-topic}/**",
+            "**/${second-topic}/**"])
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create task dependencies, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">unzipContracts.dependsOn("getContracts")
+deleteUnwantedContracts.dependsOn("unzipContracts")
+build.dependsOn("deleteUnwantedContracts")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Configure the plugin by specifying the directory that contains the contracts, by setting
+the <code>contractsDslDir</code> property, as follows:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    contractsDslDir = new File("${buildDir}/unpackedContracts")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-use-git-as-storage"><a class="anchor" href="#how-to-use-git-as-storage"></a><a class="link" href="#how-to-use-git-as-storage">6. How Can I Use Git as the Storage for Contracts and Stubs?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the polyglot world, there are languages that do not use binary storages, as
+Artifactory or Nexus do. Starting from Spring Cloud Contract version 2.0.0, we provide
+mechanisms to store contracts and stubs in a SCM (Source Control Management) repository. Currently, the
+only supported SCM is Git.</p>
+</div>
+<div class="paragraph">
+<p>The repository would have to have the following setup
+(which you can checkout from <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x/contracts_git/">here</a>):</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>.
+└── META-INF
+    └── com.example
+        └── beer-api-producer-git
+            └── 0.0.1-SNAPSHOT
+                ├── contracts
+                │   └── beer-api-consumer
+                │       ├── messaging
+                │       │   ├── shouldSendAcceptedVerification.groovy
+                │       │   └── shouldSendRejectedVerification.groovy
+                │       └── rest
+                │           ├── shouldGrantABeerIfOldEnough.groovy
+                │           └── shouldRejectABeerIfTooYoung.groovy
+                └── mappings
+                    └── beer-api-consumer
+                        └── rest
+                            ├── shouldGrantABeerIfOldEnough.json
+                            └── shouldRejectABeerIfTooYoung.json</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Under the <code>META-INF</code> folder:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>We group applications by <code>groupId</code> (such as <code>com.example</code>).</p>
+</li>
+<li>
+<p>Each application is represented by its <code>artifactId</code> (for example, <code>beer-api-producer-git</code>).</p>
+</li>
+<li>
+<p>Next, each application is organized by its version (such as <code>0.0.1-SNAPSHOT</code>). Starting
+from Spring Cloud Contract version <code>2.1.0</code>, you can specify the versions as follows
+(assuming that your versions follow semantic versioning):</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>+</code> or <code>latest</code>: To find the latest version of your stubs (assuming that the snapshots
+are always the latest artifact for a given revision number). That means:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you have <code>1.0.0.RELEASE</code>, <code>2.0.0.BUILD-SNAPSHOT</code>, and <code>2.0.0.RELEASE</code>, we assume
+that the latest is <code>2.0.0.BUILD-SNAPSHOT</code>.</p>
+</li>
+<li>
+<p>If you have <code>1.0.0.RELEASE</code> and <code>2.0.0.RELEASE</code>, we assume that the latest is <code>2.0.0.RELEASE</code>.</p>
+</li>
+<li>
+<p>If you have a version called <code>latest</code> or <code>+</code>, we will pick that folder.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>release</code>: To find the latest release version of your stubs. That means:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you have <code>1.0.0.RELEASE</code>, <code>2.0.0.BUILD-SNAPSHOT</code>, and <code>2.0.0.RELEASE</code> we assume
+that the latest is <code>2.0.0.RELEASE</code>.</p>
+</li>
+<li>
+<p>If you have a version called <code>release</code>, we pick that folder.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Finally, there are two folders:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>contracts</code>: The good practice is to store the contracts required by each
+consumer in the folder with the consumer name (such as <code>beer-api-consumer</code>). That way, you
+can use the <code>stubs-per-consumer</code> feature. Further directory structure is arbitrary.</p>
+</li>
+<li>
+<p><code>mappings</code>: The Maven or Gradle Spring Cloud Contract plugins push
+the stub server mappings in this folder. On the consumer side, Stub Runner scans this folder
+to start stub servers with stub definitions. The folder structure is a copy
+of the one created in the <code>contracts</code> subfolder.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="how-to-protocol-convention"><a class="anchor" href="#how-to-protocol-convention"></a><a class="link" href="#how-to-protocol-convention">6.1. Protocol Convention</a></h3>
+<div class="paragraph">
+<p>To control the type and location of the source of contracts (whether
+binary storage or an SCM repository), you can use the protocol in the URL of
+the repository. Spring Cloud Contract iterates over registered protocol resolvers
+and tries to fetch the contracts (by using a plugin) or stubs (from Stub Runner).</p>
+</div>
+<div class="paragraph">
+<p>For the SCM functionality, currently, we support the Git repository. To use it,
+in the property where the repository URL needs to be placed, you have to prefix
+the connection URL with <code>git://</code>. The following listing shows some examples:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>git://file:///foo/bar
+git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git
+git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-protocol-convention-producer"><a class="anchor" href="#how-to-protocol-convention-producer"></a><a class="link" href="#how-to-protocol-convention-producer">6.2. Producer</a></h3>
+<div class="paragraph">
+<p>For the producer, to use the SCM (Source Control Management) approach, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the SCM implementation from the URL that starts with
+the <code>git://</code> protocol.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+You have to manually add the <code>pushStubsToScm</code>
+goal in Maven or execute (bind) the <code>pushStubsToScm</code> task in
+Gradle. We do not push stubs to the <code>origin</code> of your git
+repository.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The following listing includes the relevant parts both Maven and Gradle build files:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- Base class mappings etc. --&gt;
+
+        &lt;!-- We want to pick contracts from a Git repository --&gt;
+        &lt;contractsRepositoryUrl&gt;git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git&lt;/contractsRepositoryUrl&gt;
+
+        &lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+            &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;/contractDependency&gt;
+
+        &lt;!-- The contracts mode can't be classpath --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;
+                &lt;goal&gt;pushStubsToScm&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+    // We want to pick contracts from a Git repository
+    contractDependency {
+        stringNotation = "${project.group}:${project.name}:${project.version}"
+    }
+    /*
+    We reuse the contract dependency section to set up the path
+    to the folder that contains the contract definitions. In our case the
+    path will be /groupId/artifactId/version/contracts
+     */
+    contractRepository {
+        repositoryUrl = "git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git"
+    }
+    // The mode can't be classpath
+    contractsMode = "REMOTE"
+    // Base class mappings etc.
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publish.dependsOn("publishStubsToScm")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With such a setup:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A git project is cloned to a temporary directory</p>
+</li>
+<li>
+<p>The SCM stub downloader goes to <code>META-INF/groupId/artifactId/version/contracts</code> folder
+to find contracts. For example, for <code>com.example:foo:1.0.0</code>, the path would be
+<code>META-INF/com.example/foo/1.0.0/contracts</code>.</p>
+</li>
+<li>
+<p>Tests are generated from the contracts.</p>
+</li>
+<li>
+<p>Stubs are created from the contracts.</p>
+</li>
+<li>
+<p>Once the tests pass, the stubs are committed in the cloned repository.</p>
+</li>
+<li>
+<p>Finally, a push is sent to that repo&#8217;s <code>origin</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-protocol-convention-producer-with-contracts-stored-locally"><a class="anchor" href="#how-to-protocol-convention-producer-with-contracts-stored-locally"></a><a class="link" href="#how-to-protocol-convention-producer-with-contracts-stored-locally">6.3. Producer with Contracts Stored Locally</a></h3>
+<div class="paragraph">
+<p>Another option to use the SCM as the destination for stubs and contracts is to store the
+contracts locally, with the producer, and only push the contracts and the stubs to SCM.
+The following listing shows the setup required to achieve this with Maven and Gradle:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;!-- In the default configuration, we want to use the contracts stored locally --&gt;
+    &lt;configuration&gt;
+        &lt;baseClassMappings&gt;
+            &lt;baseClassMapping&gt;
+                &lt;contractPackageRegex&gt;.*messaging.*&lt;/contractPackageRegex&gt;
+                &lt;baseClassFQN&gt;com.example.BeerMessagingBase&lt;/baseClassFQN&gt;
+            &lt;/baseClassMapping&gt;
+            &lt;baseClassMapping&gt;
+                &lt;contractPackageRegex&gt;.*rest.*&lt;/contractPackageRegex&gt;
+                &lt;baseClassFQN&gt;com.example.BeerRestBase&lt;/baseClassFQN&gt;
+            &lt;/baseClassMapping&gt;
+        &lt;/baseClassMappings&gt;
+        &lt;basePackageForTests&gt;com.example&lt;/basePackageForTests&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;
+                &lt;goal&gt;pushStubsToScm&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+                &lt;!-- We want to pick contracts from a Git repository --&gt;
+                &lt;contractsRepositoryUrl&gt;git://file://${env.ROOT}/target/contract_empty_git/
+                &lt;/contractsRepositoryUrl&gt;
+                &lt;!-- Example of URL via git protocol --&gt;
+                &lt;!--&lt;contractsRepositoryUrl&gt;git://git@github.com:spring-cloud-samples/spring-cloud-contract-samples.git&lt;/contractsRepositoryUrl&gt;--&gt;
+                &lt;!-- Example of URL via http protocol --&gt;
+                &lt;!--&lt;contractsRepositoryUrl&gt;git://https://github.com/spring-cloud-samples/spring-cloud-contract-samples.git&lt;/contractsRepositoryUrl&gt;--&gt;
+                &lt;!-- We reuse the contract dependency section to set up the path
+                to the folder that contains the contract definitions. In our case the
+                path will be /groupId/artifactId/version/contracts --&gt;
+                &lt;contractDependency&gt;
+                    &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+                    &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+                    &lt;version&gt;${project.version}&lt;/version&gt;
+                &lt;/contractDependency&gt;
+                &lt;!-- The mode can't be classpath --&gt;
+                &lt;contractsMode&gt;LOCAL&lt;/contractsMode&gt;
+            &lt;/configuration&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">contracts {
+        // Base package for generated tests
+    basePackageForTests = "com.example"
+    baseClassMappings {
+        baseClassMapping(".*messaging.*", "com.example.BeerMessagingBase")
+        baseClassMapping(".*rest.*", "com.example.BeerRestBase")
+    }
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publishStubsToScm {
+    // We want to modify the default set up of the plugin when publish stubs to scm is called
+    customize {
+        // We want to pick contracts from a Git repository
+        contractDependency {
+            stringNotation = "${project.group}:${project.name}:${project.version}"
+        }
+        /*
+        We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts
+         */
+        contractRepository {
+            repositoryUrl = "git://file://${new File(project.rootDir, "../target")}/contract_empty_git/"
+        }
+        // The mode can't be classpath
+        contractsMode = "LOCAL"
+    }
+}
+
+publish.dependsOn("publishStubsToScm")
+publishToMavenLocal.dependsOn("publishStubsToScm")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With such a setup:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Contracts from the default <code>src/test/resources/contracts</code> directory are picked.</p>
+</li>
+<li>
+<p>Tests are generated from the contracts.</p>
+</li>
+<li>
+<p>Stubs are created from the contracts.</p>
+</li>
+<li>
+<p>Once the tests pass:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The git project is cloned to a temporary directory.</p>
+</li>
+<li>
+<p>The stubs and contracts are committed in the cloned repository.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Finally, a push is done to that repository&#8217;s <code>origin</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-protocol-convention-contracts-producer-stubs-external"><a class="anchor" href="#how-to-protocol-convention-contracts-producer-stubs-external"></a><a class="link" href="#how-to-protocol-convention-contracts-producer-stubs-external">6.4. Keeping Contracts with the Producer and Stubs in an External Repository</a></h3>
+<div class="paragraph">
+<p>You can also keep the contracts in the producer repository but keep the stubs in an external git repository.
+This is most useful when you want to use the base consumer-producer collaboration flow but cannot
+use an artifact repository to store the stubs.</p>
+</div>
+<div class="paragraph">
+<p>To do so, use the usual producer setup and then add the <code>pushStubsToScm</code> goal and set
+<code>contractsRepositoryUrl</code> to the repository where you want to keep the stubs.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-protocol-convention-contracts-producer-stubs-external-consumer"><a class="anchor" href="#how-to-protocol-convention-contracts-producer-stubs-external-consumer"></a><a class="link" href="#how-to-protocol-convention-contracts-producer-stubs-external-consumer">6.5. Consumer</a></h3>
+<div class="paragraph">
+<p>On the consumer side, when passing the <code>repositoryRoot</code> parameter,
+either from the <code>@AutoConfigureStubRunner</code> annotation, the
+JUnit rule, JUnit 5 extension, or properties, you can pass the URL of the
+SCM repository, prefixed with the <code>git://</code> protocol. The following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AutoConfigureStubRunner(
+    stubsMode="REMOTE",
+    repositoryRoot="git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git",
+    ids="com.example:bookstore:0.0.1.RELEASE"
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With such a setup:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The git project is cloned to a temporary directory.</p>
+</li>
+<li>
+<p>The SCM stub downloader goes to thje <code>META-INF/groupId/artifactId/version/</code> folder
+to find stub definitions and contracts. For example, for <code>com.example:foo:1.0.0</code>, the path would be
+<code>META-INF/com.example/foo/1.0.0/</code>.</p>
+</li>
+<li>
+<p>Stub servers are started and fed with mappings.</p>
+</li>
+<li>
+<p>Messaging definitions are read and used in the messaging tests.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-use-pact-broker"><a class="anchor" href="#how-to-use-pact-broker"></a><a class="link" href="#how-to-use-pact-broker">7. How Can I Use the Pact Broker?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using <a href="https://pact.io/">Pact</a>, you can use the <a href="https://github.com/pact-foundation/pact_broker">Pact Broker</a>
+to store and share Pact definitions. Starting from Spring Cloud Contract
+2.0.0, you can fetch Pact files from the Pact Broker to generate
+tests and stubs.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Pact follows the consumer contract convention. That means
+that the consumer creates the Pact definitions first and then
+shares the files with the Producer. Those expectations are generated
+from the Consumer&#8217;s code and can break the Producer if the expectations
+are not met.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="how-to-use-pact-broker-pact"><a class="anchor" href="#how-to-use-pact-broker-pact"></a><a class="link" href="#how-to-use-pact-broker-pact">7.1. How to Work with Pact</a></h3>
+<div class="paragraph">
+<p>Spring Cloud Contract includes support for the <a href="https://docs.pact.io/">Pact</a> representation of
+contracts up until version 4. Instead of using the DSL, you can use Pact files. In this section, we
+show how to add Pact support for your project. Note, however, that not all functionality is supported.
+Starting with version 3, you can combine multiple matchers for the same element;
+you can use matchers for the body, headers, request and path; and you can use value generators.
+Spring Cloud Contract currently only supports multiple matchers that are combined by using the <code>AND</code> rule logic.
+Next to that, the request and path matchers are skipped during the conversion.
+When using a date, time, or datetime value generator with a given format,
+the given format is skipped and the ISO format is used.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-use-pact-broker-pact-converter"><a class="anchor" href="#how-to-use-pact-broker-pact-converter"></a><a class="link" href="#how-to-use-pact-broker-pact-converter">7.2. Pact Converter</a></h3>
+<div class="paragraph">
+<p>In order to properly support the Spring Cloud Contract way of doing messaging
+with Pact, you have to provide some additional meta data entries.</p>
+</div>
+<div class="paragraph">
+<p>To define the destination to which a message gets sent, you have to
+set a <code>metaData</code> entry in the Pact file with the <code>sentTo</code> key equal to the destination to
+ which a message is to be sent (for example, <code>"metaData": { "sentTo": "activemq:output" }</code>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-use-pact-broker-pact-contract"><a class="anchor" href="#how-to-use-pact-broker-pact-contract"></a><a class="link" href="#how-to-use-pact-broker-pact-contract">7.3. Pact Contract</a></h3>
+<div class="paragraph">
+<p>Spring Cloud Contract can read the Pact JSON definition. You can place the file in the
+<code>src/test/resources/contracts</code> folder. Remember to put the <code>spring-cloud-contract-pact</code> dependency to your classpath. The following example shows such a Pact contract:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">{
+  "provider": {
+    "name": "Provider"
+  },
+  "consumer": {
+    "name": "Consumer"
+  },
+  "interactions": [
+    {
+      "description": "",
+      "request": {
+        "method": "PUT",
+        "path": "/pactfraudcheck",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "clientId": "1234567890",
+          "loanAmount": 99999
+        },
+        "generators": {
+          "body": {
+            "$.clientId": {
+              "type": "Regex",
+              "regex": "[0-9]{10}"
+            }
+          }
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body": {
+            "$.clientId": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9]{10}"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "fraudCheckStatus": "FRAUD",
+          "rejection.reason": "Amount too high"
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body": {
+            "$.fraudCheckStatus": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "FRAUD"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.5.13"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-use-pact-broker-pact-for-producers"><a class="anchor" href="#how-to-use-pact-broker-pact-for-producers"></a><a class="link" href="#how-to-use-pact-broker-pact-for-producers">7.4. Pact for Producers</a></h3>
+<div class="paragraph">
+<p>On the producer side, you must add two additional dependencies to your plugin
+configuration. One is the Spring Cloud Contract Pact support, and the other represents
+the current Pact version that you use. The following listing shows how to do so for both
+Maven and Gradle:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml"></code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">// if additional dependencies are needed e.g. for Pact
+classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>When you execute the build of your application, a test and stub is generated. The following
+example shows a test and stub that came from this process:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">test</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Test
+    public void validate_shouldMarkClientAsFraud() throws Exception {
+        // given:
+            MockMvcRequestSpecification request = given()
+                    .header("Content-Type", "application/vnd.fraud.v1+json")
+                    .body("{\"clientId\":\"1234567890\",\"loanAmount\":99999}");
+
+        // when:
+            ResponseOptions response = given().spec(request)
+                    .put("/fraudcheck");
+
+        // then:
+            assertThat(response.statusCode()).isEqualTo(200);
+            assertThat(response.header("Content-Type")).matches("application/vnd\\.fraud\\.v1\\+json.*");
+        // and:
+            DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+            assertThatJson(parsedJson).field("['rejectionReason']").isEqualTo("Amount too high");
+        // and:
+            assertThat(parsedJson.read("$.fraudCheckStatus", String.class)).matches("FRAUD");
+    }</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">stub</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
+  "uuid" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
+  "request" : {
+    "url" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "application/vnd\\.fraud\\.v1\\+json.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.['loanAmount'] = 99999)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.clientId =~ /([0-9]{10})/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json;charset=UTF-8"
+    },
+    "transformers" : [ "response-template" ]
+  },
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-use-pact-broker-pact-consumers"><a class="anchor" href="#how-to-use-pact-broker-pact-consumers"></a><a class="link" href="#how-to-use-pact-broker-pact-consumers">7.5. Pact for Consumers</a></h3>
+<div class="paragraph">
+<p>On the consumer side, you must add two additional dependencies to your project
+dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
+current Pact version that you use. The following listing shows how to do so for both
+Maven and Gradle:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml"></code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy"></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="pact-stub-downloader"><a class="anchor" href="#pact-stub-downloader"></a><a class="link" href="#pact-stub-downloader">7.6. Communicating with the Pact Broker</a></h3>
+<div class="paragraph">
+<p>Whenever the <code>repositoryRoot</code> property starts with a Pact protocol
+(starts with <code>pact://</code>), the stub downloader tries
+to fetch the Pact contract definitions from the Pact Broker.
+Whatever is set after <code>pact://</code> is parsed as the Pact Broker URL.</p>
+</div>
+<div class="paragraph">
+<p>By setting environment variables, system properties, or properties set
+inside the plugin or contracts repository configuration, you can
+tweak the downloader&#8217;s behavior. The following table describes the
+properties:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Pact Stub Downloader properties</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of a property</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.host</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.host</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_HOST</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Host from URL passed to <code>repositoryRoot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The URL of the Pact Broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.port</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.port</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_PORT</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Port from URL passed to <code>repositoryRoot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The port of Pact Broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.protocol</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.protocol</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Protocol from URL passed to <code>repositoryRoot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The protocol of Pact Broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.tags</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.tags</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Version of the stub, or <code>latest</code> if version is <code>+</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The tags that should be used to fetch the stub.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.auth.scheme</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.auth.scheme</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Basic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The kind of authentication that should be used to connect to the Pact Broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.auth.username</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.auth.username</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The username passed to <code>contractsRepositoryUsername</code> (maven) or <code>contractRepository.username</code> (gradle)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The username to use when connecting to the Pact Broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.auth.password</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.auth.password</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The password passed to <code>contractsRepositoryPassword</code> (maven) or <code>contractRepository.password</code> (gradle)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The password to use when connecting to the Pact Broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>pactbroker.provider-name-with-group-id</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.pactbroker.provider-name-with-group-id</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When <code>true</code>, the provider name is a combination of <code>groupId:artifactId</code>. If <code>false</code>, only <code>artifactId</code> is used.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="how-to-pact-consumer"><a class="anchor" href="#how-to-pact-consumer"></a><a class="link" href="#how-to-pact-consumer">7.7. Flow: Consumer Contract approach with Pact Broker | Consumer Side</a></h3>
+<div class="paragraph">
+<p>The consumer uses the Pact framework to generate Pact files. The
+Pact files are sent to the Pact Broker. You can find an example of such a setup
+<a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x/consumer_pact">here</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-pact-producer"><a class="anchor" href="#how-to-pact-producer"></a><a class="link" href="#how-to-pact-producer">7.8. Flow: Consumer Contract Approach with Pact Broker on the Producer Side</a></h3>
+<div class="paragraph">
+<p>For the producer to use the Pact files from the Pact Broker, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the Pact implementation with the URL that contains
+the <code>pact://</code> protocol. You can pass the URL to the
+Pact Broker. You can find an example of such a setup
+<a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x/producer_pact">here</a>.
+The following listing shows the configuration details for both Maven and Gradle:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- Base class mappings etc. --&gt;
+
+        &lt;!-- We want to pick contracts from a Git repository --&gt;
+        &lt;contractsRepositoryUrl&gt;pact://http://localhost:8085&lt;/contractsRepositoryUrl&gt;
+
+        &lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+            &lt;!-- When + is passed, a latest tag will be applied when fetching pacts --&gt;
+            &lt;version&gt;+&lt;/version&gt;
+        &lt;/contractDependency&gt;
+
+        &lt;!-- The contracts mode can't be classpath --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+    &lt;/configuration&gt;
+    &lt;!-- Don't forget to add spring-cloud-contract-pact to the classpath! --&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">buildscript {
+    repositories {
+        //...
+    }
+
+    dependencies {
+        // ...
+        // Don't forget to add spring-cloud-contract-pact to the classpath!
+        classpath "org.springframework.cloud:spring-cloud-contract-pact:${contractVersion}"
+    }
+}
+
+contracts {
+    // When + is passed, a latest tag will be applied when fetching pacts
+    contractDependency {
+        stringNotation = "${project.group}:${project.name}:+"
+    }
+    contractRepository {
+        repositoryUrl = "pact://http://localhost:8085"
+    }
+    // The mode can't be classpath
+    contractsMode = "REMOTE"
+    // Base class mappings etc.
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With such a setup:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pact files are downloaded from the Pact Broker.</p>
+</li>
+<li>
+<p>Spring Cloud Contract converts the Pact files into tests and stubs.</p>
+</li>
+<li>
+<p>The JAR with the stubs gets automatically created, as usual.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-pact-consumer-producer-contract"><a class="anchor" href="#how-to-pact-consumer-producer-contract"></a><a class="link" href="#how-to-pact-consumer-producer-contract">7.9. Flow: Producer Contract approach with Pact on the Consumer Side</a></h3>
+<div class="paragraph">
+<p>In the scenario where you do not want to do the consumer contract approach
+(for every single consumer, define the expectations) but you prefer
+to do producer contracts (the producer provides the contracts and
+publishes stubs), you can use Spring Cloud Contract with the
+Stub Runner option. You can find an example of such a setup
+<a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.2.x/consumer_pact_stubrunner">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>Remember to add the Stub Runner and Spring Cloud Contract Pact modules
+as test dependencies.</p>
+</div>
+<div class="paragraph">
+<p>The following listing shows the configuration details for both Maven and Gradle:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+
+&lt;!-- Don't forget to add spring-cloud-contract-pact to the classpath! --&gt;
+&lt;dependencies&gt;
+    &lt;!-- ... --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    //...
+    testCompile("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    // Don't forget to add spring-cloud-contract-pact to the classpath!
+    testCompile("org.springframework.cloud:spring-cloud-contract-pact")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, you can pass the URL of the Pact Broker to <code>repositoryRoot</code>, prefixed
+with <code>pact://</code> protocol (for example, <code>pact://http://localhost:8085</code>), as the following
+example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+        ids = "com.example:beer-api-producer-pact",
+        repositoryRoot = "pact://http://localhost:8085")
+public class BeerControllerTest {
+    //Inject the port of the running stub
+    @StubRunnerPort("beer-api-producer-pact") int producerPort;
+    //...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With such a setup:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pact files are downloaded from the Pact Broker.</p>
+</li>
+<li>
+<p>Spring Cloud Contract converts the Pact files into stub definitions.</p>
+</li>
+<li>
+<p>The stub servers are started and fed with stubs.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-debug"><a class="anchor" href="#how-to-debug"></a><a class="link" href="#how-to-debug">8. How Can I Debug the Request/Response Being Sent by the Generated Tests Client?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The generated tests all boil down to RestAssured in some form or fashion. RestAssured
+relies on the <a href="https://hc.apache.org/httpcomponents-client-ga/">Apache HttpClient</a>.
+HttpClient has a facility called
+<a href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging">wire logging</a>,
+which logs the entire request and response to HttpClient. Spring Boot has a logging
+<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html">common application property</a>
+for doing this sort of thing. To use it, add this to your application properties, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">logging.level.org.apache.http.wire=DEBUG</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-debug-wiremock"><a class="anchor" href="#how-to-debug-wiremock"></a><a class="link" href="#how-to-debug-wiremock">9. How Can I Debug the Mapping, Request, or Response Being Sent by WireMock?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Starting from version <code>1.2.0</code>, we turn on WireMock logging to
+<code>info</code> and set the WireMock notifier to being verbose. Now you can
+exactly know what request was received by the WireMock server and which
+matching response definition was picked.</p>
+</div>
+<div class="paragraph">
+<p>To turn off this feature, set WireMock logging to <code>ERROR</code>, as follows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">logging.level.com.github.tomakehurst.wiremock=ERROR</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-see-registered-stubs"><a class="anchor" href="#how-to-see-registered-stubs"></a><a class="link" href="#how-to-see-registered-stubs">10. How Can I See What Got Registered in the HTTP Server Stub?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use the <code>mappingsOutputFolder</code> property on <code>@AutoConfigureStubRunner</code>, <code>StubRunnerRule</code>, or
+`StubRunnerExtension`to dump all mappings per artifact ID. Also the port at which the given stub server
+was started is attached.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-reference-text-from-file"><a class="anchor" href="#how-to-reference-text-from-file"></a><a class="link" href="#how-to-reference-text-from-file">11. How Can I Reference Text from File?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In version 1.2.0, we added this ability. You can call a <code>file(&#8230;&#8203;)</code> method in the
+DSL and provide a path relative to where the contract lies.
+If you use YAML, you can use the <code>bodyFromFile</code> property.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-generate-pact-from-scc"><a class="anchor" href="#how-to-generate-pact-from-scc"></a><a class="link" href="#how-to-generate-pact-from-scc">12. How Can I Generate Pact, YAML, or X files from Spring Cloud Contract Contracts?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Cloud Contract comes with a <code>ToFileContractsTransformer</code> class that lets you dump
+contracts as files for the given <code>ContractConverter</code>. It contains a <code>static void main</code>
+method that lets you execute the transformer as an executable. It takes the following
+arguments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>argument 1 : <code>FQN</code>: Fully qualified name of the <code>ContractConverter</code> (for example, <code>PactContractConverter</code>). <strong>REQUIRED</strong>.</p>
+</li>
+<li>
+<p>argument 2 : <code>path</code>: Path where the dumped files should be stored. <strong>OPTIONAL</strong>&#8201;&#8212;&#8201;defaults to <code>target/converted-contracts</code>.</p>
+</li>
+<li>
+<p>argument 3 : <code>path</code>: Path were the contracts should be searched for. <strong>OPTIONAL</strong>&#8201;&#8212;&#8201;defaults to <code>src/test/resources/contracts</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After executing the transformer, the Spring Cloud Contract files are processed and,
+depending on the provided FQN of the <code>ContractTransformer</code>, the contracts are transformed
+to the required format and dumped to the provided folder.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows how to configure Pact integration for both Maven and Gradle:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+    &lt;artifactId&gt;exec-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;1.6.0&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;id&gt;convert-dsl-to-pact&lt;/id&gt;
+            &lt;phase&gt;process-test-classes&lt;/phase&gt;
+            &lt;configuration&gt;
+                &lt;classpathScope&gt;test&lt;/classpathScope&gt;
+                &lt;mainClass&gt;
+                    org.springframework.cloud.contract.verifier.util.ToFileContractsTransformer
+                &lt;/mainClass&gt;
+                &lt;arguments&gt;
+                    &lt;argument&gt;
+                        org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter
+                    &lt;/argument&gt;
+                    &lt;argument&gt;${project.basedir}/target/pacts&lt;/argument&gt;
+                    &lt;argument&gt;
+                        ${project.basedir}/src/test/resources/contracts
+                    &lt;/argument&gt;
+                &lt;/arguments&gt;
+            &lt;/configuration&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;java&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">task convertContracts(type: JavaExec) {
+    main = "org.springframework.cloud.contract.verifier.util.ToFileContractsTransformer"
+    classpath = sourceSets.test.compileClasspath
+    args("org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter",
+            "${project.rootDir}/build/pacts", "${project.rootDir}/src/test/resources/contracts")
+}
+
+test.dependsOn("convertContracts")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-work-with-transitivie"><a class="anchor" href="#how-to-work-with-transitivie"></a><a class="link" href="#how-to-work-with-transitivie">13. How Can I Work with Transitive Dependencies?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Spring Cloud Contract plugins add the tasks that create the stubs jar for you. One
+problem that arises is that, when reusing the stubs, you can mistakenly import all of
+that stub&#8217;s dependencies. When building a Maven artifact, even though you have a couple
+of different jars, all of them share one pom, as the following listing shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">├── producer-0.0.1.BUILD-20160903.075506-1-stubs.jar
+├── producer-0.0.1.BUILD-20160903.075506-1-stubs.jar.sha1
+├── producer-0.0.1.BUILD-20160903.075655-2-stubs.jar
+├── producer-0.0.1.BUILD-20160903.075655-2-stubs.jar.sha1
+├── producer-0.0.1.BUILD-SNAPSHOT.jar
+├── producer-0.0.1.BUILD-SNAPSHOT.pom
+├── producer-0.0.1.BUILD-SNAPSHOT-stubs.jar
+├── ...
+└── ...</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>There are three possibilities of working with those dependencies so as not to have any
+issues with transitive dependencies:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Mark all application dependencies as optional</p>
+</li>
+<li>
+<p>Create a separate artifactid for the stubs</p>
+</li>
+<li>
+<p>Exclude dependencies on the consumer side</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="how-to-work-with-transitivie-optional"><a class="anchor" href="#how-to-work-with-transitivie-optional"></a><a class="link" href="#how-to-work-with-transitivie-optional">13.1. How Can I Mark All Application Dependencies as Optional?</a></h3>
+<div class="paragraph">
+<p>If, in the <code>producer</code> application, you mark all of your dependencies as optional,
+when you include the <code>producer</code> stubs in another application (or when that
+dependency gets downloaded by Stub Runner) then, since all of the dependencies are
+optional, they do not get downloaded.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-work-with-transitivie-separate"><a class="anchor" href="#how-to-work-with-transitivie-separate"></a><a class="link" href="#how-to-work-with-transitivie-separate">13.2. How can I Create a Separate <code>artifactid</code> for the Stubs?</a></h3>
+<div class="paragraph">
+<p>If you create a separate <code>artifactid</code>, you can set it up in whatever way you wish.
+For example, you might decide to have no dependencies at all.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-work-with-transitivie-exclude"><a class="anchor" href="#how-to-work-with-transitivie-exclude"></a><a class="link" href="#how-to-work-with-transitivie-exclude">13.3. How can I Exclude Dependencies on the Consumer Side?</a></h3>
+<div class="paragraph">
+<p>As a consumer, if you add the stub dependency to your classpath, you can explicitly exclude the unwanted dependencies.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contract-dsl-rest-docs"><a class="anchor" href="#contract-dsl-rest-docs"></a><a class="link" href="#contract-dsl-rest-docs">14. How can I Generate Spring REST Docs Snippets from the Contracts?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you want to include the requests and responses of your API by using Spring REST Docs,
+you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
+To do so, include the following dependencies (if you have not already done so):</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.restdocs&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-restdocs-mockmvc&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, you need to make some changes to your base class. The following examples use
+<code>WebAppContext</code> and the standalone option with RestAssured:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">WebAppContext</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.example.fraud;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+public abstract class FraudBaseWithWebAppSetup {
+
+    private static final String OUTPUT = "target/generated-snippets";
+
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
+
+    @Rule
+    public TestName testName = new TestName();
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @Before
+    public void setup() {
+        RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(this.context)
+                .apply(documentationConfiguration(this.restDocumentation))
+                .alwaysDo(document(
+                        getClass().getSimpleName() + "_" + testName.getMethodName()))
+                .build());
+    }
+
+    protected void assertThatRejectionReasonIsNull(Object rejectionReason) {
+        assert rejectionReason == null;
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Standalone</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.example.fraud;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
+public abstract class FraudBaseWithStandaloneSetup {
+
+    private static final String OUTPUT = "target/generated-snippets";
+
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
+
+    @Rule
+    public TestName testName = new TestName();
+
+    @Before
+    public void setup() {
+        RestAssuredMockMvc.standaloneSetup(MockMvcBuilders
+                .standaloneSetup(new FraudDetectionController())
+                .apply(documentationConfiguration(this.restDocumentation))
+                .alwaysDo(document(
+                        getClass().getSimpleName() + "_" + testName.getMethodName())));
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You need not specify the output directory for the generated snippets (since version 1.2.0.RELEASE of Spring REST Docs).
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-use-stubs-from-a-location"><a class="anchor" href="#how-to-use-stubs-from-a-location"></a><a class="link" href="#how-to-use-stubs-from-a-location">15. How can I Use Stubs from a Location</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want to fetch contracts or stubs from a given location without cloning a repo or fetching a JAR, just use the <code>stubs://</code> protocol when providing the repository root argument for Stub Runner or the Spring Cloud Contract plugin. You can read more about this in <a href="project-features.html#features-stub-runner-stubs-protocol">this section</a> of the documentation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-generate-stubs-at-runtime"><a class="anchor" href="#how-to-generate-stubs-at-runtime"></a><a class="link" href="#how-to-generate-stubs-at-runtime">16. How can I Generate Stubs at Runtime</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want to generate stubs at runtime for contracts, it&#8217;s enough to switch the <code>generateStubs</code> property in the <code>@AutoConfigureStubRunner</code> annotation, or call the <code>withGenerateStubs(true)</code> method on the JUnit Rule or Extension. You can read more about this in <a href="project-features.html#features-stub-runner-generate-stubs-at-runtime">this section</a> of the documentation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-use-the-failonnostubs-feature"><a class="anchor" href="#how-to-use-the-failonnostubs-feature"></a><a class="link" href="#how-to-use-the-failonnostubs-feature">17. How can I Make The Build Pass if There Are No Contracts or Stubs</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want Stub Runner not to fail if no stubs were found, it&#8217;s enough to switch the <code>generateStubs</code> property in the <code>@AutoConfigureStubRunner</code> annotation, or call the <code>withFailOnNoStubs(false)</code> method on the JUnit Rule or Extension. You can read more about this in <a href="project-features.html#features-stub-runner-fail-on-no-stubs">this section</a> of the documentation.</p>
+</div>
+<div class="paragraph">
+<p>If you want the plugins not to fail the build when no contracts were found, you can set the <code>failOnNoStubs</code> flag in Maven or call the <code>contractRepository { failOnNoStubs(false) }</code> Closure in Gradle.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-mark-contract-in-progress"><a class="anchor" href="#how-to-mark-contract-in-progress"></a><a class="link" href="#how-to-mark-contract-in-progress">18. How can I Mark that a Contract Is in Progress</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If a contract is in progress, it means that the on the producer side tests will not be generated, but the stub will be. You can read more about this in <a href="project-features.html#contract-dsl-in-progress">this section</a> of the documentation.</p>
+</div>
+<div class="paragraph">
+<p>In a CI build, before going to production, you would like to ensure that no in progress contracts are there on the classpath. That&#8217;s because you may lead to false positives. That&#8217;s why, by default, in the Spring Cloud Contract plugin, we set the value of <code>failOnInProgress</code> to <code>true</code>. If you want to allow such contracts when tests are to be generated, just set the flag to <code>false</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

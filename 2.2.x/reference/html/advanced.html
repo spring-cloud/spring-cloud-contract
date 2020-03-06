@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>Spring Cloud Contract customization</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+	$('.primary').each(function() {
+		primary = $(this);
+		createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+		primary.children('.title').remove();
+	});
+	$('.secondary').each(function(idx, node) {
+		secondary = $(node);
+		primary = findPrimary(secondary);
+		switchItem = createSwitchItem(secondary, primary.children('.switch'));
+		switchItem.content.addClass('hidden');
+		findPrimary(secondary).append(switchItem.content);
+		secondary.remove();
+	});
+}
+
+function createBlockSwitch(primary) {
+	blockSwitch = $('<div class="switch"></div>');
+	primary.prepend(blockSwitch);
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	candidate = secondary.prev();
+	while (!candidate.is('.primary')) {
+		candidate = candidate.prev();
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	blockName = block.children('.title').text();
+	content = block.children('.content').first().append(block.next('.colist'));
+	item = $('<div class="switch--item">' + blockName + '</div>');
+	item.on('click', '', content, function(e) {
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		e.data.siblings('.content').addClass('hidden');
+		e.data.removeClass('hidden');
+	});
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+</script>
+
+</head>
+<body id="contract-customization" class="book toc2 toc-left">
+<div id="header">
+<h1>Spring Cloud Contract customization</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#customization-customization">1. DSL Customization</a>
+<ul class="sectlevel2">
+<li><a href="#customization-extending">1.1. Extending the DSL</a></li>
+<li><a href="#customization-extending-common-jar">1.2. Common JAR</a></li>
+<li><a href="#customization-test-dep">1.3. Adding a Test Dependency in the Project&#8217;s Dependencies</a></li>
+<li><a href="#customization-plugin-dep">1.4. Adding a Test Dependency in the Plugin&#8217;s Dependencies</a></li>
+<li><a href="#customization-referencing">1.5. Referencing Classes in DSLs</a></li>
+</ul>
+</li>
+<li><a href="#customization-wiremock">2. WireMock Customization</a>
+<ul class="sectlevel2">
+<li><a href="#customization-wiremock-extension">2.1. Registering Your Own WireMock Extension</a></li>
+<li><a href="#customization-wiremock-configuration">2.2. Customization of WireMock Configuration</a></li>
+</ul>
+</li>
+<li><a href="#customization-pluggable-architecture">3. Using the Pluggable Architecture</a>
+<ul class="sectlevel2">
+<li><a href="#customization-custom-contract-converter">3.1. Custom Contract Converter</a></li>
+<li><a href="#customization-custom-test-generator">3.2. Using the Custom Test Generator</a></li>
+<li><a href="#customization-custom-stub-generator">3.3. Using the Custom Stub Generator</a></li>
+<li><a href="#customization-custom-stub-runner">3.4. Using the Custom Stub Runner</a></li>
+<li><a href="#customization-custom-stub-downloader">3.5. Using the Custom Stub Downloader</a></li>
+<li><a href="#scm-stub-downloader">3.6. Using the SCM Stub Downloader</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section, we describe how to customize various parts of Spring Cloud Contract.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="customization-customization"><a class="anchor" href="#customization-customization"></a><a class="link" href="#customization-customization">1. DSL Customization</a></h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This section is valid only for the Groovy DSL
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
+the remainder of this section.</p>
+</div>
+<div class="sect2">
+<h3 id="customization-extending"><a class="anchor" href="#customization-extending"></a><a class="link" href="#customization-extending">1.1. Extending the DSL</a></h3>
+<div class="paragraph">
+<p>You can provide your own functions to the DSL. The key requirement for this feature is to
+maintain the static compatibility. Later in this document, you can see examples of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Creating a JAR with reusable classes.</p>
+</li>
+<li>
+<p>Referencing of these classes in the DSLs.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can find the full example
+<a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples">here</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-extending-common-jar"><a class="anchor" href="#customization-extending-common-jar"></a><a class="link" href="#customization-extending-common-jar">1.2. Common JAR</a></h3>
+<div class="paragraph">
+<p>The following examples show three classes that can be reused in the DSLs.</p>
+</div>
+<div class="paragraph">
+<p><code>PatternUtils</code> contains functions used by both the consumer and the producer.
+The following listing shows the <code>PatternUtils</code> class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.example;
+
+import java.util.regex.Pattern;
+
+/**
+ * If you want to use {@link Pattern} directly in your tests
+ * then you can create a class resembling this one. It can
+ * contain all the {@link Pattern} you want to use in the DSL.
+ *
+ * &lt;pre&gt;
+ * {@code
+ * request {
+ *     body(
+ *         [ age: $(c(PatternUtils.oldEnough()))]
+ *     )
+ * }
+ * &lt;/pre&gt;
+ *
+ * Notice that we're using both {@code $()} for dynamic values
+ * and {@code c()} for the consumer side.
+ *
+ * @author Marcin Grzejszczak
+ */
+//tag::impl[]
+public class PatternUtils {
+
+    public static String tooYoung() {
+        //remove::start[]
+        return "[0-1][0-9]";
+        //remove::end[return]
+    }
+
+    public static Pattern oldEnough() {
+        //remove::start[]
+        return Pattern.compile("[2-9][0-9]");
+        //remove::end[return]
+    }
+
+    /**
+     * Makes little sense but it's just an example ;)
+     */
+    public static Pattern ok() {
+        //remove::start[]
+        return Pattern.compile("OK");
+        //remove::end[return]
+    }
+}
+//end::impl[]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><code>ConsumerUtils</code> contains functions used by the consumer.
+The following listing shows the <code>ConsumerUtils</code> class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.example;
+
+import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
+
+/**
+ * DSL Properties passed to the DSL from the consumer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you can have a regular expression.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you have to have a concrete value.
+ *
+ * @author Marcin Grzejszczak
+ */
+//tag::impl[]
+public class ConsumerUtils {
+    /**
+     * Consumer side property. By using the {@link ClientDslProperty}
+     * you can omit most of boilerplate code from the perspective
+     * of dynamic values. Example
+     *
+     * &lt;pre&gt;
+     * {@code
+     * request {
+     *     body(
+     *         [ age: $(ConsumerUtils.oldEnough())]
+     *     )
+     * }
+     * &lt;/pre&gt;
+     *
+     * That way it's in the implementation that we decide what value we will pass to the consumer
+     * and which one to the producer.
+     *
+     * @author Marcin Grzejszczak
+     */
+    public static ClientDslProperty oldEnough() {
+        //remove::start[]
+        // this example is not the best one and
+        // theoretically you could just pass the regex instead of `ServerDslProperty` but
+        // it's just to show some new tricks :)
+        return new ClientDslProperty(PatternUtils.oldEnough(), 40);
+        //remove::end[return]
+    }
+
+}
+//end::impl[]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><code>ProducerUtils</code> contains functions used by the producer.
+The following listing shows the <code>ProducerUtils</code> class:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.example;
+
+import org.springframework.cloud.contract.spec.internal.ServerDslProperty;
+
+/**
+ * DSL Properties passed to the DSL from the producer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you have to have a concrete value.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you can have a regular expression.
+ *
+ * @author Marcin Grzejszczak
+ */
+//tag::impl[]
+public class ProducerUtils {
+
+    /**
+     * Producer side property. By using the {@link ProducerUtils}
+     * you can omit most of boilerplate code from the perspective
+     * of dynamic values. Example
+     *
+     * &lt;pre&gt;
+     * {@code
+     * response {
+     *     body(
+     *         [ status: $(ProducerUtils.ok())]
+     *     )
+     * }
+     * &lt;/pre&gt;
+     *
+     * That way it's in the implementation that we decide what value we will pass to the consumer
+     * and which one to the producer.
+     */
+    public static ServerDslProperty ok() {
+        // this example is not the best one and
+        // theoretically you could just pass the regex instead of `ServerDslProperty` but
+        // it's just to show some new tricks :)
+        return new ServerDslProperty( PatternUtils.ok(), "OK");
+    }
+}
+//end::impl[]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-test-dep"><a class="anchor" href="#customization-test-dep"></a><a class="link" href="#customization-test-dep">1.3. Adding a Test Dependency in the Project&#8217;s Dependencies</a></h3>
+<div class="paragraph">
+<p>To add a test dependency in the project&#8217;s dependencies, you must first add the common jar
+dependency as a test dependency. Because your contracts files
+are available on the test resources path,  the common jar classes automatically become
+visible in your Groovy files. The following examples show how to test the dependency:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;beer-common&lt;/artifactId&gt;
+    &lt;version&gt;${project.version}&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">testCompile("com.example:beer-common:0.0.1.BUILD-SNAPSHOT")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-plugin-dep"><a class="anchor" href="#customization-plugin-dep"></a><a class="link" href="#customization-plugin-dep">1.4. Adding a Test Dependency in the Plugin&#8217;s Dependencies</a></h3>
+<div class="paragraph">
+<p>Now, you must add the dependency for the plugin to reuse at runtime, as the
+following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+        &lt;baseClassMappings&gt;
+            &lt;baseClassMapping&gt;
+                &lt;contractPackageRegex&gt;.*intoxication.*&lt;/contractPackageRegex&gt;
+                &lt;baseClassFQN&gt;com.example.intoxication.BeerIntoxicationBase&lt;/baseClassFQN&gt;
+            &lt;/baseClassMapping&gt;
+        &lt;/baseClassMappings&gt;
+    &lt;/configuration&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.example&lt;/groupId&gt;
+            &lt;artifactId&gt;beer-common&lt;/artifactId&gt;
+            &lt;version&gt;${project.version}&lt;/version&gt;
+            &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">classpath "com.example:beer-common:0.0.1.BUILD-SNAPSHOT"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-referencing"><a class="anchor" href="#customization-referencing"></a><a class="link" href="#customization-referencing">1.5. Referencing Classes in DSLs</a></h3>
+<div class="paragraph">
+<p>You can now reference your classes in your DSL, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package contracts.beer.rest
+
+import com.example.ConsumerUtils
+import com.example.ProducerUtils
+import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    description("""
+Represents a successful scenario of getting a beer
+
+```
+given:
+    client is old enough
+when:
+    he applies for a beer
+then:
+    we'll grant him the beer
+```
+
+""")
+    request {
+        method 'POST'
+        url '/check'
+        body(
+                age: $(ConsumerUtils.oldEnough())
+        )
+        headers {
+            contentType(applicationJson())
+        }
+    }
+    response {
+        status 200
+        body("""
+            {
+                "status": "${value(ProducerUtils.ok())}"
+            }
+            """)
+        headers {
+            contentType(applicationJson())
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+You can set the Spring Cloud Contract plugin up by setting <code>convertToYaml</code> to
+<code>true</code>. That way, you do NOT have to add the dependency with the extended functionality
+to the consumer side, since the consumer side uses YAML contracts instead of Groovy contracts.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="customization-wiremock"><a class="anchor" href="#customization-wiremock"></a><a class="link" href="#customization-wiremock">2. WireMock Customization</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section, we show how to customize the way you work with <a href="https://wiremock.org">WireMock</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="customization-wiremock-extension"><a class="anchor" href="#customization-wiremock-extension"></a><a class="link" href="#customization-wiremock-extension">2.1. Registering Your Own WireMock Extension</a></h3>
+<div class="paragraph">
+<p>WireMock lets you register custom extensions. By default, Spring Cloud Contract registers
+the transformer, which lets you reference a request from a response. If you want to
+provide your own extensions, you can register an implementation of the
+<code>org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions</code> interface.
+Since we use the <code>spring.factories</code> extension approach, you can create an entry in
+<code>META-INF/spring.factories</code> file similar to the following:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
+org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExtensions
+org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.stubrunner.TestCustomYamlContractConverter</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example shows a custom extension:</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 1. TestWireMockExtensions.groovy</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">/*
+ * Copyright 2013-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.springframework.cloud.contract.verifier.dsl.wiremock
+
+import com.github.tomakehurst.wiremock.extension.Extension
+
+/**
+ * Extension that registers the default transformer and the custom one
+ */
+class TestWireMockExtensions implements WireMockExtensions {
+    @Override
+    List&lt;Extension&gt; extensions() {
+        return [
+                new DefaultResponseTransformer(),
+                new CustomExtension()
+        ]
+    }
+}
+
+class CustomExtension implements Extension {
+
+    @Override
+    String getName() {
+        return "foo-transformer"
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Remember to override the <code>applyGlobally()</code> method and set it to <code>false</code> if you
+want the transformation to be applied only for a mapping that explicitly requires it.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-wiremock-configuration"><a class="anchor" href="#customization-wiremock-configuration"></a><a class="link" href="#customization-wiremock-configuration">2.2. Customization of WireMock Configuration</a></h3>
+<div class="paragraph">
+<p>You can register a bean of type <code>org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer</code>
+to customize the WireMock configuration (for example, to add custom transformers).
+The following example shows how to do so:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">        @Bean
+        WireMockConfigurationCustomizer optionsCustomizer() {
+            return new WireMockConfigurationCustomizer() {
+                @Override
+                public void customize(WireMockConfiguration options) {
+// perform your customization here
+                }
+            };
+        }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="customization-pluggable-architecture"><a class="anchor" href="#customization-pluggable-architecture"></a><a class="link" href="#customization-pluggable-architecture">3. Using the Pluggable Architecture</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You may encounter cases where your contracts have been defined in other formats,
+such as YAML, RAML, or PACT. In those cases, you still want to benefit from the automatic
+generation of tests and stubs. You can add your own implementation for generating both
+tests and stubs. Also, you can customize the way tests are generated (for example, you
+can generate tests for other languages) and the way stubs are generated (for example, you
+can generate stubs for other HTTP server implementations).</p>
+</div>
+<div class="sect2">
+<h3 id="customization-custom-contract-converter"><a class="anchor" href="#customization-custom-contract-converter"></a><a class="link" href="#customization-custom-contract-converter">3.1. Custom Contract Converter</a></h3>
+<div class="paragraph">
+<p>The <code>ContractConverter</code> interface lets you register your own implementation of a contract
+structure converter. The following code listing shows the <code>ContractConverter</code> interface:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package org.springframework.cloud.contract.spec;
+
+import java.io.File;
+import java.util.Collection;
+
+/**
+ * Converter to be used to convert FROM {@link File} TO {@link Contract} and from
+ * {@link Contract} to {@code T}.
+ *
+ * @param &lt;T&gt; - type to which we want to convert the contract
+ * @author Marcin Grzejszczak
+ * @since 1.1.0
+ */
+public interface ContractConverter&lt;T&gt; extends ContractStorer&lt;T&gt; {
+
+    /**
+     * Should this file be accepted by the converter. Can use the file extension to check
+     * if the conversion is possible.
+     * @param file - file to be considered for conversion
+     * @return - {@code true} if the given implementation can convert the file
+     */
+    boolean isAccepted(File file);
+
+    /**
+     * Converts the given {@link File} to its {@link Contract} representation.
+     * @param file - file to convert
+     * @return - {@link Contract} representation of the file
+     */
+    Collection&lt;Contract&gt; convertFrom(File file);
+
+    /**
+     * Converts the given {@link Contract} to a {@link T} representation.
+     * @param contract - the parsed contract
+     * @return - {@link T} the type to which we do the conversion
+     */
+    T convertTo(Collection&lt;Contract&gt; contract);
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Your implementation must define the condition on which it should start the
+conversion. Also, you must define how to perform that conversion in both directions.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Once you create your implementation, you must create a
+<code>/META-INF/spring.factories</code> file in which you provide the fully qualified name of your
+implementation.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The following example shows a typical <code>spring.factories</code> file:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.verifier.converter.YamlContractConverter</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-custom-test-generator"><a class="anchor" href="#customization-custom-test-generator"></a><a class="link" href="#customization-custom-test-generator">3.2. Using the Custom Test Generator</a></h3>
+<div class="paragraph">
+<p>If you want to generate tests for languages other than Java or you are not happy with the
+way the verifier builds Java tests, you can register your own implementation.</p>
+</div>
+<div class="paragraph">
+<p>The <code>SingleTestGenerator</code> interface lets you register your own implementation.  The
+following code listing shows the <code>SingleTestGenerator</code> interface:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package org.springframework.cloud.contract.verifier.builder;
+
+import java.nio.file.Path;
+import java.util.Collection;
+
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
+import org.springframework.cloud.contract.verifier.file.ContractMetadata;
+
+/**
+ * Builds a single test.
+ *
+ * @since 1.1.0
+ */
+public interface SingleTestGenerator {
+
+    /**
+     * Creates contents of a single test class in which all test scenarios from the
+     * contract metadata should be placed.
+     * @param properties - properties passed to the plugin
+     * @param listOfFiles - list of parsed contracts with additional metadata
+     * @param className - the name of the generated test class
+     * @param classPackage - the name of the package in which the test class should be
+     * stored
+     * @param includedDirectoryRelativePath - relative path to the included directory
+     * @return contents of a single test class
+     * @deprecated use{@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
+     */
+    @Deprecated
+    String buildClass(ContractVerifierConfigProperties properties,
+            Collection&lt;ContractMetadata&gt; listOfFiles, String className,
+            String classPackage, String includedDirectoryRelativePath);
+
+    /**
+     * Creates contents of a single test class in which all test scenarios from the
+     * contract metadata should be placed.
+     * @param properties - properties passed to the plugin
+     * @param listOfFiles - list of parsed contracts with additional metadata
+     * @param generatedClassData - information about the generated class
+     * @param includedDirectoryRelativePath - relative path to the included directory
+     * @return contents of a single test class
+     */
+    default String buildClass(ContractVerifierConfigProperties properties,
+            Collection&lt;ContractMetadata&gt; listOfFiles,
+            String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
+        String className = generatedClassData.className;
+        String classPackage = generatedClassData.classPackage;
+        String path = includedDirectoryRelativePath;
+        return buildClass(properties, listOfFiles, className, classPackage, path);
+    }
+
+    /**
+     * Extension that should be appended to the generated test class. E.g. {@code .java}
+     * or {@code .php}
+     * @param properties - properties passed to the plugin
+     */
+    @Deprecated
+    String fileExtension(ContractVerifierConfigProperties properties);
+
+    class GeneratedClassData {
+
+        public final String className;
+
+        public final String classPackage;
+
+        public final Path testClassPath;
+
+        public GeneratedClassData(String className, String classPackage,
+                Path testClassPath) {
+            this.className = className;
+            this.classPackage = classPackage;
+            this.testClassPath = testClassPath;
+        }
+
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Again, you must provide a <code>spring.factories</code> file, such as the one shown in the following
+example:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>org.springframework.cloud.contract.verifier.builder.SingleTestGenerator=/
+com.example.MyGenerator</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-custom-stub-generator"><a class="anchor" href="#customization-custom-stub-generator"></a><a class="link" href="#customization-custom-stub-generator">3.3. Using the Custom Stub Generator</a></h3>
+<div class="paragraph">
+<p>If you want to generate stubs for stub servers other than WireMock, you can plug in your
+own implementation of the <code>StubGenerator</code> interface. The following code listing shows the
+<code>StubGenerator</code> interface:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter;
+
+import java.util.Map;
+
+import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.verifier.file.ContractMetadata;
+
+/**
+ * Converts contracts into their stub representation.
+ *
+ * @since 1.1.0
+ */
+public interface StubGenerator {
+
+    /**
+     * @param fileName - file name
+     * @return {@code true} if the converter can handle the file to convert it into a
+     * stub.
+     */
+    default boolean canHandleFileName(String fileName) {
+        return fileName.endsWith(fileExtension());
+    }
+
+    /**
+     * @param rootName - root name of the contract
+     * @param content - metadata of the contract
+     * @return the collection of converted contracts into stubs. One contract can result
+     * in multiple stubs.
+     */
+    Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content);
+
+    /**
+     * @param inputFileName - name of the input file
+     * @return the name of the converted stub file. If you have multiple contracts in a
+     * single file then a prefix will be added to the generated file. If you provide the
+     * {@link Contract#name} field then that field will override the generated file name.
+     *
+     * Example: name of file with 2 contracts is {@code foo.groovy}, it will be converted
+     * by the implementation to {@code foo.json}. The recursive file converter will create
+     * two files {@code 0_foo.json} and {@code 1_foo.json}
+     */
+    String generateOutputFileNameForInput(String inputFileName);
+
+    /**
+     * Describes the file extension that this stub generator can handle.
+     * @return string describing the file extension
+     */
+    default String fileExtension() {
+        return ".json";
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Again, you must provide a <code>spring.factories</code> file, such as the one shown in the following
+example:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code># Stub converters
+org.springframework.cloud.contract.verifier.converter.StubGenerator=\
+org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The default implementation is the WireMock stub generation.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You can provide multiple stub generator implementations. For example, from a single
+DSL, you can produce both WireMock stubs and Pact files.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-custom-stub-runner"><a class="anchor" href="#customization-custom-stub-runner"></a><a class="link" href="#customization-custom-stub-runner">3.4. Using the Custom Stub Runner</a></h3>
+<div class="paragraph">
+<p>If you decide to use a custom stub generation, you also need a custom way of running
+stubs with your different stub provider.</p>
+</div>
+<div class="paragraph">
+<p>Assume that you use <a href="https://github.com/dreamhead/moco">Moco</a> to build your stubs and that
+you have written a stub generator and placed your stubs in a JAR file.</p>
+</div>
+<div class="paragraph">
+<p>In order for Stub Runner to know how to run your stubs, you have to define a custom
+HTTP Stub server implementation, which might resemble the following example:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">package org.springframework.cloud.contract.stubrunner.provider.moco
+
+import com.github.dreamhead.moco.bootstrap.arg.HttpArgs
+import com.github.dreamhead.moco.runner.JsonRunner
+import com.github.dreamhead.moco.runner.RunnerSetting
+import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
+
+import org.springframework.cloud.contract.stubrunner.HttpServerStub
+import org.springframework.util.SocketUtils
+
+@Commons
+@CompileStatic
+class MocoHttpServerStub implements HttpServerStub {
+
+    private boolean started
+    private JsonRunner runner
+    private int port
+
+    @Override
+    int port() {
+        if (!isRunning()) {
+            return -1
+        }
+        return port
+    }
+
+    @Override
+    boolean isRunning() {
+        return started
+    }
+
+    @Override
+    HttpServerStub start() {
+        return start(SocketUtils.findAvailableTcpPort())
+    }
+
+    @Override
+    HttpServerStub start(int port) {
+        this.port = port
+        return this
+    }
+
+    @Override
+    HttpServerStub stop() {
+        if (!isRunning()) {
+            return this
+        }
+        this.runner.stop()
+        return this
+    }
+
+    @Override
+    HttpServerStub registerMappings(Collection&lt;File&gt; stubFiles) {
+        List&lt;RunnerSetting&gt; settings = stubFiles.findAll { it.name.endsWith("json") }
+            .collect {
+            log.info("Trying to parse [${it.name}]")
+            try {
+                return RunnerSetting.aRunnerSetting().addStream(it.newInputStream()).
+                    build()
+            }
+            catch (Exception e) {
+                log.warn("Exception occurred while trying to parse file [${it.name}]", e)
+                return null
+            }
+        }.findAll { it }
+        this.runner = JsonRunner.newJsonRunnerWithSetting(settings,
+            HttpArgs.httpArgs().withPort(this.port).build())
+        this.runner.run()
+        this.started = true
+        return this
+    }
+
+    @Override
+    String registeredMappings() {
+        return ""
+    }
+
+    @Override
+    boolean isAccepted(File file) {
+        return file.name.endsWith(".json")
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can register it in your <code>spring.factories</code> file, as the following
+example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>org.springframework.cloud.contract.stubrunner.HttpServerStub=\
+org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Now you can run stubs with Moco.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you do not provide any implementation, the default (WireMock)
+implementation is used. If you provide more than one, the first one on the list is used.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customization-custom-stub-downloader"><a class="anchor" href="#customization-custom-stub-downloader"></a><a class="link" href="#customization-custom-stub-downloader">3.5. Using the Custom Stub Downloader</a></h3>
+<div class="paragraph">
+<p>You can customize the way your stubs are downloaded by creating an implementation of the
+<code>StubDownloaderBuilder</code> interface, as the following example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.example;
+
+class CustomStubDownloaderBuilder implements StubDownloaderBuilder {
+
+    @Override
+    public StubDownloader build(final StubRunnerOptions stubRunnerOptions) {
+        return new StubDownloader() {
+            @Override
+            public Map.Entry&lt;StubConfiguration, File&gt; downloadAndUnpackStubJar(
+                    StubConfiguration config) {
+                File unpackedStubs = retrieveStubs();
+                return new AbstractMap.SimpleEntry&lt;&gt;(
+                        new StubConfiguration(config.getGroupId(), config.getArtifactId(), version,
+                                config.getClassifier()), unpackedStubs);
+            }
+
+            File retrieveStubs() {
+                // here goes your custom logic to provide a folder where all the stubs reside
+            }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can register it in your <code>spring.factories</code> file, as the following
+example shows:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code># Example of a custom Stub Downloader Provider
+org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
+com.example.CustomStubDownloaderBuilder</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Now you can pick a folder with the source of your stubs.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you do not provide any implementation, the default (scanning the classpath) is used.
+If you provide the <code>stubsMode = StubRunnerProperties.StubsMode.LOCAL</code> or
+<code>stubsMode = StubRunnerProperties.StubsMode.REMOTE</code>, the Aether implementation is used
+If you provide more than one, the first one on the list is used.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="scm-stub-downloader"><a class="anchor" href="#scm-stub-downloader"></a><a class="link" href="#scm-stub-downloader">3.6. Using the SCM Stub Downloader</a></h3>
+<div class="paragraph">
+<p>Whenever the <code>repositoryRoot</code> starts with a SCM protocol
+(currently, we support only <code>git://</code>), the stub downloader tries
+to clone the repository and use it as a source of contracts
+to generate tests or stubs.</p>
+</div>
+<div class="paragraph">
+<p>Through environment variables, system properties, or properties set
+inside the plugin or the contracts repository configuration, you can
+tweak the downloader&#8217;s behavior. The following table describes the available
+properties:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. SCM Stub Downloader properties</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type of a property</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the property</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>git.branch</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.git.branch</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_GIT_BRANCH</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">master</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Which branch to checkout</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>git.username</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.git.username</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_GIT_USERNAME</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Git clone username</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>git.password</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.git.password</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_GIT_PASSWORD</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Git clone password</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>git.no-of-attempts</code> (plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.git.no-of-attempts</code> (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</code> (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of attempts to push the commits to <code>origin</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">* <code>git.wait-between-attempts</code> (Plugin prop)</p>
+<p class="tableblock">* <code>stubrunner.properties.git.wait-between-attempts</code>  (system prop)</p>
+<p class="tableblock">* <code>STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</code>  (env prop)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of milliseconds to wait between attempts to push the commits to <code>origin</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>
