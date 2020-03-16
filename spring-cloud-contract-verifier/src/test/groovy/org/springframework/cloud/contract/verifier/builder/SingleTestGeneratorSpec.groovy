@@ -458,6 +458,373 @@ class SingleTestGeneratorSpec extends Specification {
 			thrown UnsupportedOperationException
 	}
 
+	@Issue('#1346')
+	def 'should ignore 1 test if only 1-of-2 contracts is ignored in Contract dsl for #testFramework'() {
+		given:
+		File firstFile = tmpFolder.newFile()
+		firstFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							request {
+								method 'GET'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+
+		File secondFile = tmpFolder.newFile()
+		secondFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'POST'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+		and:
+		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+		properties.testFramework = testFramework
+		and:
+		ContractMetadata firstContract = new ContractMetadata(firstFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), firstFile))
+		firstContract.ignored >> false
+		and:
+		ContractMetadata secondContract = new ContractMetadata(secondFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
+		secondContract.ignored >> false
+		and:
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
+
+		when:
+		String clazz = testGenerator.buildClass(properties, [secondContract, firstContract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', secondFile.toPath()))
+
+		then:
+		classStrings.each { clazz.contains(it) }
+		countOccurrencesOf(clazz, ignoreAnnotation) == 1
+
+		and:
+		asserter(clazz)
+
+		where:
+		testFramework | classStrings                          | ignoreAnnotation         | asserter
+		JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'                | JAVA_ASSERTER
+		JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
+		TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
+		SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
+	@Issue('#1346')
+	def 'should ignore 2 tests if 2 contracts are ignored in Contract dsl for #testFramework'() {
+		given:
+		File firstFile = tmpFolder.newFile()
+		firstFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'GET'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+
+		File secondFile = tmpFolder.newFile()
+		secondFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'POST'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+		and:
+		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+		properties.testFramework = testFramework
+		and:
+		ContractMetadata firstContract = new ContractMetadata(firstFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), firstFile))
+		firstContract.ignored >> false
+		and:
+		ContractMetadata secondContract = new ContractMetadata(secondFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
+		secondContract.ignored >> false
+		and:
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
+
+		when:
+		String clazz = testGenerator.buildClass(properties, [secondContract, firstContract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', secondFile.toPath()))
+
+		then:
+		classStrings.each { clazz.contains(it) }
+		countOccurrencesOf(clazz, ignoreAnnotation) == 2
+
+		and:
+		asserter(clazz)
+
+		where:
+		testFramework | classStrings                          | ignoreAnnotation         | asserter
+		JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'                | JAVA_ASSERTER
+		JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
+		TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
+		SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
+	@Issue('#1346')
+	def 'should ignore 2 tests if 2 contracts are ignored in Contract dsl and in Configuration for #testFramework'() {
+		given:
+		File firstFile = tmpFolder.newFile()
+		firstFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'GET'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+
+		File secondFile = tmpFolder.newFile()
+		secondFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'POST'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+		and:
+		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+		properties.testFramework = testFramework
+		and:
+		ContractMetadata firstContract = new ContractMetadata(firstFile.
+				toPath(), true, 1, null, convertAsCollection(new File('/'), firstFile))
+		firstContract.ignored >> true
+		and:
+		ContractMetadata secondContract = new ContractMetadata(secondFile.
+				toPath(), true, 1, null, convertAsCollection(new File('/'), secondFile))
+		secondContract.ignored >> true
+		and:
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
+
+		when:
+		String clazz = testGenerator.buildClass(properties, [secondContract, firstContract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', secondFile.toPath()))
+
+		then:
+		classStrings.each { clazz.contains(it) }
+		countOccurrencesOf(clazz, ignoreAnnotation) == 2
+
+		and:
+		asserter(clazz)
+
+		where:
+		testFramework | classStrings                          | ignoreAnnotation         | asserter
+		JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'                | JAVA_ASSERTER
+		JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
+		TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
+		SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
+	@Issue('#1346')
+	def 'should ignore 1 tests if 1 of 2 contract is ignored in Contract dsl and in Configuration for #testFramework'() {
+		given:
+		File firstFile = tmpFolder.newFile()
+		firstFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'GET'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+
+		File secondFile = tmpFolder.newFile()
+		secondFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							request {
+								method 'POST'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+		and:
+		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+		properties.testFramework = testFramework
+		and:
+		ContractMetadata firstContract = new ContractMetadata(firstFile.
+				toPath(), true, 1, null, convertAsCollection(new File('/'), firstFile))
+		firstContract.ignored >> true
+		and:
+		ContractMetadata secondContract = new ContractMetadata(secondFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
+		secondContract.ignored >> false
+		and:
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
+
+		when:
+		String clazz = testGenerator.buildClass(properties, [secondContract, firstContract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', secondFile.toPath()))
+
+		then:
+		classStrings.each { clazz.contains(it) }
+		countOccurrencesOf(clazz, ignoreAnnotation) == 1
+
+		and:
+		asserter(clazz)
+
+		where:
+		testFramework | classStrings                          | ignoreAnnotation         | asserter
+		JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'                | JAVA_ASSERTER
+		JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
+		TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
+		SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
+	@Issue('#1346')
+	def 'should ignore 2 tests if 1st contracts is ignored in Contract dsl and 2nd is ignored in Configuration for #testFramework'() {
+		given:
+		File firstFile = tmpFolder.newFile()
+		firstFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'GET'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+
+		File secondFile = tmpFolder.newFile()
+		secondFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							request {
+								method 'POST'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+		and:
+		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+		properties.testFramework = testFramework
+		and:
+		ContractMetadata firstContract = new ContractMetadata(firstFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), firstFile))
+		firstContract.ignored >> false
+		and:
+		ContractMetadata secondContract = new ContractMetadata(secondFile.
+				toPath(), true, 1, null, convertAsCollection(new File('/'), secondFile))
+		secondContract.ignored >> true
+		and:
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
+
+		when:
+		String clazz = testGenerator.buildClass(properties, [secondContract, firstContract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', secondFile.toPath()))
+
+		then:
+		classStrings.each { clazz.contains(it) }
+		countOccurrencesOf(clazz, ignoreAnnotation) == 2
+
+		and:
+		asserter(clazz)
+
+		where:
+		testFramework | classStrings                          | ignoreAnnotation         | asserter
+		JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'                | JAVA_ASSERTER
+		JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
+		TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
+		SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
+	@Issue('#1346')
+	def 'should ignore 0 tests if 0 contracts are ignored in Contract dsl and in Configuration for #testFramework'() {
+		given:
+		File firstFile = tmpFolder.newFile()
+		firstFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							request {
+								method 'GET'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+
+		File secondFile = tmpFolder.newFile()
+		secondFile.write('''
+						org.springframework.cloud.contract.spec.Contract.make {
+							request {
+								method 'POST'
+								url 'url'
+							}
+							response {
+								status OK()
+							}
+						}
+		''')
+		and:
+		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+		properties.testFramework = testFramework
+		and:
+		ContractMetadata firstContract = new ContractMetadata(firstFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), firstFile))
+		firstContract.ignored >> false
+		and:
+		ContractMetadata secondContract = new ContractMetadata(secondFile.
+				toPath(), false, 1, null, convertAsCollection(new File('/'), secondFile))
+		secondContract.ignored >> false
+		and:
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
+
+		when:
+		String clazz = testGenerator.buildClass(properties, [secondContract, firstContract], 'com/foo', new SingleTestGenerator.GeneratedClassData('test', 'test', secondFile.toPath()))
+
+		then:
+		classStrings.each { clazz.contains(it) }
+		countOccurrencesOf(clazz, ignoreAnnotation) == 0
+
+		and:
+		asserter(clazz)
+
+		where:
+		testFramework | classStrings                          | ignoreAnnotation         | asserter
+		JUNIT         | mockMvcJUnitRestAssured3ClassStrings  | '@Ignore'                | JAVA_ASSERTER
+		JUNIT5        | mockMvcJUnit5RestAssured3ClassStrings | '@Disabled'              | JAVA_ASSERTER
+		TESTNG        | mockMvcTestNGRestAssured3ClassStrings | '@Test(enabled = false)' | JAVA_ASSERTER
+		SPOCK         | spockClassRestAssured3Strings         | '@Ignore'                | GROOVY_ASSERTER
+	}
+
 	@Issue('#117')
 	def 'should generate test in explicit test mode using JUnit'() {
 		given:
