@@ -37,6 +37,7 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -454,6 +455,7 @@ public class ContractVerifierExtension implements Serializable {
 		this.failOnInProgress.set(failOnInProgress);
 	}
 
+	@Nested
 	public ContractRepository getContractRepository() {
 		return contractRepository;
 	}
