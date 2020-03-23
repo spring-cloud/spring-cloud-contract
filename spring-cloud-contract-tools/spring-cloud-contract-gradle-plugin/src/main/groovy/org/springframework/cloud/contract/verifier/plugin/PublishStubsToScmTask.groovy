@@ -52,7 +52,7 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	@CompileStatic
 	static class Config {
-		@Input
+		@Nested
 		final Property<ContractVerifierExtension.ContractRepository> contractRepository
 		@Input
 		final Property<StubRunnerProperties.StubsMode> contractsMode
