@@ -90,7 +90,7 @@ class PublishStubsToScmTask extends DefaultTask {
 		}
 
 		void contractRepository(@DelegatesTo(ContractVerifierExtension.ContractRepository) Closure closure) {
-			closure.delegate = contractRepository
+			closure.delegate = contractRepository.get()
 			closure.call()
 		}
 	}
