@@ -122,7 +122,7 @@ class ContractsCopyTask extends DefaultTask {
 		}
 
 		private boolean contractFolderMissing() {
-			contractsDirectory.isPresent() && !contractsDirectory.get().asFile.exists()
+			return contractsDirectory.isPresent() && !contractsDirectory.get().asFile.exists()
 		}
 
 		@Internal
@@ -139,6 +139,8 @@ class ContractsCopyTask extends DefaultTask {
 
 		@OutputDirectory
 		DirectoryProperty copiedContractsFolder
+		@OutputDirectory
+		DirectoryProperty stubsOutputDir
 		@Optional
 		@OutputDirectory
 		DirectoryProperty backupContractsFolder
@@ -162,7 +164,7 @@ class ContractsCopyTask extends DefaultTask {
 			contractsDirectory = null
 		}
 		logger.info("For project [{}] will use contracts provided in the folder [{}]", project.name, contractsDirectory)
-		final String contractsRepository = config.contractRepository.repositoryUrl.isPresent() ? config.contractRepository.repositoryUrl : ""
+		final String contractsRepository = config.contractRepository.repositoryUrl.isPresent() ? config.contractRepository.repositoryUrl.get() : ""
 		throwExceptionWhenFailOnNoContracts(contractsDirectory, contractsRepository)
 		if (contractsDirectory == null) {
 			logger.info("Contracts directory not set and contracts weren't downloaded. There's nothing to copy")
@@ -170,7 +172,7 @@ class ContractsCopyTask extends DefaultTask {
 		}
 		final String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
 		final String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
-		final File output = config.copiedContractsFolder.get().asFile
+		File output = config.copiedContractsFolder.get().getAsFile()
 		logger.info("Downloading and unpacking files from [${contractsDirectory}] to [$output]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		sync(contractsDirectory, antPattern, slashSeparatedAntPattern, config.excludeBuildFolders.get(), output)
 		if (config.convertToYaml.get()) {
@@ -184,6 +186,7 @@ class ContractsCopyTask extends DefaultTask {
 				excludeBuildFolders: extension.excludeBuildFolders,
 				failOnNoContracts: extension.failOnNoContracts,
 				contractsDirectory: extension.contractsDslDir,
+				stubsOutputDir: extension.stubsOutputDir,
 				copiedContractsFolder: createTaskOutput(root, extension.stubsOutputDir, ContractsCopyTask.CONTRACTS, project),
 				backupContractsFolder: createTaskOutput(root, extension.stubsOutputDir, ContractsCopyTask.BACKUP, project),
 				contractDependency: extension.contractDependency,

@@ -23,9 +23,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.gradle.api.Action;
@@ -157,6 +160,8 @@ public class ContractVerifierExtension implements Serializable {
 
 	private ContractRepository contractRepository;
 
+	private PublishStubsToScm publishStubsToScm;
+
 	/**
 	 * Dependency that contains packaged contracts
 	 */
@@ -236,6 +241,8 @@ public class ContractVerifierExtension implements Serializable {
 	 */
 	private Property<String> sourceSet;
 
+	private final  ObjectFactory objects;
+
 	@Inject
 	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects) {
 		this.testFramework = objects.property(TestFramework.class).convention(TestFramework.JUNIT5);
@@ -258,6 +265,7 @@ public class ContractVerifierExtension implements Serializable {
 		this.failOnNoContracts = objects.property(Boolean.class).convention(true);
 		this.failOnInProgress = objects.property(Boolean.class).convention(true);
 		this.contractRepository = objects.newInstance(ContractRepository.class);
+		this.publishStubsToScm = objects.newInstance(PublishStubsToScm.class);
 		this.contractDependency = objects.newInstance(Dependency.class);
 		this.contractsPath = objects.property(String.class);
 		this.contractsMode = objects.property(StubRunnerProperties.StubsMode.class).convention(StubRunnerProperties.StubsMode.CLASSPATH);
@@ -270,6 +278,7 @@ public class ContractVerifierExtension implements Serializable {
 		this.contractsProperties = objects.mapProperty(String.class, String.class).convention(new HashMap<>());
 		this.disableStubPublication = objects.property(Boolean.class).convention(false);
 		this.sourceSet = objects.property(String.class);
+		this.objects = objects;
 	}
 
 	@Deprecated
@@ -462,6 +471,15 @@ public class ContractVerifierExtension implements Serializable {
 
 	public void contractRepository(Action<ContractRepository> action) {
 		action.execute(contractRepository);
+	}
+
+	@Nested
+	public PublishStubsToScm getPublishStubsToScm() {
+		return publishStubsToScm;
+	}
+
+	public void publishStubsToScm(Action<PublishStubsToScm> action) {
+		action.execute(publishStubsToScm);
 	}
 
 	public Dependency getContractDependency() {
@@ -769,12 +787,6 @@ public class ContractVerifierExtension implements Serializable {
 			return proxyPort;
 		}
 
-		// favor unwrapped int
-		@Deprecated
-		public void setProxyPort(Integer proxyPort) {
-			this.proxyPort.set(proxyPort);
-		}
-
 		public void setProxyPort(int proxyPort) {
 			Assert.state(0 < proxyPort && proxyPort <= 65536, "Proxy port should be between 1 and 65536");
 			this.proxyPort.set(proxyPort);
@@ -800,6 +812,48 @@ public class ContractVerifierExtension implements Serializable {
 					", proxyPort=" + proxyPort.getOrNull() +
 					", proxyHost=" + proxyHost.getOrNull() +
 					", cacheDownloadedContracts=" + cacheDownloadedContracts.get() +
+					'}';
+		}
+	}
+
+	public static class PublishStubsToScm implements Serializable {
+
+		/**
+		 * Dependency that contains packaged contracts
+		 */
+		private Dependency contractDependency;
+
+		private ContractRepository contractRepository;
+
+		@Inject
+		public PublishStubsToScm(ObjectFactory objects) {
+			contractDependency = objects.newInstance(Dependency.class);
+			contractRepository = objects.newInstance(ContractRepository.class);
+		}
+
+		@Nested
+		public Dependency getContractDependency() {
+			return contractDependency;
+		}
+
+		public void contractDependency(Action<Dependency> action) {
+			action.execute(contractDependency);
+		}
+
+		@Nested
+		public ContractRepository getContractRepository() {
+			return contractRepository;
+		}
+
+		public void contractRepository(Action<ContractRepository> action) {
+			action.execute(contractRepository);
+		}
+
+		@Override
+		public String toString() {
+			return "PublishStubsToScm{" +
+					"contractDependency=" + contractDependency +
+					", contractRepository=" + contractRepository +
 					'}';
 		}
 	}
