@@ -56,6 +56,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Dave Syer
  * @author Matt Garner
+ * @author Waldemar Panas
  *
  */
 @Configuration(proxyBeanMethods = false)
