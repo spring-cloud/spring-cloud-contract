@@ -56,6 +56,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Dave Syer
  * @author Matt Garner
+ * @author Waldemar Panas
  *
  */
 @Configuration(proxyBeanMethods = false)
@@ -114,6 +115,12 @@ public class WireMockConfiguration implements SmartLifecycle {
 		updateCurrentServer();
 	}
 
+	void initIfNotRunning() throws IOException {
+		if (!this.running) {
+			init();
+		}
+	}
+
 	private void reRegisterBeans() {
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
@@ -170,7 +177,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private void registerStubs() {
 		if (log.isDebugEnabled()) {
 			log.debug("Will register [" + this.wireMock.getServer().getStubs().length
-					+ "] stubs");
+					+ "] stub locations");
 		}
 		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
