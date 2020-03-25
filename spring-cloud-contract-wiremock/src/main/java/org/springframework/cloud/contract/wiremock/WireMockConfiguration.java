@@ -56,6 +56,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Dave Syer
  * @author Matt Garner
+ * @author Waldemar Panas
  *
  */
 @Configuration(proxyBeanMethods = false)
@@ -114,28 +115,58 @@ public class WireMockConfiguration implements SmartLifecycle {
 		updateCurrentServer();
 	}
 
+	void initIfNotRunning() throws IOException {
+		if (!this.running) {
+			init();
+		}
+	}
+
 	private void reRegisterBeans() {
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Registering WireMock [" + this.server + "] instance");
+			}
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
 		else {
+			if (log.isDebugEnabled()) {
+				log.debug("Destroying WireMock ["
+						+ this.beanFactory.getBean(WIREMOCK_SERVER_BEAN_NAME)
+						+ "] instance");
+			}
 			this.beanFactory.destroySingleton(WIREMOCK_SERVER_BEAN_NAME);
+			if (log.isDebugEnabled()) {
+				log.debug("Registering WireMock [" + this.server + "] instance");
+			}
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
 	}
 
 	private void reRegisterServer() {
-		if (log.isDebugEnabled()) {
-			log.debug("Creating a new server at " + "http port ["
+		if (log.isTraceEnabled()) {
+			log.trace("Creating a new server at http port ["
 					+ this.wireMock.getServer().getPort() + "] and " + "https port ["
 					+ this.wireMock.getServer().getHttpsPort() + "]");
 		}
 		if (this.isRunning()) {
-			this.server.stop();
+			if (log.isDebugEnabled()) {
+				log.debug("Stopping server [" + this.server + "] at port ["
+						+ port(this.server) + "]");
+			}
+			stop();
 		}
-		this.server = new WireMockServer(this.options);
-		this.server.start();
-		updateCurrentServer();
+		else if (this.server == null) {
+			this.server = new WireMockServer(this.options);
+			if (log.isDebugEnabled()) {
+				log.debug("Created new server [" + this.server + "] at port ["
+						+ port(this.server) + "]");
+			}
+		}
+		start();
+		if (log.isDebugEnabled()) {
+			log.debug("Started server [" + this.server + "] at port [" + port(this.server)
+					+ "]");
+		}
 		logRegisteredMappings();
 	}
 
@@ -148,8 +179,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	void reRegisterServerWithResetMappings() {
 		reRegisterServer();
+		resetMappings();
 		if (this.server.isRunning()) {
-			resetMappings();
 			updateCurrentServer();
 		}
 	}
@@ -170,7 +201,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private void registerStubs() {
 		if (log.isDebugEnabled()) {
 			log.debug("Will register [" + this.wireMock.getServer().getStubs().length
-					+ "] stubs");
+					+ "] stub locations");
 		}
 		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
@@ -225,8 +256,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@Override
 	public void start() {
 		if (isRunning()) {
+			int port = port(this.server);
 			if (log.isDebugEnabled()) {
-				log.debug("Server is already running");
+				log.debug("Server [" + this.server + "] is already running at port ["
+						+ port + "]");
 			}
 			return;
 		}
@@ -246,18 +279,23 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@Override
 	public void stop() {
 		if (this.running) {
+			WireMockServer server = this.server;
+			int port = port(server);
 			this.server.stop();
-			this.server = null;
 			this.running = false;
-			this.options = null;
 			if (log.isDebugEnabled()) {
-				log.debug("Stopped WireMock instance");
+				log.debug(
+						"Stopped WireMock [" + server + "] instance port [" + port + "]");
 			}
-			this.beanFactory.destroySingleton(WIREMOCK_SERVER_BEAN_NAME);
 		}
 		else if (log.isDebugEnabled()) {
 			log.debug("Server already stopped");
 		}
+	}
+
+	private int port(WireMockServer server) {
+		return server.isRunning() ? (server.getOptions().httpsSettings().enabled()
+				? server.httpsPort() : server.port()) : -1;
 	}
 
 	@Override
