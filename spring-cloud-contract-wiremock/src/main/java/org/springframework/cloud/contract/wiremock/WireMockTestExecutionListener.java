@@ -46,7 +46,8 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 			if (log.isDebugEnabled()) {
 				log.debug("Re-registering default mappings");
 			}
-			wireMockConfig(testContext).init();
+			wireMockConfig(testContext).initIfNotRunning();
+			wireMockConfig(testContext).start();
 		}
 	}
 
