@@ -367,6 +367,11 @@
 			<artifactId>plexus-archiver</artifactId>
 			<version>${plexus-archiver.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-shared-incremental</artifactId>
+			<version>1.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>

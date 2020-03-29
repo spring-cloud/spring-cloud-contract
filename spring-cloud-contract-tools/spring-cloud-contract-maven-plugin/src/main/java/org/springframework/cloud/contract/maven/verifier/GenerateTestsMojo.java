@@ -21,9 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -31,6 +33,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.incremental.IncrementalBuildHelper;
+import org.apache.maven.shared.incremental.IncrementalBuildHelperRequest;
+import org.apache.maven.shared.utils.io.DirectoryScanner;
 import org.eclipse.aether.RepositorySystemSession;
 
 import org.springframework.cloud.contract.spec.ContractVerifierException;
@@ -245,6 +250,19 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "failOnInProgress", defaultValue = "true")
 	private boolean failOnInProgress = true;
 
+	/**
+	 * If set to true then tests are created only when contracts have changed since last
+	 * build.
+	 */
+	@Parameter(property = "incrementalContractTest", defaultValue = "true")
+	private boolean incrementalContractTest = true;
+
+	@Parameter(defaultValue = "${mojoExecution}", readonly = true, required = true)
+	private MojoExecution mojoExecution;
+
+	@Parameter(defaultValue = "${session}", readonly = true, required = true)
+	private MavenSession session;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.mavenTestSkip || this.skipTests) {
@@ -280,6 +298,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 								this.contractsDirectory);
 		getLog().info(
 				"Directory with contract is present at [" + contractsDirectory + "]");
+
+		if (this.incrementalContractTest && noContractIsChanged(contractsDirectory)) {
+			getLog().info("Nothing to generate - all classes are up to date");
+			return;
+		}
+
 		setupConfig(config, contractsDirectory);
 		this.project
 				.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
@@ -297,9 +321,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 					+ this.baseClassMappings);
 		}
 		try {
+			LeftOverPrevention leftOverPrevention = new LeftOverPrevention(
+					this.generatedTestSourcesDir);
 			TestGenerator generator = new TestGenerator(config);
 			int generatedClasses = generator.generate();
 			getLog().info("Generated " + generatedClasses + " test classes.");
+			leftOverPrevention.deleteLeftOvers();
 		}
 		catch (ContractVerifierException e) {
 			throw new MojoExecutionException(
@@ -330,6 +357,23 @@ public class GenerateTestsMojo extends AbstractMojo {
 		if (this.baseClassMappings != null) {
 			config.setBaseClassMappings(mappingsToMap());
 		}
+	}
+
+	private boolean noContractIsChanged(File contractsDirectory)
+			throws MojoExecutionException {
+		IncrementalBuildHelper incrementalBuildHelper = new IncrementalBuildHelper(
+				mojoExecution, session);
+
+		DirectoryScanner scanner = incrementalBuildHelper.getDirectoryScanner();
+		scanner.setBasedir(contractsDirectory);
+		scanner.scan();
+		if (scanner.getIncludedFiles().length == 0) {
+			// at least one contract must exist to consider changed/unchanged
+			// do not hide fact that no contract found
+			return false;
+		}
+		boolean changeDetected = incrementalBuildHelper.inputFileTreeChanged(scanner);
+		return !changeDetected;
 	}
 
 	public Map<String, String> mappingsToMap() {
@@ -365,6 +409,35 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	public void setAssertJsonSize(boolean assertJsonSize) {
 		this.assertJsonSize = assertJsonSize;
+	}
+
+	/**
+	 * Prevents against scenario: 1. Contract is added 2. Test is generated 3. Contract is
+	 * deleted 4. Generated test still exists
+	 */
+	private final class LeftOverPrevention {
+
+		private IncrementalBuildHelper incrementalBuildHelper = new IncrementalBuildHelper(
+				mojoExecution, session);
+
+		private File generatedDirectory;
+
+		private LeftOverPrevention(File generatedDirectory)
+				throws MojoExecutionException {
+			this.generatedDirectory = generatedDirectory;
+			incrementalBuildHelper
+					.beforeRebuildExecution(new IncrementalBuildHelperRequest()
+							.outputDirectory(generatedDirectory));
+		}
+
+		private void deleteLeftOvers() throws MojoExecutionException {
+			if (generatedDirectory.exists()) {
+				incrementalBuildHelper
+						.afterRebuildExecution(new IncrementalBuildHelperRequest()
+								.outputDirectory(generatedDirectory));
+			}
+		}
+
 	}
 
 }
