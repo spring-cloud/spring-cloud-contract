@@ -40,11 +40,9 @@ import org.springframework.util.StringUtils;
  * <li>{@code contracts/group.id/artifactid/ ** /*.* }</li>
  * <li>{@code mappings/group.id/artifactid/ ** /*.* }</li>
  * </ul>
- * <p>
  *
  * examples
  *
- * <p>
  * <ul>
  * <li>{@code META-INF/com.example/fooservice/1.0.0/ **}</li>
  * <li>{@code contracts/com.example/artifactid/ ** /*.* }</li>

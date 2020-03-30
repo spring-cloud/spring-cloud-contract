@@ -55,22 +55,9 @@ public interface SingleTestGenerator {
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 */
-	default String buildClass(ContractVerifierConfigProperties properties,
+	String buildClass(ContractVerifierConfigProperties properties,
 			Collection<ContractMetadata> listOfFiles,
-			String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-		String className = generatedClassData.className;
-		String classPackage = generatedClassData.classPackage;
-		String path = includedDirectoryRelativePath;
-		return buildClass(properties, listOfFiles, className, classPackage, path);
-	}
-
-	/**
-	 * Extension that should be appended to the generated test class. E.g. {@code .java}
-	 * or {@code .php}
-	 * @param properties - properties passed to the plugin
-	 */
-	@Deprecated
-	String fileExtension(ContractVerifierConfigProperties properties);
+			String includedDirectoryRelativePath, GeneratedClassData generatedClassData);
 
 	class GeneratedClassData {
 

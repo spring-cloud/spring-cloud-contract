@@ -67,6 +67,9 @@
 		<!-- Aligned with Gradle, otherwise Gradle based projects won't work well -->
 		<contract.kotlin.version>1.3.61</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
+
+		<javadoc.failOnError>true</javadoc.failOnError>
+		<javadoc.failOnWarnings>true</javadoc.failOnWarnings>
 	</properties>
 
 	<modules>

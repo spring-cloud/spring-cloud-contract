@@ -46,7 +46,7 @@ import org.springframework.restdocs.snippet.Snippet;
  *     .andExpect(content().string("bar"))
  *     // first WireMock
  *     .andDo(WireMockRestDocs.verify()
- *          .jsonPath("$[?(&#64;.foo >= 20)]")
+ *          .jsonPath("$[?(&#64;.foo &gt;= 20)]")
  *          .contentType(MediaType.valueOf("application/json")))
  *     // then Contract DSL documentation
  *     .andDo(document("index", SpringCloudContractRestDocs.dslContract()));
