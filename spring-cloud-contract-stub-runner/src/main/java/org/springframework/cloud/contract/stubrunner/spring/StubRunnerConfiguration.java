@@ -50,6 +50,7 @@ import org.springframework.util.StringUtils;
  * stub.
  *
  * @author Marcin Grzejszczak
+ * @author Eddú Meléndez
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(StubRunnerProperties.class)
@@ -124,7 +125,8 @@ public class StubRunnerConfiguration {
 				.withGenerateStubs(Boolean
 						.parseBoolean(resolvePlaceholder(this.props.isGenerateStubs())))
 				.withProperties(this.props.getProperties())
-				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer());
+				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer())
+				.withServerId(resolvePlaceholder(this.props.getServerId()));
 	}
 
 	private String[] resolvePlaceholder(String[] string) {

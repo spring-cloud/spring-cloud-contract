@@ -29,6 +29,7 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
@@ -37,6 +38,11 @@ import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
+import shaded.org.apache.maven.settings.Server;
+import shaded.org.apache.maven.settings.Settings;
+import shaded.org.apache.maven.settings.crypto.DefaultSettingsDecrypter;
+import shaded.org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import shaded.org.apache.maven.settings.crypto.SettingsDecryptionRequest;
 
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -44,10 +50,12 @@ import org.springframework.util.StringUtils;
 
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.settings;
 import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
 
 /**
  * @author Mariusz Smykula
+ * @author Eddú Meléndez
  */
 public class AetherStubDownloader implements StubDownloader {
 
@@ -73,6 +81,8 @@ public class AetherStubDownloader implements StubDownloader {
 	private final boolean workOffline;
 
 	private final boolean deleteStubsAfterTest;
+
+	private final Settings settings;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		this.deleteStubsAfterTest = stubRunnerOptions.isDeleteStubsAfterTest();
@@ -100,6 +110,7 @@ public class AetherStubDownloader implements StubDownloader {
 		this.repositorySystem = newRepositorySystem();
 		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
 		this.session = newSession(this.repositorySystem, this.workOffline);
+		this.settings = settings();
 		registerShutdownHook();
 	}
 
@@ -110,7 +121,8 @@ public class AetherStubDownloader implements StubDownloader {
 	 * @param session repository system session
 	 */
 	public AetherStubDownloader(RepositorySystem repositorySystem,
-			List<RemoteRepository> remoteRepositories, RepositorySystemSession session) {
+			List<RemoteRepository> remoteRepositories, RepositorySystemSession session,
+			Settings settings) {
 		this.deleteStubsAfterTest = true;
 		this.remoteRepos = remoteRepositories;
 		this.repositorySystem = repositorySystem;
@@ -120,6 +132,7 @@ public class AetherStubDownloader implements StubDownloader {
 					"Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.workOffline = false;
+		this.settings = settings;
 		registerShutdownHook();
 	}
 
@@ -147,10 +160,8 @@ public class AetherStubDownloader implements StubDownloader {
 		for (int i = 0; i < repos.length; i++) {
 			if (StringUtils.hasText(repos[i])) {
 				final RemoteRepository.Builder builder = new RemoteRepository.Builder(
-						"remote" + i, "default", repos[i])
-								.setAuthentication(new AuthenticationBuilder()
-										.addUsername(stubRunnerOptions.username)
-										.addPassword(stubRunnerOptions.password).build());
+						"remote" + i, "default", repos[i]).setAuthentication(
+								resolveAuthentication(stubRunnerOptions));
 				if (stubRunnerOptions.getProxyOptions() != null) {
 					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
@@ -162,6 +173,22 @@ public class AetherStubDownloader implements StubDownloader {
 			log.debug("Using the following remote repos " + remoteRepos);
 		}
 		return remoteRepos;
+	}
+
+	private Authentication resolveAuthentication(StubRunnerOptions stubRunnerOptions) {
+		if (StringUtils.hasText(stubRunnerOptions.serverId)) {
+			Server stubServer = this.settings.getServer(stubRunnerOptions.serverId);
+			if (stubServer != null) {
+				SettingsDecryptionRequest settingsDecryptionRequest = new DefaultSettingsDecryptionRequest(
+						stubServer);
+				String stubServerPassword = new DefaultSettingsDecrypter()
+						.decrypt(settingsDecryptionRequest).getServer().getPassword();
+				return new AuthenticationBuilder().addUsername(stubServer.getUsername())
+						.addPassword(stubServerPassword).build();
+			}
+		}
+		return new AuthenticationBuilder().addUsername(stubRunnerOptions.username)
+				.addPassword(stubRunnerOptions.password).build();
 	}
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup,

@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
  * A builder object for {@link StubRunnerOptions}.
  *
  * @author Marcin Grzejszczak
+ * @author Eddú Meléndez
  */
 public class StubRunnerOptionsBuilder {
 
@@ -76,6 +77,8 @@ public class StubRunnerOptionsBuilder {
 	private Map<String, String> properties = new HashMap<>();
 
 	private Class httpServerStubConfigurer = HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
+
+	private String serverId;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -208,6 +211,7 @@ public class StubRunnerOptionsBuilder {
 		this.failOnNoStubs = options.isFailOnNoStubs();
 		this.properties = options.getProperties();
 		this.httpServerStubConfigurer = options.getHttpServerStubConfigurer();
+		this.serverId = options.getServerId();
 		return this;
 	}
 
@@ -244,6 +248,11 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withServerId(String serverId) {
+		this.serverId = serverId;
+		return this;
+	}
+
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue,
 				this.stubRepositoryRoot, this.stubsMode, this.stubsClassifier,
@@ -251,7 +260,7 @@ public class StubRunnerOptionsBuilder {
 				this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer,
 				this.consumerName, this.mappingsOutputFolder, this.deleteStubsAfterTest,
 				this.generateStubs, this.failOnNoStubs, this.properties,
-				this.httpServerStubConfigurer);
+				this.httpServerStubConfigurer, this.serverId);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

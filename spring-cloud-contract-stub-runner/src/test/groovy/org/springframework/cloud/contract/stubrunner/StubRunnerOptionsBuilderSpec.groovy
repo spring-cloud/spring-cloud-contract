@@ -231,7 +231,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		given:
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), StubRunnerProperties.StubsMode.LOCAL,
 					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, false, [foo: "bar"], Foo))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, false, [foo: "bar"], Foo, "server"))
 			builder.withStubs("foo:bar:baz")
 		when:
 			StubRunnerOptions options = builder.build()
@@ -255,6 +255,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.failOnNoStubs == false
 			options.properties == [foo: "bar"]
 			options.httpServerStubConfigurer == Foo
+			options.serverId == "server"
 	}
 
 	def shouldNotPrintUsernameAndPassword() {
@@ -262,7 +263,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"),
 					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, true, [:], Foo))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, true, true, [:], Foo, "server"))
 			builder.withStubs("foo:bar:baz")
 		when:
 			String options = builder.build().toString()

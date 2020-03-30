@@ -140,7 +140,7 @@ final class AetherFactories {
 		return new File(user);
 	}
 
-	private static Settings settings() {
+	protected static Settings settings() {
 		SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
 		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 		request.setUserSettingsFile(userSettings());

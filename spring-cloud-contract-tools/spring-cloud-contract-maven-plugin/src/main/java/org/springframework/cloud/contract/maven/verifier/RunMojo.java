@@ -43,6 +43,7 @@ import org.springframework.util.StringUtils;
  * Mojo for running stubs.
  *
  * @author Mariusz Smykula
+ * @author Eddú Meléndez
  */
 @Mojo(name = "run", requiresProject = false,
 		requiresDependencyResolution = ResolutionScope.RUNTIME)
@@ -117,6 +118,12 @@ public class RunMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${session}", readonly = true)
 	private MavenSession mavenSession;
 
+	/**
+	 *
+	 */
+	@Parameter(property = "spring.cloud.contract.verifier.server-id")
+	private String serverId;
+
 	@Inject
 	public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {
 		this.localStubRunner = localStubRunner;
@@ -143,7 +150,8 @@ public class RunMojo extends AbstractMojo {
 		}
 		else {
 			StubRunnerOptions options = optionsBuilder.withStubs(this.stubs)
-					.withMinMaxPort(this.minPort, this.maxPort).build();
+					.withMinMaxPort(this.minPort, this.maxPort)
+					.withServerId(this.serverId).build();
 			batchStubRunner = this.remoteStubRunner.run(options, this.repoSession);
 		}
 		pressAnyKeyToContinue();
