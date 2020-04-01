@@ -69,7 +69,7 @@
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 
 		<javadoc.failOnError>true</javadoc.failOnError>
-		<javadoc.failOnWarnings>true</javadoc.failOnWarnings>
+		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
 	</properties>
 
 	<modules>
