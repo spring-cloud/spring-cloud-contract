@@ -253,7 +253,9 @@ extends `com.example.base.BaseClass`. This setting takes precedence over
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
 * `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
 * `failOnInProgress`: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to `true`.
-* `incrementalContractTest`: When enabled, tests are created only when contracts have changed since last build. Defaults to `true`.
+* `incrementalContractTests`: When enabled, tests are created only when contracts have changed since last build. Defaults to `true`.
+* `incrementalContractStubs`: When enabled, stubs are created only when contracts have changed since last build. Defaults to `true`.
+* `incrementalContractStubsJar`: When enabled, stubs jar is created only when stubs have changed since last build. Defaults to `true`.
 
 If you want to download your contract definitions from a Maven repository, you can use
 the following options:

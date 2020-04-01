@@ -41,6 +41,7 @@
 		<maven-site-plugin.version>3.8.2</maven-site-plugin.version>
 		<plexus-component-metadata.version>2.0.0</plexus-component-metadata.version>
 		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
+		<maven-shared-incremental.version>1.1</maven-shared-incremental.version>
 	</properties>
 
 	<inceptionYear>2016</inceptionYear>
@@ -370,7 +371,7 @@
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>
 			<artifactId>maven-shared-incremental</artifactId>
-			<version>1.1</version>
+			<version>${maven-shared-incremental.version}</version>
 		</dependency>
 
 		<dependency>

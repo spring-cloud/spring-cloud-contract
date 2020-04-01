@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -36,6 +37,8 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
+
+import static org.springframework.cloud.contract.maven.verifier.ChangeDetector.inputFilesChangeDetected;
 
 /**
  * Convert Spring Cloud Contract Verifier contracts into stubs mappings.
@@ -188,6 +191,19 @@ public class ConvertMojo extends AbstractMojo {
 	@Parameter(property = "failOnNoContracts", defaultValue = "true")
 	private boolean failOnNoContracts;
 
+	/**
+	 * If set to true then stubs are created only when contracts have changed since last
+	 * build.
+	 */
+	@Parameter(property = "incrementalContractStubs", defaultValue = "true")
+	private boolean incrementalContractStubs = true;
+
+	@Parameter(defaultValue = "${mojoExecution}", readonly = true, required = true)
+	private MojoExecution mojoExecution;
+
+	@Parameter(defaultValue = "${session}", readonly = true, required = true)
+	private MavenSession session;
+
 	@Override
 	public void execute() throws MojoExecutionException {
 		if (this.skip) {
@@ -205,7 +221,17 @@ public class ConvertMojo extends AbstractMojo {
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = locationOfContracts(config);
 		contractsDirectory = contractSubfolderIfPresent(contractsDirectory);
+
+		if (this.incrementalContractStubs && !inputFilesChangeDetected(contractsDirectory,
+				mojoExecution, session)) {
+			getLog().info("Nothing to generate - all stubs are up to date");
+			return;
+		}
+
 		File contractsDslDir = contractsDslDir(contractsDirectory);
+		LeftOverPrevention leftOverPrevention = new LeftOverPrevention(
+				this.stubsDirectory, mojoExecution, session);
+
 		File copiedContracts = copyContracts(rootPath, config, contractsDirectory);
 		if (this.convertToYaml) {
 			contractsDslDir = copiedContracts;
@@ -220,6 +246,7 @@ public class ConvertMojo extends AbstractMojo {
 				config.getExcludedFiles(), config.getIncludedContracts(),
 				config.isExcludeBuildFolders());
 		converter.processFiles();
+		leftOverPrevention.deleteLeftOvers();
 	}
 
 	private void convertBackedUpDslsToYaml(String rootPath,
