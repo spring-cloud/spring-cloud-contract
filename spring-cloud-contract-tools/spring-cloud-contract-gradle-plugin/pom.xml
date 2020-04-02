@@ -69,6 +69,10 @@
 				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
 					<execution>
+						<id>attach-zip</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
 						<id>attach-artifacts</id>
 						<phase>${build-helper-maven-plugin.phase}</phase>
 						<goals>
