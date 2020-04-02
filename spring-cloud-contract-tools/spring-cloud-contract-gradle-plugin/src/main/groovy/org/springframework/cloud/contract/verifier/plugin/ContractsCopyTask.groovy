@@ -150,7 +150,7 @@ class ContractsCopyTask extends DefaultTask {
 	void sync() {
 		final DownloadedData downloadedData = downloadContractsIfNeeded()
 		final File contractsDirectory
-		final String antPattern
+		String antPattern = ""
 		if (downloadedData) {
 			contractsDirectory = downloadedData.downloadedContracts
 			antPattern = "${downloadedData.inclusionProperties.includedRootFolderAntPattern}*.*"
