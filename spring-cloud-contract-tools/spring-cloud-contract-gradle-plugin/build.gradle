@@ -29,7 +29,6 @@ ext {
 	JavaVersion javaVer = JavaVersion.current()
 	println "Current Java version equal to [${javaVer}]"
 	javaVersionNumber = javaVer.toString()
-	incompatibleJdk = javaVer.ordinal() > 8
 }
 
 project.version = findProperty('verifierVersion')
@@ -89,21 +88,12 @@ task libtest() {
 	}
 }
 
-task checkJdkVersion {
-	doLast {
-		if (incompatibleJdk) {
-			logger.warn("Java Version is equal to [${javaVersionNumber}]. The tests will be disabled (due to issues with compilation)")
-		}
-	}
-}
-
 test {
 	testLogging {
 		exceptionFormat = 'full'
 	}
 	systemProperties = testSystemProperties
-	dependsOn(checkJdkVersion)
-	enabled = !project.hasProperty('fast') && !incompatibleJdk
+	enabled = !project.hasProperty('fast')
 }
 
 groovydoc {
