@@ -86,7 +86,26 @@ function createSwitchItem(block, blockSwitch) {
 	return {'item': item, 'content': content};
 }
 
+function globalSwitch() {
+	$('.switch--item').each(function() {
+		$(this).off('click');
+		$(this).on('click', function() {
+			selectedText = $(this).text()
+			selectedIndex = $(this).index()
+			$(".switch--item").filter(function() { return ($(this).text() === selectedText) }).each(function() {
+				$(this).addClass('selected');
+				$(this).siblings().removeClass('selected');
+				selectedContent = $(this).parent().siblings(".content").eq(selectedIndex)
+				selectedContent.removeClass('hidden');
+				selectedContent.siblings().addClass('hidden');
+			});
+		});
+	});
+}
+
 $(addBlockSwitches);
+$(globalSwitch);
+
 </script>
 
 </head>
@@ -766,22 +785,9 @@ public interface SingleTestGenerator {
      * @param includedDirectoryRelativePath - relative path to the included directory
      * @return contents of a single test class
      */
-    default String buildClass(ContractVerifierConfigProperties properties,
+    String buildClass(ContractVerifierConfigProperties properties,
             Collection&lt;ContractMetadata&gt; listOfFiles,
-            String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
-        String className = generatedClassData.className;
-        String classPackage = generatedClassData.classPackage;
-        String path = includedDirectoryRelativePath;
-        return buildClass(properties, listOfFiles, className, classPackage, path);
-    }
-
-    /**
-     * Extension that should be appended to the generated test class. E.g. {@code .java}
-     * or {@code .php}
-     * @param properties - properties passed to the plugin
-     */
-    @Deprecated
-    String fileExtension(ContractVerifierConfigProperties properties);
+            String includedDirectoryRelativePath, GeneratedClassData generatedClassData);
 
     class GeneratedClassData {
 
@@ -1193,7 +1199,7 @@ properties:</p>
 </div>
 <script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
 <script type="text/javascript" src="js/toc.js"></script>
-<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<link rel="stylesheet" href="js/highlight/styles/github.min.css">
 <script src="js/highlight/highlight.min.js"></script>
 <script>hljs.initHighlighting()</script>
 </body>
