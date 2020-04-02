@@ -270,6 +270,10 @@
 				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
 					<execution>
+						<id>attach-zip</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
 						<id>add-source</id>
 						<phase>package</phase>
 						<goals>
