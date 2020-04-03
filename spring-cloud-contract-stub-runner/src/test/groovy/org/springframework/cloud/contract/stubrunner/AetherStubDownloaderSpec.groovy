@@ -96,4 +96,31 @@ class AetherStubDownloaderSpec extends Specification {
 			jar != null
 			repositorySystemSession.getLocalRepository().getBasedir().getAbsolutePath().endsWith(m2repoFolder)
 	}
+
+	@RestoreSystemProperties
+	def 'Should return credentials from settings.xml'() {
+		given:
+			File settings = new File(AetherStubDownloaderSpec.getResource("/.m2/settings.xml").getFile())
+			System.setProperty("org.apache.maven.user-settings", settings.getAbsolutePath())
+
+		and:
+			File configDir = new File(AetherStubDownloaderSpec.getResource("/.m2").getFile())
+			System.setProperty("maven.user.config.dir", configDir.getAbsolutePath())
+
+		and:
+			StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+					.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+					.withStubRepositoryRoot("file://" + folder.newFolder().absolutePath)
+					.withServerId("my-server")
+					.build()
+			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
+
+		when:
+			def jar = aetherStubDownloader.downloadAndUnpackStubJar(
+					new StubConfiguration("org.springframework.cloud.contract.verifier.stubs",
+							"bootService", "0.0.1-SNAPSHOT"))
+		then:
+			jar != null
+	}
+
 }

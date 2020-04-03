@@ -40,7 +40,6 @@ import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import shaded.org.apache.maven.settings.Server;
 import shaded.org.apache.maven.settings.Settings;
-import shaded.org.apache.maven.settings.crypto.DefaultSettingsDecrypter;
 import shaded.org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
 import shaded.org.apache.maven.settings.crypto.SettingsDecryptionRequest;
 
@@ -90,6 +89,7 @@ public class AetherStubDownloader implements StubDownloader {
 			log.debug("Will be resolving versions for the following options: ["
 					+ stubRunnerOptions + "]");
 		}
+		this.settings = settings();
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
 		boolean remoteReposMissing = remoteReposMissing();
 		switch (stubRunnerOptions.stubsMode) {
@@ -110,7 +110,6 @@ public class AetherStubDownloader implements StubDownloader {
 		this.repositorySystem = newRepositorySystem();
 		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
 		this.session = newSession(this.repositorySystem, this.workOffline);
-		this.settings = settings();
 		registerShutdownHook();
 	}
 
@@ -125,6 +124,7 @@ public class AetherStubDownloader implements StubDownloader {
 			Settings settings) {
 		this.deleteStubsAfterTest = true;
 		this.remoteRepos = remoteRepositories;
+		this.settings = settings;
 		this.repositorySystem = repositorySystem;
 		this.session = session;
 		if (remoteReposMissing()) {
@@ -132,7 +132,6 @@ public class AetherStubDownloader implements StubDownloader {
 					"Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.workOffline = false;
-		this.settings = settings;
 		registerShutdownHook();
 	}
 
@@ -181,7 +180,7 @@ public class AetherStubDownloader implements StubDownloader {
 			if (stubServer != null) {
 				SettingsDecryptionRequest settingsDecryptionRequest = new DefaultSettingsDecryptionRequest(
 						stubServer);
-				String stubServerPassword = new DefaultSettingsDecrypter()
+				String stubServerPassword = new MavenSettings().createSettingsDecrypter()
 						.decrypt(settingsDecryptionRequest).getServer().getPassword();
 				return new AuthenticationBuilder().addUsername(stubServer.getUsername())
 						.addPassword(stubServerPassword).build();
