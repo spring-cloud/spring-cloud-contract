@@ -99,8 +99,8 @@ public class StubRunnerCamelConfiguration {
 
 		@Override
 		public void process(Exchange exchange) {
-			if (log.isDebugEnabled()) {
-				log.debug("Got exchange [" + exchange + "]");
+			if (log.isTraceEnabled()) {
+				log.trace("Got exchange [" + exchange + "]");
 			}
 		}
 

@@ -15,7 +15,7 @@
 	<description>Spring Cloud Contract Sample Camel</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
+			<groupId>org.apache.camel.springboot</groupId>
 			<artifactId>camel-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
@@ -23,8 +23,8 @@
 			<artifactId>camel-jms</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-camel</artifactId>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-activemq</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>

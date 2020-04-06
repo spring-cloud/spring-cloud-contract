@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.consumer.MessagePactBuilder
 import au.com.dius.pact.consumer.dsl.DslPart
-import au.com.dius.pact.model.v3.messaging.MessagePact
+import au.com.dius.pact.core.model.messaging.MessagePact
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 

@@ -21,11 +21,11 @@ import java.util.regex.Pattern
 import au.com.dius.pact.consumer.dsl.DslPart
 import au.com.dius.pact.consumer.dsl.PactDslJsonArray
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
-import au.com.dius.pact.model.OptionalBody
-import au.com.dius.pact.model.Request
-import au.com.dius.pact.model.Response
-import au.com.dius.pact.model.generators.Generator
-import au.com.dius.pact.model.v3.messaging.Message
+import au.com.dius.pact.core.model.OptionalBody
+import au.com.dius.pact.core.model.Request
+import au.com.dius.pact.core.model.Response
+import au.com.dius.pact.core.model.generators.Generator
+import au.com.dius.pact.core.model.messaging.Message
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.internal.EvaluationContext
 import com.jayway.jsonpath.internal.Path
@@ -158,9 +158,9 @@ class BodyConverter {
 		def body = parseBody(request.body)
 		if (request.generators.isNotEmpty()
 				&& request.generators.categories.
-				containsKey(au.com.dius.pact.model.generators.Category.BODY)) {
+				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
 			applyGenerators(body, request.generators.categories.
-					get(au.com.dius.pact.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
+					get(au.com.dius.pact.core.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
 				return new DslProperty<Object>(new ClientDslProperty(pattern, generatedValue), currentValue)
 			}
 		}
@@ -171,9 +171,9 @@ class BodyConverter {
 		def body = parseBody(response.body)
 		if (response.generators.isNotEmpty()
 				&& response.generators.categories.
-				containsKey(au.com.dius.pact.model.generators.Category.BODY)) {
+				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
 			applyGenerators(body, response.generators.categories.
-					get(au.com.dius.pact.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
+					get(au.com.dius.pact.core.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
 				return new DslProperty<Object>(currentValue, new ServerDslProperty(pattern, generatedValue))
 			}
 		}
@@ -184,9 +184,9 @@ class BodyConverter {
 		def body = parseBody(message.contents)
 		if (message.generators.isNotEmpty()
 				&& message.generators.categories.
-				containsKey(au.com.dius.pact.model.generators.Category.BODY)) {
+				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
 			applyGenerators(body, message.generators.categories.
-					get(au.com.dius.pact.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
+					get(au.com.dius.pact.core.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
 				return new DslProperty<Object>(new ClientDslProperty(pattern, generatedValue), currentValue)
 			}
 		}

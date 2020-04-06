@@ -24,9 +24,9 @@
 
 	<properties>
 		<activemq.version>5.15.11</activemq.version>
-		<camel.version>2.24.2</camel.version>
+		<camel.version>3.1.0</camel.version>
 		<checkstyle.version>2.17</checkstyle.version>
-		<pact.version>3.6.14</pact.version>
+		<pact.version>4.0.9</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
@@ -51,10 +51,10 @@
 		<junit-jupiter.version>5.5.2</junit-jupiter.version>
 		<maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
-		<gmavenplus-plugin.version>1.6.3</gmavenplus-plugin.version>
+		<gmavenplus-plugin.version>1.8.1</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>2.5.9</groovy.version>
+		<groovy.version>2.5.10</groovy.version>
 		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.5.4</maven.version>
 		<!-- Resolver has to be aligned with Maven (e.g resolver 1.4 and Maven 3.6 or resolver 1.3 and Maven 3.5) -->
@@ -113,7 +113,7 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.camel</groupId>
+				<groupId>org.apache.camel.springboot</groupId>
 				<artifactId>camel-spring-boot-starter</artifactId>
 				<version>${camel.version}</version>
 			</dependency>
@@ -123,7 +123,7 @@
 				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.camel</groupId>
+				<groupId>org.apache.camel.springboot</groupId>
 				<artifactId>camel-spring-boot</artifactId>
 				<version>${camel.version}</version>
 			</dependency>
@@ -148,9 +148,9 @@
 				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-camel</artifactId>
-				<version>${activemq.version}</version>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-activemq</artifactId>
+				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.activemq</groupId>
@@ -214,7 +214,7 @@
 			</dependency>
 			<dependency>
 				<groupId>au.com.dius</groupId>
-				<artifactId>pact-jvm-consumer-java8_2.12</artifactId>
+				<artifactId>pact-jvm-consumer-java8</artifactId>
 				<version>${pact.version}</version>
 				<exclusions>
 					<exclusion>
@@ -229,7 +229,7 @@
 			</dependency>
 			<dependency>
 				<groupId>au.com.dius</groupId>
-				<artifactId>pact-jvm-provider-junit_2.12</artifactId>
+				<artifactId>pact-jvm-provider-junit</artifactId>
 				<version>${pact.version}</version>
 				<exclusions>
 					<exclusion>

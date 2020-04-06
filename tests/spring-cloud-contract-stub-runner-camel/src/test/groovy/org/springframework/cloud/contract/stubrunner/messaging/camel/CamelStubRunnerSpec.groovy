@@ -18,14 +18,14 @@ package org.springframework.cloud.contract.stubrunner.messaging.camel
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import org.apache.activemq.camel.component.ActiveMQComponent
 import org.apache.activemq.spring.ActiveMQConnectionFactory
 import org.apache.camel.CamelContext
 import org.apache.camel.ConsumerTemplate
 import org.apache.camel.Exchange
 import org.apache.camel.ProducerTemplate
+import org.apache.camel.component.activemq.ActiveMQComponent
 import org.apache.camel.component.jms.JmsConfiguration
-import org.apache.camel.impl.DefaultShutdownStrategy
+import org.apache.camel.impl.engine.DefaultShutdownStrategy
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 

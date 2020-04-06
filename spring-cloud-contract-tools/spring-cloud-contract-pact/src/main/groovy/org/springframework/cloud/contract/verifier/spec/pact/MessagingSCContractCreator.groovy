@@ -16,22 +16,22 @@
 
 package org.springframework.cloud.contract.verifier.spec.pact
 
-import au.com.dius.pact.model.matchingrules.Category
-import au.com.dius.pact.model.matchingrules.DateMatcher
-import au.com.dius.pact.model.matchingrules.MatchingRule
-import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
-import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
-import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
-import au.com.dius.pact.model.matchingrules.MinTypeMatcher
-import au.com.dius.pact.model.matchingrules.NullMatcher
-import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
-import au.com.dius.pact.model.matchingrules.RegexMatcher
-import au.com.dius.pact.model.matchingrules.RuleLogic
-import au.com.dius.pact.model.matchingrules.TimeMatcher
-import au.com.dius.pact.model.matchingrules.TimestampMatcher
-import au.com.dius.pact.model.matchingrules.TypeMatcher
-import au.com.dius.pact.model.v3.messaging.Message
-import au.com.dius.pact.model.v3.messaging.MessagePact
+import au.com.dius.pact.core.model.matchingrules.Category
+import au.com.dius.pact.core.model.matchingrules.DateMatcher
+import au.com.dius.pact.core.model.matchingrules.MatchingRule
+import au.com.dius.pact.core.model.matchingrules.MatchingRuleGroup
+import au.com.dius.pact.core.model.matchingrules.MaxTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.MinMaxTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.MinTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.NullMatcher
+import au.com.dius.pact.core.model.matchingrules.NumberTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.RegexMatcher
+import au.com.dius.pact.core.model.matchingrules.RuleLogic
+import au.com.dius.pact.core.model.matchingrules.TimeMatcher
+import au.com.dius.pact.core.model.matchingrules.TimestampMatcher
+import au.com.dius.pact.core.model.matchingrules.TypeMatcher
+import au.com.dius.pact.core.model.messaging.Message
+import au.com.dius.pact.core.model.messaging.MessagePact
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -144,7 +144,8 @@ class MessagingSCContractCreator {
 					}
 					if (!message.metaData.isEmpty()) {
 						headers {
-							message.metaData.each { String k, String v ->
+							message.metaData.each { String k, Object val ->
+								String v = val.toString()
 								if (k.equalsIgnoreCase("contentType")) {
 									messagingContentType(v)
 								}

@@ -36,9 +36,9 @@ public class BookService {
 	 */
 	public void returnBook(Exchange exchange) {
 		BookReturned bookReturned = exchange.getIn().getBody(BookReturned.class);
-		log.info("Returning book [$bookReturned]");
-		exchange.getOut().setBody(bookReturned);
-		exchange.getOut().setHeader("BOOK-NAME", bookReturned.bookName);
+		log.info("Returning book [" + bookReturned + "]");
+		exchange.getMessage().setBody(bookReturned);
+		exchange.getMessage().setHeader("BOOK-NAME", bookReturned.bookName);
 	}
 
 }
