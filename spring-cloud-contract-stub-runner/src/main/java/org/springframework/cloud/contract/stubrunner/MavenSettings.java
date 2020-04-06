@@ -65,12 +65,13 @@ public class MavenSettings {
 	}
 
 	private void setField(Class<?> sourceClass, String fieldName, Object target,
-						  Object value) {
+			Object value) {
 		try {
 			Field field = sourceClass.getDeclaredField(fieldName);
 			field.setAccessible(true);
 			field.set(target, value);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new IllegalStateException(
 					"Failed to set field '" + fieldName + "' on '" + target + "'", ex);
 		}
@@ -85,10 +86,12 @@ public class MavenSettings {
 			this._configurationFile = file.getAbsolutePath();
 			try {
 				this._cipher = new DefaultPlexusCipher();
-			} catch (PlexusCipherException e) {
+			}
+			catch (PlexusCipherException e) {
 				throw new IllegalStateException(e);
 			}
 		}
 
 	}
+
 }

@@ -179,7 +179,8 @@ public class AetherStubDownloader implements StubDownloader {
 			Server stubServer = this.settings.getServer(stubRunnerOptions.serverId);
 			if (stubServer != null) {
 				if (log.isDebugEnabled()) {
-					log.debug("Custom server id [" + stubServer.getId() + "] passed will resolve credentials");
+					log.debug("Custom server id [" + stubServer.getId()
+							+ "] passed will resolve credentials");
 				}
 				SettingsDecryptionRequest settingsDecryptionRequest = new DefaultSettingsDecryptionRequest(
 						stubServer);
@@ -188,7 +189,8 @@ public class AetherStubDownloader implements StubDownloader {
 				return buildAuthentication(stubServerPassword, stubServer.getUsername());
 			}
 		}
-		return buildAuthentication(stubRunnerOptions.password, stubRunnerOptions.username);
+		return buildAuthentication(stubRunnerOptions.password,
+				stubRunnerOptions.username);
 	}
 
 	Authentication buildAuthentication(String stubServerPassword, String username) {

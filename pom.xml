@@ -34,7 +34,7 @@
 		<spring-cloud-netflix.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
 		<spring-cloud-consul.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
 		<spring-cloud-commons.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-function.version>3.0.2.BUILD-SNAPSHOT</spring-cloud-function.version>
+		<spring-cloud-function.version>3.0.3.BUILD-SNAPSHOT</spring-cloud-function.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.2.9</cglib.version>
 		<spock-spring.version>1.3-groovy-2.5</spock-spring.version>
