@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,26 @@ package org.springframework.cloud.contract.verifier.spec.pact
 
 import java.util.regex.Pattern
 
-import au.com.dius.pact.model.OptionalBody
-import au.com.dius.pact.model.ProviderState
-import au.com.dius.pact.model.Request
-import au.com.dius.pact.model.RequestResponseInteraction
-import au.com.dius.pact.model.RequestResponsePact
-import au.com.dius.pact.model.Response
-import au.com.dius.pact.model.matchingrules.Category
-import au.com.dius.pact.model.matchingrules.DateMatcher
-import au.com.dius.pact.model.matchingrules.MatchingRule
-import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
-import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
-import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
-import au.com.dius.pact.model.matchingrules.MinTypeMatcher
-import au.com.dius.pact.model.matchingrules.NullMatcher
-import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
-import au.com.dius.pact.model.matchingrules.RegexMatcher
-import au.com.dius.pact.model.matchingrules.RuleLogic
-import au.com.dius.pact.model.matchingrules.TimeMatcher
-import au.com.dius.pact.model.matchingrules.TimestampMatcher
-import au.com.dius.pact.model.matchingrules.TypeMatcher
+import au.com.dius.pact.core.model.OptionalBody
+import au.com.dius.pact.core.model.ProviderState
+import au.com.dius.pact.core.model.Request
+import au.com.dius.pact.core.model.RequestResponseInteraction
+import au.com.dius.pact.core.model.RequestResponsePact
+import au.com.dius.pact.core.model.Response
+import au.com.dius.pact.core.model.matchingrules.Category
+import au.com.dius.pact.core.model.matchingrules.DateMatcher
+import au.com.dius.pact.core.model.matchingrules.MatchingRule
+import au.com.dius.pact.core.model.matchingrules.MatchingRuleGroup
+import au.com.dius.pact.core.model.matchingrules.MaxTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.MinMaxTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.MinTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.NullMatcher
+import au.com.dius.pact.core.model.matchingrules.NumberTypeMatcher
+import au.com.dius.pact.core.model.matchingrules.RegexMatcher
+import au.com.dius.pact.core.model.matchingrules.RuleLogic
+import au.com.dius.pact.core.model.matchingrules.TimeMatcher
+import au.com.dius.pact.core.model.matchingrules.TimestampMatcher
+import au.com.dius.pact.core.model.matchingrules.TypeMatcher
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -83,6 +83,9 @@ class RequestResponseSCContractCreator {
 								rulesForCategory('header')
 						headers {
 							request.headers.each { String k, List<String> v ->
+								if (k.equalsIgnoreCase("Cookie")) {
+									return
+								}
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -104,6 +107,39 @@ class RequestResponseSCContractCreator {
 									v.each({
 										header(k, it)
 									})
+								}
+							}
+						}
+					}
+					if (request.headers.containsKey("Cookie")) {
+						Category headerRules = request.matchingRules.
+								rulesForCategory('header')
+						String[] splitHeader = request.headers.get("Cookie").first().split(";")
+						Map<String, String> foundCookies = splitHeader.collectEntries {
+							String[] keyValue = it.split("=")
+							return [(keyValue[0]): keyValue[1]]
+						}
+						cookies {
+							foundCookies.each { k, v ->
+								if (headerRules.matchingRules.containsKey("Cookie")) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
+											get("Cookie")
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										v.each({
+											cookie(k, $(c(regex(((RegexMatcher) rule).getRegex())),
+													p(it)))
+										})
+									}
+									else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								}
+								else {
+									cookie(k, v)
 								}
 							}
 						}
@@ -263,6 +299,9 @@ class RequestResponseSCContractCreator {
 								rulesForCategory('header')
 						headers {
 							response.headers.forEach({ String k, List<String> v ->
+								if (k.equalsIgnoreCase("Cookie")) {
+									return
+								}
 								if (headerRules.matchingRules.containsKey(k)) {
 									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
 											get(k)
@@ -288,6 +327,41 @@ class RequestResponseSCContractCreator {
 									})
 								}
 							})
+						}
+					}
+					if (response.headers.containsKey("Cookie")) {
+						Category headerRules = response.matchingRules.
+								rulesForCategory('header')
+						String[] splitHeader = response.headers.get("Cookie").first().split(";")
+						Map<String, String> foundCookies = splitHeader.collectEntries {
+							String[] keyValue = it.split("=")
+							return [(keyValue[0]): keyValue[1]]
+						}
+						cookies {
+							foundCookies.each { k, v ->
+								if (headerRules.matchingRules.containsKey("Cookie")) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.
+											get("Cookie")
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										v.each({
+											cookie(k, $(p(regex(Pattern.compile(
+													((RegexMatcher) rule).getRegex()))),
+													c(it)))
+										})
+
+									}
+									else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								}
+								else {
+									cookie(k, v)
+								}
+							}
 						}
 					}
 				}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
-import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -40,7 +40,7 @@ import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 class SpringTestMethodBodyBuildersSpec extends Specification implements WireMockStubVerifier {
 
 	@Rule
-	OutputCapture capture = new OutputCapture()
+	OutputCaptureRule capture = new OutputCaptureRule()
 
 	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
@@ -220,6 +220,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 	}
 
 	private String singleTestGenerator(Contract contractDsl) {
+		return singleTestGenerator([contractDsl])
+	}
+
+	private String singleTestGenerator(Collection<Contract> contractDsls) {
 		return new JavaTestGenerator() {
 			@Override
 			ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
@@ -236,15 +240,15 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 					}
 				})
 			}
-		}.buildClass(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+		}.buildClass(properties, [contractMetadata(contractDsls)], "foo", generatedClassData)
 	}
 
 	private GeneratedClassMetaData generatedClassMetaData(Contract contractDsl) {
-		new GeneratedClassMetaData(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+		new GeneratedClassMetaData(properties, [contractMetadata([contractDsl])], "foo", generatedClassData)
 	}
 
-	ContractMetadata contractMetadata(Contract contractDsl) {
-		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsl)
+	ContractMetadata contractMetadata(Collection<Contract> contractDsls) {
+		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsls)
 	}
 
 	@Issue('#187')
@@ -2349,7 +2353,7 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("[\'date\']").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 			test.contains('assertThatJson(parsedJson).field("[\'dateTime\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 			test.contains('assertThatJson(parsedJson).field("[\'time\']").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
-			test.contains('assertThatJson(parsedJson).field("[\'iso8601WithOffset\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{3})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
+			test.contains('assertThatJson(parsedJson).field("[\'iso8601WithOffset\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{1,6})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
 			test.contains('assertThatJson(parsedJson).field("[\'nonBlankString\']").matches("^\\\\s*\\\\S[\\\\S\\\\s]*")')
 			test.contains('assertThatJson(parsedJson).field("[\'nonEmptyString\']").matches("[\\\\S\\\\s]+")')
 			test.contains('assertThatJson(parsedJson).field("[\'anyOf\']").matches("^foo' + endOfLineRegExSymbol + '|^bar' + endOfLineRegExSymbol + '")')
@@ -2950,6 +2954,290 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 			test.contains('''assertThatJson(parsedJson).field("['aMap']").field("['foo']").isEqualTo("bar")''')
 			test.contains('''assertThatJson(parsedJson).field("['anEmptyMap']").isEmpty()''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1139')
+	def 'should have a big decimal import for [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'POST'
+					url '/crystals/create'
+					headers {
+						header 'Content-Type' : 'application/json'
+					}
+					body(
+							amount: 200
+					)
+					bodyMatchers {
+						jsonPath('$.amount', byRegex('^[0-9]{1,3}$'))
+					}
+				}
+				response {
+					status 201
+					body(
+							amount: fromRequest().body('$.amount'),
+							price: 10100.0
+					)
+					bodyMatchers {
+						jsonPath('$.amount', byRegex('^\\d*$'))
+						jsonPath('$.price', byEquality())
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			test.contains('''$.price", java.math.BigDecimal.class)).isEqualTo("10100.0")''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1163')
+	def 'should resolve from request evaluation even if there is no response body [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method PUT()
+					url '/frauds/name'
+					body([
+							name: $(anyAlphaUnicode())
+					])
+					headers {
+						contentType("application/json")
+					}
+				}
+				response {
+					status OK()
+					headers {
+						header(contentType(), "${fromRequest().header(contentType())}")
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		and:
+			!test.contains('''{{{request.headers.Content-Type.[0]}}}''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1260')
+	def 'should generate test methods for not in progress contracts [#methodBuilderName]'() {
+		given:
+			List<Contract> contractDsl = [
+					Contract.make {
+						name("httpContractNotInProgress")
+						request {
+							method PUT()
+							url '/httpContractNotInProgress'
+						}
+						response {
+							status OK()
+						}
+					},
+					Contract.make {
+						name("httpContractInProgress")
+						inProgress()
+						request {
+							method PUT()
+							url '/httpContractInProgress'
+						}
+						response {
+							status OK()
+						}
+					},
+					Contract.make {
+						name("messagingContractNotInProgress")
+						input {
+							triggeredBy("toString()")
+						}
+						outputMessage {
+							sentTo("messagingContractNotInProgress")
+							body([type: "messagingContractNotInProgress"])
+						}
+					},
+					Contract.make {
+						name("messagingContractInProgress")
+						inProgress()
+						input {
+							triggeredBy("toString()")
+						}
+						outputMessage {
+							sentTo("messagingContractNotInProgress")
+							body([type: "messagingContractNotInProgress"])
+						}
+					}
+			]
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		and:
+			test.contains('''httpContractNotInProgress''')
+			test.contains('''messagingContractNotInProgress''')
+		and:
+			!test.contains('''httpContractInProgress''')
+			!test.contains('''messagingContractInProgress''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1052')
+	def 'should work with large numbers [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				label 'storage_object_created'
+				input {
+					triggeredBy('toString()')
+				}
+
+				outputMessage {
+					sentTo('document_uploads')
+					headers {
+						header('objectGeneration', 23094823904823)
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		and:
+			test.contains('''23094823904823L''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"junit"           | { properties.testFramework = TestFramework.JUNIT }
+			"junit5"          | { properties.testFramework = TestFramework.JUNIT5 }
+	}
+
+	@Issue('#1252')
+	def 'should call execute in headers instead of quoting it [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method PUT()
+					url '/frauds/name'
+					headers {
+						header(authorization(), value(client(anyNonBlankString()), server(execute("toString()"))))
+
+					}
+				}
+				response {
+					status OK()
+					headers {
+						header(contentType(), "${fromRequest().header(contentType())}")
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			!test.contains('''"toString()"''')
+			!test.contains("""'toString()'""")
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1263')
+	def 'should allow using execute in the request body [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description "should migrate spaceship"
+				request {
+					method POST()
+					url('/api/migration')
+					headers {
+						accept('application/json')
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+				response {
+					status OK()
+					headers {
+						contentType(applicationJson())
+					}
+					body(
+							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+					)
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			// 1 in the request and 1 in the response
+			test.findAll("hashCode()").size() == 2
 		where:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }

@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-docker-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-stub-runner-docker</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2.0.BUILD-SNAPSHOT</version>
+	<version>3.0.0.BUILD-SNAPSHOT</version>
 	<name>Spring Cloud Contract Stub Runner Docker</name>
 	<description>Spring Cloud Contract Stub Runner Docker</description>
 
@@ -37,7 +37,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.1.2</version>
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
@@ -66,7 +66,7 @@
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>1.4.5</version>
+				<version>1.4.12</version>
 				<executions>
 					<execution>
 						<id>default</id>

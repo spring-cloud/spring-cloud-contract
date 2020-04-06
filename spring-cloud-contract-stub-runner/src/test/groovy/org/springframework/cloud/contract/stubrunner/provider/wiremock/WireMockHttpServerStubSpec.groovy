@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.junit.Rule
 import spock.lang.Specification
 
-import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.web.client.RestTemplate
 
@@ -30,7 +30,7 @@ class WireMockHttpServerStubSpec extends Specification {
 	final File MAPPING_DESCRIPTOR = new File('src/test/resources/transformers.json')
 
 	@Rule
-	OutputCapture capture = new OutputCapture()
+	OutputCaptureRule capture = new OutputCaptureRule()
 
 	def 'should describe stub mapping'() {
 		given:

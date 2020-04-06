@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +40,9 @@ import org.springframework.util.StringUtils;
  * <li>{@code contracts/group.id/artifactid/ ** /*.* }</li>
  * <li>{@code mappings/group.id/artifactid/ ** /*.* }</li>
  * </ul>
- * <p>
  *
  * examples
  *
- * <p>
  * <ul>
  * <li>{@code META-INF/com.example/fooservice/1.0.0/ **}</li>
  * <li>{@code contracts/com.example/artifactid/ ** /*.* }</li>

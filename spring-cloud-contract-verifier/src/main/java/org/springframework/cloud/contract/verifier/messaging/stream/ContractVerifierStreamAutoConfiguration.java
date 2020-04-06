@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(EnableBinding.class)
 @ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
 		matchIfMissing = true)
@@ -50,25 +50,25 @@ public class ContractVerifierStreamAutoConfiguration {
 		return new ContractVerifierHelper(exchange);
 	}
 
-	@Configuration
-	@ConditionalOnClass(MessageCollector.class)
-	static class MessageCollectorConfiguration {
+	@Configuration(proxyBeanMethods = false)
+	@ConditionalOnClass(InputDestination.class)
+	static class InputDestinationConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
-		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithMessageCollector(
+		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithDestinations(
 				ApplicationContext context) {
-			DestinationResolver resolver = new DestinationResolver(context);
 			return new StreamStubMessages(
-					new StreamFromBinderMappingMessageSender(context, resolver),
-					new StreamMessageCollectorMessageReceiver(resolver, context));
+					new StreamInputDestinationMessageSender(context),
+					new StreamOutputDestinationMessageReceiver(context));
 		}
 
 	}
 
-	@Configuration
-	@ConditionalOnMissingClass("org.springframework.cloud.stream.test.binder.MessageCollector")
-	static class NoMessageCollectorClassConfiguration {
+	@Configuration(proxyBeanMethods = false)
+	@ConditionalOnMissingClass({
+			"org.springframework.cloud.stream.binder.test.InputDestination" })
+	static class NoOpStreamClassConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean

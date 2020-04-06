@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,19 +34,16 @@ class MockMvcAsyncWhen implements When, MockMvcAcceptor {
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
-		if (response.getAsync()) {
-			this.blockBuilder.addIndented(".when().async()");
-		}
+		addAsync();
 		if (response.getDelay() != null) {
 			String delay = ".timeout(" + response.getDelay().getServerValue() + ")";
-			if (response.getAsync()) {
-				this.blockBuilder.append(delay);
-			}
-			else {
-				this.blockBuilder.addIndented(delay);
-			}
+			this.blockBuilder.append(delay);
 		}
 		return this;
+	}
+
+	private void addAsync() {
+		this.blockBuilder.addIndented(".when().async()");
 	}
 
 	@Override

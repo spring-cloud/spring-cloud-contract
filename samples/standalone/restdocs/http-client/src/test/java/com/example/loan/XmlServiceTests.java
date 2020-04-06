@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import java.nio.charset.Charset;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.assertj.core.api.BDDAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,19 +33,19 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = "service.port=${wiremock.server.port}")
 @AutoConfigureWireMock(port = 0)
 public class XmlServiceTests {
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/should_return_empty_content.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/should_return_empty_content.json")
 	private Resource empty;
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/should_return_full_content.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/should_return_full_content.json")
 	private Resource full;
 
 	@Autowired

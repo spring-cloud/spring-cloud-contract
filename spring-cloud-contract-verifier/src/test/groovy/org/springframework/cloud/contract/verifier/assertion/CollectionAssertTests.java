@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.assertion;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -101,7 +102,7 @@ public class CollectionAssertTests {
 
 		SpringCloudContractAssertions.assertThat(collection)
 				.hasFlattenedSizeGreaterThanOrEqualTo(0)
-				.hasFlattenedSizeGreaterThanOrEqualTo(4);
+				.hasFlattenedSizeGreaterThanOrEqualTo(7);
 	}
 
 	@Test
@@ -110,12 +111,12 @@ public class CollectionAssertTests {
 
 		try {
 			SpringCloudContractAssertions.assertThat(collection)
-					.hasFlattenedSizeGreaterThanOrEqualTo(5);
+					.hasFlattenedSizeGreaterThanOrEqualTo(8);
 			Assertions.fail("should throw exception");
 		}
 		catch (AssertionError e) {
 			Assertions.assertThat(e).hasMessageContaining(
-					"The flattened size <4> is not greater or equal to <5>");
+					"The flattened size <7> is not greater or equal to <8>");
 		}
 	}
 
@@ -139,8 +140,8 @@ public class CollectionAssertTests {
 		Collection collection = nestedCollection();
 
 		SpringCloudContractAssertions.assertThat(collection)
-				.hasFlattenedSizeLessThanOrEqualTo(5)
-				.hasFlattenedSizeLessThanOrEqualTo(4);
+				.hasFlattenedSizeLessThanOrEqualTo(8)
+				.hasFlattenedSizeLessThanOrEqualTo(7);
 	}
 
 	@Test
@@ -154,7 +155,7 @@ public class CollectionAssertTests {
 		}
 		catch (AssertionError e) {
 			Assertions.assertThat(e).hasMessageContaining(
-					"The flattened size <4> is not less or equal to <1>");
+					"The flattened size <7> is not less or equal to <1>");
 		}
 	}
 
@@ -177,8 +178,8 @@ public class CollectionAssertTests {
 	public void should_not_throw_an_exception_when_flattened_size_is_between_the_provided_sizes() {
 		Collection collection = nestedCollection();
 
-		SpringCloudContractAssertions.assertThat(collection).hasFlattenedSizeBetween(1, 5)
-				.hasFlattenedSizeBetween(4, 4);
+		SpringCloudContractAssertions.assertThat(collection).hasFlattenedSizeBetween(1, 8)
+				.hasFlattenedSizeBetween(7, 7);
 	}
 
 	@Test
@@ -187,12 +188,12 @@ public class CollectionAssertTests {
 
 		try {
 			SpringCloudContractAssertions.assertThat(collection)
-					.hasFlattenedSizeBetween(5, 7);
+					.hasFlattenedSizeBetween(8, 9);
 			Assertions.fail("should throw exception");
 		}
 		catch (AssertionError e) {
 			Assertions.assertThat(e).hasMessageContaining(
-					"The flattened size <4> is not between <5> and <7>");
+					"The flattened size <7> is not between <8> and <9>");
 		}
 	}
 
@@ -353,8 +354,8 @@ public class CollectionAssertTests {
 	}
 
 	private Collection nestedCollection() {
-		List list = new ArrayList<>();
-		List list1 = new ArrayList<>();
+		List list = new ArrayList();
+		List list1 = new ArrayList();
 		Map<String, String> map1 = new HashMap<>();
 		map1.put("a", "1");
 		map1.put("b", "2");
@@ -362,10 +363,14 @@ public class CollectionAssertTests {
 		List list2 = new ArrayList<>();
 		Map<String, String> map2 = new HashMap<>();
 		map2.put("d", "4");
+		List list3 = new ArrayList();
+		List innerList = Arrays.asList("A", "B", "C");
 		list.add(list1);
 		list.add(list2);
+		list.add(list3);
 		list1.add(map1);
 		list2.add(map2);
+		list3.add(innerList);
 		return list;
 	}
 

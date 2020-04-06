@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,14 @@ public class FromFileProperty implements Serializable {
 
 	public boolean isByte() {
 		return byte[].class.equals(this.type) || Byte[].class.equals(this.type);
+	}
+
+	public boolean isJson() {
+		return this.fileName().endsWith(".json");
+	}
+
+	public boolean isXml() {
+		return this.fileName().endsWith(".xml");
 	}
 
 	public String asString() {

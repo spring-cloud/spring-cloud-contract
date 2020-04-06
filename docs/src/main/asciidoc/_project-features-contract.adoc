@@ -164,6 +164,11 @@ IMPORTANT: Remember that, inside the Kotlin Script file, you have to provide the
 Generally you would use its contract function like this: `org.springframework.cloud.contract.spec.ContractDsl.contract { ... }`.
 You can also provide an import to the `contract` function (`import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract`) and then call `contract { ... }`.
 
+[[contract-yml]]
+=== Contract DSL in YML
+
+In order to see a schema of a YAML contract, you can check out the link:yml-schema.html[YML Schema] page.
+
 [[contract-limitations]]
 === Limitations
 
@@ -807,6 +812,8 @@ NOTE: Before 2.0.0, these were set by using `testMatchers` and `stubMatchers`.
 See the https://github.com/spring-cloud/spring-cloud-contract/wiki/Spring-Cloud-Contract-2.0-Migration-Guide[migration guide] for more information.
 
 For YAML, you can use only the `matchers` section.
+
+IMPORTANT: Entries inside the `matchers` must reference existing elements of the payload. For more information check this https://github.com/spring-cloud/spring-cloud-contract/issues/722[issue].
 
 [[contract-dsl-dynamic-properties-in-body]]
 ==== Dynamic Properties inside the Body

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,12 +91,14 @@ class JsonToJsonPathsConverter {
 		def jsonCopy = cloneBody(json)
 		DocumentContext context = JsonPath.parse(jsonCopy)
 		if (bodyMatchers?.hasMatchers()) {
-			bodyMatchers.matchers().each { BodyMatcher matcher ->
+			List<String> pathsToDelete = []
+			List<String> paths = bodyMatchers.matchers().collect { it.path() }
+			paths.each { String path ->
 				try {
-					def entry = entry(context, matcher.path())
+					def entry = entry(context, path)
 					if (entry != null) {
-						context.delete(matcher.path())
-						removeTrailingContainers(matcher.path(), context)
+						context.delete(path)
+						pathsToDelete.add(path)
 					}
 				}
 				catch (RuntimeException e) {
@@ -104,6 +106,10 @@ class JsonToJsonPathsConverter {
 						log.trace("Exception occurred while trying to delete path [${matcher.path()}]", e)
 					}
 				}
+			}
+			pathsToDelete.sort(Collections.reverseOrder())
+			pathsToDelete.each {
+				removeTrailingContainers(it, context)
 			}
 		}
 		return jsonCopy
@@ -143,34 +149,46 @@ class JsonToJsonPathsConverter {
 	 * defining body...
 	 */
 	private static boolean removeTrailingContainers(String matcherPath, DocumentContext context) {
-		Matcher matcher = ANY_ARRAY_NOTATION_IN_JSONPATH.matcher(matcherPath)
-		boolean containsArray = matcher.find()
-		String pathWithoutAnyArray = containsArray ? matcherPath.
-				substring(0, matcherPath.lastIndexOf(lastMatch(matcher))) : matcherPath
-		def object = entry(context, pathWithoutAnyArray)
-		// object got removed and it was the only element
-		// let's get its parent and see if it contains an empty element
-		if (isIterable(object)
-				&&
-				containsOnlyEmptyElements(object)
-				&& isNotRootArray(matcherPath)) {
-			String pathToDelete = pathToDelete(pathWithoutAnyArray)
-			context.delete(pathToDelete)
-			return pathToDelete.contains(DESCENDANT_OPERATOR) ? false :
-					removeTrailingContainers(pathToDelete, context)
-		}
-		else {
-			String lastParent = matcherPath.substring(0, matcherPath.lastIndexOf("."))
-			def lastParentObject = context.read(lastParent)
-			if (isIterable(lastParentObject)
+		try {
+			Matcher matcher = ANY_ARRAY_NOTATION_IN_JSONPATH.matcher(matcherPath)
+			boolean containsArray = matcher.find()
+			String pathWithoutAnyArray = containsArray ? matcherPath.
+					substring(0, matcherPath.lastIndexOf(lastMatch(matcher))) : matcherPath
+			def object = entry(context, pathWithoutAnyArray)
+			// object got removed and it was the only element
+			// let's get its parent and see if it contains an empty element
+			if (isIterable(object)
 					&&
-					containsOnlyEmptyElements(lastParentObject)
-					&& isNotRoot(lastParent)) {
-				context.delete(lastParent)
-				return removeTrailingContainers(lastParent, context)
+					containsOnlyEmptyElements(object)
+					&& isNotRootArray(matcherPath)) {
+				String pathToDelete = pathToDelete(pathWithoutAnyArray)
+				context.delete(pathToDelete)
+				return pathToDelete.contains(DESCENDANT_OPERATOR) ? false :
+						removeTrailingContainers(pathToDelete, context)
 			}
+			else {
+				int lastIndexOfDot = matcherPath.lastIndexOf(".")
+				if (lastIndexOfDot == -1) {
+					return false
+				}
+				String lastParent = matcherPath.substring(0, lastIndexOfDot)
+				def lastParentObject = context.read(lastParent)
+				if (isIterable(lastParentObject)
+						&&
+						containsOnlyEmptyElements(lastParentObject)
+						&& isNotRoot(lastParent)) {
+					context.delete(lastParent)
+					return removeTrailingContainers(lastParent, context)
+				}
+			}
+			return false
 		}
-		return false
+		catch (RuntimeException e) {
+			if (log.isTraceEnabled()) {
+				log.trace("Exception occurred while trying to delete path [${matcherPath}]", e)
+			}
+			return false
+		}
 	}
 
 	private static String lastMatch(Matcher matcher) {
@@ -235,9 +253,9 @@ class JsonToJsonPathsConverter {
 			return path
 		}
 		int lastIndexOfDot = lastIndexOfDot(path)
-		String toLastDot = path.substring(0, lastIndexOfDot)
 		String fromLastDot = path.substring(lastIndexOfDot + 1)
-		String propertyName = "@.${fromLastDot}"
+		String toLastDot = lastIndexOfDot == -1 ? '$' : path.substring(0, lastIndexOfDot)
+		String propertyName = lastIndexOfDot == -1 ? '@' : "@.${fromLastDot}"
 		String comparison = createComparison(propertyName, bodyMatcher, value, body)
 		return "${toLastDot}[?(${comparison})]"
 	}

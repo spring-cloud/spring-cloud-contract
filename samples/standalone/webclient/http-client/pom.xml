@@ -6,7 +6,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-client-webclient</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>Spring Cloud Contract RestDocs Http WebClient Sample</name>
 	<description>Spring Cloud Contract RestDocs Http WebClient Sample</description>
@@ -14,14 +14,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.3.0.BUILD-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
 	</properties>
 
 	<dependencies>
@@ -39,6 +39,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -54,7 +60,7 @@
 			<groupId>com.example</groupId>
 			<artifactId>http-server-webclient</artifactId>
 			<classifier>stubs</classifier>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>

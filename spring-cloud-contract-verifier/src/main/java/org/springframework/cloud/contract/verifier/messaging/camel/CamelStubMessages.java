@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 			ConsumerTemplate consumerTemplate = this.context.createConsumerTemplate();
 			Exchange exchange = consumerTemplate.receive(destination,
 					timeUnit.toMillis(timeout));
-			return exchange.getIn();
+			return exchange != null ? exchange.getIn() : null;
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "

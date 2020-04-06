@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -32,6 +34,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+
+import static org.springframework.cloud.contract.maven.verifier.ChangeDetector.inputFilesChangeDetected;
 
 /**
  * Picks the converted .json files and creates a jar. Requires convert to be executed
@@ -87,6 +91,19 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private String classifier;
 
 	/**
+	 * If set to true then stubs jar is created only when stubs have changed since last
+	 * build.
+	 */
+	@Parameter(property = "incrementalContractStubsJar", defaultValue = "true")
+	private boolean incrementalContractStubsJar = true;
+
+	@Parameter(defaultValue = "${mojoExecution}", readonly = true, required = true)
+	private MojoExecution mojoExecution;
+
+	@Parameter(defaultValue = "${session}", readonly = true, required = true)
+	private MavenSession session;
+
+	/**
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
@@ -110,6 +127,11 @@ public class GenerateStubsMojo extends AbstractMojo {
 			throw new MojoExecutionException("Stubs could not be found: ["
 					+ this.outputDirectory.getAbsolutePath()
 					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
+		}
+		if (this.incrementalContractStubsJar
+				&& !inputFilesChangeDetected(outputDirectory, mojoExecution, session)) {
+			getLog().info("Nothing to generate - stubs jar is up to date");
+			return;
 		}
 		File stubsJarFile = createStubJar(this.outputDirectory);
 		this.projectHelper.attachArtifact(this.project, "jar", this.classifier,

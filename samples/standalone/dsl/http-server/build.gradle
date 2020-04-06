@@ -1,4 +1,25 @@
 // tag::repos[]
+/*
+ We need to use the [buildscript {}] section when we have to modify
+ the classpath for the plugins. If that's not the case this section
+ can be skipped.
+
+ If you don't need to modify the classpath (e.g. add a Pact dependency),
+ then you can just set the [pluginManagement {}] section in [settings.gradle] file.
+
+ // settings.gradle
+ pluginManagement {
+    repositories {
+        // for snapshots
+        maven {url "https://repo.spring.io/snapshot"}
+        // for milestones
+        maven {url "https://repo.spring.io/milestone"}
+        // for GA versions
+        gradlePluginPortal()
+    }
+ }
+
+ */
 buildscript {
 	repositories {
 		mavenCentral()
@@ -19,7 +40,7 @@ buildscript {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 // tag::deps_repos[]
 repositories {
@@ -49,15 +70,19 @@ contracts {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web")
-	compile("org.springframework.boot:spring-boot-starter-actuator")
-	compile("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
 
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
-	testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude(group: 'org.junit.vintage', module: 'junit-vintage-engine')
+	}
 }
 
 test {
+	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'

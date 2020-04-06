@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.springframework.cloud.contract.wiremock;
+
+import java.io.File;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.Rule;
@@ -34,11 +36,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class)
@@ -54,14 +60,16 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Test
 	public void matchesRequest() throws Exception {
+		FileSystemUtils.deleteRecursively(new File("target/snippets/stubs/posted.json"));
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
 						.contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()
 						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
-								.withRequestBody(WireMock.matching("greeting.*")))
-						.stub("posted"));
+								.withRequestBody(WireMock.matching("greeting.*"))))
+				.andDo(document("posted"));
+		assertThat(new File("target/snippets/stubs/posted.json")).exists();
 	}
 
 	@Test
@@ -74,8 +82,8 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()
 						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
-								.withRequestBody(WireMock.matching("garbage.*")))
-						.stub("posted"));
+								.withRequestBody(WireMock.matching("garbage.*"))))
+				.andDo(document("posted"));
 	}
 
 	@Configuration

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,16 @@
 package com.example.fraud;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
+import org.springframework.context.annotation.Configuration;
+
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -33,24 +36,30 @@ import org.springframework.web.context.WebApplicationContext;
  *
  * @author Marius Bogoevici
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, properties = "spring.cloud.stream.bindings.output.destination=sensor-data")
+
+@SpringBootTest(classes = {MessagingBase.Config.class, Application.class})
 @AutoConfigureMessageVerifier
 public abstract class MessagingBase {
 
 	@Autowired
-	MessagePoller poller;
+	MessageSender poller;
 
 	@Autowired
 	WebApplicationContext context;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		RestAssuredMockMvc.webAppContextSetup(this.context);
 	}
 
 	public void createSensorData() {
-		poller.poll();
+		poller.emit();
+	}
+
+	@Configuration
+	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
+	static class Config {
+
 	}
 
 }

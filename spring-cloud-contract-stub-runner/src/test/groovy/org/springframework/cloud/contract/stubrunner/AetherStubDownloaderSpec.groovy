@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.stubrunner
 
 import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
+import org.eclipse.aether.repository.Authentication
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -96,4 +97,39 @@ class AetherStubDownloaderSpec extends Specification {
 			jar != null
 			repositorySystemSession.getLocalRepository().getBasedir().getAbsolutePath().endsWith(m2repoFolder)
 	}
+
+	@RestoreSystemProperties
+	def 'Should return credentials from settings.xml'() {
+		given:
+			File settings = new File(AetherStubDownloaderSpec.getResource("/.m2/settings.xml").getFile())
+			System.setProperty("org.apache.maven.user-settings", settings.getAbsolutePath())
+
+		and:
+			File configDir = new File(AetherStubDownloaderSpec.getResource("/.m2").getFile())
+			System.setProperty("maven.user.config.dir", configDir.getAbsolutePath())
+
+		and:
+			StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+					.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+					.withStubRepositoryRoot(AetherStubDownloaderSpec.getResource("/m2repo/repository").toString())
+					.withServerId("my-server")
+					.build()
+			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions) {
+				@Override
+				Authentication buildAuthentication(String stubServerPassword, String username) {
+					assert username == "admin"
+					// hashed {ha7QXbuAf9wH5uVeYJGWg+SC8fdkufPVfdtpTK8Yk3E=}
+					assert stubServerPassword == "mypassword"
+					return super.buildAuthentication(stubServerPassword, username)
+				}
+			}
+
+		when:
+			def jar = aetherStubDownloader.downloadAndUnpackStubJar(
+					new StubConfiguration("org.springframework.cloud.contract.verifier.stubs",
+							"bootService", "0.0.1-SNAPSHOT"))
+		then:
+			jar != null
+	}
+
 }

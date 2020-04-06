@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,22 @@ import com.example.loan.model.Client;
 import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.test.context.junit4.SpringRunner;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(webEnvironment = WebEnvironment.NONE, properties = "server.context-path=/app")
 @AutoConfigureStubRunner(ids = {
-		"com.example:http-server-dsl:+:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+		"com.example:http-server-dsl:0.0.1:stubs:6565" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceContextPathTests {
 
 	@Autowired

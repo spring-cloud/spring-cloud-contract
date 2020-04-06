@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -31,11 +32,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
+
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
@@ -69,8 +72,8 @@ public class StubGeneratorTests {
 				.andExpect(jsonPath("$.rejectionReason").value("Amount too high"))
 				.andDo(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount > 1000)]")
-						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsFraud"));
+						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json")))
+				.andDo(document("markClientAsFraud"));
 	}
 
 	@Test
@@ -85,8 +88,8 @@ public class StubGeneratorTests {
 				.andExpect(jsonPath("$.rejectionReason").doesNotExist())
 				.andDo(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount <= 1000)]")
-						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsNotFraud"));
+						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json")))
+				.andDo(document("markClientAsNotFraud"));
 	}
 
 }

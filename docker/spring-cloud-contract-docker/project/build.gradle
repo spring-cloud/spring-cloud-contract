@@ -118,21 +118,21 @@ publishing {
 		}
 	}
 	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-		}
 	}
 }
 
 // explicitly disable artifacts publication
-String publishArtifacts = getProp("PUBLISH_ARTIFACTS") ?: "true"
-boolean publishEnabled = Boolean.parseBoolean(publishArtifacts)
+boolean publishEnabled = Boolean.parseBoolean(getProp("PUBLISH_ARTIFACTS") ?: "true")
+boolean publishOffline = Boolean.parseBoolean(getProp("PUBLISH_ARTIFACTS_OFFLINE") ?: "false")
 publish.setEnabled(publishEnabled)
+publishToMavenLocal.setEnabled(publishOffline)
 
 gradle.taskGraph.whenReady { graph ->
 	graph.allTasks.
 			findAll { it.name.startsWith("publish") && "publishStubsToScm" != it.name }*.
 			setEnabled(publishEnabled)
+	graph.allTasks.
+			findAll { it.name.startsWith("publish") && it.name.endsWith("ToMavenLocal") }*.setEnabled(publishOffline)
 }
 
 if (Boolean.parseBoolean(getProp("PUBLISH_STUBS_TO_SCM"))) {

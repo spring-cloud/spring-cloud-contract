@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
-import groovy.json.JsonBuilder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.json.JSONObject
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
@@ -38,7 +37,6 @@ import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNO
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getClientContentType
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues
-
 /**
  * Common abstraction over WireMock Request / Response conversion implementations
  *
@@ -189,11 +187,10 @@ abstract class BaseWireMockStubStrategy {
 			Map convertedMap = MapConverter.transformValues(value) {
 				it instanceof GString ? it.toString() : it
 			} as Map
-			String jsonOutput = new JSONObject(new JsonBuilder(convertedMap).toString()).
-					toString()
+			String jsonOutput =  new ObjectMapper().writeValueAsString(convertedMap)
 			return jsonOutput.replaceAll("\\\\\\\\\\\\", "\\\\")
 		}
-		return new JsonBuilder(value).toString()
+		return new ObjectMapper().writeValueAsString(value)
 	}
 
 	/**

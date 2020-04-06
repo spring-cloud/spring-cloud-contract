@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,14 +44,21 @@ public class OptionalProperty implements Serializable, CanBeDynamic {
 	}
 
 	public String value() {
-		if (this.value == null) {
+		return valueToCheck(this.value).toString();
+	}
+
+	private Object valueToCheck(Object value) {
+		if (value == null) {
 			return "";
 		}
-		else if (this.value instanceof RegexProperty) {
-			return ((RegexProperty) this.value).pattern();
+		else if (value instanceof ClientDslProperty) {
+			return valueToCheck(((ClientDslProperty) value).getClientValue());
+		}
+		else if (value instanceof RegexProperty || value instanceof Pattern) {
+			return new RegexProperty(value).pattern();
 		}
 		else {
-			return this.value.toString();
+			return value.toString();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.springframework.cloud.contract.verifier.messaging.amqp
 
 import com.rabbitmq.client.Channel
 import org.mockito.exceptions.verification.WantedButNotInvoked
+import shaded.com.google.common.collect.ImmutableMap
 import spock.lang.Specification
-import wiremock.com.google.common.collect.ImmutableMap
 
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
@@ -27,6 +27,7 @@ import org.springframework.amqp.core.DirectExchange
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
 import org.springframework.amqp.core.Queue
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
@@ -78,7 +79,7 @@ class SpringAmqpStubMessagesSpec extends Specification {
 
 	def "should send amqp message for non transactional channel"() {
 		given:
-			rabbitProperties.setPublisherConfirms(true)
+			rabbitProperties.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.SIMPLE)
 			listenerContainer.setMessageListener(messageListenerAdapter)
 			listenerContainer.setQueueNames(queueName)
 			Binding binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with(routingKey)
@@ -114,7 +115,7 @@ class SpringAmqpStubMessagesSpec extends Specification {
 
 	def "should send amqp message for transactional channel"() {
 		given:
-			rabbitProperties.setPublisherConfirms(false)
+			rabbitProperties.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.NONE)
 			listenerContainer.setMessageListener(messageListenerAdapter)
 			listenerContainer.setQueueNames(queueName)
 			Binding binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with(routingKey)

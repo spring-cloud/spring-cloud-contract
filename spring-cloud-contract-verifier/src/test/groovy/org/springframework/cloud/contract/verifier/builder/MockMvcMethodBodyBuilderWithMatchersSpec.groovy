@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
-import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -34,7 +34,7 @@ import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements WireMockStubVerifier {
 
 	@Rule
-	OutputCapture outputCapture = new OutputCapture()
+	OutputCaptureRule outputCapture = new OutputCaptureRule()
 
 	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
@@ -744,4 +744,47 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}
 	}
+
+	@Issue('#880')
+	def 'should not generate a null statement when there is no content type in the response [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description 'Should return 200'
+				request {
+					method POST()
+					url("/get")
+					headers {
+						contentType("application/json;charset=UTF-8")
+					}
+				}
+				response {
+					status OK()
+					body(file("getBody.json"))
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('null')
+			test.contains('''.array("['array']")''')
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK;
+				properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT;
+				properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+	}
+
 }

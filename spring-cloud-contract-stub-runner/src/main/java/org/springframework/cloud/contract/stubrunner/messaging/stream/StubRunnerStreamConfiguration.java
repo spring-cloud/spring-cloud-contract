@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration;
-import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.context.Lifecycle;
@@ -55,8 +55,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
-@ConditionalOnClass({ IntegrationFlows.class, EnableBinding.class })
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnClass({ IntegrationFlows.class, InputDestination.class })
 @ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
 		matchIfMissing = true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)

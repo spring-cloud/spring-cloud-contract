@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,22 @@ package org.springframework.cloud.contract.verifier;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.assertj.core.api.BDDAssertions;
 import org.junit.Test;
 import org.mockito.BDDMockito;
-import wiremock.com.google.common.collect.ArrayListMultimap;
-import wiremock.com.google.common.collect.ListMultimap;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
 
 public class TestGeneratorTests {
 
@@ -46,9 +47,10 @@ public class TestGeneratorTests {
 				.mock(SingleTestGenerator.class);
 		FileSaver fileSaver = BDDMockito.mock(FileSaver.class);
 		// and:
-		ArrayListMultimap<Path, ContractMetadata> multimap = ArrayListMultimap.create();
+		MultiValueMap<Path, ContractMetadata> multimap = CollectionUtils
+				.toMultiValueMap(new LinkedHashMap<>());
 		Path path = new File(".").toPath();
-		multimap.put(path,
+		multimap.add(path,
 				new ContractMetadata(path, false, 0, null, Contract.make(it -> {
 					it.inProgress();
 					it.request(r -> {
@@ -61,7 +63,7 @@ public class TestGeneratorTests {
 				})));
 		ContractFileScanner scanner = new ContractFileScanner(null, null, null) {
 			@Override
-			public ListMultimap<Path, ContractMetadata> findContracts() {
+			public MultiValueMap<Path, ContractMetadata> findContractsRecursively() {
 				return multimap;
 			}
 		};
@@ -87,9 +89,10 @@ public class TestGeneratorTests {
 				.mock(SingleTestGenerator.class);
 		FileSaver fileSaver = BDDMockito.mock(FileSaver.class);
 		// and:
-		ArrayListMultimap<Path, ContractMetadata> multimap = ArrayListMultimap.create();
+		MultiValueMap<Path, ContractMetadata> multimap = CollectionUtils
+				.toMultiValueMap(new LinkedHashMap<>());
 		Path path = new File(".").toPath();
-		multimap.put(path,
+		multimap.add(path,
 				new ContractMetadata(path, false, 0, null, Contract.make(it -> {
 					it.inProgress();
 					it.request(r -> {
@@ -102,7 +105,7 @@ public class TestGeneratorTests {
 				})));
 		ContractFileScanner scanner = new ContractFileScanner(null, null, null) {
 			@Override
-			public ListMultimap<Path, ContractMetadata> findContracts() {
+			public MultiValueMap<Path, ContractMetadata> findContractsRecursively() {
 				return multimap;
 			}
 		};
@@ -110,8 +113,8 @@ public class TestGeneratorTests {
 		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator,
 				fileSaver, scanner) {
 			@Override
-			Set<Map.Entry<Path, Collection<ContractMetadata>>> processAllNotInProgress(
-					ListMultimap<Path, ContractMetadata> contracts,
+			Set<Map.Entry<Path, List<ContractMetadata>>> processAllNotInProgress(
+					MultiValueMap<Path, ContractMetadata> contracts,
 					String basePackageName) {
 				return null;
 			}

@@ -17,7 +17,7 @@ public class ContractRestClientApplicationTest {
 
 	@Rule
 	public StubRunnerRule stubRunnerRule = new StubRunnerRule()
-		.downloadStub("com.example", "contract-rest-service", "0.0.1-SNAPSHOT", "stubs")
+		.downloadStub("com.example", "contract-rest-service", "0.0.1", "stubs")
 		.withPort(8100)
 		.stubsMode(StubRunnerProperties.StubsMode.LOCAL);
 

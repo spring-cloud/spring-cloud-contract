@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
@@ -75,14 +76,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		Assert.isTrue(
 				mockingDetails(rabbitTemplate).isSpy()
 						|| mockingDetails(rabbitTemplate).isMock(),
-				"StubRunner AMQP will work only if RabbiTemplate is a spy"); // we get
-																				// send
-																				// messages
-																				// by
-																				// capturing
-																				// arguments
-																				// on the
-																				// spy
+				"StubRunner AMQP will work only if RabbiTemplate is a spy");
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
 	}
@@ -95,14 +89,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		Assert.isTrue(
 				mockingDetails(rabbitTemplate).isSpy()
 						|| mockingDetails(rabbitTemplate).isMock(),
-				"StubRunner AMQP will work only if RabbiTemplate is a spy"); // we get
-																				// send
-																				// messages
-																				// by
-																				// capturing
-																				// arguments
-																				// on the
-																				// spy
+				"StubRunner AMQP will work only if RabbiTemplate is a spy");
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
 		this.rabbitProperties = rabbitProperties;
@@ -185,7 +172,9 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 			// backward compatibility
 			return true;
 		}
-		return !this.rabbitProperties.isPublisherConfirms();
+		return this.rabbitProperties.getPublisherConfirmType() == null
+				|| this.rabbitProperties
+						.getPublisherConfirmType() == CachingConnectionFactory.ConfirmType.NONE;
 	}
 
 	@Override

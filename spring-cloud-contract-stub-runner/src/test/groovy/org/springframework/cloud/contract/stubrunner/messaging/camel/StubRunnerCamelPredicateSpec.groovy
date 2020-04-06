@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.springframework.cloud.contract.stubrunner.messaging.camel
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.apache.camel.impl.DefaultCamelContext
-import org.apache.camel.impl.DefaultExchange
-import org.apache.camel.impl.DefaultMessage
+import org.apache.camel.support.DefaultExchange
+import org.apache.camel.support.DefaultMessage
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
@@ -30,7 +30,7 @@ import org.springframework.cloud.contract.spec.Contract
  */
 class StubRunnerCamelPredicateSpec extends Specification {
 	Exchange exchange = new DefaultExchange(new DefaultCamelContext())
-	Message message = new DefaultMessage()
+	Message message = new DefaultMessage(exchange)
 
 	def "should return false if headers don't match"() {
 		given:

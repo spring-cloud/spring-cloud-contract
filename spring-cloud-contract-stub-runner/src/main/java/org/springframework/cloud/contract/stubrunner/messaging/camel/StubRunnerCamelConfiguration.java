@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RoutesBuilder.class)
 @ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
 		matchIfMissing = true)
@@ -99,8 +99,8 @@ public class StubRunnerCamelConfiguration {
 
 		@Override
 		public void process(Exchange exchange) {
-			if (log.isDebugEnabled()) {
-				log.debug("Got exchange [" + exchange + "]");
+			if (log.isTraceEnabled()) {
+				log.trace("Got exchange [" + exchange + "]");
 			}
 		}
 

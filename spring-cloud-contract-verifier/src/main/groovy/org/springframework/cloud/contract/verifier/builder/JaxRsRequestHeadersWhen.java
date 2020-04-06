@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.Request;
@@ -47,9 +48,7 @@ class JaxRsRequestHeadersWhen implements When {
 				.filter(header -> !headerToIgnore(header)).iterator();
 		while (iterator.hasNext()) {
 			Header header = iterator.next();
-			String text = ".header(\"" + header.getName() + "\", "
-					+ this.bodyParser.quotedLongText(MapConverter
-							.getTestSideValuesForNonBody(header.getServerValue()))
+			String text = ".header(\"" + header.getName() + "\", " + headerValue(header)
 					+ ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
@@ -58,6 +57,15 @@ class JaxRsRequestHeadersWhen implements When {
 				this.blockBuilder.addIndented(text);
 			}
 		}
+	}
+
+	private String headerValue(Header header) {
+		Object headerServerValue = header.getServerValue();
+		if (headerServerValue instanceof ExecutionProperty) {
+			return ((ExecutionProperty) headerServerValue).getExecutionCommand();
+		}
+		return this.bodyParser.quotedLongText(
+				MapConverter.getTestSideValuesForNonBody(header.getServerValue()));
 	}
 
 	private boolean headerToIgnore(Header header) {

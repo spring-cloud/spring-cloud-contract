@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class AmqpMessagingApplication {
 		return rabbitTemplate;
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@Profile("!listener")
 	static class MessageListenerAdapterConfig {
 
@@ -105,7 +105,7 @@ public class AmqpMessagingApplication {
 
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@EnableRabbit
 	@Profile("listener")
 	static class RabbitListenerConfig {

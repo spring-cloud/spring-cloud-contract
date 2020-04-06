@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.spec.pact
 
-import au.com.dius.pact.model.Pact
-import au.com.dius.pact.model.PactSpecVersion
+import java.nio.file.Files
+
+import au.com.dius.pact.core.model.Pact
+import au.com.dius.pact.core.model.PactSpecVersion
 import groovy.json.JsonOutput
 import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Issue
@@ -25,6 +27,8 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.TestGenerator
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -49,6 +53,10 @@ class PactContractConverterSpec extends Specification {
 		getResource("/pact/pact_v3_messaging.json").toURI())
 	File pactv3UnsupportedRuleLogicJson = new File(PactContractConverterSpec.
 		getResource("/pact/pact_v3_unsupported_rule_logic.json").toURI())
+	File pact1043Json = new File(PactContractConverterSpec.
+			getResource("/pact/for-test-generation/pact_1043.json").toURI())
+	File pact1134Json = new File(PactContractConverterSpec.
+			getResource("/pact/1134/pact_1134.json").toURI())
 	@Subject
 	PactContractConverter converter = new PactContractConverter()
 
@@ -57,12 +65,12 @@ class PactContractConverterSpec extends Specification {
 			converter.isAccepted(pactJson)
 	}
 
-	def "should reject json files that are pact files"() {
+	def "should reject json files that are invalid pact files"() {
 		given:
 			File invalidPact = new File(PactContractConverterSpec.
 				getResource("/pact/invalid_pact.json").toURI())
 		expect:
-			converter.isAccepted(invalidPact)
+			!converter.isAccepted(invalidPact)
 	}
 
 	def "should convert from pact to contract"() {
@@ -339,7 +347,7 @@ class PactContractConverterSpec extends Specification {
   ],
   "metadata": {
     "pact-jvm": {
-      "version": "3.6.12"
+      "version": "4.0.9"
     }
   }
 }
@@ -725,6 +733,108 @@ class PactContractConverterSpec extends Specification {
 			def e = thrown(UnsupportedOperationException)
 			e.message.
 				contains("Currently only the AND combination rule logic is supported")
+	}
+
+	@Issue("1043")
+	def "should generate a test from pact and not contain a check for an empty array"() {
+		given:
+			File output = Files.createTempDirectory("pact").toFile()
+			output.mkdirs()
+		when:
+			new TestGenerator(new ContractVerifierConfigProperties(contractsDslDir: pact1043Json.parentFile, generatedTestSourcesDir: output, generatedTestResourcesDir: output, basePackageForTests: "example")).generate()
+		then:
+			File generatedTest = new File(output, "example/ContractVerifierTest.java")
+			String generatedTestText = generatedTest.text
+			!generatedTestText.contains('''assertThatJson(parsedJson).array().array("['authors']").isEmpty()''')
+	}
+
+	@Issue("1134")
+	def "should work properly with cookies when reading a pact file as contract"() {
+		given:
+			File output = Files.createTempDirectory("pact").toFile()
+			output.mkdirs()
+		when:
+			new TestGenerator(new ContractVerifierConfigProperties(contractsDslDir: pact1134Json.parentFile, generatedTestSourcesDir: output, generatedTestResourcesDir: output, basePackageForTests: "example")).generate()
+		then:
+			File generatedTest = new File(output, "example/ContractVerifierTest.java")
+			String generatedTestText = generatedTest.text
+			generatedTestText.contains('''cookie("a", "1")''')
+			generatedTestText.contains('''cookie("b", "2")''')
+			generatedTestText.contains('''assertThat(response.cookie("c")).isNotNull()''')
+			generatedTestText.contains('''assertThat(response.cookie("c")).isEqualTo("1")''')
+			generatedTestText.contains('''assertThat(response.cookie("d")).isNotNull()''')
+			generatedTestText.contains('''assertThat(response.cookie("d")).isEqualTo("2")''')
+	}
+
+	@Issue("1134")
+	def "should work properly with cookies when converting contract to pact"() {
+		given:
+			Collection<Contract> expectedContracts = [
+					Contract.make {
+						description("A successful Api GET call get")
+						request {
+							method(GET())
+							url("/books")
+							// cause Pact stores cookies in headers
+							headers {
+							}
+							cookies {
+								cookie("a", "1")
+								cookie("b", "2")
+							}
+						}
+						response {
+							status(200)
+							// cause Pact stores cookies in headers
+							headers {
+							}
+							cookies {
+								cookie("c", "1")
+								cookie("d", "2")
+							}
+						}
+					}
+			]
+		when:
+			Collection<Contract> contracts = converter.convertFrom(pact1134Json)
+		then:
+			contracts == expectedContracts
+	}
+
+	@Issue("1277")
+	def "should work properly with json body"() {
+		when:
+			converter.convertTo([
+					Contract.make {
+						request {
+							method 'PUT'
+							url '/api/admins/1'
+							body('''{
+  "username" : "username",
+  "password" : "password",
+  "roles" : [ "ADMIN" ]
+}''')
+							headers {
+								header('''Content-Type''', '''application/json;charset=UTF-8''')
+							}
+						}
+						response {
+							status 200
+							body('''{
+  "admin" : {
+    "adminId" : 1,
+    "username" : "username",
+    "roles" : [ "ADMIN" ]
+  }
+}''')
+							headers {
+								header('''Content-Type''', '''application/json;charset=UTF-8''')
+							}
+						}
+					}
+			])
+		then:
+			noExceptionThrown()
 	}
 }
 

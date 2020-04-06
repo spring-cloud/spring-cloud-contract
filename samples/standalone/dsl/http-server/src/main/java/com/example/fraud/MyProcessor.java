@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,50 @@
 
 package com.example.fraud;
 
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.messaging.MessageChannel;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.function.Function;
 
-interface MyProcessor extends Sink {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	String MY_OUTPUT = "my_output";
+import org.springframework.stereotype.Component;
 
-	@Output("my_output")
-	MessageChannel output();
+@Component("my_output")
+class MyProcessor implements Function<byte[], byte[]> {
 
+	private static final Logger log = LoggerFactory.getLogger(MyProcessor.class);
+
+	private final byte[] expectedInput;
+
+	private final byte[] expectedOutput;
+
+	MyProcessor() {
+		this.expectedInput = forFile("/contracts/messaging/input.pdf");
+		this.expectedOutput = forFile("/contracts/messaging/output.pdf");
+	}
+
+	private byte[] forFile(String relative) {
+		URL resource = MyProcessor.class.getResource(relative);
+		try {
+			return Files.readAllBytes(new File(resource.toURI()).toPath());
+		}
+		catch (IOException | URISyntaxException ex) {
+			throw new IllegalStateException(ex);
+		}
+	}
+
+	@Override
+	public byte[] apply(byte[] payload) {
+		log.info("Got the message!");
+		if (!Arrays.equals(payload, this.expectedInput)) {
+			log.error("Input payload size is [" + payload.length + "] and the expected one is [" + this.expectedInput.length + "]");
+			throw new IllegalStateException("Wrong input");
+		}
+		return this.expectedOutput;
+	}
 }

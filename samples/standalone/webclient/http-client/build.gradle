@@ -12,7 +12,7 @@ buildscript {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 repositories {
 	mavenCentral()
@@ -35,16 +35,19 @@ dependencyManagement {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web")
-	compile("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
-	testCompile "org.springframework.boot:spring-boot-starter-test"
-	testCompile "com.example:http-server-webclient-gradle:0.0.1-SNAPSHOT:stubs"
+	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation "com.example:http-server-webclient:0.0.1:stubs"
 }
 
 test {
+	useJUnitPlatform()
 	include '**/*GradleTests*'
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {

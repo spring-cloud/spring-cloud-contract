@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -21,6 +21,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<gradle.task>build</gradle.task>
 		<build-helper-maven-plugin.phase>package</build-helper-maven-plugin.phase>
+		<gradle.publish-plugins.task>publishPlugins</gradle.publish-plugins.task>
 	</properties>
 
 	<dependencies>
@@ -50,7 +51,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.1.0</version>
 				<configuration>
 					<filesets>
 						<fileset>
@@ -67,6 +68,10 @@
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
+					<execution>
+						<id>attach-zip</id>
+						<phase>none</phase>
+					</execution>
 					<execution>
 						<id>attach-artifacts</id>
 						<phase>${build-helper-maven-plugin.phase}</phase>
@@ -206,6 +211,19 @@
 			</build>
 		</profile>
 		<profile>
+			<id>dry-run</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env.DRY_RUN</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<gradle.publish-plugins.task>-Pexample=value</gradle.publish-plugins.task>
+			</properties>
+		</profile>
+		<profile>
 			<id>central</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
@@ -228,7 +246,11 @@
 										<argument>${gradle.task}</argument>
 										<argument>-PverifierVersion=${project.version}</argument>
 										<argument>-Pcentral</argument>
-										<argument>publishPlugins</argument>
+										<argument>-PsonatypeUsername=${env.SONATYPE_USER}</argument>
+										<argument>-PsonatypePassword=${env.SONATYPE_PASSWORD}</argument>
+										<argument>-Pgradle.publish.key=${env.GRADLE_PUBLISH_KEY}</argument>
+										<argument>-Pgradle.publish.secret=${env.GRADLE_PUBLISH_SECRET}</argument>
+										<argument>${gradle.publish-plugins.task}</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -246,9 +268,50 @@
 				<jdk>13</jdk>
 			</activation>
 			<properties>
-				<gradle.task>assemble</gradle.task>
 				<build-helper-maven-plugin.phase>none</build-helper-maven-plugin.phase>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<!-- we need a different version so as not to inherit from parent -->
+						<version>${exec-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>gradle-update-to-6</id>
+								<phase>package</phase>
+								<configuration>
+									<executable>./gradlew</executable>
+									<arguments>
+										<argument>wrapper</argument>
+										<argument>--gradle-version</argument>
+										<argument>6.0</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>gradle</id>
+								<phase>package</phase>
+								<configuration>
+									<executable>./gradlew</executable>
+									<arguments>
+										<argument>${gradle.task}</argument>
+										<!--<argument>jacocoTestReport</argument>-->
+										<argument>-PverifierVersion=${project.version}</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 

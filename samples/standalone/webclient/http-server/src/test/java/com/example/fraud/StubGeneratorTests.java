@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import java.math.BigDecimal;
 
 import com.example.fraud.model.FraudCheck;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -32,13 +32,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import static org.springframework.cloud.contract.wiremock.restdocs.WireMockWebTestClient.verify;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(classes = Application.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureWebTestClient
@@ -50,7 +50,7 @@ public class StubGeneratorTests {
 
 	private JacksonTester<FraudCheck> json;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		ObjectMapper objectMappper = new ObjectMapper();
 		// Possibly configure the mapper

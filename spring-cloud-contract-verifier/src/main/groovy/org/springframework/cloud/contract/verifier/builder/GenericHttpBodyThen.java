@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,12 +58,8 @@ class GenericHttpBodyThen implements Then, BodyMethodVisitor {
 		endBodyBlock(this.blockBuilder);
 		this.blockBuilder.addEmptyLine();
 		startBodyBlock(this.blockBuilder, "and:");
-		Request request = metadata.getContract().getRequest();
 		this.thens.stream().filter(then -> then.accept(metadata))
 				.forEach(then -> then.apply(metadata));
-		String newBody = this.templateProcessor.transform(request,
-				this.blockBuilder.toString());
-		this.blockBuilder.updateContents(newBody);
 		return this;
 	}
 

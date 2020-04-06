@@ -9,7 +9,7 @@
 
 	<logger name="com.github.jknack.handlebars.internal" level="INFO"/>
 
-<!--	<logger name="org.springframework.cloud.function" level="INFO"/>-->
+	<logger name="org.springframework.cloud.function" level="INFO"/>
 
 	<root level="DEBUG">
 		<appender-ref ref="STDOUT"/>

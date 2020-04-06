@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.consumer.MessagePactBuilder
 import au.com.dius.pact.consumer.dsl.DslPart
-import au.com.dius.pact.model.v3.messaging.MessagePact
+import au.com.dius.pact.core.model.messaging.MessagePact
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 

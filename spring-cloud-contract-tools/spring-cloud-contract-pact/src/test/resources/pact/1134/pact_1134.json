@@ -1,0 +1,39 @@
+{
+  "provider": {
+    "name": "cookie-service"
+  },
+  "consumer": {
+    "name": "cookie-consumer"
+  },
+  "interactions": [
+    {
+      "description": "A successful Api GET call",
+      "request": {
+        "method": "GET",
+        "path": "/books",
+        "headers": {
+          "Cookie": "a=1;b=2"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Cookie": "c=1;d=2"
+        }
+      },
+      "providerStates": [
+        {
+          "name": "get"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.5.13"
+    }
+  }
+}

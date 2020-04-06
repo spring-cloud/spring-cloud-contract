@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  *
  * @author Marcin Grzejszczak
  * @author Matt Garner
+ * @author Waldemar Panas
  * @since 1.2.6
  */
 public final class WireMockTestExecutionListener extends AbstractTestExecutionListener {
@@ -46,7 +47,8 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 			if (log.isDebugEnabled()) {
 				log.debug("Re-registering default mappings");
 			}
-			wireMockConfig(testContext).init();
+			wireMockConfig(testContext).initIfNotRunning();
+			wireMockConfig(testContext).start();
 		}
 	}
 
@@ -73,7 +75,23 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 						"Resetting mappings for the next test to restart them. That's necessary when"
 								+ " reusing the same context with new servers running on random ports");
 			}
-			wireMockConfig(testContext).resetMappings();
+			wireMockConfig(testContext).reRegisterServerWithResetMappings();
+		}
+	}
+
+	@Override
+	public void afterTestMethod(TestContext testContext) throws Exception {
+		if (applicationContextBroken(testContext)
+				|| wireMockConfigurationMissing(testContext)
+				|| annotationMissing(testContext)) {
+			return;
+		}
+		WireMockConfiguration wireMockConfiguration = wireMockConfig(testContext);
+		if (wireMockConfiguration.wireMock.isResetMappingsAfterEachTest()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Resetting mappings for the next test.");
+			}
+			wireMockConfiguration.resetMappings();
 		}
 	}
 

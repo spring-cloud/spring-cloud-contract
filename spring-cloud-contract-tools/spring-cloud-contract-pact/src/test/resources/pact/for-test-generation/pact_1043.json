@@ -1,0 +1,115 @@
+{
+  "provider": {
+    "name": "book-catalog-service"
+  },
+  "consumer": {
+    "name": "books-client-catalog-rest-consumer"
+  },
+  "interactions": [
+    {
+      "description": "A successful Api GET call",
+      "request": {
+        "method": "GET",
+        "path": "/books",
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "body": [
+          {
+            "isbn": "978-3-86680-192-9",
+            "id": 100,
+            "title": "A book",
+            "authors": [
+              {
+                "firstName": "string",
+                "lastName": "string"
+              }
+            ]
+          }
+        ],
+        "matchingRules": {
+          "body": {
+            "$[0].id": {
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].title": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": ".*"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].authors[0].firstName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].authors[0].lastName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].isbn": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9]{3}-[0-9]{1}-[0-9]{5}-[0-9]{3}-[0-9]{1}"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        },
+        "generators": {
+          "body": {
+            "$[0].id": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$[0].authors[0].firstName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].authors[0].lastName": {
+              "type": "RandomString",
+              "size": 20
+            }
+          }
+        }
+      },
+      "providerStates": [
+        {
+          "name": "get"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.5.13"
+    }
+  }
+}

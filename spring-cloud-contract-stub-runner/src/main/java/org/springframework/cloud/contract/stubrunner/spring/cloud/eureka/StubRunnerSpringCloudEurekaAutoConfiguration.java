@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ import org.springframework.core.env.Environment;
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter({ StubRunnerConfiguration.class,
 		EurekaClientAutoConfiguration.class })
 @ConditionalOnClass(CloudEurekaClient.class)
@@ -60,7 +60,7 @@ import org.springframework.core.env.Environment;
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
 	@Profile("!cloud")
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	protected static class NonCloudConfig {
 
 		@Bean(initMethod = "registerStubs")
@@ -77,7 +77,7 @@ public class StubRunnerSpringCloudEurekaAutoConfiguration {
 	}
 
 	@Profile("cloud")
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	protected static class CloudConfig {
 
 		private static final int DEFAULT_PORT = 80;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@ public class BookDeleter {
 	 * Scenario for "should generate tests triggered by a message": client side: if sends
 	 * a message to input.messageFrom then message will be sent to output.messageFrom
 	 * server side: will send a message to input, verify the message contents and await
-	 * upon receiving message on the output messageFrom
+	 * upon receiving message on the output messageFrom.
+	 * @param exchange - input exchange.
 	 */
 	public void bookDeleted(Exchange exchange) {
 		BookDeleted bookDeleted = exchange.getIn().getBody(BookDeleted.class);

@@ -37,9 +37,9 @@
       "defaultValue": true
     },
     {
-      "name": "stubrunner.cloud.ribbon.enabled",
+      "name": "stubrunner.cloud.loadbalancer.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable Stub Runner's Ribbon integration.",
+      "description": "Whether to enable Stub Runner's Spring Cloud Load Balancer integration.",
       "defaultValue": true
     },
     {
@@ -64,6 +64,24 @@
       "name": "stubrunner.stream.enabled",
       "type": "java.lang.Boolean",
       "description": "Whether to enable Stub Runner integration with Spring Cloud Stream.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.jms.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Stub Runner integration with Spring JMS.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.kafka.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Stub Runner integration with Spring Kafka.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.kafka.initializer.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to allow Stub Runner to take care of polling for messages instead of the KafkaStubMessages component. The latter should be used only on the producer side.",
       "defaultValue": true
     }
   ]

@@ -1,1 +1,26 @@
-rootProject.name = 'http-server-webclient-gradle'
+pluginManagement {
+	plugins {
+		id 'org.springframework.boot'
+		id "org.springframework.cloud.contract" version "${verifierVersion}"
+		id "io.spring.dependency-management" version "1.0.8.RELEASE"
+	}
+	repositories {
+		// to pick from local .m2
+		mavenLocal()
+		// for snapshots
+		maven { url "https://repo.spring.io/libs-snapshot-local" }
+		// for milestones
+		maven { url "https://repo.spring.io/libs-milestone-local" }
+		// for GA versions
+		gradlePluginPortal()
+	}
+	resolutionStrategy {
+		eachPlugin {
+			if (requested.id.id == 'org.springframework.boot') {
+				useModule("org.springframework.boot:spring-boot-gradle-plugin:${bootVersion}")
+			}
+		}
+	}
+}
+rootProject.name = 'http-server-webclient'
+

@@ -1,0 +1,23 @@
+provider.stub.artifact.id: fraudDetectionServer
+
+stubrunner:
+  repositoryRoot: classpath:m2repo/repository/
+  ids:
+    - ${some.property1}
+    - 'org.springframework.cloud.contract.verifier.stubs:${provider.stub.artifact.id}'
+  stubs-mode: ${some.stubsmode:remote}
+  min-port: ${some.minport:1000}
+  max-port: ${some.maxport:20000}
+  classifier: ${some.classifier:stubs}
+  username: ${some.username:user}
+  password: ${some.password:pass}
+  stubs-per-consumer: ${some.stubsperconsumer:false}
+  consumer-name: ${some.consumername:name}
+  mappings-output-folder: ${some.mappingsoutputfolder:target}
+  delete-stubs-after-test: ${some.deletestubsaftertest:true}
+  generate-stubs: ${some.generatestubs:false}
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+stub.port: ${stubrunner.runningstubs.${provider.stub.artifact.id}.port}

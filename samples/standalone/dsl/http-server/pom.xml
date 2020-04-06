@@ -6,7 +6,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-server-dsl</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>Spring Cloud Contract Verifier Http Server Sample</name>
 	<description>Spring Cloud Contract Verifier Http Server Sample</description>
@@ -14,15 +14,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.3.0.BUILD-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-release.version>Hoxton.BUILD-SNAPSHOT
+		<spring-cloud-contract.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-release.version>Ilford.BUILD-SNAPSHOT
 		</spring-cloud-release.version>
 	</properties>
 
@@ -40,6 +40,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -47,8 +53,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-test-support</artifactId>
+			<artifactId>spring-cloud-stream</artifactId>
+			<type>test-jar</type>
 			<scope>test</scope>
+			<classifier>test-binder</classifier>
 		</dependency>
 
 		<!-- tag::verifier_test_dependencies[] -->

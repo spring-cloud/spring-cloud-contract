@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import static org.apache.commons.text.StringEscapeUtils.unescapeXml
 import static org.springframework.cloud.contract.verifier.util.ContentType.DEFINED
 import static org.springframework.cloud.contract.verifier.util.ContentType.JSON
 import static org.springframework.cloud.contract.verifier.util.ContentType.UNKNOWN
+import static org.springframework.cloud.contract.verifier.util.ContentType.XML
 
 /**
  * A utility class that can operate on a message body basing on the provided Content Type.
@@ -116,7 +117,7 @@ class ContentUtils {
 		if (JSON == contentType) {
 			return extractValueForJSON(bodyAsValue, valueProvider)
 		}
-		if (contentType == ContentType.XML) {
+		if (contentType == XML) {
 			return extractValueForXML(bodyAsValue, valueProvider)
 		}
 		// else Brute force :(
@@ -151,7 +152,7 @@ class ContentUtils {
 				getXmlSlurperWithDefaultErrorHandler()
 						.parseText(
 						extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
-				return ContentType.XML
+				return XML
 			}
 			catch (Exception ignored) {
 				extractValueForGString(bodyAsValue, GET_STUB_SIDE)
@@ -169,7 +170,7 @@ class ContentUtils {
 			try {
 				getXmlSlurperWithDefaultErrorHandler()
 						.parseText(bodyAsValue)
-				return ContentType.XML
+				return XML
 			}
 			catch (Exception ignored) {
 				return UNKNOWN
@@ -415,7 +416,7 @@ class ContentUtils {
 			return JSON
 		}
 		if (content?.contains("xml")) {
-			return ContentType.XML
+			return XML
 		}
 		if (content?.contains("text")) {
 			return ContentType.TEXT
@@ -446,7 +447,7 @@ class ContentUtils {
 		switch (contentType) {
 			case JSON:
 				return MatchingStrategy.Type.EQUAL_TO_JSON
-			case ContentType.XML:
+			case XML:
 				return MatchingStrategy.Type.EQUAL_TO_XML
 		}
 		return MatchingStrategy.Type.EQUAL_TO
@@ -457,7 +458,7 @@ class ContentUtils {
 			return JSON
 		}
 		if (isXmlType(gstring)) {
-			return ContentType.XML
+			return XML
 		}
 		return UNKNOWN
 	}
@@ -481,7 +482,7 @@ class ContentUtils {
 		}
 		catch (Exception ignored) {
 			if (isXmlType("$string")) {
-				return ContentType.XML
+				return XML
 			}
 			return UNKNOWN
 		}
@@ -492,6 +493,15 @@ class ContentUtils {
 	}
 
 	static ContentType recognizeContentTypeFromContent(Object object) {
+		if (object instanceof FromFileProperty) {
+			FromFileProperty property = (FromFileProperty) object;
+			if (property.isJson()) {
+				return JSON
+			} else if (property.isXml()) {
+				return XML
+			}
+			object = object.isByte() ? object.asBytes() : object.asString()
+		}
 		if (object instanceof GString) {
 			return recognizeContentTypeFromContent((GString) object)
 		}
@@ -556,7 +566,7 @@ class ContentUtils {
 	static ContentType recognizeContentTypeFromMatchingStrategy(MatchingStrategy.Type type) {
 		switch (type) {
 			case MatchingStrategy.Type.EQUAL_TO_XML:
-				return ContentType.XML
+				return XML
 			case MatchingStrategy.Type.EQUAL_TO_JSON:
 				return JSON
 		}

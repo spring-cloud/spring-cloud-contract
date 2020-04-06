@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,9 +130,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 			return this;
 		}
-		int port = SocketUtils.findAvailableTcpPort();
-		HttpServerStub serverStub = start(defaultConfiguration(port));
-		cacheStubServer(true, port);
+		HttpServerStubConfiguration configuration = defaultConfiguration();
+		HttpServerStub serverStub = start(configuration);
+		cacheStubServer(configuration.randomPort, configuration.port);
 		return serverStub;
 	}
 
@@ -140,6 +140,13 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		return new HttpServerStubConfiguration(
 				HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
 				null, port);
+	}
+
+	private HttpServerStubConfiguration defaultConfiguration() {
+		int port = SocketUtils.findAvailableTcpPort();
+		return new HttpServerStubConfiguration(
+				HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
+				null, port, true);
 	}
 
 	@Override
@@ -175,7 +182,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 					+ " Started WireMock at [" + (this.https ? "https" : "http")
 					+ "] port [" + port + "]");
 		}
-		cacheStubServer(false, port);
+		cacheStubServer(configuration.randomPort, port);
 		return this;
 	}
 

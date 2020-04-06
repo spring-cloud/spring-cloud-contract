@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,15 @@
 
 package org.springframework.cloud.contract.stubrunner.spring;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
@@ -45,8 +50,9 @@ import org.springframework.util.StringUtils;
  * stub.
  *
  * @author Marcin Grzejszczak
+ * @author Eddú Meléndez
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(StubRunnerProperties.class)
 @ConditionalOnMissingBean(
 		type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
@@ -54,9 +60,6 @@ import org.springframework.util.StringUtils;
 public class StubRunnerConfiguration {
 
 	static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
-
-	@Autowired(required = false)
-	private MessageVerifier<?> contractVerifierMessaging;
 
 	private StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
 
@@ -70,45 +73,80 @@ public class StubRunnerConfiguration {
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its
 	 * instantiation JAR with stubs is downloaded and unpacked to a temporary folder and
 	 * WireMock server are started for each of those stubs
+	 * @param beanFactory bean factory
 	 * @return the batch stub runner bean
 	 */
 	@Bean
-	public BatchStubRunner batchStubRunner() {
+	public BatchStubRunner batchStubRunner(BeanFactory beanFactory) {
 		StubRunnerOptionsBuilder builder = builder();
 		if (this.props.getProxyHost() != null) {
 			builder.withProxy(this.props.getProxyHost(), this.props.getProxyPort());
 		}
-		StubRunnerOptions stubRunnerOptions = builder.build();
+		StubRunnerOptions stubRunnerOptions = stubRunnerOptions(builder);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
 				this.provider.get(stubRunnerOptions),
-				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
-						: new NoOpStubMessages()).buildBatchStubRunner();
+				new LazyMessageVerifier(beanFactory)).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		RunningStubs runningStubs = batchStubRunner.runStubs();
 		registerPort(runningStubs);
 		return batchStubRunner;
 	}
 
+	private StubRunnerOptions stubRunnerOptions(StubRunnerOptionsBuilder builder) {
+		return builder.build();
+	}
+
+	@Bean
+	public BeanPostProcessor batchStubRunnerBeanPostProcessor(BatchStubRunner runner) {
+		return new BeanPostProcessor() {
+		};
+	}
+
 	private StubRunnerOptionsBuilder builder() {
 		return new StubRunnerOptionsBuilder()
-				.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
+				.withMinMaxPort(
+						Integer.valueOf(resolvePlaceholder(this.props.getMinPort(),
+								this.props.getMinPort())),
+						Integer.valueOf(resolvePlaceholder(this.props.getMaxPort(),
+								this.props.getMaxPort())))
 				.withStubRepositoryRoot(this.props.getRepositoryRoot())
-				.withStubsMode(this.props.getStubsMode())
-				.withStubsClassifier(this.props.getClassifier())
-				.withStubs(this.props.getIds()).withUsername(this.props.getUsername())
-				.withPassword(this.props.getPassword())
-				.withStubPerConsumer(this.props.isStubsPerConsumer())
+				.withStubsMode(resolvePlaceholder(this.props.getStubsMode()))
+				.withStubsClassifier(resolvePlaceholder(this.props.getClassifier()))
+				.withStubs(resolvePlaceholder(this.props.getIds()))
+				.withUsername(resolvePlaceholder(this.props.getUsername()))
+				.withPassword(resolvePlaceholder(this.props.getPassword()))
+				.withStubPerConsumer(Boolean.parseBoolean(
+						resolvePlaceholder(this.props.isStubsPerConsumer())))
 				.withConsumerName(consumerName())
-				.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
-				.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest())
-				.withGenerateStubs(this.props.isGenerateStubs())
+				.withMappingsOutputFolder(
+						resolvePlaceholder(this.props.getMappingsOutputFolder()))
+				.withDeleteStubsAfterTest(Boolean.parseBoolean(
+						resolvePlaceholder(this.props.isDeleteStubsAfterTest())))
+				.withGenerateStubs(Boolean
+						.parseBoolean(resolvePlaceholder(this.props.isGenerateStubs())))
 				.withProperties(this.props.getProperties())
-				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer());
+				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer())
+				.withServerId(resolvePlaceholder(this.props.getServerId()));
+	}
+
+	private String[] resolvePlaceholder(String[] string) {
+		return Arrays.stream(string).map(this::resolvePlaceholder).toArray(String[]::new);
+	}
+
+	private String resolvePlaceholder(Object string) {
+		return resolvePlaceholder(string, null);
+	}
+
+	private String resolvePlaceholder(Object string, Object defaultValue) {
+		if (string == null) {
+			return defaultValue != null ? defaultValue.toString() : null;
+		}
+		return this.environment.resolvePlaceholders(string.toString());
 	}
 
 	private String consumerName() {
 		if (StringUtils.hasText(this.props.getConsumerName())) {
-			return this.props.getConsumerName();
+			return resolvePlaceholder(this.props.getConsumerName());
 		}
 		return this.environment.getProperty("spring.application.name");
 	}
@@ -130,6 +168,50 @@ public class StubRunnerConfiguration {
 			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "."
 					+ entry.getKey().getArtifactId() + ".port", entry.getValue());
 		}
+	}
+
+}
+
+class LazyMessageVerifier implements MessageVerifier {
+
+	private MessageVerifier<?> messageVerifier;
+
+	private final BeanFactory beanFactory;
+
+	LazyMessageVerifier(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+
+	private MessageVerifier messageVerifier() {
+		if (this.messageVerifier == null) {
+			try {
+				this.messageVerifier = this.beanFactory.getBean(MessageVerifier.class);
+			}
+			catch (BeansException ex) {
+				this.messageVerifier = new NoOpStubMessages();
+			}
+		}
+		return this.messageVerifier;
+	}
+
+	@Override
+	public void send(Object message, String destination) {
+		messageVerifier().send(message, destination);
+	}
+
+	@Override
+	public Object receive(String destination, long timeout, TimeUnit timeUnit) {
+		return messageVerifier().receive(destination, timeout, timeUnit);
+	}
+
+	@Override
+	public Object receive(String destination) {
+		return messageVerifier().receive(destination);
+	}
+
+	@Override
+	public void send(Object payload, Map headers, String destination) {
+		messageVerifier().send(payload, headers, destination);
 	}
 
 }

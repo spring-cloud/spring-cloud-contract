@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import java.util.regex.Pattern
 import au.com.dius.pact.consumer.dsl.DslPart
 import au.com.dius.pact.consumer.dsl.PactDslJsonArray
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
-import au.com.dius.pact.model.OptionalBody
-import au.com.dius.pact.model.Request
-import au.com.dius.pact.model.Response
-import au.com.dius.pact.model.generators.Generator
-import au.com.dius.pact.model.v3.messaging.Message
+import au.com.dius.pact.core.model.OptionalBody
+import au.com.dius.pact.core.model.Request
+import au.com.dius.pact.core.model.Response
+import au.com.dius.pact.core.model.generators.Generator
+import au.com.dius.pact.core.model.messaging.Message
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.internal.EvaluationContext
 import com.jayway.jsonpath.internal.Path
@@ -81,22 +81,10 @@ class BodyConverter {
 		}
 		DslPart p = isRoot ? createRootDslPart(v) : parent
 		if (v instanceof Map) {
-			if (!isRoot) {
-				p = p.object()
-			}
 			processMap(v as Map, p as PactDslJsonBody, dslPropertyValueExtractor)
-			if (!isRoot) {
-				p = p.closeObject()
-			}
 		}
 		else if (v instanceof Collection) {
-			if (!isRoot) {
-				p = p.array()
-			}
 			processCollection(v as Collection, p as PactDslJsonArray, dslPropertyValueExtractor)
-			if (!isRoot) {
-				p = p.closeArray()
-			}
 		}
 		return p
 	}
@@ -123,8 +111,15 @@ class BodyConverter {
 			else if (v instanceof Number) {
 				jsonArray.number(v)
 			}
-			else {
-				traverse(it, jsonArray, dslPropertyValueExtractor)
+			else if (v instanceof Map) {
+				PactDslJsonBody current = jsonArray.object()
+				traverse(v, current, dslPropertyValueExtractor)
+				current.closeObject()
+			}
+			else if (v instanceof Collection) {
+				PactDslJsonArray current = jsonArray.array()
+				traverse(v, current, dslPropertyValueExtractor)
+				current.closeArray()
 			}
 		})
 	}
@@ -146,10 +141,15 @@ class BodyConverter {
 			else if (v instanceof Number) {
 				jsonObject.numberValue(k, v)
 			}
-			else {
+			else if (v instanceof Map) {
 				PactDslJsonBody current = jsonObject.object(k)
 				traverse(v, current, dslPropertyValueExtractor)
 				current.closeObject()
+			}
+			else if (v instanceof Collection) {
+				PactDslJsonArray current = jsonObject.array(k)
+				traverse(v, current, dslPropertyValueExtractor)
+				current.closeArray()
 			}
 		})
 	}
@@ -158,9 +158,9 @@ class BodyConverter {
 		def body = parseBody(request.body)
 		if (request.generators.isNotEmpty()
 				&& request.generators.categories.
-				containsKey(au.com.dius.pact.model.generators.Category.BODY)) {
+				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
 			applyGenerators(body, request.generators.categories.
-					get(au.com.dius.pact.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
+					get(au.com.dius.pact.core.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
 				return new DslProperty<Object>(new ClientDslProperty(pattern, generatedValue), currentValue)
 			}
 		}
@@ -171,9 +171,9 @@ class BodyConverter {
 		def body = parseBody(response.body)
 		if (response.generators.isNotEmpty()
 				&& response.generators.categories.
-				containsKey(au.com.dius.pact.model.generators.Category.BODY)) {
+				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
 			applyGenerators(body, response.generators.categories.
-					get(au.com.dius.pact.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
+					get(au.com.dius.pact.core.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
 				return new DslProperty<Object>(currentValue, new ServerDslProperty(pattern, generatedValue))
 			}
 		}
@@ -184,9 +184,9 @@ class BodyConverter {
 		def body = parseBody(message.contents)
 		if (message.generators.isNotEmpty()
 				&& message.generators.categories.
-				containsKey(au.com.dius.pact.model.generators.Category.BODY)) {
+				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
 			applyGenerators(body, message.generators.categories.
-					get(au.com.dius.pact.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
+					get(au.com.dius.pact.core.model.generators.Category.BODY)) { Object currentValue, Pattern pattern, Object generatedValue ->
 				return new DslProperty<Object>(new ClientDslProperty(pattern, generatedValue), currentValue)
 			}
 		}

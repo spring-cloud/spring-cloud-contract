@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,16 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
+import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
 
@@ -37,7 +41,7 @@ import org.springframework.test.context.ContextConfiguration
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
 // Context configuration would end up in base class
-@ContextConfiguration(classes = [StreamMessagingApplication], loader = SpringBootContextLoader)
+@ContextConfiguration(classes = [Config, StreamMessagingApplication], loader = SpringBootContextLoader)
 @SpringBootTest(properties = "debug=true")
 @AutoConfigureMessageVerifier
 class StreamMessagingApplicationSpec extends Specification {
@@ -55,7 +59,7 @@ class StreamMessagingApplicationSpec extends Specification {
 					triggeredBy('bookReturnedTriggered()')
 				}
 				outputMessage {
-					sentTo('output')
+					sentTo('bookReturned')
 					body('''{ "bookName" : "foo" }''')
 					headers {
 						header('BOOK-NAME', 'foo')
@@ -66,7 +70,7 @@ class StreamMessagingApplicationSpec extends Specification {
 		when:
 			bookReturnedTriggered()
 		then:
-			def response = contractVerifierMessaging.receive('output')
+			def response = contractVerifierMessaging.receive('bookReturned')
 			response.headers.get('BOOK-NAME') == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.
@@ -79,7 +83,7 @@ class StreamMessagingApplicationSpec extends Specification {
 			def dsl = Contract.make {
 				label 'some_label'
 				input {
-					messageFrom('input')
+					messageFrom('inputDestination')
 					messageBody([
 							bookName: 'foo'
 					])
@@ -88,7 +92,7 @@ class StreamMessagingApplicationSpec extends Specification {
 					}
 				}
 				outputMessage {
-					sentTo('output')
+					sentTo('bookReturned')
 					body([
 							bookName: 'foo'
 					])
@@ -103,9 +107,9 @@ class StreamMessagingApplicationSpec extends Specification {
 		when:
 			contractVerifierMessaging.send(
 					contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-					[sample: 'header'], 'input')
+					[sample: 'header'], 'inputDestination')
 		then:
-			def response = contractVerifierMessaging.receive('output')
+			def response = contractVerifierMessaging.receive('bookReturned')
 			response.headers.get('BOOK-NAME') == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.
@@ -118,7 +122,7 @@ class StreamMessagingApplicationSpec extends Specification {
 			def dsl = Contract.make {
 				label 'some_label'
 				input {
-					messageFrom('delete')
+					messageFrom("bookDeleted")
 					messageBody([
 							bookName: 'foo'
 					])
@@ -134,7 +138,7 @@ class StreamMessagingApplicationSpec extends Specification {
 		when:
 			contractVerifierMessaging.
 					send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-							[sample: 'header'], 'delete')
+							[sample: 'header'], "bookDeleted")
 		then:
 			noExceptionThrown()
 			bookWasDeleted()
@@ -145,13 +149,20 @@ class StreamMessagingApplicationSpec extends Specification {
 	@Autowired
 	BookService bookService
 	@Autowired
-	BookListener bookListener
+	BookDeletedListener bookDeletedListener
 
 	void bookReturnedTriggered() {
 		bookService.returnBook(new BookReturned("foo"))
 	}
 
 	void bookWasDeleted() {
-		assert bookListener.bookSuccessfulyDeleted.get()
+		assert bookDeletedListener.bookSuccessfulyDeleted.get()
+	}
+
+	@Configuration
+	@EnableAutoConfiguration
+	@ImportAutoConfiguration(TestChannelBinderConfiguration)
+	static class Config {
+
 	}
 }

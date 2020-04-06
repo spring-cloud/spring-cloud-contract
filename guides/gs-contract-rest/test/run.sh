@@ -9,7 +9,7 @@ export MAVEN_OPTS="${GUIDES_MAVEN_SYSTEM_PROPERTIES}"
 export GRADLE_OPTS="${GUIDES_GRADLE_SYSTEM_PROPERTIES}"
 export JAVA_TOOL_OPTIONS="${MAVEN_OPTS}"
 
-cd $(dirname $0)
+cd "$(dirname $0)"
 
 cd ../complete
 

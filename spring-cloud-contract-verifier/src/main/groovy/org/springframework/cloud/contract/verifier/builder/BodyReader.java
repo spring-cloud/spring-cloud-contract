@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -41,6 +42,10 @@ class BodyReader {
 
 	String readStringFromFileString(SingleContractMetadata metadata,
 			FromFileProperty property, CommunicationType side) {
+		if (!Charset.defaultCharset().toString().equals(property.getCharset())) {
+			return "new String(" + readBytesFromFileString(metadata, property, side)
+					+ ", \"" + property.getCharset() + "\")";
+		}
 		return "new String(" + readBytesFromFileString(metadata, property, side) + ")";
 	}
 
