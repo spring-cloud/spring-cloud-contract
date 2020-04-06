@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.stubrunner
 
 import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
+import org.eclipse.aether.repository.Authentication
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -110,10 +111,18 @@ class AetherStubDownloaderSpec extends Specification {
 		and:
 			StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
 					.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-					.withStubRepositoryRoot("file://" + folder.newFolder().absolutePath)
+					.withStubRepositoryRoot(AetherStubDownloaderSpec.getResource("/m2repo/repository").toString())
 					.withServerId("my-server")
 					.build()
-			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
+			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions) {
+				@Override
+				Authentication buildAuthentication(String stubServerPassword, String username) {
+					assert username == "admin"
+					// hashed {ha7QXbuAf9wH5uVeYJGWg+SC8fdkufPVfdtpTK8Yk3E=}
+					assert stubServerPassword == "mypassword"
+					return super.buildAuthentication(stubServerPassword, username)
+				}
+			}
 
 		when:
 			def jar = aetherStubDownloader.downloadAndUnpackStubJar(

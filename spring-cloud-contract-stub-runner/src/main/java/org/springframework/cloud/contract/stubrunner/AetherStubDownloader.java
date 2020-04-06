@@ -178,16 +178,22 @@ public class AetherStubDownloader implements StubDownloader {
 		if (StringUtils.hasText(stubRunnerOptions.serverId)) {
 			Server stubServer = this.settings.getServer(stubRunnerOptions.serverId);
 			if (stubServer != null) {
+				if (log.isDebugEnabled()) {
+					log.debug("Custom server id [" + stubServer.getId() + "] passed will resolve credentials");
+				}
 				SettingsDecryptionRequest settingsDecryptionRequest = new DefaultSettingsDecryptionRequest(
 						stubServer);
 				String stubServerPassword = new MavenSettings().createSettingsDecrypter()
 						.decrypt(settingsDecryptionRequest).getServer().getPassword();
-				return new AuthenticationBuilder().addUsername(stubServer.getUsername())
-						.addPassword(stubServerPassword).build();
+				return buildAuthentication(stubServerPassword, stubServer.getUsername());
 			}
 		}
-		return new AuthenticationBuilder().addUsername(stubRunnerOptions.username)
-				.addPassword(stubRunnerOptions.password).build();
+		return buildAuthentication(stubRunnerOptions.password, stubRunnerOptions.username);
+	}
+
+	Authentication buildAuthentication(String stubServerPassword, String username) {
+		return new AuthenticationBuilder().addUsername(username)
+				.addPassword(stubServerPassword).build();
 	}
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup,

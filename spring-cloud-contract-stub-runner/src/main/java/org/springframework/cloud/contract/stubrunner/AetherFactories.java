@@ -134,8 +134,15 @@ final class AetherFactories {
 	private static File userSettings() {
 		String user = fromSystemPropOrEnv(MAVEN_USER_SETTINGS_LOCATION);
 		if (user == null) {
-			return new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
+			File file = new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
 					File.separator + ".m2" + File.separator + "settings.xml");
+			if (log.isDebugEnabled()) {
+				log.debug("No custom maven user settings provided, will use [" + file + "]");
+			}
+			return file;
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("Custom location provided for user settings [" + user + "]");
 		}
 		return new File(user);
 	}
