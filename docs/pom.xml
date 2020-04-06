@@ -20,6 +20,8 @@
 		<maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
 		<docs.whitelisted.branches>1.0.x,1.1.x,2.0.x,2.1.x</docs.whitelisted.branches>
 		<configprops.inclusionPattern>stubrunner.*|wiremock.*|</configprops.inclusionPattern>
+		<!-- Aligned with Groovy in SC-Build -->
+		<groovy.version>3.0.2</groovy.version>
 	</properties>
 	<build>
 		<plugins>
