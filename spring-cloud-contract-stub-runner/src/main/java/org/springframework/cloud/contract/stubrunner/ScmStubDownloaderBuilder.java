@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -364,29 +364,21 @@ class FileWalker extends SimpleFileVisitor<Path> {
 
 	private DefaultArtifactVersionWrapper replaceWithSnapshotIfSameVersions(
 			List<DefaultArtifactVersionWrapper> versions,
-			DefaultArtifactVersionWrapper latestFoundVersion) {
+			final DefaultArtifactVersionWrapper latestFoundVersion) {
 		if (versions.size() > 1 && this.latestSnapshotVersion) {
-			// 2.0.0.BUILD-SNAPSHOT
-			DefaultArtifactVersionWrapper versionWrapper = versions
-					.get(versions.size() - 2);
+			// 2.0.1.BUILD-SNAPSHOT, 2.0.0.BUILD-SNAPSHOT
+			// 2.0.0.BUILD-SNAPSHOT, 2.0.0.RELEASE
+			DefaultArtifactVersionWrapper sameVersionButSnapshot = versions.stream()
+					.filter(w -> w.projectVersion.isSameWithoutSuffix(
+							latestFoundVersion.projectVersion) && w.isSnapshot())
+					.findFirst().orElse(latestFoundVersion);
 			// 2.0.0 vs 2.0.0
-			boolean sameVersionsWithoutClassifier = Objects.equals(
-					withoutClassifier(versionWrapper),
-					withoutClassifier(latestFoundVersion));
 			// replace the RELEASE one with SNAPSHOT
-			latestFoundVersion = sameVersionsWithoutClassifier
-					&& versionWrapper.isSnapshot() ? versionWrapper : latestFoundVersion;
+			if (sameVersionButSnapshot != latestFoundVersion) {
+				return sameVersionButSnapshot;
+			}
 		}
 		return latestFoundVersion;
-	}
-
-	private String withoutClassifier(DefaultArtifactVersionWrapper versionWrapper) {
-		String version = versionWrapper.version.toString();
-		int lastIndexOf = version.lastIndexOf(".");
-		if (lastIndexOf != -1) {
-			return version.substring(0, lastIndexOf);
-		}
-		return version;
 	}
 
 	private File folderWithPredefinedName(File[] files) {
@@ -411,19 +403,20 @@ class FileWalker extends SimpleFileVisitor<Path> {
 
 class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersionWrapper> {
 
-	private static final String SNAPSHOT_SUBSTRING = "snapshot";
-
 	final DefaultArtifactVersion version;
 
 	final File file;
 
+	final ProjectVersion projectVersion;
+
 	DefaultArtifactVersionWrapper(File file) {
 		this.version = new DefaultArtifactVersion(file.getName());
 		this.file = file;
+		this.projectVersion = new ProjectVersion(this.version.toString());
 	}
 
 	boolean isSnapshot() {
-		return this.version.toString().toLowerCase().contains(SNAPSHOT_SUBSTRING);
+		return this.projectVersion.isSnapshot();
 	}
 
 	boolean isNotSnapshot() {
@@ -432,7 +425,7 @@ class DefaultArtifactVersionWrapper implements Comparable<DefaultArtifactVersion
 
 	@Override
 	public int compareTo(DefaultArtifactVersionWrapper o) {
-		return this.version.compareTo(o.version);
+		return this.projectVersion.isMoreMature(o.projectVersion);
 	}
 
 }

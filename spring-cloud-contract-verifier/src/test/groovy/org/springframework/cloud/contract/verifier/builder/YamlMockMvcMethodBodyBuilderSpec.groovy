@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-
 import org.junit.Rule
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
-import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -40,7 +39,7 @@ import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 class YamlMockMvcMethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	@Rule
-	OutputCapture capture = new OutputCapture()
+	OutputCaptureRule capture = new OutputCaptureRule()
 
 	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 the original author or authors.
+ * Copyright 2012-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,8 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  * 	public void contextLoads() throws Exception {
  * 		mockMvc.perform(get("/resource"))
  * 				.andExpect(content().string("Hello World"))
- * 				.andDo(verify().stub("resource"));
+ * 				.andDo(verify())
+ * 				.andDo(document("resource"));
  * 	}
  * </pre> which creates a file "target/snippets/stubs/resource.json" matching any GET
  * request to "/resource". To match POST and PUT, you can also specify the content type

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import groovy.transform.CompileStatic
 
 import org.springframework.cloud.contract.spec.internal.CanBeDynamic
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 
 import static ContentUtils.extractValue
@@ -88,6 +89,9 @@ class BodyExtractor {
 		}
 		else if (bodyValue instanceof DslProperty) {
 			return extractClientValueFromBody(bodyValue.clientValue)
+		}
+		else if (bodyValue instanceof FromFileProperty && bodyValue.isString()) {
+			return MapConverter.transformValues(bodyValue.asString(), Closure.IDENTITY)
 		}
 		else {
 			return MapConverter.transformValues(bodyValue, {

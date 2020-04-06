@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.example.loan;
 
 import org.junit.Test;
-import wiremock.com.google.common.collect.ImmutableMap;
+import shaded.com.google.common.collect.ImmutableMap;
 
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.BeanCreationException;
@@ -46,9 +46,8 @@ public class FailFastLoanApplicationServiceTests {
 
 		// Then
 		assertThat(throwable).isInstanceOf(BeanCreationException.class);
-		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
 		assertThat(throwable.getCause().getCause())
-				.isInstanceOf(IllegalArgumentException.class).hasMessageContaining(
+				.isInstanceOf(BeanInstantiationException.class).hasMessageContaining(
 						"No stubs or contracts were found for [org.springframework.cloud.contract.verifier.stubs:should-not-be-found:+:stubs] and the switch to fail on no stubs was set.");
 	}
 
@@ -65,9 +64,8 @@ public class FailFastLoanApplicationServiceTests {
 
 		// Then
 		assertThat(throwable).isInstanceOf(BeanCreationException.class);
-		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
 		assertThat(throwable.getCause().getCause())
-				.isInstanceOf(IllegalStateException.class)
+				.isInstanceOf(BeanInstantiationException.class)
 				.hasMessageContaining("No stubs were found on classpath ");
 	}
 

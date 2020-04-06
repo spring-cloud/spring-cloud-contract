@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,9 @@ public class ContractDslSnippetTests {
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
-				.apply(documentationConfiguration(this.restDocumentation)).build();
+				.apply(documentationConfiguration(this.restDocumentation).snippets()
+						.withAdditionalDefaults(new WireMockSnippet()))
+				.build();
 	}
 
 	@Test
@@ -92,13 +94,13 @@ public class ContractDslSnippetTests {
 				// first WireMock
 				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
 						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
-						.contentType(MediaType.valueOf("application/json"))
-						.stub("shouldGrantABeerIfOldEnough"))
+						.contentType(MediaType.valueOf("application/json")))
 				// then Contract DSL documentation
 				.andDo(document("index", SpringCloudContractRestDocs.dslContract()));
 		// end::contract_snippet[]
 
 		then(file("/contracts/index.groovy")).exists();
+		then(file("/stubs/index.json")).exists();
 		then(file("/index/dsl-contract.adoc")).exists();
 		Collection<Contract> parsedContracts = ContractVerifierDslConverter
 				.convertAsCollection(new File("/"), file("/contracts/index.groovy"));
@@ -131,14 +133,16 @@ public class ContractDslSnippetTests {
 				// first WireMock
 				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
 						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
-						.contentType(MediaType.valueOf("application/json"))
-						.stub("shouldGrantABeerIfOldEnough"))
+						.contentType(MediaType.valueOf("application/json")))
 				// then Contract DSL documentation
 				.andDo(document("{methodName}",
 						SpringCloudContractRestDocs.dslContract()));
 
 		then(file(
 				"/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy"))
+						.exists();
+		then(file(
+				"/stubs/should_create_contract_template_and_doc_with_placeholder_names.json"))
 						.exists();
 		then(file(
 				"/should_create_contract_template_and_doc_with_placeholder_names/dsl-contract.adoc"))

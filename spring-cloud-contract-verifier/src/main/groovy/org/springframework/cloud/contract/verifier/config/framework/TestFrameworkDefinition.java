@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,9 +92,8 @@ public interface TestFrameworkDefinition {
 
 	/**
 	 * @param annotationValue value of the annotation
-	 * @return the test rule or extension annotation with the {@annotationValue} passed as
-	 * an argument. E.g. for JUnit 5 tests that could be
-	 * {@code @ExtendWith(Example.class)}
+	 * @return the test rule or extension annotation with the annotationValue passed as an
+	 * argument. E.g. for JUnit 5 tests that could be {@code @ExtendWith(Example.class)}
 	 */
 	String getRuleAnnotation(String annotationValue);
 

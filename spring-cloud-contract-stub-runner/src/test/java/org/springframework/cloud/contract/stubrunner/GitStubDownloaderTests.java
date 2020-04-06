@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,6 +136,13 @@ public class GitStubDownloaderTests {
 		then(entry).isNotNull();
 		then(entry.getValue().getAbsolutePath()).contains("com.example" + File.separator
 				+ "beer-api-producer-external" + File.separator + "1.0.0.BUILD-SNAPSHOT");
+
+		entry = stubDownloader.downloadAndUnpackStubJar(
+				new StubConfiguration("com.issue1305:beer-api-producer-external:+"));
+
+		then(entry).isNotNull();
+		then(entry.getValue().getAbsolutePath()).contains("com.issue1305" + File.separator
+				+ "beer-api-producer-external" + File.separator + "0.0.11-SNAPSHOT");
 	}
 
 	@Test

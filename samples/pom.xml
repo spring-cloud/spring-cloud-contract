@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-samples</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2.0.BUILD-SNAPSHOT</version>
+	<version>3.0.0.BUILD-SNAPSHOT</version>
 	<name>Spring Cloud Contract Samples</name>
 	<description>Spring Cloud Contract Samples</description>
 
@@ -71,7 +71,7 @@
 							 is available -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
-						<version>2.0.0</version>
+						<version>3.2.1</version>
 						<configuration>
 							<settingsFile>src/it/settings.xml</settingsFile>
 							<projectsDirectory>standalone</projectsDirectory>
@@ -109,7 +109,7 @@
 							 is available -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
-						<version>3.2.0</version>
+						<version>3.2.1</version>
 						<configuration>
 							<settingsFile>src/it/settings.xml</settingsFile>
 							<projectsDirectory>standalone</projectsDirectory>

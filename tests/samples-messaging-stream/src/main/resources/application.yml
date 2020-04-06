@@ -1,4 +1,5 @@
-spring.cloud.stream.bindings.myinput.destination: inputDestination
-spring.cloud.stream.bindings.myinput.contentType: application/json
-spring.cloud.stream.bindings.output.destination: sentTo
-spring.cloud.stream.bindings.output.contentType: application/json
+spring.cloud.function.definition: bookReturned;bookSender;bookDeleted
+spring.cloud.stream.bindings.bookSender-out-0.destination: inputDestination
+spring.cloud.stream.bindings.bookReturned-in-0.destination: inputDestination
+spring.cloud.stream.bindings.bookReturned-out-0.destination: bookReturned
+spring.cloud.stream.bindings.bookDeleted-in-0.destination: bookDeleted

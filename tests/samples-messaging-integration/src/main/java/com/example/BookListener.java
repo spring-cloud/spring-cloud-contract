@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,9 @@ public class BookListener {
 	 * Scenario for "should generate tests triggered by a message": client side: if sends
 	 * a message to input.messageFrom then message will be sent to output.messageFrom
 	 * server side: will send a message to input, verify the message contents and await
-	 * upon receiving message on the output messageFrom
+	 * upon receiving message on the output messageFrom.
+	 * @param bookReturned - payload
+	 * @return message with the returned book
 	 */
 	public Message<BookReturned> returnBook(BookReturned bookReturned) {
 		log.info("Returning book [" + bookReturned + "]");
@@ -46,7 +48,8 @@ public class BookListener {
 	 * Scenario for "should generate tests triggered by a message": client side: if sends
 	 * a message to input.messageFrom then message will be sent to output.messageFrom
 	 * server side: will send a message to input, verify the message contents and await
-	 * upon receiving message on the output messageFrom
+	 * upon receiving message on the output messageFrom.
+	 * @param bookDeleted - payload
 	 */
 	public void bookDeleted(BookDeleted bookDeleted) {
 		log.info("Deleting book [ " + bookDeleted + "]");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,9 @@ import java.util.Map;
 
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToXmlPattern;
+import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,6 +50,7 @@ import org.springframework.restdocs.operation.OperationResponse;
 import org.springframework.restdocs.operation.Parameters;
 import org.springframework.restdocs.operation.RequestCookie;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -170,6 +173,22 @@ public class WireMockSnippetTests {
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
 		WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+	}
+
+	@Test
+	public void should_accept_query_params() throws IOException {
+		this.operation = operation(requestGetWithQueryParam(), response(), this.context);
+		WireMockSnippet snippet = new WireMockSnippet();
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/foo.json");
+		assertThat(stub).exists();
+		StubMapping stubMapping = WireMockStubMapping
+				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getRequest().getUrlPath()).isEqualTo("/bar");
+		assertThat(stubMapping.getRequest().getQueryParameters()).containsOnly(
+				Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
 	}
 
 	private Operation operation(OperationRequest request, OperationResponse response,
@@ -459,6 +478,53 @@ public class WireMockSnippetTests {
 			@Override
 			public URI getUri() {
 				return URI.create("https://foo/bar?myParam=");
+			}
+
+			@Override
+			public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
+			}
+		};
+	}
+
+	private OperationRequest requestGetWithQueryParam() {
+		return new OperationRequest() {
+			@Override
+			public byte[] getContent() {
+				return new byte[0];
+			}
+
+			@Override
+			public String getContentAsString() {
+				return "";
+			}
+
+			@Override
+			public HttpHeaders getHeaders() {
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
+						MediaType.APPLICATION_JSON_VALUE);
+				return httpHeaders;
+			}
+
+			@Override
+			public HttpMethod getMethod() {
+				return HttpMethod.GET;
+			}
+
+			@Override
+			public Parameters getParameters() {
+				return null;
+			}
+
+			@Override
+			public Collection<OperationRequestPart> getParts() {
+				return null;
+			}
+
+			@Override
+			public URI getUri() {
+				return URI.create("https://foo/bar?myParam=myValue");
 			}
 
 			@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.spec.internal
 
-
+import spock.lang.Issue
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
@@ -420,5 +420,67 @@ then:
 		expect:
 			assertThat(contract.request.bodyMatchers.hasMatchers()).isTrue()
 			assertThat(contract.response.bodyMatchers.hasMatchers()).isTrue()
+	}
+
+	def 'should work with optional and null value of a field'() {
+		given:
+			def contract = Contract.make {
+				description("Creating user")
+				name("Create user")
+				request {
+					method 'POST'
+					url '/api/user'
+					body(
+						address: $(consumer(optional(regex(alphaNumeric()))), producer(null)),
+						name: $(consumer(optional(regex(alphaNumeric()))), producer(''))
+					)
+					headers {
+						contentType(applicationJson())
+					}
+				}
+				response {
+					status 201
+				}
+			}
+		expect:
+			contract != null
+	}
+
+	@Issue("1200")
+	def 'should fail when regex do not match the concrete value'() {
+		when:
+			Contract.make {
+				request {
+					method 'GET'
+					url '/any'
+				}
+				response {
+					status OK()
+					body([
+							time: $(p(regex(iso8601WithOffset())),c( "thisIsNotADate"))
+					])
+				}
+			}
+		then:
+			thrown(IllegalStateException)
+	}
+
+	@Issue("1215")
+	def 'should work fine when dealing with anyOf'() {
+		when:
+			Contract.make {
+				request {
+					method 'GET'
+					url '/any'
+					body (
+							foo: $(consumer(optional(anyOf('WORKS','MIGHTY', 'DESPAIR'))), producer('DESPAIR'))
+					)
+				}
+				response {
+					status OK()
+				}
+			}
+		then:
+			noExceptionThrown()
 	}
 }

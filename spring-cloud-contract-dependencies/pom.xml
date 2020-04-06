@@ -6,19 +6,17 @@
 	<parent>
 		<artifactId>spring-cloud-dependencies-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0.BUILD-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
-	<version>2.2.0.BUILD-SNAPSHOT</version>
+	<version>3.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
 	<properties>
-		<wiremock.version>2.24.1</wiremock.version>
-		<jsonassert.version>0.4.13</jsonassert.version>
-		<rest-assured.version>4.0.0</rest-assured.version>
-		<maven.version>3.3.9</maven.version>
+		<wiremock.version>2.26.3</wiremock.version>
+		<jsonassert.version>0.4.14</jsonassert.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -111,70 +109,6 @@
 				<groupId>com.toomuchcoding.jsonassert</groupId>
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>rest-assured</artifactId>
-				<version>${rest-assured.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-xml</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>json-path</artifactId>
-				<version>${rest-assured.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>xml-path</artifactId>
-				<version>${rest-assured.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>spring-mock-mvc</artifactId>
-				<version>${rest-assured.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>spring-web</artifactId>
-						<groupId>org.springframework</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>spring-webmvc</artifactId>
-						<groupId>org.springframework</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>spring-test</artifactId>
-						<groupId>org.springframework</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>spring-web-test-client</artifactId>
-				<version>${rest-assured.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>spring-context</artifactId>
-						<groupId>org.springframework</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>spring-webflux</artifactId>
-						<groupId>org.springframework</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-settings-builder</artifactId>
-				<version>${maven.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

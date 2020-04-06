@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
  * A builder object for {@link StubRunnerOptions}.
  *
  * @author Marcin Grzejszczak
+ * @author Eddú Meléndez
  */
 public class StubRunnerOptionsBuilder {
 
@@ -76,6 +77,8 @@ public class StubRunnerOptionsBuilder {
 	private Map<String, String> properties = new HashMap<>();
 
 	private Class httpServerStubConfigurer = HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.class;
+
+	private String serverId;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -161,11 +164,17 @@ public class StubRunnerOptionsBuilder {
 
 	public StubRunnerOptionsBuilder withStubsMode(
 			StubRunnerProperties.StubsMode stubsMode) {
+		if (stubsMode == null) {
+			return this;
+		}
 		this.stubsMode = stubsMode;
 		return this;
 	}
 
 	public StubRunnerOptionsBuilder withStubsMode(String stubsMode) {
+		if (stubsMode == null) {
+			return this;
+		}
 		this.stubsMode = StubRunnerProperties.StubsMode.valueOf(stubsMode);
 		return this;
 	}
@@ -202,6 +211,7 @@ public class StubRunnerOptionsBuilder {
 		this.failOnNoStubs = options.isFailOnNoStubs();
 		this.properties = options.getProperties();
 		this.httpServerStubConfigurer = options.getHttpServerStubConfigurer();
+		this.serverId = options.getServerId();
 		return this;
 	}
 
@@ -238,6 +248,11 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withServerId(String serverId) {
+		this.serverId = serverId;
+		return this;
+	}
+
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue,
 				this.stubRepositoryRoot, this.stubsMode, this.stubsClassifier,
@@ -245,7 +260,7 @@ public class StubRunnerOptionsBuilder {
 				this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer,
 				this.consumerName, this.mappingsOutputFolder, this.deleteStubsAfterTest,
 				this.generateStubs, this.failOnNoStubs, this.properties,
-				this.httpServerStubConfigurer);
+				this.httpServerStubConfigurer, this.serverId);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

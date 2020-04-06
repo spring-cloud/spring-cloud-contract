@@ -16,7 +16,7 @@ buildscript {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 repositories {
 	mavenCentral()
@@ -41,15 +41,15 @@ dependencyManagement {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web")
-	compile("org.springframework.boot:spring-boot-starter-actuator")
-	compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
-	testCompile 'org.springframework.boot:spring-boot-starter-test'
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	// tag::dependencies[]
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
-	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	// end::dependencies[]
 }
 
@@ -73,6 +73,7 @@ contracts {
 		baseClassMapping('.*standalone.*', 'com.example.fraud.FraudBaseWithStandaloneSetup')
 		baseClassMapping('.*webapp.*', 'com.example.fraud.FraudBaseWithWebAppSetup')
 	}
+	testFramework("JUNIT")
 }
 
 generateClientStubs.enabled = false

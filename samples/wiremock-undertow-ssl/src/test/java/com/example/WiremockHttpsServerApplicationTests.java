@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,52 @@
 
 package com.example;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest("app.baseUrl=https://localhost:7443")
 @ActiveProfiles("ssl")
 public class WiremockHttpsServerApplicationTests {
 
-	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring
+	public static WireMockServer wiremock = new WireMockServer(WireMockSpring
 			.options().httpsPort(7443).port(SocketUtils.findAvailableTcpPort()));
+
+	@BeforeAll
+	static void setup() {
+		wiremock.start();
+	}
+
+	@AfterEach
+	void after() {
+		wiremock.resetAll();
+	}
+
+	@AfterAll
+	static void clean() {
+		wiremock.shutdown();
+	}
 
 	@Autowired
 	private Service service;
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+		wiremock.stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
 				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,11 +121,15 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		boolean bodyHasMatchingStrategy = request.body.clientValue instanceof MatchingStrategy
 		MatchingStrategy matchingStrategy = getMatchingStrategyFromBody(request.body)
+		Object clientSideBody = MapConverter.transformToClientValues(request.body)
 		if (contentType == ContentType.JSON) {
 			def originalBody = matchingStrategy?.clientValue
 			if (bodyHasMatchingStrategy) {
 				requestPattern.withRequestBody(
 						convertToValuePattern(matchingStrategy))
+			} else if (clientSideBody instanceof Pattern || clientSideBody instanceof RegexProperty) {
+				requestPattern.withRequestBody(
+						convertToValuePattern(appendBodyRegexpMatchPattern(request.body, contentType)))
 			}
 			else {
 				def body = JsonToJsonPathsConverter.
@@ -179,6 +183,13 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		else {
 			requestBodyGuessedFromMatchingStrategy(requestPattern)
 		}
+	}
+
+	private Object generateConcreteValue(Object originalBody) {
+		if (originalBody instanceof Pattern || originalBody instanceof RegexProperty) {
+			return new RegexProperty(originalBody).generate()
+		}
+		return originalBody
 	}
 
 	private RequestPatternBuilder requestBodyGuessedFromMatchingStrategy(RequestPatternBuilder requestPattern) {
@@ -427,13 +438,14 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private MatchingStrategy appendBodyRegexpMatchPattern(Object value, ContentType contentType) {
+		Object clientValue = MapConverter.transformToClientValues(value)
 		switch (contentType) {
 		case ContentType.JSON:
 			return new MatchingStrategy(
-					buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
+					buildJSONRegexpMatch(clientValue), MatchingStrategy.Type.MATCHING)
 		case ContentType.UNKNOWN:
 			return new MatchingStrategy(
-					buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
+					buildGStringRegexpForStubSide(clientValue), MatchingStrategy.Type.MATCHING)
 		case ContentType.XML:
 			throw new IllegalStateException("XML pattern matching is not implemented yet")
 		}

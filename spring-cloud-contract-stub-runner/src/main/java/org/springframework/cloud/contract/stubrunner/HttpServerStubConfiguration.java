@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,17 +44,33 @@ public final class HttpServerStubConfiguration {
 	 */
 	public final Integer port;
 
+	/**
+	 * Is port a random one or was it fixed.
+	 */
+	public boolean randomPort;
+
 	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer,
 			StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
 			Integer port) {
+		this(configurer, stubRunnerOptions, stubConfiguration, port, randomPort(port));
+	}
+
+	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer,
+			StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
+			Integer port, boolean randomPort) {
 		this.configurer = configurer;
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubConfiguration = stubConfiguration;
 		this.port = port;
+		this.randomPort = randomPort;
+	}
+
+	private static boolean randomPort(Integer port) {
+		return port == null || port == 0;
 	}
 
 	public boolean isRandomPort() {
-		return this.port == null || this.port == 0;
+		return randomPort(this.port);
 	}
 
 	public String toColonSeparatedDependencyNotation() {

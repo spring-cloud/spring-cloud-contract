@@ -1,6 +1,6 @@
-FROM ubuntu:18.10
+FROM ubuntu:19.10
 
-ARG SDKMAN_JAVA_INSTALLATION=8.0.222-zulu
+ARG SDKMAN_JAVA_INSTALLATION=8.0.242.hs-adpt
 
 MAINTAINER Marcin Grzejszczak <mgrzejszczak@pivotal.io>
 

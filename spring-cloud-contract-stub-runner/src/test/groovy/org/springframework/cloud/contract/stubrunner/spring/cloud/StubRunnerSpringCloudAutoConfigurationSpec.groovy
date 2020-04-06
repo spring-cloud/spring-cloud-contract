@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,11 @@ import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRun
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration
-import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -78,7 +76,7 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	// end::test[]
 
 	@Configuration
-	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration, EurekaClientAutoConfiguration,
+	@EnableAutoConfiguration(exclude = [EurekaClientAutoConfiguration,
 			ConsulAutoConfiguration, ZookeeperAutoConfiguration])
 	static class Config {
 

@@ -1,0 +1,15 @@
+name: get-all-users
+request:
+  url: /users
+  method: GET
+response:
+  status: 200
+  headers:
+    content-type: application/json; charset=UTF-8
+  body:
+    - id: 001
+      name: alice
+      country: US
+    - id: 002
+      name: bob
+      country: 日本

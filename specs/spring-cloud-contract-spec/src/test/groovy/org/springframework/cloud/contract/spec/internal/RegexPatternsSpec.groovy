@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -311,13 +311,23 @@ class RegexPatternsSpec extends Specification {
 		expect:
 			shouldMatch == RegexPatterns.iso8601WithOffset().matcher(textToMatch).matches()
 		where:
-			textToMatch                     || shouldMatch
-			'2014-03-01T12:23:45Z'          || true
-			'2014-03-01T12:23:45+01:00'     || true
-			'2014-03-01T12:23:45.123Z'      || true
-			'2014-03-01T12:23:45.123+01:00' || true
-			'2014-03-01T12:23:45'           || false
-			'2014-03-01T12:23:45.123'       || false
+			textToMatch                        || shouldMatch
+			'2014-03-01T12:23:45Z'             || true
+			'2014-03-01T12:23:45+01:00'        || true
+			'2014-03-01T12:23:45.1Z'           || true
+			'2014-03-01T12:23:45.12Z'          || true
+			'2014-03-01T12:23:45.123Z'         || true
+			'2014-03-01T12:23:45.1234Z'        || true
+			'2014-03-01T12:23:45.12345Z'       || true
+			'2014-03-01T12:23:45.123456Z'      || true
+			'2014-03-01T12:23:45.1+01:00'      || true
+			'2014-03-01T12:23:45.12+01:00'     || true
+			'2014-03-01T12:23:45.123+01:00'    || true
+			'2014-03-01T12:23:45.1234+01:00'   || true
+			'2014-03-01T12:23:45.12345+01:00'  || true
+			'2014-03-01T12:23:45.123456+01:00' || true
+			'2014-03-01T12:23:45'              || false
+			'2014-03-01T12:23:45.123'          || false
 	}
 
 	def "should generate a regex for a non blank string [#textToMatch] that should match [#shouldMatch]"() {

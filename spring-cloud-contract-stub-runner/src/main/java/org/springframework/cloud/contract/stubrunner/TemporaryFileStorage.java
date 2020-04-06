@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
@@ -46,14 +47,15 @@ final class TemporaryFileStorage {
 	 * we're creating a bounded in-memory storage of unpacked files and later we register
 	 * a shutdown hook to remove all these files.
 	 */
-	private static final Queue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(1000);
+	private static final BlockingQueue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(
+			20_000);
 
 	private TemporaryFileStorage() {
 		throw new IllegalStateException("Can't instantiate a utility class");
 	}
 
 	static void add(File file) {
-		TEMP_FILES_LOG.add(file);
+		TEMP_FILES_LOG.offer(file);
 	}
 
 	static Queue<File> files() {
@@ -65,8 +67,8 @@ final class TemporaryFileStorage {
 			log.info("Will not clear temporary files due to switch");
 			return;
 		}
-		try {
-			for (File file : TemporaryFileStorage.files()) {
+		for (File file : TemporaryFileStorage.files()) {
+			try {
 				if (file.isDirectory()) {
 					Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
 						@Override
@@ -94,13 +96,14 @@ final class TemporaryFileStorage {
 					Files.delete(file.toPath());
 				}
 			}
-		}
-		catch (NoClassDefFoundError | IOException e) {
-			// Added NoClassDefFoundError cause sometimes it's visible in the builds
-			// this error is completely harmless
-			if (log.isTraceEnabled()) {
-				log.trace("Failed to remove temporary file", e);
+			catch (NoClassDefFoundError | IOException e) {
+				// Added NoClassDefFoundError cause sometimes it's visible in the builds
+				// this error is completely harmless
+				if (log.isTraceEnabled()) {
+					log.trace("Failed to remove temporary file", e);
+				}
 			}
+			TemporaryFileStorage.files().clear();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.wiremock;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,12 +51,14 @@ public class AutoConfigureWireMockRandomPortApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 		wireMockServer.verify(0, RequestPatternBuilder.allRequests());
+		WireMock.verify(0, RequestPatternBuilder.allRequests());
 
 		stubFor(get(urlEqualTo("/test")).willReturn(aResponse()
 				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 
 		wireMockServer.verify(1, RequestPatternBuilder.allRequests());
+		WireMock.verify(1, RequestPatternBuilder.allRequests());
 	}
 
 }

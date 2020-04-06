@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,6 @@ import java.util.Set;
 import groovy.json.JsonOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import wiremock.org.eclipse.jetty.util.ConcurrentHashSet;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
@@ -47,7 +47,8 @@ import org.springframework.cloud.contract.verifier.util.BodyExtractor;
  */
 class StubRunnerExecutor implements StubFinder {
 
-	static final Set<StubServer> STUB_SERVERS = new ConcurrentHashSet<>();
+	static final Set<StubServer> STUB_SERVERS = Collections
+			.synchronizedSet(new HashSet<>());
 
 	private static final Log log = LogFactory.getLog(StubRunnerExecutor.class);
 
@@ -273,8 +274,9 @@ class StubRunnerExecutor implements StubFinder {
 		final List<File> mappings = repository.getStubs();
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
+		boolean randomPort = randomPort(port);
 		HttpServerStubConfiguration configuration = new HttpServerStubConfiguration(
-				configurer, stubRunnerOptions, stubConfiguration, port);
+				configurer, stubRunnerOptions, stubConfiguration, port, randomPort);
 		if (!hasRequest(contracts) && mappings.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
@@ -283,7 +285,7 @@ class StubRunnerExecutor implements StubFinder {
 					new NoOpHttpServerStub()).start(configuration);
 			return this.stubServer;
 		}
-		if (port != null && port >= 0) {
+		if (!randomPort) {
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
 					httpServerStub()).start(configuration);
 		}
@@ -296,12 +298,16 @@ class StubRunnerExecutor implements StubFinder {
 									httpServerStub()).start(
 											new HttpServerStubConfiguration(configurer,
 													stubRunnerOptions, stubConfiguration,
-													availablePort));
+													availablePort, true));
 						}
 					});
 		}
 		STUB_SERVERS.add(this.stubServer);
 		return this.stubServer;
+	}
+
+	private boolean randomPort(Integer port) {
+		return port == null || port == 0;
 	}
 
 	private boolean hasRequest(Collection<Contract> contracts) {

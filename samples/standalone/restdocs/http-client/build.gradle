@@ -12,7 +12,7 @@ buildscript {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 repositories {
 	mavenCentral()
@@ -35,17 +35,20 @@ dependencyManagement {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web")
-	compile("org.springframework.boot:spring-boot-starter-actuator")
-	compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
-	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
-	testCompile "org.springframework.boot:spring-boot-starter-test"
-	testCompile "com.example:http-server-restdocs:0.0.1-SNAPSHOT:stubs"
+	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation "com.example:http-server-restdocs:0.0.1:stubs"
 }
 
 test {
+	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'

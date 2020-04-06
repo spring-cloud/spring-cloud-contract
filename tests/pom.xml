@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -58,6 +58,7 @@
 				<module>spring-cloud-contract-stub-runner-stream</module>
 				<module>spring-cloud-contract-stub-runner-amqp</module>
 				<module>spring-cloud-contract-stub-runner-jms</module>
+				<module>spring-cloud-contract-stub-runner-kafka</module>
 			</modules>
 		</profile>
 		<profile>
@@ -83,6 +84,7 @@
 				<module>spring-cloud-contract-stub-runner-stream</module>
 				<module>spring-cloud-contract-stub-runner-amqp</module>
 				<module>spring-cloud-contract-stub-runner-jms</module>
+				<module>spring-cloud-contract-stub-runner-kafka</module>
 			</modules>
 		</profile>
 	</profiles>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 the original author or authors.
+ * Copyright 2016-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,26 +42,28 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 
 	private MediaType contentType;
 
-	private String name;
-
 	private MappingBuilder builder;
 
+	/**
+	 * @param name the stub name (ignored)
+	 * @return this
+	 * @deprecated in favour of explicitly calling <code>andDo(document(name))</code>
+	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public S stub(String name) {
-		this.name = name;
 		return (S) this;
-	}
-
-	protected String getName() {
-		return this.name;
 	}
 
 	public void configure(T result) {
 		Map<String, Object> configuration = getConfiguration(result);
-		String actual = new String(getRequestBodyContent(result),
-				Charset.forName("UTF-8"));
-		for (JsonPath jsonPath : this.jsonPaths.values()) {
-			new JsonPathValue(jsonPath, actual).assertHasValue(Object.class, "an object");
+		byte[] requestBodyContent = getRequestBodyContent(result);
+		if (requestBodyContent != null) {
+			String actual = new String(requestBodyContent, Charset.forName("UTF-8"));
+			for (JsonPath jsonPath : this.jsonPaths.values()) {
+				new JsonPathValue(jsonPath, actual).assertHasValue(Object.class,
+						"an object");
+			}
 		}
 		configuration.put("contract.jsonPaths", this.jsonPaths.keySet());
 		if (this.contentType != null) {

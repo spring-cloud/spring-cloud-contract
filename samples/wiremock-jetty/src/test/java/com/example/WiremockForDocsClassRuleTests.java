@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package com.example;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -36,15 +36,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("classrule")
 // tag::wiremock_test1[]
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class WiremockForDocsClassRuleTests {
 
 	// Start WireMock on some dynamic port
 	// for some reason `dynamicPort()` is not working properly
-	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().dynamicPort());
+	public static WireMockServer wiremock = new WireMockServer(WireMockSpring.options().dynamicPort());
+
+	@BeforeAll
+	static void setupClass() {
+		wiremock.start();
+	}
+
+	@AfterEach
+	void after() {
+		wiremock.resetAll();
+	}
+
+	@AfterAll
+	static void clean() {
+		wiremock.shutdown();
+	}
 
 	// A service that calls out over HTTP to wiremock's port
 	@Autowired
@@ -52,7 +65,7 @@ public class WiremockForDocsClassRuleTests {
 
 	// end::wiremock_test1[]
 	// tag::wiremock_test2[]
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.service.setBase("http://localhost:" + wiremock.port());
 	}

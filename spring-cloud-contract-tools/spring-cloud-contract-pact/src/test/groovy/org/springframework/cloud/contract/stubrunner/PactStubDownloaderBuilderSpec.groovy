@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.springframework.cloud.contract.stubrunner
 
 import java.nio.file.Files
 
-import au.com.dius.pact.model.Pact
-import au.com.dius.pact.model.PactSource
+import au.com.dius.pact.core.model.Pact
+import au.com.dius.pact.core.model.PactSource
 import au.com.dius.pact.provider.junit.loader.PactLoader
-import au.com.dius.pact.support.expressions.ValueResolver
+import au.com.dius.pact.core.support.expressions.ValueResolver
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.jetbrains.annotations.NotNull
 import spock.lang.Ignore

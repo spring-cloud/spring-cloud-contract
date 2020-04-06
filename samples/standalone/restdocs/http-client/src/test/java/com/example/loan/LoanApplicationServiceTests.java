@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,20 @@ import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import org.springframework.util.StreamUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = "service.port=${wiremock.server.port}")
 @AutoConfigureWireMock(port = 0)
 public class LoanApplicationServiceTests {
@@ -45,10 +45,10 @@ public class LoanApplicationServiceTests {
 	@Autowired
 	private LoanApplicationService service;
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/standalone/shouldMarkClientAsFraud.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/standalone/shouldMarkClientAsFraud.json")
 	private Resource markClientAsFraud;
 
-	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/webapp/shouldMarkClientAsNotFraud.json")
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/webapp/shouldMarkClientAsNotFraud.json")
 	private Resource markClientAsNotFraud;
 
 	@Autowired

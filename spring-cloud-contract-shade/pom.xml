@@ -4,22 +4,22 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<org.eclipse.sisu.inject.version>0.3.3</org.eclipse.sisu.inject.version>
-		<org.eclipse.sisu.plexus.version>0.1.1</org.eclipse.sisu.plexus.version>
+		<org.eclipse.sisu.inject.version>0.3.4</org.eclipse.sisu.inject.version>
+		<org.eclipse.sisu.plexus.version>0.3.4</org.eclipse.sisu.plexus.version>
 		<sisu-guice.version>4.2.0</sisu-guice.version>
 		<guice.version>4.2.2</guice.version>
-		<guava.version>27.1-jre</guava.version>
+		<guava.version>28.1-jre</guava.version>
 		<asm.version>7.1</asm.version>
-		<checker.version>2.11.0</checker.version>
+		<checker.version>3.1.1</checker.version>
 
 		<maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
-		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-shade</artifactId>
@@ -28,33 +28,53 @@
 	<description>Spring Cloud Contract Shaded Dependencies</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-api</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-api</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-impl</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-spi</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-file</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-util</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-http</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-impl</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-connector-basic</artifactId>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-connector-basic</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-transport-classpath</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-transport-file</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-transport-http</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver-transport-wagon</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-aether-provider</artifactId>
+			<artifactId>maven-resolver-provider</artifactId>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -249,6 +269,10 @@
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
+					<execution>
+						<id>attach-zip</id>
+						<phase>none</phase>
+					</execution>
 					<execution>
 						<id>add-source</id>
 						<phase>package</phase>

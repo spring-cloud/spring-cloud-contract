@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,13 +134,22 @@ final class AetherFactories {
 	private static File userSettings() {
 		String user = fromSystemPropOrEnv(MAVEN_USER_SETTINGS_LOCATION);
 		if (user == null) {
-			return new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
+			File file = new File(
+					new File(System.getProperty("user.home")).getAbsoluteFile(),
 					File.separator + ".m2" + File.separator + "settings.xml");
+			if (log.isDebugEnabled()) {
+				log.debug("No custom maven user settings provided, will use [" + file
+						+ "]");
+			}
+			return file;
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("Custom location provided for user settings [" + user + "]");
 		}
 		return new File(user);
 	}
 
-	private static Settings settings() {
+	protected static Settings settings() {
 		SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
 		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 		request.setUserSettingsFile(userSettings());

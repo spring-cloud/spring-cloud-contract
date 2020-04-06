@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,8 @@ public final class WireMockRestServiceServer {
 
 	private String baseUrl = "";
 
+	private boolean bufferContent = false;
+
 	private MockRestServiceServerBuilder builder;
 
 	private List<String> locations = new ArrayList<String>();
@@ -113,6 +115,15 @@ public final class WireMockRestServiceServer {
 	 */
 	public WireMockRestServiceServer ignoreExpectOrder(boolean ignoreExpectOrder) {
 		this.ignoreExpectOrder = ignoreExpectOrder;
+		return this;
+	}
+
+	/**
+	 * Flag to tell the server to buffer the contents of the response.
+	 * @return this
+	 */
+	public WireMockRestServiceServer bufferContent() {
+		this.bufferContent = true;
 		return this;
 	}
 
@@ -179,6 +190,9 @@ public final class WireMockRestServiceServer {
 	public MockRestServiceServer build() {
 		if (this.ignoreExpectOrder) {
 			this.builder.ignoreExpectOrder(true); // default is false
+		}
+		if (this.bufferContent) {
+			this.builder.bufferContent();
 		}
 		MockRestServiceServer server = this.builder.build();
 		List<StubMapping> mappings = new ArrayList<>();
@@ -266,16 +280,24 @@ public final class WireMockRestServiceServer {
 				: request.getUrlPath());
 	}
 
+	private String withoutBaseUrl(String url) {
+		int indexOfBaseUrl = url.indexOf(this.baseUrl);
+		if (indexOfBaseUrl == -1) {
+			return url;
+		}
+		return url.substring(indexOfBaseUrl + this.baseUrl.length() + 1);
+	}
+
 	private Matcher<String> requestMatcher(RequestPattern request) {
 		return new TypeSafeMatcher<String>() {
 			@Override
 			protected boolean matchesSafely(String item) {
-				if (request.getUrlMatcher() != null) {
-					return request.getUrlMatcher().match(item).isExactMatch();
+				if (request.getUrlPathPattern() != null) {
+					return Pattern.compile(request.getUrlPathPattern())
+							.matcher(withoutBaseUrl(item)).matches();
 				}
-				else if (request.getUrlPathPattern() != null) {
-					return Pattern.compile(request.getUrlPathPattern()).matcher(item)
-							.matches();
+				else if (request.getUrlMatcher() != null) {
+					return request.getUrlMatcher().match(item).isExactMatch();
 				}
 				else if (request.getUrlPattern() != null) {
 					return Pattern.compile(request.getUrlPattern()).matcher(item)

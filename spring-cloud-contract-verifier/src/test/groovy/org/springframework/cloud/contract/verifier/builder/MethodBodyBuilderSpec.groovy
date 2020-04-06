@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 the original author or authors.
+ * Copyright 2013-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,12 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-
 import org.junit.Rule
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
-import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -37,7 +36,7 @@ import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	@Rule
-	OutputCapture capture = new OutputCapture()
+	OutputCaptureRule capture = new OutputCaptureRule()
 
 	@Shared
 	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
@@ -1756,6 +1755,83 @@ response:
 			}
 	}
 
+	@Issue("#1262")
+	def "should work with the timeout flag for groovy [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method(GET())
+					url("/hello")
+				}
+				response {
+					status(200)
+					fixedDelayMilliseconds(5000)
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		and:
+			test.contains("timeout")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
+	@Issue("#1262")
+	def "should work with the timeout flag for yaml [#methodBuilderName]"() {
+		given:
+			String yaml = '''\
+request:
+  method: GET
+  url: /hello
+  queryParameters:
+    name: LuLu
+response:
+  status: 200
+  fixedDelayMilliseconds: 5000
+  body: "Hello LuLu"
+  async: true
+'''
+			File tmpFile = File.createTempFile("foo", ".yml")
+			tmpFile.createNewFile()
+			tmpFile.text = yaml
+			Contract contractDsl = new YamlContractConverter().convertFrom(tmpFile).
+					first()
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		and:
+			test.contains("timeout")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
 	@Issue("#1049")
 	def "should work with body having new lines [#methodBuilderName]"() {
 		given:
@@ -1829,6 +1905,50 @@ response:
 		and:
 			test.contains($/assertThatJson(parsedJson).field("['result']").isEqualTo("Don't worry/$)
 			test.contains("you're not a fraud")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
+	def 'should work with an array of uuids'() {
+		given:
+			Contract contractDsl = Contract.make {
+				description "TEST ARRAY"
+				request {
+					method POST()
+					urlPath($(c('/TEST'), p('/TEST')))
+					body([
+							$(c(anyUuid()), p("00000000-0000-0000-0000-000000000002")),
+							$(c(anyUuid()), p("00000000-0000-0000-0000-000000000001"))
+					])
+				}
+				response {
+					status OK()
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		and:
+			!test.contains('singleValue')
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
