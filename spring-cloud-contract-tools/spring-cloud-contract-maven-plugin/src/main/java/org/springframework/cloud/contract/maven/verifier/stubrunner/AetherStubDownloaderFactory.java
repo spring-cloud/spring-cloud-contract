@@ -53,8 +53,8 @@ public class AetherStubDownloaderFactory {
 	private final Settings settings;
 
 	@Inject
-	public AetherStubDownloaderFactory(RepositorySystem repoSystem,
-			MavenProject project, Settings settings) {
+	public AetherStubDownloaderFactory(RepositorySystem repoSystem, MavenProject project,
+			Settings settings) {
 		this.repoSystem = repoSystem;
 		this.project = project;
 		this.settings = settings;
@@ -70,8 +70,7 @@ public class AetherStubDownloaderFactory {
 						AetherStubDownloaderFactory.this.repoSystem,
 						AetherStubDownloaderFactory.this.project
 								.getRemoteProjectRepositories(),
-						repoSession,
-						AetherStubDownloaderFactory.this.settings);
+						repoSession, AetherStubDownloaderFactory.this.settings);
 			}
 
 			@Override

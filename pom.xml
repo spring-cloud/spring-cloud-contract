@@ -37,7 +37,7 @@
 		<spring-cloud-function.version>3.0.3.BUILD-SNAPSHOT</spring-cloud-function.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.2.9</cglib.version>
-		<spock-spring.version>1.3-groovy-2.5</spock-spring.version>
+		<spock-spring.version>2.0-M2-groovy-3.0</spock-spring.version>
 		<spock-global-unroll.version>0.5.1</spock-global-unroll.version>
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.8</commons-text.version>
@@ -54,7 +54,7 @@
 		<gmavenplus-plugin.version>1.8.1</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>2.5.10</groovy.version>
+		<groovy.version>3.0.2</groovy.version>
 		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.5.4</maven.version>
 		<!-- Resolver has to be aligned with Maven (e.g resolver 1.4 and Maven 3.6 or resolver 1.3 and Maven 3.5) -->
@@ -68,8 +68,9 @@
 		<contract.kotlin.version>1.3.61</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 
-		<javadoc.failOnError>true</javadoc.failOnError>
+		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<modules>
