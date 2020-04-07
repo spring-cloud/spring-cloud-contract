@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -138,7 +139,7 @@ class StubsStubDownloader implements StubDownloader {
 					+ "]. Will copy them to a temporary directory.");
 			return new ResourceResolvingStubDownloader(stubRunnerOptions,
 					this::repoRootForSchemeSpecificPart, this::anyPattern)
-							.downloadAndUnpackStubJar(stubConfiguration);
+					.downloadAndUnpackStubJar(stubConfiguration);
 		}
 		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
 				this::gavPattern).downloadAndUnpackStubJar(stubConfiguration);
@@ -161,7 +162,11 @@ class StubsStubDownloader implements StubDownloader {
 		Resource resource = ResourceResolver.resource(schemeSpecificPart);
 		if (resource != null) {
 			try {
-				return Paths.get(resource.getURI()).toString();
+				final String stringResource = Paths.get(resource.getURI()).toString();
+				if (SystemUtils.IS_OS_WINDOWS) {
+					return "/" + stringResource.replace("\\", "/");
+				}
+				return stringResource;
 			}
 			catch (IOException ex) {
 				return schemeSpecificPart;
