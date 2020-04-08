@@ -25,8 +25,8 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2016 - 2020 Spring</copyright>
     <item>
-      <title>File: 12,
-             Errors: 498,
+      <title>File: 14,
+             Errors: 547,
              Warnings: 0,
              Infos: 0
       </title>
@@ -46,6 +46,76 @@ under the License.
           <tbody>
                           <tr>
                 <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.PushStubsToScmMojo.java">org/springframework/cloud/contract/maven/verifier/PushStubsToScmMojo.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  25
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  37
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.LocalStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/LocalStubRunner.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.LeftOverPrevention.java">org/springframework/cloud/contract/maven/verifier/LeftOverPrevention.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  11
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.ConvertMojo.java">org/springframework/cloud/contract/maven/verifier/ConvertMojo.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  95
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.GenerateTestsMojo.java">org/springframework/cloud/contract/maven/verifier/GenerateTestsMojo.java</a>
                 </td>
                 <td>
@@ -55,7 +125,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  101
+                  110
                 </td>
               </tr>
                           <tr>
@@ -83,7 +153,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  39
+                  47
                 </td>
               </tr>
                           <tr>
@@ -102,7 +172,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.PushStubsToScmMojo.java">org/springframework/cloud/contract/maven/verifier/PushStubsToScmMojo.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.ChangeDetector.java">org/springframework/cloud/contract/maven/verifier/ChangeDetector.java</a>
                 </td>
                 <td>
                   0
@@ -111,7 +181,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  25
+                  9
                 </td>
               </tr>
                           <tr>
@@ -125,7 +195,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  23
+                  28
                 </td>
               </tr>
                           <tr>
@@ -144,20 +214,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  37
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.RunMojo.java">org/springframework/cloud/contract/maven/verifier/RunMojo.java</a>
                 </td>
                 <td>
@@ -172,20 +228,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.LocalStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/LocalStubRunner.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.ManifestCreator.java">org/springframework/cloud/contract/maven/verifier/ManifestCreator.java</a>
                 </td>
                 <td>
@@ -196,20 +238,6 @@ under the License.
                 </td>
                 <td>
                   16
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.ConvertMojo.java">org/springframework/cloud/contract/maven/verifier/ConvertMojo.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  88
                 </td>
               </tr>
                       </tbody>

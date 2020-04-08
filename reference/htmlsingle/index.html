@@ -14602,6 +14602,15 @@ components. Those properties might be used by (for example) built-in or custom S
 <li>
 <p><code>failOnInProgress</code>: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to <code>true</code>.</p>
 </li>
+<li>
+<p><code>incrementalContractTests</code>: When enabled, tests are created only when contracts have changed since last build. Defaults to <code>true</code>.</p>
+</li>
+<li>
+<p><code>incrementalContractStubs</code>: When enabled, stubs are created only when contracts have changed since last build. Defaults to <code>true</code>.</p>
+</li>
+<li>
+<p><code>incrementalContractStubsJar</code>: When enabled, stubs jar is created only when stubs have changed since last build. Defaults to <code>true</code>.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -19840,6 +19849,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.proxy-port</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Repository proxy port.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.server-id</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.stream.enabled</p></td>

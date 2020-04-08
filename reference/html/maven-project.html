@@ -574,6 +574,15 @@ components. Those properties might be used by (for example) built-in or custom S
 <li>
 <p><code>failOnInProgress</code>: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to <code>true</code>.</p>
 </li>
+<li>
+<p><code>incrementalContractTests</code>: When enabled, tests are created only when contracts have changed since last build. Defaults to <code>true</code>.</p>
+</li>
+<li>
+<p><code>incrementalContractStubs</code>: When enabled, stubs are created only when contracts have changed since last build. Defaults to <code>true</code>.</p>
+</li>
+<li>
+<p><code>incrementalContractStubsJar</code>: When enabled, stubs jar is created only when stubs have changed since last build. Defaults to <code>true</code>.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
