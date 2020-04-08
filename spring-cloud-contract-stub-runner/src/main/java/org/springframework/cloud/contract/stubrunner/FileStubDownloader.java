@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,7 +78,18 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
-		return new StubsResource(location);
+		//Convert any windows file format path to a uri
+		String correctlyFormattedLocation = convertLocationToUriFormat(location);
+		return new StubsResource(correctlyFormattedLocation);
+	}
+
+	private String convertLocationToUriFormat(String location) {
+		final String correctlyFormattedLocation = FilenameUtils.separatorsToUnix(location);
+		final String rawPath = correctlyFormattedLocation.replace("stubs://file://", "");
+		if (rawPath.charAt(0) != '/') {
+			return "stubs://file:///" + rawPath;
+		}
+		return correctlyFormattedLocation;
 	}
 
 }
@@ -162,11 +174,7 @@ class StubsStubDownloader implements StubDownloader {
 		Resource resource = ResourceResolver.resource(schemeSpecificPart);
 		if (resource != null) {
 			try {
-				final String stringResource = Paths.get(resource.getURI()).toString();
-				if (SystemUtils.IS_OS_WINDOWS) {
-					return "/" + stringResource.replace("\\", "/");
-				}
-				return stringResource;
+				return resource.getURL().getFile();
 			}
 			catch (IOException ex) {
 				return schemeSpecificPart;
