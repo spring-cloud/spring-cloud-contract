@@ -20,14 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
