@@ -29,7 +29,7 @@
 |stubrunner.properties |  | Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 |stubrunner.proxy-host |  | Repository proxy host.
 |stubrunner.proxy-port |  | Repository proxy port.
-|stubrunner.server-id |  | Server value registered at `settings.xml` to get the proper credentials to authenticate against the remote repository.
+|stubrunner.server-id |  | 
 |stubrunner.stream.enabled | true | Whether to enable Stub Runner integration with Spring Cloud Stream.
 |stubrunner.stubs-mode |  | Pick where the stubs should come from.
 |stubrunner.stubs-per-consumer | false | Should only stubs for this particular consumer get registered in HTTP server stub.
