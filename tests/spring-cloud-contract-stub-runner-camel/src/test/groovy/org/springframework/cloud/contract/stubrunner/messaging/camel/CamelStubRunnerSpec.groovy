@@ -53,6 +53,8 @@ import org.springframework.test.context.ContextConfiguration
 @Ignore
 class CamelStubRunnerSpec extends Specification {
 
+	//TODO: fix extremely slow test that causes pipeline to fail and then unignore
+
 	@Autowired
 	StubFinder stubFinder
 	@Autowired
