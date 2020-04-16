@@ -461,7 +461,7 @@ To work with a Gradle project:
 [source,groovy,indent=0]
 ----
 ext {
-    conractsGroupId = "com.example"
+    contractsGroupId = "com.example"
     contractsArtifactId = "common-repo"
     contractsVersion = "1.2.3"
 }
@@ -480,8 +480,8 @@ configurations {
 [source,groovy,indent=0]
 ----
 dependencies {
-    contracts "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
-    testCompile "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+    contracts "${contractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+    testCompile "${contractsGroupId}:${contractsArtifactId}:${contractsVersion}"
 }
 ----
 ====
