@@ -18115,7 +18115,7 @@ illustration purposes rather than trying to provide a &#8220;typical&#8221; exam
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">ext {
-    conractsGroupId = "com.example"
+    contractsGroupId = "com.example"
     contractsArtifactId = "common-repo"
     contractsVersion = "1.2.3"
 }
@@ -18137,8 +18137,8 @@ configurations {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
-    contracts "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
-    testCompile "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+    contracts "${contractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+    testCompile "${contractsGroupId}:${contractsArtifactId}:${contractsVersion}"
 }</code></pre>
 </div>
 </div>
