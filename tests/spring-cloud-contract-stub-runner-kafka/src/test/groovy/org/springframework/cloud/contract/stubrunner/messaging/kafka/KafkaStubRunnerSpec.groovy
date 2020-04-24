@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Commons
-import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -55,7 +54,6 @@ import org.springframework.test.context.ContextConfiguration
 @SpringBootTest(properties = ["debug=true"])
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
-@Ignore // FIXME: https://github.com/spring-cloud/spring-cloud-contract/issues/1383
 @EmbeddedKafka(topics = ["input", "output", "delete"])
 @Commons
 class KafkaStubRunnerSpec extends Specification {
