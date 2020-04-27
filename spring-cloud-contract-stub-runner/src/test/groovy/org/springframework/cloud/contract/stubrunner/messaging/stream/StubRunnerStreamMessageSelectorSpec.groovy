@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream
 
+import spock.lang.Issue
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
@@ -210,9 +211,35 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 				}
 			}
 		and:
-			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
+			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(
+					dsl)
 			message.headers >> [
 					foo: 123
+			]
+			message.payload >> [
+					foo: 123
+			]
+		expect:
+			predicate.accept(message)
+	}
+
+	@Issue("1382")
+	def "should return true if header matches regex"() {
+		given:
+			Contract dsl = Contract.make {
+				input {
+					messageFrom "foo"
+					messageHeaders {
+						header("foo", $(anyUuid()))
+					}
+					messageBody(foo: 123)
+				}
+			}
+		and:
+			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(
+					dsl)
+			message.headers >> [
+					foo: "fbcc2ed3-dbac-47e7-9a4b-c2d55709792c"
 			]
 			message.payload >> [
 					foo: 123
