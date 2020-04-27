@@ -233,8 +233,8 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
 			boolean matches;
-			if (value instanceof RegexProperty) {
-				Pattern pattern = ((RegexProperty) value).getPattern();
+			if (value instanceof RegexProperty || value instanceof Pattern) {
+				Pattern pattern = new RegexProperty(value).getPattern();
 				matches = pattern.matcher(valueInHeader.toString()).matches();
 			}
 			else {
