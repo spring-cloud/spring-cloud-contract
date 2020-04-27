@@ -54,7 +54,8 @@ The following example, from pom.xml, shows how to specify the base test class:
 INFO: The baseClassForTests element lets you specify your base test class. It must be a child of a configuration element within spring-cloud-contract-maven-plugin.
 
 Once the implementation and the test base class are in place, the tests pass, and both the application and the stub artifacts are built and installed in the local Maven repository. You can now merge the changes, and you can publish both the application and the stub artifacts in an online repository.
-2.2. On the Consumer Side
+
+== On the Consumer Side
 
 You can use Spring Cloud Contract Stub Runner in the integration tests to get a running WireMock instance or messaging route that simulates the actual service.
 
