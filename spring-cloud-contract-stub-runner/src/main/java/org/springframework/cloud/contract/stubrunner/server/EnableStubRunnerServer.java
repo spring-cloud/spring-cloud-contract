@@ -29,13 +29,13 @@ import org.springframework.context.annotation.Import;
 /**
  * Annotation to enable a Stub runner server.
  * @author Dave Syer
+ * @author Tim Ysewyn
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({ HttpStubsController.class, TriggerController.class,
-		StubRunnerConfiguration.class })
+@Import({ HttpStubsController.class, StubRunnerConfiguration.class })
 public @interface EnableStubRunnerServer {
 
 }
