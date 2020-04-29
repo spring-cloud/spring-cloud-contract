@@ -40,8 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/triggers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TriggerController {
 
-	private static final Log log = LogFactory.getLog(TriggerController.class);
-
 	private final StubFinder stubFinder;
 
 	@Autowired
