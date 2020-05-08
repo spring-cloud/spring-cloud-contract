@@ -31,6 +31,7 @@ import org.springframework.restdocs.restassured3.RestAssuredRestDocumentationCon
  * @see WireMockRestDocs for a convenient entry point for customizing and asserting the
  * stub behaviour
  * @author Eddú Meléndez
+ * @author Olga Maciaszek-Sharma
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RestAssuredRestDocumentationConfigurer.class)
@@ -39,7 +40,7 @@ public class WireMockRestAssuredConfiguration
 
 	@Override
 	public void customize(RestAssuredRestDocumentationConfigurer configurer) {
-		configurer.snippets().withDefaults(new WireMockSnippet());
+		configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
 	}
 
 }

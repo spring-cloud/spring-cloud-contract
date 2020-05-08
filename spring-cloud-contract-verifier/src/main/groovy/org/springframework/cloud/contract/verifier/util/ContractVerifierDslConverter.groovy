@@ -35,6 +35,7 @@ import org.springframework.util.StringUtils
  * Converts a String or a Groovy or Java file into a {@link Contract}.
  *
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  *
  * @since 1.0.0
  */
