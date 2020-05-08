@@ -221,7 +221,7 @@ class GitRepo {
 			return git;
 		}
 		catch (GitAPIException | URISyntaxException e) {
-			deleteBaseDirIfExists();
+			deleteBaseDirIfExists("Failed to initialize base directory");
 			throw new IllegalStateException(e);
 		}
 	}
@@ -236,7 +236,7 @@ class GitRepo {
 			return command.call();
 		}
 		catch (GitAPIException e) {
-			deleteBaseDirIfExists();
+			deleteBaseDirIfExists("Failed to delete base directory");
 			throw e;
 		}
 		finally {
@@ -290,13 +290,13 @@ class GitRepo {
 		return false;
 	}
 
-	private void deleteBaseDirIfExists() {
+	private void deleteBaseDirIfExists(String errorMessage) {
 		if (this.basedir.exists()) {
 			try {
-				FileUtils.delete(this.basedir, FileUtils.RECURSIVE);
+				org.apache.commons.io.FileUtils.deleteDirectory(this.basedir);
 			}
 			catch (IOException e) {
-				throw new IllegalStateException("Failed to initialize base directory", e);
+				throw new IllegalStateException(errorMessage, e);
 			}
 		}
 	}
