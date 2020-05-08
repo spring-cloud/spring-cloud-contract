@@ -34,6 +34,7 @@ import static org.springframework.cloud.contract.spec.internal.MatchingType.NULL
 import static org.springframework.cloud.contract.spec.internal.MatchingType.REGEX
 /**
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  */
 class JavaContractConverterSpec extends Specification {
 
