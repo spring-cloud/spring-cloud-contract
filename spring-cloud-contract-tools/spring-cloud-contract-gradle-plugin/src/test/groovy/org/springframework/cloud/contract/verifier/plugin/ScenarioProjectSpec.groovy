@@ -16,8 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import spock.lang.Ignore
 import spock.lang.Stepwise
 
+@Ignore
 @Stepwise
 class ScenarioProjectSpec extends ContractVerifierIntegrationSpec {
 

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>3.0.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-docs</artifactId>
@@ -21,7 +21,7 @@
 		<docs.whitelisted.branches>1.0.x,1.1.x,2.0.x,2.1.x</docs.whitelisted.branches>
 		<configprops.inclusionPattern>stubrunner.*|wiremock.*|</configprops.inclusionPattern>
 		<!-- Aligned with Groovy in SC-Build -->
-		<groovy.version>3.0.2</groovy.version>
+		<groovy.version>2.5.10</groovy.version>
 	</properties>
 	<build>
 		<plugins>

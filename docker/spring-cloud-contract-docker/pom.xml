@@ -6,19 +6,19 @@
 	<properties>
 		<dependency-management-plugin.version>1.0.8.RELEASE</dependency-management-plugin.version>
 		<plexus-archiver.version>4.1.0</plexus-archiver.version>
-		<sdkman-java-installation.version>8.0.242.hs-adpt</sdkman-java-installation.version>
+		<sdkman-java-installation.version>8.0.252.hs-adpt</sdkman-java-installation.version>
 	</properties>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-docker-parent</artifactId>
-		<version>3.0.0.BUILD-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-docker</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.0.BUILD-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<name>Spring Cloud Contract Docker</name>
 	<description>Spring Cloud Contract Docker</description>
 

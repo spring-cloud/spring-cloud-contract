@@ -16,29 +16,24 @@
 
 package org.springframework.cloud.contract.stubrunner.server;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
-import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
-import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 @Configuration(proxyBeanMethods = false)
-class StubRunnerBackupAutoConfiguration {
+class StubRunnerAutoConfiguration {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public MessageVerifier<?> contractVerifierMessageExchange() {
-		return new NoOpStubMessages();
-	}
+	@ConditionalOnProperty(name = "stubrunner.messaging.enabled", havingValue = "true",
+			matchIfMissing = true)
+	@AutoConfigureMessageVerifier
+	@Import({ TriggerController.class })
+	static class StubRunnerMessagingAutoConfiguration {
 
-	@Bean
-	public ContractVerifierMessaging<Object> contractVerifierMessaging(
-			MessageVerifier<Object> exchange) {
-		return new ContractVerifierMessaging<>(exchange);
 	}
 
 }

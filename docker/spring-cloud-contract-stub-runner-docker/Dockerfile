@@ -1,6 +1,6 @@
 FROM ubuntu:19.10
 
-ARG SDKMAN_JAVA_INSTALLATION=8.0.242.hs-adpt
+ARG SDKMAN_JAVA_INSTALLATION=8.0.252.hs-adpt
 
 MAINTAINER Marcin Grzejszczak <mgrzejszczak@pivotal.io>
 
