@@ -58,7 +58,7 @@ class AetherStubDownloaderSpec extends Specification {
 		and:
 			String localRepo = AetherFactories.localRepositoryDirectory(true)
 			new File(localRepo, "org/springframework/cloud/spring-cloud-contract-spec"
-					.replaceAll("/", File.separator)).list().size() > 0
+					.replace("/", File.separator)).list().size() > 0
 
 		and:
 			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
