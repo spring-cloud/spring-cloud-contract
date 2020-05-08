@@ -24,7 +24,7 @@ import org.springframework.core.io.Resource;
 /**
  * @author Budlee
  */
-class FileStubDownloaderTests {
+public class FileStubDownloaderTests {
 
 	@Test
 	public void resolve() {
