@@ -44,7 +44,7 @@ class ContractVerifierDslConverter implements ContractConverter<Collection<Contr
 
 	public static final ContractVerifierDslConverter INSTANCE = new ContractVerifierDslConverter()
 
-	private static final Pattern PACKAGE_PATTERN = Pattern.compile(".+?package (.+?);.+?", Pattern.DOTALL)
+	private static final Pattern PACKAGE_PATTERN = Pattern.compile(".*package (.+?);.+?", Pattern.DOTALL)
 
 	private static final Pattern CLASS_PATTERN = Pattern.compile(".+?class (.+?)( |\\{).+?", Pattern.DOTALL)
 
