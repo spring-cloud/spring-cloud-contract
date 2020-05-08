@@ -76,13 +76,14 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
-		//Convert any windows file format path to a uri
+		// Convert any windows file format path to a uri
 		String correctlyFormattedLocation = convertLocationToUriFormat(location);
 		return new StubsResource(correctlyFormattedLocation);
 	}
 
 	private String convertLocationToUriFormat(String location) {
-		final String correctlyFormattedLocation = FilenameUtils.separatorsToUnix(location);
+		final String correctlyFormattedLocation = FilenameUtils
+				.separatorsToUnix(location);
 		final String rawPath = correctlyFormattedLocation.replace("stubs://file://", "");
 		if (rawPath.charAt(0) != '/') {
 			return "stubs://file:///" + rawPath;
@@ -149,7 +150,7 @@ class StubsStubDownloader implements StubDownloader {
 					+ "]. Will copy them to a temporary directory.");
 			return new ResourceResolvingStubDownloader(stubRunnerOptions,
 					this::repoRootForSchemeSpecificPart, this::anyPattern)
-					.downloadAndUnpackStubJar(stubConfiguration);
+							.downloadAndUnpackStubJar(stubConfiguration);
 		}
 		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
 				this::gavPattern).downloadAndUnpackStubJar(stubConfiguration);

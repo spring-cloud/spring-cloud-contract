@@ -200,6 +200,12 @@
 			<artifactId>junit-jupiter-api</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons.io.version}</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
