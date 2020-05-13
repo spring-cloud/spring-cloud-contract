@@ -17,8 +17,10 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import org.gradle.api.internal.provider.DefaultProperty
+import org.gradle.api.internal.provider.PropertyHost
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.internal.service.scopes.ProjectBackedPropertyHost
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
@@ -97,7 +99,7 @@ class GradleContractsDownloaderHelperSpec extends Specification {
 	}
 
 	// Have to use this internal property impl here. Is there some better way?
-	static <T> Property<T> prop(Class<T> aClass) {
-		return new DefaultProperty(aClass)
+	public <T> Property<T> prop(Class<T> aClass) {
+		return new DefaultProperty(Stub(PropertyHost), aClass)
 	}
 }
