@@ -37,6 +37,10 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
  * to the cloned repo with contracts and stubs. Will also
  * commit the changes and push them to origin.
  *
+ * NOTE: starting with 2.3.0.RELEASE the <code>customize{}</code> closure previously used for
+ * {@link PublishStubsToScmTask} customisation is no longer available. The settings should be applied directly
+ * within the <code>publishStubsToScm</code> closure as in the example above.
+ *
  * @author Marcin Grzejszczak
  * @author Anatoliy Balakirev
  * @since 2.0.0
