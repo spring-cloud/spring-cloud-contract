@@ -27,6 +27,7 @@ import org.springframework.amqp.core.DirectExchange
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
 import org.springframework.amqp.core.Queue
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
@@ -78,7 +79,7 @@ class SpringAmqpStubMessagesSpec extends Specification {
 
 	def "should send amqp message for non transactional channel"() {
 		given:
-			rabbitProperties.setPublisherConfirms(true)
+			rabbitProperties.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.SIMPLE)
 			listenerContainer.setMessageListener(messageListenerAdapter)
 			listenerContainer.setQueueNames(queueName)
 			Binding binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with(routingKey)
@@ -114,7 +115,7 @@ class SpringAmqpStubMessagesSpec extends Specification {
 
 	def "should send amqp message for transactional channel"() {
 		given:
-			rabbitProperties.setPublisherConfirms(false)
+			rabbitProperties.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.NONE)
 			listenerContainer.setMessageListener(messageListenerAdapter)
 			listenerContainer.setQueueNames(queueName)
 			Binding binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with(routingKey)
