@@ -13858,7 +13858,7 @@ The registered WireMock server is reset after each test class, however, if you n
 <div class="paragraph">
 <p>If you use <code>@AutoConfigureWireMock</code>, it registers WireMock JSON stubs from the file
 system or classpath (by default, from <code>file:src/test/resources/mappings</code>). You can
-customize the locations byusing the <code>stubs</code> attribute in the annotation, which can be an
+customize the locations by using the <code>stubs</code> attribute in the annotation, which can be an
 Ant-style resource pattern or a directory. In the case of a directory, <code><strong>*/</strong>.json</code> is
 appended. The following code shows an example:</p>
 </div>
@@ -18461,6 +18461,42 @@ the `publish` task is executed
 publish.dependsOn("publishStubsToScm")</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>It is also possible to further customise the <code>publishStubsToScm</code> gradle task. In the following example,
+the task is customised to pick contracts from a local git repository:</p>
+</div>
+<div class="listingblock secondary">
+<div class="title">gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">publishStubsToScm {
+    // We want to modify the default set up of the plugin when publish stubs to scm is called
+    // We want to pick contracts from a Git repository
+    contractDependency {
+        stringNotation = "${project.group}:${project.name}:${project.version}"
+    }
+    /*
+    We reuse the contract dependency section to set up the path
+    to the folder that contains the contract definitions. In our case the
+    path will be /groupId/artifactId/version/contracts
+     */
+    contractRepository {
+        repositoryUrl = "git://file://${new File(project.rootDir, "../target")}/contract_empty_git/"
+    }
+    // We set the contracts mode to `LOCAL`
+    contractsMode = "LOCAL"
+    }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">IMPORTANT</dt>
+<dd>
+<p>Starting with <code>2.3.0.RELEASE</code> the <code>customize{}</code> closure previously used for the
+<code>publishStubsToScm</code> customization is no longer available. The settings should be applied directly
+within the <code>publishStubsToScm</code> closure as in the example above.</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -19497,8 +19533,8 @@ To do so, include the following dependencies (if you have not already done so):<
 <div class="listingblock secondary">
 <div class="title">gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
-testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'</code></pre>
 </div>
 </div>
 </div>
