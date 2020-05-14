@@ -31,9 +31,9 @@ targetCompatibility = 1.8
 repositories { mavenCentral() }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.springframework.cloud:spring-cloud-starter-contract-verifier')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation('org.springframework.cloud:spring-cloud-starter-contract-verifier')
 }
 
 dependencyManagement {

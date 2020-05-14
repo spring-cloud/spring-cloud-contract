@@ -47,4 +47,5 @@
 	<suppress files=".*HttpStatus.*" checks="HideUtility*"/>
 	<suppress files=".*contractsToCompile.*" checks=".*"/>
 	<suppress files=".*RegexPatterns.*" checks="HideUtility*"/>
+	<suppress files=".*gradle.*" checks=".*"/>
 </suppressions>
