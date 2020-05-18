@@ -99,7 +99,7 @@ class AetherStubDownloaderSpec extends Specification {
 	}
 
 	@RestoreSystemProperties
-	def 'Should return credentials from settings.xml'() {
+	def 'Should return credentials from settings_xml'() {
 		given:
 			File settings = new File(AetherStubDownloaderSpec.getResource("/.m2/settings.xml").getFile())
 			System.setProperty("org.apache.maven.user-settings", settings.getAbsolutePath())
