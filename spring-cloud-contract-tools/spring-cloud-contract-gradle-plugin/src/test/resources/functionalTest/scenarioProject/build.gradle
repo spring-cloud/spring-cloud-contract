@@ -45,15 +45,15 @@ subprojects {
 	}
 
 	dependencies {
-		testCompile "org.codehaus.groovy:groovy"
-		testCompile("org.spockframework:spock-core:$spockVersion") {
+		testImplementation "org.codehaus.groovy:groovy"
+		testImplementation("org.spockframework:spock-core:$spockVersion") {
 			exclude(group: 'org.codehaus.groovy')
 		}
-		testCompile "junit:junit:4.12"
-		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
-		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
-		testCompile "org.assertj:assertj-core:2.4.1"
-		testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
+		testImplementation "junit:junit:4.12"
+		testImplementation "com.github.tomakehurst:wiremock:${wiremockVersion}"
+		testImplementation "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
+		testImplementation "org.assertj:assertj-core:2.4.1"
+		testImplementation "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
 	}
 }
 
@@ -106,20 +106,20 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	}
 
 	dependencies {
-		compile("org.springframework.boot:spring-boot-starter-web") {
+		implementation("org.springframework.boot:spring-boot-starter-web") {
 			exclude module: "spring-boot-starter-tomcat"
 		}
-		compile("org.springframework.boot:spring-boot-starter-jetty")
-		compile("org.springframework.boot:spring-boot-starter-actuator")
+		implementation("org.springframework.boot:spring-boot-starter-jetty")
+		implementation("org.springframework.boot:spring-boot-starter-actuator")
 
 		testRuntime("org.spockframework:spock-spring:$spockVersion") {
 			exclude(group: 'org.codehaus.groovy')
 		}
-		testCompile "org.mockito:mockito-core"
-		testCompile "org.springframework:spring-test"
-		testCompile "org.springframework.boot:spring-boot-test"
-		testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
-		testCompile "io.rest-assured:spring-mock-mvc:$restAssuredVersion"
+		testImplementation "org.mockito:mockito-core"
+		testImplementation "org.springframework:spring-test"
+		testImplementation "org.springframework.boot:spring-boot-test"
+		testImplementation "io.rest-assured:rest-assured:$restAssuredVersion"
+		testImplementation "io.rest-assured:spring-mock-mvc:$restAssuredVersion"
 	}
 
 	task cleanup(type: Delete) {

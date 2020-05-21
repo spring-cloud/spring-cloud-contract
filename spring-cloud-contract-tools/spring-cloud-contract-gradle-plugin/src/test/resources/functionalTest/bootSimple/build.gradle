@@ -31,20 +31,20 @@ repositories {
 }
 
 dependencies {
-	compile "org.springframework:spring-web"
-	compile "org.springframework:spring-context-support"
-	compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
+	implementation "org.springframework:spring-web"
+	implementation "org.springframework:spring-context-support"
+	implementation "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	implementation 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
-	testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
-	testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
-	testCompile("org.spockframework:spock-spring:1.0-groovy-2.4") {
+	testImplementation "com.github.tomakehurst:wiremock:${wiremockVersion}"
+	testImplementation "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
+	testImplementation("org.spockframework:spock-spring:1.0-groovy-2.4") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	testCompile "io.restassured:rest-assured:$restAssuredVersion"
-	testCompile "io.restassured:spring-mock-mvc:$restAssuredVersion"
-	testCompile "ch.qos.logback:logback-classic:1.1.2"
-	testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
+	testImplementation "io.restassured:rest-assured:$restAssuredVersion"
+	testImplementation "io.restassured:spring-mock-mvc:$restAssuredVersion"
+	testImplementation "ch.qos.logback:logback-classic:1.1.2"
+	testImplementation "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
 }
 
 contracts {
