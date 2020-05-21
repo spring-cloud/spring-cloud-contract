@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
-import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.util.ContentType;
@@ -46,9 +45,8 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 		ContentType type = metadata.getInputTestContentType();
 		String method = request.getMethod().getServerValue().toString().toLowerCase();
 		if (request.getBody() != null) {
-			String contentType = type.getMimeType();
-			contentType = StringUtils.hasText(contentType) ? contentType
-					: getContentType(request);
+			String contentType = StringUtils.hasText(metadata.getDefinedInputTestContentType())
+					? metadata.getDefinedInputTestContentType() : type.getMimeType();
 			Object body = request.getBody().getServerValue();
 			String value;
 			if (body instanceof ExecutionProperty) {
@@ -71,13 +69,6 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 		else {
 			this.blockBuilder.addIndented(".build(\"" + method.toUpperCase() + "\")");
 		}
-	}
-
-	private String getContentType(Request request) {
-		Header contentType = request.getHeaders().getEntries().stream()
-				.filter(header -> "Content-Type".equalsIgnoreCase(header.getName()))
-				.findFirst().orElse(null);
-		return contentType != null ? contentType.getServerValue().toString() : "";
 	}
 
 	@Override

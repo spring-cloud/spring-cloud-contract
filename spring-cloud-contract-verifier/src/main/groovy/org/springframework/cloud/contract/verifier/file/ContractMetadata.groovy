@@ -26,12 +26,12 @@ import org.apache.commons.logging.LogFactory
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.NamesUtil
 import org.springframework.util.Assert
-
 /**
  * Contains metadata for a particular file with a DSL
  *
@@ -103,12 +103,16 @@ class SingleContractMetadata {
 	private final File stubsFile
 	final Contract contract
 	private final Collection<Contract> allContracts
+	final String definedInputStubContentType
 	final ContentType inputStubContentType
 	final ContentType evaluatedInputStubContentType
+	final String definedOutputStubContentType
 	final ContentType outputStubContentType
 	final ContentType evaluatedOutputStubContentType
+	final String definedInputTestContentType
 	final ContentType inputTestContentType
 	final ContentType evaluatedInputTestContentType
+	final String definedOutputTestContentType
 	final ContentType outputTestContentType
 	final ContentType evaluatedOutputTestContentType
 	private final boolean http
@@ -121,17 +125,29 @@ class SingleContractMetadata {
 		DslProperty inputBody = inputBody(currentContract)
 		Headers outputHeaders = outputHeaders(currentContract)
 		DslProperty outputBody = outputBody(currentContract)
+		Header inputContentType = contentTypeHeader(inputHeaders)
+		Header outputContentType = contentTypeHeader(outputHeaders)
+		this.definedInputTestContentType =  inputContentType != null ? inputContentType.getServerValue() : ""
 		this.evaluatedInputTestContentType = tryToEvaluateTestContentType(inputHeaders, inputBody)
 		this.inputTestContentType = inputBody != null ? this.evaluatedInputTestContentType : ContentType.UNKNOWN
+		this.definedOutputTestContentType =  outputContentType != null ? outputContentType.getServerValue() : ""
 		this.evaluatedOutputTestContentType = tryToEvaluateTestContentType(outputHeaders, outputBody)
 		this.outputTestContentType = outputBody != null ? this.evaluatedOutputTestContentType : ContentType.UNKNOWN
+		this.definedInputStubContentType =  inputContentType != null ? inputContentType.getClientValue() : ""
 		this.evaluatedInputStubContentType = tryToEvaluateStubContentType(inputHeaders, inputBody)
 		this.inputStubContentType = inputBody != null ? this.evaluatedInputStubContentType : ContentType.UNKNOWN
+		this.definedOutputStubContentType =  outputContentType != null ? outputContentType.getClientValue() : ""
 		this.evaluatedOutputStubContentType = tryToEvaluateStubContentType(outputHeaders, outputBody)
 		this.outputStubContentType = outputBody != null ? this.evaluatedOutputStubContentType : ContentType.UNKNOWN
 		this.http = currentContract.request != null
 		this.contractMetadata = contractMetadata
 		this.stubsFile = contractMetadata.getPath() != null ? contractMetadata.getPath().toFile() : null
+	}
+
+	private Header contentTypeHeader(Headers headers) {
+		return headers == null ? null : headers.getEntries().stream()
+									.filter({ header -> "Content-Type".equalsIgnoreCase(header.getName()) })
+									.findFirst().orElse(null)
 	}
 
 	private ContentType tryToEvaluateStubContentType(Headers mainHeaders, DslProperty body) {
