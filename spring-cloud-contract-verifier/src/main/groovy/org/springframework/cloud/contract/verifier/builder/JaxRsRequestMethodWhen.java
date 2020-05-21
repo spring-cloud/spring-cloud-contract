@@ -45,8 +45,10 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 		ContentType type = metadata.getInputTestContentType();
 		String method = request.getMethod().getServerValue().toString().toLowerCase();
 		if (request.getBody() != null) {
-			String contentType = StringUtils.hasText(metadata.getDefinedInputTestContentType())
-					? metadata.getDefinedInputTestContentType() : type.getMimeType();
+			String contentType = StringUtils
+					.hasText(metadata.getDefinedInputTestContentType())
+							? metadata.getDefinedInputTestContentType()
+							: type.getMimeType();
 			Object body = request.getBody().getServerValue();
 			String value;
 			if (body instanceof ExecutionProperty) {

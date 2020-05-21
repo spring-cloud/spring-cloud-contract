@@ -36,15 +36,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.springframework.web.client.RestTemplate
 /**
  * @author Marcin Grzejszczak
  */
-//TODO: Document that ribbon.eureka.enabled=false needs to be set or override it somehow
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@ActiveProfiles("cloudtest")
-@TestPropertySource(properties = "stubrunner.cloud.loadbalancer.enabled=false")
+@ActiveProfiles("cloudtest-no-ribbon")
 // tag::autoconfigure[]
 @AutoConfigureStubRunner(
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
@@ -53,7 +50,7 @@ import org.springframework.web.client.RestTemplate
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")
 // end::autoconfigure[]
-class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
+class StubRunnerSpringCloudNoRibbonAutoConfigurationSpec extends Specification {
 
 	@Autowired
 	StubFinder stubFinder
@@ -71,7 +68,7 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	}
 
 	def setup() {
-		assert !(loadBalancerClientFactory instanceof StubRunnerLoadBalancerClientFactory)
+		assert loadBalancerClientFactory instanceof StubRunnerLoadBalancerClientFactory
 	}
 
 	// tag::test[]
