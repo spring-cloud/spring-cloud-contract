@@ -89,7 +89,7 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 				.separatorsToUnix(location);
 		final String rawPath = correctlyFormattedLocation.replace("stubs://file://", "");
 		if (rawPath.charAt(0) != '/') {
-			return "stubs://file://" + rawPath;
+			return "stubs://file:///" + rawPath;
 		}
 		return correctlyFormattedLocation;
 	}
