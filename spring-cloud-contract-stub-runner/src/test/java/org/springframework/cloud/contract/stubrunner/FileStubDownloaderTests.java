@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.springframework.core.io.Resource;
 
 /**
- * @author Budlee
+ * @author Matty A
  */
 public class FileStubDownloaderTests {
 

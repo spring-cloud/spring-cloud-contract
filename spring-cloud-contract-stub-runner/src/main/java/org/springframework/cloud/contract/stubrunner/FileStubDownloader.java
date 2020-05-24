@@ -16,15 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.core.io.AbstractResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +24,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.StringUtils;
+
+
 
 /**
  * Allows to read stubs and contracts from a given location. Contrary to
@@ -48,6 +51,7 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 
 	/**
 	 * Does any of the accepted protocols matches the URL of the repository.
+	 *
 	 * @param url - of the repository
 	 * @return {@code true} if protocol is accepted
 	 */
@@ -153,14 +157,14 @@ class StubsStubDownloader implements StubDownloader {
 					+ "]. Will copy them to a temporary directory.");
 			return new ResourceResolvingStubDownloader(stubRunnerOptions,
 					this::repoRootForSchemeSpecificPart, this::anyPattern)
-							.downloadAndUnpackStubJar(stubConfiguration);
+					.downloadAndUnpackStubJar(stubConfiguration);
 		}
 		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
 				this::gavPattern).downloadAndUnpackStubJar(stubConfiguration);
 	}
 
 	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions,
-			StubConfiguration configuration) {
+													StubConfiguration configuration) {
 		String specificPart = schemeSpecificPart();
 		specificPart = specificPart.endsWith("/") ? specificPart : (specificPart + "/");
 		specificPart = specificPart + "**/*.*";
@@ -188,8 +192,7 @@ class StubsStubDownloader implements StubDownloader {
 	// for group id a.b.c and artifact id d
 	// a.b.c/d
 	// a/b/c/d
-	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions,
-			StubConfiguration configuration) {
+	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions, StubConfiguration configuration) {
 		String pathWithGroupAndArtifactId = "/" + configuration.getGroupId() + "/"
 				+ configuration.getArtifactId();
 		String pathWithGroupAndArtifactIdSlashSeparated = "/"
