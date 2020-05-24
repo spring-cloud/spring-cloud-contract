@@ -16,6 +16,15 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,16 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.core.io.AbstractResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.StringUtils;
 
 /**
  * Allows to read stubs and contracts from a given location. Contrary to
@@ -76,6 +75,10 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
+		// Can be resolving a resource for Classpath as fallback
+		if (!location.startsWith("stubs://file://")) {
+			new StubsResource(location);
+		}
 		// Convert any windows file format path to a uri
 		String correctlyFormattedLocation = convertLocationToUriFormat(location);
 		return new StubsResource(correctlyFormattedLocation);
@@ -86,7 +89,7 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 				.separatorsToUnix(location);
 		final String rawPath = correctlyFormattedLocation.replace("stubs://file://", "");
 		if (rawPath.charAt(0) != '/') {
-			return "stubs://file:///" + rawPath;
+			return "stubs://file://" + rawPath;
 		}
 		return correctlyFormattedLocation;
 	}
