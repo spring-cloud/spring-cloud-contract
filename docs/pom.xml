@@ -20,6 +20,7 @@
 		<maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
 		<docs.whitelisted.branches>1.0.x,1.1.x,2.0.x,2.1.x</docs.whitelisted.branches>
 		<configprops.inclusionPattern>stubrunner.*|wiremock.*|</configprops.inclusionPattern>
+		<upload-docs-zip.phase>deploy</upload-docs-zip.phase>
 		<!-- Aligned with Groovy in SC-Build -->
 		<groovy.version>2.5.10</groovy.version>
 	</properties>
@@ -87,9 +88,6 @@
 	<profiles>
 		<profile>
 			<id>docs</id>
-			<properties>
-				<upload-docs-zip.phase>deploy</upload-docs-zip.phase>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
