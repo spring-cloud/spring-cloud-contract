@@ -19,7 +19,7 @@
 	</description>
 
 	<properties>
-		<spring-cloud-contract.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>3.0.0-SNAPSHOT</spring-cloud-contract.version>
 	</properties>
 
 	<modules>
