@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -44,12 +43,10 @@ import org.springframework.core.env.Environment;
 @ConditionalOnProperty(value = "stubrunner.cloud.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudAutoConfiguration {
 
-	@Autowired
-	BeanFactory beanFactory;
-
 	@Bean
-	public StubRunnerDiscoveryClientWrapper stubRunnerDiscoveryClientWrapper() {
-		return new StubRunnerDiscoveryClientWrapper(this.beanFactory);
+	public StubRunnerDiscoveryClientWrapper stubRunnerDiscoveryClientWrapper(
+			BeanFactory beanFactory) {
+		return new StubRunnerDiscoveryClientWrapper(beanFactory);
 	}
 
 	@Bean
@@ -69,8 +66,6 @@ public class StubRunnerSpringCloudAutoConfiguration {
 class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 
 	private final BeanFactory beanFactory;
-
-	DiscoveryClient discoveryClient;
 
 	StubFinder stubFinder;
 

@@ -17,14 +17,18 @@
 package org.springframework.cloud.contract.verifier.plugin;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.gradle.api.Action;
@@ -36,6 +40,7 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -48,7 +53,7 @@ import org.springframework.util.Assert;
  * @author Anatoliy Balakirev
  * @author Shannon Pamperl
  */
-public class ContractVerifierExtension {
+public class ContractVerifierExtension implements Serializable {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierExtension.class);
 
@@ -155,6 +160,8 @@ public class ContractVerifierExtension {
 
 	private ContractRepository contractRepository;
 
+	private PublishStubsToScm publishStubsToScm;
+
 	/**
 	 * Dependency that contains packaged contracts
 	 */
@@ -163,7 +170,6 @@ public class ContractVerifierExtension {
 	/**
 	 * The path in the JAR with all the contracts where contracts for this particular service lay.
 	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
-	 * <p></p>
 	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
 	 * {@code /com/example/artifactid}
 	 */
@@ -186,7 +192,6 @@ public class ContractVerifierExtension {
 	/**
 	 * A way to override any base class mappings. The keys are regular expressions on the package name
 	 * and the values FQN to a base class for that given expression.
-	 * <p></p>
 	 * Example of a mapping
 	 * [.*.com.example.v1..*] to [com.example.SomeBaseClass]
 	 * When a contract's package matches the provided regular expression then extending class will be the one
@@ -236,6 +241,8 @@ public class ContractVerifierExtension {
 	 */
 	private Property<String> sourceSet;
 
+	private final  ObjectFactory objects;
+
 	@Inject
 	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects) {
 		this.testFramework = objects.property(TestFramework.class).convention(TestFramework.JUNIT);
@@ -258,6 +265,7 @@ public class ContractVerifierExtension {
 		this.failOnNoContracts = objects.property(Boolean.class).convention(true);
 		this.failOnInProgress = objects.property(Boolean.class).convention(true);
 		this.contractRepository = objects.newInstance(ContractRepository.class);
+		this.publishStubsToScm = objects.newInstance(PublishStubsToScm.class);
 		this.contractDependency = objects.newInstance(Dependency.class);
 		this.contractsPath = objects.property(String.class);
 		this.contractsMode = objects.property(StubRunnerProperties.StubsMode.class).convention(StubRunnerProperties.StubsMode.CLASSPATH);
@@ -270,6 +278,7 @@ public class ContractVerifierExtension {
 		this.contractsProperties = objects.mapProperty(String.class, String.class).convention(new HashMap<>());
 		this.disableStubPublication = objects.property(Boolean.class).convention(false);
 		this.sourceSet = objects.property(String.class);
+		this.objects = objects;
 	}
 
 	@Deprecated
@@ -455,12 +464,22 @@ public class ContractVerifierExtension {
 		this.failOnInProgress.set(failOnInProgress);
 	}
 
+	@Nested
 	public ContractRepository getContractRepository() {
 		return contractRepository;
 	}
 
 	public void contractRepository(Action<ContractRepository> action) {
 		action.execute(contractRepository);
+	}
+
+	@Nested
+	public PublishStubsToScm getPublishStubsToScm() {
+		return publishStubsToScm;
+	}
+
+	public void publishStubsToScm(Action<PublishStubsToScm> action) {
+		action.execute(publishStubsToScm);
 	}
 
 	public Dependency getContractDependency() {
@@ -575,7 +594,7 @@ public class ContractVerifierExtension {
 		this.sourceSet.set(sourceSet);
 	}
 
-	public static class Dependency {
+	public static class Dependency implements Serializable {
 		private Property<String> groupId;
 		private Property<String> artifactId;
 		private Property<String> version;
@@ -653,7 +672,7 @@ public class ContractVerifierExtension {
 		}
 	}
 
-	public static class BaseClassMapping {
+	public static class BaseClassMapping implements Serializable {
 		private final MapProperty<String, String> baseClassMappings;
 
 		@Inject
@@ -675,7 +694,7 @@ public class ContractVerifierExtension {
 	}
 
 	// This class is used as an input to the tasks, so all fields are marked as `@Input` to allow incremental build
-	public static class ContractRepository {
+	public static class ContractRepository implements Serializable {
 		private Property<String> repositoryUrl;
 		private Property<String> username;
 		private Property<String> password;
@@ -768,12 +787,6 @@ public class ContractVerifierExtension {
 			return proxyPort;
 		}
 
-		// favor unwrapped int
-		@Deprecated
-		public void setProxyPort(Integer proxyPort) {
-			this.proxyPort.set(proxyPort);
-		}
-
 		public void setProxyPort(int proxyPort) {
 			Assert.state(0 < proxyPort && proxyPort <= 65536, "Proxy port should be between 1 and 65536");
 			this.proxyPort.set(proxyPort);
@@ -799,6 +812,48 @@ public class ContractVerifierExtension {
 					", proxyPort=" + proxyPort.getOrNull() +
 					", proxyHost=" + proxyHost.getOrNull() +
 					", cacheDownloadedContracts=" + cacheDownloadedContracts.get() +
+					'}';
+		}
+	}
+
+	public static class PublishStubsToScm implements Serializable {
+
+		/**
+		 * Dependency that contains packaged contracts
+		 */
+		private Dependency contractDependency;
+
+		private ContractRepository contractRepository;
+
+		@Inject
+		public PublishStubsToScm(ObjectFactory objects) {
+			contractDependency = objects.newInstance(Dependency.class);
+			contractRepository = objects.newInstance(ContractRepository.class);
+		}
+
+		@Nested
+		public Dependency getContractDependency() {
+			return contractDependency;
+		}
+
+		public void contractDependency(Action<Dependency> action) {
+			action.execute(contractDependency);
+		}
+
+		@Nested
+		public ContractRepository getContractRepository() {
+			return contractRepository;
+		}
+
+		public void contractRepository(Action<ContractRepository> action) {
+			action.execute(contractRepository);
+		}
+
+		@Override
+		public String toString() {
+			return "PublishStubsToScm{" +
+					"contractDependency=" + contractDependency +
+					", contractRepository=" + contractRepository +
 					'}';
 		}
 	}

@@ -18,11 +18,13 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.loadbalancer;
 
 import java.io.Closeable;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import reactor.core.publisher.Mono;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -37,18 +39,21 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.ConditionalOnStubbedDiscoveryEnabled;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
+import org.springframework.cloud.contract.stubrunner.spring.cloud.StubRunnerSpringCloudAutoConfiguration;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientConfiguration;
 import org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration;
+import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.ResolvableType;
 import org.springframework.util.StringUtils;
 
 /**
  * Provides autoconfiguraion for the Spring Cloud Load Balancer module.
  *
- * @since 3.0.0
+ * @since 2.2.3
  * @author Marcin Grzejszczak
  */
 @Configuration(proxyBeanMethods = false)
@@ -57,15 +62,16 @@ import org.springframework.util.StringUtils;
 		matchIfMissing = true)
 @ConditionalOnBean(StubMapperProperties.class)
 @AutoConfigureBefore(LoadBalancerAutoConfiguration.class)
-@AutoConfigureAfter(LoadBalancerClientConfiguration.class)
+@AutoConfigureAfter({ LoadBalancerClientConfiguration.class,
+		StubRunnerSpringCloudAutoConfiguration.class })
 @ConditionalOnStubbedDiscoveryEnabled
 public class SpringCloudLoadBalancerAutoConfiguration {
 
 	@Bean
 	@Primary
-	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties) {
-		return new StubRunnerLoadBalancerClientFactory(stubFinder, stubMapperProperties);
+	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(
+			BeanFactory beanFactory) {
+		return new StubRunnerLoadBalancerClientFactory(beanFactory);
 	}
 
 }
@@ -73,20 +79,62 @@ public class SpringCloudLoadBalancerAutoConfiguration {
 class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory
 		implements Closeable {
 
-	private final StubFinder stubFinder;
+	private StubFinder stubFinder;
 
-	private final StubMapperProperties stubMapperProperties;
+	private StubMapperProperties stubMapperProperties;
 
-	StubRunnerLoadBalancerClientFactory(StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties) {
-		this.stubFinder = stubFinder;
-		this.stubMapperProperties = stubMapperProperties;
+	private final BeanFactory beanFactory;
+
+	StubRunnerLoadBalancerClientFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+
+	private StubFinder stubFinder() {
+		if (this.stubFinder == null) {
+			this.stubFinder = this.beanFactory.getBean(StubFinder.class);
+		}
+		return this.stubFinder;
+	}
+
+	private StubMapperProperties stubMapperProperties() {
+		if (this.stubMapperProperties == null) {
+			this.stubMapperProperties = this.beanFactory
+					.getBean(StubMapperProperties.class);
+		}
+		return this.stubMapperProperties;
 	}
 
 	@Override
 	public ReactiveLoadBalancer<ServiceInstance> getInstance(String serviceId) {
-		return request -> Mono.just(new DefaultResponse(
-				new StubbedServiceInstance(stubFinder, stubMapperProperties, serviceId)));
+		return (ReactorServiceInstanceLoadBalancer) request -> Mono
+				.just(new DefaultResponse(new StubbedServiceInstance(stubFinder(),
+						stubMapperProperties(), serviceId)));
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getInstance(String name, Class<T> type) {
+		return (T) getInstance(name);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getInstance(String name, Class<?> clazz, Class<?>... generics) {
+		return (T) getInstance(name);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getInstance(String name, ResolvableType type) {
+		return (T) getInstance(name);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> Map<String, T> getInstances(String name, Class<T> type) {
+		Map<String, T> map = new HashMap<>();
+		map.put(name, (T) getInstance(name));
+		return map;
 	}
 
 	@Override

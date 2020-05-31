@@ -718,6 +718,36 @@ the `publish` task is executed
 */
 publish.dependsOn("publishStubsToScm")
 ----
+
+It is also possible to further customise the `publishStubsToScm` gradle task. In the following example,
+the task is customised to pick contracts from a local git repository:
+
+[source,groovy,indent=0,role="secondary"]
+.gradle
+----
+publishStubsToScm {
+	// We want to modify the default set up of the plugin when publish stubs to scm is called
+	// We want to pick contracts from a Git repository
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:${project.version}"
+	}
+	/*
+	We reuse the contract dependency section to set up the path
+	to the folder that contains the contract definitions. In our case the
+	path will be /groupId/artifactId/version/contracts
+	 */
+	contractRepository {
+		repositoryUrl = "git://file://${new File(project.rootDir, "../target")}/contract_empty_git/"
+	}
+	// We set the contracts mode to `LOCAL`
+	contractsMode = "LOCAL"
+	}
+----
+
+IMPORTANT:: Starting with `2.3.0.RELEASE` the `customize{}` closure previously used for the
+`publishStubsToScm` customization is no longer available. The settings should be applied directly
+within the `publishStubsToScm` closure as in the example above.
+
 ====
 
 With such a setup:

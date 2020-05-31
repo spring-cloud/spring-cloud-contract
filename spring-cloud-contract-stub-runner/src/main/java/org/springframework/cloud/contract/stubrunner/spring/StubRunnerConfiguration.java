@@ -63,9 +63,6 @@ public class StubRunnerConfiguration {
 	private StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
 
 	@Autowired
-	private StubRunnerProperties props;
-
-	@Autowired
 	private ConfigurableEnvironment environment;
 
 	/**
@@ -77,9 +74,10 @@ public class StubRunnerConfiguration {
 	 */
 	@Bean
 	public BatchStubRunner batchStubRunner(BeanFactory beanFactory) {
-		StubRunnerOptionsBuilder builder = builder();
-		if (this.props.getProxyHost() != null) {
-			builder.withProxy(this.props.getProxyHost(), this.props.getProxyPort());
+		StubRunnerProperties props = beanFactory.getBean(StubRunnerProperties.class);
+		StubRunnerOptionsBuilder builder = builder(props);
+		if (props.getProxyHost() != null) {
+			builder.withProxy(props.getProxyHost(), props.getProxyPort());
 		}
 		StubRunnerOptions stubRunnerOptions = stubRunnerOptions(builder);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
@@ -101,30 +99,30 @@ public class StubRunnerConfiguration {
 		};
 	}
 
-	private StubRunnerOptionsBuilder builder() {
+	private StubRunnerOptionsBuilder builder(StubRunnerProperties props) {
 		return new StubRunnerOptionsBuilder()
 				.withMinMaxPort(
-						Integer.valueOf(resolvePlaceholder(this.props.getMinPort(),
-								this.props.getMinPort())),
-						Integer.valueOf(resolvePlaceholder(this.props.getMaxPort(),
-								this.props.getMaxPort())))
-				.withStubRepositoryRoot(this.props.getRepositoryRoot())
-				.withStubsMode(resolvePlaceholder(this.props.getStubsMode()))
-				.withStubsClassifier(resolvePlaceholder(this.props.getClassifier()))
-				.withStubs(resolvePlaceholder(this.props.getIds()))
-				.withUsername(resolvePlaceholder(this.props.getUsername()))
-				.withPassword(resolvePlaceholder(this.props.getPassword()))
-				.withStubPerConsumer(Boolean.parseBoolean(
-						resolvePlaceholder(this.props.isStubsPerConsumer())))
-				.withConsumerName(consumerName())
+						Integer.valueOf(resolvePlaceholder(props.getMinPort(),
+								props.getMinPort())),
+						Integer.valueOf(resolvePlaceholder(props.getMaxPort(),
+								props.getMaxPort())))
+				.withStubRepositoryRoot(props.getRepositoryRoot())
+				.withStubsMode(resolvePlaceholder(props.getStubsMode()))
+				.withStubsClassifier(resolvePlaceholder(props.getClassifier()))
+				.withStubs(resolvePlaceholder(props.getIds()))
+				.withUsername(resolvePlaceholder(props.getUsername()))
+				.withPassword(resolvePlaceholder(props.getPassword()))
+				.withStubPerConsumer(Boolean
+						.parseBoolean(resolvePlaceholder(props.isStubsPerConsumer())))
+				.withConsumerName(consumerName(props))
 				.withMappingsOutputFolder(
-						resolvePlaceholder(this.props.getMappingsOutputFolder()))
-				.withDeleteStubsAfterTest(Boolean.parseBoolean(
-						resolvePlaceholder(this.props.isDeleteStubsAfterTest())))
-				.withGenerateStubs(Boolean
-						.parseBoolean(resolvePlaceholder(this.props.isGenerateStubs())))
-				.withProperties(this.props.getProperties())
-				.withHttpServerStubConfigurer(this.props.getHttpServerStubConfigurer());
+						resolvePlaceholder(props.getMappingsOutputFolder()))
+				.withDeleteStubsAfterTest(Boolean
+						.parseBoolean(resolvePlaceholder(props.isDeleteStubsAfterTest())))
+				.withGenerateStubs(
+						Boolean.parseBoolean(resolvePlaceholder(props.isGenerateStubs())))
+				.withProperties(props.getProperties())
+				.withHttpServerStubConfigurer(props.getHttpServerStubConfigurer());
 	}
 
 	private String[] resolvePlaceholder(String[] string) {
@@ -142,9 +140,9 @@ public class StubRunnerConfiguration {
 		return this.environment.resolvePlaceholders(string.toString());
 	}
 
-	private String consumerName() {
-		if (StringUtils.hasText(this.props.getConsumerName())) {
-			return resolvePlaceholder(this.props.getConsumerName());
+	private String consumerName(StubRunnerProperties props) {
+		if (StringUtils.hasText(props.getConsumerName())) {
+			return resolvePlaceholder(props.getConsumerName());
 		}
 		return this.environment.getProperty("spring.application.name");
 	}

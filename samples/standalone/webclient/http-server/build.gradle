@@ -26,12 +26,12 @@ dependencyManagement {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-webflux")
-	compile("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-	testCompile 'org.springframework.boot:spring-boot-starter-test'
-	testCompile 'org.springframework.restdocs:spring-restdocs-webtestclient'
-	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
+	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
 }
 
 contracts {

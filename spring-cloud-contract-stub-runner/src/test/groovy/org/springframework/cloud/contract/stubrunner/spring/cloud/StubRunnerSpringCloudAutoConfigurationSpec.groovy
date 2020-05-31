@@ -28,12 +28,15 @@ import org.springframework.cloud.consul.ConsulAutoConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+import org.springframework.cloud.contract.stubrunner.spring.cloud.loadbalancer.StubRunnerLoadBalancerClientFactory
+import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.web.client.RestTemplate
 /**
  * @author Marcin Grzejszczak
@@ -41,6 +44,7 @@ import org.springframework.web.client.RestTemplate
 //TODO: Document that ribbon.eureka.enabled=false needs to be set or override it somehow
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @ActiveProfiles("cloudtest")
+@TestPropertySource(properties = "stubrunner.cloud.loadbalancer.enabled=false")
 // tag::autoconfigure[]
 @AutoConfigureStubRunner(
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
@@ -56,12 +60,18 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	@Autowired
 	@LoadBalanced
 	RestTemplate restTemplate
+	@Autowired
+	LoadBalancerClientFactory loadBalancerClientFactory;
 
 	@BeforeClass
 	@AfterClass
 	static void setupProps() {
 		System.clearProperty("stubrunner.repository.root")
 		System.clearProperty("stubrunner.classifier")
+	}
+
+	def setup() {
+		assert !(loadBalancerClientFactory instanceof StubRunnerLoadBalancerClientFactory)
 	}
 
 	// tag::test[]

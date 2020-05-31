@@ -1338,6 +1338,41 @@ public class FooTest {
 			}
 	}
 
+	@Issue('#1388')
+	@Unroll
+	def "should keep the custom content type that includes the +json suffix [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method("POST")
+					url("/ping")
+					headers {
+						header('Content-Type': 'application/my-content-type+json')
+					}
+					body($(test(value: "test"), stub(anyNonEmptyString())))
+				}
+				response {
+					status 200
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			test.contains('"application/my-content-type+json")')
+			!test.contains('"application/json")')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+	}
+
 	@Issue('#261')
 	@Unroll
 	def "should not produce any additional quotes for [#methodBuilderName]"() {
