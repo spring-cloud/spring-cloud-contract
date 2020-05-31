@@ -35,8 +35,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 
-
-
 /**
  * Allows to read stubs and contracts from a given location. Contrary to
  * {@link org.springframework.cloud.contract.stubrunner.AetherStubDownloaderBuilder},
@@ -51,7 +49,6 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 
 	/**
 	 * Does any of the accepted protocols matches the URL of the repository.
-	 *
 	 * @param url - of the repository
 	 * @return {@code true} if protocol is accepted
 	 */
@@ -81,7 +78,7 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 		}
 		// Can be resolving a resource for Classpath as fallback
 		if (!location.startsWith("stubs://file://")) {
-			new StubsResource(location);
+			return new StubsResource(location);
 		}
 		// Convert any windows file format path to a uri
 		String correctlyFormattedLocation = convertLocationToUriFormat(location);
@@ -163,8 +160,7 @@ class StubsStubDownloader implements StubDownloader {
 				this::gavPattern).downloadAndUnpackStubJar(stubConfiguration);
 	}
 
-	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions,
-													StubConfiguration configuration) {
+	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions, StubConfiguration configuration) {
 		String specificPart = schemeSpecificPart();
 		specificPart = specificPart.endsWith("/") ? specificPart : (specificPart + "/");
 		specificPart = specificPart + "**/*.*";
