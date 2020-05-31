@@ -154,13 +154,14 @@ class StubsStubDownloader implements StubDownloader {
 					+ "]. Will copy them to a temporary directory.");
 			return new ResourceResolvingStubDownloader(stubRunnerOptions,
 					this::repoRootForSchemeSpecificPart, this::anyPattern)
-					.downloadAndUnpackStubJar(stubConfiguration);
+							.downloadAndUnpackStubJar(stubConfiguration);
 		}
 		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
 				this::gavPattern).downloadAndUnpackStubJar(stubConfiguration);
 	}
 
-	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions, StubConfiguration configuration) {
+	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions,
+			StubConfiguration configuration) {
 		String specificPart = schemeSpecificPart();
 		specificPart = specificPart.endsWith("/") ? specificPart : (specificPart + "/");
 		specificPart = specificPart + "**/*.*";
@@ -188,7 +189,8 @@ class StubsStubDownloader implements StubDownloader {
 	// for group id a.b.c and artifact id d
 	// a.b.c/d
 	// a/b/c/d
-	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions, StubConfiguration configuration) {
+	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions,
+			StubConfiguration configuration) {
 		String pathWithGroupAndArtifactId = "/" + configuration.getGroupId() + "/"
 				+ configuration.getArtifactId();
 		String pathWithGroupAndArtifactIdSlashSeparated = "/"
