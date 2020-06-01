@@ -54,7 +54,7 @@
 		<gmavenplus-plugin.version>1.8.1</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>2.5.10</groovy.version>
+		<groovy.version>3.0.4</groovy.version>
 		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.5.4</maven.version>
 		<!-- Resolver has to be aligned with Maven (e.g resolver 1.4 and Maven 3.6 or resolver 1.3 and Maven 3.5) -->
