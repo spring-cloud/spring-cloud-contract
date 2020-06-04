@@ -4,6 +4,7 @@ Manual changes to this file will be lost when it is generated again.
 Edit the files in the src/main/asciidoc/ directory instead.
 ////
 
+
 == Spring Cloud Contract
 
 You always need confidence when pushing new features into a new application or service in
