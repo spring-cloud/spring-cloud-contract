@@ -10,7 +10,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-docs</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Docs</name>
 	<description>Spring Cloud Docs</description>
 	<properties>
