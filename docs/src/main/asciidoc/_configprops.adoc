@@ -29,19 +29,19 @@
 |stubrunner.properties |  | Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 |stubrunner.proxy-host |  | Repository proxy host.
 |stubrunner.proxy-port |  | Repository proxy port.
-|stubrunner.server-id |  | null
+|stubrunner.server-id |  | 
 |stubrunner.stream.enabled | true | Whether to enable Stub Runner integration with Spring Cloud Stream.
 |stubrunner.stubs-mode |  | Pick where the stubs should come from.
 |stubrunner.stubs-per-consumer | false | Should only stubs for this particular consumer get registered in HTTP server stub.
 |stubrunner.username |  | Repository username.
 |wiremock.placeholders.enabled | true | Flag to indicate that http URLs in generated wiremock stubs should be filtered to add or resolve a placeholder for a dynamic port.
-|wiremock.reset-mappings-after-each-test | false | null
-|wiremock.rest-template-ssl-enabled | false | null
-|wiremock.server.files | [] | null
-|wiremock.server.https-port | -1 | null
-|wiremock.server.https-port-dynamic | false | null
-|wiremock.server.port | 8080 | null
-|wiremock.server.port-dynamic | false | null
-|wiremock.server.stubs | [] | null
+|wiremock.reset-mappings-after-each-test | false | 
+|wiremock.rest-template-ssl-enabled | false | 
+|wiremock.server.files | [] | 
+|wiremock.server.https-port | -1 | 
+|wiremock.server.https-port-dynamic | false | 
+|wiremock.server.port | 8080 | 
+|wiremock.server.port-dynamic | false | 
+|wiremock.server.stubs | [] | 
 
 |===
