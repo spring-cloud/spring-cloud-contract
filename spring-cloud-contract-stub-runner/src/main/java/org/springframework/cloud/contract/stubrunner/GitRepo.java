@@ -55,10 +55,10 @@ import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FS;
-import org.eclipse.jgit.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
 
 /**
@@ -221,7 +221,7 @@ class GitRepo {
 			return git;
 		}
 		catch (GitAPIException | URISyntaxException e) {
-			deleteBaseDirIfExists();
+			deleteBaseDirIfExists("Failed to initialize base directory");
 			throw new IllegalStateException(e);
 		}
 	}
@@ -236,7 +236,7 @@ class GitRepo {
 			return command.call();
 		}
 		catch (GitAPIException e) {
-			deleteBaseDirIfExists();
+			deleteBaseDirIfExists("Failed to delete base directory");
 			throw e;
 		}
 		finally {
@@ -290,13 +290,10 @@ class GitRepo {
 		return false;
 	}
 
-	private void deleteBaseDirIfExists() {
+	private void deleteBaseDirIfExists(String errorMessage) {
 		if (this.basedir.exists()) {
-			try {
-				FileUtils.delete(this.basedir, FileUtils.RECURSIVE);
-			}
-			catch (IOException e) {
-				throw new IllegalStateException("Failed to initialize base directory", e);
+			if (!FileSystemUtils.deleteRecursively(this.basedir)) {
+				throw new IllegalStateException(errorMessage);
 			}
 		}
 	}
