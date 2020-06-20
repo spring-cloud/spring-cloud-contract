@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -86,13 +85,16 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 	}
 
 	private String convertLocationToUriFormat(String location) {
-		final String correctlyFormattedLocation = FilenameUtils
-				.separatorsToUnix(location);
+		final String correctlyFormattedLocation = separatorsToUnix(location);
 		final String rawPath = correctlyFormattedLocation.replace("stubs://file://", "");
 		if (rawPath.charAt(0) != '/') {
 			return "stubs://file:///" + rawPath;
 		}
 		return correctlyFormattedLocation;
+	}
+
+	private String separatorsToUnix(String location) {
+		return location != null && location.indexOf(92) != -1 ? location.replace('\\', '/') : location;
 	}
 
 }

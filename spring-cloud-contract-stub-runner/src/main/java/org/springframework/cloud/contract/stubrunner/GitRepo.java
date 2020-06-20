@@ -34,7 +34,6 @@ import com.jcraft.jsch.agentproxy.RemoteIdentityRepository;
 import com.jcraft.jsch.agentproxy.USocketFactory;
 import com.jcraft.jsch.agentproxy.connector.SSHAgentConnector;
 import com.jcraft.jsch.agentproxy.usocket.JNAUSocketFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jgit.api.CheckoutCommand;
@@ -59,6 +58,7 @@ import org.eclipse.jgit.util.FS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
 
 /**
@@ -292,11 +292,8 @@ class GitRepo {
 
 	private void deleteBaseDirIfExists(String errorMessage) {
 		if (this.basedir.exists()) {
-			try {
-				FileUtils.deleteDirectory(this.basedir);
-			}
-			catch (IOException e) {
-				throw new IllegalStateException(errorMessage, e);
+			if (FileSystemUtils.deleteRecursively(this.basedir)) {
+				log.warn(errorMessage);
 			}
 		}
 	}
