@@ -292,8 +292,8 @@ class GitRepo {
 
 	private void deleteBaseDirIfExists(String errorMessage) {
 		if (this.basedir.exists()) {
-			if (FileSystemUtils.deleteRecursively(this.basedir)) {
-				log.warn(errorMessage);
+			if (!FileSystemUtils.deleteRecursively(this.basedir)) {
+				throw new IllegalStateException(errorMessage);
 			}
 		}
 	}
