@@ -10,7 +10,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}"
 	}
 }
@@ -29,18 +29,22 @@ repositories {
 }
 
 apply plugin: 'groovy'
-apply plugin: 'io.spring.dependency-management'
+apply plugin: "io.spring.dependency-management"
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
-	}
-}
-
 dependencies {
+	testImplementation(platform("org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"))
+	testImplementation(platform("org.springframework.cloud:spring-cloud-stream-dependencies:${springCloudStreamVersion}"))
+
+	testImplementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+	testImplementation("org.springframework.cloud:spring-cloud-stream")
+	if (getProp("VERIFIER_MESSAGING_TYPE")) {
+		testImplementation("org.springframework.cloud:spring-cloud-stream-binder-${getProp("VERIFIER_MESSAGING_TYPE")}")
+	} else {
+		testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
+	}
 }
 
 test {
