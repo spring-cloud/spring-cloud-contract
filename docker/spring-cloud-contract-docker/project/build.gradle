@@ -30,8 +30,11 @@ repositories {
 
 apply plugin: 'groovy'
 apply plugin: "io.spring.dependency-management"
+apply plugin: "org.springframework.boot"
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
+
+bootJar.enabled = false
 
 dependencies {
 	testImplementation(platform("org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"))
@@ -40,10 +43,15 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
 	testImplementation("org.springframework.cloud:spring-cloud-stream")
+
+	// TEMP
+	testImplementation("org.springframework.cloud:spring-cloud-stream-binder-rabbit")
+
 	if (getProp("VERIFIER_MESSAGING_TYPE")) {
 		testImplementation("org.springframework.cloud:spring-cloud-stream-binder-${getProp("VERIFIER_MESSAGING_TYPE")}")
 	} else {
-		testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
+		// TEMP
+//		testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
 	}
 }
 
@@ -65,6 +73,7 @@ contracts {
 	baseClassForTests = "contracts.RestBase"
 	testMode = "EXPLICIT"
 	stubsSuffix = getProp("PRODUCER_STUBS_CLASSIFIER") ?: "stubs"
+	failOnNoContracts = getProp("FAIL_ON_NO_CONTRACTS") ?: false
 	if (getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
 		logger.
 				lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")

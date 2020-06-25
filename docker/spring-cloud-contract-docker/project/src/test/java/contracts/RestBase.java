@@ -23,11 +23,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -50,6 +52,9 @@ public abstract class RestBase {
 	@Value("${APPLICATION_PASSWORD:}")
 	String password;
 
+	@Autowired
+	ApplicationContext applicationContext;
+
 	@BeforeEach
 	public void setup() {
 		RestAssured.baseURI = this.url;
@@ -59,6 +64,17 @@ public abstract class RestBase {
 	}
 
 	public void triggerMessage(String label) {
+		triggerMessage(label, "");
+	}
+
+	public void triggerMessage(String label, String queueName) {
+		triggerMessage(label, queueName, queueName);
+	}
+
+	public void triggerMessage(String label, String groupName, String queueName) {
+		if (StringUtils.hasText(queueName)) {
+			provisionQueue(groupName, queueName);
+		}
 		String url = this.url + "/springcloudcontract/" + label;
 		log.info("Will send a request to [{}] in order to trigger a message", url);
 		restTemplate().postForObject(url, "", String.class);
