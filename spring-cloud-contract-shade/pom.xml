@@ -12,7 +12,6 @@
 		<asm.version>7.1</asm.version>
 		<checker.version>3.1.1</checker.version>
 
-		<maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
 		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
 	</properties>
@@ -173,7 +172,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>${maven-shade-plugin.version}</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
