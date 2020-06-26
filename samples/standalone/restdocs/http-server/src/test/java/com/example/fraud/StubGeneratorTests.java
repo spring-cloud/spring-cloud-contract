@@ -20,9 +20,8 @@ import java.math.BigDecimal;
 
 import com.example.fraud.model.FraudCheck;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
 
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -41,7 +39,6 @@ import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestD
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
@@ -53,7 +50,7 @@ public class StubGeneratorTests {
 
 	private JacksonTester<FraudCheck> json;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		ObjectMapper objectMappper = new ObjectMapper();
 		// Possibly configure the mapper

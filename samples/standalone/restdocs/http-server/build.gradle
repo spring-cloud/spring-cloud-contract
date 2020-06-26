@@ -73,7 +73,6 @@ contracts {
 		baseClassMapping('.*standalone.*', 'com.example.fraud.FraudBaseWithStandaloneSetup')
 		baseClassMapping('.*webapp.*', 'com.example.fraud.FraudBaseWithWebAppSetup')
 	}
-	testFramework("JUNIT")
 }
 
 generateClientStubs.enabled = false
@@ -86,6 +85,10 @@ task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses
 
 artifacts {
 	archives stubsJar
+}
+
+test {
+	useJUnitPlatform()
 }
 
 task copySnippets(type: Copy, dependsOn: test) {
