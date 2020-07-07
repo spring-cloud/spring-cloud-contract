@@ -21,7 +21,7 @@ include::_project-features-wiremock.adoc[]
 [[features-build-tools]]
 == Build Tools Integration
 
-You can run test generation and stub execution in various ways. The most common ones are
+You can run test generation and stub invokation in various ways. The most common ones are
 as follows:
 
 * link:maven-project.html[Maven]

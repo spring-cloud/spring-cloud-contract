@@ -110,7 +110,7 @@ from the container's `.m2`. Mount your local `.m2` as a volume available at the 
 
 WARNING: You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
 
-The following environment variables are used when tests are executed:
+The following environment variables are used when tests are run:
 
 - `APPLICATION_BASE_URL`: URL against which tests should be run.
 Remember that it has to be accessible from the Docker container (for example, `localhost`
@@ -168,7 +168,7 @@ $ CURRENT_DIR="$( pwd )"
 $ CURRENT_FOLDER_NAME=${PWD##*/}
 $ PROJECT_VERSION="0.0.1.RELEASE"
 
-# Execute contract tests
+# Run contract tests
 $ docker run  --rm -e "APPLICATION_BASE_URL=${APPLICATION_BASE_URL}" -e "PUBLISH_ARTIFACTS=true" -e "PROJECT_NAME=${CURRENT_FOLDER_NAME}" -e "REPO_WITH_BINARIES_URL=${ARTIFACTORY_URL}" -e "PROJECT_VERSION=${PROJECT_VERSION}" -v "${CURRENT_DIR}/contracts/:/contracts:ro" -v "${CURRENT_DIR}/node_modules/spring-cloud-contract/output:/spring-cloud-contract-output/" springcloud/spring-cloud-contract:"${SC_CONTRACT_DOCKER_VERSION}"
 
 # Kill app
@@ -190,7 +190,7 @@ stateful situation.
 - The contract tests are generated through Docker, and tests
 are run against the running application.
 ** The contracts are taken from `/contracts` folder.
-** The output of the test execution is available under
+** The output of the test is available under
 `node_modules/spring-cloud-contract/output`.
 - The stubs are uploaded to Artifactory. You can find them in
 http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/ .
@@ -263,7 +263,7 @@ that the stubs are setup properly. To do so, run the following commands:
 ====
 [source,bash]
 ----
-# let's execute the first request (no response is returned)
+# let's run the first request (no response is returned)
 $ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "genre" : "Genre", "description" : "Description", "author" : "Author", "publisher" : "Publisher", "pages" : 100, "image_url" : "https://d213dhlpdb53mu.cloudfront.net/assets/pivotal-square-logo-41418bd391196c3022f3cd9f3959b3f6d7764c47873d858583384e759c7db435.svg", "buy_url" : "https://pivotal.io" }' http://localhost:9876/api/books
 # Now time for the second request
 $ curl -X GET http://localhost:9876/api/books

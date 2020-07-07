@@ -380,7 +380,7 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 
 A `StubRunnerExtension` is also available for JUnit 5. `StubRunnerRule` and
 `StubRunnerExtension` work in a very similar fashion. After the rule or extension is
-executed, Stub Runner connects to your Maven repository and, for the given list of
+called, Stub Runner connects to your Maven repository and, for the given list of
 dependencies, tries to:
 
 - Download them
@@ -719,7 +719,7 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 
 One way to use Stub Runner Boot is to use it as a feed of stubs for "`smoke tests`". What does that mean?
 Assume that you do not want to deploy 50 microservices to a test environment in order
-to see whether your application works. You have already executed a suite of tests during the build process,
+to see whether your application works. You have already run a suite of tests during the build process,
 but you would also like to ensure that the packaging of your application works. You can
 deploy your application to an environment, start it, and run a couple of tests on it to see whether
 it works. We can call those tests "`smoke tests`", because their purpose is to check only a handful

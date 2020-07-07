@@ -345,7 +345,7 @@ JAR is available offline, remotely, and so on).
 * `deleteStubsAfterTest`: If set to `false`, do not remove any downloaded
 contracts from temporary directories.
 * `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
-* `failOnInProgress`: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to `true`.
+* `failOnInProgress`: If set to `true`, then, if any contracts that are in progress are found, they break the build. On the producer side, you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test results on the consumer side. Defaults to `true`.
 
 There is also the `contractRepository { ... }` closure that contains the following properties
 

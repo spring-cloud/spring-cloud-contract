@@ -645,7 +645,7 @@ to use the SCM implementation from the URL that starts with
 the `git://` protocol.
 
 IMPORTANT: You have to manually add the `pushStubsToScm`
-goal in Maven or execute (bind) the `pushStubsToScm` task in
+goal in Maven or use (bind) the `pushStubsToScm` task in
 Gradle. We do not push stubs to the `origin` of your git
 repository.
 
@@ -714,7 +714,7 @@ contracts {
 
 /*
 In this scenario we want to publish stubs to SCM whenever
-the `publish` task is executed
+the `publish` task is invoked
 */
 publish.dependsOn("publishStubsToScm")
 ----
@@ -902,7 +902,7 @@ include::{standalone_pact_path}/http-server/build.gradle[tags=pact_dependency,in
 ----
 ====
 
-When you execute the build of your application, a test and stub is generated. The following
+When you build your application, a test and stub is generated. The following
 example shows a test and stub that came from this process:
 
 ====
@@ -1312,14 +1312,14 @@ If you use YAML, you can use the `bodyFromFile` property.
 
 Spring Cloud Contract comes with a `ToFileContractsTransformer` class that lets you dump
 contracts as files for the given `ContractConverter`. It contains a `static void main`
-method that lets you execute the transformer as an executable. It takes the following
+method that lets you invoke the transformer as an executable. It takes the following
 arguments:
 
 - argument 1 : `FQN`: Fully qualified name of the `ContractConverter` (for example, `PactContractConverter`). *REQUIRED*.
 - argument 2 : `path`: Path where the dumped files should be stored. *OPTIONAL* -- defaults to `target/converted-contracts`.
 - argument 3 : `path`: Path were the contracts should be searched for. *OPTIONAL* -- defaults to `src/test/resources/contracts`.
 
-After executing the transformer, the Spring Cloud Contract files are processed and,
+After calling the transformer, the Spring Cloud Contract files are processed and,
 depending on the provided FQN of the `ContractTransformer`, the contracts are transformed
 to the required format and dumped to the provided folder.
 
