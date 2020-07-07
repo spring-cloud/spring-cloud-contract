@@ -73,7 +73,8 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	}
 
 	BasicMappingBuilder(String customRequestMatcherName, Parameters parameters) {
-		this.requestPatternBuilder = new RequestPatternBuilder(customRequestMatcherName, parameters);
+		this.requestPatternBuilder = new RequestPatternBuilder(customRequestMatcherName,
+				parameters);
 	}
 
 	@Override
@@ -113,19 +114,22 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	}
 
 	@Override
-	public BasicMappingBuilder withCookie(String name, StringValuePattern cookieValuePattern) {
+	public BasicMappingBuilder withCookie(String name,
+			StringValuePattern cookieValuePattern) {
 		this.requestPatternBuilder.withCookie(name, cookieValuePattern);
 		return this;
 	}
 
 	@Override
-	public BasicMappingBuilder withQueryParam(String key, StringValuePattern queryParamPattern) {
+	public BasicMappingBuilder withQueryParam(String key,
+			StringValuePattern queryParamPattern) {
 		this.requestPatternBuilder.withQueryParam(key, queryParamPattern);
 		return this;
 	}
 
 	@Override
-	public ScenarioMappingBuilder withQueryParams(Map<String, StringValuePattern> queryParams) {
+	public ScenarioMappingBuilder withQueryParams(
+			Map<String, StringValuePattern> queryParams) {
 		for (Map.Entry<String, StringValuePattern> entry : queryParams.entrySet()) {
 			this.requestPatternBuilder.withQueryParam(entry.getKey(), entry.getValue());
 		}
@@ -139,7 +143,8 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	}
 
 	@Override
-	public ScenarioMappingBuilder withMultipartRequestBody(MultipartValuePatternBuilder multipartPatternBuilder) {
+	public ScenarioMappingBuilder withMultipartRequestBody(
+			MultipartValuePatternBuilder multipartPatternBuilder) {
 		this.requestPatternBuilder.withRequestBodyPart(multipartPatternBuilder.build());
 		return this;
 	}
@@ -182,13 +187,16 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 
 	@Override
 	public BasicMappingBuilder withBasicAuth(String username, String password) {
-		this.requestPatternBuilder.withBasicAuth(new BasicCredentials(username, password));
+		this.requestPatternBuilder
+				.withBasicAuth(new BasicCredentials(username, password));
 		return this;
 	}
 
 	@Override
-	public <P> BasicMappingBuilder withPostServeAction(String extensionName, P parameters) {
-		Parameters params = parameters instanceof Parameters ? (Parameters) parameters : Parameters.of(parameters);
+	public <P> BasicMappingBuilder withPostServeAction(String extensionName,
+			P parameters) {
+		Parameters params = parameters instanceof Parameters ? (Parameters) parameters
+				: Parameters.of(parameters);
 		this.postServeActions.put(extensionName, params);
 		return this;
 	}
@@ -224,18 +232,22 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	}
 
 	@Override
-	public MappingBuilder andMatching(String customRequestMatcherName, Parameters parameters) {
+	public MappingBuilder andMatching(String customRequestMatcherName,
+			Parameters parameters) {
 		this.requestPatternBuilder.andMatching(customRequestMatcherName, parameters);
 		return this;
 	}
 
 	@Override
 	public StubMapping build() {
-		if (this.scenarioName == null && (this.requiredScenarioState != null || this.newScenarioState != null)) {
-			throw new IllegalStateException("Scenario name must be specified to require or set a new scenario state");
+		if (this.scenarioName == null && (this.requiredScenarioState != null
+				|| this.newScenarioState != null)) {
+			throw new IllegalStateException(
+					"Scenario name must be specified to require or set a new scenario state");
 		}
 		RequestPattern requestPattern = this.requestPatternBuilder.build();
-		ResponseDefinition response = (this.responseDefBuilder != null ? this.responseDefBuilder : aResponse()).build();
+		ResponseDefinition response = (this.responseDefBuilder != null
+				? this.responseDefBuilder : aResponse()).build();
 		StubMapping mapping = new StubMapping(requestPattern, response);
 		mapping.setPriority(this.priority);
 		mapping.setScenarioName(this.scenarioName);
@@ -244,7 +256,8 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 		mapping.setUuid(this.id);
 		mapping.setName(this.name);
 		mapping.setPersistent(this.isPersistent);
-		mapping.setPostServeActions(this.postServeActions.isEmpty() ? null : this.postServeActions);
+		mapping.setPostServeActions(
+				this.postServeActions.isEmpty() ? null : this.postServeActions);
 		mapping.setMetadata(this.metadata);
 		return mapping;
 	}
