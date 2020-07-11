@@ -16,7 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.util.xml
 
+import com.sun.org.apache.xml.internal.security.utils.DOMNamespaceContext
 
+import javax.xml.namespace.NamespaceContext
 import java.util.stream.IntStream
 
 import javax.xml.parsers.DocumentBuilder
@@ -87,10 +89,13 @@ class XmlToXPathsConverter {
 
 	private static String getNodeValue(String path, Object body) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
-		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance()
+		builderFactory.setNamespaceAware(true)
+		DocumentBuilder documentBuilder = builderFactory
 			.newDocumentBuilder()
 		Document parsedXml = documentBuilder.
 			parse(new InputSource(new StringReader(body as String)))
+		xPath.setNamespaceContext(new DOMNamespaceContext(parsedXml.documentElement))
 		return xPath.evaluate(path, parsedXml.documentElement)
 	}
 
