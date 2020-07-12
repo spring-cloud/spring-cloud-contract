@@ -24,20 +24,20 @@ import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import org.springframework.util.StreamUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = "service.port=${wiremock.server.port}")
 @AutoConfigureWireMock(port = 0)
 public class LoanApplicationServiceTests {

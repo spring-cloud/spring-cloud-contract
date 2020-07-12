@@ -70,7 +70,7 @@
       "version": "3.0.0"
     },
     "pact-jvm": {
-      "version": "3.6.14"
+      "version": "4.0.9"
     }
   }
 }

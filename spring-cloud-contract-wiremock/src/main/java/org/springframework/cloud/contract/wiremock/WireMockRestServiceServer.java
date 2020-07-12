@@ -280,16 +280,24 @@ public final class WireMockRestServiceServer {
 				: request.getUrlPath());
 	}
 
+	private String withoutBaseUrl(String url) {
+		int indexOfBaseUrl = url.indexOf(this.baseUrl);
+		if (indexOfBaseUrl == -1) {
+			return url;
+		}
+		return url.substring(indexOfBaseUrl + this.baseUrl.length() + 1);
+	}
+
 	private Matcher<String> requestMatcher(RequestPattern request) {
 		return new TypeSafeMatcher<String>() {
 			@Override
 			protected boolean matchesSafely(String item) {
-				if (request.getUrlMatcher() != null) {
-					return request.getUrlMatcher().match(item).isExactMatch();
+				if (request.getUrlPathPattern() != null) {
+					return Pattern.compile(request.getUrlPathPattern())
+							.matcher(withoutBaseUrl(item)).matches();
 				}
-				else if (request.getUrlPathPattern() != null) {
-					return Pattern.compile(request.getUrlPathPattern()).matcher(item)
-							.matches();
+				else if (request.getUrlMatcher() != null) {
+					return request.getUrlMatcher().match(item).isExactMatch();
 				}
 				else if (request.getUrlPattern() != null) {
 					return Pattern.compile(request.getUrlPattern()).matcher(item)

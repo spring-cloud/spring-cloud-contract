@@ -38,7 +38,8 @@ public class BookService {
 	 * side: will run the method and await upon receiving message on the output
 	 * messageFrom
 	 *
-	 * Method triggers sending a message to a source
+	 * Method triggers sending a message to a source.
+	 * @param bookReturned - payload
 	 */
 	public void returnBook(BookReturned bookReturned) {
 		log.info("Returning book " + bookReturned);

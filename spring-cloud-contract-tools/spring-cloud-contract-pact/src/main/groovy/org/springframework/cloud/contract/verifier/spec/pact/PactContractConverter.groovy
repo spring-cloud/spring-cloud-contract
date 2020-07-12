@@ -16,17 +16,16 @@
 
 package org.springframework.cloud.contract.verifier.spec.pact
 
-import au.com.dius.pact.model.Pact
-import au.com.dius.pact.model.PactReader
-import au.com.dius.pact.model.PactSpecVersion
-import au.com.dius.pact.model.RequestResponsePact
-import au.com.dius.pact.model.v3.messaging.MessagePact
+import au.com.dius.pact.core.model.DefaultPactReader
+import au.com.dius.pact.core.model.Pact
+import au.com.dius.pact.core.model.PactSpecVersion
+import au.com.dius.pact.core.model.RequestResponsePact
+import au.com.dius.pact.core.model.messaging.MessagePact
 import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
-
 /**
  * Converter of JSON PACT file
  *
@@ -45,7 +44,7 @@ class PactContractConverter implements ContractConverter<Collection<Pact>> {
 	@Override
 	boolean isAccepted(File file) {
 		try {
-			PactReader.loadPact(file)
+			DefaultPactReader.INSTANCE.loadPact(file)
 			return true
 		}
 		catch (Exception e) {
@@ -55,7 +54,7 @@ class PactContractConverter implements ContractConverter<Collection<Pact>> {
 
 	@Override
 	Collection<Contract> convertFrom(File file) {
-		Pact pact = PactReader.loadPact(file)
+		Pact pact = DefaultPactReader.INSTANCE.loadPact(file)
 		if (pact instanceof RequestResponsePact) {
 			return requestResponseSCContractCreator.
 					convertFrom(pact as RequestResponsePact)

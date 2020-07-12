@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>2.2.4.BUILD-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -29,7 +29,7 @@
 		<maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
 
 		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
-		<asciidoctor-maven-plugin.version>1.5.7.1</asciidoctor-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
 		<maven-filtering.version>3.1.1</maven-filtering.version>
 		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0
@@ -41,6 +41,7 @@
 		<maven-site-plugin.version>3.8.2</maven-site-plugin.version>
 		<plexus-component-metadata.version>2.0.0</plexus-component-metadata.version>
 		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
+		<maven-shared-incremental.version>1.1</maven-shared-incremental.version>
 	</properties>
 
 	<inceptionYear>2016</inceptionYear>
@@ -366,6 +367,11 @@
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-archiver</artifactId>
 			<version>${plexus-archiver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-shared-incremental</artifactId>
+			<version>${maven-shared-incremental.version}</version>
 		</dependency>
 
 		<dependency>

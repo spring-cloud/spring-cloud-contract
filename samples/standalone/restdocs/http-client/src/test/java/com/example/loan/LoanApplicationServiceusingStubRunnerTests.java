@@ -20,19 +20,19 @@ import com.example.loan.model.Client;
 import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
-import org.springframework.test.context.junit4.SpringRunner;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
 @AutoConfigureStubRunner(ids = "com.example:http-server-restdocs")
 public class LoanApplicationServiceusingStubRunnerTests {
@@ -43,7 +43,7 @@ public class LoanApplicationServiceusingStubRunnerTests {
 	@Value("${stubrunner.runningstubs.http-server-restdocs.port}")
 	int port;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.service.setPort(this.port);
 	}

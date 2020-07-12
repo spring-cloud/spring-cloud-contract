@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
-package com.example;
+package com.example.fraud;
 
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.messaging.SubscribableChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.EmitterProcessor;
 
-/**
- * @author Marcin Grzejszczak
- */
-interface DeleteSink {
+import org.springframework.stereotype.Component;
 
-	String MYINPUT = "delete";
+@Component
+class MessageSender {
 
-	@Input(DeleteSink.MYINPUT)
-	SubscribableChannel delete();
+	private static final Logger log = LoggerFactory.getLogger(MessageSender.class);
 
+	private final EmitterProcessor<String> emitterProcessor;
+
+	MessageSender(EmitterProcessor<String> emitterProcessor) {
+		this.emitterProcessor = emitterProcessor;
+	}
+
+	public void emit() {
+		log.info("Emitting the message");
+		this.emitterProcessor.onNext("{\"id\":\"99\",\"temperature\":\"123.45\"}");
+	}
 }

@@ -131,6 +131,11 @@ public class StubRunnerProperties {
 	 */
 	private Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer = NoOpHttpServerStubConfigurer.class;
 
+	/**
+	 *
+	 */
+	private String serverId;
+
 	public int getMinPort() {
 		return this.minPort;
 	}
@@ -280,6 +285,14 @@ public class StubRunnerProperties {
 
 	public void setHttpServerStubConfigurer(Class httpServerStubConfigurer) {
 		this.httpServerStubConfigurer = httpServerStubConfigurer;
+	}
+
+	public String getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(String serverId) {
+		this.serverId = serverId;
 	}
 
 	@Override

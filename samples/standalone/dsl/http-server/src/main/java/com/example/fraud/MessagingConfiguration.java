@@ -16,20 +16,24 @@
 
 package com.example.fraud;
 
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.integration.support.MessageBuilder;
-import org.springframework.stereotype.Component;
+import java.util.function.Supplier;
 
-@Component
-class MessagePoller {
-	private final Source source;
+import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.Flux;
 
-	MessagePoller(Source source) {
-		this.source = source;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+class MessagingConfiguration {
+
+	@Bean
+	EmitterProcessor<String> sensorDataEmitter() {
+		return EmitterProcessor.create();
 	}
 
-	public void poll() {
-		this.source.output().send(MessageBuilder
-				.withPayload("{\"id\":\"99\",\"temperature\":\"123.45\"}").build());
+	@Bean(name = "sensor_data")
+	Supplier<Flux<String>> sensorData(EmitterProcessor<String> processor) {
+		return () -> processor;
 	}
 }

@@ -16,19 +16,15 @@
 
 package org.springframework.cloud.contract.verifier.messaging.stream;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
-import org.springframework.cloud.stream.function.StreamFunctionProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
-import org.springframework.util.StringUtils;
 
 class StreamOutputDestinationMessageReceiver
 		implements MessageVerifierReceiver<Message<?>> {
@@ -47,35 +43,13 @@ class StreamOutputDestinationMessageReceiver
 		try {
 			OutputDestination outputDestination = this.context
 					.getBean(OutputDestination.class);
-			StreamFunctionProperties streamFunctionProperties = this.context
-					.getBean(StreamFunctionProperties.class);
-			int indexOfDestination = StringUtils
-					.isEmpty(streamFunctionProperties.getDefinition()) ? 0
-							: indexOfDestination(streamFunctionProperties, destination);
-			return outputDestination.receive(timeUnit.toMillis(timeout),
-					indexOfDestination);
+			return outputDestination.receive(timeUnit.toMillis(timeout), destination);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "
 					+ " a channel with name [" + destination + "]", e);
 			throw new IllegalStateException(e);
 		}
-	}
-
-	private int indexOfDestination(StreamFunctionProperties streamFunctionProperties,
-			String destination) {
-		String[] split = streamFunctionProperties.getDefinition().split(";");
-		if (split.length == 1) {
-			return 0;
-		}
-		int indexOfDestination = Arrays.stream(split).map(String::toLowerCase)
-				.collect(Collectors.toList()).indexOf(destination.toLowerCase());
-		if (indexOfDestination == -1) {
-			throw new IllegalStateException("Destination with name [" + destination
-					+ "] not found in the function definitions ["
-					+ streamFunctionProperties.getDefinition() + "]");
-		}
-		return indexOfDestination;
 	}
 
 	@Override

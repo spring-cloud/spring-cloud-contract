@@ -10,16 +10,16 @@
 		<guice.version>4.2.2</guice.version>
 		<guava.version>28.1-jre</guava.version>
 		<asm.version>7.1</asm.version>
-		<checker.version>2.11.0</checker.version>
+		<checker.version>3.1.1</checker.version>
 
 		<maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
-		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.2.4.BUILD-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-shade</artifactId>
@@ -269,6 +269,10 @@
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
+					<execution>
+						<id>attach-zip</id>
+						<phase>none</phase>
+					</execution>
 					<execution>
 						<id>add-source</id>
 						<phase>package</phase>

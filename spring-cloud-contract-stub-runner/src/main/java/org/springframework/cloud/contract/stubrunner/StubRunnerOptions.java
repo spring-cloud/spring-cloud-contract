@@ -37,6 +37,7 @@ import org.springframework.util.StringUtils;
  * Use {@link StubRunnerOptionsBuilder} to build this object.
  *
  * @author Marcin Grzejszczak
+ * @author Eddú Meléndez
  * @see StubRunnerOptionsBuilder
  */
 public class StubRunnerOptions {
@@ -134,6 +135,11 @@ public class StubRunnerOptions {
 	 */
 	private Map<String, String> properties;
 
+	/**
+	 *
+	 */
+	final String serverId;
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode,
 			String stubsClassifier, Collection<StubConfiguration> dependencies,
@@ -142,7 +148,8 @@ public class StubRunnerOptions {
 			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder,
 			boolean deleteStubsAfterTest, boolean generateStubs, boolean failOnNoStubs,
 			Map<String, String> properties,
-			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer) {
+			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer,
+			String serverId) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -162,6 +169,7 @@ public class StubRunnerOptions {
 		this.failOnNoStubs = failOnNoStubs;
 		this.properties = properties;
 		this.httpServerStubConfigurer = httpServerStubConfigurer;
+		this.serverId = serverId;
 	}
 
 	public static StubRunnerOptions fromSystemProps() {
@@ -188,7 +196,8 @@ public class StubRunnerOptions {
 						System.getProperty("stubrunner.generate-stubs", "false")))
 				.withFailOnNoStubs(Boolean.parseBoolean(
 						System.getProperty("stubrunner.fail-on-no-stubs", "false")))
-				.withProperties(stubRunnerProps());
+				.withProperties(stubRunnerProps())
+				.withServerId(System.getProperty("stubrunner.server-id", ""));
 		builder = httpStubConfigurer(builder);
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
@@ -354,6 +363,10 @@ public class StubRunnerOptions {
 		this.properties = properties;
 	}
 
+	public String getServerId() {
+		return this.serverId;
+	}
+
 	public Class<? extends HttpServerStubConfigurer> getHttpServerStubConfigurer() {
 		return this.httpServerStubConfigurer;
 	}
@@ -370,7 +383,7 @@ public class StubRunnerOptions {
 				+ ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions
 				+ "', stubsPerConsumer='" + this.stubsPerConsumer + '\''
 				+ ", httpServerStubConfigurer='" + this.httpServerStubConfigurer + '\''
-				+ '}';
+				+ ", serverId='" + this.serverId + '\'' + '}';
 	}
 
 	private String obfuscate(String string) {

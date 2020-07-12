@@ -73,6 +73,7 @@ contracts {
 		baseClassMapping('.*standalone.*', 'com.example.fraud.FraudBaseWithStandaloneSetup')
 		baseClassMapping('.*webapp.*', 'com.example.fraud.FraudBaseWithWebAppSetup')
 	}
+	testFramework("JUNIT")
 }
 
 generateClientStubs.enabled = false

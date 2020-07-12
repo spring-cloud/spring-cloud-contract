@@ -18,19 +18,19 @@ package org.springframework.cloud.contract.verifier.spec.pact
 
 import java.util.regex.Pattern
 
-import au.com.dius.pact.model.generators.Category
-import au.com.dius.pact.model.generators.DateGenerator
-import au.com.dius.pact.model.generators.DateTimeGenerator
-import au.com.dius.pact.model.generators.Generator
-import au.com.dius.pact.model.generators.Generators
-import au.com.dius.pact.model.generators.RandomBooleanGenerator
-import au.com.dius.pact.model.generators.RandomDecimalGenerator
-import au.com.dius.pact.model.generators.RandomHexadecimalGenerator
-import au.com.dius.pact.model.generators.RandomIntGenerator
-import au.com.dius.pact.model.generators.RandomStringGenerator
-import au.com.dius.pact.model.generators.RegexGenerator
-import au.com.dius.pact.model.generators.TimeGenerator
-import au.com.dius.pact.model.generators.UuidGenerator
+import au.com.dius.pact.core.model.generators.Category
+import au.com.dius.pact.core.model.generators.DateGenerator
+import au.com.dius.pact.core.model.generators.DateTimeGenerator
+import au.com.dius.pact.core.model.generators.Generator
+import au.com.dius.pact.core.model.generators.Generators
+import au.com.dius.pact.core.model.generators.RandomBooleanGenerator
+import au.com.dius.pact.core.model.generators.RandomDecimalGenerator
+import au.com.dius.pact.core.model.generators.RandomHexadecimalGenerator
+import au.com.dius.pact.core.model.generators.RandomIntGenerator
+import au.com.dius.pact.core.model.generators.RandomStringGenerator
+import au.com.dius.pact.core.model.generators.RegexGenerator
+import au.com.dius.pact.core.model.generators.TimeGenerator
+import au.com.dius.pact.core.model.generators.UuidGenerator
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 

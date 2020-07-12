@@ -31,14 +31,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import au.com.dius.pact.model.Pact;
-import au.com.dius.pact.model.PactSpecVersion;
+import au.com.dius.pact.core.model.Pact;
+import au.com.dius.pact.core.model.PactSpecVersion;
+import au.com.dius.pact.core.support.expressions.SystemPropertyResolver;
+import au.com.dius.pact.core.support.expressions.ValueResolver;
 import au.com.dius.pact.provider.junit.loader.PactBroker;
 import au.com.dius.pact.provider.junit.loader.PactBrokerAuth;
 import au.com.dius.pact.provider.junit.loader.PactBrokerLoader;
 import au.com.dius.pact.provider.junit.loader.PactLoader;
-import au.com.dius.pact.support.expressions.SystemPropertyResolver;
-import au.com.dius.pact.support.expressions.ValueResolver;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
@@ -268,11 +268,6 @@ class PactStubDownloader implements StubDownloader {
 			}
 
 			@Override
-			public String protocol() {
-				return scheme();
-			}
-
-			@Override
 			public String scheme() {
 				return resolver
 						.resolveValue("pactbroker.protocol:" + pactBrokerUrl.getScheme());
@@ -286,11 +281,6 @@ class PactStubDownloader implements StubDownloader {
 			@Override
 			public String[] consumers() {
 				return new String[] { resolver.resolveValue("pactbroker.consumers:") };
-			}
-
-			@Override
-			public boolean failIfNoPactsFound() {
-				return true;
 			}
 
 			@Override
@@ -316,6 +306,11 @@ class PactStubDownloader implements StubDownloader {
 					public String password() {
 						return resolver.resolveValue(
 								"pactbroker.auth.password:" + stubRunnerPassword);
+					}
+
+					@Override
+					public String token() {
+						return resolver.resolveValue("pactbroker.auth.token:");
 					}
 				};
 			}

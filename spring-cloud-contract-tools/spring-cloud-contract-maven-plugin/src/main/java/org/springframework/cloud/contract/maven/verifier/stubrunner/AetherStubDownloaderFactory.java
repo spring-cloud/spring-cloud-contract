@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import shaded.org.apache.maven.settings.Settings;
 
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
@@ -37,6 +38,7 @@ import org.springframework.core.io.ResourceLoader;
  * Builds {@link StubDownloaderBuilder} for a Maven project.
  *
  * @author Mariusz Smykula
+ * @author Eddú Meléndez
  */
 @Named
 @Singleton
@@ -48,11 +50,14 @@ public class AetherStubDownloaderFactory {
 
 	private final RepositorySystem repoSystem;
 
+	private final Settings settings;
+
 	@Inject
-	public AetherStubDownloaderFactory(RepositorySystem repoSystem,
-			MavenProject project) {
+	public AetherStubDownloaderFactory(RepositorySystem repoSystem, MavenProject project,
+			Settings settings) {
 		this.repoSystem = repoSystem;
 		this.project = project;
+		this.settings = settings;
 	}
 
 	public StubDownloaderBuilder build(final RepositorySystemSession repoSession) {
@@ -65,7 +70,7 @@ public class AetherStubDownloaderFactory {
 						AetherStubDownloaderFactory.this.repoSystem,
 						AetherStubDownloaderFactory.this.project
 								.getRemoteProjectRepositories(),
-						repoSession);
+						repoSession, AetherStubDownloaderFactory.this.settings);
 			}
 
 			@Override

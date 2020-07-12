@@ -16,10 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud
 
+import java.util.function.Function
+
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -27,15 +30,14 @@ import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
-import org.springframework.cloud.stream.annotation.EnableBinding
-import org.springframework.cloud.stream.messaging.Sink
-import org.springframework.cloud.stream.messaging.Source
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -46,6 +48,7 @@ import org.springframework.test.context.ContextConfiguration
 		repositoryRoot = "classpath:m2repo/repository/",
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		stubsPerConsumer = true)
+@ActiveProfiles("streamconsumer")
 class StubRunnerStubsPerConsumerSpec extends Specification {
 // end::test[]
 
@@ -77,7 +80,7 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 			Message<?> receivedMessage = messaging.receive('output')
 		and:
 			receivedMessage != null
-			receivedMessage.payload == '''{"bookName":"foo_for_bar"}'''
+			receivedMessage.payload == '''{"bookName":"foo_for_bar"}'''.bytes
 			receivedMessage.headers.get('BOOK-NAME') == 'foo_for_bar'
 	}
 
@@ -91,6 +94,14 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableBinding([Sink, Source])
-	static class Config {}
+	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
+	static class Config {
+		@Bean
+		Function output() {
+			return  { Object o ->
+				println(o)
+				return o
+			}
+		}
+	}
 }

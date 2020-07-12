@@ -30,9 +30,9 @@ import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.ResponseOptions;
 import io.restassured.specification.RequestSpecification;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,14 +42,14 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerPort;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import org.springframework.web.client.RestTemplate;
 
 import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::autoconfigure_stubrunner[]
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {
 		"com.example:http-server-dsl:0.0.1:stubs" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
@@ -63,7 +63,7 @@ public class LoanApplicationServiceTests {
 	@Autowired
 	private LoanApplicationService service;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.service.setPort(this.stubPort);
 	}

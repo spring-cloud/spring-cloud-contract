@@ -18,8 +18,8 @@ package org.springframework.cloud.contract.verifier.spec.pact
 
 import java.nio.file.Files
 
-import au.com.dius.pact.model.Pact
-import au.com.dius.pact.model.PactSpecVersion
+import au.com.dius.pact.core.model.Pact
+import au.com.dius.pact.core.model.PactSpecVersion
 import groovy.json.JsonOutput
 import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Issue
@@ -65,12 +65,12 @@ class PactContractConverterSpec extends Specification {
 			converter.isAccepted(pactJson)
 	}
 
-	def "should reject json files that are pact files"() {
+	def "should reject json files that are invalid pact files"() {
 		given:
 			File invalidPact = new File(PactContractConverterSpec.
 				getResource("/pact/invalid_pact.json").toURI())
 		expect:
-			converter.isAccepted(invalidPact)
+			!converter.isAccepted(invalidPact)
 	}
 
 	def "should convert from pact to contract"() {
@@ -347,7 +347,7 @@ class PactContractConverterSpec extends Specification {
   ],
   "metadata": {
     "pact-jvm": {
-      "version": "3.6.14"
+      "version": "4.0.9"
     }
   }
 }

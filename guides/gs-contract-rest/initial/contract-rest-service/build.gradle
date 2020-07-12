@@ -46,7 +46,3 @@ contracts {
 		baseClassMapping(".*hello.*", "hello.BaseClass")
 	}
 }
-
-task wrapper(type: Wrapper){
-	gradleVersion = '6.4'
-}

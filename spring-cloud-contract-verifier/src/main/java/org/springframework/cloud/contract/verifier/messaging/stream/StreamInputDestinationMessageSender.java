@@ -16,19 +16,15 @@
 
 package org.springframework.cloud.contract.verifier.messaging.stream;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.stream.binder.test.InputDestination;
-import org.springframework.cloud.stream.function.StreamFunctionProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Marcin Grzejszczak
@@ -56,31 +52,13 @@ class StreamInputDestinationMessageSender implements MessageVerifierSender<Messa
 		try {
 			InputDestination inputDestination = this.context
 					.getBean(InputDestination.class);
-			StreamFunctionProperties streamFunctionProperties = this.context
-					.getBean(StreamFunctionProperties.class);
-			int indexOfDestination = StringUtils
-					.isEmpty(streamFunctionProperties.getDefinition()) ? 0
-							: indexOfDestination(streamFunctionProperties, destination);
-			inputDestination.send(message, indexOfDestination);
+			inputDestination.send(message, destination);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to send a message [" + message
 					+ "] " + "to a destination with name [" + destination + "]", e);
 			throw e;
 		}
-	}
-
-	private int indexOfDestination(StreamFunctionProperties streamFunctionProperties,
-			String destination) {
-		String[] split = streamFunctionProperties.getDefinition().split(";");
-		int indexOfDestination = Arrays.stream(split).map(String::toLowerCase)
-				.collect(Collectors.toList()).indexOf(destination.toLowerCase());
-		if (indexOfDestination == -1) {
-			throw new IllegalStateException("Destination with name [" + destination
-					+ "] not found in the function definitions ["
-					+ streamFunctionProperties.getDefinition() + "]");
-		}
-		return indexOfDestination;
 	}
 
 }

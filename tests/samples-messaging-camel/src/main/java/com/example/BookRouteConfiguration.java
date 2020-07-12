@@ -16,10 +16,10 @@
 
 package com.example;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.model.dataformat.JsonLibrary;
-import org.apache.camel.spring.SpringRouteBuilder;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +41,7 @@ public class BookRouteConfiguration {
 
 	@Bean
 	RoutesBuilder myRouter(final BookService bookService, final BookDeleter bookDeleter) {
-		return new SpringRouteBuilder() {
+		return new RouteBuilder() {
 
 			@Override
 			public void configure() throws Exception {

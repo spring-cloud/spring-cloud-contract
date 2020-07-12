@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
+import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.util.FileSystemUtils;
 
@@ -132,6 +133,7 @@ public class GeneratedTestClassTests {
 		// given
 		JavaTestGenerator generator = new JavaTestGenerator();
 		ContractVerifierConfigProperties configProperties = new ContractVerifierConfigProperties();
+		configProperties.setTestFramework(TestFramework.JUNIT);
 		Collection<ContractMetadata> contracts = Collections
 				.singletonList(new ContractMetadata(this.file.toPath(), true, 1, 2,
 						convertAsCollection(new File("/"), this.file)));

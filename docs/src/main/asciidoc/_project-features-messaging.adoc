@@ -113,8 +113,8 @@ work.
 
 [IMPORTANT]
 =====
-If you want to use Spring Cloud Stream, remember to add a dependency on
-`org.springframework.cloud:spring-cloud-stream-test-support`, as  follows:
+If you want to use Spring Cloud Stream, remember to add a test dependency on
+`org.springframework.cloud:spring-cloud-stream`, as  follows:
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -122,15 +122,17 @@ If you want to use Spring Cloud Stream, remember to add a dependency on
 ----
 <dependency>
     <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-stream-test-support</artifactId>
+    <artifactId>spring-cloud-stream</artifactId>
+    <type>test-jar</type>
     <scope>test</scope>
+    <classifier>test-binder</classifier>
 </dependency>
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
+testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
 ----
 ====
 =====
@@ -686,7 +688,7 @@ destination is resolved as a channel name.
 [IMPORTANT]
 =====
 If you want to use Spring Cloud Stream, remember to add a dependency on
-`org.springframework.cloud:spring-cloud-stream-test-support`, as follows:
+`org.springframework.cloud:spring-cloud-stream` test support, as follows:
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -694,15 +696,17 @@ If you want to use Spring Cloud Stream, remember to add a dependency on
 ----
 <dependency>
     <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-stream-test-support</artifactId>
+    <artifactId>spring-cloud-stream</artifactId>
+    <type>test-jar</type>
     <scope>test</scope>
+    <classifier>test-binder</classifier>
 </dependency>
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
+testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
 ----
 ====
 =====

@@ -22,8 +22,8 @@ import java.nio.charset.Charset;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.assertj.core.api.BDDAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +33,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = "service.port=${wiremock.server.port}")
 @AutoConfigureWireMock(port = 0)
 public class XmlServiceTests {
