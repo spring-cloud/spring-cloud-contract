@@ -94,7 +94,8 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 	}
 
 	private String separatorsToUnix(String location) {
-		return location != null && location.indexOf(92) != -1 ? location.replace('\\', '/') : location;
+		return location != null && location.indexOf(92) != -1
+				? location.replace('\\', '/') : location;
 	}
 
 }
