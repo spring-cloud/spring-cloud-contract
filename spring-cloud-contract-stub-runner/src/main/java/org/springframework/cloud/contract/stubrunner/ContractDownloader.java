@@ -193,9 +193,8 @@ public class ContractDownloader {
 	}
 
 	private String wrapWithAntPattern(String path) {
-		String changedPath = path.replace(File.separator, "/");
-		return "**" + surroundWithSeparator(changedPath).replace(File.separator, "/")
-				+ "**/";
+		String changedPath = surroundWithSeparator(path).replace(File.separator, "/");
+		return "**" + changedPath.replace(File.separator, "/") + "**/";
 	}
 
 	private String groupArtifactToPattern(File contractsDirectory) {

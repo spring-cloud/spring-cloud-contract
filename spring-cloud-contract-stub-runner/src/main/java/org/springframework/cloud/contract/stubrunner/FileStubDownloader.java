@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +75,27 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
-		return new StubsResource(location);
+		// Can be resolving a resource for Classpath as fallback
+		if (!location.startsWith("stubs://file://")) {
+			return new StubsResource(location);
+		}
+		// Convert any windows file format path to a uri
+		String correctlyFormattedLocation = convertLocationToUriFormat(location);
+		return new StubsResource(correctlyFormattedLocation);
+	}
+
+	private String convertLocationToUriFormat(String location) {
+		final String correctlyFormattedLocation = separatorsToUnix(location);
+		final String rawPath = correctlyFormattedLocation.replace("stubs://file://", "");
+		if (rawPath.charAt(0) != '/') {
+			return "stubs://file:///" + rawPath;
+		}
+		return correctlyFormattedLocation;
+	}
+
+	private String separatorsToUnix(String location) {
+		return location != null && location.indexOf(92) != -1
+				? location.replace('\\', '/') : location;
 	}
 
 }
@@ -161,7 +180,7 @@ class StubsStubDownloader implements StubDownloader {
 		Resource resource = ResourceResolver.resource(schemeSpecificPart);
 		if (resource != null) {
 			try {
-				return Paths.get(resource.getURI()).toString();
+				return resource.getURL().getFile();
 			}
 			catch (IOException ex) {
 				return schemeSpecificPart;

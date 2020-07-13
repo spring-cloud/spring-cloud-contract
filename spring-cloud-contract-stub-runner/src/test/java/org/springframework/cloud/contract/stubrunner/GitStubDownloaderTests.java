@@ -86,12 +86,12 @@ public class GitStubDownloaderTests {
 	public void should_pick_stubs_for_group_and_artifact_with_version_from_a_git_repo()
 			throws Exception {
 		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		String contractFolderLocation = (file("/git_samples/contract-git/")
+				.getAbsolutePath() + "/").replace(File.separator, "/");
 		StubDownloader stubDownloader = stubDownloaderBuilder
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git/").getAbsolutePath()
-								+ "/")
+						.withStubRepositoryRoot("git://" + contractFolderLocation)
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
@@ -107,12 +107,12 @@ public class GitStubDownloaderTests {
 	public void should_pick_latest_build_snapshot_stubs_when_latest_version_set()
 			throws URISyntaxException {
 		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		String contractFolderLocation = (file("/git_samples/contract-git/")
+				.getAbsolutePath() + "/").replace(File.separator, "/");
 		StubDownloader stubDownloader = stubDownloaderBuilder
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git/").getAbsolutePath()
-								+ "/")
+						.withStubRepositoryRoot("git://" + contractFolderLocation)
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
@@ -149,12 +149,12 @@ public class GitStubDownloaderTests {
 	public void should_pick_latest_release_stubs_when_release_version_set()
 			throws URISyntaxException {
 		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		String contractFolderLocation = (file("/git_samples/contract-git/")
+				.getAbsolutePath() + "/").replace(File.separator, "/");
 		StubDownloader stubDownloader = stubDownloaderBuilder
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git/").getAbsolutePath()
-								+ "/")
+						.withStubRepositoryRoot("git://" + contractFolderLocation)
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
@@ -177,13 +177,14 @@ public class GitStubDownloaderTests {
 	public void should_pick_latest_build_snapshot_stubs_when_latest_version_set_and_latest_folder_exists()
 			throws URISyntaxException {
 		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		String contractFolderLocation = (file(
+				"/git_samples/contract-predefined-names-git/").getAbsolutePath()
+						.replace("/", File.separator)
+				+ "/").replace(File.separator, "/");
 		StubDownloader stubDownloader = stubDownloaderBuilder
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-predefined-names-git/")
-										.getAbsolutePath()
-								+ "/")
+						.withStubRepositoryRoot("git://" + contractFolderLocation)
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
@@ -213,13 +214,13 @@ public class GitStubDownloaderTests {
 	public void should_pick_release_folder_when_release_version_set()
 			throws URISyntaxException {
 		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		String contractFolderLocation = (file(
+				"/git_samples/contract-predefined-names-git/").getAbsolutePath() + "/")
+						.replace(File.separator, "/");
 		StubDownloader stubDownloader = stubDownloaderBuilder
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-predefined-names-git/")
-										.getAbsolutePath()
-								+ "/")
+						.withStubRepositoryRoot("git://" + contractFolderLocation)
 						.withProperties(props()).build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
@@ -242,12 +243,12 @@ public class GitStubDownloaderTests {
 	public void should_fail_to_fetch_stubs_when_concrete_version_was_not_specified()
 			throws URISyntaxException {
 		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
+		String contractFolderLocation = (file("/git_samples/contract-git/")
+				.getAbsolutePath() + "/").replace(File.separator, "/");
 		StubDownloader stubDownloader = stubDownloaderBuilder
 				.build(new StubRunnerOptionsBuilder()
 						.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-						.withStubRepositoryRoot("git://"
-								+ file("/git_samples/contract-git").getAbsolutePath()
-								+ "/")
+						.withStubRepositoryRoot("git://" + contractFolderLocation)
 						.withProperties(props()).build());
 
 		try {
