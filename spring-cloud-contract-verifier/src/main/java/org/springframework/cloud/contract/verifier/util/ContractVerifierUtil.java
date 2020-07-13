@@ -35,7 +35,10 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import org.springframework.cloud.contract.verifier.util.xml.DOMNamespaceContext;
 
 /**
  * Helper class for the generated tests.
@@ -81,8 +84,10 @@ public final class ContractVerifierUtil {
 	 */
 	public static String valueFromXPath(Document parsedXml, String path) {
 		XPath xPath = XPathFactory.newInstance().newXPath();
+		Element documentElement = parsedXml.getDocumentElement();
+		xPath.setNamespaceContext(new DOMNamespaceContext(documentElement));
 		try {
-			return xPath.evaluate(path, parsedXml.getDocumentElement());
+			return xPath.evaluate(path, documentElement);
 		}
 		catch (XPathExpressionException exception) {
 			LOG.error("Incorrect xpath provided: " + path, exception);
@@ -99,9 +104,10 @@ public final class ContractVerifierUtil {
 	 */
 	public static Node nodeFromXPath(Document parsedXml, String path) {
 		XPath xPath = XPathFactory.newInstance().newXPath();
+		Element documentElement = parsedXml.getDocumentElement();
+		xPath.setNamespaceContext(new DOMNamespaceContext(documentElement));
 		try {
-			return (Node) xPath.evaluate(path, parsedXml.getDocumentElement(),
-					XPathConstants.NODE);
+			return (Node) xPath.evaluate(path, documentElement, XPathConstants.NODE);
 		}
 		catch (XPathExpressionException exception) {
 			LOG.error("Incorrect xpath provided: " + path, exception);
