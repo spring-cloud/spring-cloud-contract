@@ -488,6 +488,12 @@
 				<groupId>io.rest-assured</groupId>
 				<artifactId>xml-path</artifactId>
 				<version>${rest-assured.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sun.xml.bind</groupId>
+						<artifactId>jaxb-osgi</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>io.rest-assured</groupId>
@@ -495,16 +501,16 @@
 				<version>${rest-assured.version}</version>
 				<exclusions>
 					<exclusion>
+						<groupId>org.springframework</groupId>
 						<artifactId>spring-web</artifactId>
-						<groupId>org.springframework</groupId>
 					</exclusion>
 					<exclusion>
+						<groupId>org.springframework</groupId>
 						<artifactId>spring-webmvc</artifactId>
-						<groupId>org.springframework</groupId>
 					</exclusion>
 					<exclusion>
-						<artifactId>spring-test</artifactId>
 						<groupId>org.springframework</groupId>
+						<artifactId>spring-test</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -514,12 +520,12 @@
 				<version>${rest-assured.version}</version>
 				<exclusions>
 					<exclusion>
-						<artifactId>spring-context</artifactId>
 						<groupId>org.springframework</groupId>
+						<artifactId>spring-context</artifactId>
 					</exclusion>
 					<exclusion>
-						<artifactId>spring-webflux</artifactId>
 						<groupId>org.springframework</groupId>
+						<artifactId>spring-webflux</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
