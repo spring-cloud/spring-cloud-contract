@@ -1044,7 +1044,7 @@ from the provided contracts:
 - Produce and install stubs
 
 You do not want to generate tests, since you, as the consumer, want only to play with the
-stubs. You need to skip the test generation and execution. To do so, run the following commands:
+stubs. You need to skip the test generation and invokation. To do so, run the following commands:
 
 ====
 [source,bash,indent=0]

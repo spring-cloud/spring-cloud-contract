@@ -38,7 +38,7 @@ include::{verifier_core_path}/src/test/resources/yml/contract_message_method.yml
 ====
 
 In the previous example case, the output message is sent to `output` if a method called
-`bookReturnedTriggered` is executed. On the message publisher's side, we generate a
+`bookReturnedTriggered` is invoked. On the message publisher's side, we generate a
 test that calls that method to trigger the message. On the consumer side, you can use
 the `some_label` to trigger the message.
 

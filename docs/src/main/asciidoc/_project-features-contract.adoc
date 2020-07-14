@@ -1004,7 +1004,7 @@ include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/spr
 ----
 
 [[contract-dsl-custom-methods]]
-==== Executing Custom Methods on the Server Side
+==== Calling Custom Methods on the Server Side
 
 IMPORTANT: This section is valid only for Groovy DSL. Check out the
 <<contract-dsl-matchers>> section for YAML examples of a similar feature.
@@ -1921,8 +1921,8 @@ your tests far more meaningful.
 Stateful contracts (known also as scenarios) are contract definitions that should be read
 in order. This might be useful in the following situations:
 
-* You want to execute the contract in a precisely defined order, since you use Spring
-Cloud Contract to test your stateful application
+* You want to invoke the contract in a precisely defined order, since you use Spring
+Cloud Contract to test your stateful application.
 
 TIP: We really discourage you from doing that, since contract tests should be stateless.
 

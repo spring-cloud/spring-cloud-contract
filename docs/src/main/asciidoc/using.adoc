@@ -169,7 +169,7 @@ contracts {
 
 /*
 In this scenario we want to publish stubs to SCM whenever
-the `publish` task is executed
+the `publish` task is run
 */
 publish.dependsOn("publishStubsToScm")
 ----

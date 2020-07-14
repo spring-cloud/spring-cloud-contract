@@ -252,7 +252,7 @@ extends `com.example.base.BaseClass`. This setting takes precedence over
 * `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
 * `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
-* `failOnInProgress`: If set to true then if any contracts that are in progress are found, will break the build. On the producer side you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test execution results on the consumer side.. Defaults to `true`.
+* `failOnInProgress`: If set to `true`, then, if any contracts that are in progress are found, they break the build. On the producer side, you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test results on the consumer side. Defaults to `true`.
 * `incrementalContractTests`: When enabled, tests are created only when contracts have changed since last build. Defaults to `true`.
 * `incrementalContractStubs`: When enabled, stubs are created only when contracts have changed since last build. Defaults to `true`.
 * `incrementalContractStubsJar`: When enabled, stubs jar is created only when stubs have changed since last build. Defaults to `true`.
@@ -581,7 +581,7 @@ In order to fix this issue, provide the following section in your `pom.xml`:
 
 You can select the http://spockframework.org/[Spock Framework] for creating and running the auto-generated contract
 verification tests with both Maven and Gradle. However, whereas using Gradle is straightforward,
-in Maven, you will require some additional setup in order to make the tests compile and execute properly.
+in Maven, you will require some additional setup in order to make the tests compile and work properly.
 
 First of all, you must use a plugin, such as the https://github.com/groovy/GMavenPlus[GMavenPlus] plugin,
 to add Groovy to your project. In GMavenPlus plugin, you need to explicitly set test sources, including both the
