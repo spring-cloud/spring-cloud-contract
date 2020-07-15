@@ -23,7 +23,6 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
-		<activemq.version>5.15.11</activemq.version>
 		<camel.version>3.3.0</camel.version>
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>4.0.9</pact.version>
@@ -48,8 +47,6 @@
 		<junit-platform.version>1.3.2</junit-platform.version>
 		<junit-vintage.version>5.6.2</junit-vintage.version>
 		<junit-jupiter.version>5.5.2</junit-jupiter.version>
-		<maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>3.0.0-M4</maven-failsafe-plugin.version>
 		<gmavenplus-plugin.version>1.8.1</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
@@ -150,11 +147,6 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-activemq</artifactId>
 				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-pool</artifactId>
-				<version>${activemq.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
