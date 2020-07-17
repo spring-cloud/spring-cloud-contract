@@ -12,17 +12,21 @@ content type be set. Otherwise, the default of `application/octet-stream` gets u
 
 In order to use JAX-RS mode, use the following settings:
 
+====
 [source,groovy,indent=0]
 ----
 testMode = 'JAXRSCLIENT'
 ----
+====
 
 The following example shows a generated test API:
 
+====
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/JaxRsClientMethodBuilderSpec.groovy[tags=jaxrs,indent=0]
 ----
+====
 
 [[feature-webflux]]
 === WebFlux with WebTestClient
@@ -57,6 +61,7 @@ contracts {
 The following example shows how to set up a WebTestClient base class and RestAssured
 for WebFlux:
 
+====
 [source,groovy,indent=0]
 ----
 import io.restassured.module.webtestclient.RestAssuredWebTestClient;
@@ -72,6 +77,7 @@ public abstract class BeerRestBase {
 }
 }
 ----
+====
 
 TIP: The `WebTestClient` mode is faster than the `EXPLICIT` mode.
 
@@ -107,6 +113,7 @@ contracts {
 
 The following example shows how to set up a base class and RestAssured for Web Flux:
 
+====
 [source,groovy,indent=0]
 ----
 include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=annotations,indent=0]
@@ -118,6 +125,7 @@ include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.j
 
 }
 ----
+====
 
 [[features-context-paths]]
 === Working with Context Paths
@@ -186,10 +194,11 @@ that information (for example, in the stubs, you have to call `/my-context-path/
 
 You can use https://projects.spring.io/spring-restdocs[Spring REST Docs] to generate
 documentation (for example, in Asciidoc format) for an HTTP API with Spring MockMvc,
-`WebTestClient`, or RestAssured. At the same time that you generate documentation for your API, you can also
+WebTestClient, or RestAssured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use `@AutoConfigureRestDocs` to have stubs be
-automatically generated in the REST Docs output directory.
+automatically generated in the REST Docs output directory. The following UML diagram shows
+the REST Docs flow:
 
 [plantuml, rest-docs, png]
 ----
@@ -214,6 +223,7 @@ automatically generated in the REST Docs output directory.
 
 The following example uses `MockMvc`:
 
+====
 [source,java,indent=0]
 ----
 @RunWith(SpringRunner.class)
@@ -233,11 +243,13 @@ public class ApplicationTests {
 	}
 }
 ----
+====
 
 This test generates a WireMock stub at `target/snippets/stubs/resource.json`. It matches
-all `GET` requests to the `/resource` path. The same example with `WebTestClient` (used
+all `GET` requests to the `/resource` path. The same example with WebTestClient (used
 for testing Spring WebFlux applications) would be as follows:
 
+====
 [source,java,indent=0]
 ----
 @RunWith(SpringRunner.class)
@@ -257,6 +269,7 @@ public class ApplicationTests {
 	}
 }
 ----
+====
 
 Without any additional configuration, these tests create a stub with a request matcher
 for the HTTP method and all headers except `host` and `content-length`. To match the
@@ -289,7 +302,7 @@ public class ApplicationTests {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
 				.andExpect(status().isOk())
-				.andDo(verify().jsonPath("$.id")
+				.andDo(verify().jsonPath("$.id"))
 				.andDo(document("resource"));
 	}
 }
@@ -299,13 +312,14 @@ public class ApplicationTests {
 The preceding contract specifies that any valid POST with an `id` field receives the response
 defined in this test. You can chain together calls to `.jsonPath()` to add additional
 matchers. If JSON Path is unfamiliar, the https://github.com/jayway/JsonPath[JayWay
-documentation] can help you get up to speed. The `WebTestClient` version of this test
+documentation] can help you get up to speed. The WebTestClient version of this test
 has a similar `verify()` static helper that you insert in the same place.
 
 Instead of the `jsonPath` and `contentType` convenience methods, you can also use the
 WireMock APIs to verify that the request matches the created stub, as the
 following example shows:
 
+====
 [source,java,indent=0]
 ----
 	@Test
@@ -314,17 +328,18 @@ following example shows:
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
 				.andExpect(status().isOk())
 				.andDo(verify()
-						.wiremock(WireMock.post(
-							urlPathEquals("/resource"))
-							.withRequestBody(matchingJsonPath("$.id"))
-							.andDo(document("post-resource"));
+						.wiremock(WireMock.post(urlPathEquals("/resource"))
+						.withRequestBody(matchingJsonPath("$.id"))
+						.andDo(document("post-resource"))));
 	}
 ----
+====
 
 The WireMock API is rich. You can match headers, query parameters, and the request body by
 regex as well as by JSON path. You can use these features to create stubs with a wider
 range of parameters. The preceding example generates a stub resembling the following example:
 
+====
 .post-resource.json
 [source,json]
 ----
@@ -346,6 +361,7 @@ range of parameters. The preceding example generates a stub resembling the follo
   }
 }
 ----
+====
 
 NOTE: You can use either the `wiremock()` method or the `jsonPath()` and `contentType()`
 methods to create request matchers, but you cannot use both approaches.

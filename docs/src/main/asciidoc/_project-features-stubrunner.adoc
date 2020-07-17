@@ -12,7 +12,7 @@ automatically download and run the stubs for you.
 [[features-stub-runner-snapshot-versions]]
 === Snapshot Versions
 
-You can add the additional snapshot repository to your `build.gradle` file to use snapshot
+You can add the additional snapshot repository to your build file to use snapshot
 versions, which are automatically uploaded after every successful build, as follows:
 
 ====
@@ -198,7 +198,7 @@ To achieve proper stub packaging, the producer would set up the contracts as fol
 ----
 ====
 
-By using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
+By using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or the
 https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/build.gradle[Gradle Jar] task, you have to create the following
 structure in your stubs jar:
 
@@ -273,7 +273,7 @@ This section describes how to run stubs. It contains the following topics:
 [[features-stub-runner-http-stubs]]
 ===== HTTP Stubs
 
-Stubs are defined in JSON documents, whose syntax is defined in http://wiremock.org/stubbing.html[WireMock documentation]
+Stubs are defined in JSON documents, whose syntax is defined in the http://wiremock.org/stubbing.html[WireMock documentation].
 
 The following example defines a stub in JSON:
 
@@ -394,7 +394,7 @@ range of ports or the provided port
 Stub Runner uses the https://wiki.eclipse.org/Aether[Eclipse Aether] mechanism to download the Maven dependencies.
 Check their https://wiki.eclipse.org/Aether[docs] for more information.
 
-Since the `StubRunnerRule` and `StubRunnerExtension` implement the `StubFinder` they let
+Since the `StubRunnerRule` and `StubRunnerExtension` implement the `StubFinder`, they let
 you find the started stubs, as the following example shows:
 
 ====
@@ -408,19 +408,19 @@ The following examples provide more detail about using Stub Runner:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.spock
+.Spock
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleSpec.groovy[tags=classrule]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.junit 4
+.Junit 4
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleJUnitTest.java[tags=test]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.junit 5
+.Junit 5
 ----
 include::{stubrunner_core_path}/src/test/java/org/springframework/cloud/contract/stubrunner/junit/StubRunnerJUnit5ExtensionTests.java[tags=extension]
 ----
@@ -499,10 +499,12 @@ include::{stubrunner_core_path}/src/test/resources/application-test.yml[tags=tes
 Instead of using the properties, you can also use the properties inside the `@AutoConfigureStubRunner`.
 The following example achieves the same result by setting values on the annotation:
 
+====
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerSpringCloudAutoConfigurationSpec.groovy[tags=autoconfigure]
 ----
+====
 
 Stub Runner Spring registers environment variables in the following manner
 for every registered WireMock server. The following example shows Stub Runner IDs for
@@ -516,7 +518,7 @@ for every registered WireMock server. The following example shows Stub Runner ID
 You can reference these values in your code.
 
 You can also use the `@StubRunnerPort` annotation to inject the port of a running stub.
-The value of the annotation can be the `groupid:artifactid` or just the `artifactid`.
+The value of the annotation can be the `groupid:artifactid` or only the `artifactid`.
 The following example works shows Stub Runner IDs for
 `com.example:thing1` and `com.example:thing2`.
 
@@ -537,8 +539,8 @@ Stub Runner can integrate with Spring Cloud.
 
 For real life examples, see:
 
-- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer[The producer app sample]
-- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_with_discovery[The consumer app sample]
+- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer[The producer application sample]
+- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_with_discovery[The consumer application sample]
 
 [[features-stub-runner-cloud-stubbing-discovery]]
 ==== Stubbing Service Discovery
@@ -659,7 +661,7 @@ $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 Starting from the `1.4.0.RELEASE` version of the https://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
 project, you can start Stub Runner Boot by running `spring cloud stubrunner`.
 
-In order to pass the configuration, you can create a `stubrunner.yml` file in the current working directory,
+To pass the configuration, you can create a `stubrunner.yml` file in the current working directory,
 in a subdirectory called `config`, or in `~/.spring-cloud`. The file could resemble the following
 example for running stubs installed locally:
 
@@ -725,7 +727,7 @@ deploy your application to an environment, start it, and run a couple of tests o
 it works. We can call those tests "`smoke tests`", because their purpose is to check only a handful
 of testing scenarios.
 
-The problem with this approach is thatm if you use microservices, you most likely also
+The problem with this approach is that, if you use microservices, you most likely also
 use a service discovery tool. Stub Runner Boot lets you solve this issue by starting the
 required stubs and registering them in a service discovery tool. Consider the following example of
 such a setup with Eureka (assume that Eureka is already running):
@@ -851,25 +853,25 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 Then only the stubs registered under a path that contains the `foo-consumer` in its name (that is, those from the
 `src/test/resources/contracts/foo-consumer/some/contracts/...` folder) are allowed to be referenced.
 
-See https://github.com/spring-cloud/spring-cloud-contract/issues/224[issue 224] for more
-information about the reasons behind this change.
+For more information about the reasons behind this change,
+see https://github.com/spring-cloud/spring-cloud-contract/issues/224[issue 224].
 
 [[features-stub-runner-stubs-protocol]]
 === Fetching Stubs or Contract Definitions From A Location
 
 Instead of picking the stubs or contract definitions from
-Artifactory / Nexus or Git, one can just want to point to
-a location on drive or classpath. This can be especially useful in a multimodule project, where one module wants
+Artifactory, Nexus, or Git, you can point to
+a location on a drive or the classpath. Doing so can be especially useful in a multi-module project, where one module wants
 to reuse stubs or contracts from another module without
 the need to actually install those in a local maven
-repository ot commit those changes to Git.
+repository to commit those changes to Git.
 
-In order to achieve this it's enough to use the `stubs://`
+In order to achieve this, you can use the `stubs://`
 protocol when the repository root parameter is set either
 in Stub Runner or in a Spring Cloud Contract plugin.
 
-In this example the `producer` project has been successfully
-built and stubs were generated under the `target/stubs` folder. As a consumer one can setup the Stub Runner to pick the stubs from that location using the `stubs://` protocol.
+In this example, the `producer` project has been successfully
+built and stubs were generated under the `target/stubs` folder. As a consumer, one can set up the Stub Runner to pick the stubs from that location by using the `stubs://` protocol.
 
 ====
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
@@ -902,8 +904,10 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 ----
 ====
 
-Contracts and stubs may be stored in a location, where each producer has its own, dedicated folder for contracts and stub mappings. Under that folder each consumer can have its own setup. To make Stub Runner find the dedicated folder from the provided ids one can pass a property `stubs.find-producer=true` or a system property `stubrunner.stubs.find-producer=true` .
+Contracts and stubs may be stored in a location, where each producer has its own, dedicated folder for contracts and stub mappings. Under that folder, each consumer can have its own setup. To make Stub Runner find the dedicated folder from the provided IDs, you can pass the `stubs.find-producer=true` property or the `stubrunner.stubs.find-producer=true` system property.
+The following listing shows an arrangement of contracts and stubs:
 
+====
 [source,bash,indent=0]
 ----
 └── com.example <1>
@@ -920,11 +924,12 @@ Contracts and stubs may be stored in a location, where each producer has its own
             └── shouldReturnStuffForOtherArtifactId.json
 
 ----
-<1> group id of the consumers
+<1> group ID of the consumers
 <2> consumer with artifact id [some-artifact-id]
 <3> contracts for the consumer with artifact id [some-artifact-id]
 <4> mappings for the consumer with artifact id [some-artifact-id]
 <5> consumer with artifact id [some-other-artifact-id]
+====
 
 ====
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
@@ -977,9 +982,9 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 
 As a consumer, you might not want to wait for the producer to finish its implementation and then publish their stubs. A solution to this problem can be generation of stubs at runtime.
 
-As a producer, when a contract is defined, you are required to make the generated tests pass in order for the stubs to be published. There are cases where you would like to unblock the consumers so that they can fetch the stubs before your tests are actually passing. In this case you should set such contracts as in progress. You can read more about this under the <<contract-dsl-in-progress>> section. That way your tests will not be generated, but the stubs will.
+As a producer, when a contract is defined, you are required to make the generated tests pass in order for the stubs to be published. There are cases where you would like to unblock the consumers so that they can fetch the stubs before your tests actually pass. In this case, you should set such contracts as in-progress. You can read more about this under the <<contract-dsl-in-progress>> section. That way, your tests are not generated, but the stubs are generated.
 
-As a consumer, you can toggle a switch to generate stubs at runtime. Stub Runner will ignore all the existing stub mappings and will generate new ones for all the contract definitions. Another option is to pass the `stubrunner.generate-stubs` system property. Below you can find an example of such setup.
+As a consumer, you can toggle a switch to generate stubs at runtime. Stub Runner ignores all the existing stub mappings and generates new ones for all the contract definitions. Another option is to pass the `stubrunner.generate-stubs` system property. The following example shows such a setup:
 
 ====
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
@@ -1018,7 +1023,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 [[features-stub-runner-fail-on-no-stubs]]
 === Fail On No Stubs
 
-By default Stub Runner will fail if no stubs were found. In order to change that behaviour, just set to `false` the `failOnNoStubs` property in the annotation or call the `withFailOnNoStubs(false)` method on a JUnit Rule or Extension.
+By default, Stub Runner will fail if no stubs are found. In order to change that behavior, set the `failOnNoStubs` property to `false` in the annotation or call the `withFailOnNoStubs(false)` method on a JUnit Rule or Extension. The following example shows how to do so:
 
 ====
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
@@ -1071,19 +1076,19 @@ properties. The following table shows their names with their default values:
 [frame="topbot",options="header"]
 |===============
 | Property name | Default value | Description
-|stubrunner.minPort|10000| Minimum value of a port for a started WireMock with stubs.
-|stubrunner.maxPort|15000| Maximum value of a port for a started WireMock with stubs.
-|stubrunner.repositoryRoot|| Maven repo URL. If blank, then call the local Maven repo.
-|stubrunner.classifier|stubs| Default classifier for the stub artifacts.
-|stubrunner.stubsMode|CLASSPATH| The way you want to fetch and register the stubs
-|stubrunner.ids|| Array of Ivy notation stubs to download.
-|stubrunner.username|| Optional username to access the tool that stores the JARs with
+|`stubrunner.minPort`|`10000`| Minimum value of a port for a started WireMock with stubs.
+|`stubrunner.maxPort`|`15000`| Maximum value of a port for a started WireMock with stubs.
+|`stubrunner.repositoryRoot`|| Maven repository URL. If blank, then call the local Maven repo.
+|`stubrunner.classifier`|`stubs`| Default classifier for the stub artifacts.
+|`stubrunner.stubsMode`|`CLASSPATH`| The way you want to fetch and register the stubs.
+|`stubrunner.ids`|| Array of Ivy notation stubs to download.
+|`stubrunner.username`|| Optional username to access the tool that stores the JARs with
 stubs.
-|stubrunner.password|| Optional password to access the tool that stores the JARs with
+|`stubrunner.password`|| Optional password to access the tool that stores the JARs with
 stubs.
-|stubrunner.stubsPerConsumer|`false`| Set to `true` if you want to use different stubs for
+|`stubrunner.stubsPerConsumer`|`false`| Set to `true` if you want to use different stubs for
 each consumer instead of registering all stubs for every consumer.
-|stubrunner.consumerName|| If you want to use a stub for each consumer and want to
+|`stubrunner.consumerName`|| If you want to use a stub for each consumer and want to
 override the consumer name, change this value.
 |===============
 
@@ -1112,5 +1117,5 @@ downloaded.
 
 IMPORTANT: Starting with version 1.0.4, you can provide a range of versions that you
 would like the Stub Runner to take into consideration. You can read more about the
-https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges[Aether versioning
-ranges here].
+Aether versioning ranges
+https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges[here].

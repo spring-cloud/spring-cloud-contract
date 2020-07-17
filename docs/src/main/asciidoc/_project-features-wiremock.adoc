@@ -3,9 +3,8 @@
 include::_attributes.adoc[]
 
 The Spring Cloud Contract WireMock modules let you use https://github.com/tomakehurst/wiremock[WireMock] in a
-Spring Boot application. Check out the
-https://github.com/spring-cloud/spring-cloud-contract/tree/{github-tag}/samples[samples]
-for more details.
+Spring Boot application. For more detail, check out the
+https://github.com/spring-cloud/spring-cloud-contract/tree/{github-tag}/samples[samples].
 
 If you have a Spring Boot application that uses Tomcat as an embedded server (which is
 the default with `spring-boot-starter-web`), you can add
@@ -24,12 +23,13 @@ include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=
 
 To start the stub server on a different port, use (for example),
 `@AutoConfigureWireMock(port=9999)`. For a random port, use a value of `0`. The stub
-server port can be bound in the test application context with the "wiremock.server.port"
+server port can be bound in the test application context with the `wiremock.server.port`
 property. Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to
 your test application context, where it is cached between methods and classes
-having the same context. The same is true for Spring integration tests. Also, you can
+that have the same context. The same is true for Spring integration tests. Also, you can
 inject a bean of type `WireMockServer` into your test.
-The registered WireMock server is reset after each test class, however, if you need to reset it after each test method, just set the `wiremock.reset-mappings-after-each-test` property to `true`.
+The registered WireMock server is reset after each test class.
+However, if you need to reset it after each test method, set the `wiremock.reset-mappings-after-each-test` property to `true`.
 
 [[features-wiremock-registering-stubs]]
 === Registering Stubs Automatically
@@ -61,7 +61,7 @@ public class WiremockImportApplicationTests {
 
 NOTE: Actually, WireMock always loads mappings from `src/test/resources/mappings` *as
 well as* the custom locations in the `stubs` attribute. To change this behavior, you can
-also specify a files root, as described in the next section of this document.
+also specify a file root, as described in the <<features-wiremock-using-files,next section of this document>>.
 
 If you use Spring Cloud Contract's default stub jars, your
 stubs are stored in the `/META-INF/group-id/artifact-id/versions/mappings/` folder.
@@ -83,14 +83,16 @@ case of the file system, you can see in the JSON DSL that the response has a `bo
 (literal) `body`. The files are resolved relative to a root directory (by default,
 `src/test/resources/\__files`). To customize this location, you can set the `files`
 attribute in the `@AutoConfigureWireMock` annotation to the location of the parent
-directory (in other words, `__files` is a subdirectory). You can use Spring resource
+directory (in other words, `__files` is a subdirectory). You can use a Spring resource
 notation to refer to `file:...` or `classpath:...` locations. Generic URLs are not
 supported. A list of values can be given -- in which case, WireMock resolves the first file
 that exists when it needs to find a response body.
 
 NOTE: When you configure the `files` root, it also affects the
 automatic loading of stubs, because they come from the root location
-in a subdirectory called `mappings`. The value of `files` has no
+in a subdirectory called `mappings`.
+
+NOTE: The value of `files` has no
 effect on the stubs loaded explicitly from the `stubs` attribute.
 
 [[features-wiremock-junit-rule]]
@@ -115,7 +117,7 @@ have been run.
 === Relaxed SSL Validation for Rest Template
 
 WireMock lets you stub a "`secure`" server with an `https` URL protocol. If your
-application wants to contact that stub server in an integration test, it will find that
+application wants to contact that stub server in an integration test, it finds that
 the SSL certificates are not valid (the usual problem with self-installed certificates).
 The best option is often to re-configure the client to use `http`. If that is not an
 option, you can ask Spring to configure an HTTP client that ignores SSL validation errors
