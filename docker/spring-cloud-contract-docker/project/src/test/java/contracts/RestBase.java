@@ -17,20 +17,17 @@
 package contracts;
 
 import io.restassured.RestAssured;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StringUtils;
 
 /**
  * @author Marcin Grzejszczak
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = RestBase.Config.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public abstract class RestBase {
 
@@ -43,7 +40,7 @@ public abstract class RestBase {
 	@Value("${APPLICATION_PASSWORD:}")
 	String password;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		RestAssured.baseURI = this.url;
 		if (StringUtils.hasText(this.username)) {
