@@ -91,7 +91,8 @@ class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory
 
 	@Override
 	public ReactiveLoadBalancer<ServiceInstance> getInstance(String serviceId) {
-		return new ContractReactorServiceInstanceLoadBalancer(this.beanFactory, serviceId);
+		return new ContractReactorServiceInstanceLoadBalancer(this.beanFactory,
+				serviceId);
 	}
 
 	@Override
@@ -198,7 +199,8 @@ class StubbedServiceInstance implements ServiceInstance {
 
 }
 
-class ContractReactorServiceInstanceLoadBalancer implements ReactorServiceInstanceLoadBalancer, LoadBalancerLifecycle {
+class ContractReactorServiceInstanceLoadBalancer
+		implements ReactorServiceInstanceLoadBalancer, LoadBalancerLifecycle {
 
 	private final BeanFactory beanFactory;
 
@@ -208,7 +210,8 @@ class ContractReactorServiceInstanceLoadBalancer implements ReactorServiceInstan
 
 	private StubMapperProperties stubMapperProperties;
 
-	ContractReactorServiceInstanceLoadBalancer(BeanFactory beanFactory, String serviceId) {
+	ContractReactorServiceInstanceLoadBalancer(BeanFactory beanFactory,
+			String serviceId) {
 		this.beanFactory = beanFactory;
 		this.serviceId = serviceId;
 	}
@@ -225,9 +228,8 @@ class ContractReactorServiceInstanceLoadBalancer implements ReactorServiceInstan
 
 	@Override
 	public Mono<Response<ServiceInstance>> choose(Request request) {
-		return Mono
-				.just(new DefaultResponse(new StubbedServiceInstance(stubFinder(),
-						stubMapperProperties(), this.serviceId)));
+		return Mono.just(new DefaultResponse(new StubbedServiceInstance(stubFinder(),
+				stubMapperProperties(), this.serviceId)));
 	}
 
 	private StubFinder stubFinder() {
@@ -244,4 +246,5 @@ class ContractReactorServiceInstanceLoadBalancer implements ReactorServiceInstan
 		}
 		return this.stubMapperProperties;
 	}
+
 }
