@@ -28,11 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tim Ysewyn
  */
-public class StubRunnerAutoConfigurationTests {
+public class StubRunnerServerConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(StubRunnerConfiguration.class,
-					StubRunnerAutoConfiguration.class));
+					StubRunnerServerConfiguration.class));
 
 	@Test
 	public void shouldCreateBeansByDefault() {

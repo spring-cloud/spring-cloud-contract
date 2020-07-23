@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Import;
  * @author Tim Ysewyn
  */
 @Configuration(proxyBeanMethods = false)
-class StubRunnerAutoConfiguration {
+class StubRunnerServerConfiguration {
 
 	@ConditionalOnProperty(name = "stubrunner.messaging.enabled", havingValue = "true",
 			matchIfMissing = true)
