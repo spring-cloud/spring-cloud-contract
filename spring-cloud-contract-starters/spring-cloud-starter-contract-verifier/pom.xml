@@ -26,6 +26,10 @@
 					<groupId>com.sun.xml.bind</groupId>
 					<artifactId>jaxb-osgi</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -35,6 +39,10 @@
 				<exclusion>
 					<groupId>com.sun.xml.bind</groupId>
 					<artifactId>jaxb-osgi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

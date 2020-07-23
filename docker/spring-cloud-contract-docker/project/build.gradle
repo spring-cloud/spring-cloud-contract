@@ -105,7 +105,7 @@ task copyOutput(type: Copy) {
 	into '/spring-cloud-contract-output'
 }
 
-test{
+test {
 	finalizedBy("copyOutput")
 	useJUnitPlatform()
 }
@@ -155,7 +155,8 @@ task resolveDependencies {
 			println "Retrieving dependencies for $name"
 			try {
 				config.files
-			} catch (e) {
+			}
+			catch (e) {
 				project.logger.info e.message // some cannot be resolved, silentlyish skip them
 			}
 		}
