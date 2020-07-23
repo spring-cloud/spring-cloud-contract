@@ -105,7 +105,10 @@ task copyOutput(type: Copy) {
 	into '/spring-cloud-contract-output'
 }
 
-test.finalizedBy("copyOutput")
+test{
+	finalizedBy("copyOutput")
+	useJUnitPlatform()
+}
 
 publishing {
 	repositories {
