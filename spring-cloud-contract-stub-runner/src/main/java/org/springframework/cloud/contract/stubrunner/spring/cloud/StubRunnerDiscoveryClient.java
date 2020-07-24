@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud;
 
-import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,8 +40,7 @@ import org.springframework.util.StringUtils;
  */
 class StubRunnerDiscoveryClient implements DiscoveryClient {
 
-	private static final Log log = LogFactory
-			.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(StubRunnerDiscoveryClient.class);
 
 	private final DiscoveryClient delegate;
 
@@ -51,7 +49,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 	private final StubMapperProperties stubMapperProperties;
 
 	StubRunnerDiscoveryClient(DiscoveryClient delegate, StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties, String springAppName) {
+			StubMapperProperties stubMapperProperties) {
 		this.delegate = delegate instanceof StubRunnerDiscoveryClient
 				? noOpDiscoveryClient() : delegate;
 		if (log.isDebugEnabled()) {
@@ -63,7 +61,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 	}
 
 	StubRunnerDiscoveryClient(StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties, String springAppName) {
+			StubMapperProperties stubMapperProperties) {
 		this.delegate = noOpDiscoveryClient();
 		if (log.isDebugEnabled()) {
 			log.debug("Will delegate calls to discovery service [" + this.delegate
@@ -97,13 +95,13 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 		String serviceToFind = StringUtils.hasText(ivyNotation) ? ivyNotation : serviceId;
 		URL stubUrl = this.stubFinder.findStubUrl(serviceToFind);
 		log.info("Resolved from ivy [" + ivyNotation + "] service to find ["
-				+ serviceToFind + "]. " + "Found stub is available under URL [" + stubUrl
+				+ serviceToFind + "]. Found stub is available under URL [" + stubUrl
 				+ "]");
 		if (stubUrl == null) {
 			return getInstancesFromDelegate(serviceId);
 		}
-		return Collections.<ServiceInstance>singletonList(new StubRunnerServiceInstance(
-				serviceId, stubUrl.getHost(), stubUrl.getPort(), toUri(stubUrl)));
+		return Collections.singletonList(new StubRunnerServiceInstance(serviceId,
+				stubUrl.getHost(), stubUrl.getPort(), toUri(stubUrl)));
 	}
 
 	private List<ServiceInstance> getInstancesFromDelegate(String serviceId) {
