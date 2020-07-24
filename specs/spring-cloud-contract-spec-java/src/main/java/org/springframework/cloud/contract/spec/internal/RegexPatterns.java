@@ -85,7 +85,7 @@ public final class RegexPatterns {
 	protected static final Pattern NON_BLANK = Pattern.compile("^\\s*\\S[\\S\\s]*");
 
 	protected static final Pattern ISO8601_WITH_OFFSET = Pattern.compile(
-			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.\\d{1,6})?(Z|[+-][01]\\d:[0-5]\\d)");
+			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.\\d+)?(Z|[+-][01]\\d:[0-5]\\d)");
 
 	protected static Pattern anyOf(String... values) {
 		return Pattern.compile(Arrays.stream(values).map(it -> '^' + it + '$')
