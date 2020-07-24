@@ -53,10 +53,15 @@ class StubServer {
 	}
 
 	private StubServer stubServer() {
+		this.httpServerStub.registerMappings(this.mappings);
 		log.info("Started stub server for project ["
 				+ this.stubConfiguration.toColonSeparatedDependencyNotation()
-				+ "] on port " + this.httpServerStub.port());
-		this.httpServerStub.registerMappings(this.mappings);
+				+ "] on port " + this.httpServerStub.port() + " with ["
+				+ this.mappings.size() + "] mappings");
+		if (this.mappings.isEmpty() && getPort() != -1) {
+			log.warn(
+					"There are no HTTP mappings registered, if your contracts are not messaging based then something went wrong");
+		}
 		return this;
 	}
 
