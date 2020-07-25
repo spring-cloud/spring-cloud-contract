@@ -71,11 +71,11 @@ public final class RegexPatterns {
 	protected static final Pattern UUID = Pattern
 			.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
 
-	protected static final Pattern ANY_DATE = Pattern
-			.compile("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
+	protected static final Pattern ANY_DATE = Pattern.compile(
+			"(\\d\\d\\d\\d)-(0[4,6,9]|11)-(0[1-9]|[12][0-9]|3[0])|(\\d\\d\\d\\d)-(0[1,3,5,7,8]|10|12)-(0[1-9]|[12][0-9]|3[01])|(\\d\\d\\d\\d)-(02)-(0[1-9]|[12][0-8])");
 
 	protected static final Pattern ANY_DATE_TIME = Pattern.compile(
-			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+			"((\\d\\d\\d\\d)-(0[4,6,9]|11)-(0[1-9]|[12][0-9]|3[0])|(\\d\\d\\d\\d)-(0[1,3,5,7,8]|10|12)-(0[1-9]|[12][0-9]|3[01])|(\\d\\d\\d\\d)-(02)-(0[1-9]|[12][0-8]))T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
 
 	protected static final Pattern ANY_TIME = Pattern
 			.compile("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");

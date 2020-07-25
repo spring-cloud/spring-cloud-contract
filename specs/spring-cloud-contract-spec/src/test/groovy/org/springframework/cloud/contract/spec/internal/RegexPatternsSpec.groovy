@@ -263,6 +263,12 @@ class RegexPatternsSpec extends Specification {
 			"1014-12-32" || false
 			"1014-13-31" || false
 			"1014-20-30" || false
+			"1037-04-31" || false
+			"1037-04-30" || true
+			"1037-02-29" || false
+			"1037-02-28" || true
+			"1037-01-31" || true
+			"1037-01-32" || false
 			'5'          || false
 	}
 
@@ -289,6 +295,10 @@ class RegexPatternsSpec extends Specification {
 			"1014-20-30T24:23:45" || false
 			"1014-20-30T23:60:45" || false
 			"1014-20-30T23:59:60" || false
+			"1037-04-31T23:59:59" || false
+			"1037-04-30T23:59:59" || true
+			"1037-02-29T23:59:59" || false
+			"1037-02-28T23:59:59" || true
 	}
 
 	def "should generate a regex with time [#textToMatch] in HH:mm:ss format that should match [#shouldMatch]"() {
