@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.util.xml
 
-import com.sun.org.apache.xml.internal.security.utils.DOMNamespaceContext
-
-import javax.xml.namespace.NamespaceContext
 import java.util.stream.IntStream
 
 import javax.xml.parsers.DocumentBuilder
@@ -64,10 +61,13 @@ class XmlToXPathsConverter {
 
 	static Object removeMatchingXPaths(Object body, BodyMatchers bodyMatchers) {
 		XPath xPath = XPathFactory.newInstance().newXPath()
-		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance()
+		builderFactory.setNamespaceAware(true)
+		DocumentBuilder documentBuilder = builderFactory
 			.newDocumentBuilder()
 		Document parsedXml = documentBuilder
 			.parse(new InputSource(new StringReader(body as String)))
+		xPath.setNamespaceContext(new DOMNamespaceContext(parsedXml.documentElement))
 		bodyMatchers?.matchers()?.each({
 			Node node = xPath.evaluate(it.path(), parsedXml.documentElement, NODE) as Node
 			removeNode(node)
