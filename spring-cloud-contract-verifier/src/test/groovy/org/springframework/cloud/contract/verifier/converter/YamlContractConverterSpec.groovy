@@ -89,6 +89,9 @@ class YamlContractConverterSpec extends Specification {
 	URL ymlRestXmlFile = YamlContractConverterSpec.
 			getResource("/yml/contract_rest_xml.yml")
 	File ymlRestXml = new File(ymlRestXmlFile.toURI())
+	URL ymlRestNamedXmlFile = YamlContractConverterSpec.
+			getResource("/yml/contract_rest_named_xml.yml")
+	File ymlRestNamedXml = new File(ymlRestNamedXmlFile.toURI())
 	URL oa3SpecUrl = YamlContractConverterSpec.getResource('/yml/oa3/openapi_petstore.yml')
 	File oa3File = new File(oa3SpecUrl.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
@@ -110,6 +113,11 @@ class YamlContractConverterSpec extends Specification {
 <valueWithTypeMatch>string</valueWithTypeMatch>
 <key><complex>foo</complex></key>
 </test>
+'''
+	String xmlContractBodyWithNamespaces = '''
+<ns1:customer xmlns:ns1="http://demo.com/testns">
+<email>customer@test.com</email>
+</ns1:customer>
 '''
 
 	def "should convert YAML with Cookies to DSL"() {
@@ -1329,6 +1337,34 @@ metadata: null
 			contract.response.body.serverValue.replaceAll("\n", "")
 											  .replaceAll(' ', '') == xmlContractBody
 					.replaceAll("\n", "").replaceAll(' ', '')
+	}
+
+	def "should convert REST YAML with XML with namespace in request and response to DSL"() {
+		given:
+		assert converter.isAccepted(ymlRestNamedXml)
+		when:
+		Collection<Contract> contracts = converter.convertFrom(ymlRestNamedXml)
+		then:
+		contracts.size() == 1
+		Contract contract = contracts.first()
+		contract.request.headers.entries.find({
+			it.name == 'Content-Type' && it.clientValue == "application/xml" && it.serverValue == "application/xml"
+		})
+		contract.request.bodyMatchers.matchers.isEmpty()
+		contract.request.body.clientValue.replaceAll("\n", "").
+				replaceAll(' ', '') == xmlContractBodyWithNamespaces.replaceAll("\n", "").
+				replaceAll(' ', '')
+		contract.request.body.serverValue.replaceAll("\n", "").
+				replaceAll(' ', '') == xmlContractBodyWithNamespaces.replaceAll("\n", "").
+				replaceAll(' ', '')
+		and:
+		contract.response.bodyMatchers.matchers.isEmpty()
+		contract.response.body.clientValue.replaceAll("\n", "")
+				.replaceAll(' ', '') == xmlContractBodyWithNamespaces
+				.replaceAll("\n", "").replaceAll(' ', '')
+		contract.response.body.serverValue.replaceAll("\n", "")
+				.replaceAll(' ', '') == xmlContractBodyWithNamespaces
+				.replaceAll("\n", "").replaceAll(' ', '')
 	}
 
 	def "should accept a yaml file that is a proper scc YAML contract"() {
