@@ -1,18 +1,18 @@
-IMPORTANT: The following properties can be passed as a system property (e.g. `stubrunner.properties.git.branch`) or via an environment variable (e.g. `STUBRUNNER_PROPERTIES_GIT_BRANCH`) or as a property inside stub runner's annotation or a JUnit Rule / Extension. In the latter case you can pass `git.branch` property name instead of the `stubrunner.properties.git.branch` one.
+IMPORTANT: The following properties can be passed as a system property (for example, `stubrunner.properties.git.branch`), as an environment variable (for example, `STUBRUNNER_PROPERTIES_GIT_BRANCH`), or as a property inside stub runner's annotation or a JUnit Rule (JUnit 4) or Extension (JUnit 5). In the latter case, you can pass the `git.branch` property instead of `stubrunner.properties.git.branch`.
 
 .Stubrunner Properties Options
 |===
 |Name | Default | Description
 
-|stubrunner.properties.pactbroker.provider-name-with-group-id | false | When using the Pact Broker based approach, you can automatically group id to the provider name.
+|`stubrunner.properties.pactbroker.provider-name-with-group-id` | `false` | When using the Pact Broker-based approach, you can automatically group ID to the provider name.
 
-|stubrunner.properties.git.branch |  | When using the SCM based approach, you can customize the branch name to check out.
-|stubrunner.properties.git.commit-message | Updating project [$project] with stubs | When using the SCM based approach, you can customize the commit message for created stubs. The `$project` text will be replaced with the project name.
-|stubrunner.properties.git.no-of-attempts | 10 | When using the SCM based approach, you can customize number of retries to push the stubs to Git.
-|stubrunner.properties.git.username |  | When using the SCM based approach, you can pass the username to connect to the Git repository.
-|stubrunner.properties.git.password |  | When using the SCM based approach, you can pass the password to connect to the Git repository.
-|stubrunner.properties.git.wait-between-attempts | 1000 | When using the SCM based approach, you can customize waiting time in ms between trying to push the stubs to Git.
+|`stubrunner.properties.git.branch` |  | When using the SCM-based approach, you can customize the branch name to check out.
+|`stubrunner.properties.git.commit-message` | Updating project [$project] with stubs | When using the SCM based approach, you can customize the commit message for created stubs. The `$project` text is replaced with the project name.
+|`stubrunner.properties.git.no-of-attempts` | `10` | When using the-SCM based approach, you can customize the number of retries to push the stubs to Git.
+|`stubrunner.properties.git.username` |  | When using the SCM-based approach, you can pass the username to connect to the git repository.
+|`stubrunner.properties.git.password` |  | When using the SCM-based approach, you can pass the password to connect to the git repository.
+|`stubrunner.properties.git.wait-between-attempts` | `1000` | When using the SCM-based approach, you can customize waiting time in ms between attempts to push the stubs to git.
 
-|stubrunner.properties.stubs.find-producer | false | When using the Stubs protocol, you can toggle this flag to search for contracts via the `group id / artifact id` instead of taking the stubs directly from the provided folder.
+|`stubrunner.properties.stubs.find-producer` | `false` | When using the `stubs` protocol, you can toggle this flag to search for contracts in the `group id / artifact id` instead of taking the stubs directly from the provided folder.
 
 |===

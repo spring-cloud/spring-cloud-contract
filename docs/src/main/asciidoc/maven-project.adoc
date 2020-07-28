@@ -17,12 +17,12 @@ following sections:
 * <<maven-pushing-stubs-to-scm>>
 * <<maven-sts>>
 
-You can also check the plugin's documentation  link:../../spring-cloud-contract-maven-plugin/index.html[here].
+You can also check the plugin's documentation link:../../spring-cloud-contract-maven-plugin/index.html[here].
 
 [[maven-add-plugin]]
 == Adding the Maven Plugin
 
-Add the Spring Cloud Contract BOM in a fashion similar to the following:
+To add the Spring Cloud Contract BOM, include the following section in your `pom.xml` file:
 
 ====
 [source,xml,indent=0]
@@ -44,12 +44,12 @@ You can read more in the
 spring-cloud-contract-maven-plugin/index.html[Spring
 Cloud Contract Maven Plugin Documentation].
 
-Sometimes, regardless of the picked IDE, you can see that the `target/generated-test-source` folder is not visible on the IDE's classpath. To ensure that it's always there, you can add the following entry to your `pom.xml`
+Sometimes, regardless of the picked IDE, you can see that the `target/generated-test-source` folder is not visible on the IDE's classpath. To ensure that it is always there, you can add the following entry to your `pom.xml`
 
 ====
 [source,xml,indent=0]
 ----
-<plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
@@ -69,7 +69,6 @@ Sometimes, regardless of the picked IDE, you can see that the `target/generated-
 			</plugin>
 ----
 ====
-
 
 [[maven-rest-assured]]
 == Maven and Rest Assured 2.0
@@ -169,13 +168,13 @@ Given that structure, Spring Cloud Contract Verifier creates a test class named
 * `shouldReturnUser()`
 
 [[maven-run-plugin]]
-== Run plugin
+== Run Plugin
 
 The `generateTests` plugin goal is assigned to be invoked in the phase called
 `generate-test-sources`. If you want it to be part of your build process, you need not do
 anything. If you want only to generate tests, invoke the `generateTests` goal.
 
-If you want to run stubs via Maven it's enough to call the `run` goal with the stubs to run as the `spring.cloud.contract.verifier.stubs` system property as follows:
+If you want to run stubs from Maven, call the `run` goal with the stubs to run as the `spring.cloud.contract.verifier.stubs` system property as follows:
 
 [source,bash,indent=0]
 ====
@@ -226,7 +225,7 @@ If neither of these values are set, the value is set to
 classes.
 * `baseClassForTests`: Creates a base class for all generated tests. By default, if you
 use Spock classes, the class is `spock.lang.Specification`.
-* contractsDirectory: Specifies a directory that contains contracts written with the
+* `contractsDirectory`: Specifies a directory that contains contracts written with the
 Groovyn DSL. The default directory is `/src/test/resources/contracts`.
 * `generatedTestSourcesDir`: Specifies the test source directory where tests generated
 from the Groovy DSL should be placed. By default, its value is
@@ -264,7 +263,7 @@ the following options:
 * `contractsPath`: The path to the concrete contracts in the JAR with packaged contracts.
 Defaults to `groupid/artifactid` where `gropuid` is slash separated.
 * `contractsMode`: Picks the mode in which stubs are found and registered.
-* `deleteStubsAfterTest`: If set to `false` will not remove any downloaded
+* `deleteStubsAfterTest`: If set to `false`, do not remove any downloaded
 contracts from temporary directories.
 * `contractsRepositoryUrl`: URL to a repository with the artifacts that have contracts. If it is not provided,
 use the current Maven ones.
@@ -278,7 +277,7 @@ We cache only non-snapshot, explicitly provided versions (for example
 
 The following list describes experimental features that you can turn on in the plugin:
 
-* `convertToYaml`: Converts all DSLs to the declarative YAML format. This can be extremely useful when you use external libraries in your Groovy DSLs. By turning this feature on (by setting it to `true`) you need not add the library dependency on the consumer side.
+* `convertToYaml`: Converts all DSLs to the declarative YAML format. This can be extremely useful when you use external libraries in your Groovy DSLs. By turning this feature on (by setting it to `true`), you need not add the library dependency on the consumer side.
 * `assertJsonSize`: You can check the size of JSON arrays in the generated tests. This feature is disabled by default.
 
 [[maven-single-base]]
@@ -305,7 +304,7 @@ class MvcSpec extends Specification {
 ----
 ====
 
-You can also setup the whole context if necessary, as the following example shows:
+If necessary, you can also setup the whole context, as the following example shows:
 
 ====
 [source,java,indent=0]
@@ -345,7 +344,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -408,6 +407,7 @@ include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/bas
 ====
 
 Assume that you have contracts under these two locations:
+
 * `src/test/resources/contract/com/`
 * `src/test/resources/contract/foo/`
 
@@ -522,7 +522,7 @@ The following image shows an exception that you may see when you use STS:
 
 image::{github-raw}/docs/src/main/asciidoc/images/sts_exception.png[STS Exception]
 
-When you click on the error marker you should see something like the following:
+When you click on the error marker, you should see something like the following:
 
 ====
 [source,bash]
@@ -537,7 +537,7 @@ When you click on the error marker you should see something like the following:
 ----
 ====
 
-In order to fix this issue, provide the following section in your `pom.xml`:
+To fix this issue, provide the following section in your `pom.xml`:
 
 ====
 [source,xml]
@@ -580,8 +580,8 @@ In order to fix this issue, provide the following section in your `pom.xml`:
 == Maven Plugin with Spock Tests
 
 You can select the http://spockframework.org/[Spock Framework] for creating and running the auto-generated contract
-verification tests with both Maven and Gradle. However, whereas using Gradle is straightforward,
-in Maven, you will require some additional setup in order to make the tests compile and work properly.
+verification tests with both Maven and Gradle. However, while using Gradle is straightforward,
+in Maven, you need some additional setup in order to make the tests compile and execute properly.
 
 First of all, you must use a plugin, such as the https://github.com/groovy/GMavenPlus[GMavenPlus] plugin,
 to add Groovy to your project. In GMavenPlus plugin, you need to explicitly set test sources, including both the

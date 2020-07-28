@@ -7,7 +7,7 @@ means of communication. All of the integrations shown in this document work with
 but you can also create one of your own and use that.
 
 [[contract-dsl-messaging-top-level]]
-=== Messaging DSL Top-Level Elements
+=== Messaging DSL Top-level Elements
 
 The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
 following sections explain the differences:
@@ -21,17 +21,17 @@ following sections explain the differences:
 ==== Output Triggered by a Method
 
 The output message can be triggered by calling a method (such as a `Scheduler` when a contract was
-started and a message was sent), as shown in the following example:
+started and when a message was sent), as shown in the following example:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_message_method.yml[indent=0]
 ----
@@ -40,7 +40,7 @@ include::{verifier_core_path}/src/test/resources/yml/contract_message_method.yml
 In the previous example case, the output message is sent to `output` if a method called
 `bookReturnedTriggered` is invoked. On the message publisher's side, we generate a
 test that calls that method to trigger the message. On the consumer side, you can use
-the `some_label` to trigger the message.
+`some_label` to trigger the message.
 
 [[contract-dsl-output-triggered-message]]
 ==== Output Triggered by a Message
@@ -50,13 +50,13 @@ example:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_message_input_message.yml[indent=0]
 ----
@@ -71,7 +71,7 @@ consumer side, you can either send a message to the input destination or use a l
 [[contract-dsl-consumer-producer]]
 ==== Consumer/Producer
 
-IMPORTANT: This section is valid only for Groovy DSL.
+IMPORTANT: This section is valid only for the Groovy DSL.
 
 In HTTP, you have a notion of `client`/`stub and `server`/`test` notation. You can also
 use those paradigms in messaging. In addition, Spring Cloud Contract Verifier also
@@ -79,10 +79,12 @@ provides the `consumer` and `producer` methods, as presented in the following ex
 (note that you can use either `$` or `value` methods to provide `consumer` and `producer`
 parts):
 
+====
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
 ----
+====
 
 [[contract-dsl-messaging-common]]
 ==== Common
@@ -183,7 +185,7 @@ message  is triggered by a component inside the application (for example, a sche
 
 IMPORTANT: The destination passed to `messageFrom` or `sentTo` can have different
 meanings for different messaging implementations. For Stream and Integration, it is
-first resolved as a `destination` of a channel. Then, if there is no such `destination`
+first resolved as a `destination` of a channel. Then, if there is no such `destination`,
 it is resolved as a channel name. For Camel, that's a certain component (for example,
 `jms`).
 
@@ -194,13 +196,13 @@ Consider the following contract:
 
 =====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 [source,yml,indent=0]
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario1.yml[indent=0]
@@ -230,13 +232,13 @@ Consider the following contract:
 
 =====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_dsl]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario2.yml[indent=0]
 ----
@@ -265,13 +267,13 @@ Consider the following contract:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
 ----
@@ -310,12 +312,14 @@ That way, the only remaining framework is Spring AMQP.
 
 To trigger a message, use the `StubTrigger` interface, as the following example shows:
 
+====
 [source,groovy]
 ----
 include::{stubrunner_core_path}/src/main/java/org/springframework/cloud/contract/stubrunner/StubTrigger.java[lines=16..-1]
 ----
+====
 
-For convenience, the `StubFinder` interface extends `StubTrigger`, so you only need one
+For convenience, the `StubFinder` interface extends `StubTrigger`, so you need only one
 or the other in your tests.
 
 `StubTrigger` gives you the following options to trigger a message:
@@ -330,17 +334,24 @@ or the other in your tests.
 
 The following example shows how to trigger a message with a label:
 
+====
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
-[[features-messaging-trigger-group-artifact-ids]]
-==== Trigger by Group and Artifact Ids
+====
 
+[[features-messaging-trigger-group-artifact-ids]]
+==== Trigger by Group and Artifact IDs
+
+The following example shows how to trigger a message by group and artifact IDs:
+
+====
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
 ----
+====
 
 [[features-messaging-trigger-artifact-ids]]
 ==== Trigger by Artifact IDs
@@ -387,7 +398,7 @@ If you need to disable this functionality, set the `stubrunner.camel.enabled=fal
 ==== Examples
 
 Assume that we have the following Maven repository with deployed stubs for the
-`camelService` application.
+`camelService` application:
 
 ====
 [source,bash,indent=0]
@@ -436,6 +447,12 @@ include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/or
 include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
 ----
 ====
+
+These examples lend themselves to three scenarios:
+
+. <<features-messaging-stub-runner-camel-scenario1>>
+. <<features-messaging-stub-runner-camel-scenario2>>
+. <<features-messaging-stub-runner-camel-scenario3>>
 
 [[features-messaging-stub-runner-camel-scenario1]]
 ===== Scenario 1 (No Input Message)
@@ -681,7 +698,7 @@ Spring Cloud Contract Stub Runner's messaging module gives you an easy way to
 integrate with Spring Stream. For the provided artifacts, it automatically downloads the
 stubs and registers the required routes.
 
-WARNING: If Stub Runner's integration with the Stream `messageFrom` or `sentTo` strings
+CAUTION: If Stub Runner's integration with the Stream `messageFrom` or `sentTo` strings
 are resolved first as the `destination` of a channel and no such `destination` exists, the
 destination is resolved as a channel name.
 
@@ -877,10 +894,10 @@ automatically downloads the stubs and registers the required routes.
 
 The integration tries to work standalone (that is, without interaction with a running
 RabbitMQ message broker). It expects a `RabbitTemplate` on the application context and
-uses it as a spring boot test named `@SpyBean`. As a result, it can use the Mockito spy
+uses it as a Spring Boot test named `@SpyBean`. As a result, it can use the Mockito spy
 functionality to verify and inspect messages sent by the application.
 
-On the message consumer side, the stub runner considers all `@RabbitListener` annotated
+On the message consumer side, the stub runner considers all `@RabbitListener`-annotated
 endpoints and all `SimpleMessageListenerContainer` objects on the application context.
 
 As messages are usually sent to exchanges in AMQP, the message contract contains the
@@ -902,7 +919,7 @@ set the property `stubrunner.amqp.enabled=true`. Remember to annotate your test 
 with `@AutoConfigureStubRunner`.
 
 IMPORTANT: If you already have Stream and Integration on the classpath, you need
-to disable them explicitly by setting the  `stubrunner.stream.enabled=false` and
+to explicitly disable them by setting the  `stubrunner.stream.enabled=false` and
 `stubrunner.integration.enabled=false` properties.
 
 [[features-messaging-stub-runner-amqp-example]]
@@ -960,7 +977,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-amqp/src/test/resources/
 [[features-messaging-stub-runner-amqp-triggering]]
 ===== Triggering the Message
 
-To trigger a message using the contract in the preceding section, use the `StubTrigger` interface as
+To trigger a message using the contract in the preceding section, use the `StubTrigger` interface, as
 follows:
 
 ====
@@ -1005,7 +1022,7 @@ NOTE: The message is directly handed over to the `onMessage` method of the
 [[features-messaging-stub-runner-amqp-configuration]]
 ===== Spring AMQP Test Configuration
 
-In order to avoid Spring AMQP trying to connect to a running broker during our tests, we
+To avoid Spring AMQP trying to connect to a running broker during our tests, we
 configure a mock `ConnectionFactory`.
 
 To disable the mocked `ConnectionFactory`, set the following property:
@@ -1026,7 +1043,7 @@ stubrunner:
 Spring Cloud Contract Stub Runner's messaging module provides an easy way to
 integrate with Spring JMS.
 
-The integration assumes that you have a running instance of a JMS broker (e.g. `activemq` embedded broker).
+The integration assumes that you have a running instance of a JMS broker (such as an `activemq` embedded broker).
 
 [[features-messaging-stub-runner-jms-adding]]
 ==== Adding the Runner to the Project
@@ -1163,15 +1180,15 @@ include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/
 Spring Cloud Contract Stub Runner's messaging module provides an easy way to
 integrate with Spring Kafka.
 
-The integration assumes that you have a running instance of a embedded Kafka broker (via the `spring-kafka-test` dependency).
+The integration assumes that you have a running instance of an embedded Kafka broker (through the `spring-kafka-test` dependency).
 
 [[features-messaging-stub-runner-kafka-adding]]
 ==== Adding the Runner to the Project
 
-You need to have both Spring Kafka, Spring Kafka Test (to run the `@EmbeddedBroker`) and Spring Cloud Contract Stub Runner on the classpath. Remember to annotate your test class
+You need to have Spring Kafka, Spring Kafka Test (to run the `@EmbeddedBroker`), and Spring Cloud Contract Stub Runner on the classpath. Remember to annotate your test class
 with `@AutoConfigureStubRunner`.
 
-With Kafka integration, in order to poll for a single message we need to register a consumer upon Spring context startup. That may lead to a situation that, when you're on the consumer side, Stub Runner can register an additional consumer for the same group id and topic. That could lead to a situation that only one of the components would actually poll for the message. Since on the consumer side you have both the Spring Cloud Contract Stub Runner and Spring Cloud Contract Verifier classpath, we need to be able to switch off such behaviour. That's done automatically via the `stubrunner.kafka.initializer.enabled` flag, that will disable the Contact Verifier consumer registration. If your application is both the consumer and the producer of a kafka message, you might need to manually toggle that property to `false` in the base class of your generated tests.
+With Kafka integration, in order to poll for a single message, we need to register a consumer upon Spring context startup. That may lead to a situation that, when you are on the consumer side, Stub Runner can register an additional consumer for the same group ID and topic. That could lead to a situation that only one of the components would actually poll for the message. Since, on the consumer side, you have both the Spring Cloud Contract Stub Runner and Spring Cloud Contract Verifier classpath, we need to be able to switch off such behavior. That is done automatically through the `stubrunner.kafka.initializer.enabled` flag, which disables the Contact Verifier consumer registration. If your application is both the consumer and the producer of a Kafka message, you might need to manually toggle that property to `false` in the base class of your generated tests.
 
 :input_name: input
 :output_name: output

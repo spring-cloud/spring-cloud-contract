@@ -101,14 +101,14 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 [[flows-provider-git-producer]]
 === Setting up the Producer
 
-In order to push the stubs to a git repository instead of Nexus or Artifactory, you need
+To push the stubs to a git repository instead of Nexus or Artifactory, you need
 to use the `git` protocol in the URL of the plugin setup. Also you need to explicitly tell
-the plugin to push the stubs at the end of the build process. The following example shows
-how to do so:
+the plugin to push the stubs at the end of the build process. The following examples show
+how to do so in both Maven and Gradle:
 
 ====
 [source,xml,indent=0,role="primary"]
-.maven
+.Maven
 ----
 <plugin>
     <groupId>org.springframework.cloud</groupId>
@@ -147,7 +147,7 @@ how to do so:
 ----
 
 [source,groovy,indent=0,role="secondary"]
-.gradle
+.Gradle
 ----
 contracts {
 	// We want to pick contracts from a Git repository
@@ -176,7 +176,7 @@ publish.dependsOn("publishStubsToScm")
 ====
 
 You can read more about setting up a git repository in the
-<<howto.adoc#how-to-use-git-as-storage,How To page>> of the documentation.
+<<howto.adoc#how-to-use-git-as-storage,How To section>> of the documentation.
 
 [[flows-cdc-contracts-producer]]
 == Consumer Driven Contracts with Contracts on the Producer Side
@@ -191,7 +191,7 @@ with contracts on the producer side flow.
 In this flow, we perform Consumer Driven Contract testing. The contract definitions are
 stored in a separate repository.
 
-See the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/contracts_on_the_producer_side.html[workshop page]
+See the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/contracts_on_the_producer_side.html[workshop section]
 for step-by-step instructions on how to do this flow.
 
 === Prerequisites
@@ -201,23 +201,23 @@ To use consumer-driven contracts with the contracts held in an external reposito
 * Contains all the contract definitions for each producer.
 * Can package the contract definitions in a JAR.
 * For each contract producer, contains a way (for example, `pom.xml`) to install stubs
-locally through the Spring Cloud Contract Plugin (SCC Plugin)
+locally through the Spring Cloud Contract Plugin (SCC Plugin).
 
 For more information, see the <<howto.adoc#how-to-common-repo-with-contracts, How To section>>,
-where we describe how to set up such a repository
+where we describe how to set up such a repository.
 For an example of such a project, see {samples_code}/beer_contracts[this sample].
 
 You also need consumer code that has Spring Cloud Contract Stub Runner set up.
 For an example of such a project, see {samples_code}/consumer[this sample].
 You also need producer code that has Spring Cloud Contract set up, together with a plugin.
 For an example of such a project, see {samples_code}/producer_with_external_contracts[this sample].
-The stub storage is Nexus or Artifactory
+The stub storage is Nexus or Artifactory.
 
-At a high level, the flow looks as follows:
+At a high level, the flow is as follows:
 
-. The consumer works with the contract definitions from the separate repository
-. Once the consumer's work is done, a branch with working code is done on the consumer
-side and a pull request is made to the separate repository that holds the contract definitions.
+. The consumer works with the contract definitions from the separate repository.
+. Once the consumer's work is done, a branch with working code is created on the consumer
+side, and a pull request is made to the separate repository that holds the contract definitions.
 . The producer takes over the pull request to the separate repository with contract
 definitions and installs the JAR with all contracts locally.
 . The producer generates tests from the locally stored JAR and writes the missing
@@ -238,7 +238,7 @@ The consumer:
 +
 The test fails due to no server being present.
 . Clones the repository that holds the contract definitions.
-. Set up the requirements as contracts under the folder with the consumer name as a subfolder of the producer.
+. Sets up the requirements as contracts under the folder, with the consumer name as a subfolder of the producer.
 +
 For example, for a producer named `producer` and a consumer named `consumer`, the contracts would be stored under `src/main/resources/contracts/producer/consumer/`)
 . Once the contracts are defined, installs the producer stubs to local storage, as the following example shows:
@@ -257,9 +257,9 @@ $ ./mvnw clean install
 The SCC Stub Runner:
 * Fetches the producer stubs.
 * Runs an in-memory HTTP server stub with the producer stubs.
-* Now your test communicates with the HTTP server stub and your tests pass
-* Create a pull request to the repository with contract definitions, with the new contracts for the producer
-* Branch your consumer code, until the producer team has merged their code
+Now your test communicates with the HTTP server stub, and your tests pass.
+* Creates a pull request to the repository with contract definitions, with the new contracts for the producer.
+* Branches your consumer code, until the producer team has merged their code.
 
 The following UML diagram shows the consumer flow:
 
@@ -371,7 +371,8 @@ $ git merge --no-ff the_branch_with_pull_request
 $ git push origin master
 ----
 ====
-. The CI system builds the project with the contract definitions and uploads the JAR with
++
+The CI system builds the project with the contract definitions and uploads the JAR with
 the contract definitions to Nexus or Artifactory.
 . Switches to working remotely.
 . Sets up the plugin so that the contract definitions are no longer taken from the local
@@ -416,9 +417,9 @@ contracts {
 ====
 . Merges the producer code with the new implementation.
 . The CI system:
-* Builds the project
-* Generates tests, stubs, and the stub JAR
-* Uploads the artifact with the application and the stubs to Nexus or Artifactory.
+** Builds the project.
+** Generates tests, stubs, and the stub JAR.
+** Uploads the artifact with the application and the stubs to Nexus or Artifactory.
 
 The following UML diagram shows the producer process:
 
@@ -455,15 +456,15 @@ The following UML diagram shows the producer process:
 ----
 
 [[flows-cdc-contracts-stubs-git]]
-== Consumer Driven Contracts with Contracts on the Producer Side, Pushed to Git
+== Consumer-driven Contracts with Contracts on the Producer Side, Pushed to Git
 
-You can check <<getting-started.adoc#getting-started-cdc, Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side>> to see the consumer driven contracts with contracts on the producer side flow.
+You can read the <<getting-started.adoc#getting-started-cdc, Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side>> to see the consumer driven contracts with contracts on the producer side flow.
 
 The stub storage implementation is a git repository. We describe its setup in the
 <<flows-provider-git>> section.
 
 You can read more about setting up a git repository for the consumer and producer sides in
-the <<howto.adoc#how-to-use-git-as-storage,How To page>> of the documentation.
+the <<howto.adoc#how-to-use-git-as-storage,How To section>> of the documentation.
 
 [[flows-provider-non-spring]]
 == Provider Contract Testing with Stubs in Artifactory for a non-Spring Application
@@ -471,12 +472,12 @@ the <<howto.adoc#how-to-use-git-as-storage,How To page>> of the documentation.
 [[flows-provider-non-spring-flow]]
 === The Flow
 
-You can check <<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract based application>> to see the flow for provider contract testing with stubs in Nexus or Artifactory.
+You can read <<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract-based Application>> to see the flow for provider contract testing with stubs in Nexus or Artifactory.
 
 [[flows-provider-non-spring-consumer]]
 === Setting up the Consumer
 
-For the consumer side, you can use a JUnit rule. That way, you need not start a Spring context. The follwoing listing shows such a rule (in JUnit4 and JUnit 5);
+For the consumer side, you can use a JUnit rule. That way, you need not start a Spring context. The following listing shows such a rule (in JUnit4 and JUnit 5);
 
 ====
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
@@ -546,7 +547,7 @@ send out requests to a real port), as follows:
 
 ====
 [source,xml,indent=0,role="primary"]
-.maven
+.Maven
 ----
 <plugin>
 	<groupId>org.springframework.cloud</groupId>
@@ -562,7 +563,7 @@ send out requests to a real port), as follows:
 ----
 
 [source,groovy,indent=0,role="secondary"]
-.gradle
+.Gradle
 ----
 contracts {
 	// This will setup the EXPLICIT mode for the tests
@@ -613,7 +614,7 @@ public class BaseClass {
 
 With such a setup:
 
-* We have setup the Spring Cloud Contract plugin to use the `EXPLICIT` mode to send real
+* We have set up the Spring Cloud Contract plugin to use the `EXPLICIT` mode to send real
 requests instead of mocked ones.
 * We have defined a base class that:
 ** Starts the HTTP server on a random port for each test.
@@ -621,7 +622,7 @@ requests instead of mocked ones.
 ** Closes the HTTP server after each test.
 
 [[flows-provider-non-jvm]]
-== Provider Contract Testing with Stubs in Artifactory in a non-JVM World
+== Provider Contract Testing with Stubs in Artifactory in a Non-JVM World
 
 In this flow, we assume that:
 
@@ -631,7 +632,7 @@ In this flow, we assume that:
 * Spring Cloud Contract Docker (SCC Docker) and Spring Cloud Contract Stub Runner Docker
 (SCC Stub Runner Docker) images are used.
 
-You can read more about how to use Spring Cloud Contract with Docker link:docker-project.html[in this page].
+You can read more about how to use Spring Cloud Contract with Docker link:docker-project.html[here].
 
 https://spring.io/blog/2018/02/13/spring-cloud-contract-in-a-polyglot-world[Here], you can
 read a blog post about how to use Spring Cloud Contract in a polyglot world.
@@ -649,7 +650,7 @@ At a high level, the producer:
 . Sets up the build tool to:
 .. Start the application with mocked services on a given port.
 +
-If mocking is not possible, you can setup the infrastructure and define tests in a stateful way.
+If mocking is not possible, you can set up the infrastructure and define tests in a stateful way.
 .. Run the Spring Cloud Contract Docker image and pass the port of a running application as an environment variable.
 
 The SCC Docker image:
@@ -718,7 +719,7 @@ The following UML diagram shows the consumer flow:
 [[flows-provider-rest-docs]]
 == Provider Contract Testing with REST Docs and Stubs in Nexus or Artifactory
 
-In this flow, we do not use a Spring Cloud Contract plugin to generate tests and stubs. We write https://spring.io/projects/spring-restdocs[Spring RESTDocs] and, from them, we automatically generate stubs. Finally, we set up our builds to package the stubs and upload them to the stub storage site -- in our case, Nexus or Artifactory.
+In this flow, we do not use a Spring Cloud Contract plugin to generate tests and stubs. We write https://spring.io/projects/spring-restdocs[Spring RESTDocs], and, from them, we automatically generate stubs. Finally, we set up our builds to package the stubs and upload them to the stub storage site -- in our case, Nexus or Artifactory.
 
 See the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/rest_docs.html[workshop page] for a step-by-step instruction on how to use this flow.
 
@@ -727,12 +728,12 @@ See the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/
 
 As a producer, we:
 
-. We write RESTDocs tests of our API.
-. We add Spring Cloud Contract Stub Runner starter to our build (`spring-cloud-starter-contract-stub-runner`), as follows
+. Write RESTDocs tests of our API.
+. Add Spring Cloud Contract Stub Runner starter to our build (`spring-cloud-starter-contract-stub-runner`), as follows:
 +
 ====
 [source,xml,indent=0,role="primary"]
-.maven
+.Maven
 ----
 <dependencies>
 	<dependency>
@@ -756,7 +757,7 @@ As a producer, we:
 ----
 
 [source,groovy,indent=0,role="secondary"]
-.gradle
+.Gradle
 ----
 dependencies {
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
@@ -773,7 +774,7 @@ dependencyManagement {
 +
 ====
 [source,xml,indent=0,role="primary"]
-.maven
+.Maven
 ----
 <!-- pom.xml -->
 <plugins>
@@ -822,7 +823,7 @@ dependencyManagement {
 ----
 
 [source,groovy,indent=0,role="secondary"]
-.gradle
+.Gradle
 ----
 task stubsJar(type: Jar) {
 	classifier = "stubs"
@@ -863,7 +864,7 @@ The following UML diagram shows the producer flow:
 [[flows-provider-rest-docs-consumer]]
 === Consumer Flow
 
-Since the consumer flow is not affected by the tool used to generate the stubs, you can check <<getting-started.adoc#getting-started-first-application-consumer, Developing Your First Spring Cloud Contract based application>> to see the flow for consumer side of the provider contract testing with stubs in Nexus or Artifactory.
+Since the consumer flow is not affected by the tool used to generate the stubs, you can read <<getting-started.adoc#getting-started-first-application-consumer, Developing Your First Spring Cloud Contract-based Application>> to see the flow for consumer side of the provider contract testing with stubs in Nexus or Artifactory.
 
 [[using-whats-next]]
 == What to Read Next

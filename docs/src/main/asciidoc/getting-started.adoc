@@ -2,7 +2,7 @@
 = Getting Started
 include::_attributes.adoc[]
 
-If you are getting started with {project-full-name}, or Spring in general, start by reading
+If you are getting started with {project-full-name} or Spring in general, start by reading
 this section. It answers the basic "`what?`", "`how?`" and "`why?`" questions. It
 includes an introduction to {project-full-name}, along with installation instructions. We then
 walk you through building your first {project-full-name} application, discussing some core
@@ -90,7 +90,7 @@ were tested against the producer's side. In short, you can trust those stubs.
 
 The main purposes of Spring Cloud Contract are:
 
-- To ensure that HTTP and Messaging stubs (used when developing the client) do exactly
+- To ensure that HTTP and messaging stubs (used when developing the client) do exactly
 what the actual server-side implementation does.
 - To promote the ATDD (acceptance test-driven developement) method and the microservices architectural style.
 - To provide a way to publish changes in contracts that are immediately visible on both sides.
@@ -102,7 +102,7 @@ IMPORTANT: Spring Cloud Contract's purpose is NOT to start writing business
 features in the contracts. Assume that we have a business use case of fraud check. If a
 user can be a fraud for 100 different reasons, we would assume that you would create two
 contracts, one for the positive case and one for the negative case. Contract tests are
-used to test contracts between applications and not to simulate full behavior.
+used to test contracts between applications, not to simulate full behavior.
 
 [[getting-started-what-is-a-contract]]
 === What Is a Contract?
@@ -112,7 +112,7 @@ formulate our expectations. That is why we write contracts. In other words, a co
 an agreement on how the API or message communication should look. Consider the following example:
 
 Assume that you want to send a request that contains the ID of a client company and the
-amount it wants to borrow from us. You also want to send it to the `/fraudcheck` URL via
+amount it wants to borrow from us. You also want to send it to the `/fraudcheck` URL by using
 the `PUT` method. The following listing shows a contract to check whether a client should
 be marked as a fraud in both Groovy and YAML:
 
@@ -268,8 +268,10 @@ $ cd local-http-server-repo
 $ ./mvnw clean install -DskipTests
 ----
 ====
+
 TIP: The tests are being skipped because the producer-side contract implementation is not
 in place yet, so the automatically-generated contract tests fail.
+
 * By getting already-existing producer service stubs from a remote repository. To do so,
 pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract
 Stub Runner` properties, as the following example shows:
@@ -293,6 +295,8 @@ run the collaborators' stubs for you, as the following example shows:
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
+	. . .
+}
 ----
 ====
 
@@ -322,7 +326,7 @@ image::getting-started-three-second.png[Getting started first application]
 [[getting-started-first-application-producer]]
 === On the Producer Side
 
-To start working with `Spring Cloud Contract`, you can add Spring Cloud Contract Verifier
+To start working with `Spring Cloud Contract`, you can add the Spring Cloud Contract Verifier
 dependency and plugin to your build file, as the following example shows:
 
 ====
@@ -427,7 +431,7 @@ response:
 
 If you need to use messaging, you can define:
 
-* The input and output messages (taking into account from and where it
+* The input and output messages (taking into account from where it
 was sent, the message body, and the header).
 * The methods that should be called after the message is received.
 * The methods that, when called, should trigger a message.
@@ -707,7 +711,7 @@ The `FraudController` is about as simple as things get. You can do much more, in
 logging, validating the client ID, and so on.
 
 Once the implementation and the test base class are in place, the tests pass, and both the
-application and the stub artifacts are built and installed in the local Maven repository
+application and the stub artifacts are built and installed in the local Maven repository.
 Information about installing the stubs jar to the local repository appears in the logs, as
 the following example shows:
 
@@ -762,8 +766,9 @@ $ ./mvnw clean install -DskipTests
 ====
 NOTE: The tests are skipped because the Producer-side contract implementation is not yet
 in place, so the automatically-generated contract tests fail.
-* Getting already existing producer service stubs from a remote repository. To do so,
-pass the stub artifact IDs and artifact repository URl as `Spring Cloud Contract Stub
+
+* By getting existing producer service stubs from a remote repository. To do so,
+pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract Stub
 Runner` properties, as the following example shows:
 +
 ====
@@ -785,6 +790,8 @@ the collaborators' stubs for you, as the following example shows:
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class LoanApplicationServiceTests {
+	. . .
+}
 ----
 ====
 
@@ -821,19 +828,19 @@ we mark the client as a fraud.
 
 Technical remarks
 
-* Fraud Detection has an `artifact-id` of `http-server`
-* Loan Issuance has an artifact-id of `http-client`
-* Both have a `group-id` of `com.example`
-* For the sake of this example the `Stub Storage` is Nexus/Artifactory
+* Fraud Detection has an `artifact-id` of `http-server`.
+* Loan Issuance has an `artifact-id` of `http-client`.
+* Both have a `group-id` of `com.example`.
+* For the sake of this example, the `Stub Storage` is Nexus/Artifactory.
 
 Social remarks
 
 * Both the client and the server development teams need to communicate directly and
-discuss changes while going through the process
-* CDC is all about communication
+discuss changes while going through the process.
+* CDC is all about communication.
 
 The {samples_code}/{standalone_samples_path}/http-server[server-side
-code is available here] and {samples_code}/{standalone_samples_path}/http-client[the client code  is available here].
+code is available here], and {samples_code}/{standalone_samples_path}/http-client[the client code  is available here].
 
 TIP: In this case, the producer owns the contracts. Physically, all of the contracts are
 in the producer's repository.
@@ -841,7 +848,7 @@ in the producer's repository.
 [[getting-started-cdc-technical-note]]
 === Technical Note
 
-If you use the SNAPSHOT, Milestone, or Release Candidate versions you need to add the
+If you use the SNAPSHOT, Milestone, or Release Candidate versions, you need to add the
 following section to your build:
 
 ====
@@ -862,7 +869,7 @@ For simplicity, we use the following acronyms:
 
 - Loan Issuance (LI): The HTTP client
 - Fraud Detection (FD): The HTTP server
-- Spring Cloud Contract (SCC)
+- SCC: Spring Cloud Contract
 
 [[getting-started-cdc-consumer]]
 === The Consumer Side (Loan Issuance)
@@ -872,14 +879,14 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 . Start doing TDD by writing a test for your feature.
 . Write the missing implementation.
 . Clone the Fraud Detection service repository locally.
-. Define the contract locally in the repo of the fraud detection service.
+. Define the contract locally in the repository of the fraud detection service.
 . Add the Spring Cloud Contract (SCC) plugin.
 . Run the integration tests.
 . File a pull request.
 . Create an initial implementation.
 . Take over the pull request.
 . Write the missing implementation.
-. Deploy your app.
+. Deploy your application.
 . Work online.
 
 We start with the loan issuance flow, which the following UML diagram shows:
@@ -987,26 +994,26 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resource
 ----
 ====
 
-The YML contract is quite straightforward. However, when you take a look at the Contract
+The YML contract is quite straightforward. However, when you take a look at the contract
 written with a statically typed Groovy DSL, you might wonder what the
 `value(client(...), server(...))` parts are. By using this notation, Spring Cloud
-Contract lets you define parts of a JSON block, a URL, or other structure that is dynamic. In case
+Contract lets you define parts of a JSON block, a URL, or other structure that is dynamic. In the case
 of an identifier or a timestamp, you need not hardcode a value. You want to allow some
 different ranges of values. To enable ranges of values, you can set regular expressions
 that match those values for the consumer side. You can provide the body by means of either
-a map notation or String with interpolations. We highly recommend using the map notation.
+a map notation or a String with interpolations. We highly recommend using the map notation.
 
-TIP: You must understand the map notation in order to set up contracts. See the
+TIP: To set up contracts, you must understand the map notation. See the
 https://groovy-lang.org/json.html[Groovy docs regarding JSON].
 
 The previously shown contract is an agreement between two sides that:
 
-- If an HTTP request is sent with all of
+* If an HTTP request is sent with all of:
 ** A `PUT` method on the `/fraudcheck` endpoint
 ** A JSON body with a `client.id` that matches the regular expression `[0-9]{10}` and
-`loanAmount` equal to `99999`,
+`loanAmount` equal to `99999`
 ** A `Content-Type` header with a value of `application/vnd.fraud.v1+json`
-- Then an HTTP response is sent to the consumer that
+* Then an HTTP response is sent to the consumer that
 ** Has status `200`
 ** Contains a JSON body with the `fraudCheckStatus` field containing a value of `FRAUD` and
 the `rejectionReason` field having a value of `Amount too high`
@@ -1113,8 +1120,7 @@ include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub
 
 . Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
 `group-id` and `artifact-id` for the Stub Runner to download the stubs of your
-collaborators. (Optional step) Because you are playing with the collaborators offline, you
-can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`).
+collaborators.
 +
 ====
 [source,groovy,indent=0]
@@ -1122,6 +1128,9 @@ can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`
 include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
 ----
 ====
+
+.  (Optional) Because you are playing with the collaborators offline, you
+can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`).
 
 Now, when you run your tests, you see something like the following output in the logs:
 
@@ -1156,7 +1165,7 @@ the server side. Currently, the consumer side work is done.
 === The Producer Side (Fraud Detection server)
 
 As a developer of the Fraud Detection server (a server to the Loan Issuance service), you
-might want to do the following
+might want to:
 
 - Take over the pull request
 - Write the missing implementation
@@ -1288,11 +1297,11 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 
 If you used the Groovy DSL, you can see that all of the `producer()` parts of the Contract that were present in the
 `value(consumer(...), producer(...))` blocks got injected into the test.
-In case of using YAML, the same applied for the `matchers` sections of the `response`.
+If you use YAML, the same applies for the `matchers` sections of the `response`.
 
 Note that, on the producer side, you are also doing TDD. The expectations are expressed
 in the form of a test. This test sends a request to our own application with the URL,
-headers, and body defined in the contract. It is also expecting precisely defined values
+headers, and body defined in the contract. It also expects precisely defined values
 in the response. In other words, you have the `red` part of `red`, `green`, and
 `refactor`. It is time to convert the `red` into the `green`.
 
@@ -1312,8 +1321,8 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com
 ----
 ====
 
-When you run `./mvnw clean install` again, the tests pass. Since the `Spring Cloud
-Contract Verifier` plugin adds the tests to the `generated-test-sources`, you can
+When you run `./mvnw clean install` again, the tests pass. Since the Spring Cloud
+Contract Verifier plugin adds the tests to the `generated-test-sources`, you can
 actually run those tests from your IDE.
 
 [[getting-started-cdc-producer-deploy]]
@@ -1331,13 +1340,13 @@ $ git push origin master
 ----
 ====
 
-Your CI might run something a command such as `./mvnw clean deploy`, which would publish both the
+Your CI might run a command such as `./mvnw clean deploy`, which would publish both the
 application and the stub artifacts.
 
 [[getting-started-cdc-consumer-final]]
 === Consumer Side (Loan Issuance), Final Step
 
-As a developer of the loan issuance service (a consumer of the Fraud Detection server), I want to:
+As a developer of the loan issuance service (a consumer of the Fraud Detection server), you need to:
 
 - Merge our feature branch to `master`
 - Switch to online mode of working
@@ -1405,7 +1414,7 @@ Otherwise, the next logical step is to read <<using.adoc#using, Using {project-f
 you are really impatient, you could also jump ahead and read about
 <<project-features.adoc#project-features, {project-full-name} features>>.
 
-In addition to that you can check out the following videos:
+In addition, you can check out the following videos:
 
 - "Consumer Driven Contracts and Your Microservice Architecture" by Olga Maciaszek-Sharma and Marcin Grzejszczak
 

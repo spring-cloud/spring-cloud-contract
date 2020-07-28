@@ -7,13 +7,13 @@ that contains a project that generates tests and runs them in `EXPLICIT` mode
 against a running application.
 
 TIP: The `EXPLICIT` mode means that the tests generated from contracts send
-real requests and not the mocked ones.
+real requests and not mocked ones.
 
 We also publish a `spring-cloud/spring-cloud-contract-stub-runner` Docker image
 that starts the standalone version of Stub Runner.
 
 [[docker-intro]]
-== A Short Introduction to Maven, JARs and Binary storage
+== A Short Introduction to Maven, JARs, and Binary Storage
 
 Since non-JVM projects can use the Docker image, it is good to
 explain the basic terms behind Spring Cloud Contract packaging defaults.
@@ -22,8 +22,8 @@ Parts of the following definitions were taken from the https://maven.apache.org/
 
 - `Project`: Maven thinks in terms of projects. Projects
 are all you build. Those projects follow a well defined
-“Project Object Model”. Projects can depend on other projects,
-in which case the latter are called “dependencies”. A project may
+"`Project Object Model`". Projects can depend on other projects --
+in that case, the latter are called "`dependencies`". A project may
 consistent of several subprojects. However, these subprojects are still
 treated equally as projects.
 - `Artifact`: An artifact is something that is either produced or used
@@ -51,7 +51,7 @@ like them to be available for others to download, reference, or reuse. In the ca
 of the JVM world, those artifacts are generally JARs. For Ruby, those artifacts are gems.
 For Docker, those artifacts are Docker images. You can store those artifacts
 in a manager. Examples of such managers include https://jfrog.com/artifactory/[Artifactory]
-or https://www.sonatype.org/nexus/[Nexus].
+and https://www.sonatype.org/nexus/[Nexus].
 
 [[docker-how-it-works]]
 == Generating Tests on the Producer Side
@@ -67,7 +67,7 @@ The image then:
 - Generates the contract tests
 - Runs the tests against the provided URL
 - Generates the https://github.com/tomakehurst/wiremock[WireMock] stubs
-- Publishes the stubs to a Artifact Manager (optional - turned on by default)
+- Publishes the stubs to a Artifact Manager (optional -- turned on by default)
 
 [[docker-env-vars]]
 === Environment Variables
@@ -81,13 +81,13 @@ The following list describes the environment variables:
 - `PROJECT_NAME`: Your project's artifact id. Defaults to `example`.
 - `PRODUCER_STUBS_CLASSIFIER`: Archive classifier used for generated producer stubs. Defaults to `stubs`.
 - `REPO_WITH_BINARIES_URL`: URL of your Artifact Manager. Defaults to `http://localhost:8081/artifactory/libs-release-local`,
-which is the default URL of https://jfrog.com/artifactory/[Artifactory] running locally.
+which is the default URL of https://jfrog.com/artifactory/[Artifactory] when running locally.
 - `REPO_WITH_BINARIES_USERNAME`: (optional) Username when the Artifact Manager is secured. Defaults to `admin`.
 - `REPO_WITH_BINARIES_PASSWORD`: (optional) Password when the Artifact Manager is secured. Defaults to `password`.
 - `PUBLISH_ARTIFACTS`: If set to `true`, publishes the artifact to binary storage. Defaults to `true`.
-- `PUBLISH_ARTIFACTS_OFFLINE`: If set to `true`, it will publish the artifacts to local `.m2`. Defaults to `false`.
+- `PUBLISH_ARTIFACTS_OFFLINE`: If set to `true`, publishes the artifacts to local `.m2`. Defaults to `false`.
 
-These environment variables are used when contracts lay in an external repository. To enable
+The following environment variables are used when contracts are in an external repository. To enable
 this feature, you must set the `EXTERNAL_CONTRACTS_ARTIFACT_ID` environment variable.
 
 - `EXTERNAL_CONTRACTS_GROUP_ID`: Group ID of the project with contracts. Defaults to `com.example`
@@ -97,18 +97,18 @@ this feature, you must set the `EXTERNAL_CONTRACTS_ARTIFACT_ID` environment vari
 - `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`: URL of your Artifact Manager. It defaults to
 the value of `REPO_WITH_BINARIES_URL` environment variable.
 If that is not set, it defaults to `http://localhost:8081/artifactory/libs-release-local`,
-which is the default URL of https://jfrog.com/artifactory/[Artifactory] running locally.
+which is the default URL of https://jfrog.com/artifactory/[Artifactory] when running locally.
 - `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME`: (optional) Username if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`
 requires authentication. It defaults to `REPO_WITH_BINARIES_USERNAME`. If that is not set, it defaults to `admin`.
 - `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD`: (optional) Password if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`
 requires authentication. It defaults to `REPO_WITH_BINARIES_PASSWORD`. If that is not set, it defaults to `password`.
 - `EXTERNAL_CONTRACTS_PATH`: Path to contracts for the given project, inside the project with contracts.
 Defaults to slash-separated `EXTERNAL_CONTRACTS_GROUP_ID` concatenated with `/` and `EXTERNAL_CONTRACTS_ARTIFACT_ID`. For example,
-for group id `cat-server-side.dog` and artifact id `fish`, would result in `cat/dog/fish` for the contracts path.
+for group id `cat-server-side.dog` and artifact ID `fish`, would result in `cat/dog/fish` for the contracts path.
 - `EXTERNAL_CONTRACTS_WORK_OFFLINE`; If set to `true`, retrieves the artifact with contracts
 from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path.
 
-WARNING: You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
+CAUTION: You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
 
 The following environment variables are used when tests are run:
 
@@ -184,7 +184,7 @@ with a mocked database. In this example, we want to show how we can
 benefit from Spring Cloud Contract in very little time.
 - Due to those constraints, the contracts also represent the
 stateful situation.
-** The first request is a `POST` that causes data to get inserted to the database.
+** The first request is a `POST` that causes data to get inserted into the database.
 ** The second request is a `GET` that returns a list of data with 1 previously inserted element.
 - The NodeJS application is started (on port `3000`).
 - The contract tests are generated through Docker, and tests
@@ -193,7 +193,7 @@ are run against the running application.
 ** The output of the test is available under
 `node_modules/spring-cloud-contract/output`.
 - The stubs are uploaded to Artifactory. You can find them in
-http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/ .
+http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/.
 The stubs are at http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar.
 
 [[docker-stubrunner]]
@@ -207,7 +207,7 @@ that starts the standalone version of Stub Runner.
 [[docker-stubrunner-env-vars]]
 === Environment Variables
 
-You can run the docker image and pass any of the <<project-features.adoc#features-stub-runner-common-properties-junit-spring, Common Properties for JUnit and Spring>>
+You can run the docker image and pass any of the <<project-features.adoc#features-stub-runner-common-properties-junit-spring, common properties for JUnit and Spring>>
 as environment variables. The convention is that all the
 letters should be upper case.
 The dot (`.`) should be replaced with underscore (`_`) characters. For example,
@@ -254,7 +254,7 @@ When the preceding commands run,
 - A standalone Stub Runner application gets started.
 - It downloads the stub with coordinates `com.example:bookstore:0.0.1.RELEASE:stubs` on port `9876`.
 - It gets downloads from Artifactory running at `http://192.168.0.100:8081/artifactory/libs-release-local`.
-- After a whil, Stub Runner is running on port `8083`.
+- After a while, Stub Runner is running on port `8083`.
 - The stubs are running at port `9876`.
 
 On the server side, we built a stateful stub. We can use curl to assert

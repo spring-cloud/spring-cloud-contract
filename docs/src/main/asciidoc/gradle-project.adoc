@@ -21,12 +21,12 @@ following sections:
 [[gradle-prerequisites]]
 == Prerequisites
 
-In order to use Spring Cloud Contract Verifier with WireMock, you must use either a
+To use Spring Cloud Contract Verifier with WireMock, you must use either a
 Gradle or a Maven plugin.
 
 WARNING: If you want to use Spock in your projects, you must separately add the
 `spock-core` and `spock-spring` modules. See https://spockframework.github.io/[Spock's
-documnetation for more information]
+documentation] for more information.
 
 [[gradle-add-gradle-plugin]]
 == Add Gradle Plugin with Dependencies
@@ -138,7 +138,7 @@ dependencies {
 [[gradle-and-rest-assured]]
 == Gradle and Rest Assured 2.0
 
-By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x
+By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x,
 you can add it to the plugins classpath, as the following listing shows:
 
 ====
@@ -190,8 +190,8 @@ By default, Spring Cloud Contract Verifier looks for stubs in the
 
 The directory that contains stub definitions is treated as a class name, and each stub
 definition is treated as a single test. Spring Cloud Contract Verifier assumes that it
-contains at  least one level of directories that are to be used as the test class name.
-If more than  one level of nested directories is present, all except the last one is used
+contains at least one level of directories that are to be used as the test class name.
+If more than one level of nested directories is present, all except the last one is used
 as the package name. Consider the following structure:
 
 ====
@@ -212,7 +212,7 @@ Given the preceding structure, Spring Cloud Contract Verifier creates a test cla
 == Running the Plugin
 
 The plugin registers itself to be invoked before a `check` task. If you want it to be
-part of your build process, you need do nothing more. If you just want to generate
+part of your build process, you need do nothing more. If you want only to generate
 tests, invoke the `generateContractTests` task.
 
 [[gradle-default-setup]]
@@ -325,11 +325,11 @@ from the Groovy DSL should be placed. By default, its value is
 `$buildDir/generated-test-resources/contracts`.
 * `stubsOutputDir`: Specifies the directory where the generated WireMock stubs from
 the Groovy DSL should be placed.
-* `testFramework`: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`), and
+* `testFramework`: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`) and
 JUnit 5 are supported, with JUnit 4 being the default framework.
 * `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
-* `sourceSet`: Source set where the contracts are stored. If not provided will assume `test` (e.g. `project.sourceSets.test.java` for JUnit or `project.sourceSets.test.groovy` for Spock).
+* `sourceSet`: Source set where the contracts are stored. If not provided will assume `test` (for example, `project.sourceSets.test.java` for JUnit or `project.sourceSets.test.groovy` for Spock).
 
 You can use the following properties when you want to specify the location of the JAR
 that contains the contracts:
@@ -338,36 +338,36 @@ that contains the contracts:
 `groupid:artifactid:version:classifier` coordinates. You can use the `contractDependency`
 closure to set it up.
 * `contractsPath`: Specifies the path to the jar. If contract dependencies are
- downloaded, the path defaults to `groupid/artifactid` where `groupid` is slash
+ downloaded, the path defaults to `groupid/artifactid`, where `groupid` is slash
  separated. Otherwise, it scans contracts under the provided directory.
 * `contractsMode`: Specifies the mode for downloading contracts (whether the
 JAR is available offline, remotely, and so on).
-* `deleteStubsAfterTest`: If set to `false`, do not remove any downloaded
+* `deleteStubsAfterTest`: If set to `false`, does not remove any downloaded
 contracts from temporary directories.
 * `failOnNoContracts`: When enabled, will throw an exception when no contracts were found. Defaults to `true`.
 * `failOnInProgress`: If set to `true`, then, if any contracts that are in progress are found, they break the build. On the producer side, you need to be explicit about the fact that you have contracts in progress and take into consideration that you might be causing false positive test results on the consumer side. Defaults to `true`.
 
 There is also the `contractRepository { ... }` closure that contains the following properties
 
-* `repositoryUrl`: the URL to the repository with contract definitions
-* `username` : Repository username
-* `password` : Repository password
-* `proxyPort` : the port of the proxy
-* `proxyHost` : the host of the proxy
-* `cacheDownloadedContracts` : If set to `true` then will cache the folder where non snapshot contract artifacts got downloaded. Defaults to `true`.
+* `repositoryUrl`: The URL to the repository with contract definitions
+* `username` : The repository username
+* `password` : The repository password
+* `proxyPort` : The port of the proxy
+* `proxyHost` : The host of the proxy
+* `cacheDownloadedContracts` : If set to `true`, caches the folder where non-snapshot contract artifacts got downloaded. Defaults to `true`.
 
 You can also turn on the following experimental features in the plugin:
 
 * `convertToYaml`: Converts all DSLs to the declarative YAML format. This can be extremely
 useful when you use external libraries in your Groovy DSLs. By turning this feature on
-(by setting it to `true`) you need not add the library dependency on the consumer side.
+(by setting it to `true`), you need not add the library dependency on the consumer side.
 * `assertJsonSize`: You can check the size of JSON arrays in the generated tests. This
 feature is disabled by default.
 
 [[gradle-single-base-class]]
 == Single Base Class for All Tests
 
-When using Spring Cloud Contract Verifier in default MockMvc, you need to create a base
+When using Spring Cloud Contract Verifier in MockMvc (the default), you need to create a base
 specification for all generated acceptance tests. In this class, you need to point to an
 endpoint, which should be verified. The following example shows how to do so:
 
@@ -394,7 +394,7 @@ plugin which class should get extended by the autogenerated tests. You have two 
 
 === By Convention
 
-The convention is such that if you have a contract in (for example)
+The convention is such that, if you have a contract in (for example)
 `src/test/resources/contract/foo/bar/baz/` and set the value of the
 `packageWithBaseClasses` property to `com.example.base`, then Spring Cloud Contract
 Verifier assumes that there is a `BarBazBase` class under the `com.example.base` package.
@@ -423,9 +423,10 @@ include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/
 ----
 ====
 
-Let's assume that you have contracts in the following directories:
- - `src/test/resources/contract/com/`
- - `src/test/resources/contract/foo/`
+Assume that you have contracts in the following directories:
+
+- `src/test/resources/contract/com/`
+- `src/test/resources/contract/foo/`
 
 By providing `baseClassForTests`, we have a fallback in case mapping did not succeed.
 (You could also provide the `packageWithBaseClasses` as a fallback.) That way, the tests
@@ -460,7 +461,7 @@ $ ./gradlew pushStubsToScm
 ----
 ====
 
-Under <<scm-stub-downloader>> you can find all possible
+Under <<scm-stub-downloader>>, you can find all possible
 configuration options that you can pass either through
 the `contractsProperties` field (for example, `contracts { contractsProperties = [foo:"bar"] }`),
 through the `contractsProperties` method (for example, `contracts { contractsProperties([foo:"bar"]) }`),
@@ -483,7 +484,7 @@ WireMock JSON stubs by using the following command:
 
 NOTE: The `stubsOutputDir` option has to be set for stub generation to work.
 
-When present, JSON stubs can be used in automated tests to consume a service. The
+When present, you can use JSON stubs in automated tests to consume a service. The
 following example shows how to do so:
 
 ====

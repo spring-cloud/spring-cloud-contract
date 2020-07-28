@@ -16,7 +16,7 @@ the remainder of this section.
 === Extending the DSL
 
 You can provide your own functions to the DSL. The key requirement for this feature is to
-maintain the static compatibility. Later in this document, you can see examples of:
+maintain the static compatibility. Later in this chapter, you can see examples of:
 
 * Creating a JAR with reusable classes.
 * Referencing of these classes in the DSLs.
@@ -64,7 +64,7 @@ include::{samples_url}/common/src/main/java/com/example/ProducerUtils.java[]
 
 To add a test dependency in the project's dependencies, you must first add the common jar
 dependency as a test dependency. Because your contracts files
-are available on the test resources path,  the common jar classes automatically become
+are available on the test resources path, the common jar classes automatically become
 visible in your Groovy files. The following examples show how to test the dependency:
 
 ====
@@ -129,8 +129,8 @@ WireMock lets you register custom extensions. By default, Spring Cloud Contract 
 the transformer, which lets you reference a request from a response. If you want to
 provide your own extensions, you can register an implementation of the
 `org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions` interface.
-Since we use the `spring.factories` extension approach, you can create an entry in
-`META-INF/spring.factories` file similar to the following:
+Since we use the `spring.factories` extension approach, you can create an entry similar to
+the following in the `META-INF/spring.factories` file:
 
 ====
 [source,groovy,indent=0]
@@ -149,8 +149,8 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 ----
 ====
 
-IMPORTANT: Remember to override the `applyGlobally()` method and set it to `false` if you
-want the transformation to be applied only for a mapping that explicitly requires it.
+IMPORTANT: If you want the transformation to be applied only for a mapping that explicitly
+requires it, override the `applyGlobally()` method and set it to `false` .
 
 [[customization-wiremock-configuration]]
 === Customization of WireMock Configuration
@@ -267,7 +267,7 @@ DSL, you can produce both WireMock stubs and Pact files.
 [[customization-custom-stub-runner]]
 === Using the Custom Stub Runner
 
-If you decide to use a custom stub generation, you also need a custom way of running
+If you decide to use custom stub generation, you also need a custom way of running
 stubs with your different stub provider.
 
 Assume that you use https://github.com/dreamhead/moco[Moco] to build your stubs and that
@@ -327,6 +327,8 @@ class CustomStubDownloaderBuilder implements StubDownloaderBuilder {
 			File retrieveStubs() {
 			    // here goes your custom logic to provide a folder where all the stubs reside
 			}
+		}
+	}
 }
 ----
 ====

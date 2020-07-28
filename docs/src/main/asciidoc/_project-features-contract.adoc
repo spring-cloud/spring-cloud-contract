@@ -2,7 +2,7 @@
 == Contract DSL
 include::_attributes.adoc[]
 
-Spring Cloud Contract supports the DSLs written in the following languages:
+Spring Cloud Contract supports DSLs written in the following languages:
 
 * Groovy
 * YAML
@@ -15,25 +15,25 @@ The following example shows a contract definition:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=dsl_example,indent=0]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_rest.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest.java[tags=class,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_rest.kts[tags=class,indent=0]
 ----
@@ -41,7 +41,7 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_rest.kts[tags=c
 
 [TIP]
 ====
-You can compile contracts to stubs mapping by using  the following standalone Maven command:
+You can compile contracts to stubs mapping by using the following standalone Maven command:
 
 ----
 mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert
@@ -51,7 +51,7 @@ mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert
 [[contract-groovy]]
 === Contract DSL in Groovy
 
-If you are not familiar with Groovy, do not worry - you can use Java syntax in the
+If you are not familiar with Groovy, do not worry. You can use Java syntax in the
 Groovy DSL files as well.
 
 If you decide to write the contract in Groovy, do not be alarmed if you have not used Groovy
@@ -68,9 +68,11 @@ the `Contract` class (`import org.springframework.cloud.spec.Contract`) and then
 [[contract-java]]
 === Contract DSL in Java
 
-To write a contract definition in Java, you need to create a class, that implements either the `Supplier<Contract>` interface for a single contract or `Supplier<Collection<Contract>>` for multiple contracts.
+To write a contract definition in Java, you need to create a class that implements either the `Supplier<Contract>` interface (for a single contract) or `Supplier<Collection<Contract>>` (for multiple contracts).
 
-You can also write the contract definitions under `src/test/java` (e.g. `src/test/java/contracts`) so that you don't have to modify the classpath of your project. In this case you'll have to provide a new location of contract definitions to your Spring Cloud Contract plugin.
+You can also write the contract definitions under `src/test/java` (for example, `src/test/java/contracts`) so that you do not have to modify the classpath of your project. In this case, you have to provide a new location of contract definitions to your Spring Cloud Contract plugin.
+
+The following example (in both Maven and Gradle) has the contract definitions under `src/test/java`:
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -99,12 +101,12 @@ contracts {
 [[contract-kotlin]]
 === Contract DSL in Kotlin
 
-To get started with writing contracts in Kotlin you would need to start with a (newly created) Kotlin Script file (.kts).
-Just like the with the Java DSL you can put your contracts in any directory of your choice.
-The Maven and Gradle plugins will look at the `src/test/resources/contracts` directory by default.
+To get started with writing contracts in Kotlin, you need to start with a (newly created) Kotlin Script file (`.kts`).
+As with the Java DSL, you can put your contracts in any directory of your choice.
+By default, the Maven and Gradle plugins look at the `src/test/resources/contracts` directory.
 
-You need to explicitly pass the the `spring-cloud-contract-spec-kotlin` dependency to your project plugin setup.
-
+You need to explicitly pass the `spring-cloud-contract-spec-kotlin` dependency to your project plugin setup.
+The following example (in both Maven and Gradle) shows how to do so:
 
 ====
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -161,13 +163,13 @@ dependencies {
 ====
 
 IMPORTANT: Remember that, inside the Kotlin Script file, you have to provide the fully qualified name to the `ContractDSL` class.
-Generally you would use its contract function like this: `org.springframework.cloud.contract.spec.ContractDsl.contract { ... }`.
+Generally you would use its contract function as follows: `org.springframework.cloud.contract.spec.ContractDsl.contract { ... }`.
 You can also provide an import to the `contract` function (`import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract`) and then call `contract { ... }`.
 
 [[contract-yml]]
-=== Contract DSL in YML
+=== Contract DSL in YAML
 
-In order to see a schema of a YAML contract, you can check out the link:yml-schema.html[YML Schema] page.
+To see a schema of a YAML contract, visit the link:yml-schema.html[YML Schema] page.
 
 [[contract-limitations]]
 === Limitations
@@ -200,25 +202,25 @@ following code shows an example:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=description,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_rest.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=description,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=description,indent=0]
 ----
@@ -227,7 +229,7 @@ include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/c
 [[contract-dsl-name]]
 ==== Name
 
-You can provide a name for your contract. Assume that you provided the following name:
+You can provide a name for your contract. Assume that you provide the following name:
 `should register a user`. If you do so, the name of the autogenerated test is
 `validate_should_register_a_user`. Also, the name of the stub in a WireMock stub is
 `should_register_a_user.json`.
@@ -241,25 +243,25 @@ The following example shows how to add a name to a contract:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=name,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=name,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=name,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=name,indent=0]
 ----
@@ -274,25 +276,25 @@ example shows how to do so:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=ignored,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=ignored,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=ignored,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=ignored,indent=0]
 ----
@@ -301,40 +303,40 @@ include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/c
 [[contract-dsl-in-progress]]
 ==== Contracts in Progress
 
-A contract in progress will not generate tests on the producer side, but will allow generation of stubs.
+A contract in progress does not generate tests on the producer side but does allow generation of stubs.
 
-IMPORTANT: Use this feature with caution as it may lead to false positives. You generate stubs for your consumers to use without actually having the implementation in place!
+IMPORTANT: Use this feature with caution as it may lead to false positives, because you generate stubs for your consumers to use without actually having the implementation in place.
 
-If you want to set a contract in progress the following
+If you want to set a contract in progress, the following
 example shows how to do so:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=in_progress,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=in_progress,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=in_progress,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=in_progress,indent=0]
 ----
 ====
 
-You can set the value of the `failOnInProgress` Spring Cloud Contract plugin property to ensure that your build will break when at least one contract in progress remains in your sources.
+You can set the value of the `failOnInProgress` Spring Cloud Contract plugin property to ensure that your build breaks when at least one contract in progress remains in your sources.
 
 [[contract-dsl-passing-values-from-files]]
 ==== Passing Values from Files
@@ -357,31 +359,31 @@ Further assume that your contract is as follows:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/resources/classpath/readFromFile.groovy[indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_from_file.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest_from_file.java[tags=class,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/readFromFile.kts[tags=class,indent=0]
 ----
 ====
 
-Further assume that the JSON files is as follows:
+Further assume that the JSON files are as follows:
 
 ====
 [source,json,indent=0,subs="verbatim,attributes",role="primary"]
@@ -398,8 +400,8 @@ include::{verifier_core_path}/src/test/resources/classpath/response.json[indent=
 ====
 
 When test or stub generation takes place, the contents of the `request.json` and `response.json` files are passed to the body
-of a request or a response. The name of the file needs to be a file with location
-relative to the folder in which the contract lays.
+of a request or a response. The name of the file needs to be a file in a location
+relative to the folder in which the contract resides.
 
 If you need to pass the contents of a file in binary form,
 you can use the `fileAsBytes` method in the coded DSL or a `bodyFromFileAsBytes` field in YAML.
@@ -408,32 +410,32 @@ The following example shows how to pass the contents of binary files:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/resources/body_builder/worksWithPdf.groovy[indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_pdf.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest_from_pdf.java[tags=class,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/resources/contracts/shouldWorkWithBinaryPayload.kts[tags=class,indent=0]
 ----
 ====
 
 IMPORTANT: You should use this approach whenever you want to work with binary payloads,
- both for HTTP and messaging.
+both for HTTP and messaging.
 
 [[features-http]]
 == Contracts for HTTP
@@ -458,13 +460,13 @@ The following example shows how to define an HTTP request contract:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=http_dsl,indent=0]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=priority,indent=0]
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
@@ -474,13 +476,13 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response,
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=http_dsl,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=http_dsl,indent=0]
 ----
@@ -500,25 +502,25 @@ The following example shows a contract for a request:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=request,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request_obligatory,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=request,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=request,indent=0]
 ----
@@ -531,25 +533,25 @@ The following example uses `url`:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=url,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_rest_with_path.yml[tags=url_path,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=url,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=url,indent=0]
 ----
@@ -559,13 +561,13 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.k
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=urlpath,indent=0]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
 ...
@@ -573,13 +575,13 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=query_par
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=urlpath,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=urlpath,indent=0]
 ----
@@ -589,13 +591,13 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.k
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=headers,indent=0]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
 ...
@@ -603,13 +605,13 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=headers,i
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=headers,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=headers,indent=0]
 ----
@@ -619,13 +621,13 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.k
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=cookies,indent=0]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
 ...
@@ -633,13 +635,13 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=cookies,i
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=cookies,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=cookies,indent=0]
 ----
@@ -649,13 +651,13 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.k
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=body,indent=0]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
 ...
@@ -663,13 +665,13 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=body,inde
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=body,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=body,indent=0]
 ----
@@ -680,31 +682,31 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.k
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=multipartdsl,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_multipart.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_multipart.java[tags=class,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/multipart.kts[tags=class,indent=0]
 ----
 ====
 
-In the preceding example, we define parameters in either of two ways:
+In the preceding example, we defined parameters in either of two ways:
 
 .Coded DSL
 * Directly, by using the map notation, where the value can be a dynamic property (such as
@@ -720,15 +722,15 @@ such as `named("fileName", "fileContent")`, or by using a map notation, such as
 can be set in the `multipart.named` section. That section contains
 the `paramName` (the name of the parameter), `fileName` (the name of the file),
 `fileContent` (the content of the file) fields.
-* The dynamic bits can be set via the `matchers.multipart` section.
+* The dynamic bits can be set in the `matchers.multipart` section.
 ** For parameters, use the `params` section, which can accept
 `regex` or a `predefined` regular expression.
-** for named params, use the `named` section where first you
+** For named parameters, use the `named` section where you first
 define the parameter name with `paramName`. Then you can pass the
 parametrization of either `fileName` or `fileContent` in a
 `regex` or in a `predefined` regular expression.
 
-From the contract in the preceding example, the generated test and stubs look as follows:
+From the contract in the preceding example, the generated test and stub look as follows:
 
 ====
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
@@ -764,13 +766,13 @@ following code shows an example:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=response,indent=0]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response,indent=0]
 ...
@@ -778,13 +780,13 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response_
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=response,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=response,indent=0]
 ----
@@ -813,12 +815,12 @@ See the https://github.com/spring-cloud/spring-cloud-contract/wiki/Spring-Cloud-
 
 For YAML, you can use only the `matchers` section.
 
-IMPORTANT: Entries inside the `matchers` must reference existing elements of the payload. For more information check this https://github.com/spring-cloud/spring-cloud-contract/issues/722[issue].
+IMPORTANT: Entries inside the `matchers` must reference existing elements of the payload. For more information, see https://github.com/spring-cloud/spring-cloud-contract/issues/722[this issue].
 
 [[contract-dsl-dynamic-properties-in-body]]
 ==== Dynamic Properties inside the Body
 
-IMPORTANT: This section is valid only for the Coded DSL (Groovy, Java etc.). Check out the
+IMPORTANT: This section is valid only for the Coded DSL (Groovy, Java, and so on). See the
 <<contract-dsl-matchers>> section for YAML examples of a similar feature.
 
 You can set the properties inside the body either with the `value` method or, if you use
@@ -851,7 +853,7 @@ method. Subsequent sections take a closer look at what you can do with those val
 [[contract-dsl-regex]]
 ==== Regular Expressions
 
-IMPORTANT: This section is valid only for Groovy DSL. Check out the
+IMPORTANT: This section is valid only for the Groovy DSL. See the
 <<contract-dsl-matchers>> section for YAML examples of a similar feature.
 
 You can use regular expressions to write your requests in the contract DSL. Doing so is
@@ -859,7 +861,7 @@ particularly useful when you want to indicate that a given response should be pr
 for requests that follow a given pattern. Also, you can use regular expressions when you
 need to use patterns and not exact values both for your tests and your server-side tests.
 
-Make sure that regex matches a whole region of a sequence, as, internally, a call to
+Make sure that regex matches a whole region of a sequence, as, internally,
 https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html#matches[`Pattern.matches()`]
 is called. For instance, `abc` does not match `aabc`, but `.abc` does.
 There are several additional <<contract-dsl-regex-limitations,known limitations>> as well.
@@ -868,19 +870,19 @@ The following example shows how to use regular expressions to write a request:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=regex,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=regex,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=regex,indent=0]
 ----
@@ -926,13 +928,13 @@ The following example shows how you can reference those methods:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=regex_creating_props,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=regex_creating_props,indent=0]
 ----
@@ -941,18 +943,18 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.k
 [[contract-dsl-regex-limitations]]
 ===== Limitations
 
-WARNING: Due to certain limitations of the `Xeger` library that generates a string out of
+CAUTION: Due to certain limitations of the `Xeger` library that generates a string out of
 a regex, do not use the `$` and `^` signs in your regex if you rely on automatic
 generation. See https://github.com/spring-cloud/spring-cloud-contract/issues/899[Issue 899].
 
-WARNING: Do not use a `LocalDate` instance as a value for `$` (for example, `$(consumer(LocalDate.now()))`).
+CAUTION: Do not use a `LocalDate` instance as a value for `$` (for example, `$(consumer(LocalDate.now()))`).
 It causes a `java.lang.StackOverflowError`. Use `$(consumer(LocalDate.now().toString()))` instead.
 See https://github.com/spring-cloud/spring-cloud-contract/issues/900[Issue 900].
 
 [[contract-dsl-optional-params]]
 ==== Passing Optional Parameters
 
-IMPORTANT: This section is valid only for Groovy DSL. Check out the
+IMPORTANT: This section is valid only for Groovy DSL. See the
 <<contract-dsl-matchers>> section for YAML examples of a similar feature.
 
 You can provide optional parameters in your contract. However, you can provide
@@ -965,19 +967,19 @@ The following example shows how to provide optional parameters:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=optionals,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=optionals,indent=0]
 ----
@@ -990,7 +992,7 @@ If you use Spock, the following test would be generated from the previous exampl
 
 ====
 [source,groovy,indent=0]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals_test,indent=0]
 ----
@@ -1006,29 +1008,28 @@ include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/spr
 [[contract-dsl-custom-methods]]
 ==== Calling Custom Methods on the Server Side
 
-IMPORTANT: This section is valid only for Groovy DSL. Check out the
+IMPORTANT: This section is valid only for the Groovy DSL. See the
 <<contract-dsl-matchers>> section for YAML examples of a similar feature.
 
 You can define a method call that runs on the server side during the test. Such a
 method can be added to the class defined as `baseClassForTests` in the configuration. The
 following code shows an example of the contract portion of the test case:
 
-
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=method,indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=method,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=method,indent=0]
 ----
@@ -1096,13 +1097,13 @@ you reference a bunch of elements from the HTTP request. You can use the followi
 options:
 
 * `fromRequest().url()`: Returns the request URL and query parameters.
-* `fromRequest().query(String key)`: Returns the first query parameter with a given name.
-* `fromRequest().query(String key, int index)`: Returns the nth query parameter with a
+* `fromRequest().query(String key)`: Returns the first query parameter with the given name.
+* `fromRequest().query(String key, int index)`: Returns the nth query parameter with the
 given name.
 * `fromRequest().path()`: Returns the full path.
 * `fromRequest().path(int index)`: Returns the nth path element.
-* `fromRequest().header(String key)`: Returns the first header with a given name.
-* `fromRequest().header(String key, int index)`: Returns the nth header with a given name.
+* `fromRequest().header(String key)`: Returns the first header with the given name.
+* `fromRequest().header(String key, int index)`: Returns the nth header with the given name.
 * `fromRequest().body()`: Returns the full request body.
 * `fromRequest().body(String jsonPath)`: Returns the element from the request that
 matches the JSON Path.
@@ -1112,13 +1113,13 @@ https://handlebarsjs.com/[Handlebars] `{{{ }}}` notation with custom Spring Clou
 functions to achieve this. In that case, you can use the following options:
 
 * `{{{ request.url }}}`: Returns the request URL and query parameters.
-* `{{{ request.query.key.[index] }}}`: Returns the nth query parameter with a given name.
+* `{{{ request.query.key.[index] }}}`: Returns the nth query parameter with the given name.
 For example, for a key of `thing`, the first entry is `{{{ request.query.thing.[0] }}}`
 * `{{{ request.path }}}`: Returns the full path.
 * `{{{ request.path.[index] }}}`: Returns the nth path element. For example,
 the first entry is ```{{{ request.path.[0] }}}
-* `{{{ request.headers.key }}}`: Returns the first header with a given name.
-* `{{{ request.headers.key.[index] }}}`: Returns the nth header with a given name.
+* `{{{ request.headers.key }}}`: Returns the first header with the given name.
+* `{{{ request.headers.key.[index] }}}`: Returns the nth header with the given name.
 * `{{{ request.body }}}`: Returns the full request body.
 * `{{{ jsonpath this 'your.json.path' }}}`: Returns the element from the request that
 matches the JSON Path. For example, for a JSON path of `$.here`, use `{{{ jsonpath this '$.here' }}}`
@@ -1127,19 +1128,19 @@ Consider the following contract:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=template_contract,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_reference_request.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 package contracts.beer.rest;
 
@@ -1179,7 +1180,7 @@ class shouldReturnStatsForAUser implements Supplier<Contract> {
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 package contracts.beer.rest
 
@@ -1212,6 +1213,7 @@ contract {
 
 Running a JUnit test generation leads to a test that resembles the following example:
 
+====
 [source,java,indent=0]
 ----
  // given:
@@ -1243,11 +1245,13 @@ Running a JUnit test generation leads to a test that resembles the following exa
   assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2");
   assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla");
 ----
+====
 
 As you can see, elements from the request have been properly referenced in the response.
 
 The generated WireMock stub should resemble the following example:
 
+====
 [source,json,indent=0]
 ----
 {
@@ -1280,10 +1284,12 @@ The generated WireMock stub should resemble the following example:
   }
 }
 ----
+====
 
 Sending a request such as the one presented in the `request` part of the contract results
 in sending the following response body:
 
+====
 [source,json,indent=0]
 ----
 {
@@ -1300,14 +1306,15 @@ in sending the following response body:
   "responseBaz2" : "Bla bla bar bla bla"
 }
 ----
+====
 
 IMPORTANT: This feature works only with WireMock versions greater than or equal
 to 2.5.1. The Spring Cloud Contract Verifier uses WireMock's
 `response-template` response transformer. It uses Handlebars to convert the Mustache `{{{ }}}` templates into
 proper values. Additionally, it registers two helper functions:
 
-* `escapejsonbody`: Escapes the request body in a format that can be embedded in a JSON.
-* `jsonpath`: For a given parameter, find an object in the request body.
+* `escapejsonbody`: Escapes the request body in a format that can be embedded in JSON.
+* `jsonpath`: For a given parameter, finds an object in the request body.
 
 [[contract-dsl-matchers]]
 ==== Dynamic Properties in the Matchers Sections
@@ -1329,49 +1336,52 @@ following matching possibilities:
 
 ===== Coded DSL
 
-* For the stubs (in tests on the consumer's side):
-** `byEquality()`: The value taken from the consumer's request in the provided JSON path must be
+For the stubs (in tests on the consumer's side):
+
+* `byEquality()`: The value taken from the consumer's request in the provided JSON path must be
 equal to the value provided in the contract.
-** `byRegex(...)`: The value taken from the consumer's request in the provided JSON path must
+* `byRegex(...)`: The value taken from the consumer's request in the provided JSON path must
 match the regex. You can also pass the type of the expected matched value (for example, `asString()`, `asLong()`, and so on).
-** `byDate()`: The value taken from the consumer's request in the provided JSON path must
+* `byDate()`: The value taken from the consumer's request in the provided JSON path must
 match the regex for an ISO Date value.
-** `byTimestamp()`: The value taken from the consumer's request in the provided JSON path must
+* `byTimestamp()`: The value taken from the consumer's request in the provided JSON path must
 match the regex for an ISO DateTime value.
-** `byTime()`: The value taken from the consumer's request in the provided JSON path must
+* `byTime()`: The value taken from the consumer's request in the provided JSON path must
 match the regex for an ISO Time value.
-* For the verification (in generated tests on the Producer's side):
-** `byEquality()`: The value taken from the producer's response in the provided JSON path must be
+
+For the verification (in generated tests on the Producer's side):
+
+* `byEquality()`: The value taken from the producer's response in the provided JSON path must be
 equal to the provided value in the contract.
-** `byRegex(...)`: The value taken from the producer's response in the provided JSON path must
+* `byRegex(...)`: The value taken from the producer's response in the provided JSON path must
 match the regex.
-** `byDate()`: The value taken from the producer's response in the provided JSON path must match
+* `byDate()`: The value taken from the producer's response in the provided JSON path must match
 the regex for an ISO Date value.
-** `byTimestamp()`: The value taken from the producer's response in the provided JSON path must
+* `byTimestamp()`: The value taken from the producer's response in the provided JSON path must
 match the regex for an ISO DateTime value.
-** `byTime()`: The value taken from the producer's response in the provided JSON path must match
+* `byTime()`: The value taken from the producer's response in the provided JSON path must match
 the regex for an ISO Time value.
-** `byType()`: The value taken from the producer's response in the provided JSON path needs to be
+* `byType()`: The value taken from the producer's response in the provided JSON path needs to be
 of the same type as the type defined in the body of the response in the contract.
 `byType` can take a closure, in which you can set `minOccurrence` and `maxOccurrence`. For the
 request side, you should use the closure to assert size of the collection.
 That way, you can assert the size of the flattened collection. To check the size of an
 unflattened collection, use a custom method with the `byCommand(...)` `testMatcher`.
-** `byCommand(...)`: The value taken from the producer's response in the provided JSON path is
+* `byCommand(...)`: The value taken from the producer's response in the provided JSON path is
 passed as an input to the custom method that you provide. For example,
 `byCommand('thing($it)')` results in calling a `thing` method to which the value matching the
 JSON Path gets passed. The type of the object read from the JSON can be one of the
 following, depending on the JSON path:
-*** `String`: If you point to a `String` value.
-*** `JSONArray`: If you point to a `List`.
-*** `Map`: If you point to a `Map`.
-*** `Number`: If you point to `Integer`, `Double`, or another kind of number.
-*** `Boolean`: If you point to a `Boolean`.
-** `byNull()`: The value taken from the response in the provided JSON path must be null.
+** `String`: If you point to a `String` value.
+** `JSONArray`: If you point to a `List`.
+** `Map`: If you point to a `Map`.
+** `Number`: If you point to `Integer`, `Double`, or another kind of number.
+** `Boolean`: If you point to a `Boolean`.
+* `byNull()`: The value taken from the response in the provided JSON path must be null.
 
 ===== YAML
 
-NOTE: See the Groovy section for detailed explanation of
+NOTE: See the Groovy section for a detailed explanation of
 what the types mean.
 
 For YAML, the structure of a matcher resembles the following example:
@@ -1432,13 +1442,13 @@ Consider the following example:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderWithMatchersSpec.groovy[tags=matchers,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_matchers.yml[indent=0]
 ----
@@ -1447,7 +1457,7 @@ include::{verifier_core_path}/src/test/resources/yml/contract_matchers.yml[inden
 In the preceding example, you can see the dynamic portions of the contract in the
 `matchers` sections. For the request part, you can see that, for all fields but
 `valueWithoutAMatcher`, the values of the regular expressions that the stub should
-contain are explicitly set. For the `valueWithoutAMatcher`, the verification takes place
+contain are explicitly set. For `valueWithoutAMatcher`, the verification takes place
 in the same way as without the use of matchers. In that case, the test performs an
 equality check.
 
@@ -1530,6 +1540,7 @@ collection.
 
 Consider the following example:
 
+====
 [source,groovy,indent=0]
 ----
 Contract.make {
@@ -1558,9 +1569,11 @@ Contract.make {
     }
 }
 ----
+====
 
 The preceding code leads to creating the following test (the code block shows only the assertion section):
 
+====
 [source,java,indent=0]
 ----
 		and:
@@ -1575,9 +1588,10 @@ The preceding code leads to creating the following test (the code block shows on
 			assertThat(parsedJson.read("\$.events[0].eventId", String.class)).matches("^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})\$")
 			assertThat(parsedJson.read("\$.events[0].status", String.class)).matches(".+")
 ----
+====
 
-As you can see, the assertion is malformed. Only the first element of the array got
-asserted. In order to fix this, you should apply the assertion to the whole `$.events`
+Note that the assertion is malformed. Only the first element of the array got
+asserted. To fix this, apply the assertion to the whole `$.events`
 collection and assert it with the `byCommand(...)` method.
 
 [[contract-dsl-async]]
@@ -1589,7 +1603,7 @@ provide an `async()` method in the `response` section. The following code shows 
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 org.springframework.cloud.contract.spec.Contract.make {
     request {
@@ -1605,14 +1619,14 @@ org.springframework.cloud.contract.spec.Contract.make {
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 response:
     async: true
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 class contract implements Supplier<Collection<Contract>> {
 
@@ -1633,7 +1647,7 @@ class contract implements Supplier<Collection<Contract>> {
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 
@@ -1654,7 +1668,7 @@ The following example shows how to do so:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 org.springframework.cloud.contract.spec.Contract.make {
     request {
@@ -1670,14 +1684,14 @@ org.springframework.cloud.contract.spec.Contract.make {
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 response:
     fixedDelayMilliseconds: 1000
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 class contract implements Supplier<Collection<Contract>> {
 
@@ -1698,7 +1712,7 @@ class contract implements Supplier<Collection<Contract>> {
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 
@@ -1722,31 +1736,31 @@ The XML body has to be passed within the `body` element
 as a `String` or `GString`. Also, body matchers can be provided for
 both the request and the response. In place of the `jsonPath(...)` method, the `org.springframework.cloud.contract.spec.internal.BodyMatchers.xPath`
 method should be used, with the desired `xPath` provided as the first argument
-and the appropriate `MatchingType` as second. All the body matchers apart from `byType()` are supported.
+and the appropriate `MatchingType` as the second argument. All the body matchers apart from `byType()` are supported.
 
 The following example shows a Groovy DSL contract with XML in the response body:
 
 ====
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.groovy
+.Groovy
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/XmlMethodBodyBuilderSpec.groovy[tags=xmlgroovy]
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_xml.java[tags=class,indent=0]
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 include::{verifier_core_path}/src/test/resources/kotlin/contract_xml.kts[tags=class,indent=0]
 ----
@@ -1754,6 +1768,7 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_xml.kts[tags=cl
 
 The following example shows an automatically generated test for XML in the response body:
 
+====
 [source,java,indent=0]
 ----
 @Test
@@ -1782,6 +1797,7 @@ public void validate_xmlMatches() throws Exception {
 	assertThat(valueFromXPath(parsedXml, "/test/duck/@type")).isEqualTo("xtype");
 	}
 ----
+====
 
 [[contract-dsl-multiple]]
 === Multiple Contracts in One File
@@ -1791,19 +1807,19 @@ following example:
 
 ====
 [source,groovy,indent=0,role="primary"]
-.groovy
+.Groovy
 ----
 include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/multiple-contracts/src/test/resources/contracts/com/hello/v1/WithList.groovy[lines=18..-1,indent=0]
 ----
 
 [source,yaml,indent=0,role="secondary"]
-.yml
+.YAML
 ----
 include::{verifier_core_path}/src/test/resources/yml/multiple_contracts.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.java
+.Java
 ----
 class contract implements Supplier<Collection<Contract>> {
 
@@ -1825,7 +1841,7 @@ class contract implements Supplier<Collection<Contract>> {
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.kotlin
+.Kotlin
 ----
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 
@@ -1845,8 +1861,9 @@ arrayOf(
 ====
 
 In the preceding example, one contract has the `name` field and the other does not. This
-leads to generation of two tests that look more or less like the following:
+leads to generation of two tests that look like the following:
 
+====
 [source,java,indent=0]
 ----
 package org.springframework.cloud.contract.verifier.tests.com.hello;
@@ -1892,6 +1909,7 @@ public class V1Test extends TestBase {
 
 }
 ----
+====
 
 Notice that, for the contract that has the `name` field, the generated test method is named
 `validate_should_post_a_user`. The one that does not have the `name` field is called
@@ -1918,7 +1936,7 @@ your tests far more meaningful.
 [[contract-stateful-contracts]]
 === Stateful Contracts
 
-Stateful contracts (known also as scenarios) are contract definitions that should be read
+Stateful contracts (also known as scenarios) are contract definitions that should be read
 in order. This might be useful in the following situations:
 
 * You want to invoke the contract in a precisely defined order, since you use Spring
@@ -1947,9 +1965,9 @@ my_contracts_dir\
 Such a tree causes Spring Cloud Contract Verifier to generate WireMock's scenario with a
 name of `scenario1` and the three following steps:
 
-. login, marked as `Started` pointing to...
-. showCart, marked as `Step1` pointing to...
-. logout, marked as `Step2` (which closes the scenario).
+. `login`, marked as `Started` pointing to...
+. `showCart`, marked as `Step1` pointing to...
+. `logout`, marked as `Step2` (which closes the scenario).
 
 You can find more details about WireMock scenarios at
 https://wiremock.org/docs/stateful-behaviour/[https://wiremock.org/docs/stateful-behaviour/].
