@@ -223,7 +223,7 @@ class DslToYamlContractConverterSpec extends Specification {
 					new YamlContract.BodyStubMatcher(
 							path: '$.date',
 							type: YamlContract.StubMatcherType.by_date,
-							value: "(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])"),
+							value: "(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.dateTime',
 							type: YamlContract.StubMatcherType.by_timestamp,
@@ -306,7 +306,7 @@ class DslToYamlContractConverterSpec extends Specification {
 					new YamlContract.BodyTestMatcher(
 							path: '$.date',
 							type: YamlContract.TestMatcherType.by_date,
-							value: '(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'),
+							value: '(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.dateTime',
 							type: YamlContract.TestMatcherType.by_timestamp,

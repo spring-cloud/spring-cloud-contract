@@ -59,7 +59,7 @@ class ValueGeneratorConverter {
 	private static final Pattern UUID = Pattern.compile(UUID_PATTERN)
 	private static final String UUID_PATTERN = '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
 	private static final Pattern ANY_DATE = Pattern.compile(ANY_DATE_PATTERN)
-	private static final String ANY_DATE_PATTERN = '(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'
+	private static final String ANY_DATE_PATTERN = '((\\d\\d\\d\\d)-(0[4,6,9]|11)-(0[1-9]|[12][0-9]|3[0])|(\\d\\d\\d\\d)-(0[1,3,5,7,8]|10|12)-(0[1-9]|[12][0-9]|3[01])|(\\d\\d\\d\\d)-(02)-(0[1-9]|[12][0-8]))T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'
 	private static final Pattern ANY_TIME = Pattern.compile(ANY_TIME_PATTERN)
 	private static final String ANY_TIME_PATTERN = '(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'
 	private static final Pattern ANY_DATE_TIME = Pattern.compile(ANY_DATE_TIME_PATTERN)

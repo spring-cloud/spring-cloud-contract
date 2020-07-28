@@ -1144,11 +1144,11 @@ inProgress: false
 					new YamlContract.BodyStubMatcher(
 							path: '$.date',
 							type: YamlContract.StubMatcherType.by_date,
-							value: "(\\d\\d\\d\\d)-(0[4,6,9]|11)-(0[1-9]|[12][0-9]|3[0])|(\\d\\d\\d\\d)-(0[1,3,5,7,8]|10|12)-(0[1-9]|[12][0-9]|3[01])|(\\d\\d\\d\\d)-(02)-(0[1-9]|[12][0-8])"),
+							value: "(\\\\d\\\\d\\\\d\\\\d)-(0[4,6,9]|11)-(0[1-9]|[12][0-9]|3[0])|(\\\\d\\\\d\\\\d\\\\d)-(0[1,3,5,7,8]|10|12)-(0[1-9]|[12][0-9]|3[01])|(\\\\d\\\\d\\\\d\\\\d)-(02)-(0[1-9]|[12][0-8])"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.dateTime',
 							type: YamlContract.StubMatcherType.by_timestamp,
-							value: "((\\d\\d\\d\\d)-(0[4,6,9]|11)-(0[1-9]|[12][0-9]|3[0])|(\\d\\d\\d\\d)-(0[1,3,5,7,8]|10|12)-(0[1-9]|[12][0-9]|3[01])|(\\d\\d\\d\\d)-(02)-(0[1-9]|[12][0-8]))T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
+							value: "((\\\\d\\\\d\\\\d\\\\d)-(0[4,6,9]|11)-(0[1-9]|[12][0-9]|3[0])|(\\\\d\\\\d\\\\d\\\\d)-(0[1,3,5,7,8]|10|12)-(0[1-9]|[12][0-9]|3[01])|(\\\\d\\\\d\\\\d\\\\d)-(02)-(0[1-9]|[12][0-8]))T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
 					new YamlContract.BodyStubMatcher(
 							path: '$.time',
 							type: YamlContract.StubMatcherType.by_time,
@@ -1221,7 +1221,7 @@ inProgress: false
 					new YamlContract.BodyTestMatcher(
 							path: '$.date',
 							type: YamlContract.TestMatcherType.by_date,
-							value: '(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'),
+							value: '(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'),
 					new YamlContract.BodyTestMatcher(
 							path: '$.dateTime',
 							type: YamlContract.TestMatcherType.by_timestamp,
