@@ -199,7 +199,7 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	@Override
 	public StubRunnerRule failOnNoStubs(boolean failOnNoStubs) {
 		builder().withFailOnNoStubs(failOnNoStubs);
-		return null;
+		return this.delegate;
 	}
 
 	@Override
