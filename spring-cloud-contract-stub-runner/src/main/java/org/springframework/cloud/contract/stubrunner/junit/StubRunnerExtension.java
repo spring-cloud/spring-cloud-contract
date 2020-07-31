@@ -91,10 +91,14 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 
 	@Override
 	public void afterEach(ExtensionContext context) throws Exception {
-		if (this.afterAllCalled.get()) {
+		if (extensionOverStaticField()) {
 			return;
 		}
 		after();
+	}
+
+	private boolean extensionOverStaticField() {
+		return this.afterAllCalled.get() || this.beforeAllCalled.get();
 	}
 
 	@Override
@@ -108,7 +112,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 
 	@Override
 	public void beforeEach(ExtensionContext context) throws Exception {
-		if (this.beforeAllCalled.get()) {
+		if (extensionOverStaticField()) {
 			return;
 		}
 		before();
