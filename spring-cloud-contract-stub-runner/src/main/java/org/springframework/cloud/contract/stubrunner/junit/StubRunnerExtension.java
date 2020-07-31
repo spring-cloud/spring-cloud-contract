@@ -26,7 +26,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -48,7 +50,7 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
+public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback,
 		StubFinder, StubRunnerExtensionOptions {
 
 	private static final String DELIMITER = ":";
@@ -74,14 +76,32 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
+	public void afterAll(ExtensionContext extensionContext) {
+		after();
+	}
+
+	@Override
+	public void afterEach(ExtensionContext context) throws Exception {
+		after();
+	}
+
+	@Override
 	public void beforeAll(ExtensionContext extensionContext) {
+		before();
+	}
+
+	@Override
+	public void beforeEach(ExtensionContext context) throws Exception {
+		before();
+	}
+
+	private void before() {
 		stubFinder(new BatchStubRunnerFactory(builder().build(), verifier())
 				.buildBatchStubRunner());
 		stubFinder().runStubs();
 	}
 
-	@Override
-	public void afterAll(ExtensionContext extensionContext) {
+	private void after() {
 		try {
 			stubFinder().close();
 		}
@@ -89,6 +109,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 			LOG.warn(exception.getMessage(), exception);
 		}
 	}
+
 
 	@Override
 	public URL findStubUrl(String groupId, String artifactId)
