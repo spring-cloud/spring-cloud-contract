@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,6 +62,10 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 
 	StubRunnerExtension delegate = this;
 
+	private AtomicBoolean beforeAllCalled = new AtomicBoolean();
+
+	private AtomicBoolean afterAllCalled = new AtomicBoolean();
+
 	private BatchStubRunner stubFinder;
 
 	private StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(
@@ -77,21 +82,35 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 
 	@Override
 	public void afterAll(ExtensionContext extensionContext) {
-		after();
+		try {
+			after();
+		} finally {
+			this.afterAllCalled.set(true);
+		}
 	}
 
 	@Override
 	public void afterEach(ExtensionContext context) throws Exception {
+		if (this.afterAllCalled.get()) {
+			return;
+		}
 		after();
 	}
 
 	@Override
 	public void beforeAll(ExtensionContext extensionContext) {
-		before();
+		try {
+			before();
+		} finally {
+			this.beforeAllCalled.set(true);
+		}
 	}
 
 	@Override
 	public void beforeEach(ExtensionContext context) throws Exception {
+		if (this.beforeAllCalled.get()) {
+			return;
+		}
 		before();
 	}
 
