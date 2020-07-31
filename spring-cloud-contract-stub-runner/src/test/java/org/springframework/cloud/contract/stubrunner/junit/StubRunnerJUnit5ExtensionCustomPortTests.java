@@ -41,8 +41,8 @@ class StubRunnerJUnit5ExtensionCustomPortTests {
 			.repoRoot(repoRoot()).stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs",
 					"loanIssuance")
-			.withPort(12345).downloadStub(
-					"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");
+			.withPort(22345).downloadStub(
+					"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:22346");
 
 	@BeforeAll
 	@AfterAll
@@ -88,9 +88,9 @@ class StubRunnerJUnit5ExtensionCustomPortTests {
 		then(httpGet(stubRunnerExtension.findStubUrl("fraudDetectionServer").toString()
 				+ "/name")).isEqualTo("fraudDetectionServer");
 		then(stubRunnerExtension.findStubUrl("loanIssuance"))
-				.isEqualTo(URI.create("http://localhost:12345").toURL());
+				.isEqualTo(URI.create("http://localhost:22345").toURL());
 		then(stubRunnerExtension.findStubUrl("fraudDetectionServer"))
-				.isEqualTo(URI.create("http://localhost:12346").toURL());
+				.isEqualTo(URI.create("http://localhost:22346").toURL());
 	}
 
 	private String httpGet(String url) throws Exception {
