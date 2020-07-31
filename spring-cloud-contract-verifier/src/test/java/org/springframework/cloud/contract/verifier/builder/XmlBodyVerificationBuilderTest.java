@@ -24,10 +24,13 @@ public class XmlBodyVerificationBuilderTest {
 		builder.addXmlResponseBodyCheck(blockBuilder, xml, matchers, xml, true);
 		// Then
 		String test = blockBuilder.toString();
-		assertThat(test).contains("DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();")
+		assertThat(test).contains(
+				"DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();")
 				.contains("builderFactory.setNamespaceAware(true);")
-				.contains("DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();")
-				.contains("Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(")
+				.contains(
+						"DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();")
+				.contains(
+						"Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(")
 				.contains(xml);
 	}
 
