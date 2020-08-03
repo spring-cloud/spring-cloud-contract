@@ -191,6 +191,7 @@ The following sections describe the most common top-level elements:
 * <<contract-dsl-ignoring-contracts>>
 * <<contract-dsl-in-progress>>
 * <<contract-dsl-passing-values-from-files>>
+* <<contract-dsl-metadata>>
 
 [[contract-dsl-description]]
 ==== Description
@@ -434,6 +435,40 @@ include::{contract_kotlin_spec_path}/src/test/resources/contracts/shouldWorkWith
 
 IMPORTANT: You should use this approach whenever you want to work with binary payloads,
  both for HTTP and messaging.
+
+[[contract-dsl-metadata]]
+==== Metadata
+
+You can add `metadata` to your contract. Via the metadata you can pass in configuration to extensions. Below you can find
+an example of using the `wiremock` key and value being WireMock's `StubMapping` object. Spring Cloud Contract is able to
+patch parts of your generated stub mapping with your custom code. You may want to do that in order to add webhooks, custom
+delays or integrate with third party WireMock extensions.
+
+====
+[source,groovy,indent=0,role="primary"]
+.groovy
+----
+include::{standalone_samples_path}/http-server/src/test/resources/contracts/fraud/shouldReturnFraudStats.groovy[tags=metadata,indent=0]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.yml
+----
+include::{standalone_samples_path}/http-server/src/test/resources/contracts/yml/fraud/shouldReturnFraudStats.yml[tags=metadata,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.java
+----
+include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=metadata,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.kotlin
+----
+include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=metadata,indent=0]
+----
+====
 
 [[features-http]]
 == Contracts for HTTP

@@ -16,8 +16,11 @@
  */
 
 // tag::class[]
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -57,6 +60,16 @@ class contract_rest_with_tags implements Supplier<Collection<Contract>> {
 			}));
 
 	// end::in_progress[]
+
+	static Object metadata = Collections.singletonList(
+			// tag::metadata[]
+			Contract.make(c -> {
+				Map<String, Object> map = new HashMap<>();
+				map.put("wiremock", "{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }");
+				c.metadata(map);
+			}));
+
+	// end::metadata[]
 
 	@Override
 	public Collection<Contract> get() {

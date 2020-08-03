@@ -306,6 +306,27 @@ then:
 	}
 
 	@Test
+	fun `should set contract metadata`() {
+		val contract =
+		// tag::metadata[]
+		contract {
+			metadata("wiremock" to """
+		{
+		  "response" : {
+			"fixedDelayMilliseconds": 2000
+		  }
+		}""")
+		}
+		// end::metadata[]
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			assertThat(contract.metadata).isNotEmpty
+		}
+	}
+
+	@Test
 	fun `should make equals and hashcode work properly for URL`() {
 		val a: Contract = contract {
 			request {

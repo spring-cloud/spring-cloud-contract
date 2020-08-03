@@ -35,6 +35,7 @@ import org.springframework.cloud.contract.spec.Contract
 			}
 		}
 	},
+	// tag::metadata[]
 	Contract.make {
 		request {
 			method GET()
@@ -58,4 +59,5 @@ import org.springframework.cloud.contract.spec.Contract
 '''
 		])
 	}
+	// end::metadata[]
 ]

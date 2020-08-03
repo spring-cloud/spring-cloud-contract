@@ -127,12 +127,18 @@ class ContractDsl {
 	}
 
 	/**
-	 * The output part of the contract.
-	 * @param configurer lambda to configure the output message
+	 * The metadata.
+	 * @param map metadata to set
 	 */
-	fun metadata(map: Map<String, Object>) {
+	fun metadata(map: Map<String, Any>) {
 		metadata = metadata.plus(map)
 	}
+
+	/**
+	 * The metadata.
+	 * @param metadata metadata to set
+	 */
+	fun metadata(vararg metadata: Pair<String, Any>) = metadata(metadata.toMap())
 
 	private fun get(): Contract {
 		val contract = Contract()
