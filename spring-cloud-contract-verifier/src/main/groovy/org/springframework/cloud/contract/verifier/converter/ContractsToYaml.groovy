@@ -61,6 +61,7 @@ class ContractsToYaml {
 			yamlContract.inProgress = contract.inProgress
 			yamlContract.description = contract.description
 			yamlContract.label = contract.label
+			yamlContract.metadata = contract.metadata
 			request(contract, yamlContract)
 			response(yamlContract, contract)
 			input(contract, yamlContract)

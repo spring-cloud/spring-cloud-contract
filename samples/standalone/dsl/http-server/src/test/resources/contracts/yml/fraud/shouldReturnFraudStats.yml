@@ -9,6 +9,13 @@ response:
     count: 200
   headers:
     Content-Type: application/json
+metadata:
+  wiremock: >
+    {
+      "response" : {
+        "fixedDelayMilliseconds": 2000
+      }
+    }
 ---
 request:
   method: GET

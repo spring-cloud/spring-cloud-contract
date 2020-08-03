@@ -51,9 +51,9 @@ class WireMockStubStrategy {
 	}
 
 	/**
-	 * Converts {@link ContractMetadata} to String version of {@link StubMapping}
+	 * Converts {@link ContractMetadata} to {@link StubMapping}
 	 */
-	String toWireMockClientStub() {
+	StubMapping toWireMockClientStub() {
 		StubMapping stubMapping = new StubMapping()
 		RequestPattern request = wireMockRequestStubStrategy.buildClientRequestContent()
 		ResponseDefinition response = wireMockResponseStubStrategy.
@@ -66,11 +66,11 @@ class WireMockStubStrategy {
 		stubMapping.response = response
 
 		if (!request || !response) {
-			return ''
+			return null
 		}
 
 		if (groovyDsl.ignored || contract.ignored) {
-			return ''
+			return null
 		}
 
 		if (contract.order != null) {
@@ -80,6 +80,6 @@ class WireMockStubStrategy {
 				stubMapping.newScenarioState = STEP_PREFIX + (contract.order + 1)
 			}
 		}
-		return StubMapping.buildJsonStringFor(stubMapping)
+		return stubMapping
 	}
 }

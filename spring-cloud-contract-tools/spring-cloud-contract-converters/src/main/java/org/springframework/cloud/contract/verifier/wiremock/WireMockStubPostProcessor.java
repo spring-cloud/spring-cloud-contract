@@ -14,48 +14,18 @@
  * limitations under the License.
  */
 
-package contracts
+package org.springframework.cloud.contract.verifier.wiremock;
 
-import org.springframework.cloud.contract.spec.Contract
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
-[
-	Contract.make {
-		request {
-			name "should count all frauds"
-			method GET()
-			url '/frauds'
-		}
-		response {
-			status OK()
-			body([
-				count: $(regex("[2-9][0-9][0-9]").asInteger())
-			])
-			headers {
-				contentType("application/json")
-			}
-		}
-	},
-	Contract.make {
-		request {
-			method GET()
-			url '/drunks'
-		}
-		response {
-			status OK()
-			body([
-				count: 100
-			])
-			headers {
-				contentType("application/json")
-			}
-		}
-		metadata([wiremock: '''\
-	{
-		"response" : {
-			"fixedDelayMilliseconds": 2000
-		}
-	}
-'''
-		])
-	}
-]
+import org.springframework.cloud.contract.verifier.converter.StubPostProcessor;
+
+/**
+ * Post processor of WireMock stub mappings.
+ *
+ * @author Marcin Grzejszczak
+ * @since 3.0.0
+ */
+public interface WireMockStubPostProcessor extends StubPostProcessor<StubMapping> {
+
+}

@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.wiremock;
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
 
 /**
@@ -23,7 +25,7 @@ import org.springframework.cloud.contract.verifier.converter.StubGenerator;
  *
  * @since 1.0.0
  */
-public abstract class DslToWireMockConverter implements StubGenerator {
+public abstract class DslToWireMockConverter implements StubGenerator<StubMapping> {
 
 	@Override
 	public String generateOutputFileNameForInput(String inputFileName) {

@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
@@ -2003,7 +2004,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			json == ''
+			json == null
 	}
 
 	@Issue('#30')
@@ -2031,7 +2032,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null, groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
-			json == ''
+			json == null
 	}
 
 	@Issue('#237')
@@ -2982,7 +2983,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		and:
-			String wireMockStub = new WireMockStubStrategy("Test",
+			StubMapping wireMockStub = new WireMockStubStrategy("Test",
 					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
 					.toWireMockClientStub()
 
@@ -2992,7 +2993,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server.start()
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
-			server.addStubMapping(WireMockStubMapping.buildFrom(wireMockStub))
+			server.addStubMapping(wireMockStub)
 		when:
 			ResponseEntity<String> entity = callWithOptionalAndEmpty(port)
 		then:
