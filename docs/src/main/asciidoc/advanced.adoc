@@ -168,6 +168,54 @@ include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wirem
 ----
 ====
 
+[[customization-wiremock-from-metadata]]
+=== Customization of WireMock via Metadata
+
+With version 3.0.0 you're able to set `metadata` in your contracts. If you set an entry with key equal to `wiremock` and the value
+will be a valid WireMock's `StubMapping` JSON / map or an actual `StubMapping` object, Spring Cloud Contract will patch the generated
+stub with part of your customization. Let's look at the following example
+
+[source,yaml,indent=0]
+----
+include::{standalone_samples_path}/http-server/src/test/resources/contracts/yml/fraud/shouldReturnFraudStats.yml[tags=metadata,indent=0]
+----
+
+In the `metadata` section we've set an entry with key `wiremock` and its value is a JSON `StubMapping` that sets a delay in the generated stub. Such code allowed us to get the following merged WireMock JSON stub.
+
+[source,json,indent=0]
+----
+{
+  "id" : "ebae49e2-a2a3-490c-a57f-ba28e26b81ea",
+  "request" : {
+    "url" : "/yamlfrauds",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"count\":200}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    },
+    "fixedDelayMilliseconds" : 2000,
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "ebae49e2-a2a3-490c-a57f-ba28e26b81ea"
+}
+----
+
+The current implementation allows to manipulate only the stub side (we don't change the generated test). Also, what does not get changed
+are the whole request and body and headers of the response.
+
+[[customization-wiremock-from-metadata-custom-processor]]
+==== Customization of WireMock via Metadata and a Custom Processor
+
+If you want to apply a custom WireMock `StubMapping` post processing, you can under `META-INF/spring.factories` under the
+`org.springframework.cloud.contract.verifier.converter.StubProcessor` key register your own implementation of a stub processor. For your convenience we've created an interface called `org.springframework.cloud.contract.verifier.wiremock.WireMockStubPostProcessor` that is dedicated to WireMock.
+
+You'll have to implement methods to inform Spring Cloud Contract whether the post processor is applicable for a given contract and how should the post processing look like.
+
+IMPORTANT: On the consumer side, when using Stub Runner, remember to pass the custom `HttpServerStubConfigurer` implementation (e.g. the one that extends `WireMockHttpServerStubConfigurer`) where you'll register a custom extension of your choosing. If you don't do so, even you have a custom WireMock extension on the classpath, WireMock will not notice it, won't apply it and will print out a warning statement that the given extension was not found.
+
 [[customization-pluggable-architecture]]
 == Using the Pluggable Architecture
 

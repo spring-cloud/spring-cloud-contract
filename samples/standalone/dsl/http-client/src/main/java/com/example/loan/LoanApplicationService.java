@@ -40,6 +40,8 @@ public class LoanApplicationService {
 	private final RestTemplate restTemplate;
 
 	private int port = 6565;
+	
+	private String prefix = "";
 
 	@Autowired
 	public LoanApplicationService(RestTemplateBuilder builder) {
@@ -61,11 +63,15 @@ public class LoanApplicationService {
 
 		// tag::client_call_server[]
 		ResponseEntity<FraudServiceResponse> response = restTemplate.exchange(
-				"http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+				"http://localhost:" + port + fraudCheck(), HttpMethod.PUT,
 				new HttpEntity<>(request, httpHeaders), FraudServiceResponse.class);
 		// end::client_call_server[]
 
 		return response.getBody();
+	}
+
+	private String fraudCheck() {
+		return "/" + prefix + "fraudcheck";
 	}
 
 	private LoanApplicationResult buildResponseFromFraudResult(
@@ -86,7 +92,7 @@ public class LoanApplicationService {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 		ResponseEntity<Response> response = restTemplate.exchange(
-				"http://localhost:" + port + "/frauds", HttpMethod.GET,
+				"http://localhost:" + port + "/" + prefix + "frauds", HttpMethod.GET,
 				new HttpEntity<>(httpHeaders), Response.class);
 		return response.getBody().getCount();
 	}
@@ -95,7 +101,7 @@ public class LoanApplicationService {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 		ResponseEntity<Response> response = restTemplate.exchange(
-				"http://localhost:" + port + "/drunks", HttpMethod.GET,
+				"http://localhost:" + port + "/"+ prefix + "drunks", HttpMethod.GET,
 				new HttpEntity<>(httpHeaders), Response.class);
 		return response.getBody().getCount();
 	}
@@ -105,7 +111,7 @@ public class LoanApplicationService {
 		httpHeaders.add("Cookie", "name=foo");
 		httpHeaders.add("Cookie", "name2=bar");
 		ResponseEntity<String> response = restTemplate.exchange(
-				"http://localhost:" + port + "/frauds/name", HttpMethod.GET,
+				"http://localhost:" + port + "/" + prefix + "frauds/name", HttpMethod.GET,
 				new HttpEntity<>(httpHeaders), String.class);
 		return response.getBody();
 	}
@@ -114,4 +120,7 @@ public class LoanApplicationService {
 		this.port = port;
 	}
 
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 }

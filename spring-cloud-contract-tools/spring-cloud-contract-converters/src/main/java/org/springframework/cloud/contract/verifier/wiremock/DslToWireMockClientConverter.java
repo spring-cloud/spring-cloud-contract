@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
@@ -39,7 +41,31 @@ public class DslToWireMockClientConverter extends DslToWireMockConverter {
 
 	private String convertASingleContract(String rootName, ContractMetadata contract,
 			Contract dsl) {
-		return new WireMockStubStrategy(rootName, contract, dsl).toWireMockClientStub();
+		StubMapping stubMapping = new WireMockStubStrategy(rootName, contract, dsl)
+				.toWireMockClientStub();
+		StubMapping mapping = postProcessStubMapping(stubMapping, dsl);
+		if (mapping == null) {
+			return "";
+		}
+		return mapping.toString();
+	}
+
+	@Override
+	public StubMapping postProcessStubMapping(StubMapping stubMapping,
+			Contract contract) {
+		StubMapping mapping = super.postProcessStubMapping(stubMapping, contract);
+		// apply the default WireMock processor as the last one
+		return defaultStubMappingPostProcessing(mapping, contract);
+	}
+
+	@Override
+	public StubMapping defaultStubMappingPostProcessing(StubMapping stubMapping,
+			Contract contract) {
+		DefaultWireMockStubPostProcessor processor = new DefaultWireMockStubPostProcessor();
+		if (processor.isApplicable(contract)) {
+			return processor.postProcess(stubMapping, contract);
+		}
+		return stubMapping;
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import groovy.json.JsonOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
@@ -86,15 +87,9 @@ class StubRunnerExecutor implements StubFinder {
 			}
 			return runningStubs();
 		}
-		try {
-			HttpServerStubConfigurer configurer = stubRunnerOptions
-					.getHttpServerStubConfigurer().newInstance();
-			startStubServers(configurer, stubRunnerOptions, stubConfiguration,
-					repository);
-		}
-		catch (InstantiationException | IllegalAccessException ex) {
-			log.error("Failed to instantiate the HTTP stub configurer", ex);
-		}
+		HttpServerStubConfigurer configurer = BeanUtils
+				.instantiateClass(stubRunnerOptions.getHttpServerStubConfigurer());
+		startStubServers(configurer, stubRunnerOptions, stubConfiguration, repository);
 		RunningStubs runningCollaborators = runningStubs();
 		log.info("All stubs are now running " + runningCollaborators.toString());
 		return runningCollaborators;

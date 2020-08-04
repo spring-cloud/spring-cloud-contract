@@ -18,26 +18,14 @@ package org.springframework.cloud.contract.verifier.wiremock;
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
-import org.springframework.cloud.contract.verifier.converter.StubGenerator;
+import org.springframework.cloud.contract.verifier.converter.StubPostProcessor;
 
 /**
- * WireMock implementation of the {@link StubGenerator}.
+ * Post processor of WireMock stub mappings.
  *
- * @since 1.0.0
+ * @author Marcin Grzejszczak
+ * @since 3.0.0
  */
-public abstract class DslToWireMockConverter implements StubGenerator<StubMapping> {
-
-	@Override
-	public String generateOutputFileNameForInput(String inputFileName) {
-		return inputFileName.replaceAll(extension(inputFileName), "json");
-	}
-
-	private String extension(String inputFileName) {
-		int i = inputFileName.lastIndexOf(".");
-		if (i > 0) {
-			return inputFileName.substring(i + 1);
-		}
-		return "";
-	}
+public interface WireMockStubPostProcessor extends StubPostProcessor<StubMapping> {
 
 }

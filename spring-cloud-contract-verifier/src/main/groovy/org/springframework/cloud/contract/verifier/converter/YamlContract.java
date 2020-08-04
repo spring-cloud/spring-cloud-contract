@@ -54,6 +54,8 @@ public class YamlContract {
 
 	public boolean inProgress;
 
+	public Map<String, Object> metadata;
+
 	public static class Request {
 
 		public String method;

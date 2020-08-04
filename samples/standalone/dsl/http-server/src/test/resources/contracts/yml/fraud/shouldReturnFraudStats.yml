@@ -1,4 +1,5 @@
 ---
+# tag::metadata[]
 name: "should count all frauds"
 request:
   method: GET
@@ -9,6 +10,14 @@ response:
     count: 200
   headers:
     Content-Type: application/json
+metadata:
+  wiremock: >
+    {
+      "response" : {
+        "fixedDelayMilliseconds": 2000
+      }
+    }
+# end::metadata[]
 ---
 request:
   method: GET

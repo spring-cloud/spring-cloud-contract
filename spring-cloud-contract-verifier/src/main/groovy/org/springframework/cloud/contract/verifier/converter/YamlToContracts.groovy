@@ -102,6 +102,9 @@ class YamlToContracts {
 				if (yamlContract.inProgress) {
 					inProgress()
 				}
+				if (yamlContract.metadata) {
+					metadata(yamlContract.metadata)
+				}
 				if (yamlContract.request?.method) {
 					request {
 						method(yamlContract.request?.method)

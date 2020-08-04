@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.spec;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -94,6 +96,11 @@ public class Contract {
 	 * finished. Used together with the {@code generateStubs} option.
 	 */
 	private boolean inProgress;
+
+	/**
+	 * Mapping of metadata. Can be used for external integrations.
+	 */
+	private Map<String, Object> metadata = new HashMap<>();
 
 	public Contract() {
 
@@ -259,6 +266,14 @@ public class Contract {
 	}
 
 	/**
+	 * Appends all entries to the existing metadata mapping.
+	 * @param map metadata to set
+	 */
+	public void metadata(Map<String, Object> map) {
+		this.metadata.putAll(map);
+	}
+
+	/**
 	 * Whether the contract should be ignored or not.
 	 */
 	public void ignored() {
@@ -360,6 +375,14 @@ public class Contract {
 		this.inProgress = inProgress;
 	}
 
+	public void setMetadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
+	}
+
+	public Map<String, Object> getMetadata() {
+		return metadata;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -376,13 +399,14 @@ public class Contract {
 				&& Objects.equals(description, contract.description)
 				&& Objects.equals(name, contract.name)
 				&& Objects.equals(input, contract.input)
+				&& Objects.equals(metadata, contract.metadata)
 				&& Objects.equals(outputMessage, contract.outputMessage);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(priority, request, response, label, description, name, input,
-				outputMessage, ignored);
+				outputMessage, metadata, ignored);
 	}
 
 	@Override

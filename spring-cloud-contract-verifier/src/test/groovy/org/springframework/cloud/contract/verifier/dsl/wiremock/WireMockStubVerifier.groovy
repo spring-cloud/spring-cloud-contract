@@ -28,11 +28,16 @@ trait WireMockStubVerifier {
 
 	void stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping stubMapping = WireMockStubMapping.buildFrom(mappingDefinition)
-		stubMapping.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
+		stubMappingIsValidWireMockStub(stubMapping)
+	}
+	
+	void stubMappingIsValidWireMockStub(StubMapping mappingDefinition) {
+		mappingDefinition.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
 			Pattern.compile(it.getValue())
 		}
-		assert !mappingDefinition.contains('org.springframework.cloud.contract.spec.internal')
-		assert !mappingDefinition.contains('cursor')
+		String definition = mappingDefinition.toString()
+		assert !definition.contains('org.springframework.cloud.contract.spec.internal')
+		assert !definition.contains('cursor')
 	}
 
 	void stubMappingIsValidWireMockStub(Contract contractDsl) {
