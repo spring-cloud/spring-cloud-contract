@@ -6,7 +6,7 @@
 	<properties>
 		<dependency-management-plugin.version>1.0.8.RELEASE</dependency-management-plugin.version>
 		<plexus-archiver.version>4.1.0</plexus-archiver.version>
-		<sdkman-java-installation.version>8.0.262.hs-adpt</sdkman-java-installation.version>
+		<sdkman-java-installation.version>8.0.265.hs-adpt</sdkman-java-installation.version>
 	</properties>
 
 	<parent>
