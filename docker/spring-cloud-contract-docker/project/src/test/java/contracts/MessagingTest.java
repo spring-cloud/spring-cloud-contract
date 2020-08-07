@@ -3,8 +3,8 @@ package contracts;
 import contracts.RestBase;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import org.junit.Test;
-import org.junit.Rule;
+import org.junit.jupiter.api.Test;
+
 import javax.inject.Inject;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;

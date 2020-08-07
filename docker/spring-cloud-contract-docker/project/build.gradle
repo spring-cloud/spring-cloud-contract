@@ -38,24 +38,16 @@ bootJar.enabled = false
 
 dependencies {
 	testImplementation(platform("org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"))
-	testImplementation(platform("org.springframework.cloud:spring-cloud-stream-dependencies:${springCloudStreamVersion}"))
 
 	testImplementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
-	testImplementation("org.springframework.cloud:spring-cloud-stream")
-
-	// TEMP
-	testImplementation("org.springframework.cloud:spring-cloud-stream-binder-rabbit")
-
-	if (getProp("VERIFIER_MESSAGING_TYPE")) {
-		testImplementation("org.springframework.cloud:spring-cloud-stream-binder-${getProp("VERIFIER_MESSAGING_TYPE")}")
-	} else {
-		// TEMP
-//		testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
-	}
+	testImplementation("org.apache.camel.springboot:camel-spring-boot-starter:${camelVersion}")
+	testImplementation("org.apache.camel:camel-kafka:${camelVersion}")
+	testImplementation("org.apache.camel:camel-rabbitmq:${camelVersion}")
 }
 
 test {
+	useJUnitPlatform()
 	testLogging {
 		exceptionFormat = 'full'
 		afterSuite { desc, result ->
@@ -79,7 +71,7 @@ contracts {
 				lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
 		// tests - contracts from an artifact
 		contractsPath = getProp("EXTERNAL_CONTRACTS_PATH") ?: ""
-		if (Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) == false) {
+		if (!Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE"))) {
 			contractRepository {
 				repositoryUrl = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
 						getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
@@ -120,7 +112,6 @@ task copyOutput(type: Copy) {
 
 test {
 	finalizedBy("copyOutput")
-	useJUnitPlatform()
 }
 
 publishing {
@@ -170,7 +161,7 @@ task resolveDependencies {
 				config.files
 			}
 			catch (e) {
-				project.logger.info e.message // some cannot be resolved, silentlyish skip them
+				project.logger.info e.message // some cannot be resolved, silently skip them
 			}
 		}
 	}

@@ -17,6 +17,7 @@
 package contracts;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +29,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -52,8 +55,13 @@ public abstract class RestBase {
 	@Value("${APPLICATION_PASSWORD:}")
 	String password;
 
-	@Autowired
-	ApplicationContext applicationContext;
+	@Value("${MESSAGING_TRIGGER_CONNECT_TIMEOUT:5000}")
+	Integer connectTimeout;
+
+	@Value("${MESSAGING_TRIGGER_READ_TIMEOUT:5000}")
+	Integer readTimeout;
+
+	@Autowired MessageVerifier messageVerifier;
 
 	@BeforeEach
 	public void setup() {
@@ -68,13 +76,8 @@ public abstract class RestBase {
 	}
 
 	public void triggerMessage(String label, String queueName) {
-		triggerMessage(label, queueName, queueName);
-	}
-
-	public void triggerMessage(String label, String groupName, String queueName) {
-		if (StringUtils.hasText(queueName)) {
-			provisionQueue(groupName, queueName);
-		}
+		log.info("First will try to receive a message to generate a queue");
+		messageVerifier.receive(queueName, 100, TimeUnit.MILLISECONDS);
 		String url = this.url + "/springcloudcontract/" + label;
 		log.info("Will send a request to [{}] in order to trigger a message", url);
 		restTemplate().postForObject(url, "", String.class);
@@ -82,8 +85,8 @@ public abstract class RestBase {
 
 	private RestTemplate restTemplate() {
 		RestTemplateBuilder builder = new RestTemplateBuilder()
-				.setConnectTimeout(Duration.ofSeconds(5))
-				.setReadTimeout(Duration.ofSeconds(5));
+				.setConnectTimeout(Duration.ofMillis(this.connectTimeout))
+				.setReadTimeout(Duration.ofMillis(this.readTimeout));
 		if (StringUtils.hasText(this.username)) {
 			builder = builder.basicAuthentication(this.username, this.password);
 		}
@@ -91,6 +94,7 @@ public abstract class RestBase {
 	}
 
 	@Configuration
+	@Import(MessagingAutoConfig.class)
 	@EnableAutoConfiguration
 	protected static class Config {
 
