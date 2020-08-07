@@ -65,7 +65,8 @@ class contract_rest_with_tags implements Supplier<Collection<Contract>> {
 			// tag::metadata[]
 			Contract.make(c -> {
 				Map<String, Object> map = new HashMap<>();
-				map.put("wiremock", "{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }");
+				map.put("wiremock",
+						"{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }");
 				c.metadata(map);
 			}));
 
