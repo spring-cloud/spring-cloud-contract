@@ -110,6 +110,10 @@ from the container's `.m2`. Mount your local `.m2` as a volume available at the 
 
 CAUTION: You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
 
+The following environment variables are used when running messaging based tests:
+
+- `MESSAGING_TYPE` - what type of messaging system are you using (currently supported are `rabbit`, `kafka`)
+
 The following environment variables are used when tests are run:
 
 - `APPLICATION_BASE_URL`: URL against which tests should be run.
@@ -213,6 +217,11 @@ letters should be upper case.
 The dot (`.`) should be replaced with underscore (`_`) characters. For example,
 the `stubrunner.repositoryRoot` property should be represented
 as a `STUBRUNNER_REPOSITORY_ROOT` environment variable.
+
+In addition to those variables you can set the following ones:
+
+- `MESSAGING_TYPE` - what type of messaging system are you using (currently supported are `rabbit`, `kafka`)
+- `ADDITIONAL_OPTS` - any additional properties that you would like to pass to the application
 
 [[docker-stubrunner-example]]
 === Example of Usage
