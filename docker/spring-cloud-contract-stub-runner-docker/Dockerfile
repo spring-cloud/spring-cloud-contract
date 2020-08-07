@@ -20,7 +20,12 @@ ENV JAVA_HOME /root/.sdkman/candidates/java/current/
 ENV PATH "${PATH}:${JAVA_HOME}/bin"
 
 # Spring Cloud Contract
-ENV SERVER_PORT 8083
+ENV SERVER_PORT 8750
 VOLUME /tmp
 ADD target/libs/stub-runner-boot.jar stub-runner-boot.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/stub-runner-boot.jar"]
+RUN echo "Fetching dependencies, please wait..."
+RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar
+RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=rabbit
+RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=kafka
+COPY run.sh run.sh
+ENTRYPOINT ["./run.sh"]

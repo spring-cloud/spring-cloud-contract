@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: stubrunner
+
+server:
+  port: 8750
+
+info:
+  artifactId: "@project.artifactId@"
+  description: "@project.description@"
+  version: "@project.version@"
