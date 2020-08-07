@@ -90,11 +90,19 @@ class ContractVerifierSpec extends Specification {
 	 * project.evaluate() is used here in order to trigger the evaluation lifecycle of a project.
 	 * This method is currently exposed via the internal API and is subject to change, however, Gradle
 	 * does not yet expose a way to test this portion of the lifecycle.
+	 *
+	 * In the next version, this test will be completely removed as publication will be fully a user
+	 * responsibility.
 	 */
-	def "should configure maven-publish plugin, if available"() {
+	@Deprecated
+	def "should configure maven-publish plugin, if enabled"() {
 		given:
 			project.plugins.apply(MavenPublishPlugin)
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
+			ContractVerifierExtension extension = project.getExtensions().findByType(ContractVerifierExtension)
+			extension.with {
+				disableStubPublication = false
+			}
 			project.evaluate() // Currently internal method to trigger afterEvaluate blocks.
 
 		expect:

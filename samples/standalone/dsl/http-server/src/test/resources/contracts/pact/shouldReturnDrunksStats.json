@@ -10,7 +10,7 @@
       "description": "",
       "request": {
         "method": "GET",
-        "path": "/drunks"
+        "path": "/pactdrunks"
       },
       "response": {
         "status": 200,

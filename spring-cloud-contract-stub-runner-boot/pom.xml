@@ -13,6 +13,9 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Stub Runner Boot</name>
 	<description>Spring Cloud Contract Stub Runner Boot</description>
+	<properties>
+		<thin-jar.version>1.0.25.RELEASE</thin-jar.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -35,6 +38,13 @@
 				<configuration>
 					<executable>true</executable>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.boot.experimental</groupId>
+						<artifactId>spring-boot-thin-layout</artifactId>
+						<version>${thin-jar.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

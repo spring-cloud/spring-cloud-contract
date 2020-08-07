@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.gradle.api.publish.PublishingExtension
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
@@ -75,6 +76,15 @@ configure(listOf(project(":fraudDetectionService"), project(":loanApplicationSer
 		contractsDslDir.set(file("${project.projectDir}/mappings/"))
 		generatedTestSourcesDir.set(file("${project.buildDir}/generated-test-sources/"))
 		stubsOutputDir.set(file("${project.buildDir}/production/${project.name}-stubs/"))
+	}
+
+	configure<PublishingExtension> {
+		publications {
+			create<MavenPublication>("stubs") {
+				artifactId = "${project.name}-stubs"
+				artifact(tasks.named<Jar>("verifierStubsJar").get())
+			}
+		}
 	}
 
 	dependencies {
