@@ -30,7 +30,6 @@ group = 'org.springframework.cloud.testprojects'
 
 subprojects {
 	apply plugin: 'groovy'
-	apply plugin: 'maven-publish'
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
@@ -61,6 +60,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'org.springframework.cloud.contract'
+	apply plugin: 'maven-publish'
 
 	// tag::jar_setup[]
 	ext {
@@ -71,7 +71,6 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	// Automatically added by plugin:
 	// copyContracts - copies contracts to the output folder from which JAR will be created
 	// verifierStubsJar - JAR with a provided stub suffix
-	// the presented publication is also added by the plugin but you can modify it as you wish
 
 	publishing {
 		publications {

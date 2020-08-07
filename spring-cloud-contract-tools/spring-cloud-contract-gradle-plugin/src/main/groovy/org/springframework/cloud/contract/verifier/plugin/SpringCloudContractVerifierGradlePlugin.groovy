@@ -25,7 +25,7 @@ import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
+import org.gradle.api.tasks.bundling.Jar
 
 import org.springframework.cloud.contract.verifier.config.TestFramework
 
@@ -167,6 +167,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return task
 	}
 
+	@Deprecated
 	private void createAndConfigureMavenPublishPlugin(TaskProvider<Task> stubsTask, ContractVerifierExtension extension) {
 		if (!classIsOnClasspath("org.gradle.api.publish.maven.plugins.MavenPublishPlugin")) {
 			project.logger.debug("Maven Publish Plugin is not present - won't add default publication")
@@ -193,7 +194,9 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	@CompileDynamic
+	@Deprecated
 	private void setPublications(def publishingExtension, TaskProvider<Task> stubsTask) {
+		project.logger.warn("Spring Cloud Contract Verifier Plugin: Creating stubs publication is deprecated")
 		publishingExtension.publications {
 			stubs(MavenPublication) {
 				artifactId "${project.name}"
@@ -212,6 +215,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	@CompileDynamic
+	@Deprecated
 	private boolean hasStubsPublication(def publishingExtension) {
 		try {
 			return publishingExtension.publications.getByName('stubs')
@@ -251,6 +255,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return task
 	}
 
+	@Deprecated
 	private boolean classIsOnClasspath(String className) {
 		try {
 			Class.forName(className)

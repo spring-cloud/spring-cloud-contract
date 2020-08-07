@@ -233,7 +233,10 @@ public class ContractVerifierExtension implements Serializable {
 
 	/**
 	 * Is set to true will not provide the default publication task
+	 *
+	 * @deprecated - with 3.0.0, the user should include stubs with their own publication(s)
 	 */
+	@Deprecated
 	private Property<Boolean> disableStubPublication;
 
 	/**
@@ -276,7 +279,7 @@ public class ContractVerifierExtension implements Serializable {
 		this.deleteStubsAfterTest = objects.property(Boolean.class).convention(true);
 		this.convertToYaml = objects.property(Boolean.class).convention(false);
 		this.contractsProperties = objects.mapProperty(String.class, String.class).convention(new HashMap<>());
-		this.disableStubPublication = objects.property(Boolean.class).convention(false);
+		this.disableStubPublication = objects.property(Boolean.class).convention(true);
 		this.sourceSet = objects.property(String.class);
 		this.objects = objects;
 	}
@@ -578,10 +581,12 @@ public class ContractVerifierExtension implements Serializable {
 		contractsProperties.set(map);
 	}
 
+	@Deprecated
 	public Property<Boolean> getDisableStubPublication() {
 		return disableStubPublication;
 	}
 
+	@Deprecated
 	public void setDisableStubPublication(boolean disableStubPublication) {
 		this.disableStubPublication.set(disableStubPublication);
 	}

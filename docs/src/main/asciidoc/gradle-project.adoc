@@ -15,6 +15,7 @@ following sections:
 * <<gradle-single-base-class>>
 * <<gradle-different-base-classes>>
 * <<gradle-invoking-generated-tests>>
+* <<gradle-publishing-stubs-to-artifact-repo>>
 * <<gradle-pushing-stubs-to-scm>>
 * <<gradle-consumer>>
 
@@ -251,25 +252,12 @@ tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStub
     from contractVerifier.stubsOutputDir
 }
 
-project.artifacts {
-    archives task
-}
-
 tasks.create(type: Copy, name: 'copyContracts') {
     from contracts.contractsDslDir
     into contracts.stubsOutputDir
 }
 
 verifierStubsJar.dependsOn 'copyContracts'
-
-publishing {
-    publications {
-        stubs(MavenPublication) {
-            artifactId project.name
-            artifact verifierStubsJar
-        }
-    }
-}
 ----
 ====
 
@@ -445,6 +433,35 @@ the following command:
 ./gradlew generateContractTests test
 ----
 ====
+
+[[gradle-publishing-stubs-to-artifact-repo]]
+== Publishing Stubs to Artifact Repository
+
+If you use an binary artifact repository to keep the stubs,
+you will need to configure the publishing section for Gradle to
+include the `verifierStubsJar`. To do that, you can use the
+example configuration below:
+
+====
+[source,groovy,indent=0]
+----
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            // other configuration
+
+            artifact verifierStubsJar
+        }
+    }
+}
+----
+====
+
+Since 3.0.0, the internal stubs publication has been deprecated
+and disabled by default. It is recommended to include the
+`verifierStubsJar` with one of your own publications.
 
 [[gradle-pushing-stubs-to-scm]]
 == Pushing Stubs to SCM
