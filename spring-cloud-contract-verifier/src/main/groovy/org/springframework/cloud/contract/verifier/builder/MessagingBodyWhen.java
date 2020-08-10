@@ -22,15 +22,20 @@ class MessagingBodyWhen implements When {
 
 	private final BlockBuilder blockBuilder;
 
-	MessagingBodyWhen(BlockBuilder blockBuilder) {
+	private final BodyReader bodyReader;
+
+	MessagingBodyWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
+		this.bodyReader = new BodyReader(metaData);
 	}
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		this.bodyReader.storeContractAsYaml(metadata);
 		this.blockBuilder.addIndented("contractVerifierMessaging.send(inputMessage, \""
 				+ metadata.getContract().getInput().getMessageFrom().getServerValue()
-				+ "\")").addEndingIfNotPresent();
+				+ "\", contract(this, \"" + metadata.methodName() + ".yml\"))")
+				.addEndingIfNotPresent();
 		return this;
 	}
 

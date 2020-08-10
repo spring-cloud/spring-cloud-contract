@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

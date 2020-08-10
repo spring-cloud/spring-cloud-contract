@@ -27,7 +27,7 @@ import java.util.Collection;
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-public interface ContractConverter<T> extends ContractStorer<T> {
+public interface ContractConverter<T> extends ContractStorer<T>, ContractReader<T> {
 
 	/**
 	 * Should this file be accepted by the converter. Can use the file extension to check

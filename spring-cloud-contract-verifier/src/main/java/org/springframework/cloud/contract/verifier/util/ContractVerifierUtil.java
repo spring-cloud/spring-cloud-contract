@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +39,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
 import org.springframework.cloud.contract.verifier.util.xml.DOMNamespaceContext;
 
 /**
@@ -113,6 +116,19 @@ public final class ContractVerifierUtil {
 			LOG.error("Incorrect xpath provided: " + path, exception);
 			throw new IllegalArgumentException();
 		}
+	}
+
+	/**
+	 * Helper method to convert a file to bytes.
+	 * @param testClass - test class relative to which the file is stored
+	 * @param relativePath - relative path to the file
+	 * @return bytes of the file
+	 * @since 3.0.0
+	 */
+	public static YamlContract contract(Object testClass, String relativePath) {
+		byte[] bytes = fileToBytes(testClass, relativePath);
+		List<YamlContract> read = new YamlContractConverter().read(bytes);
+		return read.isEmpty() ? null : read.get(0);
 	}
 
 	/**

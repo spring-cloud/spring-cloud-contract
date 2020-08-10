@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 
 import java.util.Map;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
@@ -40,7 +41,16 @@ public class ContractVerifierMessaging<M> {
 		this.exchange.send(message.getPayload(), message.getHeaders(), destination);
 	}
 
+	public void send(ContractVerifierMessage message, String destination,
+			YamlContract contract) {
+		this.exchange.send(message.getPayload(), message.getHeaders(), destination);
+	}
+
 	public ContractVerifierMessage receive(String destination) {
+		return convert(this.exchange.receive(destination));
+	}
+
+	public ContractVerifierMessage receive(String destination, YamlContract contract) {
 		return convert(this.exchange.receive(destination));
 	}
 

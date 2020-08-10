@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.verifier.messaging;
 
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+
 /**
  * Core interface that allows you to receive messages.
  *
@@ -46,5 +48,29 @@ public interface MessageVerifierReceiver<M> {
 	 * @return received message
 	 */
 	M receive(String destination);
+
+	/**
+	 * Receives the message from the given destination. You can provide the timeout for
+	 * receiving that message.
+	 * @param destination destination from which the message will be received
+	 * @param timeout timeout to wait for the message
+	 * @param timeUnit param to define the unit of timeout
+	 * @param contract contract related to this method
+	 * @return received message
+	 */
+	default M receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
+		return receive(destination, timeout, timeUnit);
+	};
+
+	/**
+	 * Receives the message from the given destination. A default timeout will be applied.
+	 * @param destination destination from which the message will be received
+	 * @param contract contract related to this method
+	 * @return received message
+	 */
+	default M receive(String destination, YamlContract contract) {
+		return receive(destination);
+	};
 
 }

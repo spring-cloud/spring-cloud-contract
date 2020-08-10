@@ -77,7 +77,7 @@ public abstract class RestBase {
 
 	public void triggerMessage(String label, String queueName) {
 		log.info("First will try to receive a message to generate a queue");
-		messageVerifier.receive(queueName, 100, TimeUnit.MILLISECONDS);
+		this.messageVerifier.receive(queueName, 100, TimeUnit.MILLISECONDS);
 		String url = this.url + "/springcloudcontract/" + label;
 		log.info("Will send a request to [{}] in order to trigger a message", url);
 		restTemplate().postForObject(url, "", String.class);

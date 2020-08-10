@@ -18,6 +18,10 @@ package org.springframework.cloud.contract.verifier.messaging;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+
 /**
  * Core interface that allows you to send messages.
  *
@@ -45,5 +49,28 @@ public interface MessageVerifierSender<M> {
 	 * @param destination destination to which the message will be sent
 	 */
 	<T> void send(T payload, Map<String, Object> headers, String destination);
+
+	/**
+	 * Sends the message to the given destination.
+	 * @param message to send
+	 * @param destination destination to which the message will be sent
+	 * @param contract contract related to this method
+	 */
+	default void send(M message, String destination, @Nullable YamlContract contract) {
+		send(message, destination);
+	};
+
+	/**
+	 * Sends the given payload with headers, to the given destination.
+	 * @param <T> payload type
+	 * @param payload payload to send
+	 * @param headers headers to send
+	 * @param destination destination to which the message will be sent
+	 * @param contract contract related to this method
+	 */
+	default <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
+		send(payload, headers, destination);
+	}
 
 }

@@ -27,7 +27,6 @@ public class MessagingTest extends RestBase {
 			triggerMessage("ping_pong", "output");
 
 		// then:
-			ContractVerifierMessage response = contractVerifierMessaging.receive("output");
 			assertThat(response).isNotNull();
 
 		// and:

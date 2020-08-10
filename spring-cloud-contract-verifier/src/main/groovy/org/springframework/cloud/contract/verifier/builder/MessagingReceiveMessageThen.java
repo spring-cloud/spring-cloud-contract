@@ -28,21 +28,27 @@ class MessagingReceiveMessageThen implements Then, BodyMethodVisitor {
 
 	private final ComparisonBuilder comparisonBuilder;
 
+	private final BodyReader bodyReader;
+
 	MessagingReceiveMessageThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.comparisonBuilder = comparisonBuilder;
+		this.bodyReader = new BodyReader(generatedClassMetaData);
 	}
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
 		OutputMessage outputMessage = singleContractMetadata.getContract()
 				.getOutputMessage();
+		this.bodyReader.storeContractAsYaml(singleContractMetadata);
 		this.blockBuilder.addLineWithEnding(
 				"ContractVerifierMessage response = contractVerifierMessaging.receive("
-						+ sentToValue(outputMessage.getSentTo().getServerValue()) + ")");
+						+ sentToValue(outputMessage.getSentTo().getServerValue())
+						+ ", contract(this, \"" + singleContractMetadata.methodName()
+						+ ".yml\"))");
 		this.blockBuilder.addLineWithEnding(
 				this.comparisonBuilder.assertThatIsNotNull("response"));
 		return this;
