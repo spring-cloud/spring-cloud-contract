@@ -28,6 +28,7 @@ import org.mockito.ArgumentMatchers;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -38,6 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
+import org.springframework.cloud.contract.verifier.messaging.util.MetadataUtil;
 import org.springframework.util.Assert;
 
 import static org.mockito.Matchers.eq;
@@ -116,6 +119,26 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		send(message, destination, contract);
 	}
 
+	public void mergeMessagePropertiesFromMetadata(YamlContract contract,
+			Message message) {
+		if (contract != null
+				&& contract.metadata.containsKey(AmqpMetadata.METADATA_KEY)) {
+			AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
+			ContractVerifierMessageMetadata messageMetadata = ContractVerifierMessageMetadata
+					.fromMetadata(contract.metadata);
+			boolean isInput = isInputMessage(messageMetadata);
+			MessageProperties fromMetadata = isInput
+					? amqpMetadata.getInputMessage().getMessageProperties()
+					: amqpMetadata.getOutputMessage().getMessageProperties();
+			MetadataUtil.merge(message.getMessageProperties(), fromMetadata);
+		}
+	}
+
+	public boolean isInputMessage(ContractVerifierMessageMetadata messageMetadata) {
+		return messageMetadata
+				.getMessageType() == ContractVerifierMessageMetadata.MessageType.INPUT;
+	}
+
 	private String header(Map<String, Object> headers, String headerName) {
 		if (headers == null) {
 			return "";
@@ -133,6 +156,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 
 	@Override
 	public void send(Message message, String destination, YamlContract contract) {
+		mergeMessagePropertiesFromMetadata(contract, message);
 		final String routingKey = message.getMessageProperties().getReceivedRoutingKey();
 		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor
 				.getListenerContainersForDestination(destination, routingKey);

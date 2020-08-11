@@ -40,7 +40,10 @@ public class ContractVerifierMessaging<M> {
 	}
 
 	public void send(ContractVerifierMessage message, String destination,
-			YamlContract contract) {
+			@Nullable YamlContract contract) {
+		if (contract != null) {
+			setMessageType(contract, ContractVerifierMessageMetadata.MessageType.INPUT);
+		}
 		this.exchange.send(message.getPayload(), message.getHeaders(), destination,
 				contract);
 	}
@@ -51,7 +54,16 @@ public class ContractVerifierMessaging<M> {
 
 	public ContractVerifierMessage receive(String destination,
 			@Nullable YamlContract contract) {
+		if (contract != null) {
+			setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
+		}
 		return convert(this.exchange.receive(destination, contract));
+	}
+
+	public void setMessageType(YamlContract contract,
+			ContractVerifierMessageMetadata.MessageType output) {
+		contract.metadata.put(ContractVerifierMessageMetadata.METADATA_KEY,
+				new ContractVerifierMessageMetadata(output));
 	}
 
 	public ContractVerifierMessage receive(String destination) {

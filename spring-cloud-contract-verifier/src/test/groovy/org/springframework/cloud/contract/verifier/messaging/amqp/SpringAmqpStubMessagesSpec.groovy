@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.messaging.amqp
 
 import com.rabbitmq.client.Channel
 import org.mockito.exceptions.verification.WantedButNotInvoked
-import shaded.com.google.common.collect.ImmutableMap
 import spock.lang.Specification
 
 import org.springframework.amqp.core.Binding
@@ -32,6 +31,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties
+import org.springframework.cloud.contract.verifier.converter.YamlContract
 
 import static org.mockito.Mockito.mock
 import static org.springframework.amqp.core.MessageProperties.CONTENT_TYPE_JSON
@@ -63,17 +63,47 @@ class SpringAmqpStubMessagesSpec extends Specification {
 
 		when:
 			messageVerifier.send(payload,
-					ImmutableMap.builder()
-								.put(DEFAULT_CLASSID_FIELD_NAME, "org.example.Some")
-								.put("amqp_receivedRoutingKey", routingKey)
-								.put("contentType", CONTENT_TYPE_JSON)
-								.build(),
+					[(DEFAULT_CLASSID_FIELD_NAME): "org.example.Some",
+					 "amqp_receivedRoutingKey"   : routingKey,
+					 "contentType"               : CONTENT_TYPE_JSON],
 					exchange)
 		then:
 			1 * messageListenerAdapter.onMessage({ Message msg ->
 				msg.getMessageProperties().getReceivedRoutingKey() == "resource.created" &&
 						msg.getMessageProperties().getContentType() == CONTENT_TYPE_JSON &&
 						msg.getMessageProperties().getHeaders().get(DEFAULT_CLASSID_FIELD_NAME) == "org.example.Some"
+			})
+	}
+
+	def "should send amqp message with metadata id"() {
+		given:
+			listenerContainer.setMessageListener(messageListenerAdapter)
+			listenerContainer.setQueueNames(queueName)
+			Binding binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with(routingKey)
+			MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [listenerContainer], [binding])
+			SpringAmqpStubMessages messageVerifier = new SpringAmqpStubMessages(rabbitTemplate, messageListenerAccessor, rabbitProperties)
+
+		when:
+			messageVerifier.send(payload,
+					[(DEFAULT_CLASSID_FIELD_NAME): "org.example.Some",
+					 "amqp_receivedRoutingKey"   : routingKey,
+					 "contentType"               : CONTENT_TYPE_JSON],
+					exchange, new YamlContract(metadata:
+					[
+						"amqp": [
+							"inputMessage": ["messageProperties": [
+								correlationId: "correlationIdValue",
+								consumerQueue: "queue"]]
+						],
+						"verifierMessage" : [messageType: "INPUT"]
+					]))
+		then:
+			1 * messageListenerAdapter.onMessage({ Message msg ->
+				msg.getMessageProperties().getReceivedRoutingKey() == "resource.created" &&
+						msg.getMessageProperties().getContentType() == CONTENT_TYPE_JSON &&
+						msg.getMessageProperties().getHeaders().get(DEFAULT_CLASSID_FIELD_NAME) == "org.example.Some" &&
+						msg.getMessageProperties().getCorrelationId() == "correlationIdValue" &&
+						msg.getMessageProperties().getConsumerQueue() == "queue"
 			})
 	}
 
@@ -102,11 +132,9 @@ class SpringAmqpStubMessagesSpec extends Specification {
 
 		when:
 			messageVerifier.send(payload,
-					ImmutableMap.builder()
-								.put(DEFAULT_CLASSID_FIELD_NAME, "org.example.Some")
-								.put("amqp_receivedRoutingKey", routingKey)
-								.put("contentType", CONTENT_TYPE_JSON)
-								.build(),
+					[(DEFAULT_CLASSID_FIELD_NAME): "org.example.Some",
+					 "amqp_receivedRoutingKey"   : routingKey,
+					 "contentType"               : CONTENT_TYPE_JSON],
 					exchange)
 		then:
 			createChannelCalled
@@ -138,11 +166,9 @@ class SpringAmqpStubMessagesSpec extends Specification {
 
 		when:
 			messageVerifier.send(payload,
-					ImmutableMap.builder()
-								.put(DEFAULT_CLASSID_FIELD_NAME, "org.example.Some")
-								.put("amqp_receivedRoutingKey", routingKey)
-								.put("contentType", CONTENT_TYPE_JSON)
-								.build(),
+					[(DEFAULT_CLASSID_FIELD_NAME): "org.example.Some",
+					 "amqp_receivedRoutingKey"   : routingKey,
+					 "contentType"               : CONTENT_TYPE_JSON],
 					exchange)
 		then:
 			createChannelCalled

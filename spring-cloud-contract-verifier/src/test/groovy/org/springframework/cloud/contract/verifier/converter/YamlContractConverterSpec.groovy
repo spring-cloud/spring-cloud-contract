@@ -722,7 +722,7 @@ name: "post1"
 priority: null
 ignored: false
 inProgress: false
-metadata: null
+metadata: {}
 '''
 			String expectedYaml2 = '''\
 ---
@@ -765,7 +765,7 @@ name: "post2"
 priority: null
 ignored: false
 inProgress: false
-metadata: null
+metadata: {}
 '''
 		when:
 			Map<String, byte[]> strings = converter.store(yamlContracts())
