@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +40,8 @@ class StreamOutputDestinationMessageReceiver
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		try {
 			OutputDestination outputDestination = this.context
 					.getBean(OutputDestination.class);
@@ -53,8 +55,8 @@ class StreamOutputDestinationMessageReceiver
 	}
 
 	@Override
-	public Message<?> receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message<?> receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 }

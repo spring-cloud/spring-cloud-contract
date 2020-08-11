@@ -32,10 +32,13 @@ class MessagingBodyWhen implements When {
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
 		this.bodyReader.storeContractAsYaml(metadata);
-		this.blockBuilder.addIndented("contractVerifierMessaging.send(inputMessage, \""
-				+ metadata.getContract().getInput().getMessageFrom().getServerValue()
-				+ "\", contract(this, \"" + metadata.methodName() + ".yml\"))")
-				.addEndingIfNotPresent();
+		this.blockBuilder
+				.addIndented("contractVerifierMessaging.send(inputMessage, \"" + metadata
+						.getContract().getInput().getMessageFrom().getServerValue()
+						+ "\",")
+				.addEmptyLine().indent()
+				.addIndented("contract(this, \"" + metadata.methodName() + ".yml\"))")
+				.addEndingIfNotPresent().unindent();
 		return this;
 	}
 

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
@@ -49,7 +50,7 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public void send(Message message, String destination) {
+	public void send(Message message, String destination, YamlContract contract) {
 		try {
 			ProducerTemplate producerTemplate = this.context.createProducerTemplate();
 			Exchange exchange = new DefaultExchange(this.context);
@@ -64,12 +65,14 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(this.builder.create(payload, headers), destination);
+	public <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
+		send(this.builder.create(payload, headers), destination, contract);
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		try {
 			ConsumerTemplate consumerTemplate = this.context.createConsumerTemplate();
 			Exchange exchange = consumerTemplate.receive(destination,
@@ -84,8 +87,8 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public Message receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 }

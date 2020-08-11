@@ -34,6 +34,7 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
@@ -193,23 +194,25 @@ class LazyMessageVerifier implements MessageVerifier {
 	}
 
 	@Override
-	public void send(Object message, String destination) {
-		messageVerifier().send(message, destination);
+	public void send(Object message, String destination, YamlContract contract) {
+		messageVerifier().send(message, destination, contract);
 	}
 
 	@Override
-	public Object receive(String destination, long timeout, TimeUnit timeUnit) {
-		return messageVerifier().receive(destination, timeout, timeUnit);
+	public Object receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
+		return messageVerifier().receive(destination, timeout, timeUnit, contract);
 	}
 
 	@Override
-	public Object receive(String destination) {
-		return messageVerifier().receive(destination);
+	public Object receive(String destination, YamlContract contract) {
+		return messageVerifier().receive(destination, contract);
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination) {
-		messageVerifier().send(payload, headers, destination);
+	public void send(Object payload, Map headers, String destination,
+			YamlContract contract) {
+		messageVerifier().send(payload, headers, destination, contract);
 	}
 
 }

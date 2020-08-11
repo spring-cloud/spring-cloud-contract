@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.integration.channel.QueueChannel;
@@ -49,7 +50,8 @@ class StreamPollableChannelMessageReceiver
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		MessageHandler handler = this.messageChannel::send;
 		MessageChannel channel = null;
 		try {
@@ -77,8 +79,8 @@ class StreamPollableChannelMessageReceiver
 	}
 
 	@Override
-	public Message<?> receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message<?> receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 }

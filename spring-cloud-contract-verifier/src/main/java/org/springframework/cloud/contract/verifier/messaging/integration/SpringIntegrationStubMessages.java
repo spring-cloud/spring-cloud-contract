@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
@@ -46,12 +47,13 @@ public class SpringIntegrationStubMessages implements MessageVerifier<Message<?>
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(this.builder.create(payload, headers), destination);
+	public <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
+		send(this.builder.create(payload, headers), destination, contract);
 	}
 
 	@Override
-	public void send(Message<?> message, String destination) {
+	public void send(Message<?> message, String destination, YamlContract contract) {
 		try {
 			MessageChannel messageChannel = this.context.getBean(destination,
 					MessageChannel.class);
@@ -65,7 +67,8 @@ public class SpringIntegrationStubMessages implements MessageVerifier<Message<?>
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		try {
 			PollableChannel messageChannel = this.context.getBean(destination,
 					PollableChannel.class);
@@ -79,8 +82,8 @@ public class SpringIntegrationStubMessages implements MessageVerifier<Message<?>
 	}
 
 	@Override
-	public Message<?> receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message<?> receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 }

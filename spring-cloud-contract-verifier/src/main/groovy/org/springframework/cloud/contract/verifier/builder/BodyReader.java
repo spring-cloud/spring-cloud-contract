@@ -94,6 +94,9 @@ class BodyReader {
 			parent = classDataForMethod.testClassPath();
 		}
 		File newFile = new File(parent.toFile(), newFileName);
+		if (newFile.exists()) {
+			return;
+		}
 		// for IDE
 		try {
 			Path path = newFile.toPath();

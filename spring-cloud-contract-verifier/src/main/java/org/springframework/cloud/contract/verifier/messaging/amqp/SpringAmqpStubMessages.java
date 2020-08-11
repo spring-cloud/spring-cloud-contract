@@ -36,6 +36,7 @@ import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.util.Assert;
 
@@ -96,7 +97,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
 		Message message = org.springframework.amqp.core.MessageBuilder
 				.withBody(((String) payload).getBytes())
 				.andProperties(MessagePropertiesBuilder.newInstance()
@@ -111,7 +113,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 			message.getMessageProperties().setReceivedRoutingKey(
 					header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
 		}
-		send(message, destination);
+		send(message, destination, contract);
 	}
 
 	private String header(Map<String, Object> headers, String headerName) {
@@ -130,7 +132,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public void send(Message message, String destination) {
+	public void send(Message message, String destination, YamlContract contract) {
 		final String routingKey = message.getMessageProperties().getReceivedRoutingKey();
 		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor
 				.getListenerContainersForDestination(destination, routingKey);
@@ -178,7 +180,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
 		ArgumentCaptor<String> routingKeyCaptor = ArgumentCaptor.forClass(String.class);
 		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination),
@@ -207,8 +210,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public Message receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 }

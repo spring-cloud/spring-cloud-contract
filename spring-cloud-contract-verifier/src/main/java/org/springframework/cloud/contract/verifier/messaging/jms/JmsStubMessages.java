@@ -25,6 +25,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
@@ -38,23 +39,25 @@ class JmsStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public void send(Message message, String destination) {
+	public void send(Message message, String destination, YamlContract contract) {
 		jmsTemplate.convertAndSend(destination, message, new ReplyToProcessor());
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		jmsTemplate.setReceiveTimeout(timeUnit.toMillis(timeout));
 		return jmsTemplate.receive(destination);
 	}
 
 	@Override
-	public Message receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination) {
+	public void send(Object payload, Map headers, String destination,
+			YamlContract contract) {
 		jmsTemplate.send(destination, session -> {
 			Message message = createMessage(session, payload);
 			setHeaders(message, headers);

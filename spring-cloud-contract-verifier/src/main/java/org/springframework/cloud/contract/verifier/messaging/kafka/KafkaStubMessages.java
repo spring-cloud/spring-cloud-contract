@@ -31,6 +31,7 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
@@ -56,7 +57,7 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	@Override
-	public void send(Message<?> message, String destination) {
+	public void send(Message<?> message, String destination, YamlContract contract) {
 		String defaultTopic = this.kafkaTemplate.getDefaultTopic();
 		try {
 			this.kafkaTemplate.setDefaultTopic(destination);
@@ -76,20 +77,22 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
-		return this.receiver.receive(destination, timeout, timeUnit);
+	public Message receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
+		return this.receiver.receive(destination, timeout, timeUnit, contract);
 	}
 
 	@Override
-	public Message receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination) {
+	public void send(Object payload, Map headers, String destination,
+			YamlContract contract) {
 		Message<?> message = MessageBuilder.createMessage(payload,
 				new MessageHeaders(headers));
-		send(message, destination);
+		send(message, destination, contract);
 	}
 
 }
@@ -104,7 +107,8 @@ class Receiver {
 		this.consumers = consumers;
 	}
 
-	Message receive(String topic, long timeout, TimeUnit timeUnit) {
+	Message receive(String topic, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		Consumer consumer = this.consumers.get(topic);
 		if (consumer == null) {
 			throw new IllegalStateException(

@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.verifier.messaging;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 
 /**
@@ -40,14 +42,18 @@ public interface MessageVerifierReceiver<M> {
 	 * @param timeUnit param to define the unit of timeout
 	 * @return received message
 	 */
-	M receive(String destination, long timeout, TimeUnit timeUnit);
+	default M receive(String destination, long timeout, TimeUnit timeUnit) {
+		return receive(destination, timeout, timeUnit, null);
+	}
 
 	/**
 	 * Receives the message from the given destination. A default timeout will be applied.
 	 * @param destination destination from which the message will be received
 	 * @return received message
 	 */
-	M receive(String destination);
+	default M receive(String destination) {
+		return receive(destination, null);
+	}
 
 	/**
 	 * Receives the message from the given destination. You can provide the timeout for
@@ -58,10 +64,8 @@ public interface MessageVerifierReceiver<M> {
 	 * @param contract contract related to this method
 	 * @return received message
 	 */
-	default M receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
-		return receive(destination, timeout, timeUnit);
-	};
+	M receive(String destination, long timeout, TimeUnit timeUnit,
+			@Nullable YamlContract contract);
 
 	/**
 	 * Receives the message from the given destination. A default timeout will be applied.
@@ -69,8 +73,6 @@ public interface MessageVerifierReceiver<M> {
 	 * @param contract contract related to this method
 	 * @return received message
 	 */
-	default M receive(String destination, YamlContract contract) {
-		return receive(destination);
-	};
+	M receive(String destination, YamlContract contract);
 
 }

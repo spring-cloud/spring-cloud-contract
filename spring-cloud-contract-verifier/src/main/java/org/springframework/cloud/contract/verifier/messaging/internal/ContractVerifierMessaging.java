@@ -37,21 +37,14 @@ public class ContractVerifierMessaging<M> {
 		this.exchange = exchange;
 	}
 
-	public void send(ContractVerifierMessage message, String destination) {
-		this.exchange.send(message.getPayload(), message.getHeaders(), destination);
-	}
-
 	public void send(ContractVerifierMessage message, String destination,
 			YamlContract contract) {
-		this.exchange.send(message.getPayload(), message.getHeaders(), destination);
-	}
-
-	public ContractVerifierMessage receive(String destination) {
-		return convert(this.exchange.receive(destination));
+		this.exchange.send(message.getPayload(), message.getHeaders(), destination,
+				contract);
 	}
 
 	public ContractVerifierMessage receive(String destination, YamlContract contract) {
-		return convert(this.exchange.receive(destination));
+		return convert(this.exchange.receive(destination, contract));
 	}
 
 	public <T> ContractVerifierMessage create(T payload, Map<String, Object> headers) {

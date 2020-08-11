@@ -335,7 +335,10 @@ class SingleTestGeneratorSpec extends Specification {
 						}
 		''')
 		and:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+					generatedTestResourcesDir: new File("./target/generated-test-resources"),
+					generatedTestSourcesDir: new File("./target/generated-test-sources")
+			)
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2,
 					convertAsCollection(new File('/'), file))

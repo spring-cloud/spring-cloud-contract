@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,22 +83,24 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 	static class MyMessageVerifier implements MessageVerifier {
 
 		@Override
-		public void send(Object message, String destination) {
+		public void send(Object message, String destination, YamlContract contract) {
 			throw new IllegalStateException("Failed to send a message");
 		}
 
 		@Override
-		public Object receive(String destination, long timeout, TimeUnit timeUnit) {
+		public Object receive(String destination, long timeout, TimeUnit timeUnit,
+				YamlContract contract) {
 			throw new IllegalStateException("Failed to receive a message with timeout");
 		}
 
 		@Override
-		public Object receive(String destination) {
+		public Object receive(String destination, YamlContract contract) {
 			throw new IllegalStateException("Failed to receive a message");
 		}
 
 		@Override
-		public void send(Object payload, Map headers, String destination) {
+		public void send(Object payload, Map headers, String destination,
+				YamlContract contract) {
 			throw new IllegalStateException("Failed to send a message with headers");
 		}
 

@@ -115,7 +115,7 @@ class SingleContractMetadata {
 	final String definedOutputTestContentType
 	final ContentType outputTestContentType
 	final ContentType evaluatedOutputTestContentType
-	final String methodName
+	String methodName
 	private final boolean http
 
 	SingleContractMetadata(Contract currentContract, ContractMetadata contractMetadata) {
@@ -143,7 +143,6 @@ class SingleContractMetadata {
 		this.http = currentContract.request != null
 		this.contractMetadata = contractMetadata
 		this.stubsFile = contractMetadata.getPath() != null ? contractMetadata.getPath().toFile() : null
-		this.methodName = calculateMethodName()
 	}
 
 	private Header contentTypeHeader(Headers headers) {
@@ -224,6 +223,9 @@ class SingleContractMetadata {
 	}
 
 	String methodName() {
+		if (this.methodName == null) {
+			this.methodName = calculateMethodName()
+		}
 		return this.methodName
 	}
 
