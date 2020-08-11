@@ -126,7 +126,8 @@ class FooSpec extends Specification {
 \t\t\tbookReturnedTriggered()
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -200,7 +201,8 @@ public class FooTest {
 \t\t\tbookReturnedTriggered();
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -284,10 +286,12 @@ class FooSpec extends Specification {
 \t\t\t)
 
 \t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input")
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
+\t\t\t\t\tcontract(this, "foo.yml"))
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -370,10 +374,12 @@ public class FooTest {
 \t\t\t);
 
 \t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input");
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
+\t\t\t\t\tcontract(this, "foo.yml"));
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -447,7 +453,8 @@ class FooSpec extends Specification {
 \t\t\t)
 
 \t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete")
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tbookWasDeleted()
 
 \t\tthen:
@@ -516,7 +523,8 @@ public class FooTest {
 \t\t\t);
 
 \t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete");
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tbookWasDeleted();
 
 \t}
@@ -587,10 +595,12 @@ public class FooTest {
 \t\t\t);
 
 \t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input");
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
+\t\t\t\t\tcontract(this, "foo.yml"));
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -660,10 +670,12 @@ class FooSpec extends Specification {
 \t\t\t)
 
 \t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input")
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
+\t\t\t\t\tcontract(this, "foo.yml"))
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -744,10 +756,12 @@ public class FooTest {
 \t\t\t);
 
 \t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input");
+\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
+\t\t\t\t\tcontract(this, "foo.yml"));
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -817,7 +831,8 @@ public class FooTest {
 \t\t\trequestIsCalled();
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -962,7 +977,8 @@ public class FooTest {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")')
+			test.contains('ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote"')
+			test.contains('contract(this, "foo.yml"))')
 			test.contains('assertThat(response).isNotNull()')
 			test.contains('assertThat(response.getHeader("processId")).isNotNull()')
 			test.contains('assertThat(response.getHeader("processId").toString()).matches("[\\\\S\\\\s]+")')
@@ -1024,7 +1040,8 @@ class FooSpec extends Specification {
 \t\t\trequestIsCalled()
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -1095,7 +1112,8 @@ class FooSpec extends Specification {
 \t\t\trequestIsCalled()
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -1166,7 +1184,8 @@ class FooSpec extends Specification {
 \t\t\trequestIsCalled()
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString())
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString(),
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -1240,7 +1259,8 @@ public class FooTest {
 \t\t\trequestIsCalled();
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString());
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString(),
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -1317,7 +1337,8 @@ class FooSpec extends Specification {
 \t\t\tfoo()
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -1360,7 +1381,8 @@ public class FooTest {
 \t\t\tfoo();
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -1434,10 +1456,12 @@ class FooSpec extends Specification {
 \t\t\t)
 
 \t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "foo")
+\t\t\tcontractVerifierMessaging.send(inputMessage, "foo",
+\t\t\t\t\tcontract(this, "foo.yml"))
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -1480,10 +1504,12 @@ public class FooTest {
 \t\t\t);
 
 \t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "foo");
+\t\t\tcontractVerifierMessaging.send(inputMessage, "foo",
+\t\t\t\t\tcontract(this, "foo.yml"));
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:
@@ -1566,7 +1592,8 @@ class FooSpec extends Specification {
 \t\t\tcreateNewPerson()
 
 \t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic")
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic",
+\t\t\t\t\tcontract(this, "foo.yml"))
 \t\t\tresponse != null
 
 \t\tand:
@@ -1622,7 +1649,8 @@ public class FooTest {
 \t\t\tcreateNewPerson();
 
 \t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic");
+\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic",
+\t\t\t\t\tcontract(this, "foo.yml"));
 \t\t\tassertThat(response).isNotNull();
 
 \t\t// and:

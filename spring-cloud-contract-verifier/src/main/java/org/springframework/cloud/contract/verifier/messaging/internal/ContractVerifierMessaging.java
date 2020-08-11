@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
@@ -43,8 +45,17 @@ public class ContractVerifierMessaging<M> {
 				contract);
 	}
 
-	public ContractVerifierMessage receive(String destination, YamlContract contract) {
+	public void send(ContractVerifierMessage message, String destination) {
+		send(message, destination, null);
+	}
+
+	public ContractVerifierMessage receive(String destination,
+			@Nullable YamlContract contract) {
 		return convert(this.exchange.receive(destination, contract));
+	}
+
+	public ContractVerifierMessage receive(String destination) {
+		return receive(destination, null);
 	}
 
 	public <T> ContractVerifierMessage create(T payload, Map<String, Object> headers) {

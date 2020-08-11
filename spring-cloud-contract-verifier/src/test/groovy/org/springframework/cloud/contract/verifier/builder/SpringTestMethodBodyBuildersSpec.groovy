@@ -32,7 +32,6 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
-import org.springframework.util.FileSystemUtils
 /**
  * @author Jakub Kubrynski, codearte.io
  * @author Tim Ysewyn
@@ -55,7 +54,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 
 	@Shared
 	SingleTestGenerator.GeneratedClassData generatedClassData =
-			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File("./target").toPath())
+			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File("./target/generated-test-sources").toPath())
 
 	@Shared
 	Contract contractDslWithCookiesValue = Contract.make {
@@ -188,8 +187,8 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 
 	def setup() {
 		configProperties = newProps()
-		FileSystemUtils.deleteRecursively(configProperties.generatedTestResourcesDir)
-		FileSystemUtils.deleteRecursively(configProperties.generatedTestSourcesDir)
+		configProperties.generatedTestResourcesDir.mkdirs()
+		configProperties.generatedTestSourcesDir.mkdirs()
 	}
 
 	def 'should generate assertions for simple response body with #methodBuilderName'() {
