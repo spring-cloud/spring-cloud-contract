@@ -52,6 +52,12 @@ import org.springframework.cloud.contract.verifier.util.xml.DOMNamespaceContext;
  */
 public final class ContractVerifierUtil {
 
+	/**
+	 * Prefix for the generated test names.
+	 */
+	// TODO: Find a better place for this.
+	public static final String TEST_METHOD_PREFIX = "validate_";
+
 	private static final Log LOG = LogFactory.getLog(ContractVerifierUtil.class);
 
 	private ContractVerifierUtil() {
@@ -126,9 +132,24 @@ public final class ContractVerifierUtil {
 	 * @since 3.0.0
 	 */
 	public static YamlContract contract(Object testClass, String relativePath) {
-		byte[] bytes = fileToBytes(testClass, relativePath);
+		String path = fromRelativePath(relativePath);
+		byte[] bytes = fileToBytes(testClass, path);
 		List<YamlContract> read = new YamlContractConverter().read(bytes);
 		return read.isEmpty() ? null : read.get(0);
+	}
+
+	static String fromRelativePath(String relativePath) {
+		String path = relativePath;
+		if (path.startsWith(TEST_METHOD_PREFIX)) {
+			path = path.substring(TEST_METHOD_PREFIX.length());
+		}
+		if (path.endsWith("()")) {
+			path = path.replace("()", "");
+		}
+		if (!path.endsWith(".yml")) {
+			path = path + ".yml";
+		}
+		return path;
 	}
 
 	/**

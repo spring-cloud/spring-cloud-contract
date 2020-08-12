@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
-import org.springframework.context.ApplicationContext;
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.util.StringUtils;
@@ -61,23 +64,31 @@ public abstract class RestBase {
 	@Value("${MESSAGING_TRIGGER_READ_TIMEOUT:5000}")
 	Integer readTimeout;
 
-	@Autowired MessageVerifier messageVerifier;
+	@Value("${MESSAGING_TYPE:}")
+	String messagingType;
+
+	@Autowired
+	MessageVerifier messageVerifier;
 
 	@BeforeEach
-	public void setup() {
+	public void setup(TestInfo testInfo) {
 		RestAssured.baseURI = this.url;
 		if (StringUtils.hasText(this.username)) {
 			RestAssured.authentication = RestAssured.basic(this.username, this.password);
 		}
+		YamlContract contract = ContractVerifierUtil.contract(this, testInfo.getDisplayName());
+		setupAmqpIfPresent(contract);
+	}
+
+	private void setupAmqpIfPresent(YamlContract contract) {
+		AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
+		if (StringUtils.hasText(amqpMetadata.getOutputMessage().getDeclareQueueWithName()) || "kafka".equalsIgnoreCase(this.messagingType)) {
+			log.info("First will try to receive a message to generate a queue");
+			this.messageVerifier.receive(contract.outputMessage.sentTo, 100, TimeUnit.MILLISECONDS, contract);
+		}
 	}
 
 	public void triggerMessage(String label) {
-		triggerMessage(label, "");
-	}
-
-	public void triggerMessage(String label, String queueName) {
-		log.info("First will try to receive a message to generate a queue");
-		this.messageVerifier.receive(queueName, 100, TimeUnit.MILLISECONDS);
 		String url = this.url + "/springcloudcontract/" + label;
 		log.info("Will send a request to [{}] in order to trigger a message", url);
 		restTemplate().postForObject(url, "", String.class);

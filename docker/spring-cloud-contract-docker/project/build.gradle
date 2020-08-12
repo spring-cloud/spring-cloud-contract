@@ -41,6 +41,7 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+	testImplementation("org.springframework.amqp:spring-rabbit")
 	testImplementation("org.apache.camel.springboot:camel-spring-boot-starter:${camelVersion}")
 	testImplementation("org.apache.camel:camel-kafka:${camelVersion}")
 	testImplementation("org.apache.camel:camel-rabbitmq:${camelVersion}")

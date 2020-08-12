@@ -161,4 +161,14 @@ public class ContractVerifierUtilTest {
 		assertThat(node).isNull();
 	}
 
+	@Test
+	public void should_set_path_without_prefix_and_with_suffix() {
+		assertThat(ContractVerifierUtil.fromRelativePath("validate_foo()"))
+				.isEqualTo("foo.yml");
+		assertThat(ContractVerifierUtil.fromRelativePath("validate_foo"))
+				.isEqualTo("foo.yml");
+		assertThat(ContractVerifierUtil.fromRelativePath("foo")).isEqualTo("foo.yml");
+		assertThat(ContractVerifierUtil.fromRelativePath("foo.yml")).isEqualTo("foo.yml");
+	}
+
 }

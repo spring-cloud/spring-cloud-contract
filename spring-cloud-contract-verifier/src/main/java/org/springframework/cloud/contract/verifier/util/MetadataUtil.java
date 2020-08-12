@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging.util;
+package org.springframework.cloud.contract.verifier.util;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

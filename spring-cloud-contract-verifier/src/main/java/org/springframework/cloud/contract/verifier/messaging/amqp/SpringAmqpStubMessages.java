@@ -40,7 +40,7 @@ import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
-import org.springframework.cloud.contract.verifier.messaging.util.MetadataUtil;
+import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 import org.springframework.util.Assert;
 
 import static org.mockito.Matchers.eq;

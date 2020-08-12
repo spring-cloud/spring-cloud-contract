@@ -17,35 +17,52 @@
 package contracts;
 
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.yaml.snakeyaml.Yaml;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Marcin Grzejszczak
  */
 @Configuration
+@ConditionalOnProperty("MESSAGING_TYPE")
 public class MessagingAutoConfig {
 
 	@Bean
-	@ConditionalOnProperty("MESSAGING_TYPE")
-	MessageVerifier manualMessageVerifier(@Value("${MESSAGING_TYPE:}") String messagingType, Environment environment, ConsumerTemplate consumerTemplate) {
-		return new MessageVerifier() {
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(
+			MessageVerifier<Message> exchange) {
+		return new ContractVerifierCamelHelper(exchange);
+	}
+
+	@Bean
+	MessageVerifier<Message> manualMessageVerifier(@Value("${MESSAGING_TYPE:}") String messagingType, Environment environment, ConsumerTemplate consumerTemplate) {
+		return new MessageVerifier<>() {
+
 			@Override
-			public Object receive(String destination, long timeout, TimeUnit timeUnit) {
-				Exchange exchange = consumerTemplate.receive(messagingType() + "://" + destination + additionalOptions(destination), timeUnit.toMillis(timeout));
+			public Message receive(String destination, long timeout, TimeUnit timeUnit, YamlContract yamlContract) {
+				String uri = messagingType() + "://" + destination + additionalOptions(yamlContract);
+				Exchange exchange = consumerTemplate.receive(uri, timeUnit.toMillis(timeout));
 				if (exchange == null) {
 					return null;
 				}
-				return exchange.getMessage().getBody();
+				return exchange.getMessage();
 			}
 
 			private String messagingType() {
@@ -55,28 +72,66 @@ public class MessagingAutoConfig {
 				return "rabbitmq";
 			}
 
-			private String additionalOptions(String destination) {
-				if (messagingType.equalsIgnoreCase("kafka")) {
+			private String additionalOptions(YamlContract contract) {
+				if (contract == null) {
 					return "";
 				}
-				return "?queue=" + destination + "&addresses=" + environment.getRequiredProperty("RABBITMQ_HOST") + ":" + environment.getProperty("RABBITMQ_PORT", "5672");
+				if (messagingType.equalsIgnoreCase("kafka")) {
+					return setKafkaOpts(contract);
+				}
+				return setRabbitOpts(contract);
+			}
+
+			private String setKafkaOpts(YamlContract contract) {
+				int consumerGroup = sameConsumerGroupForSameContract(contract);
+				return "?brokers=" + environment.getRequiredProperty("SPRING_KAFKA_BOOTSTRAP_SERVERS") + "&autoOffsetReset=latest&groupId=" + consumerGroup;
+			}
+
+			private int sameConsumerGroupForSameContract(YamlContract contract) {
+				return contract.input.hashCode() + contract.outputMessage.hashCode();
+			}
+
+			private String setRabbitOpts(YamlContract contract) {
+				String opts = "?addresses=" + environment.getRequiredProperty("SPRING_RABBITMQ_ADDRESSES");
+				AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
+				if (StringUtils.hasText(amqpMetadata.getOutputMessage().getDeclareQueueWithName())) {
+					opts = opts + "&queue=" + amqpMetadata.getOutputMessage().getDeclareQueueWithName();
+					// routing key
+				}
+				if (StringUtils.hasText(amqpMetadata.getOutputMessage().getMessageProperties().getReceivedRoutingKey())) {
+					opts = opts + "&routingKey=" + amqpMetadata.getOutputMessage().getMessageProperties().getReceivedRoutingKey();
+				}
+				return opts;
 			}
 
 			@Override
-			public Object receive(String destination) {
-				return receive(destination, 5, TimeUnit.SECONDS);
+			public Message receive(String destination, YamlContract yamlContract) {
+				return receive(destination, 5, TimeUnit.SECONDS, yamlContract);
 			}
 
 			@Override
-			public void send(Object message, String destination) {
+			public void send(Message message, String destination, YamlContract yamlContract) {
 				throw new UnsupportedOperationException("Currently supports only receiving");
 			}
 
 			@Override
-			public void send(Object payload, Map headers, String destination) {
+			public void send(Object payload, Map headers, String destination, YamlContract yamlContract) {
 				throw new UnsupportedOperationException("Currently supports only receiving");
 			}
 		};
+	}
+
+}
+
+class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
+
+	ContractVerifierCamelHelper(MessageVerifier<Message> exchange) {
+		super(exchange);
+	}
+
+	@Override
+	protected ContractVerifierMessage convert(Message receive) {
+		return new ContractVerifierMessage(receive.getBody(), receive.getHeaders());
 	}
 
 }

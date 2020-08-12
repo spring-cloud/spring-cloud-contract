@@ -21,12 +21,27 @@ public class MessagingTest extends RestBase {
 	@Inject ContractVerifierMessaging contractVerifierMessaging;
 	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-	@Test
+//	@Test
 	public void validate_pingPong() throws Exception {
 		// when:
-			triggerMessage("ping_pong", "output");
+			triggerMessage("ping_pong");
 
 		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("output", contract(this, "pingPong.yml"));
+			assertThat(response).isNotNull();
+
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['message']").isEqualTo("pong");
+	}
+
+	@Test
+	public void validate_kafkaPingPong() throws Exception {
+		// when:
+			triggerMessage("kafka_ping_pong");
+
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("output", contract(this, "kafkaPingPong.yml"));
 			assertThat(response).isNotNull();
 
 		// and:

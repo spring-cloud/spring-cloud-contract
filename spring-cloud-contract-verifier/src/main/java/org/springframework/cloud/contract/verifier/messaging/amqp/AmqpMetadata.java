@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.amqp;
 import java.util.Map;
 
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.cloud.contract.verifier.messaging.util.MetadataUtil;
+import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 
 /**
  * Represents metadata for AMQP based communication.
@@ -75,12 +75,26 @@ public class AmqpMetadata {
 		 */
 		private MessageProperties messageProperties;
 
+		/**
+		 * If set, will declare a queue with given name and bind it to the provided
+		 * exchange from the contract.
+		 */
+		private String declareQueueWithName;
+
 		public MessageProperties getMessageProperties() {
 			return this.messageProperties;
 		}
 
 		public void setMessageProperties(MessageProperties messageProperties) {
 			this.messageProperties = messageProperties;
+		}
+
+		public String getDeclareQueueWithName() {
+			return declareQueueWithName;
+		}
+
+		public void setDeclareQueueWithName(String declareQueueWithName) {
+			this.declareQueueWithName = declareQueueWithName;
 		}
 
 	}

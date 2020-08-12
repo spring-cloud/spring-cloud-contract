@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 
 import java.util.Map;
 
-import org.springframework.cloud.contract.verifier.messaging.util.MetadataUtil;
+import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 
 /**
  * Metadata representation of the Contract Verifier messaging.
