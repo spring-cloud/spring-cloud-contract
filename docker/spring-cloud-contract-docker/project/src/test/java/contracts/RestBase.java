@@ -34,6 +34,7 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -76,20 +77,44 @@ public abstract class RestBase {
 		if (StringUtils.hasText(this.username)) {
 			RestAssured.authentication = RestAssured.basic(this.username, this.password);
 		}
-		YamlContract contract = ContractVerifierUtil.contract(this, testInfo.getDisplayName());
-		setupAmqpIfPresent(contract);
+		setupMessagingFromContract(testInfo);
 	}
 
-	private void setupAmqpIfPresent(YamlContract contract) {
-		AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
-		if (isMessagingType("rabbit") && hasDeclaredOutputQueue(amqpMetadata) || isMessagingType("kafka")) {
-			log.info("First will try to receive a message to generate a queue");
-			this.messageVerifier.receive(contract.outputMessage.sentTo, 100, TimeUnit.MILLISECONDS, contract);
+	private void setupMessagingFromContract(TestInfo testInfo) {
+		try {
+			YamlContract contract = ContractVerifierUtil.contract(this, testInfo.getDisplayName());
+			setupAmqpIfPresent(contract);
+		} catch (Exception e) {
+			
 		}
 	}
 
+	private void setupAmqpIfPresent(YamlContract contract) {
+		if (contract.input == null && contract.outputMessage == null) {
+			return;
+		}
+		AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
+		if (isMessagingType("rabbit") && hasDeclaredOutputQueue(amqpMetadata) || isMessagingType("kafka")) {
+			log.info("First will try to receive a message to setup the connection with the broker");
+			if (contract.input != null && StringUtils.hasText(contract.input.messageFrom)) {
+				setupAmqpConnection(contract.input.messageFrom, contract);
+			}
+			if (contract.outputMessage != null && StringUtils.hasText(contract.outputMessage.sentTo)){
+				setupAmqpConnection(contract.outputMessage.sentTo, contract);
+			}
+		}
+	}
+
+	private void setupAmqpConnection(String destination, YamlContract contract) {
+		if (StringUtils.isEmpty(destination)) {
+			return;
+		}
+		log.info("Setting up destination [{}]", destination);
+		this.messageVerifier.receive(destination, 100, TimeUnit.MILLISECONDS, contract);
+	}
+
 	private boolean hasDeclaredOutputQueue(AmqpMetadata amqpMetadata) {
-		return StringUtils.hasText(amqpMetadata.getOutputMessage().getDeclareQueueWithName());
+		return StringUtils.hasText(amqpMetadata.getOutputMessage().getConnectToBroker().getDeclareQueueWithName());
 	}
 
 	private boolean isMessagingType(String rabbit) {

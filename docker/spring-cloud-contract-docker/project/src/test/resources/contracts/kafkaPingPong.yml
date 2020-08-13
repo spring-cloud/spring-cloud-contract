@@ -1,8 +1,0 @@
-description: 'Send a pong message in response to a ping message'
-label: 'kafka_ping_pong'
-input:
-  triggeredBy: 'triggerMessage("kafka_ping_pong")'
-outputMessage:
-  sentTo: 'output'
-  body:
-    message: 'pong'

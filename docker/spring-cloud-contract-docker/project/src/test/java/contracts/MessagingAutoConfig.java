@@ -24,6 +24,8 @@ import javax.security.auth.message.MessagePolicy;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,11 +57,14 @@ public class MessagingAutoConfig {
 
 	@Bean
 	MessageVerifier<Message> manualMessageVerifier(@Value("${MESSAGING_TYPE:}") String messagingType, Environment environment, ConsumerTemplate consumerTemplate) {
-		return new MessageVerifier<>() {
+		return new MessageVerifier<Message>() {
+
+			private final Logger log = LoggerFactory.getLogger(MessageVerifier.class);
 
 			@Override
 			public Message receive(String destination, long timeout, TimeUnit timeUnit, YamlContract yamlContract) {
 				String uri = messagingType() + "://" + destination + additionalOptions(yamlContract);
+				log.info("Camel URI [{}]", uri);
 				Exchange exchange = consumerTemplate.receive(uri, timeUnit.toMillis(timeout));
 				if (exchange == null) {
 					return null;
@@ -99,7 +104,7 @@ public class MessagingAutoConfig {
 
 			private String defaultOpts(YamlContract contract) {
 				String consumerGroup = sameConsumerGroupForSameContract(contract);
-				return "?brokers=" + environment.getRequiredProperty("SPRING_KAFKA_BOOTSTRAP_SERVERS") + "&autoOffsetReset=latest&groupId=" + consumerGroup;
+				return "?brokers=" + environment.getRequiredProperty("SPRING_KAFKA_BOOTSTRAP_SERVERS") + "&autoOffsetReset=latest&groupId=" + consumerGroup + "&shutdownTimeout=5";
 			}
 
 			private String sameConsumerGroupForSameContract(YamlContract contract) {
@@ -129,7 +134,7 @@ public class MessagingAutoConfig {
 				if (StringUtils.hasText(connectToBroker.getDeclareQueueWithName())) {
 					opts = opts + "&queue=" + connectToBroker.getDeclareQueueWithName();
 				}
-				if (StringUtils.hasText(messageProperties.getReceivedRoutingKey())) {
+				if (messageProperties != null && StringUtils.hasText(messageProperties.getReceivedRoutingKey())) {
 					opts = opts + "&routingKey=" + messageProperties.getReceivedRoutingKey();
 				}
 				return opts;
@@ -162,6 +167,9 @@ class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
 
 	@Override
 	protected ContractVerifierMessage convert(Message receive) {
+		if (receive == null) {
+			return null;
+		}
 		return new ContractVerifierMessage(receive.getBody(), receive.getHeaders());
 	}
 
