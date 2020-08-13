@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -96,6 +97,7 @@ class VerifierObjectMapper extends ObjectMapper {
 				.setDefaultPropertyInclusion(JsonInclude.Include.NON_DEFAULT)
 				.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
 				.setDefaultPropertyInclusion(JsonInclude.Include.NON_ABSENT);
+		configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		FilterProvider filters = new SimpleFilterProvider()
 				.addFilter("non default properties", new MyFilter());
 		addMixIn(Object.class, PropertyFilterMixIn.class);

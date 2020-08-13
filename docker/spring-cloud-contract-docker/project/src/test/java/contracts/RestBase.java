@@ -82,10 +82,18 @@ public abstract class RestBase {
 
 	private void setupAmqpIfPresent(YamlContract contract) {
 		AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
-		if (StringUtils.hasText(amqpMetadata.getOutputMessage().getDeclareQueueWithName()) || "kafka".equalsIgnoreCase(this.messagingType)) {
+		if (isMessagingType("rabbit") && hasDeclaredOutputQueue(amqpMetadata) || isMessagingType("kafka")) {
 			log.info("First will try to receive a message to generate a queue");
 			this.messageVerifier.receive(contract.outputMessage.sentTo, 100, TimeUnit.MILLISECONDS, contract);
 		}
+	}
+
+	private boolean hasDeclaredOutputQueue(AmqpMetadata amqpMetadata) {
+		return StringUtils.hasText(amqpMetadata.getOutputMessage().getDeclareQueueWithName());
+	}
+
+	private boolean isMessagingType(String rabbit) {
+		return rabbit.equalsIgnoreCase(this.messagingType);
 	}
 
 	public void triggerMessage(String label) {

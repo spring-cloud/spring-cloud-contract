@@ -128,7 +128,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 					.fromMetadata(contract.metadata);
 			boolean isInput = isInputMessage(messageMetadata);
 			MessageProperties fromMetadata = isInput
-					? amqpMetadata.getInputMessage().getMessageProperties()
+					? amqpMetadata.getInput().getMessageProperties()
 					: amqpMetadata.getOutputMessage().getMessageProperties();
 			MetadataUtil.merge(message.getMessageProperties(), fromMetadata);
 		}

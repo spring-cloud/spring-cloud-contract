@@ -91,7 +91,7 @@ class SpringAmqpStubMessagesSpec extends Specification {
 					exchange, new YamlContract(metadata:
 					[
 						"amqp": [
-							"inputMessage": ["messageProperties": [
+							"input": ["messageProperties": [
 								correlationId: "correlationIdValue",
 								consumerQueue: "queue"]]
 						],
