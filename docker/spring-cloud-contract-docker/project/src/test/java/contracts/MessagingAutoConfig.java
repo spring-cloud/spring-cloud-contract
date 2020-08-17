@@ -19,8 +19,6 @@ package contracts;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.security.auth.message.MessagePolicy;
-
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

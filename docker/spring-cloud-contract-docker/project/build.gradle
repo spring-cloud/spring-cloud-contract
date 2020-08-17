@@ -1,3 +1,6 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 buildscript {
 	repositories {
 		mavenLocal()
@@ -63,7 +66,7 @@ test {
 }
 
 contracts {
-	baseClassForTests = "contracts.RestBase"
+	baseClassForTests = "contracts.ContractTestsBase"
 	testMode = "EXPLICIT"
 	stubsSuffix = getProp("PRODUCER_STUBS_CLASSIFIER") ?: "stubs"
 	failOnNoContracts = getProp("FAIL_ON_NO_CONTRACTS") ?: false
@@ -165,5 +168,44 @@ task resolveDependencies {
 				project.logger.info e.message // some cannot be resolved, silently skip them
 			}
 		}
+	}
+}
+
+task dumpAllProps() {
+	doLast {
+		// additional env vars - will be printed in the table
+		// TODO: Parse the java code for env vars
+		String buildGradle = file("build.gradle").text
+		Set<Tuple2> props = [] as HashSet
+		Pattern pattern = Pattern.compile('^.*getProp\\([\'|"](.+)[\'|"]\\).+$')
+		Pattern defaultValuePattern = Pattern.compile('^.*?: [\'|"](.+)[\'|"].*$')
+		buildGradle.eachLine {
+			if (it.contains("getProp(")) {
+				Matcher matcher = pattern.matcher(it)
+				if (matcher.matches()) {
+					String name = matcher.group(1)
+					String defaultValue = ''
+					if (it.contains("?:")) {
+						Matcher defaultValueMatcher = defaultValuePattern.matcher(it)
+						if (defaultValueMatcher.matches()) {
+							defaultValue = defaultValueMatcher.group(1)
+						}
+					}
+					props << new Tuple2<>(name, defaultValue)
+				}
+			}
+		}
+		println "Found [" + props.size() + "] entries"
+		File output = new File("build", "props.adoc")
+		if (!output.exists()) {
+			output.parentFile.mkdirs()
+			output.createNewFile()
+		}
+		String table = """\
+.Docker environment variables
+|===
+|Name | Default
+"""
+		output.text = table + props.collect { '|' + it.first + '|' + it.second }.join("\n")
 	}
 }

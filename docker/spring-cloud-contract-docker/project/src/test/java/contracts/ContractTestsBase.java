@@ -34,7 +34,6 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
-import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -44,11 +43,11 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author Marcin Grzejszczak
  */
-@SpringBootTest(classes = RestBase.Config.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = ContractTestsBase.Config.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @AutoConfigureMessageVerifier
-public abstract class RestBase {
+public abstract class ContractTestsBase {
 
-	private static final Logger log = LoggerFactory.getLogger(RestBase.class);
+	private static final Logger log = LoggerFactory.getLogger(ContractTestsBase.class);
 
 	@Value("${APPLICATION_BASE_URL}")
 	String url;

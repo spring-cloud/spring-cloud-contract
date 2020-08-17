@@ -110,9 +110,15 @@ from the container's `.m2`. Mount your local `.m2` as a volume available at the 
 
 CAUTION: You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
 
-The following environment variables are used when running messaging based tests:
+The following environment variables are being used when running messaging based tests:
 
 - `MESSAGING_TYPE` - what type of messaging system are you using (currently supported are `rabbit`, `kafka`)
+- `MESSAGING_TRIGGER_CONNECT_TIMEOUT` - timeout set for triggering the Spring Cloud Contract endpoint in the producer app
+- `MESSAGING_TRIGGER_READ_TIMEOUT` - timeout set for triggering the Spring Cloud Contract endpoint in the producer app
+- `SPRING_KAFKA_BOOTSTRAP_SERVERS` - when using Kafka - IP and port where the
+Kafka servers are running
+- `SPRING_RABBITMQ_ADDRESSES` - when using RabbitMQ - IP and port where the
+RabbitMQ servers are running
 
 The following environment variables are used when tests are run:
 
@@ -123,7 +129,7 @@ does not work)
 - `APPLICATION_PASSWORD`: (optional) Password for basic authentication to your application.
 
 [[docker-example-of-usage]]
-=== Example of Usage
+=== Example of Usage via HTTP
 
 In this section, we explore a simple MVC application. To get started, clone the following
 git repository and cd to the resulting directory, by running the following commands:
@@ -199,6 +205,216 @@ are run against the running application.
 - The stubs are uploaded to Artifactory. You can find them in
 http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/.
 The stubs are at http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar.
+
+[[docker-example-of-usage-messaging]]
+=== Example of Usage via Messaging
+
+If you want to use Spring Cloud Contract with messaging via the Docker images (e.g.
+in case of polyglot applications) then you'll have to have the following prerequisites met:
+
+* Middleware (e.g. RabbitMQ or Kafka) must be running before generating tests
+* Your contract needs to call a method `triggerMessage(...)` with a `String` parameter that is equal to the contract's `label`.
+* Your application needs to have a HTTP endpoint via which we can trigger a message
+** That endpoint should not be available on production (could be enabled via an environment variable)
+
+[[docker-example-of-usage-messaging-contract]]
+==== Example of a Messaging Contract
+
+The contract needs to call a `triggerMessage(...)` method. That method is already provided in the base class for all tests in the docker image and will send out a request to the HTTP endpoint on the producer side. Below you can find examples of such contracts.
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    description 'Send a pong message in response to a ping message'
+    label 'ping_pong'
+    input {
+        // You have to provide the `triggerMessage` method with the `label`
+        // as a String parameter of the method
+        triggeredBy('triggerMessage("ping_pong")')
+    }
+    outputMessage {
+        sentTo('output')
+        body([
+            message: 'pong'
+        ])
+    }
+    metadata(
+        [amqp:
+         [
+           outputMessage: [
+               connectToBroker: [
+                   declareQueueWithName: "queue"
+               ],
+                messageProperties: [
+                    receivedRoutingKey: '#'
+                ]
+           ]
+         ]
+        ])
+}
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+description: 'Send a pong message in response to a ping message'
+label: 'ping_pong'
+input:
+    # You have to provide the `triggerMessage` method with the `label`
+    # as a String parameter of the method
+    triggeredBy: 'triggerMessage("ping_pong")'
+outputMessage:
+    sentTo: 'output'
+    body:
+        message: 'pong'
+metadata:
+    amqp:
+        outputMessage:
+            connectToBroker:
+                declareQueueWithName: "queue"
+            messageProperties:
+                receivedRoutingKey: '#'
+----
+====
+
+[[docker-example-of-usage-messaging-endpoint]]
+==== HTTP Endpoint to Trigger a Message
+
+Why is there need to develop such an endpoint? Spring Cloud Contract
+would have to generate code in various languages (as it does in Java) to make it possible to trigger production
+code that sends a message to a broker. If such code is not generated then we need to be able to trigger the message anyways, and the way to do it is to provide an HTTP endpoint that the user will prepare in the language of their choosing.
+
+The endpoint must have the following configuration:
+
+- URL: `/springcloudcontract/{label}` where `label` can be any text
+- Method: `POST`
+- Basing on the `label` will generate a message that will be sent to a given destination according to the contract definition
+
+Below you have an example of such an endpoint. If you're interested in
+providing an example in your language don't hesitate to file an issue in
+the https://github.com/spring-cloud/spring-cloud-contract/issues/new?assignees=&labels=&template=feature_request.md&title=New+Polyglot+Sample+of+a+HTTP+controller[Spring Cloud Contract repository at Github].
+
+====
+[source,python,indent=0,subs="verbatim,attributes"]
+.Python
+----
+#!/usr/bin/env python
+
+from flask import Flask
+from flask import jsonify
+import pika
+import os
+
+app = Flask(__name__)
+
+# Production code that sends a message to RabbitMQ
+def message(cmd):
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+    channel.basic_publish(
+        exchange='output',
+        routing_key='#',
+        body=cmd,
+        properties=pika.BasicProperties(
+            delivery_mode=2,  # make message persistent
+        ))
+    connection.close()
+    return " [x] Sent via Rabbit: %s" % cmd
+
+# This should be ran in tests (shouldn't be publicly available)
+if 'CONTRACT_TEST' in os.environ:
+    @app.route('/springcloudcontract/<label>', methods=['POST'])
+    def springcloudcontract(label):
+        if label == "ping_pong":
+            return message('{"message":"pong"}')
+        else:
+            raise ValueError('No such label expected.')
+----
+====
+
+[[docker-example-of-usage-messaging-producer]]
+==== Running Message Tests on the Producer Side
+
+Now, let's generate tests from contracts to test the producer side.
+We will run bash code to start the Docker image
+with attached contracts, however we will also add variables for the messaging
+code to work. In this case let's assume that the contracts are being stored in
+a Git repository.
+
+====
+[source,bash]
+----
+#!/bin/bash
+set -x
+
+CURRENT_DIR="$( pwd )"
+
+export SC_CONTRACT_DOCKER_VERSION="${SC_CONTRACT_DOCKER_VERSION:-3.0.0-SNAPSHOT}"
+export APP_IP="$( ./whats_my_ip.sh )"
+export APP_PORT="${APP_PORT:-8000}"
+export APPLICATION_BASE_URL="http://${APP_IP}:${APP_PORT}"
+export PROJECT_GROUP="${PROJECT_GROUP:-group}"
+export PROJECT_NAME="${PROJECT_NAME:-application}"
+export PROJECT_VERSION="${PROJECT_VERSION:-0.0.1-SNAPSHOT}"
+export PRODUCER_STUBS_CLASSIFIER="${PRODUCER_STUBS_CLASSIFIER:-stubs}"
+export FAIL_ON_NO_CONTRACTS="${FAIL_ON_NO_CONTRACTS:-false}"
+# In our Python app we want to enable the HTTP endpoint
+export CONTRACT_TEST="true"
+# In the Verifier docker container we want to add support for RabbitMQ
+export MESSAGING_TYPE="rabbit"
+
+# Let's start the infrastructure (e.g. via Docker Compose)
+yes | docker-compose kill || echo "Nothing running"
+docker-compose up -d
+
+echo "SC Contract Version [${SC_CONTRACT_DOCKER_VERSION}]"
+echo "Application URL [${APPLICATION_BASE_URL}]"
+echo "Project Version [${PROJECT_VERSION}]"
+
+# Let's run python app
+gunicorn -w 4 --bind 0.0.0.0 main:app &
+APP_PID=$!
+
+# Generate and run tests
+docker run  --rm \
+                --name verifier \
+                # For the image to find the RabbitMQ running in another container
+                -e "SPRING_RABBITMQ_ADDRESSES=${APP_IP}:5672" \
+                # We need to tell the container what messaging middleware we will use
+                -e "MESSAGING_TYPE=${MESSAGING_TYPE}" \
+                -e "PUBLISH_STUBS_TO_SCM=false" \
+                -e "PUBLISH_ARTIFACTS=false" \
+                -e "APPLICATION_BASE_URL=${APPLICATION_BASE_URL}" \
+                -e "PROJECT_NAME=${PROJECT_NAME}" \
+                -e "PROJECT_GROUP=${PROJECT_GROUP}" \
+                -e "PROJECT_VERSION=${PROJECT_VERSION}" \
+                -e "EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL=git://https://github.com/marcingrzejszczak/cdct_python_contracts.git" \
+                -e "EXTERNAL_CONTRACTS_ARTIFACT_ID=${PROJECT_NAME}" \
+                -e "EXTERNAL_CONTRACTS_GROUP_ID=${PROJECT_GROUP}" \
+                -e "EXTERNAL_CONTRACTS_VERSION=${PROJECT_VERSION}" \
+                -v "${CURRENT_DIR}/build/spring-cloud-contract/output:/spring-cloud-contract-output/" \
+                springcloud/spring-cloud-contract:"${SC_CONTRACT_DOCKER_VERSION}"
+
+kill $APP_PID
+
+yes | docker-compose kill
+----
+====
+
+What will happen is:
+
+- Tests will be generated from contracts taken from Git
+- In the contract we've provided an entry in metadata called `declareQueueWithName` that will lead to creation of a queue in RabbitMQ with the given name *before* the request to trigger the message is sent
+- Via the `triggerMessage("ping_pong")` method call a POST request to the Python application to the `/springcloudcontract/ping_pong` endpoint will be made
+- The Python application will generate and send a `'{"message":"pong"}'` JSON via RabbitMQ to an exchange called `output`
+- The generated test will poll for a message sent to the `output` exchange
+- Once the message was received will assert its contents
+
+After the tests have passed we know that the message was properly sent from the Python app to RabbitMQ.
 
 [[docker-stubrunner]]
 == Running Stubs on the Consumer Side
@@ -283,3 +499,20 @@ $ curl -X GET http://localhost:9876/api/books
 IMPORTANT: If you want use the stubs that you have built locally, on your host,
 you should set the `-e STUBRUNNER_STUBS_MODE=LOCAL` environment variable and mount
 the volume of your local m2 (`-v "${HOME}/.m2/:/root/.m2:ro"`).
+
+[[docker-stubrunner-example-messaging]]
+=== Example of Usage with Messaging
+
+In order to make messaging work it's enough to pass the `MESSAGING_TYPE` environment variable with `kafka` or `rabbit` values. This will lead to setting up
+the Stub Runner Boot Docker image with dependencies required to connect to the broker.
+
+In order to set the connection properties you can check out Spring Cloud Stream properties page to set proper environment variables.
+
+// TODO: Change to current or sth
+* https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#integration-properties[Spring Boot Integration properties]
+** You can search for `spring.rabbitmq.xxx` or `spring.kafka.xxx` properties
+* https://docs.spring.io/spring-cloud-stream-binder-rabbit/docs/3.1.0.M1/reference/html/index.html#_configuration_options[Stream specific RabbitMQ properties]
+* https://docs.spring.io/spring-cloud-stream-binder-kafka/docs/3.1.0.M1/reference/html/index.html#_configuration_options[Stream specific Kafka properties]
+
+The most common property you would set is the location of the running middlewara.
+If a property to set it is called `spring.rabbitmq.addresses` or `spring.kafka.bootstrap-servers` then you should name the environment variable `SPRING_RABBITMQ_ADDRESSES` and SPRING_KAFKA_BOOTSTRAP_SERVERS` respectively.
