@@ -16,6 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.wiremock;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.StreamSupport;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
@@ -28,13 +35,6 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import repackaged.nl.flotsam.xeger.Xeger;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.StreamSupport;
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
@@ -89,20 +89,29 @@ public class WireMockToDslConverter {
 
 	private String convertFromWireMockStub(String wireMockStringStub) {
 		JsonNode wireMockStub = parseStubDefinition(wireMockStringStub);
-		return buildPriority(wireMockStub) + "request {\n"
-				+ buildRequestMethod(wireMockStub) + buildRequestUrl(wireMockStub)
+		return buildPriority(wireMockStub)
+				+ "request {\n"
+				+ buildRequestMethod(wireMockStub)
+				+ buildRequestUrl(wireMockStub)
 				+ buildRequestUrlPattern(wireMockStub)
 				+ buildRequestUrlPathPattern(wireMockStub)
-				+ buildRequestUrlPath(wireMockStub) + buildRequestHeaders(wireMockStub)
-				+ buildRequestBody(wireMockStub) + "}\n" + "response {\n"
-				+ buildResponseStatus(wireMockStub) + buildResponseBody(wireMockStub)
-				+ buildResponseHeaders(wireMockStub) + "}" + "\n";
+				+ buildRequestUrlPath(wireMockStub)
+				+ buildRequestHeaders(wireMockStub)
+				+ buildRequestBody(wireMockStub)
+				+ "}\n"
+				+ "response {\n"
+				+ buildResponseStatus(wireMockStub)
+				+ buildResponseBody(wireMockStub)
+				+ buildResponseHeaders(wireMockStub)
+				+ "}"
+				+ "\n";
 	}
 
 	private JsonNode parseStubDefinition(String wireMockStringStub) {
 		try {
 			return OBJECT_MAPPER.reader().readTree(wireMockStringStub);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new RuntimeException("WireMock string stub could not be read", e);
 		}
 	}
@@ -188,13 +197,13 @@ public class WireMockToDslConverter {
 
 	private String buildHeader(String method, String value) {
 		switch (method) {
-			case "equalTo":
-				return "'" + value + "'";
-			case "contains":
-				String regex = "^.*" + value + ".*$";
-				return "c(regex('" + escapeJava(regex) + "'))";
-			default:
-				return "c(regex('" + escapeJava(value) + "'))";
+		case "equalTo":
+			return "'" + value + "'";
+		case "contains":
+			String regex = "^.*" + value + ".*$";
+			return "c(regex('" + escapeJava(regex) + "'))";
+		default:
+			return "c(regex('" + escapeJava(value) + "'))";
 		}
 	}
 
@@ -267,7 +276,8 @@ public class WireMockToDslConverter {
 							.withArrayIndenter(customIndenter)
 							.withObjectIndenter(customIndenter))
 					.writeValueAsString(intermediateObjectForPrettyPrinting);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new RuntimeException("WireMock response body could not be pretty printed");
 		}
 	}
