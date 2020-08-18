@@ -19,8 +19,10 @@ package org.springframework.cloud.contract.verifier.util;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -88,6 +90,90 @@ public final class MetadataUtil {
 		}
 	}
 
+	public static MetadataMap map() {
+		return new MetadataMap();
+	}
+
+	public static class MetadataMap implements Map<String, Object> {
+
+		private final Map<String, Object> delegate = new HashMap<>();
+
+		public MetadataMap entry(String key, Object value) {
+			put(key, value);
+			return this;
+		}
+
+		@Override
+		public int size() {
+			return this.delegate.size();
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return this.delegate.isEmpty();
+		}
+
+		@Override
+		public boolean containsKey(Object key) {
+			return this.delegate.containsKey(key);
+		}
+
+		@Override
+		public boolean containsValue(Object value) {
+			return this.delegate.containsValue(value);
+		}
+
+		@Override
+		public Object get(Object key) {
+			return this.delegate.get(key);
+		}
+
+		@Override
+		public Object put(String key, Object value) {
+			return this.delegate.put(key, value);
+		}
+
+		@Override
+		public Object remove(Object key) {
+			return this.delegate.remove(key);
+		}
+
+		@Override
+		public void putAll(Map<? extends String, ?> m) {
+			this.delegate.putAll(m);
+		}
+
+
+		@Override
+		public void clear() {
+			this.delegate.clear();
+		}
+
+		@Override
+		public Set<String> keySet() {
+			return this.delegate.keySet();
+		}
+
+		@Override
+		public Collection<Object> values() {
+			return this.delegate.values();
+		}
+
+		@Override
+		public Set<Entry<String, Object>> entrySet() {
+			return this.delegate.entrySet();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return this.delegate.equals(o);
+		}
+
+		@Override
+		public int hashCode() {
+			return this.delegate.hashCode();
+		}
+	}
 }
 
 class VerifierObjectMapper extends ObjectMapper {

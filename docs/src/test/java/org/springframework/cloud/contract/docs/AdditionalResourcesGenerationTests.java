@@ -119,7 +119,8 @@ class AdditionalResourcesGenerationTests {
 		Files.write(schemaFile.toPath(), schemaString.getBytes());
 	}
 
-	private String generateJsonSchemaForClass(Class clazz) throws JsonProcessingException {
+	private String generateJsonSchemaForClass(Class clazz)
+			throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
@@ -162,11 +163,11 @@ class AdditionalResourcesGenerationTests {
 				.append("[[metadata-").append(key).append("]]\n")
 				.append("#### Metadata ").append(key).append("\n\n")
 				.append("* key: `").append(key).append("`").append("\n")
-				.append("* description:\n```\n").append(description).append("\n```\n\n")
+				.append("* description:\n\n").append(description).append("\n\n")
 				.append("Example:\n\n")
 				.append("```yaml\n").append(mapper.writeValueAsString(newInstance)).append("\n```\n\n")
 				// To make the schema collapsable
-				.append("+++ <details><summary> +++\nSchema:\n+++ </summary><div> +++\n")
+				.append("+++ <details><summary> +++\nClick here to expand the JSON schema:\n+++ </summary><div> +++\n")
 				.append("```json\n").append(generateJsonSchemaForClass(metadatum)).append("\n```\n")
 				.append("+++ </div></details> +++\n\n")
 				.append("If you're interested in learning more about the types and its properties, please check out the following classes:\n\n")

@@ -310,7 +310,7 @@ then:
 		val contract =
 		// tag::metadata[]
 		contract {
-			metadata("wiremock" to """
+			metadata("wiremock" to ("stubmapping" to """
 		{
 		  "response" : {
 			"fixedDelayMilliseconds": 2000

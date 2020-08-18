@@ -13,11 +13,11 @@ response:
 metadata:
   wiremock:
     stubMapping: >
-    {
-      "response" : {
-        "fixedDelayMilliseconds": 2000
+      {
+        "response" : {
+          "fixedDelayMilliseconds": 2000
+        }
       }
-    }
 # end::metadata[]
 ---
 request:

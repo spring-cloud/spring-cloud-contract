@@ -19,12 +19,11 @@
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
+import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 
 // tag::class[]
 class contract_rest_with_tags implements Supplier<Collection<Contract>> {
@@ -64,12 +63,10 @@ class contract_rest_with_tags implements Supplier<Collection<Contract>> {
 	static Object metadata = Collections.singletonList(
 			// tag::metadata[]
 			Contract.make(c -> {
-				Map<String, Object> map = new HashMap<>();
-				map.put("wiremock",
-						"{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }");
-				c.metadata(map);
+				c.metadata(MetadataUtil.map()
+						.entry("wiremock",
+							ContractVerifierUtil.map().entry("stubMapping", "{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }")));
 			}));
-
 	// end::metadata[]
 
 	@Override

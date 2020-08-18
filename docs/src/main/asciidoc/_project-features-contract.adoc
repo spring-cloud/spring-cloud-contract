@@ -442,7 +442,7 @@ both for HTTP and messaging.
 ==== Metadata
 
 You can add `metadata` to your contract. Via the metadata you can pass in configuration to extensions. Below you can find
-an example of using the `wiremock` key and value being WireMock's `StubMapping` object. Spring Cloud Contract is able to
+an example of using the `wiremock` key. Its value is a map whose key is `stubMapping` and value being WireMock's `StubMapping` object. Spring Cloud Contract is able to
 patch parts of your generated stub mapping with your custom code. You may want to do that in order to add webhooks, custom
 delays or integrate with third party WireMock extensions.
 
