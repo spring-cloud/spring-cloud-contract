@@ -312,7 +312,7 @@ import os
 app = Flask(__name__)
 
 # Production code that sends a message to RabbitMQ
-def message(cmd):
+def send_message(cmd):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
     channel.basic_publish(
@@ -330,7 +330,7 @@ if 'CONTRACT_TEST' in os.environ:
     @app.route('/springcloudcontract/<label>', methods=['POST'])
     def springcloudcontract(label):
         if label == "ping_pong":
-            return message('{"message":"pong"}')
+            return send_message('{"message":"pong"}')
         else:
             raise ValueError('No such label expected.')
 ----

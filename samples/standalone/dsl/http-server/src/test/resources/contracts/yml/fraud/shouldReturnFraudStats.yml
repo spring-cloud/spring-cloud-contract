@@ -11,7 +11,8 @@ response:
   headers:
     Content-Type: application/json
 metadata:
-  wiremock: >
+  wiremock:
+    stubMapping: >
     {
       "response" : {
         "fixedDelayMilliseconds": 2000

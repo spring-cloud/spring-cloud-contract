@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.kafka;
 import java.util.Map;
 
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
+import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetadata;
 
 /**
  * Represents metadata for Kafka based communication.
@@ -26,7 +27,7 @@ import org.springframework.cloud.contract.verifier.util.MetadataUtil;
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class KafkaMetadata {
+public class KafkaMetadata implements SpringCloudContractMetadata {
 
 	/**
 	 * Key under which this metadata entry can be found in contract's metadata.
@@ -62,6 +63,16 @@ public class KafkaMetadata {
 	public static KafkaMetadata fromMetadata(Map<String, Object> metadata) {
 		return MetadataUtil.fromMetadata(metadata, KafkaMetadata.METADATA_KEY,
 				new KafkaMetadata());
+	}
+
+	@Override
+	public String key() {
+		return METADATA_KEY;
+	}
+
+	@Override
+	public String description() {
+		return "Metadata for Kafka based communication";
 	}
 
 	/**

@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.wiremock;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,17 +34,14 @@ import org.springframework.cloud.contract.spec.Contract;
 
 class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
-	private static final List<Class> APPLICABLE_CLASSES = Arrays.asList(String.class,
-			StubMapping.class, Map.class);
-
-	public static final String WIREMOCK_METADATA_ENTRY = "wiremock";
-
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
 	public StubMapping postProcess(StubMapping stubMapping, Contract contract) {
-		Object wiremock = getWiremockEntry(contract);
-		StubMapping stubMappingFromMetadata = stubMappingFromMetadata(wiremock);
+		WireMockMetaData wireMockMetaData = WireMockMetaData
+				.fromMetadata(contract.getMetadata());
+		StubMapping stubMappingFromMetadata = stubMappingFromMetadata(
+				wireMockMetaData.getStubMapping());
 		stubMapping.setResponse(mergedResponse(stubMapping, stubMappingFromMetadata));
 		if (stubMappingFromMetadata.getPostServeActions() != null) {
 			setPostServeActions(stubMapping, stubMappingFromMetadata);
@@ -149,10 +145,6 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 				: stubMapping.getResponse().getFixedDelayMilliseconds();
 	}
 
-	private Object getWiremockEntry(Contract contract) {
-		return contract.getMetadata().get(WIREMOCK_METADATA_ENTRY);
-	}
-
 	private StubMapping stubMappingFromMetadata(Object wiremock) {
 		if (wiremock instanceof String) {
 			return StubMapping.buildFrom((String) wiremock);
@@ -176,13 +168,15 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
 	@Override
 	public boolean isApplicable(Contract contract) {
-		boolean contains = contract.getMetadata().containsKey(WIREMOCK_METADATA_ENTRY);
+		boolean contains = contract.getMetadata()
+				.containsKey(WireMockMetaData.METADATA_KEY);
 		if (!contains) {
 			return false;
 		}
-		Object wiremock = getWiremockEntry(contract);
-		return APPLICABLE_CLASSES.stream()
-				.anyMatch(aClass -> aClass.isAssignableFrom(wiremock.getClass()));
+		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata())
+				.getStubMapping();
+		return WireMockMetaData.APPLICABLE_CLASSES.stream()
+				.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
 	}
 
 }

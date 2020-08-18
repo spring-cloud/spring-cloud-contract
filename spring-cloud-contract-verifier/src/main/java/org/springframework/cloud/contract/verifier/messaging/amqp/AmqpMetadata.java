@@ -16,10 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
+import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetadata;
 
 /**
  * Represents metadata for AMQP based communication.
@@ -27,7 +30,7 @@ import org.springframework.cloud.contract.verifier.util.MetadataUtil;
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class AmqpMetadata {
+public class AmqpMetadata implements SpringCloudContractMetadata {
 
 	/**
 	 * Key under which this metadata entry can be found in contract's metadata.
@@ -63,6 +66,21 @@ public class AmqpMetadata {
 	public static AmqpMetadata fromMetadata(Map<String, Object> metadata) {
 		return MetadataUtil.fromMetadata(metadata, AmqpMetadata.METADATA_KEY,
 				new AmqpMetadata());
+	}
+
+	@Override
+	public String key() {
+		return METADATA_KEY;
+	}
+
+	@Override
+	public String description() {
+		return "Metadata for AMQP based communication";
+	}
+
+	@Override
+	public List<Class> additionalClassesToLookAt() {
+		return Collections.singletonList(MessageProperties.class);
 	}
 
 	/**

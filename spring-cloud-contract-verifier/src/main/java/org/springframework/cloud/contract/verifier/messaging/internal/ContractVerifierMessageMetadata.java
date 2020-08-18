@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 import java.util.Map;
 
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
+import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetadata;
 
 /**
  * Metadata representation of the Contract Verifier messaging.
@@ -26,7 +27,7 @@ import org.springframework.cloud.contract.verifier.util.MetadataUtil;
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class ContractVerifierMessageMetadata {
+public class ContractVerifierMessageMetadata implements SpringCloudContractMetadata {
 
 	/**
 	 * Metadata entry in the contract.
@@ -54,6 +55,16 @@ public class ContractVerifierMessageMetadata {
 			Map<String, Object> metadata) {
 		return MetadataUtil.fromMetadata(metadata, METADATA_KEY,
 				new ContractVerifierMessageMetadata());
+	}
+
+	@Override
+	public String key() {
+		return METADATA_KEY;
+	}
+
+	@Override
+	public String description() {
+		return "Internal metadata entries used by the framework";
 	}
 
 	/**
