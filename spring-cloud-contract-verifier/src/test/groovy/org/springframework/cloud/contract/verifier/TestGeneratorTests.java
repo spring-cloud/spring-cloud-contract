@@ -19,9 +19,6 @@ package org.springframework.cloud.contract.verifier;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.assertj.core.api.BDDAssertions;
 import org.junit.Test;
@@ -113,8 +110,7 @@ public class TestGeneratorTests {
 		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator,
 				fileSaver, scanner) {
 			@Override
-			void processAllNotInProgress(
-					MultiValueMap<Path, ContractMetadata> contracts,
+			void processAllNotInProgress(MultiValueMap<Path, ContractMetadata> contracts,
 					String basePackageName) {
 			}
 		};
