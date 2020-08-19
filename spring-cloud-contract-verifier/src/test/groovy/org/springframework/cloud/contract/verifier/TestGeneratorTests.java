@@ -113,10 +113,9 @@ public class TestGeneratorTests {
 		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator,
 				fileSaver, scanner) {
 			@Override
-			Set<Map.Entry<Path, List<ContractMetadata>>> processAllNotInProgress(
+			void processAllNotInProgress(
 					MultiValueMap<Path, ContractMetadata> contracts,
 					String basePackageName) {
-				return null;
 			}
 		};
 

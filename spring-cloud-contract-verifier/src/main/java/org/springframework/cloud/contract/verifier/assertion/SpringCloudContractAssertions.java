@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.builder.imports
+package org.springframework.cloud.contract.verifier.assertion;
 
-import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
+import org.assertj.core.api.Assertions;
 
-/**
- * @author Olga Maciaszek-Sharma
- *
- * @since 2.1.0
- */
-@CompileStatic
-@PackageScope
-@Deprecated
-class ImportDefinitions {
+public class SpringCloudContractAssertions extends Assertions {
 
-	final List<String> imports
-	final List<String> staticImports
-
-	ImportDefinitions(List<String> imports, List<String> staticImports = []) {
-		this.imports = imports
-		this.staticImports = staticImports
+	/**
+	 * Creates a new instance of <code>{@link CollectionAssert}</code>.
+	 * @param <ELEMENT> type to assert
+	 * @param actual the actual value.
+	 * @return the created assertion object.
+	 */
+	public static <ELEMENT> CollectionAssert<ELEMENT> assertThat(
+			Iterable<? extends ELEMENT> actual) {
+		return new CollectionAssert<>(actual);
 	}
+
 }
