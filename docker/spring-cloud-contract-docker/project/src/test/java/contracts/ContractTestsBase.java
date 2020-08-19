@@ -49,21 +49,39 @@ public abstract class ContractTestsBase {
 
 	private static final Logger log = LoggerFactory.getLogger(ContractTestsBase.class);
 
+	/**
+	 * URL at which the application is running.
+	 */
 	@Value("${APPLICATION_BASE_URL}")
 	String url;
 
+	/**
+	 * Optional username to access the application.
+	 */
 	@Value("${APPLICATION_USERNAME:}")
 	String username;
 
+	/**
+	 * Optional password to access the application.
+	 */
 	@Value("${APPLICATION_PASSWORD:}")
 	String password;
 
+	/**
+	 * Timeout to connect to the application to trigger a message.
+	 */
 	@Value("${MESSAGING_TRIGGER_CONNECT_TIMEOUT:5000}")
 	Integer connectTimeout;
 
+	/**
+	 * Timeout to read the response from the application to trigger a message.
+	 */
 	@Value("${MESSAGING_TRIGGER_READ_TIMEOUT:5000}")
 	Integer readTimeout;
 
+	/**
+	 * Defines the messaging type when dealing with message based contracts.
+	 */
 	@Value("${MESSAGING_TYPE:}")
 	String messagingType;
 

@@ -112,43 +112,10 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel.springboot</groupId>
-				<artifactId>camel-spring-boot-starter</artifactId>
+				<artifactId>camel-spring-boot-dependencies</artifactId>
 				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-spring</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel.springboot</groupId>
-				<artifactId>camel-spring-boot</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-core</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-kafka</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-jackson</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-jms</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-activemq</artifactId>
-				<version>${camel.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>

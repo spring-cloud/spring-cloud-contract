@@ -1,0 +1,21 @@
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/release" }
+}
+
+ext {
+	roasterVersion = "2.21.2.Final"
+	junit5Version = "5.6.2"
+}
+
+dependencies {
+	implementation "org.jboss.forge.roaster:roaster-api:${roasterVersion}"
+	implementation "org.jboss.forge.roaster:roaster-jdt:${roasterVersion}"
+}
+
+test {
+	useJUnitPlatform()
+}

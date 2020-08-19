@@ -76,57 +76,11 @@ The Docker image requires some environment variables to point to
 your running application, to the Artifact manager instance, and so on.
 The following list describes the environment variables:
 
-- `PROJECT_GROUP`: Your project's group ID. Defaults to `com.example`.
-- `PROJECT_VERSION`: Your project's version. Defaults to `0.0.1-SNAPSHOT`.
-- `PROJECT_NAME`: Your project's artifact id. Defaults to `example`.
-- `PRODUCER_STUBS_CLASSIFIER`: Archive classifier used for generated producer stubs. Defaults to `stubs`.
-- `REPO_WITH_BINARIES_URL`: URL of your Artifact Manager. Defaults to `http://localhost:8081/artifactory/libs-release-local`,
-which is the default URL of https://jfrog.com/artifactory/[Artifactory] when running locally.
-- `REPO_WITH_BINARIES_USERNAME`: (optional) Username when the Artifact Manager is secured. Defaults to `admin`.
-- `REPO_WITH_BINARIES_PASSWORD`: (optional) Password when the Artifact Manager is secured. Defaults to `password`.
-- `PUBLISH_ARTIFACTS`: If set to `true`, publishes the artifact to binary storage. Defaults to `true`.
-- `PUBLISH_ARTIFACTS_OFFLINE`: If set to `true`, publishes the artifacts to local `.m2`. Defaults to `false`.
-
-The following environment variables are used when contracts are in an external repository. To enable
-this feature, you must set the `EXTERNAL_CONTRACTS_ARTIFACT_ID` environment variable.
-
-- `EXTERNAL_CONTRACTS_GROUP_ID`: Group ID of the project with contracts. Defaults to `com.example`
-- `EXTERNAL_CONTRACTS_ARTIFACT_ID`: Artifact ID of the project with contracts.
-- `EXTERNAL_CONTRACTS_CLASSIFIER`: Classifier of the project with contracts. Empty by default.
-- `EXTERNAL_CONTRACTS_VERSION`: Version of the project with contracts. Defaults to `+`, equivalent to picking the latest.
-- `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`: URL of your Artifact Manager. It defaults to
-the value of `REPO_WITH_BINARIES_URL` environment variable.
-If that is not set, it defaults to `http://localhost:8081/artifactory/libs-release-local`,
-which is the default URL of https://jfrog.com/artifactory/[Artifactory] when running locally.
-- `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME`: (optional) Username if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`
-requires authentication. It defaults to `REPO_WITH_BINARIES_USERNAME`. If that is not set, it defaults to `admin`.
-- `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD`: (optional) Password if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`
-requires authentication. It defaults to `REPO_WITH_BINARIES_PASSWORD`. If that is not set, it defaults to `password`.
-- `EXTERNAL_CONTRACTS_PATH`: Path to contracts for the given project, inside the project with contracts.
-Defaults to slash-separated `EXTERNAL_CONTRACTS_GROUP_ID` concatenated with `/` and `EXTERNAL_CONTRACTS_ARTIFACT_ID`. For example,
-for group id `cat-server-side.dog` and artifact ID `fish`, would result in `cat/dog/fish` for the contracts path.
-- `EXTERNAL_CONTRACTS_WORK_OFFLINE`; If set to `true`, retrieves the artifact with contracts
-from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path.
-
-CAUTION: You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
-
-The following environment variables are being used when running messaging based tests:
-
-- `MESSAGING_TYPE` - what type of messaging system are you using (currently supported are `rabbit`, `kafka`)
-- `MESSAGING_TRIGGER_CONNECT_TIMEOUT` - timeout set for triggering the Spring Cloud Contract endpoint in the producer app
-- `MESSAGING_TRIGGER_READ_TIMEOUT` - timeout set for triggering the Spring Cloud Contract endpoint in the producer app
-- `SPRING_KAFKA_BOOTSTRAP_SERVERS` - when using Kafka - IP and port where the
-Kafka servers are running
-- `SPRING_RABBITMQ_ADDRESSES` - when using RabbitMQ - IP and port where the
-RabbitMQ servers are running
+include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/props.adoc[indent=0]
 
 The following environment variables are used when tests are run:
 
-- `APPLICATION_BASE_URL`: URL against which tests should be run.
-Remember that it has to be accessible from the Docker container (for example, `localhost`
-does not work)
-- `APPLICATION_USERNAME`: (optional) Username for basic authentication to your application.
-- `APPLICATION_PASSWORD`: (optional) Password for basic authentication to your application.
+include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/appProps.adoc[indent=0]
 
 [[docker-example-of-usage]]
 === Example of Usage via HTTP

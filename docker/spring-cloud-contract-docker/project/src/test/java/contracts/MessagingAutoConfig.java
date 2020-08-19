@@ -37,7 +37,6 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.kafka.KafkaMetadata;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 /**
@@ -47,6 +46,24 @@ import org.springframework.util.StringUtils;
 @ConditionalOnProperty("MESSAGING_TYPE")
 public class MessagingAutoConfig {
 
+	/**
+	 * Type of messaging. Can be either [rabbit] or [kafka].
+	 */
+	@Value("${MESSAGING_TYPE:}")
+	String messagingType;
+
+	/**
+	 * For RabbitMQ - brokers addresses.
+	 */
+	@Value("${SPRING_RABBITMQ_ADDRESSES:}")
+	String springRabbitmqAddresses;
+
+	/**
+	 * For Kafka - brokers addresses.
+	 */
+	@Value("${SPRING_KAFKA_BOOTSTRAP_SERVERS:}")
+	String springKafkaBootstrapServers;
+
 	@Bean
 	public ContractVerifierMessaging<Message> contractVerifierMessaging(
 			MessageVerifier<Message> exchange) {
@@ -54,7 +71,7 @@ public class MessagingAutoConfig {
 	}
 
 	@Bean
-	MessageVerifier<Message> manualMessageVerifier(@Value("${MESSAGING_TYPE:}") String messagingType, Environment environment, ConsumerTemplate consumerTemplate) {
+	MessageVerifier<Message> manualMessageVerifier(ConsumerTemplate consumerTemplate) {
 		return new MessageVerifier<Message>() {
 
 			private final Logger log = LoggerFactory.getLogger(MessageVerifier.class);
@@ -102,7 +119,7 @@ public class MessagingAutoConfig {
 
 			private String defaultOpts(YamlContract contract) {
 				String consumerGroup = sameConsumerGroupForSameContract(contract);
-				return "?brokers=" + environment.getRequiredProperty("SPRING_KAFKA_BOOTSTRAP_SERVERS") + "&autoOffsetReset=latest&groupId=" + consumerGroup + "&shutdownTimeout=5";
+				return "?brokers=" + getRequiredProperty("SPRING_KAFKA_BOOTSTRAP_SERVERS", springKafkaBootstrapServers) + "&autoOffsetReset=latest&groupId=" + consumerGroup + "&shutdownTimeout=5";
 			}
 
 			private String sameConsumerGroupForSameContract(YamlContract contract) {
@@ -110,7 +127,7 @@ public class MessagingAutoConfig {
 			}
 
 			private String setRabbitOpts(YamlContract contract) {
-				String opts = "?addresses=" + environment.getRequiredProperty("SPRING_RABBITMQ_ADDRESSES");
+				String opts = "?addresses=" + getRequiredProperty("SPRING_RABBITMQ_ADDRESSES", springRabbitmqAddresses);
 				AmqpMetadata metadata = AmqpMetadata.fromMetadata(contract.metadata);
 				ContractVerifierMessageMetadata messageMetadata = ContractVerifierMessageMetadata.fromMetadata(contract.metadata);
 				if (inputMessage(messageMetadata) && StringUtils.hasText(metadata.getInput().getConnectToBroker().getAdditionalOptions())) {
@@ -120,6 +137,13 @@ public class MessagingAutoConfig {
 					return opts + "&" + metadata.getOutputMessage().getConnectToBroker().getAdditionalOptions();
 				}
 				return defaultOpts(opts, metadata, messageMetadata);
+			}
+
+			private String getRequiredProperty(String name, String value) {
+				if (StringUtils.isEmpty(value)) {
+					throw new IllegalStateException("The property [" + name + "] must not be empty!");
+				}
+				return value;
 			}
 
 			private boolean inputMessage(ContractVerifierMessageMetadata messageMetadata) {
