@@ -143,7 +143,6 @@ public final class MetadataUtil {
 			this.delegate.putAll(m);
 		}
 
-
 		@Override
 		public void clear() {
 			this.delegate.clear();
@@ -173,7 +172,9 @@ public final class MetadataUtil {
 		public int hashCode() {
 			return this.delegate.hashCode();
 		}
+
 	}
+
 }
 
 class VerifierObjectMapper extends ObjectMapper {

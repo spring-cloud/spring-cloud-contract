@@ -68,7 +68,7 @@ public class DocsFromSources {
 				for (FieldSource<JavaClassSource> field : fields) {
 					List<AnnotationSource<JavaClassSource>> annotations = field.getAnnotations();
 					for (AnnotationSource<JavaClassSource> annotation : annotations) {
-						if (annotation.getQualifiedName().contains("org.springframework.beans.factory.annotation.Value")) {
+						if ("org.springframework.beans.factory.annotation.Value".equals(annotation.getQualifiedName())) {
 							info("Field [" + field.getName() + "] has @Value annotation");
 							JavaDocSource<FieldSource<JavaClassSource>> javaDoc = field.getJavaDoc();
 							String description = javaDoc.getFullText();
@@ -97,6 +97,7 @@ public class DocsFromSources {
 			StringBuilder stringBuilder = new StringBuilder().append(ADOC_HEADER);
 			Collections.sort(envVars);
 			envVars.forEach(envVar -> stringBuilder.append(envVar.toString()).append("\n"));
+			stringBuilder.append("|===");
 			Files.write(output, stringBuilder.toString().getBytes());
 		}
 		catch (IOException e) {
@@ -149,7 +150,7 @@ class EnvVar implements Comparable<EnvVar> {
 
 	@Override
 	public int compareTo(EnvVar o) {
-		return o.name.compareTo(name);
+		return name.compareTo(o.name);
 	}
 
 	@Override

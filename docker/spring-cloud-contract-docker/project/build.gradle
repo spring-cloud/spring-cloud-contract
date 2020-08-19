@@ -249,7 +249,7 @@ task dumpAllProps() {
 |===
 |Name | Description | Default
 """
-		output.text = table + envVars.sort().collect { '|' + it.key + '|' + it.value.description + '|' + it.value.defaultValue }.join("\n")
+		output.text = table + envVars.sort().collect { '|' + it.key + '|' + it.value.description + '|' + it.value.defaultValue }.join("\n") + "\n|==="
 
 		new DocsFromSources(project).buildApplicationEnvVars()
 	}

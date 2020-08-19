@@ -63,10 +63,11 @@ class contract_rest_with_tags implements Supplier<Collection<Contract>> {
 	static Object metadata = Collections.singletonList(
 			// tag::metadata[]
 			Contract.make(c -> {
-				c.metadata(MetadataUtil.map()
-						.entry("wiremock",
-							ContractVerifierUtil.map().entry("stubMapping", "{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }")));
+				c.metadata(MetadataUtil.map().entry("wiremock",
+						ContractVerifierUtil.map().entry("stubMapping",
+								"{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }")));
 			}));
+
 	// end::metadata[]
 
 	@Override
