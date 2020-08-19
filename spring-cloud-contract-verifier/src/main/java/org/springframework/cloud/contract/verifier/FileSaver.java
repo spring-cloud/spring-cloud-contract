@@ -16,12 +16,6 @@
 
 package org.springframework.cloud.contract.verifier;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeLast;
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize;
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.packageToDirectory;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +24,12 @@ import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeLast;
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize;
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.packageToDirectory;
 
 class FileSaver {
 
