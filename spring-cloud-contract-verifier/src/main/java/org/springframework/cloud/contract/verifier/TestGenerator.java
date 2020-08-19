@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -83,10 +84,14 @@ public class TestGenerator {
 		this(configProperties, generator, saver,
 				new ContractFileScannerBuilder()
 						.baseDir(configProperties.getContractsDslDir())
-						.excluded(new HashSet<>(configProperties.getExcludedFiles()))
-						.ignored(new HashSet<>(configProperties.getIgnoredFiles()))
-						.included(new HashSet<>(configProperties.getIncludedFiles()))
+						.excluded(toSet(configProperties.getExcludedFiles()))
+						.ignored(toSet(configProperties.getIgnoredFiles()))
+						.included(toSet(configProperties.getIncludedFiles()))
 						.includeMatcher(configProperties.getIncludedContracts()).build());
+	}
+
+	private static Set<String> toSet(List<String> files) {
+		return Optional.ofNullable(files).map(HashSet::new).orElseGet(HashSet::new);
 	}
 
 	protected TestGenerator(ContractVerifierConfigProperties configProperties,
