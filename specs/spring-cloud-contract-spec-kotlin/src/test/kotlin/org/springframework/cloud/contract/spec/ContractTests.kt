@@ -315,7 +315,7 @@ then:
 		  "response" : {
 			"fixedDelayMilliseconds": 2000
 		  }
-		}""")
+		}"""))
 		}
 		// end::metadata[]
 
