@@ -7,7 +7,6 @@ GRADLE_BIN_DIR="gradle-${WRAPPER_VERSION}-bin"
 GRADLE_WRAPPER_DIR="${HOME}/.gradle/wrapper/dists/${GRADLE_BIN_DIR}"
 CURRENT_DIR="$( pwd )"
 GRADLE_OUTPUT_DIR="${CURRENT_DIR}/target/gradle_dependencies/"
-ADOC_OUTPUT_DIR="${CURRENT_DIR}/target/adoc/"
 pushd project
   rm -rf .gradle
   ./gradlew wrapper --gradle-version "${WRAPPER_VERSION}"
@@ -19,9 +18,10 @@ pushd project
   else
       echo "Gradle Wrapper [${GRADLE_WRAPPER_DIR}] not found. Will not copy it"
   fi
-  mkdir -p "${ADOC_OUTPUT_DIR}"
-  ./gradlew dumpAllProps -g "${GRADLE_OUTPUT_DIR}"
-  cp "$( pwd )/build/props.adoc" "${ADOC_OUTPUT_DIR}/"
-  cp "$( pwd )/build/appProps.adoc" "${ADOC_OUTPUT_DIR}/"
+popd
+
+./build_adocs.sh
+
+pushd project
   rm -rf build
 popd
