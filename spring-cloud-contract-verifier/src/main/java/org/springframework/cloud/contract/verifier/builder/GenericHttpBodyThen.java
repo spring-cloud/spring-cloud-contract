@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor;
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor;

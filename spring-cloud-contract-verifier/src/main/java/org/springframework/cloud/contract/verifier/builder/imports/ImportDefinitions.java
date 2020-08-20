@@ -14,26 +14,37 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.builder.imports
+package org.springframework.cloud.contract.verifier.builder.imports;
 
-import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Olga Maciaszek-Sharma
- *
  * @since 2.1.0
  */
-@CompileStatic
-@PackageScope
 @Deprecated
 class ImportDefinitions {
 
-	final List<String> imports
-	final List<String> staticImports
+	private final List<String> imports;
 
-	ImportDefinitions(List<String> imports, List<String> staticImports = []) {
-		this.imports = imports
-		this.staticImports = staticImports
+	private final List<String> staticImports;
+
+	public ImportDefinitions(List<String> imports, List<String> staticImports) {
+		this.imports = imports;
+		this.staticImports = staticImports;
 	}
+
+	public ImportDefinitions(List<String> imports) {
+		this(imports, new ArrayList<>());
+	}
+
+	public final List<String> getImports() {
+		return imports;
+	}
+
+	public final List<String> getStaticImports() {
+		return staticImports;
+	}
+
 }
