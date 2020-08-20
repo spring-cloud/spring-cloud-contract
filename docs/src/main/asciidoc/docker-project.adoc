@@ -424,7 +424,13 @@ $ STUBRUNNER_PORT="8083"
 $ STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
 $ STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
 # Run the docker with Stub Runner Boot
-$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -e "STUBRUNNER_STUBS_MODE=REMOTE" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
+$ docker run  --rm \
+    -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" \
+    -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" \
+    -e "STUBRUNNER_STUBS_MODE=REMOTE" \
+    -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" \
+    -p "9876:9876" \
+    springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
 ----
 ====
 
@@ -469,4 +475,136 @@ In order to set the connection properties you can check out Spring Cloud Stream 
 * https://docs.spring.io/spring-cloud-stream-binder-kafka/docs/3.1.0.M1/reference/html/index.html#_configuration_options[Stream specific Kafka properties]
 
 The most common property you would set is the location of the running middlewara.
-If a property to set it is called `spring.rabbitmq.addresses` or `spring.kafka.bootstrap-servers` then you should name the environment variable `SPRING_RABBITMQ_ADDRESSES` and SPRING_KAFKA_BOOTSTRAP_SERVERS` respectively.
+If a property to set it is called `spring.rabbitmq.addresses` or `spring.kafka.bootstrap-servers` then you should name the environment variable `SPRING_RABBITMQ_ADDRESSES` and `SPRING_KAFKA_BOOTSTRAP_SERVERS` respectively.
+
+[[docker-middleware-standalone]]
+== Running Contract Tests against Existing Middleware
+
+There is legitimate reason to run your contract tests against existing middleware. Some
+testing frameworks might give you false positive results - the test within your build
+passes whereas on production the communication fails.
+
+In Spring Cloud Contract docker images we give an option to connect to existing middleware.
+As presented in previous subsections we do support Kafka and RabbitMQ out of the box. However,
+via https://camel.apache.org/components/latest/index.html[Apache Camel Components] we can support
+other middleware too. Let's take a look at the following examples of usage.
+
+[[docker-verifier-running-middlware]]
+=== Spring Cloud Contract Docker and running Middleware
+
+In order to connect to arbitrary middleware, we'll leverage the `standalone` metadata entry
+in the contract section.
+
+[source,yaml,indent=0]
+----
+description: 'Send a pong message in response to a ping message'
+label: 'standalone_ping_pong' <1>
+input:
+  triggeredBy: 'triggerMessage("ping_pong")' <2>
+outputMessage:
+  sentTo: 'rabbitmq:output' <3>
+  body: <4>
+    message: 'pong'
+metadata:
+  standalone: <5>
+    setup: <6>
+      options: rabbitmq:output?queue=output&routingKey=# <7>
+    outputMessage: <8>
+      additionalOptions: routingKey=#&queue=output <9>
+----
+<1> Label by which we'll be able to trigger the message via Stub Runner
+<2> As in the previous messaging examples we'll need to trigger the HTTP endpoint in the running application to make it send a message according to the provided protocol
+<3> `protocol:destination` as requested by Apache Camel
+<4> Output message body
+<5> Standalone metadata entry
+<6> Setup part will contain information about how to prepare for running contract tests before the actual call to HTTP endpoint of the running application is made
+<7> Apache Camel URI to be called in the setup phase. In this case we will try to poll for a message at the `output` exchange and due to to having the `queue=output` and `routingKey=#` a queue with name `output` will be set and bound to the `output` exchange with routing key `#`
+<8> Additional options (more technical ones) to be appended to the `protocol:destination` from point (3) - together will be combined in the following format `rabbitmq:output?routingKey=#&queue=output`.
+
+For the contract tests to pass we will need as usual in case of messaging in polyglot environment
+a running application and running middleware. This time we will have different environment variables set for the Spring Cloud Contract Docker image.
+
+[source,bash,indent=0]
+----
+#!/bin/bash
+set -x
+
+# Setup
+# Run the middleware
+docker-compose up -d rabbitmq <1>
+
+# Run the python application
+gunicorn -w 4 --bind 0.0.0.0 main:app & <2>
+APP_PID=$!
+
+docker run  --rm \
+                --name verifier \
+                -e "STANDALONE_PROTOCOL=rabbitmq" \ <3>
+                -e "CAMEL_COMPONENT_RABBITMQ_ADDRESSES=172.18.0.1:5672" \ <4>
+                -e "PUBLISH_STUBS_TO_SCM=false" \
+                -e "PUBLISH_ARTIFACTS=false" \
+                -e "APPLICATION_BASE_URL=172.18.0.1" \
+                -e "PROJECT_NAME=application" \
+                -e "PROJECT_GROUP=group" \
+                -e "EXTERNAL_CONTRACTS_ARTIFACT_ID=application" \
+                -e "EXTERNAL_CONTRACTS_GROUP_ID=group" \
+                -e "EXTERNAL_CONTRACTS_VERSION=0.0.1-SNAPSHOT" \
+                -v "${CURRENT_DIR}/build/spring-cloud-contract/output:/spring-cloud-contract-output/" \
+                springcloud/spring-cloud-contract:"${SC_CONTRACT_DOCKER_VERSION}"
+
+
+# Teardown
+kill $APP_PID
+yes | docker-compose kill
+----
+<1> We need to have the middleware running first
+<2> The application needs to be up and running
+<3> Via the `STANDALONE_PROTOCOL` environment variable we will fetch a https://camel.apache.org/components/latest/index.html[Apache Camel Component]. The artifact that we will fetch is `org.apache.camel.springboot:camel-${STANDALONE_PROTOCOL}-starter`. In other words `STANDALONE_PROTOCOL` is matching Camel's component.
+<4> We're setting addresses (we could be setting credentials) via Camel's Spring Boot Starter mechanisms. Example for https://camel.apache.org/components/latest/rabbitmq-component.html#_spring_boot_auto_configuration[Apache Camel's RabbitMQ Spring Boot Auto-Configuration]
+
+[[docker-stubrunner-running-middlware]]
+=== Stub Runner Docker and running Middleware
+
+In order to trigger a stub message against running middleware, we can run Stub Runner Docker image in the following manner.
+
+Example of usage
+
+```bash
+$ docker run \
+    -e "CAMEL_COMPONENT_RABBITMQ_ADDRESSES=172.18.0.1:5672" \ <1>
+    -e "STUBRUNNER_IDS=group:application:0.0.1-SNAPSHOT" \ <2>
+    -e "STUBRUNNER_REPOSITORY_ROOT=git://https://github.com/marcingrzejszczak/cdct_python_contracts.git" \ <3>
+    -e ADDITIONAL_OPTS="--thin.properties.dependencies.rabbitmq=org.apache.camel.springboot:camel-rabbitmq-starter:3.4.0" \ <4>
+    -e "STUBRUNNER_STUBS_MODE=REMOTE" \ <5>
+    -v "${HOME}/.m2/:/root/.m2:ro" \ <6>
+    -p 8750:8750 \ <7>
+    springcloud/spring-cloud-contract-stub-runner:3.0.0-SNAPSHOT <8>
+```
+<1> We're injecting the address of RabbitMQ via https://camel.apache.org/components/latest/rabbitmq-component.html#_spring_boot_auto_configuration[Apache Camel's Spring Boot Auto-Configuration]
+<2> We're telling Stub Runner which stubs to download
+<3> We're providing an external location for our stubs (Git repository)
+<4> Via the `ADDITIONAL_OPTS=--thin.properties.dependencies.XXX=GROUP:ARTIFACT:VERSION` property we're telling Stub Runner which additional dependency to fetch at runtime. In this case we want to fetch `camel-rabbitmq-starter` so `XXX` is a random string and we want to fetch `org.apache.camel.springboot:camel-rabbitmq-starter` artifact in version `3.4.0`.
+<5> Since we're using Git, the remote option of fetching stubs needs to be set
+<6> So that we speed up launching of Stub Runner, we're attaching our local Maven repository `.m2` as a volume. If you don't have it populated you can consider setting the write permissions via `:rw` instead read only `:ro`.
+<7> We expose the port `8750` at which Stub Runner is running.
+<8> Coordinates of the Stub Runner Docker image.
+
+After a while you'll notice the following text in your console, which means that Stub Runner is ready to accept requests.
+
+[source,bash,indent=0]
+----
+o.a.c.impl.engine.AbstractCamelContext   : Apache Camel 3.4.3 (camel-1) started in 0.007 seconds
+o.s.c.c.s.server.StubRunnerBoot          : Started StubRunnerBoot in 14.483 seconds (JVM running for 18.666)
+o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+----
+
+To get the list of triggers you can send an HTTP GET request to `localhost:8750/triggers` endpoint. To trigger a stub message, you can send a HTTP POST request to `localhost:8750/triggers/standalone_ping_pong`. In the console you'll see:
+
+[source,bash.indent=0]
+----
+o.s.c.c.v.m.camel.CamelStubMessages      : Will send a message to URI [rabbitmq:output?routingKey=#&queue=output]
+----
+
+If you check the RabbitMQ management console, you'll see that there's 1 message available in the `output` queue.

@@ -40,6 +40,7 @@ Map<String, EnvVar> envVars = [
 				"for group id `cat-server-side.dog` and artifact ID `fish`, would result in `cat/dog/fish` for the contracts path.", ""),
 		EXTERNAL_CONTRACTS_WORK_OFFLINE: new EnvVar("If set to `true`, retrieves the artifact with contracts from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path", "false"),
 		PUBLISH_STUBS_TO_SCM: new EnvVar("If set to `true` will run the task to publish stubs to scm", false),
+		MESSAGING_TYPE: new EnvVar("Type of messaging. Can be either [rabbit] or [kafka].", ""),
 ]
 
 group = getProp(envVars, "PROJECT_GROUP") ?: 'com.example'
@@ -114,6 +115,11 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	if (getProp(envVars, "MESSAGING_TYPE") != "") {
+		systemProperty("spring.profiles.active", "messagingtype")
+	} else if (getProp(envVars, "STANDALONE_PROTOCOL") != "") {
+		systemProperty("spring.profiles.active", "standalone")
+	}
 	testLogging {
 		exceptionFormat = 'full'
 		afterSuite { desc, result ->

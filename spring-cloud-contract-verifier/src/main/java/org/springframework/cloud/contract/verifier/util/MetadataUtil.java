@@ -63,7 +63,7 @@ public final class MetadataUtil {
 	 */
 	public static <T> T fromMetadata(Map<String, Object> metadata, String key,
 			T objectToMerge) {
-		if (!metadata.containsKey(key)) {
+		if (metadata == null || !metadata.containsKey(key)) {
 			return objectToMerge;
 		}
 		return merge(objectToMerge, metadata.get(key));

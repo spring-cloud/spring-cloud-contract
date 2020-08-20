@@ -14,4 +14,5 @@ if [[ "${MESSAGING_TYPE}" != "" ]]; then
   ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --thin.profile=${MESSAGING_TYPE}"
 fi
 
+echo "Please wait for the dependencies to be downloaded..."
 java -Djava.security.egd=file:/dev/./urandom -jar /stub-runner-boot.jar ${ADDITIONAL_OPTS}

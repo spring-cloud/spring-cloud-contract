@@ -73,6 +73,11 @@ public class ContractVerifierMessageMetadata implements SpringCloudContractMetad
 	public enum MessageType {
 
 		/**
+		 * Setup message.
+		 */
+		SETUP,
+
+		/**
 		 * Input message.
 		 */
 		INPUT,

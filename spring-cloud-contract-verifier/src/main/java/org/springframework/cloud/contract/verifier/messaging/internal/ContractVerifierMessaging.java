@@ -60,7 +60,7 @@ public class ContractVerifierMessaging<M> {
 		return convert(this.exchange.receive(destination, contract));
 	}
 
-	public void setMessageType(YamlContract contract,
+	private void setMessageType(YamlContract contract,
 			ContractVerifierMessageMetadata.MessageType output) {
 		contract.metadata.put(ContractVerifierMessageMetadata.METADATA_KEY,
 				new ContractVerifierMessageMetadata(output));

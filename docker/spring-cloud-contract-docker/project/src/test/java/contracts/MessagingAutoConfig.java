@@ -37,6 +37,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.kafka.KafkaMetadata;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.util.StringUtils;
 
 /**
@@ -44,6 +45,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnProperty("MESSAGING_TYPE")
+@Profile("messagingtype")
 public class MessagingAutoConfig {
 
 	/**

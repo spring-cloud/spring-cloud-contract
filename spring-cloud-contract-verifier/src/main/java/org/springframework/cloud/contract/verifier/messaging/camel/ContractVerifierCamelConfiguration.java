@@ -17,7 +17,9 @@
 package org.springframework.cloud.contract.verifier.messaging.camel;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -47,8 +49,9 @@ public class ContractVerifierCamelConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	MessageVerifier<Message> contractVerifierMessageExchange(CamelContext camelContext) {
-		return new CamelStubMessages(camelContext);
+	MessageVerifier<Message> contractVerifierMessageExchange(CamelContext camelContext,
+			ProducerTemplate producerTemplate, ConsumerTemplate consumerTemplate) {
+		return new CamelStubMessages(camelContext, producerTemplate, consumerTemplate);
 	}
 
 	@Bean
@@ -68,6 +71,9 @@ class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
 
 	@Override
 	protected ContractVerifierMessage convert(Message receive) {
+		if (receive == null) {
+			return null;
+		}
 		return new ContractVerifierMessage(receive.getBody(), receive.getHeaders());
 	}
 

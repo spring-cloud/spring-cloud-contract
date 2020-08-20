@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
@@ -151,6 +152,7 @@ class AdditionalResourcesGenerationTests {
 	private StringBuilder adocWithMetadata(List<Class> metadata) throws Exception {
 		YAMLMapper mapper = new YAMLMapper();
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
 		StringBuilder sb = new StringBuilder();
 		for (Class metadatum : metadata) {
 			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) metadatum

@@ -28,9 +28,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Marcin Grzejszczak
@@ -41,27 +42,63 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 
 	private final CamelContext context;
 
+	private final ProducerTemplate producerTemplate;
+
+	private final ConsumerTemplate consumerTemplate;
+
 	private final ContractVerifierCamelMessageBuilder builder;
 
-	@Autowired
-	public CamelStubMessages(CamelContext context) {
+
+	public CamelStubMessages(CamelContext context, ProducerTemplate producerTemplate,
+			ConsumerTemplate consumerTemplate) {
 		this.context = context;
+		this.producerTemplate = producerTemplate;
+		this.consumerTemplate = consumerTemplate;
 		this.builder = new ContractVerifierCamelMessageBuilder(context);
 	}
 
 	@Override
 	public void send(Message message, String destination, YamlContract contract) {
 		try {
-			ProducerTemplate producerTemplate = this.context.createProducerTemplate();
 			Exchange exchange = new DefaultExchange(this.context);
 			exchange.setIn(message);
-			producerTemplate.send(destination, exchange);
+			StandaloneMetadata standaloneMetadata = StandaloneMetadata
+					.fromMetadata(contract != null ? contract.metadata : null);
+			ContractVerifierMessageMetadata verifierMessageMetadata = ContractVerifierMessageMetadata
+					.fromMetadata(contract != null ? contract.metadata : null);
+			String finalDestination = finalDestination(destination,
+					additionalOptions(verifierMessageMetadata, standaloneMetadata),
+					verifierMessageMetadata);
+			log.info("Will send a message to URI [" + finalDestination + "]");
+			this.producerTemplate.send(finalDestination, exchange);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to send a message [" + message
 					+ "] " + "to a channel with name [" + destination + "]", e);
 			throw e;
 		}
+	}
+
+	private String additionalOptions(
+			ContractVerifierMessageMetadata verifierMessageMetadata,
+			StandaloneMetadata metadata) {
+		return verifierMessageMetadata
+				.getMessageType() == ContractVerifierMessageMetadata.MessageType.INPUT
+						? metadata.getInput().getAdditionalOptions()
+						: metadata.getOutputMessage().getAdditionalOptions();
+	}
+
+	public String finalDestination(String destination, String additionalOpts,
+			ContractVerifierMessageMetadata verifierMessageMetadata) {
+		String finalDestination = destination;
+		if (verifierMessageMetadata
+				.getMessageType() == ContractVerifierMessageMetadata.MessageType.SETUP) {
+			return finalDestination;
+		}
+		if (StringUtils.hasText(additionalOpts)) {
+			finalDestination = finalDestination + "?" + additionalOpts;
+		}
+		return finalDestination;
 	}
 
 	@Override
@@ -74,8 +111,15 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 	public Message receive(String destination, long timeout, TimeUnit timeUnit,
 			YamlContract contract) {
 		try {
-			ConsumerTemplate consumerTemplate = this.context.createConsumerTemplate();
-			Exchange exchange = consumerTemplate.receive(destination,
+			StandaloneMetadata standaloneMetadata = StandaloneMetadata
+					.fromMetadata(contract != null ? contract.metadata : null);
+			ContractVerifierMessageMetadata verifierMessageMetadata = ContractVerifierMessageMetadata
+					.fromMetadata(contract != null ? contract.metadata : null);
+			String finalDestination = finalDestination(destination,
+					additionalOptions(verifierMessageMetadata, standaloneMetadata),
+					verifierMessageMetadata);
+			log.info("Will receive a message from URI [" + finalDestination + "]");
+			Exchange exchange = this.consumerTemplate.receive(finalDestination,
 					timeUnit.toMillis(timeout));
 			return exchange != null ? exchange.getIn() : null;
 		}

@@ -34,6 +34,8 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.camel.StandaloneMetadata;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -100,29 +102,49 @@ public abstract class ContractTestsBase {
 	private void setupMessagingFromContract(TestInfo testInfo) {
 		try {
 			YamlContract contract = ContractVerifierUtil.contract(this, testInfo.getDisplayName());
-			setupAmqpIfPresent(contract);
+			setupMessagingIfPresent(contract);
 		} catch (Exception e) {
-			
+			log.warn("An exception occurred while trying to setup messaging from contract", e);
 		}
 	}
 
-	private void setupAmqpIfPresent(YamlContract contract) {
+	private void setupMessagingIfPresent(YamlContract contract) {
 		if (contract.input == null && contract.outputMessage == null) {
 			return;
 		}
+		setupAmqpIfPresent(contract);
+		setupStandaloneIfPresent(contract);
+	}
+
+	private void setupAmqpIfPresent(YamlContract contract) {
 		AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
 		if (isMessagingType("rabbit") && hasDeclaredOutputQueue(amqpMetadata) || isMessagingType("kafka")) {
 			log.info("First will try to receive a message to setup the connection with the broker");
 			if (contract.input != null && StringUtils.hasText(contract.input.messageFrom)) {
-				setupAmqpConnection(contract.input.messageFrom, contract);
+				setupConnection(contract.input.messageFrom, contract);
 			}
 			if (contract.outputMessage != null && StringUtils.hasText(contract.outputMessage.sentTo)){
-				setupAmqpConnection(contract.outputMessage.sentTo, contract);
+				setupConnection(contract.outputMessage.sentTo, contract);
 			}
 		}
 	}
 
-	private void setupAmqpConnection(String destination, YamlContract contract) {
+	private void setupStandaloneIfPresent(YamlContract contract) {
+		StandaloneMetadata metadata = StandaloneMetadata.fromMetadata(contract.metadata);
+		if (StringUtils.hasText(metadata.getSetup().getOptions())) {
+			log.info("First will try to receive a message to setup the connection with the broker");
+			setMessageType(contract, ContractVerifierMessageMetadata.MessageType.SETUP);
+			setupConnection(metadata.getSetup().getOptions(), contract);
+		}
+	}
+
+	private void setMessageType(YamlContract contract,
+			ContractVerifierMessageMetadata.MessageType output) {
+		contract.metadata.put(ContractVerifierMessageMetadata.METADATA_KEY,
+				new ContractVerifierMessageMetadata(output));
+	}
+
+	private void setupConnection(String destination, YamlContract contract) {
 		if (StringUtils.isEmpty(destination)) {
 			return;
 		}
