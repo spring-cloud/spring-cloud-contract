@@ -59,13 +59,14 @@ response:
         predefined:
 metadata:
   wiremock:
-    "postServeActions": {
-      "webhook": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "body": "{ \"result\": \"SUCCESS\" }",
-        "url": "http://localhost:56299/callback"
+    stubMapping:
+      "postServeActions": {
+        "webhook": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "body": "{ \"result\": \"SUCCESS\" }",
+          "url": "http://localhost:56299/callback"
+        }
       }
-    }

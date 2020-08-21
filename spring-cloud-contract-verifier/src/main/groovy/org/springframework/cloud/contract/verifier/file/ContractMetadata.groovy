@@ -115,6 +115,7 @@ class SingleContractMetadata {
 	final String definedOutputTestContentType
 	final ContentType outputTestContentType
 	final ContentType evaluatedOutputTestContentType
+	String methodName
 	private final boolean http
 
 	SingleContractMetadata(Contract currentContract, ContractMetadata contractMetadata) {
@@ -222,6 +223,13 @@ class SingleContractMetadata {
 	}
 
 	String methodName() {
+		if (this.methodName == null) {
+			this.methodName = calculateMethodName()
+		}
+		return this.methodName
+	}
+
+	private String calculateMethodName() {
 		if (contract.name) {
 			String name = NamesUtil.
 					camelCase(NamesUtil.convertIllegalPackageChars(contract.name))

@@ -722,7 +722,7 @@ name: "post1"
 priority: null
 ignored: false
 inProgress: false
-metadata: null
+metadata: {}
 '''
 			String expectedYaml2 = '''\
 ---
@@ -765,10 +765,18 @@ name: "post2"
 priority: null
 ignored: false
 inProgress: false
-metadata: null
+metadata: {}
 '''
 		when:
-			Map<String, byte[]> strings = converter.store([
+			Map<String, byte[]> strings = converter.store(yamlContracts())
+		then:
+			strings.size() == 2
+			new String(strings["post1.yml"]).trim() == expectedYaml1.trim()
+			new String(strings["post2.yml"]).trim() == expectedYaml2.trim()
+	}
+
+	private List<YamlContract> yamlContracts() {
+		return [
 					new YamlContract(
 							name: "post1",
 							request: new YamlContract.Request(method: "POST", url: "/users/1"),
@@ -777,12 +785,7 @@ metadata: null
 					name: "post2",
 					request: new YamlContract.Request(method: "POST", url: "/users/2"),
 					response: new YamlContract.Response(status: 200)
-			),
-			])
-		then:
-			strings.size() == 2
-			new String(strings["post1.yml"]).trim() == expectedYaml1.trim()
-			new String(strings["post2.yml"]).trim() == expectedYaml2.trim()
+			)]
 	}
 
 	def "should parse messaging contract for [#file]"() {
@@ -1287,6 +1290,23 @@ metadata: null
 			YamlContract yamlContract = yamlContracts.first()
 			yamlContract.request.body == null
 			yamlContract.request.bodyFromFileAsBytes != null
+	}
+
+	def "should read contract from bytes"() {
+		given:
+			Map<String, byte[]> strings = converter.store([new YamlContract(
+							name: "post1",
+							request: new YamlContract.Request(method: "POST", url: "/users/1"),
+							response: new YamlContract.Response(status: 200)
+					)])
+		when:
+			List<YamlContract> yamlContracts = converter.read(strings.values().first())
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.request.method == "POST"
+			yamlContract.request.url == "/users/1"
+			yamlContract.response.status == 200
 	}
 
 	def "should convert REST YAML with XML request and response to DSL"() {

@@ -28,6 +28,7 @@ import org.mockito.ArgumentMatchers;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -36,7 +37,10 @@ import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
+import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 import org.springframework.util.Assert;
 
 import static org.mockito.Matchers.eq;
@@ -96,7 +100,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
 		Message message = org.springframework.amqp.core.MessageBuilder
 				.withBody(((String) payload).getBytes())
 				.andProperties(MessagePropertiesBuilder.newInstance()
@@ -111,7 +116,27 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 			message.getMessageProperties().setReceivedRoutingKey(
 					header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
 		}
-		send(message, destination);
+		send(message, destination, contract);
+	}
+
+	public void mergeMessagePropertiesFromMetadata(YamlContract contract,
+			Message message) {
+		if (contract != null
+				&& contract.metadata.containsKey(AmqpMetadata.METADATA_KEY)) {
+			AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
+			ContractVerifierMessageMetadata messageMetadata = ContractVerifierMessageMetadata
+					.fromMetadata(contract.metadata);
+			boolean isInput = isInputMessage(messageMetadata);
+			MessageProperties fromMetadata = isInput
+					? amqpMetadata.getInput().getMessageProperties()
+					: amqpMetadata.getOutputMessage().getMessageProperties();
+			MetadataUtil.merge(message.getMessageProperties(), fromMetadata);
+		}
+	}
+
+	public boolean isInputMessage(ContractVerifierMessageMetadata messageMetadata) {
+		return messageMetadata
+				.getMessageType() == ContractVerifierMessageMetadata.MessageType.INPUT;
 	}
 
 	private String header(Map<String, Object> headers, String headerName) {
@@ -130,7 +155,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public void send(Message message, String destination) {
+	public void send(Message message, String destination, YamlContract contract) {
+		mergeMessagePropertiesFromMetadata(contract, message);
 		final String routingKey = message.getMessageProperties().getReceivedRoutingKey();
 		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor
 				.getListenerContainersForDestination(destination, routingKey);
@@ -178,7 +204,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
 		ArgumentCaptor<String> routingKeyCaptor = ArgumentCaptor.forClass(String.class);
 		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination),
@@ -207,8 +234,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public Message receive(String destination) {
-		return receive(destination, 5, TimeUnit.SECONDS);
+	public Message receive(String destination, YamlContract contract) {
+		return receive(destination, 5, TimeUnit.SECONDS, contract);
 	}
 
 }

@@ -23,7 +23,8 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
-		<camel.version>3.3.0</camel.version>
+		<!-- Align it also in Docker image -->
+		<camel.version>3.4.3</camel.version>
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>4.0.9</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
@@ -71,8 +72,8 @@
 
 	<modules>
 		<module>spring-cloud-contract-dependencies</module>
-		<module>docs</module>
 		<module>docker</module>
+		<module>docs</module>
 		<module>spring-cloud-contract-shade</module>
 		<module>spring-cloud-contract-wiremock</module>
 		<module>spring-cloud-contract-verifier</module>

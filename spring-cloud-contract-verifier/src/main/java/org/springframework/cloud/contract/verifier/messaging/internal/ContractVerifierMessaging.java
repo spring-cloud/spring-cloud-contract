@@ -18,6 +18,9 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
@@ -36,12 +39,35 @@ public class ContractVerifierMessaging<M> {
 		this.exchange = exchange;
 	}
 
+	public void send(ContractVerifierMessage message, String destination,
+			@Nullable YamlContract contract) {
+		if (contract != null) {
+			setMessageType(contract, ContractVerifierMessageMetadata.MessageType.INPUT);
+		}
+		this.exchange.send(message.getPayload(), message.getHeaders(), destination,
+				contract);
+	}
+
 	public void send(ContractVerifierMessage message, String destination) {
-		this.exchange.send(message.getPayload(), message.getHeaders(), destination);
+		send(message, destination, null);
+	}
+
+	public ContractVerifierMessage receive(String destination,
+			@Nullable YamlContract contract) {
+		if (contract != null) {
+			setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
+		}
+		return convert(this.exchange.receive(destination, contract));
+	}
+
+	private void setMessageType(YamlContract contract,
+			ContractVerifierMessageMetadata.MessageType output) {
+		contract.metadata.put(ContractVerifierMessageMetadata.METADATA_KEY,
+				new ContractVerifierMessageMetadata(output));
 	}
 
 	public ContractVerifierMessage receive(String destination) {
-		return convert(this.exchange.receive(destination));
+		return receive(destination, null);
 	}
 
 	public <T> ContractVerifierMessage create(T payload, Map<String, Object> headers) {

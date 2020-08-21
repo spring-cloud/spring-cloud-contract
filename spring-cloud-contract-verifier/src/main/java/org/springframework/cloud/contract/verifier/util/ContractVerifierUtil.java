@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +39,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
 import org.springframework.cloud.contract.verifier.util.xml.DOMNamespaceContext;
 
 /**
@@ -48,6 +51,12 @@ import org.springframework.cloud.contract.verifier.util.xml.DOMNamespaceContext;
  * @since 2.1.0
  */
 public final class ContractVerifierUtil {
+
+	/**
+	 * Prefix for the generated test names.
+	 */
+	// TODO: Find a better place for this.
+	public static final String TEST_METHOD_PREFIX = "validate_";
 
 	private static final Log LOG = LogFactory.getLog(ContractVerifierUtil.class);
 
@@ -113,6 +122,34 @@ public final class ContractVerifierUtil {
 			LOG.error("Incorrect xpath provided: " + path, exception);
 			throw new IllegalArgumentException();
 		}
+	}
+
+	/**
+	 * Helper method to convert a file to bytes.
+	 * @param testClass - test class relative to which the file is stored
+	 * @param relativePath - relative path to the file
+	 * @return bytes of the file
+	 * @since 3.0.0
+	 */
+	public static YamlContract contract(Object testClass, String relativePath) {
+		String path = fromRelativePath(relativePath);
+		byte[] bytes = fileToBytes(testClass, path);
+		List<YamlContract> read = new YamlContractConverter().read(bytes);
+		return read.isEmpty() ? null : read.get(0);
+	}
+
+	static String fromRelativePath(String relativePath) {
+		String path = relativePath;
+		if (path.startsWith(TEST_METHOD_PREFIX)) {
+			path = path.substring(TEST_METHOD_PREFIX.length());
+		}
+		if (path.endsWith("()")) {
+			path = path.replace("()", "");
+		}
+		if (!path.endsWith(".yml")) {
+			path = path + ".yml";
+		}
+		return path;
 	}
 
 	/**

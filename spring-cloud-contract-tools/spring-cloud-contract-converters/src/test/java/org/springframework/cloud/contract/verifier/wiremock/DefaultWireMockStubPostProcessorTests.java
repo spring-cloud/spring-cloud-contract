@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.wiremock;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,7 +67,9 @@ class DefaultWireMockStubPostProcessorTests {
 	@Test
 	void should_not_be_applicable_for_invalid_metadata_entry() {
 		Contract contract = new Contract();
-		contract.getMetadata().put("wiremock", 5);
+		Map<String, Object> map = new HashMap<>();
+		map.put("stubMapping", 5);
+		contract.getMetadata().put("wiremock", map);
 
 		then(new DefaultWireMockStubPostProcessor().isApplicable(contract)).isFalse();
 	}
@@ -74,15 +77,17 @@ class DefaultWireMockStubPostProcessorTests {
 	@Test
 	void should_be_applicable_for_valid_metadata_entry() {
 		Contract contract = new Contract();
-		contract.getMetadata().put("wiremock", "foo");
+		Map<String, Object> map = new HashMap<>();
+		map.put("stubMapping", "foo");
+		contract.getMetadata().put("wiremock", map);
 
 		then(new DefaultWireMockStubPostProcessor().isApplicable(contract)).isTrue();
 
-		contract.getMetadata().put("wiremock", new StubMapping());
+		map.put("stubMapping", new StubMapping());
 
 		then(new DefaultWireMockStubPostProcessor().isApplicable(contract)).isTrue();
 
-		contract.getMetadata().put("wiremock", new HashMap<>());
+		map.put("stubMapping", new HashMap<>());
 
 		then(new DefaultWireMockStubPostProcessor().isApplicable(contract)).isTrue();
 	}
@@ -90,7 +95,9 @@ class DefaultWireMockStubPostProcessorTests {
 	@Test
 	void should_merge_stub_mappings_when_stub_mapping_is_string() {
 		Contract contract = new Contract();
-		contract.getMetadata().put("wiremock", POST_SERVE_ACTION);
+		Map<String, Object> map = new HashMap<>();
+		map.put("stubMapping", POST_SERVE_ACTION);
+		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
 		StubMapping result = new DefaultWireMockStubPostProcessor()
@@ -102,7 +109,9 @@ class DefaultWireMockStubPostProcessorTests {
 	@Test
 	void should_merge_stub_mappings_when_stub_mapping_is_stub_mapping() {
 		Contract contract = new Contract();
-		contract.getMetadata().put("wiremock", StubMapping.buildFrom(POST_SERVE_ACTION));
+		Map<String, Object> map = new HashMap<>();
+		map.put("stubMapping", StubMapping.buildFrom(POST_SERVE_ACTION));
+		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
 		StubMapping result = new DefaultWireMockStubPostProcessor()
@@ -115,8 +124,10 @@ class DefaultWireMockStubPostProcessorTests {
 	void should_merge_stub_mappings_when_stub_mapping_is_map()
 			throws JsonProcessingException {
 		Contract contract = new Contract();
-		contract.getMetadata().put("wiremock",
+		Map<String, Object> map = new HashMap<>();
+		map.put("stubMapping",
 				new ObjectMapper().readValue(POST_SERVE_ACTION, HashMap.class));
+		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
 		StubMapping result = new DefaultWireMockStubPostProcessor()
@@ -128,7 +139,9 @@ class DefaultWireMockStubPostProcessorTests {
 	@Test
 	void should_merge_stub_mappings_when_stub_mapping_is_string_and_contains_response() {
 		Contract contract = new Contract();
-		contract.getMetadata().put("wiremock", RESPONSE_DELAY);
+		Map<String, Object> map = new HashMap<>();
+		map.put("stubMapping", RESPONSE_DELAY);
+		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
 		StubMapping result = new DefaultWireMockStubPostProcessor()

@@ -32,7 +32,6 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
-
 /**
  * @author Jakub Kubrynski, codearte.io
  * @author Tim Ysewyn
@@ -43,13 +42,19 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 	OutputCaptureRule capture = new OutputCaptureRule()
 
 	@Shared
-	ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-			assertJsonSize: true
-	)
+	ContractVerifierConfigProperties configProperties = newProps()
+
+	private static ContractVerifierConfigProperties newProps() {
+		new ContractVerifierConfigProperties(
+				assertJsonSize: true,
+				generatedTestResourcesDir: new File("./target/generated-test-resources"),
+				generatedTestSourcesDir: new File("./target/generated-test-sources")
+		)
+	}
 
 	@Shared
 	SingleTestGenerator.GeneratedClassData generatedClassData =
-			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File(".").toPath())
+			new SingleTestGenerator.GeneratedClassData("foo", "com.example", new File("./target/generated-test-sources").toPath())
 
 	@Shared
 	Contract contractDslWithCookiesValue = Contract.make {
@@ -181,9 +186,9 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 	}
 
 	def setup() {
-		properties = new ContractVerifierConfigProperties(
-				assertJsonSize: true
-		)
+		configProperties = newProps()
+		configProperties.generatedTestResourcesDir.mkdirs()
+		configProperties.generatedTestSourcesDir.mkdirs()
 	}
 
 	def 'should generate assertions for simple response body with #methodBuilderName'() {
@@ -213,10 +218,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	private String singleTestGenerator(Contract contractDsl) {
@@ -240,15 +245,11 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 					}
 				})
 			}
-		}.buildClass(properties, [contractMetadata(contractDsls)], "foo", generatedClassData)
-	}
-
-	private GeneratedClassMetaData generatedClassMetaData(Contract contractDsl) {
-		new GeneratedClassMetaData(properties, [contractMetadata([contractDsl])], "foo", generatedClassData)
+		}.buildClass(configProperties, [contractMetadata(contractDsls)], "foo", generatedClassData)
 	}
 
 	ContractMetadata contractMetadata(Collection<Contract> contractDsls) {
-		return new ContractMetadata(new File(".").toPath(), false, 0, null, contractDsls)
+		return new ContractMetadata(new File("./target/").toPath(), false, 0, null, contractDsls)
 	}
 
 	@Issue('#187')
@@ -281,10 +282,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#79')
@@ -319,10 +320,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#79')
@@ -360,10 +361,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#82')
@@ -392,15 +393,15 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | bodyString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """.body('''{\"items\":[\"HOP\"]}''')"""
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | """.body('''{\"items\":[\"HOP\"]}''')"""
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                                                      | '.body("{\\"items\\":[\\"HOP\\"]}")'
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                                                      | '.body("{\\"items\\":[\\"HOP\\"]}")'
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                                                      | '.body("{\\"items\\":[\\"HOP\\"]}")'
 	}
 
@@ -430,10 +431,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName | methodBuilder                                      | bodyString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """.body('''property1=VAL1''')"""
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '.body("property1=VAL1")'
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '.body("property1=VAL1")'
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '.body("property1=VAL1")'
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | """.body('''property1=VAL1''')"""
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '.body("property1=VAL1")'
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '.body("property1=VAL1")'
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '.body("property1=VAL1")'
 	}
 
 	@Issue('185')
@@ -466,10 +467,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate assertions for array in response body with #methodBuilderName'() {
@@ -502,10 +503,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate assertions for array inside response body element with #methodBuilderName'() {
@@ -537,10 +538,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate assertions for nested objects in response body with #methodBuilderName'() {
@@ -572,10 +573,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate regex assertions for map objects in response body with #methodBuilderName'() {
@@ -611,10 +612,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate regex assertions for string objects in response body with #methodBuilderName'() {
@@ -646,10 +647,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue(['#126', '#143'])
@@ -681,10 +682,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate a call with an url path and query parameters with #methodBuilderName'() {
@@ -738,10 +739,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#169')
@@ -796,10 +797,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate test for empty body with #methodBuilderName'() {
@@ -825,10 +826,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | bodyString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ".body('''''')"
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '.body("")'
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '.body("")'
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '.body("")'
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | ".body('''''')"
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '.body("")'
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '.body("")'
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '.body("")'
 	}
 
 	def 'should generate test for String in response body with #methodBuilderName'() {
@@ -856,16 +857,16 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 		where:
 			methodBuilderName | methodBuilder | bodyDefinitionString                                   | bodyEvaluationString
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | 'String responseBody = response.body.asString()'       | "responseBody == 'test'"
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
 	}
 
@@ -904,15 +905,15 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | headerEvaluationString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''response.header("Location") ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | '''response.header("Location") ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                                                      | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                                                      | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                                                      | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
 	}
 
@@ -951,15 +952,15 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | headerEvaluationString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''response.header("Location") ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | '''response.header("Location") ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                                                      | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                                                      | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                                                      | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
 	}
 
@@ -1000,10 +1001,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should work properly with GString url with #methodBuilderName'() {
@@ -1035,13 +1036,13 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
-	def 'should resolve properties in GString with regular expression with #methodBuilderName'() {
+	def 'should resolve configProperties in GString with regular expression with #methodBuilderName'() {
 		given:
 			Contract contractDsl = Contract.make {
 				priority 1
@@ -1077,16 +1078,16 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('42')
 	def 'should not omit the optional field in the test creation with MockMvcSpockMethodBodyBuilder'() {
 		given:
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
@@ -1165,16 +1166,16 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 		where:
 			methodBuilderName | methodBuilder | assertionStrings
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("\\$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 	}
 
@@ -1241,10 +1242,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | bodyString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '"street":"Light Street"'
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '\\"street\\":\\"Light Street\\"'
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '\\"street\\":\\"Light Street\\"'
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '\\"street\\":\\"Light Street\\"'
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | '"street":"Light Street"'
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '\\"street\\":\\"Light Street\\"'
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '\\"street\\":\\"Light Street\\"'
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '\\"street\\":\\"Light Street\\"'
 
 	}
 
@@ -1275,10 +1276,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | bodyString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '"street":"Light Street"'
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '\\"street\\":\\"Light Street\\"'
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '\\"street\\":\\"Light Street\\"'
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '\\"street\\":\\"Light Street\\"'
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | '"street":"Light Street"'
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '\\"street\\":\\"Light Street\\"'
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '\\"street\\":\\"Light Street\\"'
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '\\"street\\":\\"Light Street\\"'
 
 	}
 
@@ -1316,10 +1317,10 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('177')
@@ -1345,11 +1346,11 @@ World.''')
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | bodyString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """'''hello,
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | """'''hello,
 World.'''"""
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '"hello,\\nWorld."'
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '"hello,\\nWorld."'
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '"hello,\\nWorld."'
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '"hello,\\nWorld."'
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '"hello,\\nWorld."'
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '"hello,\\nWorld."'
 	}
 
 	@Issue('180')
@@ -1395,25 +1396,25 @@ World.'''"""
 		where:
 			methodBuilderName | methodBuilder | requestStrings
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 """.param('formParameter', '''"formParameterValue"'''""",
 												 """.param('someBooleanParameter', 'true')""",
 												 """.multiPart('file', 'filename.csv', 'file content'.bytes, 'application/json')"""]
 			"testng"         | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
 												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
 												 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json")']
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
@@ -1460,25 +1461,25 @@ World.'''"""
 		where:
 			methodBuilderName | methodBuilder | requestStrings
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 """.param('formParameter', '''"formParameterValue"'''""",
 												 """.param('someBooleanParameter', 'true')""",
 												 """.multiPart('file', 'filename.csv', 'file content'.bytes)"""]
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
 												 '.multiPart("file", "filename.csv", "file content".getBytes());']
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
 												 '.multiPart("file", "filename.csv", "file content".getBytes())']
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
@@ -1520,19 +1521,19 @@ World.'''"""
 		where:
 			methodBuilderName | methodBuilder | requestStrings
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 """.multiPart('file', 'file', [100, 117, 100, 97] as byte[])"""]
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
 
@@ -1572,25 +1573,25 @@ World.'''"""
 		where:
 			methodBuilderName | methodBuilder | requestStrings
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 """.param('formParameter', '''"formParameterValue"'''""",
 												 """.param('someBooleanParameter', 'true')""",
 												 """.multiPart('file', toString(), 'file content'.bytes)"""]
 			"testng"         | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
 												 '.multiPart("file", toString(), "file content".getBytes());']
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
 												 '.multiPart("file", toString(), "file content".getBytes())']
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 												 '.param("formParameter", "\\"formParameterValue\\"")',
 												 '.param("someBooleanParameter", "true")',
@@ -1634,10 +1635,10 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#216')
@@ -1664,7 +1665,7 @@ World.'''"""
 					)
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
@@ -1729,10 +1730,10 @@ World.'''"""
 			test.contains('''assertThatRejectionReasonIsNull(''')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('262')
@@ -1757,7 +1758,7 @@ World.'''"""
 					}
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
@@ -1795,10 +1796,10 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('266')
@@ -1833,10 +1834,10 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('266')
@@ -1867,10 +1868,10 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('47')
@@ -1897,9 +1898,9 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder                                      | bodyDefinitionString
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '.when().async()'
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '.when().async()'
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '.when().async()'
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | '.when().async()'
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '.when().async()'
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '.when().async()'
 	}
 
 	@Issue('372')
@@ -1931,9 +1932,9 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 	}
 
 	def 'should generate proper test code with array of primitives using #methodBuilderName'() {
@@ -1965,10 +1966,10 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#273')
@@ -1984,7 +1985,7 @@ World.'''"""
 					body(code: 9, message: $(consumer('Wrong credentials'), producer(regex('^(?!\\s*$).+'))))
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 
 			String test = singleTestGenerator(contractDsl)
@@ -2068,7 +2069,7 @@ World.'''"""
 	@Issue('#32')
 	def 'should generate the regular expression for the other side of communication'() {
 		given:
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(dslWithOnlyOneSideForDocs)
 			def strippedTest = test.replace('\n', '').stripIndent().stripMargin()
@@ -2101,7 +2102,7 @@ World.'''"""
 					])
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
@@ -2130,7 +2131,7 @@ World.'''"""
 					])
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
@@ -2188,7 +2189,7 @@ World.'''"""
 					])
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
@@ -2210,7 +2211,7 @@ World.'''"""
 					body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 
 			String test = singleTestGenerator(contractDsl)
@@ -2233,7 +2234,7 @@ World.'''"""
 					body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 
 			String test = singleTestGenerator(contractDsl)
@@ -2264,7 +2265,7 @@ World.'''"""
 					])
 				}
 			}
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
@@ -2368,10 +2369,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
 '''
 		where:
 			methodBuilderName | methodBuilder                                      | endOfLineRegExSymbol
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '\\$'
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '$'
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '$'
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '$'
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | '\\$'
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '$'
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '$'
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '$'
 	}
 
 	@Issue('#162')
@@ -2401,10 +2402,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#173')
@@ -2438,10 +2439,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#172')
@@ -2471,10 +2472,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		where:
 			//order is inverted cause Intellij didn't parse this properly
 			methodBuilderName | methodBuilder                                      | expectedAssertion
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """responseBody == '''{"a":1}\\n{"a":2}'''"""
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | """responseBody == '''{"a":1}\\n{"a":2}'''"""
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
 	}
 
 	@Issue('#443')
@@ -2505,22 +2506,22 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		where:
 			methodBuilderName | methodBuilder | testAssertion
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
 			"testng"         | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile("true|false")""") }
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 	}
 
@@ -2554,10 +2555,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		where:
 			//order is inverted cause Intellij didn't parse this properly
 			methodBuilderName | methodBuilder                                      | expectedAssertion
-			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }| '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }| '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }   | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
 	}
 
 	@Issue('#169')
@@ -2584,22 +2585,22 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		where:
 			methodBuilderName | methodBuilder
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}
 	}
 
@@ -2629,16 +2630,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			!test.contains('assertThatJson(parsedJson).array("[\'foo\']").isEmpty()')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#226')
@@ -2665,22 +2666,22 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		where:
 			methodBuilderName | methodBuilder | requestAssertion                                                                             | responseAssertion
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | { String body -> body.contains("body('''12000''')") }                                        | { String body -> body.contains("responseBody == '12000'") }
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('responseBody == "12000"') }
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 	}
 
@@ -2766,22 +2767,22 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		where:
 			methodBuilderName | methodBuilder | responseAssertion
 			"spock"           | {
-				properties.testFramework = TestFramework.SPOCK
+				configProperties.testFramework = TestFramework.SPOCK
 			}                                 | { String body -> body.contains("""response.header("Authorization") == 'foo secret bar'""") }
 			"testng"          | {
-				properties.testFramework = TestFramework.TESTNG
+				configProperties.testFramework = TestFramework.TESTNG
 			}                                 | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
 			"mockmvc"         | {
-				properties.testMode = TestMode.MOCKMVC
+				configProperties.testMode = TestMode.MOCKMVC
 			}                                 | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String body -> body.contains('''response.getHeaderString("Authorization") == "foo secret bar"''') }
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
 			"webclient"       | {
-				properties.testMode = TestMode.WEBTESTCLIENT
+				configProperties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | { String body -> body.contains('''assertThat(response.header("Authorization")).isEqualTo("foo secret bar");''') }
 	}
 
@@ -2830,16 +2831,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate JUnit assertions with cookies [#methodBuilderName]'() {
@@ -2855,8 +2856,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate JUnit assertions with cookies pattern [#methodBuilderName]'() {
@@ -2873,8 +2874,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should not generate JUnit cookie assertion with absent cookie [#methodBuilderName]'() {
@@ -2888,13 +2889,13 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
 			methodBuilderName | methodBuilder
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	def 'should generate spock assertions with cookies'() {
 		given:
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDslWithCookiesValue)
 		then:
@@ -2907,7 +2908,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 
 	def 'should generate spock assertions with cookies pattern'() {
 		given:
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDslWithCookiesPattern)
 		then:
@@ -2921,7 +2922,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 
 	def 'should not generate spock cookie assertion with absent cookie'() {
 		given:
-			properties.testFramework = TestFramework.SPOCK
+			configProperties.testFramework = TestFramework.SPOCK
 		when:
 			String test = singleTestGenerator(contractDslWithAbsentCookies)
 		then:
@@ -2956,16 +2957,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''assertThatJson(parsedJson).field("['anEmptyMap']").isEmpty()''')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#1139')
@@ -3006,16 +3007,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''$.price", java.math.BigDecimal.class)).isEqualTo("10100.0")''')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#1163')
@@ -3048,16 +3049,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			!test.contains('''{{{request.headers.Content-Type.[0]}}}''')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#1260')
@@ -3120,16 +3121,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			!test.contains('''messagingContractInProgress''')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#1052')
@@ -3157,10 +3158,10 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''23094823904823L''')
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"junit"           | { properties.testFramework = TestFramework.JUNIT }
-			"junit5"          | { properties.testFramework = TestFramework.JUNIT5 }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"junit"           | { configProperties.testFramework = TestFramework.JUNIT }
+			"junit5"          | { configProperties.testFramework = TestFramework.JUNIT5 }
 	}
 
 	@Issue('#1252')
@@ -3192,16 +3193,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			!test.contains("""'toString()'""")
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 
 	@Issue('#1263')
@@ -3240,15 +3241,15 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.findAll("hashCode()").size() == 2
 		where:
 			methodBuilderName | methodBuilder
-			"spock"           | { properties.testFramework = TestFramework.SPOCK }
-			"testng"          | { properties.testFramework = TestFramework.TESTNG }
-			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
 			"jaxrs"           | {
-				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+				configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT
 			}
-			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
 }

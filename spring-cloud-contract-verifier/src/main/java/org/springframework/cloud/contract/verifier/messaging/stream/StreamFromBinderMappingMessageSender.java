@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
@@ -47,12 +48,13 @@ class StreamFromBinderMappingMessageSender implements MessageVerifierSender<Mess
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(this.builder.create(payload, headers), destination);
+	public <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
+		send(this.builder.create(payload, headers), destination, contract);
 	}
 
 	@Override
-	public void send(Message<?> message, String destination) {
+	public void send(Message<?> message, String destination, YamlContract contract) {
 		try {
 			MessageChannel messageChannel = this.context.getBean(this.resolver
 					.resolvedDestination(destination, DefaultChannels.OUTPUT),

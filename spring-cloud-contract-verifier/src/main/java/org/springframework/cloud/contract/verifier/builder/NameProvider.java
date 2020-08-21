@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
+import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
 import org.springframework.util.StringUtils;
 
@@ -33,7 +34,8 @@ class NameProvider {
 	private static final Log log = LogFactory.getLog(NameProvider.class);
 
 	String methodName(SingleContractMetadata singleContractMetadata) {
-		return "validate_" + generateMethodName(singleContractMetadata);
+		return ContractVerifierUtil.TEST_METHOD_PREFIX
+				+ generateMethodName(singleContractMetadata);
 	}
 
 	private String generateMethodName(SingleContractMetadata singleContractMetadata) {

@@ -442,7 +442,7 @@ both for HTTP and messaging.
 ==== Metadata
 
 You can add `metadata` to your contract. Via the metadata you can pass in configuration to extensions. Below you can find
-an example of using the `wiremock` key and value being WireMock's `StubMapping` object. Spring Cloud Contract is able to
+an example of using the `wiremock` key. Its value is a map whose key is `stubMapping` and value being WireMock's `StubMapping` object. Spring Cloud Contract is able to
 patch parts of your generated stub mapping with your custom code. You may want to do that in order to add webhooks, custom
 delays or integrate with third party WireMock extensions.
 
@@ -471,6 +471,8 @@ include::{verifier_core_path}/src/test/resources/contractsToCompile/contract_res
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=metadata,indent=0]
 ----
 ====
+
+You can check the <<contract-metadata-examples>> section for examples of what we support in the metadata section.
 
 [[features-http]]
 == Contracts for HTTP
@@ -2006,3 +2008,10 @@ name of `scenario1` and the three following steps:
 
 You can find more details about WireMock scenarios at
 https://wiremock.org/docs/stateful-behaviour/[https://wiremock.org/docs/stateful-behaviour/].
+
+[[contract-metadata-examples]]
+=== Contract Metadata Examples
+
+In the following sections you can find examples of the supported metadata entries.
+
+include::{project-root}/docs/target/metadata.adoc[indent=0]

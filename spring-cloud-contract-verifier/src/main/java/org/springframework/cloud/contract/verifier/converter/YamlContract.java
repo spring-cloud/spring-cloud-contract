@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.converter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,34 @@ public class YamlContract {
 
 	public boolean inProgress;
 
-	public Map<String, Object> metadata;
+	public Map<String, Object> metadata = new HashMap<>();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		YamlContract that = (YamlContract) o;
+		return ignored == that.ignored && inProgress == that.inProgress
+				&& Objects.equals(this.request, that.request)
+				&& Objects.equals(this.response, that.response)
+				&& Objects.equals(this.input, that.input)
+				&& Objects.equals(this.outputMessage, that.outputMessage)
+				&& Objects.equals(this.description, that.description)
+				&& Objects.equals(this.label, that.label)
+				&& Objects.equals(this.name, that.name)
+				&& Objects.equals(this.priority, that.priority)
+				&& this.metadata.equals(that.metadata);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(request, response, input, outputMessage, description, label,
+				name, priority, ignored, inProgress, metadata);
+	}
 
 	public static class Request {
 

@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
@@ -40,23 +41,25 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		this.sender.send(payload, headers, destination);
+	public <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
+		this.sender.send(payload, headers, destination, contract);
 	}
 
 	@Override
-	public void send(Message<?> message, String destination) {
-		this.sender.send(message, destination);
+	public void send(Message<?> message, String destination, YamlContract contract) {
+		this.sender.send(message, destination, contract);
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
-		return this.receiver.receive(destination, timeout, timeUnit);
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
+		return this.receiver.receive(destination, timeout, timeUnit, contract);
 	}
 
 	@Override
-	public Message<?> receive(String destination) {
-		return this.receiver.receive(destination);
+	public Message<?> receive(String destination, YamlContract contract) {
+		return this.receiver.receive(destination, contract);
 	}
 
 }

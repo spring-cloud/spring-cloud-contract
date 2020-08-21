@@ -137,6 +137,14 @@ class SingleTestGeneratorSpec extends Specification {
 		tmp = tmpFolder.newFolder()
 		File classpath = new File(SingleTestGeneratorSpec.class.getResource('/classpath/').toURI())
 		FileSystemUtils.copyRecursively(classpath, tmp)
+		def resource = SingleTestGeneratorSpec.class.getResource('/request.json')?.toURI()
+		if (resource != null) {
+			new File(resource)?.delete()
+		}
+		resource = SingleTestGeneratorSpec.class.getResource('/response.json')?.toURI()
+		if (resource != null) {
+			new File(resource)?.delete()
+		}
 	}
 
 	private static writeContract(File file) {
@@ -335,7 +343,10 @@ class SingleTestGeneratorSpec extends Specification {
 						}
 		''')
 		and:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+					generatedTestResourcesDir: file.parentFile,
+					generatedTestSourcesDir: file.parentFile
+			)
 			properties.testFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2,
 					convertAsCollection(new File('/'), file))
@@ -982,7 +993,8 @@ class SingleTestGeneratorSpec extends Specification {
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
-					testFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+					testFramework: testFramework,
+					contractsDslDir: contractLocation.parentFile,
 					basePackageForTests: 'a.b',
 					generatedTestSourcesDir: temp,
 					generatedTestResourcesDir: tmpFolder.newFolder()

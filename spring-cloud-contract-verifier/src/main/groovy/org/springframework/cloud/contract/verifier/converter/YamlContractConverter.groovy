@@ -16,12 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
+
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
-
 /**
  * Simple converter from and to a {@link YamlContract} to a collection of {@link Contract}
  *
@@ -68,6 +69,15 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 		return contracts.collectEntries {
 			return [(name(it)):
 							this.mapper.writeValueAsString(it).bytes]
+		}
+	}
+
+	@Override
+	List<YamlContract> read(byte[] bytes) {
+		try {
+			return Collections.singletonList(this.mapper.readValue(bytes, YamlContract))
+		} catch (Exception e) {
+			return this.mapper.readerForListOf(YamlContract.class).readValue(bytes)
 		}
 	}
 

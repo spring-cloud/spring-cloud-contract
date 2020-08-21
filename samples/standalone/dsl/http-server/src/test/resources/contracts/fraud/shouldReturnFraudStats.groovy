@@ -50,13 +50,16 @@ import org.springframework.cloud.contract.spec.Contract
 				contentType("application/json")
 			}
 		}
-		metadata([wiremock: '''\
-	{
-		"response" : {
-			"fixedDelayMilliseconds": 2000
-		}
-	}
-'''
+		metadata([
+			wiremock: [
+				stubMapping: '''\
+					{
+						"response" : {
+							"fixedDelayMilliseconds": 2000
+						}
+					}
+				'''
+				]
 		])
 	}
 	// end::metadata[]

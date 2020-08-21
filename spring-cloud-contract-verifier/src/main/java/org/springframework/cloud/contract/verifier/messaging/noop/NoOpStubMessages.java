@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.noop;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
@@ -27,20 +28,22 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 public class NoOpStubMessages implements MessageVerifier<Object> {
 
 	@Override
-	public void send(Object message, String destination) {
+	public void send(Object message, String destination, YamlContract contract) {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination,
+			YamlContract contract) {
 	}
 
 	@Override
-	public Object receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Object receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		return null;
 	}
 
 	@Override
-	public Object receive(String destination) {
+	public Object receive(String destination, YamlContract contract) {
 		return null;
 	}
 

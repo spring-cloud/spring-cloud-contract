@@ -1,0 +1,17 @@
+# Spring Cloud Contract Verifier Docker Project
+
+## Developer tips
+
+In order to use a new environment variable inside the Gradle script, you need to add it to the `envVars` map together with a description and a default value. Otherwise, any attempt to resolve such an environment variable will lead to an exception being thrown.
+
+If you're referencing any environment variables from inside the Java code please follow the following convention.
+
+```java
+/**
+ * Some description.
+ **/
+@Value("${ENV_VAR_NAME:defaultValue}")
+String envVar;
+```
+
+If you provide Javadocs, we will automatically parse any `@Value` annotated fields and build a table of environment variables with description and default values.

@@ -1,3 +1,5 @@
+import contracts.DocsFromSources
+
 buildscript {
 	repositories {
 		mavenLocal()
@@ -10,13 +12,39 @@ buildscript {
 	}
 
 	dependencies {
-		classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}"
 	}
 }
 
-group = getProp("PROJECT_GROUP") ?: 'com.example'
-version = getProp("PROJECT_VERSION") ?: '0.0.1-SNAPSHOT'
+Map<String, EnvVar> envVars = [
+		PROJECT_GROUP: new EnvVar("Your project's group ID", "com.example"),
+		PROJECT_VERSION: new EnvVar("Your project's version", "0.0.1-SNAPSHOT"),
+		PROJECT_NAME: new EnvVar("Your project's artifact id", "example"),
+		STANDALONE_PROTOCOL: new EnvVar("For standalone version, which additional protocol should be added", ""),
+		PRODUCER_STUBS_CLASSIFIER: new EnvVar("Archive classifier used for generated producer stubs", "stubs"),
+		FAIL_ON_NO_CONTRACTS: new EnvVar("Should the build fail if there are no contracts present?", false),
+		REPO_WITH_BINARIES_URL: new EnvVar("URL of your Artifact Manager (defaults to the default URL of https://jfrog.com/artifactory/[Artifactory] when running locally)", "http://localhost:8081/artifactory/libs-release-local"),
+		REPO_WITH_BINARIES_USERNAME: new EnvVar("(optional) Username when the Artifact Manager is secured", "admin"),
+		REPO_WITH_BINARIES_PASSWORD: new EnvVar("(optional) Password when the Artifact Manager is secured", "password"),
+		PUBLISH_ARTIFACTS: new EnvVar("If set to `true`, publishes the artifact to binary storage", "true"),
+		PUBLISH_ARTIFACTS_OFFLINE: new EnvVar("If set to `true`, publishes the artifacts to local m2", "false"),
+		EXTERNAL_CONTRACTS_GROUP_ID: new EnvVar("Group ID of the project with contracts", "com.example"),
+		EXTERNAL_CONTRACTS_ARTIFACT_ID: new EnvVar("Artifact ID of the project with contracts", ""),
+		EXTERNAL_CONTRACTS_CLASSIFIER: new EnvVar("Classifier of the project with contracts", ""),
+		EXTERNAL_CONTRACTS_VERSION: new EnvVar("Version of the project with contracts. Defautls to an equivalent of picking the latest", "+"),
+		EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL: new EnvVar("URL of your Artifact Manager. It defaults to the value of `REPO_WITH_BINARIES_URL` environment variable and if that is not set, it defaults to `http://localhost:8081/artifactory/libs-release-local`", ""),
+		EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME: new EnvVar("(optional) Username if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL` requires authentication. It defaults to `REPO_WITH_BINARIES_USERNAME`. If that is not set, it defaults to `admin", ""),
+		EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD: new EnvVar("(optional) Password if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL` requires authentication. It defaults to `REPO_WITH_BINARIES_PASSWORD, If that is not set, it defaults to `password", ""),
+		EXTERNAL_CONTRACTS_PATH: new EnvVar("Path to contracts for the given project, inside the project with contracts. Defaults to slash-separated `EXTERNAL_CONTRACTS_GROUP_ID` concatenated with `/` and `EXTERNAL_CONTRACTS_ARTIFACT_ID. For example,\n" +
+				"for group id `cat-server-side.dog` and artifact ID `fish`, would result in `cat/dog/fish` for the contracts path.", ""),
+		EXTERNAL_CONTRACTS_WORK_OFFLINE: new EnvVar("If set to `true`, retrieves the artifact with contracts from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path", "false"),
+		PUBLISH_STUBS_TO_SCM: new EnvVar("If set to `true` will run the task to publish stubs to scm", false),
+		MESSAGING_TYPE: new EnvVar("Type of messaging. Can be either [rabbit] or [kafka].", ""),
+]
+
+group = getProp(envVars, "PROJECT_GROUP") ?: 'com.example'
+version = getProp(envVars, "PROJECT_VERSION") ?: '0.0.1-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -29,21 +57,69 @@ repositories {
 }
 
 apply plugin: 'groovy'
-apply plugin: 'io.spring.dependency-management'
+apply plugin: "io.spring.dependency-management"
+apply plugin: "org.springframework.boot"
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+bootJar.enabled = false
+
+class EnvVar {
+	final Object defaultValue
+	final String description
+
+	EnvVar(String description, Object defaultValue) {
+		this.defaultValue = defaultValue
+		this.description = description
+	}
+
+	boolean equals(o) {
+		if (this.is(o)) {
+			return true
+		}
+		if (getClass() != o.class) {
+			return false
+		}
+		EnvVar envVar = (EnvVar) o
+		if (defaultValue != envVar.defaultValue) {
+			return false
+		}
+		if (description != envVar.description) {
+			return false
+		}
+		return true
+	}
+
+	int hashCode() {
+		int result
+		result = (defaultValue != null ? defaultValue.hashCode() : 0)
+		result = 31 * result + (description != null ? description.hashCode() : 0)
+		return result
 	}
 }
 
 dependencies {
+	testImplementation(platform("org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"))
+	testImplementation(platform("org.apache.camel.springboot:camel-spring-boot-dependencies:${camelVersion}"))
+
+	testImplementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+	testImplementation("org.springframework.amqp:spring-rabbit")
+	testImplementation("org.apache.camel.springboot:camel-spring-boot-starter")
+	testImplementation("org.apache.camel.springboot:camel-kafka-starter")
+	testImplementation("org.apache.camel.springboot:camel-rabbitmq-starter")
+	if (getProp(envVars, "STANDALONE_PROTOCOL")) {
+		testImplementation("org.apache.camel.springboot:camel-${getProp(envVars, "STANDALONE_PROTOCOL")}-starter")
+	}
 }
 
 test {
+	useJUnitPlatform()
+	if (getProp(envVars, "MESSAGING_TYPE") != "") {
+		systemProperty("spring.profiles.active", "messagingtype")
+	} else if (getProp(envVars, "STANDALONE_PROTOCOL") != "") {
+		systemProperty("spring.profiles.active", "standalone")
+	}
 	testLogging {
 		exceptionFormat = 'full'
 		afterSuite { desc, result ->
@@ -58,32 +134,33 @@ test {
 }
 
 contracts {
-	baseClassForTests = "contracts.RestBase"
+	baseClassForTests = "contracts.ContractTestsBase"
 	testMode = "EXPLICIT"
-	stubsSuffix = getProp("PRODUCER_STUBS_CLASSIFIER") ?: "stubs"
-	if (getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
+	stubsSuffix = getProp(envVars, "PRODUCER_STUBS_CLASSIFIER") ?: "stubs"
+	failOnNoContracts = getProp(envVars, "FAIL_ON_NO_CONTRACTS") ?: false
+	if (getProp(envVars, "EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
 		logger.
-				lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
+				lifecycle("Will use an artifact with contracts [${getProp(envVars, "EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp(envVars, "EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
 		// tests - contracts from an artifact
-		contractsPath = getProp("EXTERNAL_CONTRACTS_PATH") ?: ""
-		if (Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) == false) {
+		contractsPath = getProp(envVars, "EXTERNAL_CONTRACTS_PATH") ?: ""
+		if (!Boolean.parseBoolean(getProp(envVars, "EXTERNAL_CONTRACTS_WORK_OFFLINE").toString())) {
 			contractRepository {
-				repositoryUrl = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
-						getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
-				username = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME') ?:
-						getProp('REPO_WITH_BINARIES_USERNAME') ?: 'admin'
-				password = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD') ?:
-						getProp('REPO_WITH_BINARIES_PASSWORD') ?: 'password'
+				repositoryUrl = getProp(envVars, 'EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
+						getProp(envVars, 'REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+				username = getProp(envVars, 'EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME') ?:
+						getProp(envVars, 'REPO_WITH_BINARIES_USERNAME') ?: 'admin'
+				password = getProp(envVars, 'EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD') ?:
+						getProp(envVars, 'REPO_WITH_BINARIES_PASSWORD') ?: 'password'
 			}
 		}
 		contractDependency {
-			groupId = getProp("EXTERNAL_CONTRACTS_GROUP_ID") ?: "com.example"
-			artifactId = getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")
-			delegate.classifier = getProp("EXTERNAL_CONTRACTS_CLASSIFIER") ?: ""
-			delegate.version = getProp("EXTERNAL_CONTRACTS_VERSION") ?: "+"
+			groupId = getProp(envVars, "EXTERNAL_CONTRACTS_GROUP_ID") ?: "com.example"
+			artifactId = getProp(envVars, "EXTERNAL_CONTRACTS_ARTIFACT_ID")
+			delegate.classifier = getProp(envVars, "EXTERNAL_CONTRACTS_CLASSIFIER") ?: ""
+			delegate.version = getProp(envVars, "EXTERNAL_CONTRACTS_VERSION") ?: "+"
 		}
 		contractsMode = Boolean.
-				parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) ? "LOCAL" : "REMOTE"
+				parseBoolean(getProp(envVars, "EXTERNAL_CONTRACTS_WORK_OFFLINE").toString()) ? "LOCAL" : "REMOTE"
 	}
 	else {
 		logger.lifecycle("Will use contracts from the mounted [/contracts] folder")
@@ -107,16 +184,15 @@ task copyOutput(type: Copy) {
 
 test {
 	finalizedBy("copyOutput")
-	useJUnitPlatform()
 }
 
 publishing {
 	repositories {
 		maven {
-			url getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+			url getProp(envVars, 'REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
 			credentials {
-				username getProp('REPO_WITH_BINARIES_USERNAME') ?: 'admin'
-				password getProp('REPO_WITH_BINARIES_PASSWORD') ?: 'password'
+				username getProp(envVars, 'REPO_WITH_BINARIES_USERNAME').toString() ?: 'admin'
+				password getProp(envVars, 'REPO_WITH_BINARIES_PASSWORD').toString() ?: 'password'
 			}
 		}
 	}
@@ -125,8 +201,8 @@ publishing {
 }
 
 // explicitly disable artifacts publication
-boolean publishEnabled = Boolean.parseBoolean(getProp("PUBLISH_ARTIFACTS") ?: "true")
-boolean publishOffline = Boolean.parseBoolean(getProp("PUBLISH_ARTIFACTS_OFFLINE") ?: "false")
+boolean publishEnabled = Boolean.parseBoolean(getProp(envVars, "PUBLISH_ARTIFACTS").toString() ?: "true")
+boolean publishOffline = Boolean.parseBoolean(getProp(envVars, "PUBLISH_ARTIFACTS_OFFLINE").toString() ?: "false")
 publish.setEnabled(publishEnabled)
 publishToMavenLocal.setEnabled(publishOffline)
 
@@ -138,14 +214,17 @@ gradle.taskGraph.whenReady { graph ->
 			findAll { it.name.startsWith("publish") && it.name.endsWith("ToMavenLocal") }*.setEnabled(publishOffline)
 }
 
-if (Boolean.parseBoolean(getProp("PUBLISH_STUBS_TO_SCM"))) {
+if (Boolean.parseBoolean(getProp(envVars, "PUBLISH_STUBS_TO_SCM").toString())) {
 	publish.dependsOn("publishStubsToScm")
 }
 
-String getProp(String propName) {
+Object getProp(Map<String, EnvVar> envVars, String propName) {
+	if (!envVars.containsKey(propName)) {
+		throw new IllegalStateException("You've referenced a property with name [${propName}] but it's not in the list of accepatble props ${envVars.keySet()}")
+	}
 	return hasProperty(propName) ?
 			(getProperty(propName) ?: System.properties[propName]) : System.properties[propName] ?:
-			System.getenv(propName)
+			System.getenv(propName) ?: envVars.get(propName)?.defaultValue
 }
 
 task resolveDependencies {
@@ -157,8 +236,27 @@ task resolveDependencies {
 				config.files
 			}
 			catch (e) {
-				project.logger.info e.message // some cannot be resolved, silentlyish skip them
+				project.logger.info e.message // some cannot be resolved, silently skip them
 			}
 		}
+	}
+}
+
+task dumpAllProps() {
+	doLast {
+		// TODO: Parse the java code for env vars
+		File output = new File("build", "props.adoc")
+		if (!output.exists()) {
+			output.parentFile.mkdirs()
+			output.createNewFile()
+		}
+		String table = """\
+.Docker environment variables
+|===
+|Name | Description | Default
+"""
+		output.text = table + envVars.sort().collect { '|' + it.key + '|' + it.value.description + '|' + it.value.defaultValue }.join("\n") + "\n|==="
+
+		new DocsFromSources(project).buildApplicationEnvVars()
 	}
 }

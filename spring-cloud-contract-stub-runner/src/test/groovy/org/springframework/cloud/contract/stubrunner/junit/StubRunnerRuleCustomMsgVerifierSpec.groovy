@@ -25,6 +25,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+import org.springframework.cloud.contract.verifier.converter.YamlContract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 
 /**
@@ -68,22 +69,22 @@ class StubRunnerRuleCustomMsgVerifierSpec extends Specification {
 	static class MyMessageVerifier implements MessageVerifier {
 
 		@Override
-		void send(Object message, String destination) {
+		void send(Object message, String destination, YamlContract contract) {
 			throw new IllegalStateException("Failed to send a message")
 		}
 
 		@Override
-		Object receive(String destination, long timeout, TimeUnit timeUnit) {
+		Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 			throw new IllegalStateException("Failed to receive a message with timeout")
 		}
 
 		@Override
-		Object receive(String destination) {
+		Object receive(String destination, YamlContract contract) {
 			throw new IllegalStateException("Failed to receive a message")
 		}
 
 		@Override
-		void send(Object payload, Map headers, String destination) {
+		void send(Object payload, Map headers, String destination, YamlContract contract) {
 			throw new IllegalStateException("Failed to send a message with headers")
 		}
 	}

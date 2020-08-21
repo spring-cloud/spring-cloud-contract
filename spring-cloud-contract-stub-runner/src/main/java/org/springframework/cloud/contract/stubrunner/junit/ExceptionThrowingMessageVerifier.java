@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.junit;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
@@ -30,22 +31,24 @@ class ExceptionThrowingMessageVerifier implements MessageVerifier {
 	private static final String EXCEPTION_MESSAGE = "Please provide a custom MessageVerifier to use this feature";
 
 	@Override
-	public void send(Object message, String destination) {
+	public void send(Object message, String destination, YamlContract contract) {
 		throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
 	}
 
 	@Override
-	public Object receive(String destination, long timeout, TimeUnit timeUnit) {
+	public Object receive(String destination, long timeout, TimeUnit timeUnit,
+			YamlContract contract) {
 		throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
 	}
 
 	@Override
-	public Object receive(String destination) {
+	public Object receive(String destination, YamlContract contract) {
 		throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination) {
+	public void send(Object payload, Map headers, String destination,
+			YamlContract contract) {
 		throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
 	}
 

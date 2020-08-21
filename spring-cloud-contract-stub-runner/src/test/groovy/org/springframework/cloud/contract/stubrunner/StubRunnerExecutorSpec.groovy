@@ -22,6 +22,7 @@ import groovy.json.JsonOutput
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
+import org.springframework.cloud.contract.verifier.converter.YamlContract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.util.SocketUtils
 
@@ -168,22 +169,22 @@ class StubRunnerExecutorSpec extends Specification {
 		boolean called
 
 		@Override
-		void send(Object message, String destination) {
+		void send(Object message, String destination, YamlContract contract) {
 
 		}
 
 		@Override
-		Object receive(String destination, long timeout, TimeUnit timeUnit) {
+		Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 			return null
 		}
 
 		@Override
-		Object receive(String destination) {
+		Object receive(String destination, YamlContract contract) {
 			return null
 		}
 
 		@Override
-		void send(Object payload, Map headers, String destination) {
+		void send(Object payload, Map headers, String destination, YamlContract contract) {
 			this.called = true
 			println "Body <${payload}>"
 			assert !payload.toString().contains("cursor")
@@ -201,23 +202,23 @@ class StubRunnerExecutorSpec extends Specification {
 	private class AssertingStubMessages implements MessageVerifier<Object> {
 
 		@Override
-		void send(Object message, String destination) {
+		void send(Object message, String destination, YamlContract contract) {
 			throw new UnsupportedOperationException()
 		}
 
 		@Override
-		<T> void send(T payload, Map<String, Object> headers, String destination) {
+		<T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
 			assert !(JsonOutput.toJson(payload).contains("serverValue"))
 			assert headers.entrySet().every { !(it.value.toString().contains("serverValue")) }
 		}
 
 		@Override
-		Object receive(String destination, long timeout, TimeUnit timeUnit) {
+		Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 			throw new UnsupportedOperationException()
 		}
 
 		@Override
-		Object receive(String destination) {
+		Object receive(String destination, YamlContract contract) {
 			throw new UnsupportedOperationException()
 		}
 

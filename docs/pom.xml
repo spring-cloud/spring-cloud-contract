@@ -44,7 +44,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>schema-generation</id>
+						<id>resource-generation</id>
 						<phase>generate-test-resources</phase>
 						<goals>
 							<goal>test</goal>
@@ -77,6 +77,11 @@
 			<version>${jackson-module-jsonSchema.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-amqp</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -98,6 +103,19 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>generate-docker-env-vars</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<workingDirectory>${maven.multiModuleProjectDirectory}/docker/spring-cloud-contract-docker</workingDirectory>
+									<executable>./build_adocs.sh</executable>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.asciidoctor</groupId>

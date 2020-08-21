@@ -39,7 +39,10 @@ import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 
@@ -60,6 +63,8 @@ class StubRunnerExecutor implements StubFinder {
 	private final List<HttpServerStub> serverStubs;
 
 	private StubServer stubServer;
+
+	private final YamlContractConverter yamlContractConverter = new YamlContractConverter();
 
 	StubRunnerExecutor(AvailablePortScanner portScanner,
 			MessageVerifier<?> contractVerifierMessaging,
@@ -251,12 +256,22 @@ class StubRunnerExecutor implements StubFinder {
 		OutputMessage outputMessage = groovyDsl.getOutputMessage();
 		DslProperty<?> body = outputMessage.getBody();
 		Headers headers = outputMessage.getHeaders();
+		List<YamlContract> yamlContracts = yamlContractConverter
+				.convertTo(Collections.singleton(groovyDsl));
+		YamlContract contract = yamlContracts.get(0);
+		setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
 		// TODO: Json is harcoded here
 		this.contractVerifierMessaging.send(
 				JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(
 						body == null ? null : body.getClientValue())),
 				headers == null ? null : headers.asStubSideMap(),
-				outputMessage.getSentTo().getClientValue());
+				outputMessage.getSentTo().getClientValue(), contract);
+	}
+
+	private void setMessageType(YamlContract contract,
+			ContractVerifierMessageMetadata.MessageType output) {
+		contract.metadata.put(ContractVerifierMessageMetadata.METADATA_KEY,
+				new ContractVerifierMessageMetadata(output));
 	}
 
 	private URL returnStubUrlIfMatches(boolean condition) {
