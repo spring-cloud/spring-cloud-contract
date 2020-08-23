@@ -429,6 +429,13 @@ public class YamlContract {
 
 		public PredefinedRegex predefined;
 
+		public ValueMatcher() {
+		}
+
+		public ValueMatcher(String regex) {
+			this.regex = regex;
+		}
+
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) {
