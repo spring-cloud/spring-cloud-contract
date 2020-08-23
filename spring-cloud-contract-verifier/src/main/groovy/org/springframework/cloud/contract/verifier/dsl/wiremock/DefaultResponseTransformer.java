@@ -3,14 +3,13 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import wiremock.com.github.jknack.handlebars.Helper;
+
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
 
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
-
-import wiremock.com.github.jknack.handlebars.Helper;
-
-/**
+/**.
  * Default implementation of {@link ResponseTemplateTransformer} that contains default set
  * of handlebars helpers
  *
