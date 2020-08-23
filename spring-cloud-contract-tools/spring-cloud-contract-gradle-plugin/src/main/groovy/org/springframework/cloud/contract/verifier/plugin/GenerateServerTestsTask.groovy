@@ -230,7 +230,7 @@ class GenerateServerTestsTask extends DefaultTask {
 
 	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContractsTask) {
 		return new Config(
-				copyContractsTask.flatMap { it.config.copiedContractsFolder },
+				copyContractsTask.flatMap { it.copiedContractsFolder },
 				extension.nameSuffixForTests,
 				extension.basePackageForTests,
 				extension.baseClassForTests,

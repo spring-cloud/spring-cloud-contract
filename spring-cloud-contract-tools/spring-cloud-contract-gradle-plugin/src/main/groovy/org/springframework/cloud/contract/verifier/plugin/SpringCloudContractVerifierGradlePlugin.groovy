@@ -26,9 +26,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
-
 import org.springframework.cloud.contract.verifier.config.TestFramework
-
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -246,12 +244,34 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private TaskProvider<ContractsCopyTask> createAndConfigureCopyContractsTask(ContractVerifierExtension extension) {
-		TaskProvider<ContractsCopyTask> task = project.tasks.register(ContractsCopyTask.TASK_NAME, ContractsCopyTask)
-		task.configure {
-			it.description = "Copies contracts to the output folder"
-			it.group = GROUP_NAME
-			it.config = ContractsCopyTask.fromExtension(extension, buildRootPath(), project)
-		}
+		TaskProvider<ContractsCopyTask> task = project.tasks.register(ContractsCopyTask.TASK_NAME, ContractsCopyTask, { contractsCopyTask ->
+			contractsCopyTask.group = GROUP_NAME
+			contractsCopyTask.description = "Copies contracts to the output folder"
+
+			contractsCopyTask.convertToYaml.convention(extension.convertToYaml)
+			contractsCopyTask.failOnNoContracts.convention(extension.failOnNoContracts)
+			contractsCopyTask.contractsDirectory.convention(extension.contractsDslDir)
+			contractsCopyTask.contractDependency.with {
+				groupId.convention(extension.contractDependency.groupId)
+				artifactId.convention(extension.contractDependency.artifactId)
+				version.convention(extension.contractDependency.version)
+				classifier.convention(extension.contractDependency.classifier)
+				stringNotation.convention(extension.contractDependency.stringNotation)
+			}
+			contractsCopyTask.contractRepository.with {
+				repositoryUrl.convention(extension.contractRepository.repositoryUrl)
+				username.convention(extension.contractRepository.username)
+				password.convention(extension.contractRepository.password)
+				proxyHost.convention(extension.contractRepository.proxyHost)
+				proxyPort.convention(extension.contractRepository.proxyPort)
+			}
+			contractsCopyTask.contractsMode.convention(extension.contractsMode)
+			contractsCopyTask.excludeBuildFolders.convention(extension.excludeBuildFolders)
+			contractsCopyTask.deleteStubsAfterTest.convention(extension.deleteStubsAfterTest)
+
+			contractsCopyTask.copiedContractsFolder.convention(extension.stubsOutputDir.dir(buildRootPath() + File.separator + ContractsCopyTask.CONTRACTS))
+			contractsCopyTask.backupContractsFolder.convention(extension.stubsOutputDir.dir(buildRootPath() + File.separator + ContractsCopyTask.BACKUP))
+		})
 		return task
 	}
 

@@ -74,7 +74,7 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContracts,
 								String root, Project project) {
 		return new Config(
-				contractsDslDir: copyContracts.flatMap { it.config.copiedContractsFolder },
+				contractsDslDir: copyContracts.flatMap { it.copiedContractsFolder },
 				excludedFiles: extension.excludedFiles,
 				excludeBuildFolders: extension.excludeBuildFolders,
 
