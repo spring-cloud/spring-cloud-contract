@@ -216,7 +216,8 @@ abstract class BaseWireMockStubStrategy {
 			jsonOutput = convertValueToJson(convertedMap);
 			return jsonOutput.replaceAll("\\\\\\\\\\\\", "\\\\");
 		}
-		return convertValueToJson(value);
+		String jsonOutput = convertValueToJson(value);
+		return jsonOutput.replaceAll("\\\\\\\\\\\\", "\\\\");
 	}
 
 	/**
