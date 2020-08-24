@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.util
+package org.springframework.cloud.contract.verifier.util;
 
-import groovy.transform.CompileStatic
+import java.util.LinkedHashSet;
 
 /**
- * Represents a set of Strings - set of method calls to assert a JSON
+ * Represents a set of Strings - set of method calls to assert a JSON.
  *
  * @since 1.0.0
  */
-@CompileStatic
-class JsonPaths extends LinkedHashSet<MethodBufferingJsonVerifiable> {
-}
+public class JsonPaths extends LinkedHashSet<MethodBufferingJsonVerifiable> {
 
+}
