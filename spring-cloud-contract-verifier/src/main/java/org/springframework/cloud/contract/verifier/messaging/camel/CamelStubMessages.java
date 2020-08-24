@@ -48,7 +48,6 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 
 	private final ContractVerifierCamelMessageBuilder builder;
 
-
 	public CamelStubMessages(CamelContext context, ProducerTemplate producerTemplate,
 			ConsumerTemplate consumerTemplate) {
 		this.context = context;

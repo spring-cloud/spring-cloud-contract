@@ -55,13 +55,19 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastD
 public class TestGenerator {
 
 	private static final Logger log = LoggerFactory.getLogger(TestGenerator.class);
+
 	private static final String DEFAULT_CLASS_PREFIX = "ContractVerifier";
+
 	private static final String DEFAULT_TEST_PACKAGE = "org.springframework.cloud.contract.verifier.tests";
 
 	private final ContractVerifierConfigProperties configProperties;
+
 	private final AtomicInteger counter = new AtomicInteger();
+
 	private final SingleTestGenerator generator;
+
 	private final FileSaver saver;
+
 	private final ContractFileScanner contractFileScanner;
 
 	public TestGenerator(ContractVerifierConfigProperties configProperties) {

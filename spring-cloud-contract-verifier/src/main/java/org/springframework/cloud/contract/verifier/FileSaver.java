@@ -36,6 +36,7 @@ class FileSaver {
 	private static final Logger log = LoggerFactory.getLogger(FileSaver.class);
 
 	private final File targetDirectory;
+
 	private final String fileExtension;
 
 	FileSaver(File targetDirectory, String fileExtension) {

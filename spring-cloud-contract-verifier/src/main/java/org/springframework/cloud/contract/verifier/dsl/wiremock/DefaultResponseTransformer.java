@@ -25,14 +25,15 @@ import wiremock.com.github.jknack.handlebars.Helper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
 
-/**.
- * Default implementation of {@link ResponseTemplateTransformer} that contains default set
- * of handlebars helpers
+/**
+ * . Default implementation of {@link ResponseTemplateTransformer} that contains default
+ * set of handlebars helpers
  *
  * @author Marcin Grzejszczak
  * @since 1.2.0
  */
 public class DefaultResponseTransformer extends ResponseTemplateTransformer {
+
 	public DefaultResponseTransformer() {
 		super(false, defaultHelpers());
 	}

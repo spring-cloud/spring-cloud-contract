@@ -47,7 +47,9 @@ public class BaseImportProvider {
 			Arrays.asList(
 					"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat",
 					"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*"));
+
 	private static final Map<TestFramework, String> RULE_IMPORT;
+
 	private static final Map<TestFramework, ImportDefinitions> TEST_FRAMEWORK_SPECIFIC_IMPORTS;
 
 	static {
