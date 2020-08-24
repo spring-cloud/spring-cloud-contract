@@ -24,6 +24,7 @@
 		<spring-cloud-contract.version>3.0.0-SNAPSHOT
 		</spring-cloud-contract.version>
 		<spring-cloud-release.version>2020.0.0-SNAPSHOT</spring-cloud-release.version>
+		<reactor.version>2020.0.0-SNAPSHOT</reactor.version>
 	</properties>
 
 	<dependencies>
@@ -75,6 +76,14 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud-release.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- TODO: This should not be set manually -->
+			<dependency>
+				<groupId>io.projectreactor</groupId>
+				<artifactId>reactor-bom</artifactId>
+				<version>${reactor.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

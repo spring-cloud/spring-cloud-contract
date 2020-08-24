@@ -61,6 +61,8 @@ apply plugin: 'maven-publish'
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+		// TODO: We shouldn't be setting this
+		mavenBom "io.projectreactor:reactor-bom:$reactorBomVersion"
 	}
 }
 

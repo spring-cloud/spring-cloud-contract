@@ -111,6 +111,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<!-- TODO: This should not be set manually -->
 			<dependency>
 				<groupId>io.projectreactor</groupId>
 				<artifactId>reactor-bom</artifactId>
