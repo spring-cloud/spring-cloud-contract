@@ -268,7 +268,7 @@ following code listing shows the `SingleTestGenerator` interface:
 ====
 [source,groovy]
 ----
-include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGenerator.java[indent=0,lines=17..-1]
+include::{verifier_core_path}/src/main/java/org/springframework/cloud/contract/verifier/builder/SingleTestGenerator.java[indent=0,lines=17..-1]
 ----
 ====
 
