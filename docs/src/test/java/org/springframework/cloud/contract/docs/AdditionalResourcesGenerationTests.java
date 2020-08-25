@@ -163,7 +163,7 @@ class AdditionalResourcesGenerationTests {
 			// @formatter:off
 			sb
 				.append("[[metadata-").append(key).append("]]\n")
-				.append("#### Metadata ").append(key).append("\n\n")
+				.append("##### Metadata ").append(key).append("\n\n")
 				.append("* key: `").append(key).append("`").append("\n")
 				.append("* description:\n\n").append(description).append("\n\n")
 				.append("Example:\n\n")
