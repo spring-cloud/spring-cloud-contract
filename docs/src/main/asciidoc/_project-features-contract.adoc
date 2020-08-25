@@ -472,7 +472,9 @@ include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/c
 ----
 ====
 
-You can check the <<contract-metadata-examples>> section for examples of what we support in the metadata section.
+In the following sections you can find examples of the supported metadata entries.
+
+include::{project-root}/docs/target/metadata.adoc[indent=0]
 
 [[features-http]]
 == Contracts for HTTP
@@ -2008,10 +2010,3 @@ name of `scenario1` and the three following steps:
 
 You can find more details about WireMock scenarios at
 https://wiremock.org/docs/stateful-behaviour/[https://wiremock.org/docs/stateful-behaviour/].
-
-[[contract-metadata-examples]]
-=== Contract Metadata Examples
-
-In the following sections you can find examples of the supported metadata entries.
-
-include::{project-root}/docs/target/metadata.adoc[indent=0]
