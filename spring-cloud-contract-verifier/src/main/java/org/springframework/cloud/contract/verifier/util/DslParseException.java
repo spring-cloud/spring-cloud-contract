@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.util
-
-import groovy.transform.InheritConstructors
+package org.springframework.cloud.contract.verifier.util;
 
 /**
- * Exception occurring when we're trying to parse the DSL
+ * Exception occurring when we're trying to parse the DSL.
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-@InheritConstructors
-class DslParseException extends RuntimeException {
+public class DslParseException extends RuntimeException {
+
+	public DslParseException(String message) {
+		super(message);
+	}
+
+	public DslParseException(Throwable cause) {
+		super(cause);
+	}
+
 }

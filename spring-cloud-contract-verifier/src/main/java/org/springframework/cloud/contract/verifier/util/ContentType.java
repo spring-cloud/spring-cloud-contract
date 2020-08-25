@@ -14,25 +14,48 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.util
+package org.springframework.cloud.contract.verifier.util;
+
 /**
  * Represents content type. Used to pick the way bodies are parsed.
  *
  * @since 1.0.0
  */
-enum ContentType {
+public enum ContentType {
 
+	/**
+	 * application/json.
+	 */
 	JSON("application/json"),
+	/**
+	 * application/xml.
+	 */
 	XML("application/xml"),
+	/**
+	 * text/plain.
+	 */
 	TEXT("text/plain"),
+	/**
+	 * application/x-www-form-urlencoded.
+	 */
 	FORM("application/x-www-form-urlencoded"),
-	// the content-type was defined and we don't want to override it
+	/**
+	 * The content-type was defined and we don't want to override it.
+	 */
 	DEFINED(""),
-	UNKNOWN("application/octet-stream")
+	/**
+	 * application/octet-stream.
+	 */
+	UNKNOWN("application/octet-stream");
 
-	final String mimeType
+	private final String mimeType;
 
 	ContentType(String mimeType) {
-		this.mimeType = mimeType
+		this.mimeType = mimeType;
 	}
+
+	public final String getMimeType() {
+		return mimeType;
+	}
+
 }
