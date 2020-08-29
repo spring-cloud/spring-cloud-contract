@@ -157,6 +157,9 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		TaskProvider<Task> task = stubsTask()
 		if (task) {
 			// How is this possible? Where can it come from?
+			// TODO: This can only happen if one of the following is true:
+			//   1) plugin was applied twice (allprojects/subprojects/standard apply)
+			//   2) Another task with the same name exists, but was not provided by this plugin
 			project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!")
 		}
 		else {
@@ -235,11 +238,11 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		task.configure {
 			it.description = "Creates the stubs JAR task"
 			it.group = GROUP_NAME
-			it.getArchiveBaseName().set(project.name)
-			it.getArchiveClassifier().set(extension.stubsSuffix)
-			it.from { extension.stubsOutputDir }
+			it.getArchiveBaseName().convention(project.provider { project.name })
+			it.getArchiveClassifier().convention(extension.stubsSuffix)
+			it.from(generateClientStubs.flatMap { it.stubsOutputDir })
 
-			it.dependsOn generateClientStubs
+			it.dependsOn(generateClientStubs)
 		}
 		project.artifacts {
 			archives task
