@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.plugin
+package org.springframework.cloud.contract.verifier.plugin;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
-import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskProvider
-import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter
+import org.gradle.api.DefaultTask;
+import org.gradle.api.file.Directory;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
+import org.gradle.api.tasks.TaskAction;
+import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.util.List;
 
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
@@ -37,62 +40,61 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
  *
  * @author Marcin Grzejszczak
  * @author Anatoliy Balakirev
+ * @author Shannon Pamperl
  * @since 2.0.0
  */
-@CompileStatic
 class GenerateClientStubsFromDslTask extends DefaultTask {
 
-	static final String TASK_NAME = 'generateClientStubs'
-	private static final String DEFAULT_MAPPINGS_FOLDER = 'mappings'
-	@Nested
-	Config config
+	static final String TASK_NAME = "generateClientStubs";
+	static final String DEFAULT_MAPPINGS_FOLDER = "mappings";
 
-	static class Config {
-		@InputDirectory
-		Provider<Directory> contractsDslDir
-		@Input
-		ListProperty<String> excludedFiles
-		@Input
-		Provider<Boolean> excludeBuildFolders
+	private Property<Directory> contractsDslDir;
 
-		@OutputDirectory
-		Provider<Directory> stubsOutputDir
+	private ListProperty<String> excludedFiles;
+
+	private Property<Boolean> excludeBuildFolders;
+
+	private DirectoryProperty stubsOutputDir;
+
+	@Inject
+	GenerateClientStubsFromDslTask(ObjectFactory objects) {
+		contractsDslDir = objects.directoryProperty();
+		excludedFiles = objects.listProperty(String.class);
+		excludeBuildFolders = objects.property(Boolean.class);
+
+		stubsOutputDir = objects.directoryProperty();
 	}
 
 	@TaskAction
 	void generate() {
-		File output = config.stubsOutputDir.get().asFile
-		logger.info("Stubs output dir [${output}")
-		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion")
-		logger.info("Contracts dir is [${config.contractsDslDir.get().asFile}] output stubs dir is [${output}]")
-		List<String> excludedFiles = config.excludedFiles.get()
+		File output = stubsOutputDir.get().getAsFile();
+		getLogger().info("Stubs output dir [{}]", output);
+		getLogger().info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion");
+		getLogger().info("Contracts dir is [{}] output stubs dir is [{}]", contractsDslDir.get().getAsFile(), output);
+		List<String> excludedFiles = this.excludedFiles.get();
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(output,
-				config.contractsDslDir.get().asFile, excludedFiles, ".*", config.excludeBuildFolders.get())
-		converter.processFiles()
+				contractsDslDir.get().getAsFile(), excludedFiles, ".*", excludeBuildFolders.get());
+		converter.processFiles();
 	}
 
-	static Config fromExtension(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContracts,
-								String root, Project project) {
-		return new Config(
-				contractsDslDir: copyContracts.flatMap { it.copiedContractsFolder },
-				excludedFiles: extension.excludedFiles,
-				excludeBuildFolders: extension.excludeBuildFolders,
-
-				stubsOutputDir: createTaskOutput(root, extension.stubsOutputDir, project)
-		)
+	@InputDirectory
+	@PathSensitive(PathSensitivity.RELATIVE)
+	public Property<Directory> getContractsDslDir() {
+		return contractsDslDir;
 	}
 
-	private static DirectoryProperty createTaskOutput(String root, DirectoryProperty stubsOutputDir, Project project) {
-		Provider<Directory> provider = stubsOutputDir.flatMap {
-			Directory dir = it
-			File output = new File(dir.asFile, "${root}/${DEFAULT_MAPPINGS_FOLDER}")
+	@Input
+	public ListProperty<String> getExcludedFiles() {
+		return excludedFiles;
+	}
 
-			DirectoryProperty property = project.objects.directoryProperty();
-			property.set(output)
-			return property
-		}
-		DirectoryProperty property = project.objects.directoryProperty();
-		property.set(provider)
-		return property
+	@Input
+	public Property<Boolean> getExcludeBuildFolders() {
+		return excludeBuildFolders;
+	}
+
+	@OutputDirectory
+	public Property<Directory> getStubsOutputDir() {
+		return stubsOutputDir;
 	}
 }

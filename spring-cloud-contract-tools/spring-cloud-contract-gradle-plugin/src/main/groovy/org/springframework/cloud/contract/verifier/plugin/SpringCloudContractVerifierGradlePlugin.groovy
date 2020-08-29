@@ -136,14 +136,18 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private TaskProvider<GenerateClientStubsFromDslTask> createAndConfigureGenerateClientStubs(ContractVerifierExtension extension,
 			TaskProvider<ContractsCopyTask> copyContracts) {
-		TaskProvider<GenerateClientStubsFromDslTask> task = project.tasks.register(GenerateClientStubsFromDslTask.TASK_NAME, GenerateClientStubsFromDslTask)
-		task.configure {
-			it.description = "Generate client stubs from the contracts"
-			it.group = GROUP_NAME
-			it.config = GenerateClientStubsFromDslTask.fromExtension(extension, copyContracts, buildRootPath(), project)
+		TaskProvider<GenerateClientStubsFromDslTask> task = project.tasks.register(GenerateClientStubsFromDslTask.TASK_NAME, GenerateClientStubsFromDslTask, { generateClientStubs ->
+			generateClientStubs.group = GROUP_NAME
+			generateClientStubs.description = "Generate client stubs from the contracts"
 
-			it.dependsOn copyContracts
-		}
+			generateClientStubs.contractsDslDir.convention(copyContracts.flatMap { it.copiedContractsFolder })
+			generateClientStubs.excludedFiles.convention(extension.excludedFiles)
+			generateClientStubs.excludeBuildFolders.convention(extension.excludeBuildFolders)
+
+			generateClientStubs.stubsOutputDir.convention(extension.stubsOutputDir.dir(buildRootPath() + File.separator + GenerateClientStubsFromDslTask.DEFAULT_MAPPINGS_FOLDER))
+
+			generateClientStubs.dependsOn(copyContracts)
+		})
 		return task
 	}
 
