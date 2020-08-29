@@ -110,13 +110,30 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private void createGenerateTestsTask(ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContracts) {
 		TaskProvider<GenerateServerTestsTask> task = project.tasks.register(GenerateServerTestsTask.TASK_NAME, GenerateServerTestsTask)
-		task.configure {
-			it.description = "Generate server tests from the contracts"
-			it.group = GROUP_NAME
-			it.enabled = !project.gradle.startParameter.excludedTaskNames.contains("test")
-			it.config = GenerateServerTestsTask.fromExtension(extension, copyContracts)
+		task.configure {generateServerTestsTask ->
+			generateServerTestsTask.description = "Generate server tests from the contracts"
+			generateServerTestsTask.group = GROUP_NAME
+			generateServerTestsTask.enabled = !project.gradle.startParameter.excludedTaskNames.contains("test")
 
-			it.dependsOn copyContracts
+			generateServerTestsTask.contractsDslDir.convention(copyContracts.flatMap { it.copiedContractsFolder })
+			generateServerTestsTask.nameSuffixForTests.convention(extension.nameSuffixForTests)
+			generateServerTestsTask.basePackageForTests.convention(extension.basePackageForTests)
+			generateServerTestsTask.baseClassForTests.convention(extension.baseClassForTests)
+			generateServerTestsTask.packageWithBaseClasses.convention(extension.packageWithBaseClasses)
+			generateServerTestsTask.excludedFiles.convention(extension.excludedFiles)
+			generateServerTestsTask.ignoredFiles.convention(extension.ignoredFiles)
+			generateServerTestsTask.includedFiles.convention(extension.includedFiles)
+			generateServerTestsTask.imports.convention(extension.imports)
+			generateServerTestsTask.staticImports.convention(extension.staticImports)
+			generateServerTestsTask.testMode.convention(extension.testMode)
+			generateServerTestsTask.testFramework.convention(extension.testFramework)
+			generateServerTestsTask.baseClassMappings.convention(extension.baseClassMappings.getBaseClassMappings())
+			generateServerTestsTask.assertJsonSize.convention(extension.assertJsonSize)
+			generateServerTestsTask.failOnInProgress.convention(extension.failOnInProgress)
+			generateServerTestsTask.generatedTestSourcesDir.convention(extension.generatedTestSourcesDir)
+			generateServerTestsTask.generatedTestResourcesDir.convention(extension.generatedTestResourcesDir)
+
+			generateServerTestsTask.dependsOn(copyContracts)
 		}
 		project.tasks.findByName("compileTestJava").dependsOn(task)
 		project.tasks.findByName("check").dependsOn(task)
