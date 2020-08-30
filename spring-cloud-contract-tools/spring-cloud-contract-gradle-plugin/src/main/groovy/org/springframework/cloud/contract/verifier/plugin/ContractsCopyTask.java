@@ -16,6 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.File;
+
+import javax.inject.Inject;
+
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
@@ -41,9 +45,6 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 import org.springframework.util.StringUtils;
 
-import javax.inject.Inject;
-import java.io.File;
-
 // TODO: Convert to incremental task: https://docs.gradle.org/current/userguide/custom_tasks.html#incremental_tasks
 /**
  * Task that copies the contracts in order for the jar task to
@@ -62,32 +63,32 @@ class ContractsCopyTask extends DefaultTask {
 	static final String BACKUP = "original";
 
 	// inputs
-	private Property<Boolean> convertToYaml;
+	private final Property<Boolean> convertToYaml;
 
-	private Property<Boolean> failOnNoContracts;
+	private final Property<Boolean> failOnNoContracts;
 
-	private DirectoryProperty contractsDirectory;
+	private final DirectoryProperty contractsDirectory;
 
-	private Dependency contractDependency;
+	private final Dependency contractDependency;
 
-	private Repository contractRepository;
+	private final Repository contractRepository;
 
-	private Property<StubRunnerProperties.StubsMode> contractsMode;
+	private final Property<StubRunnerProperties.StubsMode> contractsMode;
 
-	private MapProperty<String, String> contractsProperties;
+	private final MapProperty<String, String> contractsProperties;
 
-	private Property<String> contractsPath;
+	private final Property<String> contractsPath;
 
 	// FIXME: I don't think this makes sense given the default configuration... This would only make sense if contractDir == project.projectDir
-	private Property<Boolean> excludeBuildFolders;
+	private final Property<Boolean> excludeBuildFolders;
 
 	// FIXME: deleting the stubs after tests breaks incremental builds
-	private Property<Boolean> deleteStubsAfterTest;
+	private final Property<Boolean> deleteStubsAfterTest;
 
 	// outputs
-	private DirectoryProperty copiedContractsFolder;
+	private final DirectoryProperty copiedContractsFolder;
 
-	private DirectoryProperty backupContractsFolder;
+	private final DirectoryProperty backupContractsFolder;
 
 	@Inject
 	public ContractsCopyTask(ObjectFactory objects) {
@@ -97,6 +98,8 @@ class ContractsCopyTask extends DefaultTask {
 		contractDependency = objects.newInstance(Dependency.class);
 		contractRepository = objects.newInstance(Repository.class);
 		contractsMode = objects.property(StubRunnerProperties.StubsMode.class);
+		contractsProperties = objects.mapProperty(String.class, String.class);
+		contractsPath = objects.property(String.class);
 		excludeBuildFolders = objects.property(Boolean.class);
 		deleteStubsAfterTest = objects.property(Boolean.class);
 
@@ -210,37 +213,37 @@ class ContractsCopyTask extends DefaultTask {
 	}
 
 	@Input
-	public Property<Boolean> getConvertToYaml() {
+	Property<Boolean> getConvertToYaml() {
 		return convertToYaml;
 	}
 
 	@Input
-	public Property<Boolean> getFailOnNoContracts() {
+	Property<Boolean> getFailOnNoContracts() {
 		return failOnNoContracts;
 	}
 
 	@InputDirectory
 	@PathSensitive(PathSensitivity.RELATIVE)
-	public DirectoryProperty getContractsDirectory() {
+	DirectoryProperty getContractsDirectory() {
 		return contractsDirectory;
 	}
 
 	@Nested
-	public Dependency getContractDependency() {
+	Dependency getContractDependency() {
 		return contractDependency;
 	}
 
-	class Dependency {
+	static class Dependency {
 		private static final String LATEST_VERSION = "+";
 
-		private Property<String> groupId;
-		private Property<String> artifactId;
-		private Property<String> version;
-		private Property<String> classifier;
-		private Property<String> stringNotation;
+		private final Property<String> groupId;
+		private final Property<String> artifactId;
+		private final Property<String> version;
+		private final Property<String> classifier;
+		private final Property<String> stringNotation;
 
 		@Inject
-		Dependency(ObjectFactory objects) {
+		public Dependency(ObjectFactory objects) {
 			groupId = objects.property(String.class);
 			artifactId = objects.property(String.class);
 			version = objects.property(String.class);
@@ -250,36 +253,36 @@ class ContractsCopyTask extends DefaultTask {
 
 		@Input
 		@Optional
-		public Property<String> getGroupId() {
+		Property<String> getGroupId() {
 			return groupId;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getArtifactId() {
+		Property<String> getArtifactId() {
 			return artifactId;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getVersion() {
+		Property<String> getVersion() {
 			return version;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getClassifier() {
+		Property<String> getClassifier() {
 			return classifier;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getStringNotation() {
+		Property<String> getStringNotation() {
 			return stringNotation;
 		}
 
 		@Internal
-		public StubConfiguration toStubConfiguration() {
+		StubConfiguration toStubConfiguration() {
 			String stringNotation = this.stringNotation.getOrNull();
 			if (StringUtils.hasText(stringNotation)) {
 				// TODO: Is there a reason for the parse, then recreate?
@@ -298,19 +301,19 @@ class ContractsCopyTask extends DefaultTask {
 	}
 
 	@Nested
-	public Repository getContractRepository() {
+	Repository getContractRepository() {
 		return contractRepository;
 	}
 
-	class Repository {
-		private Property<String> repositoryUrl;
-		private Property<String> username;
-		private Property<String> password;
-		private Property<String> proxyHost;
-		private Property<Integer> proxyPort;
+	static class Repository {
+		private final Property<String> repositoryUrl;
+		private final Property<String> username;
+		private final Property<String> password;
+		private final Property<String> proxyHost;
+		private final Property<Integer> proxyPort;
 
 		@Inject
-		Repository(ObjectFactory objects) {
+		public Repository(ObjectFactory objects) {
 			repositoryUrl = objects.property(String.class);
 			username = objects.property(String.class);
 			password = objects.property(String.class);
@@ -320,70 +323,70 @@ class ContractsCopyTask extends DefaultTask {
 
 		@Input
 		@Optional
-		public Property<String> getRepositoryUrl() {
+		Property<String> getRepositoryUrl() {
 			return repositoryUrl;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getUsername() {
+		Property<String> getUsername() {
 			return username;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getPassword() {
+		Property<String> getPassword() {
 			return password;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getProxyHost() {
+		Property<String> getProxyHost() {
 			return proxyHost;
 		}
 
 		@Input
 		@Optional
-		public Property<Integer> getProxyPort() {
+		Property<Integer> getProxyPort() {
 			return proxyPort;
 		}
 	}
 
 	@Input
 	@Optional
-	public Property<StubRunnerProperties.StubsMode> getContractsMode() {
+	Property<StubRunnerProperties.StubsMode> getContractsMode() {
 		return contractsMode;
 	}
 
 	@Input
-	public MapProperty<String, String> getContractsProperties() {
+	MapProperty<String, String> getContractsProperties() {
 		return contractsProperties;
 	}
 
 	@Input
 	@Optional
-	public Property<String> getContractsPath() {
+	Property<String> getContractsPath() {
 		return contractsPath;
 	}
 
 	@Input
-	public Property<Boolean> getExcludeBuildFolders() {
+	Property<Boolean> getExcludeBuildFolders() {
 		return excludeBuildFolders;
 	}
 
 	@Input
-	public Property<Boolean> getDeleteStubsAfterTest() {
+	Property<Boolean> getDeleteStubsAfterTest() {
 		return deleteStubsAfterTest;
 	}
 
 	@OutputDirectory
-	public DirectoryProperty getCopiedContractsFolder() {
+	DirectoryProperty getCopiedContractsFolder() {
 		return copiedContractsFolder;
 	}
 
 	@Optional
 	@OutputDirectory
-	public DirectoryProperty getBackupContractsFolder() {
+	DirectoryProperty getBackupContractsFolder() {
 		return backupContractsFolder;
 	}
 

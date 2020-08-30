@@ -51,26 +51,26 @@ import java.util.List;
 class GenerateServerTestsTask extends DefaultTask {
 	static final String TASK_NAME = "generateContractTests";
 
-	private DirectoryProperty contractsDslDir;
-	private Property<String> nameSuffixForTests;
-	private Property<String> basePackageForTests;
-	private Property<String> baseClassForTests;
-	private Property<String> packageWithBaseClasses;
-	private ListProperty<String> excludedFiles;
-	private ListProperty<String> ignoredFiles;
-	private ListProperty<String> includedFiles;
-	private ListProperty<String> imports;
-	private ListProperty<String> staticImports;
-	private Property<TestMode> testMode;
-	private Property<TestFramework> testFramework;
-	private MapProperty<String, String> baseClassMappings;
-	private Property<Boolean> assertJsonSize;
-	private Property<Boolean> failOnInProgress;
-	private DirectoryProperty generatedTestSourcesDir;
-	private DirectoryProperty generatedTestResourcesDir;
+	private final DirectoryProperty contractsDslDir;
+	private final Property<String> nameSuffixForTests;
+	private final Property<String> basePackageForTests;
+	private final Property<String> baseClassForTests;
+	private final Property<String> packageWithBaseClasses;
+	private final ListProperty<String> excludedFiles;
+	private final ListProperty<String> ignoredFiles;
+	private final ListProperty<String> includedFiles;
+	private final ListProperty<String> imports;
+	private final ListProperty<String> staticImports;
+	private final Property<TestMode> testMode;
+	private final Property<TestFramework> testFramework;
+	private final MapProperty<String, String> baseClassMappings;
+	private final Property<Boolean> assertJsonSize;
+	private final Property<Boolean> failOnInProgress;
+	private final DirectoryProperty generatedTestSourcesDir;
+	private final DirectoryProperty generatedTestResourcesDir;
 
 	@Inject
-	GenerateServerTestsTask(ObjectFactory objects) {
+	public GenerateServerTestsTask(ObjectFactory objects) {
 		this.contractsDslDir = objects.directoryProperty();
 		this.nameSuffixForTests = objects.property(String.class);
 		this.basePackageForTests = objects.property(String.class);

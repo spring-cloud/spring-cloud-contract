@@ -55,22 +55,22 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	static final String TASK_NAME = "publishStubsToScm";
 
-	private ContractRepository contractRepository;
+	private final Repository contractRepository;
 
-	private Property<StubRunnerProperties.StubsMode> contractsMode;
+	private final Property<StubRunnerProperties.StubsMode> contractsMode;
 
 	// FIXME: deleting the stubs after tests breaks incremental builds
-	private Property<Boolean> deleteStubsAfterTest;
+	private final Property<Boolean> deleteStubsAfterTest;
 
-	private Property<Boolean> failOnNoContracts;
+	private final Property<Boolean> failOnNoContracts;
 
-	private MapProperty<String, String> contractsProperties;
+	private final MapProperty<String, String> contractsProperties;
 
-	private DirectoryProperty stubsDir;
+	private final DirectoryProperty stubsDir;
 
 	@Inject
-	PublishStubsToScmTask(ObjectFactory objects) {
-		this.contractRepository = objects.newInstance(ContractRepository.class);
+	public PublishStubsToScmTask(ObjectFactory objects) {
+		this.contractRepository = objects.newInstance(Repository.class);
 		this.contractsMode = objects.property(StubRunnerProperties.StubsMode.class);
 		this.deleteStubsAfterTest = objects.property(Boolean.class);
 		this.failOnNoContracts = objects.property(Boolean.class);
@@ -96,19 +96,19 @@ class PublishStubsToScmTask extends DefaultTask {
 	}
 
 	@Nested
-	ContractRepository getContractRepository() {
+	Repository getContractRepository() {
 		return contractRepository;
 	}
 
-	class ContractRepository {
-		private Property<String> repositoryUrl;
-		private Property<String> username;
-		private Property<String> password;
-		private Property<Integer> proxyPort;
-		private Property<String> proxyHost;
+	static class Repository {
+		private final Property<String> repositoryUrl;
+		private final Property<String> username;
+		private final Property<String> password;
+		private final Property<Integer> proxyPort;
+		private final Property<String> proxyHost;
 
 		@Inject
-		ContractRepository(ObjectFactory objects) {
+		public Repository(ObjectFactory objects) {
 			this.repositoryUrl = objects.property(String.class);
 			this.username = objects.property(String.class);
 			this.password = objects.property(String.class);
@@ -118,31 +118,31 @@ class PublishStubsToScmTask extends DefaultTask {
 
 		@Input
 		@Optional
-		public Property<String> getRepositoryUrl() {
+		Property<String> getRepositoryUrl() {
 			return repositoryUrl;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getUsername() {
+		Property<String> getUsername() {
 			return username;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getPassword() {
+		Property<String> getPassword() {
 			return password;
 		}
 
 		@Input
 		@Optional
-		public Property<Integer> getProxyPort() {
+		Property<Integer> getProxyPort() {
 			return proxyPort;
 		}
 
 		@Input
 		@Optional
-		public Property<String> getProxyHost() {
+		Property<String> getProxyHost() {
 			return proxyHost;
 		}
 	}

@@ -23,14 +23,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.gradle.api.Action;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.ProjectLayout;
@@ -38,11 +33,6 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Nested;
-import org.gradle.api.tasks.Optional;
-
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
@@ -55,100 +45,98 @@ import org.springframework.util.Assert;
  */
 public class ContractVerifierExtension implements Serializable {
 
-	private static final Log log = LogFactory.getLog(ContractVerifierExtension.class);
-
 	/**
 	 * For which unit test library tests should be generated
 	 */
-	private Property<TestFramework> testFramework;
+	private final Property<TestFramework> testFramework;
 
 	/**
 	 * Which mechanism should be used to invoke REST calls during tests
 	 */
-	private Property<TestMode> testMode;
+	private final Property<TestMode> testMode;
 
 	/**
 	 * Base package for generated tests
 	 */
-	private Property<String> basePackageForTests;
+	private final Property<String> basePackageForTests;
 
 	/**
 	 * Class which all generated tests should extend
 	 */
-	private Property<String> baseClassForTests;
+	private final Property<String> baseClassForTests;
 
 	/**
 	 * Suffix for generated test classes, like Spec or Test
 	 */
-	private Property<String> nameSuffixForTests;
+	private final Property<String> nameSuffixForTests;
 
 	/**
 	 * Rule class that should be added to generated tests
 	 */
-	private Property<String> ruleClassForTests;
+	private final Property<String> ruleClassForTests;
 
 	/**
 	 * Patterns that should not be taken into account for processing
 	 */
-	private ListProperty<String> excludedFiles;
+	private final ListProperty<String> excludedFiles;
 
 	/**
 	 * Patterns that should be taken into account for processing
 	 */
-	private ListProperty<String> includedFiles;
+	private final ListProperty<String> includedFiles;
 
 	/**
 	 * Patterns for which generated tests should be @Ignored
 	 */
-	private ListProperty<String> ignoredFiles;
+	private final ListProperty<String> ignoredFiles;
 
 	/**
 	 * Imports that should be added to generated tests
 	 */
-	private ListProperty<String> imports;
+	private final ListProperty<String> imports;
 
 	/**
 	 * Static imports that should be added to generated tests
 	 */
-	private ListProperty<String> staticImports;
+	private final ListProperty<String> staticImports;
 
 	/**
 	 * Directory containing contracts written using the GroovyDSL
 	 */
-	private DirectoryProperty contractsDslDir;
+	private final DirectoryProperty contractsDslDir;
 
 	/**
 	 * Test source directory where tests generated from Groovy DSL should be placed
 	 */
-	private DirectoryProperty generatedTestSourcesDir;
+	private final DirectoryProperty generatedTestSourcesDir;
 
 	/**
 	 * Test resource directory where tests generated from Groovy DSL should be referenced
 	 */
-	private DirectoryProperty generatedTestResourcesDir;
+	private final DirectoryProperty generatedTestResourcesDir;
 
 	/**
 	 * Dir where the generated stubs from Groovy DSL should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
-	private DirectoryProperty stubsOutputDir;
+	private final DirectoryProperty stubsOutputDir;
 
 	/**
 	 * Suffix for the generated Stubs Jar task
 	 */
-	private Property<String> stubsSuffix;
+	private final Property<String> stubsSuffix;
 
 	/**
 	 * Incubating feature. You can check the size of JSON arrays. If not turned on
 	 * explicitly will be disabled.
 	 */
-	private Property<Boolean> assertJsonSize;
+	private final Property<Boolean> assertJsonSize;
 
 	/**
 	 * When enabled, this flag will tell stub runner to throw an exception when no stubs /
 	 * contracts were found.
 	 */
-	private Property<Boolean> failOnNoContracts;
+	private final Property<Boolean> failOnNoContracts;
 
 	/**
 	 * If set to true then if any contracts that are in progress are found, will break the
@@ -156,16 +144,16 @@ public class ContractVerifierExtension implements Serializable {
 	 * contracts in progress and take into consideration that you might be causing false
 	 * positive test execution results on the consumer side.
 	 */
-	private Property<Boolean> failOnInProgress;
+	private final Property<Boolean> failOnInProgress;
 
-	private ContractRepository contractRepository;
+	private final ContractRepository contractRepository;
 
-	private PublishStubsToScm publishStubsToScm;
+	private final PublishStubsToScm publishStubsToScm;
 
 	/**
 	 * Dependency that contains packaged contracts
 	 */
-	private Dependency contractDependency;
+	private final Dependency contractDependency;
 
 	/**
 	 * The path in the JAR with all the contracts where contracts for this particular service lay.
@@ -173,12 +161,12 @@ public class ContractVerifierExtension implements Serializable {
 	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
 	 * {@code /com/example/artifactid}
 	 */
-	private Property<String> contractsPath;
+	private final Property<String> contractsPath;
 
 	/**
 	 * Picks the mode in which stubs will be found and registered
 	 */
-	private Property<StubRunnerProperties.StubsMode> contractsMode;
+	private final Property<StubRunnerProperties.StubsMode> contractsMode;
 
 	/**
 	 * A package that contains all the base clases for generated tests. If your contract resides in a location
@@ -187,7 +175,7 @@ public class ContractVerifierExtension implements Serializable {
 	 * have the package {@code com.example.contracts.base} and name {@code ExampleV1Base}. As you can see
 	 * it will take the two last folders to and attach {@code Base} to its name.
 	 */
-	private Property<String> packageWithBaseClasses;
+	private final Property<String> packageWithBaseClasses;
 
 	/**
 	 * A way to override any base class mappings. The keys are regular expressions on the package name
@@ -197,39 +185,30 @@ public class ContractVerifierExtension implements Serializable {
 	 * When a contract's package matches the provided regular expression then extending class will be the one
 	 * provided in the map - in this case {@code com.example.SomeBaseClass}
 	 */
-	private BaseClassMapping baseClassMappings;
+	private final BaseClassMapping baseClassMappings;
 
 	/**
 	 * If set to true then the {@code target} or {@code build} folders are getting
 	 * excluded from any operations. This is used out of the box when working with
 	 * common repo with contracts.
 	 */
-	private Property<Boolean> excludeBuildFolders;
-
-	/**
-	 * If set to {@code true} will not assert whether the downloaded stubs / contract
-	 * JAR was downloaded from a remote location or a local one(only applicable to Maven repos, not Git or Pact)
-	 *
-	 * @deprecated - with 2.1.0 this option is redundant
-	 */
-	@Deprecated
-	private Property<Boolean> contractsSnapshotCheckSkip;
+	private final Property<Boolean> excludeBuildFolders;
 
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary
 	 * folder after running tests
 	 */
-	private Property<Boolean> deleteStubsAfterTest;
+	private final Property<Boolean> deleteStubsAfterTest;
 
 	/**
 	 * If {@code true} then will convert contracts to a YAML representation
 	 */
-	private Property<Boolean> convertToYaml;
+	private final Property<Boolean> convertToYaml;
 
 	/**
 	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
-	private MapProperty<String, String> contractsProperties;
+	private final MapProperty<String, String> contractsProperties;
 
 	/**
 	 * Is set to true will not provide the default publication task
@@ -237,14 +216,12 @@ public class ContractVerifierExtension implements Serializable {
 	 * @deprecated - with 3.0.0, the user should include stubs with their own publication(s)
 	 */
 	@Deprecated
-	private Property<Boolean> disableStubPublication;
+	private final Property<Boolean> disableStubPublication;
 
 	/**
 	 * Source set where the contracts are stored. If not provided will assume {@code test}.
 	 */
-	private Property<String> sourceSet;
-
-	private final  ObjectFactory objects;
+	private final Property<String> sourceSet;
 
 	@Inject
 	public ContractVerifierExtension(ProjectLayout layout, ObjectFactory objects) {
@@ -275,24 +252,11 @@ public class ContractVerifierExtension implements Serializable {
 		this.packageWithBaseClasses = objects.property(String.class);
 		this.baseClassMappings = objects.newInstance(BaseClassMapping.class);
 		this.excludeBuildFolders = objects.property(Boolean.class).convention(false);
-		this.contractsSnapshotCheckSkip = objects.property(Boolean.class).convention(false);
 		this.deleteStubsAfterTest = objects.property(Boolean.class).convention(true);
 		this.convertToYaml = objects.property(Boolean.class).convention(false);
 		this.contractsProperties = objects.mapProperty(String.class, String.class).convention(new HashMap<>());
 		this.disableStubPublication = objects.property(Boolean.class).convention(true);
 		this.sourceSet = objects.property(String.class);
-		this.objects = objects;
-	}
-
-	@Deprecated
-	public void setTargetFramework(TestFramework targetFramework) {
-		log.warn("Please use the [testFramework] field. This one is deprecated");
-		this.testFramework.set(targetFramework);
-	}
-
-	@Deprecated
-	public TestFramework getTargetFramework() {
-		return getTestFramework().get();
 	}
 
 	public Property<TestFramework> getTestFramework() {
@@ -304,9 +268,7 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public void setTestFramework(String testFramework) {
-		if (testFramework != null) {
-			this.testFramework.set(TestFramework.valueOf(testFramework.toUpperCase()));
-		}
+		this.testFramework.set(TestFramework.valueOf(testFramework.toUpperCase()));
 	}
 
 	public Property<TestMode> getTestMode() {
@@ -318,9 +280,7 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public void setTestMode(String testMode) {
-		if (testMode != null) {
-			this.testMode.set(TestMode.valueOf(testMode.toUpperCase()));
-		}
+		this.testMode.set(TestMode.valueOf(testMode.toUpperCase()));
 	}
 
 	public Property<String> getBasePackageForTests() {
@@ -467,7 +427,6 @@ public class ContractVerifierExtension implements Serializable {
 		this.failOnInProgress.set(failOnInProgress);
 	}
 
-	@Nested
 	public ContractRepository getContractRepository() {
 		return contractRepository;
 	}
@@ -476,7 +435,6 @@ public class ContractVerifierExtension implements Serializable {
 		action.execute(contractRepository);
 	}
 
-	@Nested
 	public PublishStubsToScm getPublishStubsToScm() {
 		return publishStubsToScm;
 	}
@@ -510,9 +468,7 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public void setContractsMode(String contractsMode) {
-		if (contractsMode != null) {
-			this.contractsMode.set(StubRunnerProperties.StubsMode.valueOf(contractsMode.toUpperCase()));
-		}
+		this.contractsMode.set(StubRunnerProperties.StubsMode.valueOf(contractsMode.toUpperCase()));
 	}
 
 	public Property<String> getPackageWithBaseClasses() {
@@ -543,14 +499,6 @@ public class ContractVerifierExtension implements Serializable {
 		this.excludeBuildFolders.set(excludeBuildFolders);
 	}
 
-	public Property<Boolean> getContractsSnapshotCheckSkip() {
-		return contractsSnapshotCheckSkip;
-	}
-
-	public void setContractsSnapshotCheckSkip(boolean contractsSnapshotCheckSkip) {
-		this.contractsSnapshotCheckSkip.set(contractsSnapshotCheckSkip);
-	}
-
 	public Property<Boolean> getDeleteStubsAfterTest() {
 		return deleteStubsAfterTest;
 	}
@@ -575,12 +523,6 @@ public class ContractVerifierExtension implements Serializable {
 		this.contractsProperties.set(contractsProperties);
 	}
 
-	// use standard setter instead
-	@Deprecated
-	public void contractsProperties(Map<String, String> map) {
-		contractsProperties.set(map);
-	}
-
 	@Deprecated
 	public Property<Boolean> getDisableStubPublication() {
 		return disableStubPublication;
@@ -600,11 +542,11 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public static class Dependency implements Serializable {
-		private Property<String> groupId;
-		private Property<String> artifactId;
-		private Property<String> version;
-		private Property<String> classifier;
-		private Property<String> stringNotation;
+		private final Property<String> groupId;
+		private final Property<String> artifactId;
+		private final Property<String> version;
+		private final Property<String> classifier;
+		private final Property<String> stringNotation;
 
 		@Inject
 		public Dependency(ObjectFactory objects) {
@@ -615,8 +557,6 @@ public class ContractVerifierExtension implements Serializable {
 			stringNotation = objects.property(String.class);
 		}
 
-		@Input
-		@Optional
 		public Property<String> getGroupId() {
 			return groupId;
 		}
@@ -625,8 +565,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.groupId.set(groupId);
 		}
 
-		@Input
-		@Optional
 		public Property<String> getArtifactId() {
 			return artifactId;
 		}
@@ -635,8 +573,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.artifactId.set(artifactId);
 		}
 
-		@Input
-		@Optional
 		public Property<String> getVersion() {
 			return version;
 		}
@@ -645,8 +581,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.version.set(version);
 		}
 
-		@Input
-		@Optional
 		public Property<String> getClassifier() {
 			return classifier;
 		}
@@ -655,8 +589,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.classifier.set(classifier);
 		}
 
-		@Input
-		@Optional
 		public Property<String> getStringNotation() {
 			return stringNotation;
 		}
@@ -700,17 +632,11 @@ public class ContractVerifierExtension implements Serializable {
 
 	// This class is used as an input to the tasks, so all fields are marked as `@Input` to allow incremental build
 	public static class ContractRepository implements Serializable {
-		private Property<String> repositoryUrl;
-		private Property<String> username;
-		private Property<String> password;
-		private Property<Integer> proxyPort;
-		private Property<String> proxyHost;
-		/**
-		 * If set to true then will cache the folder where non snapshot contract artifacts got downloaded.
-		 *
-		 * Not used any more, as we switched to Gradle's incremental build.
-		 */
-		private Property<Boolean> cacheDownloadedContracts;
+		private final Property<String> repositoryUrl;
+		private final Property<String> username;
+		private final Property<String> password;
+		private final Property<Integer> proxyPort;
+		private final Property<String> proxyHost;
 
 		@Inject
 		public ContractRepository(ObjectFactory objects) {
@@ -719,11 +645,8 @@ public class ContractVerifierExtension implements Serializable {
 			this.password = objects.property(String.class);
 			this.proxyHost = objects.property(String.class);
 			this.proxyPort = objects.property(Integer.class);
-			this.cacheDownloadedContracts = objects.property(Boolean.class).convention(true);
 		}
 
-		@Input
-		@Optional
 		public Property<String> getRepositoryUrl() {
 			return repositoryUrl;
 		}
@@ -732,14 +655,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.repositoryUrl.set(repositoryUrl);
 		}
 
-		// favor property assignment
-		@Deprecated
-		public void repositoryUrl(String repositoryUrl) {
-			this.repositoryUrl.set(repositoryUrl);
-		}
-
-		@Input
-		@Optional
 		public Property<String> getUsername() {
 			return username;
 		}
@@ -748,14 +663,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.username.set(username);
 		}
 
-		// favor property assignment
-		@Deprecated
-		public void username(String username) {
-			this.username.set(username);
-		}
-
-		@Input
-		@Optional
 		public Property<String> getPassword() {
 			return password;
 		}
@@ -764,14 +671,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.password.set(password);
 		}
 
-		// favor property assignment
-		@Deprecated
-		public void password(String password) {
-			this.password.set(password);
-		}
-
-		@Input
-		@Optional
 		public Property<String> getProxyHost() {
 			return proxyHost;
 		}
@@ -780,14 +679,6 @@ public class ContractVerifierExtension implements Serializable {
 			this.proxyHost.set(proxyHost);
 		}
 
-		// favor property assignment
-		@Deprecated
-		public void proxyHost(String proxyHost) {
-			this.proxyHost.set(proxyHost);
-		}
-
-		@Input
-		@Optional
 		public Property<Integer> getProxyPort() {
 			return proxyPort;
 		}
@@ -795,17 +686,6 @@ public class ContractVerifierExtension implements Serializable {
 		public void setProxyPort(int proxyPort) {
 			Assert.state(0 < proxyPort && proxyPort <= 65536, "Proxy port should be between 1 and 65536");
 			this.proxyPort.set(proxyPort);
-		}
-
-		@Internal
-		@Deprecated
-		public Property<Boolean> getCacheDownloadedContracts() {
-			return cacheDownloadedContracts;
-		}
-
-		@Deprecated
-		public void setCacheDownloadedContracts(boolean cacheDownloadedContracts) {
-			this.cacheDownloadedContracts.set(cacheDownloadedContracts);
 		}
 
 		@Override
@@ -816,7 +696,6 @@ public class ContractVerifierExtension implements Serializable {
 					", password=" + password.getOrNull() +
 					", proxyPort=" + proxyPort.getOrNull() +
 					", proxyHost=" + proxyHost.getOrNull() +
-					", cacheDownloadedContracts=" + cacheDownloadedContracts.get() +
 					'}';
 		}
 	}
@@ -826,9 +705,9 @@ public class ContractVerifierExtension implements Serializable {
 		/**
 		 * Dependency that contains packaged contracts
 		 */
-		private Dependency contractDependency;
+		private final Dependency contractDependency;
 
-		private ContractRepository contractRepository;
+		private final ContractRepository contractRepository;
 
 		@Inject
 		public PublishStubsToScm(ObjectFactory objects) {
@@ -836,7 +715,6 @@ public class ContractVerifierExtension implements Serializable {
 			contractRepository = objects.newInstance(ContractRepository.class);
 		}
 
-		@Nested
 		public Dependency getContractDependency() {
 			return contractDependency;
 		}
@@ -845,7 +723,6 @@ public class ContractVerifierExtension implements Serializable {
 			action.execute(contractDependency);
 		}
 
-		@Nested
 		public ContractRepository getContractRepository() {
 			return contractRepository;
 		}

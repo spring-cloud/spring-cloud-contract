@@ -16,6 +16,11 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.File;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
@@ -29,10 +34,6 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.util.List;
 
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
@@ -57,7 +58,7 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 	private DirectoryProperty stubsOutputDir;
 
 	@Inject
-	GenerateClientStubsFromDslTask(ObjectFactory objects) {
+	public GenerateClientStubsFromDslTask(ObjectFactory objects) {
 		contractsDslDir = objects.directoryProperty();
 		excludedFiles = objects.listProperty(String.class);
 		excludeBuildFolders = objects.property(Boolean.class);
