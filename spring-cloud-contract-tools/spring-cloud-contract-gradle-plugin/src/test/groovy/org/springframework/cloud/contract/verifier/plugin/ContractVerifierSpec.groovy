@@ -48,7 +48,7 @@ class ContractVerifierSpec extends Specification {
 
 	def "should create generateContractTests task"() {
 		expect:
-			project.tasks.named("generateContractTests") != null
+			project.tasks.named("generateContractTests").get() != null
 	}
 
 	def "should configure generateContractTests task as a dependency of the check task"() {
@@ -58,12 +58,12 @@ class ContractVerifierSpec extends Specification {
 
 	def "should create generateClientStubs task"() {
 		expect:
-			project.tasks.named("generateClientStubs") != null
+			project.tasks.named("generateClientStubs").get() != null
 	}
 
 	def "should create verifierStubsJar task"() {
 		expect:
-			project.tasks.named("verifierStubsJar") != null
+			project.tasks.named("verifierStubsJar").get() != null
 	}
 
 	def "should configure generateClientStubs task as a dependency of the verifierStubsJar task"() {
@@ -78,7 +78,7 @@ class ContractVerifierSpec extends Specification {
 
 	def "should create copyContracts task"() {
 		expect:
-			project.tasks.named("copyContracts") != null
+			project.tasks.named("copyContracts").get() != null
 	}
 
 	def "should configure copyContracts task as a dependency of the verifierStubsJar task"() {
@@ -131,5 +131,44 @@ class ContractVerifierSpec extends Specification {
 			}
 		expect:
 			extension
+	}
+
+	def "should property merge scm repository settings for publishing stubs to scm"() {
+		given:
+			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
+			ContractVerifierExtension extension = project.extensions.findByType(ContractVerifierExtension)
+			PublishStubsToScmTask task = project.tasks.findByName(PublishStubsToScmTask.TASK_NAME)
+
+		when:
+			extension.contractRepository.with {
+				repositoryUrl = "https://git.example.com"
+				username = "username"
+				password = "password"
+				proxyHost = "host"
+				proxyPort = 8080
+			}
+
+		then:
+			task.contractRepository.repositoryUrl.get() == "https://git.example.com"
+			task.contractRepository.username.get() == "username"
+			task.contractRepository.password.get() == "password"
+			task.contractRepository.proxyHost.get() == "host"
+			task.contractRepository.proxyPort.get() == 8080
+
+		and:
+			extension.publishStubsToScm.contractRepository.with {
+				repositoryUrl = "https://git2.example.com"
+				username = "username2"
+				password = "password2"
+				proxyHost = "host2"
+				proxyPort = 8081
+			}
+
+		then:
+			task.contractRepository.repositoryUrl.get() == "https://git2.example.com"
+			task.contractRepository.username.get() == "username2"
+			task.contractRepository.password.get() == "password2"
+			task.contractRepository.proxyHost.get() == "host2"
+			task.contractRepository.proxyPort.get() == 8081
 	}
 }
