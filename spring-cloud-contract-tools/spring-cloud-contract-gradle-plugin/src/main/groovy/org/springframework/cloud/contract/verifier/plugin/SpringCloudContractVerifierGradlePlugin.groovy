@@ -26,6 +26,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
@@ -142,12 +143,25 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	private void createAndConfigurePublishStubsToScmTask(ContractVerifierExtension extension,
 			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
 		TaskProvider<PublishStubsToScmTask> task = project.tasks.register(PublishStubsToScmTask.TASK_NAME, PublishStubsToScmTask)
-		task.configure {
-			it.description = "The generated stubs get committed to the SCM repo and pushed to origin"
-			it.group = GROUP_NAME
-			it.config = PublishStubsToScmTask.fromExtension(extension, project.objects)
+		task.configure {publishStubsToScmTask ->
+			publishStubsToScmTask.description = "The generated stubs get committed to the SCM repo and pushed to origin"
+			publishStubsToScmTask.group = GROUP_NAME
 
-			it.dependsOn generateClientStubs
+			ContractVerifierExtension.ContractRepository stubs = extension.publishStubsToScm.contractRepository
+			ContractVerifierExtension.ContractRepository original = extension.contractRepository
+
+			publishStubsToScmTask.contractRepository.repositoryUrl.convention(stubs.repositoryUrl.orElse(original.repositoryUrl))
+			publishStubsToScmTask.contractRepository.username.convention(stubs.username.orElse(original.username))
+			publishStubsToScmTask.contractRepository.password.convention(stubs.password.orElse(original.password))
+			publishStubsToScmTask.contractRepository.proxyHost.convention(stubs.proxyHost.orElse(original.proxyHost))
+			publishStubsToScmTask.contractRepository.proxyPort.convention(stubs.proxyPort.orElse(original.proxyPort))
+			publishStubsToScmTask.contractsMode.convention(extension.contractsMode)
+			publishStubsToScmTask.deleteStubsAfterTest.convention(extension.deleteStubsAfterTest)
+			publishStubsToScmTask.failOnNoContracts.convention(extension.failOnNoContracts)
+			publishStubsToScmTask.contractsProperties.convention(extension.contractsProperties)
+			publishStubsToScmTask.stubsDir.convention(generateClientStubs.flatMap { it.stubsOutputDir })
+
+			publishStubsToScmTask.dependsOn generateClientStubs
 		}
 	}
 
