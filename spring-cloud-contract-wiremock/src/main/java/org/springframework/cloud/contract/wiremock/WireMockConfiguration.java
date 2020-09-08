@@ -33,6 +33,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -78,7 +79,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private Options options;
 
 	@Autowired(required = false)
-	private WireMockConfigurationCustomizer customizer;
+	private ObjectProvider<WireMockConfigurationCustomizer> customizers;
 
 	@Autowired
 	private DefaultListableBeanFactory beanFactory;
@@ -106,8 +107,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 				factory.extensions(new ResponseTemplateTransformer(false));
 			}
 			this.options = factory;
-			if (this.customizer != null) {
-				this.customizer.customize(factory);
+			if (this.customizers != null) {
+				this.customizers.orderedStream()
+						.forEach(customizer -> customizer.customize(factory));
 			}
 		}
 		reRegisterServerWithResetMappings();
