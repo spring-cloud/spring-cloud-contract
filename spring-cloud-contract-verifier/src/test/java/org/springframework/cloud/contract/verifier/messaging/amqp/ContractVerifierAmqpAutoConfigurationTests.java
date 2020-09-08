@@ -18,21 +18,31 @@ package org.springframework.cloud.contract.verifier.messaging.amqp;
 
 import org.junit.Test;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.boot.test.mock.mockito.MockitoPostProcessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * @author Tim Ysewyn
+ * @author Henning Garus
  */
 public class ContractVerifierAmqpAutoConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(RabbitAutoConfiguration.class,
 					ContractVerifierAmqpAutoConfiguration.class,
-					RabbitMockConnectionFactoryAutoConfiguration.class));
+					RabbitMockConnectionFactoryAutoConfiguration.class))
+			// register MockitoPostProcessor manually to perform the SpyBean injection for
+			// ContractVerifierAmqpAutoConfiguration. This is normally done automatically
+			// during test setup
+			.withInitializer(context -> MockitoPostProcessor
+					.register((BeanDefinitionRegistry) context));
 
 	@Test
 	public void shouldNotCreateBeansByDefault() {
@@ -55,7 +65,23 @@ public class ContractVerifierAmqpAutoConfigurationTests {
 
 	@Test
 	public void shouldCreateBeansWhenExplicitlyEnabled() {
-		// TODO
+		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=true")
+				.run((context) -> {
+					assertThat(context.getBeansOfType(SpringAmqpStubMessages.class))
+							.hasSize(1);
+					assertThat(context.getBeansOfType(ContractVerifierHelper.class))
+							.hasSize(1);
+				});
+	}
+
+	@Test
+	public void shouldNotThrowOnSendWhenRabbitTemplateIsTransacted() {
+		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=true")
+				.run(context -> assertThatCode(() -> {
+					RabbitTemplate rabbitTemplate = context.getBean(RabbitTemplate.class);
+					rabbitTemplate.setChannelTransacted(true);
+					rabbitTemplate.convertAndSend("A Message");
+				}).doesNotThrowAnyException());
 	}
 
 }
