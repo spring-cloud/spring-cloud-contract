@@ -23,12 +23,13 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -79,8 +80,11 @@ public class RabbitMockConnectionFactoryAutoConfiguration {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return new CachingConnectionFactory(mockConnectionFactory) {
-
+		return new AbstractConnectionFactory(mockConnectionFactory) {
+			@Override
+			public @NonNull org.springframework.amqp.rabbit.connection.Connection createConnection() {
+				return super.createBareConnection();
+			}
 		};
 	}
 
