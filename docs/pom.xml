@@ -24,8 +24,24 @@
 		<groovy.version>2.5.10</groovy.version>
 	</properties>
 	<build>
-		<sourceDirectory>src/main/asciidoc</sourceDirectory>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/asciidoc</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -75,12 +91,10 @@
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-jsonSchema</artifactId>
 			<version>${jackson-module-jsonSchema.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-amqp</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<profiles>
@@ -113,6 +127,19 @@
 								<configuration>
 									<workingDirectory>${maven.multiModuleProjectDirectory}/docker/spring-cloud-contract-docker</workingDirectory>
 									<executable>./build_adocs.sh</executable>
+								</configuration>
+							</execution>
+							<execution>
+								<id>generate-adoc-resources</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>org.springframework.cloud.contract.docs.Main</mainClass>
+									<arguments>
+										<argument>${maven.multiModuleProjectDirectory}/docs</argument>
+									</arguments>
 								</configuration>
 							</execution>
 						</executions>
