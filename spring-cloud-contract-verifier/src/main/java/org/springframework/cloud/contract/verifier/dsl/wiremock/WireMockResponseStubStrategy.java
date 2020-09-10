@@ -84,7 +84,8 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 					.flatMap(Collection::stream).map(Extension::getName)
 					.toArray(String[]::new);
 		}
-		return new String[] { new DefaultResponseTransformer().getName() };
+		return new String[] { new DefaultResponseTransformer().getName(),
+				SpringCloudContractRequestMatcher.NAME };
 	}
 
 	private void appendHeaders(ResponseDefinitionBuilder builder) {

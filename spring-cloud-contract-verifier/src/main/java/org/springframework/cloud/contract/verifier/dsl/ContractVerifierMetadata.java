@@ -14,47 +14,48 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging.internal;
+package org.springframework.cloud.contract.verifier.dsl;
 
 import java.util.Map;
 
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetadata;
+import org.springframework.lang.NonNull;
 
 /**
- * Metadata representation of the Contract Verifier messaging.
+ * Metadata representation of the Contract Verifier.
  *
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class ContractVerifierMessageMetadata implements SpringCloudContractMetadata {
+public class ContractVerifierMetadata implements SpringCloudContractMetadata {
 
 	/**
 	 * Metadata entry in the contract.
 	 */
-	public static final String METADATA_KEY = "verifierMessage";
+	public static final String METADATA_KEY = "verifier";
 
-	private MessageType messageType;
-
-	public ContractVerifierMessageMetadata(MessageType messageType) {
-		this.messageType = messageType;
+	public ContractVerifierMetadata(String tool) {
+		this.tool = tool;
 	}
 
-	public ContractVerifierMessageMetadata() {
+	public ContractVerifierMetadata() {
 	}
 
-	public MessageType getMessageType() {
-		return this.messageType;
+	private String tool;
+
+	public String getTool() {
+		return this.tool;
 	}
 
-	public void setMessageType(MessageType messageType) {
-		this.messageType = messageType;
+	public void setTool(String tool) {
+		this.tool = tool;
 	}
 
-	public static ContractVerifierMessageMetadata fromMetadata(
-			Map<String, Object> metadata) {
+	@NonNull
+	public static ContractVerifierMetadata fromMetadata(Map<String, Object> metadata) {
 		return MetadataUtil.fromMetadata(metadata, METADATA_KEY,
-				new ContractVerifierMessageMetadata());
+				new ContractVerifierMetadata());
 	}
 
 	@Override
@@ -64,29 +65,7 @@ public class ContractVerifierMessageMetadata implements SpringCloudContractMetad
 
 	@Override
 	public String description() {
-		return "Internal metadata entries used by the framework, related to messaging";
-	}
-
-	/**
-	 * Type of a message.
-	 */
-	public enum MessageType {
-
-		/**
-		 * Setup message.
-		 */
-		SETUP,
-
-		/**
-		 * Input message.
-		 */
-		INPUT,
-
-		/**
-		 * Output message.
-		 */
-		OUTPUT
-
+		return "Metadata entries used by the framework";
 	}
 
 }

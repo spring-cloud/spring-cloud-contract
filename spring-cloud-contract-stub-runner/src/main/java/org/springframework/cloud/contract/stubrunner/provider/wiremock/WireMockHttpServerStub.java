@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
 import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer;
+import org.springframework.cloud.contract.verifier.dsl.wiremock.SpringCloudContractRequestMatcher;
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -92,7 +94,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 		}
 		else {
-			extensions.add(new DefaultResponseTransformer(false, helpers()));
+			extensions.addAll(
+					Arrays.asList(new DefaultResponseTransformer(false, helpers()),
+							new SpringCloudContractRequestMatcher()));
 		}
 		return extensions.toArray(new Extension[extensions.size()]);
 	}
