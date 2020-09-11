@@ -119,7 +119,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
 		then:
 			JSONAssert.assertEquals('''
-{"request":{"url":"/multipart","method":"POST","headers":{"Content-Type":{"matches":"multipart/form-data.*"}},"bodyPatterns":[{"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\".+\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Transfer-Encoding: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n.+\\r\\n--\\\\1.*"}]},"response":{"status":200,"body":"hello","transformers":["response-template"]}}
+{"request":{"url":"/multipart","method":"POST","headers":{"Content-Type":{"matches":"multipart/form-data.*"}},"bodyPatterns":[{"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\".+\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Transfer-Encoding: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n.+\\r\\n--\\\\1.*"}]},"response":{"status":200,"body":"hello","transformers":["response-template", "spring-cloud-contract" ]}}
 ''', json, false)
 		and:
 			StubMapping mapping = stubMappingIsValidWireMockStub(json)
@@ -752,7 +752,7 @@ class DslToWireMockClientConverterSpec extends Specification {
     "headers" : {
       "Content-Type" : "application/json"
     },
-    "transformers" : [ "response-template" ]
+    "transformers" : [ "response-template", "spring-cloud-contract" ]
   }
 }
 '''
@@ -992,7 +992,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		  "CorrelationID" : "11111111-1111-1111-1111-111111111111",
 		  "Content-Type" : "application/json;charset=UTF-8"
 		},
-		"transformers" : [ "response-template" ]
+		"transformers" : [ "response-template", "spring-cloud-contract" ]
 	  },
 	  "priority" : 1
 	}

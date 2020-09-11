@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock
 import java.util.regex.Pattern
 
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.matching.ContentPattern
 import com.github.tomakehurst.wiremock.matching.RequestPattern
@@ -45,6 +46,9 @@ import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.verifier.converter.YamlContract
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
+import org.springframework.cloud.contract.verifier.dsl.ContractVerifierMetadata
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
@@ -52,6 +56,7 @@ import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter
+import org.springframework.util.StringUtils
 
 import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO
 import static org.springframework.cloud.contract.spec.internal.MatchingType.COMMAND
@@ -105,6 +110,28 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return requestPatternBuilder.build()
 	}
 
+	private void appendBody(RequestPatternBuilder requestPatternBuilder) {
+		if (contract.metadata.containsKey(ContractVerifierMetadata.METADATA_KEY)) {
+			ContractVerifierMetadata metadata = ContractVerifierMetadata.fromMetadata(contract.getMetadata())
+			appendSpringCloudContractMatcher(metadata, requestPatternBuilder)
+			if (StringUtils.isEmpty(metadata.getTool())) {
+				doAppendBody(requestPatternBuilder)
+			}
+		}
+		else {
+			doAppendBody(requestPatternBuilder)
+		}
+	}
+
+	private void appendSpringCloudContractMatcher(ContractVerifierMetadata metadata, RequestPatternBuilder requestPatternBuilder) {
+		Parameters parameters = Parameters.one("tool", metadata.getTool() ?: "unknown");
+		YamlContractConverter converter = new YamlContractConverter();
+		List<YamlContract> contracts = converter.convertTo(Collections.singleton(contract));
+		Map<String, byte[]> store = converter.store(contracts);
+		parameters.put("contract", new String(store.entrySet().iterator().next().value))
+		requestPatternBuilder.andMatching(SpringCloudContractRequestMatcher.NAME, parameters)
+	}
+
 	private RequestPatternBuilder appendMethodAndUrl() {
 		if (!request.method) {
 			return null
@@ -115,7 +142,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return RequestPatternBuilder.newRequestPattern(requestMethod, urlPattern)
 	}
 
-	private void appendBody(RequestPatternBuilder requestPattern) {
+	private void doAppendBody(RequestPatternBuilder requestPattern) {
 		if (!request.body) {
 			return
 		}

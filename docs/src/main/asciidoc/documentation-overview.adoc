@@ -111,18 +111,18 @@ link:docker-project.html[Docker]
 Finally, we have a few topics for more advanced users:
 
 * *Customizing the DSL:*
-<<advanced.adoc#contract-dsl-customization, DSL Customization>> |
-<<advanced.adoc#contract-dsl-extending-common-jar, Common JAR>> |
-<<advanced.adoc#contract-dsl-test-dep, Test Dependency>> |
-<<advanced.adoc#contract-dsl-plugin-dep, Plugin Dependency>> |
-<<advanced.adoc#contract-dsl-referencing, Referencing the DSL>>
+<<advanced.html#contract-dsl-customization, DSL Customization>> |
+<<advanced.html#contract-dsl-extending-common-jar, Common JAR>> |
+<<advanced.html#contract-dsl-test-dep, Test Dependency>> |
+<<advanced.html#contract-dsl-plugin-dep, Plugin Dependency>> |
+<<advanced.html#contract-dsl-referencing, Referencing the DSL>>
 * *Customizing WireMock:*
-<<advanced.adoc#customization-wiremock-extension, Extensions>> |
-<<advanced.adoc#customization-wiremock-configuration, Configuration>>
+<<advanced.html#customization-wiremock-extension, Extensions>> |
+<<advanced.html#customization-wiremock-configuration, Configuration>>
 * *Customizing {project-full-name}:*
-<<advanced.adoc#contract-dsl-pluggable-architecture, Pluggable Architecture>> |
-<<advanced.adoc#contract-dsl-custom-contract-converter, Contract Converter>> |
-<<advanced.adoc#contract-dsl-custom-test-generator, Test Generator>> |
-<<advanced.adoc#contract-dsl-custom-stub-generator, Stub Generator>> |
-<<advanced.adoc#contract-dsl-custom-stub-runner, Stub Runner>> |
-<<advanced.adoc#contract-dsl-custom-stub-downloader, Stub Downloader>>
+<<advanced.html#contract-dsl-pluggable-architecture, Pluggable Architecture>> |
+<<advanced.html#contract-dsl-custom-contract-converter, Contract Converter>> |
+<<advanced.html#contract-dsl-custom-test-generator, Test Generator>> |
+<<advanced.html#contract-dsl-custom-stub-generator, Stub Generator>> |
+<<advanced.html#contract-dsl-custom-stub-runner, Stub Runner>> |
+<<advanced.html#contract-dsl-custom-stub-downloader, Stub Downloader>>

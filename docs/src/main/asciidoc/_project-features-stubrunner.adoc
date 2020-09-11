@@ -81,7 +81,7 @@ You can pick from the following options of acquiring stubs:
 - Classpath-scanning solution that searches the classpath with a pattern to retrieve stubs
 - Writing your own implementation of the `org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder` for full customization
 
-The latter example is described in the <<advanced.adoc#customization-custom-stub-runner, Custom Stub Runner>> section.
+The latter example is described in the <<advanced.html#customization-custom-stub-runner, Custom Stub Runner>> section.
 
 [[features-stub-runner-downloading-stub]]
 ===== Downloading Stubs

@@ -439,3 +439,188 @@ Contract.make {
 
 The generated document (formatted in Asciidoc in this case) contains a formatted
 contract. The location of this file would be `index/dsl-contract.adoc`.
+
+[[features-graphql]]
+=== GraphQL
+
+Since https://graphql.org/[GraphQL] is essentially HTTP you can write a contract for it by creating a standard HTTP contract with an additional `metadata` entry with key `verifier` and a mapping `tool=graphql`.
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+
+	request {
+		method(POST())
+		url("/graphql")
+		headers {
+			contentType("application/json")
+		}
+		body('''
+{
+	"query":"query queryName($personName: String!) {\\n  personToCheck(name: $personName) {\\n    name\\n    age\\n  }\\n}\\n\\n\\n\\n",
+	"variables":{"personName":"Old Enough"},
+	"operationName":"queryName"
+}
+''')
+	}
+
+	response {
+		status(200)
+		headers {
+			contentType("application/json")
+		}
+		body('''\
+{
+  "data": {
+    "personToCheck": {
+      "name": "Old Enough",
+      "age": "40"
+    }
+  }
+}
+''')
+	}
+	metadata(verifier: [
+	        tool: "graphql"
+	])
+}
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+---
+request:
+  method: "POST"
+  url: "/graphql"
+  headers:
+    Content-Type: "application/json"
+  body:
+    query: "query queryName($personName: String!) { personToCheck(name: $personName)
+      {         name    age  } }"
+    variables:
+      personName: "Old Enough"
+    operationName: "queryName"
+  matchers:
+    headers:
+      - key: "Content-Type"
+        regex: "application/json.*"
+        regexType: "as_string"
+response:
+  status: 200
+  headers:
+    Content-Type: "application/json"
+  body:
+    data:
+      personToCheck:
+        name: "Old Enough"
+        age: "40"
+  matchers:
+    headers:
+      - key: "Content-Type"
+        regex: "application/json.*"
+        regexType: "as_string"
+name: "shouldRetrieveOldEnoughPerson"
+metadata:
+  verifier:
+    tool: "graphql"
+----
+====
+
+Adding the metadata section will change the way the default, WireMock stub is built. It will now use the Spring Cloud Contract request matcher, so that e.g. the `query` part of the GraphQL request gets compared against the real request by ignoring whitespaces.
+
+[[features-graphql-producer]]
+==== Producer Side Setup
+
+On the producer side your configuration can look as follows.
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <testMode>EXPLICIT</testMode>
+        <baseClassForTests>com.example.BaseClass</baseClassForTests>
+    </configuration>
+</plugin>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+contracts {
+	testMode = "EXPLICIT"
+	baseClassForTests = "com.example.BaseClass"
+}
+----
+====
+
+The base class would set up the applicatoin running on a random port.
+
+====
+[source,java,indent=0,subs="verbatim,attributes"]
+.Base Class
+----
+@SpringBootTest(classes = ProducerApplication.class,
+		properties = "graphql.servlet.websocket.enabled=false",
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public abstract class BaseClass {
+
+	@LocalServerPort int port;
+
+	@BeforeEach
+	public void setup() {
+		RestAssured.baseURI = "http://localhost:" + port;
+	}
+}
+
+----
+====
+
+[[features-graphql-consumer]]
+==== Consumer Side Setup
+
+Example of a consumer side test of the GraphQL API.
+
+====
+[source,java,indent=0,subs="verbatim,attributes"]
+.Consumer Side Test
+----
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+public class BeerControllerGraphQLTest {
+
+	@RegisterExtension
+	static StubRunnerExtension rule = new StubRunnerExtension()
+			.downloadStub("com.example","beer-api-producer-graphql")
+			.stubsMode(StubRunnerProperties.StubsMode.LOCAL);
+
+	private static final String REQUEST_BODY = "{\n"
+			+ "\"query\":\"query queryName($personName: String!) {\\n  personToCheck(name: $personName) {\\n    name\\n    age\\n  }\\n}\","
+			+ "\"variables\":{\"personName\":\"Old Enough\"},\n"
+			+ "\"operationName\":\"queryName\"\n"
+			+ "}";
+
+	@Test
+	public void should_send_a_graphql_request() {
+		ResponseEntity<String> responseEntity = new RestTemplate()
+				.exchange(RequestEntity
+						.post(URI.create("http://localhost:" + rule.findStubUrl("beer-api-producer-graphql").getPort() + "/graphql"))
+						.contentType(MediaType.APPLICATION_JSON)
+						.body(REQUEST_BODY), String.class);
+
+		BDDAssertions.then(responseEntity.getStatusCodeValue()).isEqualTo(200);
+
+	}
+}
+
+----
+====
