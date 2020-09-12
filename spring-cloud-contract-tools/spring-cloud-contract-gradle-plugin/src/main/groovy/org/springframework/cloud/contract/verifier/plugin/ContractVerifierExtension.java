@@ -111,6 +111,16 @@ public class ContractVerifierExtension implements Serializable {
 	private final DirectoryProperty generatedTestSourcesDir;
 
 	/**
+	 * Java test source directory where tests generated from Contract DSL should be placed
+	 */
+	private final DirectoryProperty generatedTestJavaSourcesDir;
+
+	/**
+	 * Groovy test source directory where tests generated from Contract DSL should be placed
+	 */
+	private final DirectoryProperty generatedTestGroovySourcesDir;
+
+	/**
 	 * Test resource directory where tests generated from Groovy DSL should be referenced
 	 */
 	private final DirectoryProperty generatedTestResourcesDir;
@@ -237,8 +247,10 @@ public class ContractVerifierExtension implements Serializable {
 		this.imports = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.staticImports = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.contractsDslDir = objects.directoryProperty().convention(layout.getProjectDirectory().dir("src/test/resources/contracts"));
-		this.generatedTestSourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contracts"));
-		this.generatedTestResourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-resources/contracts"));
+		this.generatedTestSourcesDir = objects.directoryProperty();
+		this.generatedTestJavaSourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contracts/java"));
+		this.generatedTestGroovySourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contracts/groovy"));
+		this.generatedTestResourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-resources/contractTest"));
 		this.stubsOutputDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("stubs"));
 		this.stubsSuffix = objects.property(String.class).convention("stubs");
 		this.assertJsonSize = objects.property(Boolean.class).convention(false);
@@ -371,12 +383,30 @@ public class ContractVerifierExtension implements Serializable {
 		this.contractsDslDir.set(contractsDslDir);
 	}
 
+	@Deprecated
 	public DirectoryProperty getGeneratedTestSourcesDir() {
 		return generatedTestSourcesDir;
 	}
 
+	@Deprecated
 	public void setGeneratedTestSourcesDir(File generatedTestSourcesDir) {
 		this.generatedTestSourcesDir.set(generatedTestSourcesDir);
+	}
+
+	public DirectoryProperty getGeneratedTestJavaSourcesDir() {
+		return generatedTestJavaSourcesDir;
+	}
+
+	public void setGeneratedTestJavaSourcesDir(File generatedTestJavaSourcesDir) {
+		this.generatedTestJavaSourcesDir.set(generatedTestJavaSourcesDir);
+	}
+
+	public DirectoryProperty getGeneratedTestGroovySourcesDir() {
+		return generatedTestGroovySourcesDir;
+	}
+
+	public void setGeneratedTestGroovySourcesDir(File generatedTestGroovySourcesDir) {
+		this.generatedTestGroovySourcesDir.set(generatedTestGroovySourcesDir);
 	}
 
 	public DirectoryProperty getGeneratedTestResourcesDir() {
