@@ -32,6 +32,7 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
@@ -220,7 +221,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			generateClientStubs.getExcludedFiles().convention(extension.getExcludedFiles());
 			generateClientStubs.getExcludeBuildFolders().convention(extension.getExcludeBuildFolders());
 
-			generateClientStubs.getStubsOutputDir().convention(extension.getStubsOutputDir().dir(buildRootPath() + File.separator + GenerateClientStubsFromDslTask.DEFAULT_MAPPINGS_FOLDER));
+			generateClientStubs.getStubsOutputDir().convention(extension.getStubsOutputDir().dir(buildRootPath(GenerateClientStubsFromDslTask.DEFAULT_MAPPINGS_FOLDER)));
 
 			generateClientStubs.dependsOn(copyContracts);
 		});
@@ -339,8 +340,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			contractsCopyTask.getExcludeBuildFolders().convention(extension.getExcludeBuildFolders());
 			contractsCopyTask.getDeleteStubsAfterTest().convention(extension.getDeleteStubsAfterTest());
 
-			contractsCopyTask.getCopiedContractsFolder().convention(extension.getStubsOutputDir().dir(buildRootPath() + File.separator + ContractsCopyTask.CONTRACTS));
-			contractsCopyTask.getBackupContractsFolder().convention(extension.getStubsOutputDir().dir(buildRootPath() + File.separator + ContractsCopyTask.BACKUP));
+			contractsCopyTask.getCopiedContractsFolder().convention(extension.getStubsOutputDir().dir(buildRootPath(ContractsCopyTask.CONTRACTS)));
+			contractsCopyTask.getBackupContractsFolder().convention(extension.getStubsOutputDir().dir(buildRootPath(ContractsCopyTask.BACKUP)));
 		});
 		return task;
 	}
@@ -357,10 +358,19 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		return false;
 	}
 
-	private String buildRootPath() {
-		String groupId = project.getGroup().toString();
-		String artifactId = project.getName();
-		String version = project.getVersion().toString();
-		return "META-INF/" + groupId + "/" + artifactId + "/" + version;
+	private Provider<String> buildRootPath(String path) {
+		return project.provider(() -> {
+			StringBuilder builder = new StringBuilder();
+			builder.append("META-INF")
+					.append(File.separator)
+					.append(project.getGroup())
+					.append(File.separator)
+					.append(project.getName())
+					.append(File.separator)
+					.append(project.getVersion())
+					.append(File.separator)
+					.append(path);
+			return builder.toString();
+		});
 	}
 }
