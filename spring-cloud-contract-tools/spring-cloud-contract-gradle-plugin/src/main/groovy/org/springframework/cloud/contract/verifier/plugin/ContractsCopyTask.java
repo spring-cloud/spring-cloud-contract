@@ -17,9 +17,14 @@
 package org.springframework.cloud.contract.verifier.plugin;
 
 import java.io.File;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
@@ -36,11 +41,13 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.springframework.cloud.contract.stubrunner.ContractDownloader;
+import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
+import org.springframework.cloud.contract.stubrunner.StubRunnerPropertyUtils;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 import org.springframework.util.StringUtils;
@@ -107,6 +114,30 @@ class ContractsCopyTask extends DefaultTask {
 		backupContractsFolder = objects.directoryProperty();
 
 		this.getOutputs().upToDateWhen(task -> !(this.shouldDownloadContracts() && this.getContractDependency().toStubConfiguration().isVersionChanging()));
+		this.doFirst(inner -> {
+			String repositoryUrl = contractRepository.getRepositoryUrl().getOrNull();
+			if (repositoryUrl != null && ScmStubDownloaderBuilder.isProtocolAccepted(repositoryUrl)) {
+				String branch = StubRunnerPropertyUtils.getProperty(contractsProperties.get(), "git.branch");
+				branch = StringUtils.hasText(branch) ? branch : "master";
+				UsernamePasswordCredentialsProvider provider = null;
+				if (StringUtils.hasText(contractRepository.getUsername().get())) {
+					provider = new UsernamePasswordCredentialsProvider(contractRepository.getUsername().get(), contractRepository.getPassword().get());
+				}
+				try {
+					Collection<Ref> refs = Git.lsRemoteRepository()
+							.setRemote(repositoryUrl)
+							.setCredentialsProvider(provider)
+							.call();
+					for (Ref ref : refs) {
+						if (ref.getName().equals(branch) || ref.getName().equals("refs/heads/" + branch) || ref.getName().equals("refs/tags/" + branch)) {
+							contractsProperties.put("git.commit", ref.getObjectId().name());
+						}
+					}
+				} catch (GitAPIException e) {
+					getLogger().warn("Unable to determine git repository commit id");
+				}
+			}
+		});
 	}
 
 	@TaskAction
@@ -285,10 +316,7 @@ class ContractsCopyTask extends DefaultTask {
 		StubConfiguration toStubConfiguration() {
 			String stringNotation = this.stringNotation.getOrNull();
 			if (StringUtils.hasText(stringNotation)) {
-				// TODO: Is there a reason for the parse, then recreate?
-				StubConfiguration stubConfiguration = new StubConfiguration(stringNotation);
-				return new StubConfiguration(stubConfiguration.getGroupId(), stubConfiguration.getArtifactId(),
-						stubConfiguration.getVersion(), stubConfiguration.getClassifier());
+				return new StubConfiguration(stringNotation);
 			}
 
 			String groupId = this.groupId.getOrNull();

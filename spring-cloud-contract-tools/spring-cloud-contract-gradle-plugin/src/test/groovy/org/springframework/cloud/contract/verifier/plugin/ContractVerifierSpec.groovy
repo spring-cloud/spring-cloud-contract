@@ -17,12 +17,18 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.DefaultProject
 import org.gradle.api.plugins.GroovyPlugin
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.tasks.SourceSet
 import org.gradle.testfixtures.ProjectBuilder
+import org.springframework.cloud.contract.verifier.config.TestFramework
 import spock.lang.Specification
 
 class ContractVerifierSpec extends Specification {
@@ -36,9 +42,9 @@ class ContractVerifierSpec extends Specification {
 		project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 	}
 
-	def "should apply groovy plugin"() {
+	def "should apply java plugin"() {
 		expect:
-			project.plugins.hasPlugin(GroovyPlugin)
+			project.plugins.hasPlugin(JavaPlugin)
 	}
 
 	def "should create contracts extension"() {
@@ -46,14 +52,96 @@ class ContractVerifierSpec extends Specification {
 			project.extensions.findByType(ContractVerifierExtension) != null
 	}
 
+	def "should create a test sourceset with java sources"() {
+		given:
+			ContractVerifierExtension extension = project.extensions.getByType(ContractVerifierExtension)
+			Directory projectDir = project.layout.projectDirectory
+			SourceSet contractTest = project.convention.getPlugin(JavaPluginConvention).getSourceSets().getByName("contractTest")
+
+		expect:
+			contractTest != null
+			contractTest.java.srcDirs.contains(projectDir.dir("src/contractTest/java").asFile)
+			contractTest.java.srcDirs.contains(extension.generatedTestJavaSourcesDir.get().asFile)
+			contractTest.resources.srcDirs.contains(projectDir.dir("src/contractTest/resources").asFile)
+			contractTest.resources.srcDirs.contains(extension.generatedTestResourcesDir.get().asFile)
+	}
+
+	def "should create a test sourceset with groovy sources, if the groovy plugin is present"() {
+		given:
+			project.plugins.apply(GroovyPlugin)
+			ContractVerifierExtension extension = project.extensions.getByType(ContractVerifierExtension)
+			Directory projectDir = project.layout.projectDirectory
+			SourceSet contractTest = project.convention.getPlugin(JavaPluginConvention).getSourceSets().getByName("contractTest")
+
+		expect:
+			contractTest != null
+			contractTest.java.srcDirs.contains(projectDir.dir("src/contractTest/java").asFile)
+			contractTest.java.srcDirs.contains(extension.generatedTestJavaSourcesDir.get().asFile)
+			contractTest.groovy.srcDirs.contains(projectDir.dir('src/contractTest/groovy').asFile)
+			contractTest.groovy.srcDirs.contains(extension.generatedTestGroovySourcesDir.get().asFile)
+			contractTest.resources.srcDirs.contains(projectDir.dir("src/contractTest/resources").asFile)
+			contractTest.resources.srcDirs.contains(extension.generatedTestResourcesDir.get().asFile)
+	}
+
+	def "should setup dependency configurations"() {
+		given:
+			Configuration contractTestCompileOnly = project.configurations.contractTestCompileOnly
+			Configuration contractTestImplementation = project.configurations.contractTestImplementation
+			Configuration contractTestRuntimeOnly = project.configurations.contractTestRuntimeOnly
+
+		expect:
+			contractTestCompileOnly != null
+			contractTestCompileOnly.extendsFrom.contains(project.configurations.testCompileOnly)
+			contractTestImplementation != null
+			contractTestImplementation.extendsFrom.contains(project.configurations.testImplementation)
+			contractTestRuntimeOnly != null
+			contractTestRuntimeOnly.extendsFrom.contains(project.configurations.testRuntimeOnly)
+	}
+
+	def "should create contract test task"() {
+		expect:
+			project.tasks.named("contractTest").get() != null
+	}
+
 	def "should create generateContractTests task"() {
 		expect:
 			project.tasks.named("generateContractTests").get() != null
 	}
 
-	def "should configure generateContractTests task as a dependency of the check task"() {
+	def "should configure generateContractTests task as a dependency of the compileContractTestJava task"() {
 		expect:
-			project.tasks.check.getDependsOn().contains(project.tasks.named("generateContractTests"))
+			project.tasks.compileContractTestJava.getDependsOn().contains(project.tasks.named("generateContractTests"))
+			project.tasks.findByName("compileContractTestGroovy") == null
+	}
+
+	def "should configure generateContractTests task as a dependency of the compileContractTestGroovy task"() {
+		given:
+			project.plugins.apply(GroovyPlugin)
+
+		expect:
+			project.tasks.compileContractTestJava.getDependsOn().contains(project.tasks.named("generateContractTests"))
+			project.tasks.compileContractTestGroovy.getDependsOn().contains(project.tasks.named("generateContractTests"))
+	}
+
+	def "should configure generatedTestSourcesDir with the appropriate directories"() {
+		when:
+			ContractVerifierExtension extension = project.extensions.findByType(ContractVerifierExtension)
+			GenerateServerTestsTask generateServerTestsTask = project.tasks.getByName("generateContractTests") as GenerateServerTestsTask
+
+		then:
+			generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestJavaSourcesDir.get().asFile
+
+		and:
+			extension.testFramework.set(TestFramework.SPOCK)
+
+		then:
+			generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestGroovySourcesDir.get().asFile
+
+		and:
+			extension.generatedTestSourcesDir.set(project.file("src/random"))
+
+		then:
+			generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestSourcesDir.get().asFile
 	}
 
 	def "should create generateClientStubs task"() {

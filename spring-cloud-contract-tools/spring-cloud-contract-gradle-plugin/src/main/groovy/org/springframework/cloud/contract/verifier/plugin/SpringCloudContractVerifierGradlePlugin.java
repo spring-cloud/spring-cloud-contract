@@ -75,9 +75,10 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	@Override
 	public void apply(Project project) {
 		this.project = project;
+		project.getPlugins().apply(JavaPlugin.class);
 		ContractVerifierExtension extension = project.getExtensions().create(EXTENSION_NAME, ContractVerifierExtension.class);
 
-		JavaPluginConvention javaConvention = project.getConvention().getByType(JavaPluginConvention.class);
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet contractTestSourceSet = configureSourceSets(extension, javaConvention);
 		configureConfigurations();
 		registerContractTestTask(contractTestSourceSet);
@@ -91,15 +92,14 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	}
 
 	private SourceSet configureSourceSets(ContractVerifierExtension extension, JavaPluginConvention javaConvention) {
-		Directory projectDir = project.getLayout().getProjectDirectory();
 		SourceSetContainer sourceSets = javaConvention.getSourceSets();
 		SourceSet contractTest = sourceSets.create(CONTRACT_TEST_SOURCE_SET_NAME);
-		contractTest.getJava().srcDirs(projectDir.dir("src/contracts/java"), extension.getGeneratedTestJavaSourcesDir());
+		contractTest.getJava().srcDirs(extension.getGeneratedTestJavaSourcesDir());
 		project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
 			GroovySourceSet groovy = ((HasConvention) contractTest).getConvention().getPlugin(GroovySourceSet.class);
-			groovy.getGroovy().srcDirs(projectDir.dir("src/contracts/groovy"), extension.getGeneratedTestGroovySourcesDir());
+			groovy.getGroovy().srcDirs(extension.getGeneratedTestGroovySourcesDir());
 		});
-		contractTest.getResources().srcDirs(projectDir.dir("src/contracts/resources"), extension.getGeneratedTestResourcesDir());
+		contractTest.getResources().srcDirs(extension.getGeneratedTestResourcesDir());
 
 		SourceSetOutput mainOutput = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput();
 		SourceSetOutput testOutput = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME).getOutput();
@@ -145,8 +145,6 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		task.configure(generateServerTestsTask -> {
 			generateServerTestsTask.setDescription("Generate server tests from the contracts");
 			generateServerTestsTask.setGroup(GROUP_NAME);
-			// TODO: if there is a custom source set this won't be needed anymore
-			generateServerTestsTask.setEnabled(!project.getGradle().getStartParameter().getExcludedTaskNames().contains("test"));
 
 			generateServerTestsTask.getContractsDslDir().convention(copyContracts.flatMap(ContractsCopyTask::getCopiedContractsFolder));
 			generateServerTestsTask.getNameSuffixForTests().convention(extension.getNameSuffixForTests());
@@ -278,7 +276,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		publishingExtension.publications(publicationsContainer -> {
 			publicationsContainer.create("stubs", MavenPublication.class, stubsPublication -> {
 				stubsPublication.setArtifactId(project.getName());
-				stubsPublication.artifact(stubsTask);
+				stubsPublication.artifact(stubsTask.get());
 			});
 		});
 	}
