@@ -248,8 +248,8 @@ public class ContractVerifierExtension implements Serializable {
 		this.staticImports = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.contractsDslDir = objects.directoryProperty().convention(layout.getProjectDirectory().dir("src/test/resources/contracts"));
 		this.generatedTestSourcesDir = objects.directoryProperty();
-		this.generatedTestJavaSourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contracts/java"));
-		this.generatedTestGroovySourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contracts/groovy"));
+		this.generatedTestJavaSourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contractTest/java"));
+		this.generatedTestGroovySourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contractTest/groovy"));
 		this.generatedTestResourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-resources/contractTest"));
 		this.stubsOutputDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("stubs"));
 		this.stubsSuffix = objects.property(String.class).convention("stubs");

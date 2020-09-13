@@ -97,7 +97,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
 		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
 		stubsOutputDir = stubsOutputDirRoot
-		sourceSet = "test"
+		sourceSet = "contractTest"
 	}
 
 	jar {
@@ -146,5 +146,5 @@ configure(project(':loanApplicationService')) {
 		into "src/test/resources/mappings"
 	}
 
-	project.tasks.named("generateContractTests").get().dependsOn('copyCollaboratorStubs')
+	project.tasks.named("test").get().dependsOn('copyCollaboratorStubs')
 }

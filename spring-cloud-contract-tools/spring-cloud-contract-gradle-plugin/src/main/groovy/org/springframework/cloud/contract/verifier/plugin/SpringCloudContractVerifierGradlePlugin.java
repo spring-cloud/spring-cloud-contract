@@ -25,6 +25,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.file.Directory;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.HasConvention;
 import org.gradle.api.plugins.GroovyPlugin;
@@ -89,6 +90,20 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		createAndConfigureStubsJarTasks(extension, copyContracts, generateClientStubs);
 		createGenerateTestsTask(extension, contractTestSourceSet, copyContracts);
 		createAndConfigurePublishStubsToScmTask(extension, generateClientStubs);
+
+		project.afterEvaluate(inner -> {
+			DirectoryProperty generatedTestSourcesDir = extension.getGeneratedTestSourcesDir();
+			if (generatedTestSourcesDir.isPresent()) {
+				if (extension.getTestFramework().get() == TestFramework.SPOCK) {
+					project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
+						GroovySourceSet groovy = ((HasConvention) contractTestSourceSet).getConvention().getPlugin(GroovySourceSet.class);
+						groovy.getGroovy().srcDirs(generatedTestSourcesDir);
+					});
+				} else {
+					contractTestSourceSet.getJava().srcDirs(generatedTestSourcesDir);
+				}
+			}
+		});
 	}
 
 	private SourceSet configureSourceSets(ContractVerifierExtension extension, JavaPluginConvention javaConvention) {
@@ -308,7 +323,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			stubsJar.setGroup(GROUP_NAME);
 			stubsJar.getArchiveBaseName().convention(project.provider(project::getName));
 			stubsJar.getArchiveClassifier().convention(extension.getStubsSuffix());
-			stubsJar.from(generateClientStubs.flatMap(GenerateClientStubsFromDslTask::getStubsOutputDir));
+			stubsJar.from(extension.getStubsOutputDir());
 
 			stubsJar.dependsOn(generateClientStubs);
 		});
