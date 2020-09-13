@@ -88,41 +88,23 @@ class SpringCloudContractRequestMatcherTests {
 		BDDAssertions.then(result.isExactMatch()).isFalse();
 	}
 
-	private static final String PROPER_YAML = "---\n"
-			+ "request:\n"
-			+ "  method: \"POST\"\n"
-			+ "  url: \"/graphql\"\n"
-			+ "  headers:\n"
-			+ "    Content-Type: \"application/json\"\n"
-			+ "  body:\n"
+	private static final String PROPER_YAML = "---\n" + "request:\n"
+			+ "  method: \"POST\"\n" + "  url: \"/graphql\"\n" + "  headers:\n"
+			+ "    Content-Type: \"application/json\"\n" + "  body:\n"
 			+ "    query: \"query queryName($personName: String!) { personToCheck(name: $personName)"
-			+ "      {         name    age  } }\"\n"
-			+ "    variables:\n"
-			+ "      personName: \"Old Enough\"\n"
-			+ "    operationName: \"queryName\"\n"
-			+ "  matchers:\n"
-			+ "    headers:\n"
+			+ "      {         name    age  } }\"\n" + "    variables:\n"
+			+ "      personName: \"Old Enough\"\n" + "    operationName: \"queryName\"\n"
+			+ "  matchers:\n" + "    headers:\n" + "      - key: \"Content-Type\"\n"
+			+ "        regex: \"application/json.*\"\n"
+			+ "        regexType: \"as_string\"\n" + "response:\n" + "  status: 200\n"
+			+ "  headers:\n" + "    Content-Type: \"application/json\"\n" + "  body:\n"
+			+ "    data:\n" + "      personToCheck:\n" + "        name: \"Old Enough\"\n"
+			+ "        age: \"40\"\n" + "  matchers:\n" + "    headers:\n"
 			+ "      - key: \"Content-Type\"\n"
 			+ "        regex: \"application/json.*\"\n"
 			+ "        regexType: \"as_string\"\n"
-			+ "response:\n"
-			+ "  status: 200\n"
-			+ "  headers:\n"
-			+ "    Content-Type: \"application/json\"\n"
-			+ "  body:\n"
-			+ "    data:\n"
-			+ "      personToCheck:\n"
-			+ "        name: \"Old Enough\"\n"
-			+ "        age: \"40\"\n"
-			+ "  matchers:\n"
-			+ "    headers:\n"
-			+ "      - key: \"Content-Type\"\n"
-			+ "        regex: \"application/json.*\"\n"
-			+ "        regexType: \"as_string\"\n"
-			+ "name: \"shouldRetrieveOldEnoughPerson\"\n"
-			+ "metadata:\n"
-			+ "  verifier:\n"
-			+ "    tool: \"graphql\"\n";
+			+ "name: \"shouldRetrieveOldEnoughPerson\"\n" + "metadata:\n"
+			+ "  verifier:\n" + "    tool: \"graphql\"\n";
 
 	@Test
 	void should_not_match_when_exception_occurs_while_trying_to_parse_contract() {
@@ -135,8 +117,8 @@ class SpringCloudContractRequestMatcherTests {
 			}
 		};
 
-		MatchResult result = matcher.match(BDDMockito.mock(Request.class),
-				toMap(Tuples.of("tool", "unsupported"), Tuples.of("contract", PROPER_YAML)));
+		MatchResult result = matcher.match(BDDMockito.mock(Request.class), toMap(
+				Tuples.of("tool", "unsupported"), Tuples.of("contract", PROPER_YAML)));
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
 	}
