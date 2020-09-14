@@ -16,46 +16,30 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-import org.springframework.cloud.contract.spec.internal.Response;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class RestAssuredCookiesThen
-		implements Then, RestAssuredAcceptor, CookieElementProcessor {
+class CustomModeResponseWhen implements When, CustomModeAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
-	private final ComparisonBuilder comparisonBuilder;
+	private final GeneratedClassMetaData generatedClassMetaData;
 
-	RestAssuredCookiesThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
+	CustomModeResponseWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
-		this.comparisonBuilder = comparisonBuilder;
+		this.generatedClassMetaData = metaData;
 	}
 
 	@Override
-	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
-		processCookies(metadata);
+	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
+		this.blockBuilder
+				.addLineWithEnding("Response response = httpVerifier.exchange(request)")
+				.endBlock();
 		return this;
 	}
 
 	@Override
-	public ComparisonBuilder comparisonBuilder() {
-		return this.comparisonBuilder;
-	}
-
-	@Override
-	public BlockBuilder blockBuilder() {
-		return this.blockBuilder;
-	}
-
-	@Override
-	public String cookieKey(String key) {
-		return "response.cookie(\"" + key + "\")";
-	}
-
-	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		Response response = metadata.getContract().getResponse();
-		return response.getCookies() != null;
+		return acceptType(this.generatedClassMetaData, metadata);
 	}
 
 }

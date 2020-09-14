@@ -14,38 +14,21 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.config;
+package org.springframework.cloud.contract.verifier.builder;
 
-import org.springframework.cloud.contract.verifier.http.HttpVerifier;
+interface CustomModeBodyParser extends BodyParser {
 
-/**
- * Provides different testing modes.
- *
- * @author Jakub Kubrynski, codearte.io
- *
- * @since 1.0.0
- */
-public enum TestMode {
+	BodyParser INSTANCE = new CustomModeBodyParser() {
+	};
 
-	/**
-	 * Requires the user to provide an implementation of the {@link HttpVerifier}.
-	 */
-	CUSTOM,
-	/**
-	 * Uses Spring's MockMvc mode.
-	 */
-	MOCKMVC,
-	/**
-	 * Uses direct HTTP invocations with Rest Assured.
-	 */
-	EXPLICIT,
-	/**
-	 * Uses JAX-RS client.
-	 */
-	JAXRSCLIENT,
-	/**
-	 * Uses Spring's reactive WebTestClient.
-	 */
-	WEBTESTCLIENT
+	@Override
+	default String responseAsString() {
+		return "response.getBody().asString()";
+	}
+
+	@Override
+	default String byteArrayString() {
+		return "response.getBody().asByteArray()";
+	}
 
 }

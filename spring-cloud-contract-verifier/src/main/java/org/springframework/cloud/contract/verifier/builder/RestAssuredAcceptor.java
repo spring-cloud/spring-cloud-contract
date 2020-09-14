@@ -14,38 +14,19 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.config;
+package org.springframework.cloud.contract.verifier.builder;
 
-import org.springframework.cloud.contract.verifier.http.HttpVerifier;
+import org.springframework.cloud.contract.verifier.config.TestMode;
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-/**
- * Provides different testing modes.
- *
- * @author Jakub Kubrynski, codearte.io
- *
- * @since 1.0.0
- */
-public enum TestMode {
+interface RestAssuredAcceptor {
 
-	/**
-	 * Requires the user to provide an implementation of the {@link HttpVerifier}.
-	 */
-	CUSTOM,
-	/**
-	 * Uses Spring's MockMvc mode.
-	 */
-	MOCKMVC,
-	/**
-	 * Uses direct HTTP invocations with Rest Assured.
-	 */
-	EXPLICIT,
-	/**
-	 * Uses JAX-RS client.
-	 */
-	JAXRSCLIENT,
-	/**
-	 * Uses Spring's reactive WebTestClient.
-	 */
-	WEBTESTCLIENT
+	default boolean acceptType(GeneratedClassMetaData generatedClassMetaData,
+			SingleContractMetadata singleContractMetadata) {
+		return generatedClassMetaData.configProperties.getTestMode() != TestMode.CUSTOM
+				&& generatedClassMetaData.configProperties
+						.getTestMode() != TestMode.JAXRSCLIENT
+				&& singleContractMetadata.isHttp();
+	}
 
 }

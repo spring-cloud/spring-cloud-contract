@@ -16,46 +16,27 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-import org.springframework.cloud.contract.spec.internal.Response;
+import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class RestAssuredCookiesThen
-		implements Then, RestAssuredAcceptor, CookieElementProcessor {
+class CustomModeRequestBuildGiven implements Given {
 
 	private final BlockBuilder blockBuilder;
 
-	private final ComparisonBuilder comparisonBuilder;
-
-	RestAssuredCookiesThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
+	CustomModeRequestBuildGiven(BlockBuilder blockBuilder) {
 		this.blockBuilder = blockBuilder;
-		this.comparisonBuilder = comparisonBuilder;
 	}
 
 	@Override
-	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
-		processCookies(metadata);
+	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
+		this.blockBuilder.addLineWithEnding(".build()");
 		return this;
 	}
 
 	@Override
-	public ComparisonBuilder comparisonBuilder() {
-		return this.comparisonBuilder;
-	}
-
-	@Override
-	public BlockBuilder blockBuilder() {
-		return this.blockBuilder;
-	}
-
-	@Override
-	public String cookieKey(String key) {
-		return "response.cookie(\"" + key + "\")";
-	}
-
-	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		Response response = metadata.getContract().getResponse();
-		return response.getCookies() != null;
+		Request request = metadata.getContract().getRequest();
+		return request != null;
 	}
 
 }

@@ -122,6 +122,7 @@ response:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue("#187")
@@ -155,6 +156,7 @@ response:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('#79')
@@ -190,6 +192,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('#79')
@@ -228,6 +231,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('#82')
@@ -263,6 +267,9 @@ response:
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                                                      | '.body("{\\"items\\":[\\"HOP\\"]}")'
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
+			}                                                                      | '.body("{\\"items\\":[\\"HOP\\"]}")'
 	}
 
 	@Issue('#88')
@@ -292,6 +299,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """.body('''property1=VAL1''')"""
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '.body("property1=VAL1")'
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '.body("property1=VAL1")'
+			"custom"          | { properties.testMode = TestMode.CUSTOM }          | '.body("property1=VAL1")'
 	}
 
 	@Issue('185')
@@ -326,6 +334,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	def 'should generate assertions for array in response body with #methodBuilderName'() {
@@ -363,6 +372,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	def 'should generate assertions for array inside response body element with #methodBuilderName'() {
@@ -399,6 +409,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	def 'should generate assertions for nested objects in response body with #methodBuilderName'() {
@@ -432,6 +443,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	def 'should generate regex assertions for map objects in response body with #methodBuilderName'() {
@@ -469,6 +481,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	def "should generate a call with an url path and query parameters with #methodBuilderName"() {
@@ -642,6 +655,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | ".body('''''')"
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '.body("")'
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '.body("")'
+			"custom"          | { properties.testMode = TestMode.CUSTOM }          | '.body("")'
 	}
 
 	def 'should generate test for String in response body with #methodBuilderName'() {
@@ -677,6 +691,9 @@ response:
 			}                                 | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                 | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
 			}                                 | 'String responseBody = response.getBody().asString();' | 'assertThat(responseBody).isEqualTo("test");'
 	}
 
@@ -731,6 +748,9 @@ response:
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                                                      | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
+			}                                                                      | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
 	}
 
 	def 'should work with more complex stuff and jsonpaths with #methodBuilderName'() {
@@ -777,6 +797,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('72')
@@ -821,6 +842,9 @@ response:
 			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
 			}                                 | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 	}
 
@@ -871,6 +895,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('180')
@@ -1188,6 +1213,7 @@ response:
 			methodBuilderName | methodBuilder
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('262')
@@ -1261,6 +1287,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('266')
@@ -1298,6 +1325,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('266')
@@ -1330,6 +1358,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('47')
@@ -1420,6 +1449,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('#273')
@@ -1662,6 +1692,9 @@ response:
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
 			}                                 | { String s -> "response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application.vnd.fraud.v1.json.*')" }
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
+			}                                 | { String s -> "response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application.vnd.fraud.v1.json.*')" }
 	}
 
 	@Issue('#172')
@@ -1699,6 +1732,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """responseBody == '''{"a":1}\\n{"a":2}\\n'''"""
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}\\n'''
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}\\n'''
+			"custom"          | { properties.testMode = TestMode.CUSTOM }          | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}\\n'''
 	}
 
 	@Issue('#443')
@@ -1747,6 +1781,9 @@ response:
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
+			}                                 | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 	}
 
 	@Issue('#169')
@@ -1785,6 +1822,7 @@ response:
 			methodBuilderName | methodBuilder                                      | expectedAssertion
 			"spock"           | { properties.testFramework = TestFramework.SPOCK } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }         | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+			"custom"          | { properties.testMode = TestMode.CUSTOM }          | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
 	}
 
 	@Issue('#169')
@@ -1824,6 +1862,9 @@ response:
 			}
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
 			}
 	}
 
@@ -1866,6 +1907,7 @@ response:
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
 			}
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('#226')
@@ -1908,6 +1950,9 @@ response:
 			}                                 | { String body -> body.contains(""".build("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
 			"webclient"       | {
 				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
+			"custom"          | {
+				properties.testMode = TestMode.CUSTOM
 			}                                 | { String body -> body.contains('body("12000")') }                                            | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
 	}
 }

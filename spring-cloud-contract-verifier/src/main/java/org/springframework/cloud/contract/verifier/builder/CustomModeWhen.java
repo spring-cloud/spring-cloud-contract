@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class RestAssuredWhen implements When, BodyMethodVisitor, RestAssuredAcceptor {
+class CustomModeWhen implements When, BodyMethodVisitor, CustomModeAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -30,30 +30,18 @@ class RestAssuredWhen implements When, BodyMethodVisitor, RestAssuredAcceptor {
 
 	private final List<When> responseWhens = new LinkedList<>();
 
-	private final List<When> whens = new LinkedList<>();
-
-	RestAssuredWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
+	CustomModeWhen(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.responseWhens.addAll(Arrays.asList(
-				new MockMvcResponseWhen(blockBuilder, this.generatedClassMetaData),
-				new SpockMockMvcResponseWhen(blockBuilder, this.generatedClassMetaData),
-				new ExplicitResponseWhen(blockBuilder, this.generatedClassMetaData),
-				new WebTestClientResponseWhen(blockBuilder,
-						this.generatedClassMetaData)));
-		this.whens.addAll(
-				Arrays.asList(new MockMvcQueryParamsWhen(this.blockBuilder, bodyParser),
-						new MockMvcAsyncWhen(this.blockBuilder,
-								this.generatedClassMetaData),
-						new MockMvcUrlWhen(this.blockBuilder, bodyParser)));
+				new CustomModeResponseWhen(blockBuilder, this.generatedClassMetaData)));
 	}
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata singleContractMetadata) {
 		startBodyBlock(this.blockBuilder, "when:");
 		addResponseWhenLine(singleContractMetadata);
-		indentedBodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
 		this.blockBuilder.addEmptyLine();
 		return this;
 	}

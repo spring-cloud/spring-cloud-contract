@@ -26,13 +26,14 @@ import org.springframework.cloud.contract.spec.internal.Response;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 
-class RestAssuredHeadersThen implements Then, RestAssuredAcceptor {
+class CustomModeHeadersThen implements Then, CustomModeAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	RestAssuredHeadersThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
+	CustomModeHeadersThen(BlockBuilder blockBuilder,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
 	}
@@ -44,8 +45,10 @@ class RestAssuredHeadersThen implements Then, RestAssuredAcceptor {
 		Iterator<Header> iterator = headers.getEntries().iterator();
 		while (iterator.hasNext()) {
 			Header header = iterator.next();
-			String text = processHeaderElement(header.getName(), header.getServerValue() instanceof NotToEscapePattern
-					? header.getServerValue() : MapConverter.getTestSideValues(header.getServerValue()));
+			String text = processHeaderElement(header.getName(),
+					header.getServerValue() instanceof NotToEscapePattern
+							? header.getServerValue()
+							: MapConverter.getTestSideValues(header.getServerValue()));
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLineWithEnding(text);
 			}
@@ -59,18 +62,22 @@ class RestAssuredHeadersThen implements Then, RestAssuredAcceptor {
 
 	private String processHeaderElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			return this.comparisonBuilder.assertThat("response.header(\"" + property + "\")")
+			return this.comparisonBuilder
+					.assertThat("response.header(\"" + property + "\")")
 					+ matchesManuallyEscapedPattern((NotToEscapePattern) value);
 		}
 		else if (value instanceof ExecutionProperty) {
-			return ((ExecutionProperty) value).insertValue("response.header(\"" + property + "\")");
+			return ((ExecutionProperty) value)
+					.insertValue("response.header(\"" + property + "\")");
 
 		}
-		return this.comparisonBuilder.assertThat("response.header(\"" + property + "\")", value);
+		return this.comparisonBuilder.assertThat("response.header(\"" + property + "\")",
+				value);
 	}
 
 	private String matchesManuallyEscapedPattern(NotToEscapePattern value) {
-		return this.comparisonBuilder.matchesEscaped(value.getServerValue().pattern().replace("\\", "\\\\"));
+		return this.comparisonBuilder
+				.matchesEscaped(value.getServerValue().pattern().replace("\\", "\\\\"));
 	}
 
 	@Override
