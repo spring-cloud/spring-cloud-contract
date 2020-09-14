@@ -36,9 +36,15 @@ class ImportsBuilder {
 		return this;
 	}
 
-	ImportsBuilder custom() {
-		this.parentBuilder.imports(new CustomImports(builder, metaData));
-		this.parentBuilder.staticImports(new CustomStaticImports(builder, metaData));
+	ImportsBuilder userImports() {
+		this.parentBuilder.imports(new UserImports(builder, metaData));
+		this.parentBuilder.staticImports(new UserStaticImports(builder, metaData));
+		return this;
+	}
+
+	ImportsBuilder customMode() {
+		this.parentBuilder.imports(new CustomModeImports(builder, metaData));
+		this.parentBuilder.staticImports(new CustomModeStaticImports(builder, metaData));
 		return this;
 	}
 

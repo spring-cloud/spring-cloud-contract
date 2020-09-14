@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class RestAssuredThen implements Then, BodyMethodVisitor, RestAssuredAcceptor {
+class CustomModeThen implements Then, BodyMethodVisitor, CustomModeAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -30,15 +30,15 @@ class RestAssuredThen implements Then, BodyMethodVisitor, RestAssuredAcceptor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	RestAssuredThen(BlockBuilder blockBuilder,
+	CustomModeThen(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.thens.addAll(Arrays.asList(
-				new RestAssuredStatusCodeThen(this.blockBuilder, comparisonBuilder),
-				new RestAssuredHeadersThen(this.blockBuilder, comparisonBuilder),
-				new RestAssuredCookiesThen(this.blockBuilder, comparisonBuilder),
+				new CustomModeStatusCodeThen(this.blockBuilder, comparisonBuilder),
+				new CustomModeHeadersThen(this.blockBuilder, comparisonBuilder),
+				new CustomModeCookiesThen(this.blockBuilder, comparisonBuilder),
 				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
 						bodyParser, comparisonBuilder)));
 	}

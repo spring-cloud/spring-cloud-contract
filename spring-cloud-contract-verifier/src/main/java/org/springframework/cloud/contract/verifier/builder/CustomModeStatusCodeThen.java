@@ -16,30 +16,34 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-import java.util.Arrays;
+import org.springframework.cloud.contract.spec.internal.Response;
+import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class CustomImports implements Imports {
+class CustomModeStatusCodeThen implements Then {
 
 	private final BlockBuilder blockBuilder;
 
-	private final GeneratedClassMetaData generatedClassMetaData;
+	private final ComparisonBuilder comparisonBuilder;
 
-	CustomImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
+	CustomModeStatusCodeThen(BlockBuilder blockBuilder,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
-		this.generatedClassMetaData = generatedClassMetaData;
+		this.comparisonBuilder = comparisonBuilder;
 	}
 
 	@Override
-	public Imports call() {
-		Arrays.stream(this.generatedClassMetaData.configProperties.getImports())
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
+		Response response = metadata.getContract().getResponse();
+		this.blockBuilder
+				.addIndented(this.comparisonBuilder.assertThat("response.statusCode()",
+						response.getStatus().getServerValue()))
+				.addEndingIfNotPresent();
 		return this;
 	}
 
 	@Override
-	public boolean accept() {
-		return this.generatedClassMetaData.configProperties.getImports() != null
-				&& this.generatedClassMetaData.configProperties.getImports().length > 0;
+	public boolean accept(SingleContractMetadata metadata) {
+		return true;
 	}
 
 }

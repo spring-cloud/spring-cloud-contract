@@ -99,6 +99,20 @@ class SingleMethodBuilder {
 				.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
 	}
 
+	SingleMethodBuilder customMode() {
+		return given(new CustomModeGiven(this.blockBuilder, this.generatedClassMetaData,
+				CustomModeBodyParser.INSTANCE))
+						.methodPreProcessor(new InProgressContractMethodPreProcessor())
+						.when(new CustomModeWhen(this.blockBuilder,
+								this.generatedClassMetaData))
+						.then(new CustomModeThen(this.blockBuilder,
+								this.generatedClassMetaData,
+								CustomModeBodyParser.INSTANCE,
+								ComparisonBuilder.JAVA_HTTP_INSTANCE))
+						.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(
+								this.blockBuilder));
+	}
+
 	SingleMethodBuilder jaxRs() {
 		return methodPreProcessor(new InProgressContractMethodPreProcessor())
 				.given(new JaxRsGiven(this.generatedClassMetaData))

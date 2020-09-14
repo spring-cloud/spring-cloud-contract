@@ -17,12 +17,13 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class RestAssuredGiven implements Given, BodyMethodVisitor, RestAssuredAcceptor {
+class CustomModeGiven implements Given, BodyMethodVisitor, CustomModeAcceptor {
 
 	private final BlockBuilder blockBuilder;
 
@@ -32,21 +33,20 @@ class RestAssuredGiven implements Given, BodyMethodVisitor, RestAssuredAcceptor 
 
 	private final List<Given> bodyGivens = new LinkedList<>();
 
-	RestAssuredGiven(BlockBuilder blockBuilder,
+	CustomModeGiven(BlockBuilder blockBuilder,
 			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-		this.requestGivens.addAll(Arrays.asList(
-				new MockMvcRequestGiven(blockBuilder, generatedClassMetaData),
-				new SpockMockMvcRequestGiven(blockBuilder, generatedClassMetaData),
-				new ExplicitRequestGiven(blockBuilder, generatedClassMetaData),
-				new WebTestClientRequestGiven(blockBuilder, generatedClassMetaData)));
-		this.bodyGivens.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder),
-				new MockMvcCookiesGiven(blockBuilder),
-				new MockMvcBodyGiven(blockBuilder, generatedClassMetaData, bodyParser),
-				new JavaMultipartGiven(blockBuilder, generatedClassMetaData, bodyParser),
-				new SpockMockMvcMultipartGiven(blockBuilder, generatedClassMetaData,
-						bodyParser)));
+		this.requestGivens.addAll(Collections.singletonList(
+				new CustomModeRequestGiven(blockBuilder, generatedClassMetaData)));
+		this.bodyGivens.addAll(
+				Arrays.asList(new CustomModeMethodWithUrlGiven(blockBuilder, bodyParser),
+						new CustomModeHeadersGiven(blockBuilder),
+						new CustomModeCookiesGiven(blockBuilder),
+						new CustomModeBodyGiven(blockBuilder, generatedClassMetaData,
+								bodyParser),
+						new CustomMultipartGiven(generatedClassMetaData),
+						new CustomModeRequestBuildGiven(blockBuilder)));
 	}
 
 	@Override
@@ -62,13 +62,13 @@ class RestAssuredGiven implements Given, BodyMethodVisitor, RestAssuredAcceptor 
 		this.requestGivens.stream().filter(given -> given.accept(singleContractMetadata))
 				.findFirst()
 				.orElseThrow(() -> new IllegalStateException(
-						"No matching request building Given implementation for Rest Assured"))
+						"No matching request building Given implementation for a custom test mode"))
 				.apply(singleContractMetadata);
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return acceptType(this.generatedClassMetaData, singleContractMetadata);
+		return acceptType(generatedClassMetaData, singleContractMetadata);
 	}
 
 }

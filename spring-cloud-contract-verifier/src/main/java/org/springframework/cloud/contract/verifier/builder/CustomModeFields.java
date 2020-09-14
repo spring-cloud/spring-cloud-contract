@@ -16,32 +16,31 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
-class FieldBuilder {
+import java.util.Arrays;
 
-	private final ClassBodyBuilder parentBuilder;
+class CustomModeFields implements Field, CustomModeAcceptor {
 
-	private final BlockBuilder builder;
+	private final BlockBuilder blockBuilder;
 
-	private final GeneratedClassMetaData metaData;
+	private final GeneratedClassMetaData generatedClassMetaData;
 
-	FieldBuilder(ClassBodyBuilder parentBuilder) {
-		this.parentBuilder = parentBuilder;
-		this.builder = parentBuilder.blockBuilder;
-		this.metaData = parentBuilder.generatedClassMetaData;
+	private static final String[] FIELDS = { "@Inject HttpVerifier httpVerifier" };
+
+	CustomModeFields(BlockBuilder blockBuilder,
+			GeneratedClassMetaData generatedClassMetaData) {
+		this.blockBuilder = blockBuilder;
+		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
-	FieldBuilder messaging() {
-		this.parentBuilder.field(new MessagingFields(this.builder, this.metaData));
+	@Override
+	public Field call() {
+		Arrays.stream(FIELDS).forEach(this.blockBuilder::addLineWithEnding);
 		return this;
 	}
 
-	FieldBuilder customMode() {
-		this.parentBuilder.field(new CustomModeFields(this.builder, this.metaData));
-		return this;
-	}
-
-	ClassBodyBuilder build() {
-		return this.parentBuilder;
+	@Override
+	public boolean accept() {
+		return acceptType(this.generatedClassMetaData);
 	}
 
 }

@@ -19,14 +19,14 @@ package org.springframework.cloud.contract.verifier.builder;
 import org.springframework.cloud.contract.spec.internal.Response;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class RestAssuredCookiesThen
-		implements Then, RestAssuredAcceptor, CookieElementProcessor {
+class CustomModeCookiesThen implements Then, CustomModeAcceptor, CookieElementProcessor {
 
 	private final BlockBuilder blockBuilder;
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	RestAssuredCookiesThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
+	CustomModeCookiesThen(BlockBuilder blockBuilder,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
 	}
