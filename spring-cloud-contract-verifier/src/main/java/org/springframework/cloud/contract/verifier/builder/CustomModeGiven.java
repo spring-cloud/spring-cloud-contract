@@ -41,6 +41,7 @@ class CustomModeGiven implements Given, BodyMethodVisitor, CustomModeAcceptor {
 				new CustomModeRequestGiven(blockBuilder, generatedClassMetaData)));
 		this.bodyGivens.addAll(
 				Arrays.asList(new CustomModeMethodWithUrlGiven(blockBuilder, bodyParser),
+						new CustomModeSchemeProtocolGiven(blockBuilder),
 						new CustomModeHeadersGiven(blockBuilder),
 						new CustomModeCookiesGiven(blockBuilder),
 						new CustomModeBodyGiven(blockBuilder, generatedClassMetaData,
