@@ -100,6 +100,19 @@ public class Response {
 		return this.cookies;
 	}
 
+
+	/**
+	 * @param response template of a response
+	 * @return builder filled with response data
+	 */
+	public static Builder from(Response response) {
+		return new Builder()
+			.headers(response.headers)
+			.statusCode(response.statusCode)
+			.cookies(response.cookies)
+			.body(response.body);
+	}
+
 	/**
 	 * Response builder.
 	 */
@@ -147,6 +160,16 @@ public class Response {
 		 */
 		public Response.Builder header(String key, Object value) {
 			this.headers.put(key, value);
+			return this;
+		}
+
+		/**
+		 * @param key cookie key
+		 * @param value cookie value
+		 * @return builder
+		 */
+		public Response.Builder cookie(String key, Object value) {
+			this.cookies.put(key, value);
 			return this;
 		}
 
