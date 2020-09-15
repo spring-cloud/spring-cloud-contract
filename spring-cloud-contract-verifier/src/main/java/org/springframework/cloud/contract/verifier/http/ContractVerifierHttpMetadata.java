@@ -42,12 +42,12 @@ public class ContractVerifierHttpMetadata implements SpringCloudContractMetadata
 	/**
 	 * Scheme used for HTTP communication.
 	 */
-	private Scheme scheme;
+	private Scheme scheme = Scheme.HTTP;
 
 	/**
 	 * Protocol used for HTTP communication.
 	 */
-	private Protocol protocol;
+	private Protocol protocol = Protocol.HTTP_1_1;
 
 	@NonNull
 	public static ContractVerifierHttpMetadata fromMetadata(
@@ -117,7 +117,7 @@ public class ContractVerifierHttpMetadata implements SpringCloudContractMetadata
 	}
 
 	/**
-	 * Taken from OKHttp's Protocol.
+	 * Taken from OKHttp's Protocol {@link okhttp3.Protocol}.
 	 */
 	public enum Protocol {
 

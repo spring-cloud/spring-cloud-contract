@@ -18,10 +18,10 @@ package org.springframework.cloud.contract.verifier.http;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -33,8 +33,8 @@ import okhttp3.RequestBody;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * {@link HttpVerifier} implementation that uses {@link OkHttpClient}.
- * Has an inbuilt support for GRPC.
+ * {@link HttpVerifier} implementation that uses {@link OkHttpClient}. Has an inbuilt
+ * support for GRPC.
  *
  * Warning! This API is experimental and can change in time.
  *
@@ -43,24 +43,36 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OkHttpHttpVerifier implements HttpVerifier {
 
-	private final String url;
+	private final String hostAndPort;
 
-	public OkHttpHttpVerifier(String url) {
-		this.url = url;
+	/**
+	 * @param hostAndPort - don't pass the scheme, it will be resolved from
+	 * {@link Request#scheme()}. E.g. pass {@code localhost:1234}.
+	 */
+	public OkHttpHttpVerifier(String hostAndPort) {
+		this.hostAndPort = hostAndPort;
 	}
 
 	@Override
 	public Response exchange(Request request) {
 		String requestContentType = request.contentType();
-		// TODO: Resolve protocol and scheme from contract?
 		OkHttpClient client = new OkHttpClient.Builder()
-				.protocols(protocols(requestContentType)).build();
-		okhttp3.Request req = new okhttp3.Request.Builder()
-				.url(this.url + (request.path().startsWith("/") ? request.path()
-						: "/" + request.path()))
-				.method(request.method().name(), requestBody(request, requestContentType))
-				.headers(Headers.of(stringTyped(request.headers()))) // TODO: Add cookies
+				.protocols(Collections
+						.singletonList(toProtocol(request.protocol().toString())))
 				.build();
+		Map<String, String> headers = stringTyped(request.headers());
+		if (!request.cookies().isEmpty()) {
+			headers.put("Set-Cookie",
+					request.cookies().entrySet().stream()
+							.map(e -> e.getKey() + "=" + e.getValue().toString())
+							.collect(Collectors.joining(";")));
+		}
+		okhttp3.Request req = new okhttp3.Request.Builder()
+				.url(request.scheme().name().toLowerCase() + ":" + this.hostAndPort
+						+ (request.path().startsWith("/") ? request.path()
+								: "/" + request.path()))
+				.method(request.method().name(), requestBody(request, requestContentType))
+				.headers(Headers.of(headers)).build();
 		try (okhttp3.Response res = client.newCall(req).execute()) {
 			return response(res);
 		}
@@ -69,29 +81,27 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 		}
 	}
 
-	private List<Protocol> protocols(String requestContentType) {
-		if (this.url.startsWith("https")) {
-			return Arrays.asList(Protocol.HTTP_2, Protocol.HTTP_1_1);
+	private Protocol toProtocol(String string) {
+		try {
+			return Protocol.get(string);
 		}
-		else if (isGrpc(requestContentType)) {
-			return Collections.singletonList(Protocol.H2_PRIOR_KNOWLEDGE);
+		catch (IOException e) {
+			throw new IllegalStateException(e);
 		}
-		return Collections.singletonList(Protocol.HTTP_1_1);
 	}
 
 	private Response response(okhttp3.Response res) throws IOException {
 		byte[] responseBody = responseBody(res);
-		// String contentType = res.headers().get("Content-Type");
-		// TODO: Response body in the test / contract should already be properly encoded
-		// if (contentType != null && isGrpc(contentType) && responseBody != null) {
-		// responseBody = grpcResponseBody(responseBody);
-		// }
 		return Response.builder().body(responseBody).statusCode(res.code())
-				.headers(withSingleHeader(res))
-				// TODO: Add cookies
-				// .cookies(res.headers().values("Set-Cookie").stream().map(s ->
-				// s.split(";")).flatMap(Arrays::stream).collect(Collectors.toMap(o -> o.
-				// , e -> e.getValue().get(0), (a,b) -> a, HashMap::new))))
+				.headers(withSingleHeader(res)).cookies(res.headers().values("Set-Cookie")
+						.stream().flatMap(s -> Arrays.stream(s.split(";"))).map(s -> {
+							String[] singleCookie = s.split("=");
+							return new AbstractMap.SimpleEntry<>(singleCookie[0],
+									singleCookie.length > 1 ? singleCookie[1] : "");
+						})
+						.collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey,
+								AbstractMap.SimpleEntry::getValue, (a, b) -> a,
+								HashMap::new)))
 				.build();
 	}
 

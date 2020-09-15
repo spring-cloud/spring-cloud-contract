@@ -32,6 +32,10 @@ import org.springframework.cloud.contract.spec.internal.HttpMethods;
  */
 public class Request {
 
+	private final ContractVerifierHttpMetadata.Protocol protocol;
+
+	private final ContractVerifierHttpMetadata.Scheme scheme;
+
 	private final HttpMethods.HttpMethod method;
 
 	private final String path;
@@ -42,8 +46,12 @@ public class Request {
 
 	private final Map<String, Object> cookies;
 
-	Request(HttpMethods.HttpMethod method, String path, Body body,
-			Map<String, Object> headers, Map<String, Object> cookies) {
+	Request(ContractVerifierHttpMetadata.Protocol protocol,
+			ContractVerifierHttpMetadata.Scheme scheme, HttpMethods.HttpMethod method,
+			String path, Body body, Map<String, Object> headers,
+			Map<String, Object> cookies) {
+		this.protocol = protocol;
+		this.scheme = scheme;
 		this.method = method;
 		this.path = path;
 		this.body = body;
@@ -62,6 +70,20 @@ public class Request {
 			return null;
 		}
 		return value.toString();
+	}
+
+	/**
+	 * @return {@link ContractVerifierHttpMetadata.Protocol}
+	 */
+	public ContractVerifierHttpMetadata.Protocol protocol() {
+		return this.protocol;
+	}
+
+	/**
+	 * @return {@link ContractVerifierHttpMetadata.Scheme}
+	 */
+	public ContractVerifierHttpMetadata.Scheme scheme() {
+		return this.scheme;
 	}
 
 	/**
@@ -195,6 +217,10 @@ public class Request {
 
 		final String path;
 
+		ContractVerifierHttpMetadata.Protocol protocol = ContractVerifierHttpMetadata.Protocol.HTTP_1_1;
+
+		ContractVerifierHttpMetadata.Scheme scheme = ContractVerifierHttpMetadata.Scheme.HTTP;
+
 		Body body;
 
 		Map<String, Object> headers = new HashMap<>();
@@ -204,6 +230,24 @@ public class Request {
 		Builder(HttpMethods.HttpMethod method, String path) {
 			this.method = method;
 			this.path = path;
+		}
+
+		/**
+		 * @param scheme text representation of a scheme
+		 * @return builder
+		 */
+		public Request.Builder scheme(String scheme) {
+			this.scheme = ContractVerifierHttpMetadata.Scheme.fromString(scheme);
+			return this;
+		}
+
+		/**
+		 * @param protocol text representation of a protocol
+		 * @return builder
+		 */
+		public Request.Builder protocol(String protocol) {
+			this.protocol = ContractVerifierHttpMetadata.Protocol.fromString(protocol);
+			return this;
 		}
 
 		/**
@@ -247,8 +291,8 @@ public class Request {
 		 * @return built {@link Request}
 		 */
 		public Request build() {
-			return new Request(this.method, this.path, this.body, this.headers,
-					this.cookies);
+			return new Request(this.protocol, this.scheme, this.method, this.path,
+					this.body, this.headers, this.cookies);
 		}
 
 	}
