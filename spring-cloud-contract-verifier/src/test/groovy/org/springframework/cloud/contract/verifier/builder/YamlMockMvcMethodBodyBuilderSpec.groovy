@@ -553,6 +553,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	@Issue('#169')
@@ -627,6 +628,7 @@ response:
 			"spock"           | { properties.testFramework = TestFramework.SPOCK }
 			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
 	def 'should generate test for empty body with #methodBuilderName'() {
