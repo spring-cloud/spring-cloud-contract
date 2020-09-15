@@ -143,9 +143,34 @@ public class Request {
 	}
 
 	/**
+	 * @param request from which a builder will be built
+	 * @return a builder with request data filled in
+	 */
+	public static Request.Builder from(Request request) {
+		return new MethodBuilder()
+			.method(request.method.getMethodName(), request.path)
+			.scheme(request.scheme)
+			.protocol(request.protocol)
+			.queryParams(request.queryParameters)
+			.headers(request.headers)
+			.cookies(request.cookies)
+			.body(request.body);
+	}
+
+	/**
 	 * Builder over HTTP methods.
 	 */
 	public static class MethodBuilder {
+
+		/**
+		 * Factory method for a generic HTTP method.
+		 * @param method to call
+		 * @param path to call
+		 * @return builder
+		 */
+		public Request.Builder method(String method, String path) {
+			return new Request.Builder(HttpMethods.HttpMethod.valueOf(method.toUpperCase()), path);
+		}
 
 		/**
 		 * Factory method for DELETE HTTP method.
@@ -226,9 +251,9 @@ public class Request {
 	 */
 	public static class Builder {
 
-		final HttpMethods.HttpMethod method;
+		HttpMethods.HttpMethod method;
 
-		final String path;
+		String path;
 
 		List<AbstractMap.SimpleEntry<String, String>> queryParameters = new LinkedList<>();
 
@@ -248,6 +273,24 @@ public class Request {
 		}
 
 		/**
+		 * @param method HTTP method
+		 * @return builder
+		 */
+		public Request.Builder method(HttpMethods.HttpMethod method) {
+			this.method = method;
+			return this;
+		}
+
+		/**
+		 * @param path HTTP path
+		 * @return builder
+		 */
+		public Request.Builder path(String path) {
+			this.path = path;
+			return this;
+		}
+
+		/**
 		 * @param scheme text representation of a scheme
 		 * @return builder
 		 */
@@ -262,6 +305,24 @@ public class Request {
 		 */
 		public Request.Builder protocol(String protocol) {
 			this.protocol = ContractVerifierHttpMetadata.Protocol.fromString(protocol);
+			return this;
+		}
+
+		/**
+		 * @param scheme representation of a scheme
+		 * @return builder
+		 */
+		public Request.Builder scheme(ContractVerifierHttpMetadata.Scheme scheme) {
+			this.scheme = scheme;
+			return this;
+		}
+
+		/**
+		 * @param protocol representation of a protocol
+		 * @return builder
+		 */
+		public Request.Builder protocol(ContractVerifierHttpMetadata.Protocol protocol) {
+			this.protocol = protocol;
 			return this;
 		}
 
@@ -285,6 +346,15 @@ public class Request {
 		}
 
 		/**
+		 * @param queryParameters - list of query parameters
+		 * @return builder
+		 */
+		public Request.Builder queryParams(List<AbstractMap.SimpleEntry<String, String>> queryParameters) {
+			this.queryParameters = queryParameters;
+			return this;
+		}
+
+		/**
 		 * @param headers HTTP headers
 		 * @return builder
 		 */
@@ -294,12 +364,22 @@ public class Request {
 		}
 
 		/**
-		 * @param key HTTP key
-		 * @param value HTTP value
+		 * @param key HTTP header key
+		 * @param value HTTP header value
 		 * @return builder
 		 */
 		public Request.Builder header(String key, Object value) {
 			this.headers.put(key, value);
+			return this;
+		}
+
+		/**
+		 * @param key cookie key
+		 * @param value cookie value
+		 * @return builder
+		 */
+		public Request.Builder cookie(String key, Object value) {
+			this.cookies.put(key, value);
 			return this;
 		}
 
