@@ -17,11 +17,11 @@
 package org.springframework.cloud.contract.verifier.http;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -57,9 +57,7 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 	public Response exchange(Request request) {
 		String requestContentType = request.contentType();
 		OkHttpClient client = new OkHttpClient.Builder()
-				.protocols(Collections
-						.singletonList(toProtocol(request.protocol().toString())))
-				.build();
+				.protocols(toProtocol(request.protocol().toString())).build();
 		Map<String, String> headers = stringTyped(request.headers());
 		if (!request.cookies().isEmpty()) {
 			headers.put("Set-Cookie",
@@ -67,10 +65,7 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 							.map(e -> e.getKey() + "=" + e.getValue().toString())
 							.collect(Collectors.joining(";")));
 		}
-		okhttp3.Request req = new okhttp3.Request.Builder()
-				.url(request.scheme().name().toLowerCase() + ":" + this.hostAndPort
-						+ (request.path().startsWith("/") ? request.path()
-								: "/" + request.path()))
+		okhttp3.Request req = new okhttp3.Request.Builder().url(url(request))
 				.method(request.method().name(), requestBody(request, requestContentType))
 				.headers(Headers.of(headers)).build();
 		try (okhttp3.Response res = client.newCall(req).execute()) {
@@ -81,9 +76,33 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 		}
 	}
 
-	private Protocol toProtocol(String string) {
+	private String url(Request request) {
+		String url = request.scheme().name().toLowerCase() + ":" + this.hostAndPort
+				+ (request.path().startsWith("/") ? request.path()
+						: "/" + request.path());
+		if (!request.queryParams().isEmpty()) {
+			return url + "?"
+					+ request.queryParams().stream()
+							.map(e -> e.getKey() + "=" + e.getValue())
+							.collect(Collectors.joining("&"));
+		}
+		return url;
+	}
+
+	private List<Protocol> toProtocol(String string) {
 		try {
-			return Protocol.get(string);
+			Protocol protocol = Protocol.get(string);
+			switch (protocol) {
+			case HTTP_1_0:
+			case HTTP_2:
+			case QUIC:
+				return Arrays.asList(protocol, Protocol.HTTP_1_1);
+			case HTTP_1_1:
+				return Collections.singletonList(Protocol.HTTP_1_1);
+			case H2_PRIOR_KNOWLEDGE:
+				return Collections.singletonList(Protocol.H2_PRIOR_KNOWLEDGE);
+			}
+			return Collections.emptyList();
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
@@ -114,34 +133,6 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 		return RequestBody.create(MediaType.parse(requestContentType), bodyArray);
 	}
 
-	private boolean isGrpc(String contentType) {
-		return contentType.startsWith("application/grpc");
-	}
-
-	// the encoded body should already have proper byte values
-	// TODO: This should be removed?
-	private byte[] grpcRequestBody(Request request) {
-		byte[] bodyArray; // TODO: Add compression support
-		byte compressedFlag = 0;
-		byte[] message = request.body().asByteArray();
-		byte[] messageLength = ByteBuffer.allocate(4).putInt(message.length).array();
-		bodyArray = ByteBuffer.allocate(1 + messageLength.length + message.length)
-				.put(compressedFlag).put(messageLength).put(message).array();
-		return bodyArray;
-	}
-
-	// TODO: This should be removed?
-	private byte[] grpcResponseBody(byte[] responseBody) {
-		// 5 value = 4th index
-		// 1 for compression, 4 for message size
-		int actualPayloadSize = responseBody.length - 5;
-		byte[] destination = new byte[actualPayloadSize];
-		System.arraycopy(responseBody, 5, destination, 0, actualPayloadSize);
-		responseBody = destination;
-		return responseBody;
-	}
-
-	@Nullable
 	private byte[] responseBody(okhttp3.Response res) throws IOException {
 		return res.body() != null ? res.body().bytes() : null;
 	}

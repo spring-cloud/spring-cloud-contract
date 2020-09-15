@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.verifier.http;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.internal.HttpMethods;
@@ -40,6 +42,8 @@ public class Request {
 
 	private final String path;
 
+	private final List<AbstractMap.SimpleEntry<String, String>> queryParameters;
+
 	private final Body body;
 
 	private final Map<String, Object> headers;
@@ -48,12 +52,14 @@ public class Request {
 
 	Request(ContractVerifierHttpMetadata.Protocol protocol,
 			ContractVerifierHttpMetadata.Scheme scheme, HttpMethods.HttpMethod method,
-			String path, Body body, Map<String, Object> headers,
-			Map<String, Object> cookies) {
+			String path, List<AbstractMap.SimpleEntry<String, String>> queryParameters,
+			Body body, Map<String, Object> headers, Map<String, Object> cookies) {
 		this.protocol = protocol;
 		this.scheme = scheme;
 		this.method = method;
 		this.path = path;
+		this.queryParameters = queryParameters == null ? new LinkedList<>()
+				: queryParameters;
 		this.body = body;
 		this.headers = headers == null ? new HashMap<>() : headers;
 		this.cookies = cookies == null ? new HashMap<>() : cookies;
@@ -119,6 +125,13 @@ public class Request {
 	 */
 	public Map<String, Object> cookies() {
 		return this.cookies;
+	}
+
+	/**
+	 * @return query parameters
+	 */
+	public List<AbstractMap.SimpleEntry<String, String>> queryParams() {
+		return this.queryParameters;
 	}
 
 	/**
@@ -217,6 +230,8 @@ public class Request {
 
 		final String path;
 
+		List<AbstractMap.SimpleEntry<String, String>> queryParameters = new LinkedList<>();
+
 		ContractVerifierHttpMetadata.Protocol protocol = ContractVerifierHttpMetadata.Protocol.HTTP_1_1;
 
 		ContractVerifierHttpMetadata.Scheme scheme = ContractVerifierHttpMetadata.Scheme.HTTP;
@@ -260,6 +275,16 @@ public class Request {
 		}
 
 		/**
+		 * @param name - query parameter name
+		 * @param value - query parameter value
+		 * @return builder
+		 */
+		public Request.Builder queryParam(String name, String value) {
+			this.queryParameters.add(new AbstractMap.SimpleEntry<>(name, value));
+			return this;
+		}
+
+		/**
 		 * @param headers HTTP headers
 		 * @return builder
 		 */
@@ -292,7 +317,7 @@ public class Request {
 		 */
 		public Request build() {
 			return new Request(this.protocol, this.scheme, this.method, this.path,
-					this.body, this.headers, this.cookies);
+					this.queryParameters, this.body, this.headers, this.cookies);
 		}
 
 	}
