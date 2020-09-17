@@ -313,6 +313,11 @@ class WireMockXmlStubStrategySpec extends Specification implements WireMockStubV
         "equalTo": "abc"
       }
     }, {
+      "matchesXPath" : {
+        "expression" : "/test/duck/@type",
+        "equalTo" : "xtype"
+      }
+    }, {
       "matchesXPath": {
         "expression": "/test/duck/text()",
         "equalTo": "123"

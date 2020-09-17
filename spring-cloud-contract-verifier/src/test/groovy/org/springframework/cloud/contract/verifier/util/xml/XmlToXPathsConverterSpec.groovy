@@ -18,6 +18,12 @@ class XmlToXPathsConverterSpec extends Specification {
       <email>customer@test.com</email>
     </customer>
     '''
+	@Shared
+	String attributesInChildXml = '''<customer first_custom_attribute="first_value">
+      <email second_custom_attribute="second_value" >customer@test.com</email>
+      <address third_custom_attribute="third_value"/>
+    </customer>
+    '''
 
 	@Unroll
 	def "should generate [#expectedValue] for xPath [#value]"() {
@@ -37,6 +43,18 @@ class XmlToXPathsConverterSpec extends Specification {
 		then:
 		def e = thrown(XPathExpressionException)
 		e.message.contains('Prefix must resolve to a namespace: ns1')
+	}
+
+	@Unroll
+	def "should generate matched path [#expectedValue] for xPath [#value]"() {
+		expect:
+		value == expectedValue
+		where:
+		value || expectedValue
+		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(0).path() || '''/customer/email/text()'''
+		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(1).path() || '''/customer/@first_custom_attribute'''
+		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(2).path() || '''/customer/email/@second_custom_attribute'''
+		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(3).path() || '''/customer/address/@third_custom_attribute'''
 	}
 
 	@Unroll

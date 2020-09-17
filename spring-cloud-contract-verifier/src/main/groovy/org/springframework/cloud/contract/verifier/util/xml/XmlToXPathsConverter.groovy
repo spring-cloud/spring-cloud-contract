@@ -220,7 +220,7 @@ class XmlToXPathsConverter {
 
 	private static List<Node> addValueNodes(Node node, List<List<Node>> valueNodes, List<Node> attributes) {
 		getChildNodesAsList(node).each {
-			attributes.addAll(getAttributesAsList(node))
+			attributes.addAll(getAttributesAsList(it))
 			if (isValueNode(it) && !isBlank(it.nodeValue)) {
 				valueNodes << withParents(it)
 			}
