@@ -34,9 +34,9 @@ import org.springframework.cloud.contract.spec.internal.HttpMethods;
  */
 public class Request {
 
-	private final ContractVerifierHttpMetadata.Protocol protocol;
+	private final ContractVerifierHttpMetaData.Protocol protocol;
 
-	private final ContractVerifierHttpMetadata.Scheme scheme;
+	private final ContractVerifierHttpMetaData.Scheme scheme;
 
 	private final HttpMethods.HttpMethod method;
 
@@ -50,8 +50,8 @@ public class Request {
 
 	private final Map<String, Object> cookies;
 
-	Request(ContractVerifierHttpMetadata.Protocol protocol,
-			ContractVerifierHttpMetadata.Scheme scheme, HttpMethods.HttpMethod method,
+	Request(ContractVerifierHttpMetaData.Protocol protocol,
+			ContractVerifierHttpMetaData.Scheme scheme, HttpMethods.HttpMethod method,
 			String path, List<AbstractMap.SimpleEntry<String, String>> queryParameters,
 			Body body, Map<String, Object> headers, Map<String, Object> cookies) {
 		this.protocol = protocol;
@@ -79,16 +79,16 @@ public class Request {
 	}
 
 	/**
-	 * @return {@link ContractVerifierHttpMetadata.Protocol}
+	 * @return {@link ContractVerifierHttpMetaData.Protocol}
 	 */
-	public ContractVerifierHttpMetadata.Protocol protocol() {
+	public ContractVerifierHttpMetaData.Protocol protocol() {
 		return this.protocol;
 	}
 
 	/**
-	 * @return {@link ContractVerifierHttpMetadata.Scheme}
+	 * @return {@link ContractVerifierHttpMetaData.Scheme}
 	 */
-	public ContractVerifierHttpMetadata.Scheme scheme() {
+	public ContractVerifierHttpMetaData.Scheme scheme() {
 		return this.scheme;
 	}
 
@@ -257,9 +257,9 @@ public class Request {
 
 		List<AbstractMap.SimpleEntry<String, String>> queryParameters = new LinkedList<>();
 
-		ContractVerifierHttpMetadata.Protocol protocol = ContractVerifierHttpMetadata.Protocol.HTTP_1_1;
+		ContractVerifierHttpMetaData.Protocol protocol = ContractVerifierHttpMetaData.Protocol.HTTP_1_1;
 
-		ContractVerifierHttpMetadata.Scheme scheme = ContractVerifierHttpMetadata.Scheme.HTTP;
+		ContractVerifierHttpMetaData.Scheme scheme = ContractVerifierHttpMetaData.Scheme.HTTP;
 
 		Body body;
 
@@ -295,7 +295,7 @@ public class Request {
 		 * @return builder
 		 */
 		public Request.Builder scheme(String scheme) {
-			this.scheme = ContractVerifierHttpMetadata.Scheme.fromString(scheme);
+			this.scheme = ContractVerifierHttpMetaData.Scheme.fromString(scheme);
 			return this;
 		}
 
@@ -304,7 +304,7 @@ public class Request {
 		 * @return builder
 		 */
 		public Request.Builder protocol(String protocol) {
-			this.protocol = ContractVerifierHttpMetadata.Protocol.fromString(protocol);
+			this.protocol = ContractVerifierHttpMetaData.Protocol.fromString(protocol);
 			return this;
 		}
 
@@ -312,7 +312,7 @@ public class Request {
 		 * @param scheme representation of a scheme
 		 * @return builder
 		 */
-		public Request.Builder scheme(ContractVerifierHttpMetadata.Scheme scheme) {
+		public Request.Builder scheme(ContractVerifierHttpMetaData.Scheme scheme) {
 			this.scheme = scheme;
 			return this;
 		}
@@ -321,7 +321,7 @@ public class Request {
 		 * @param protocol representation of a protocol
 		 * @return builder
 		 */
-		public Request.Builder protocol(ContractVerifierHttpMetadata.Protocol protocol) {
+		public Request.Builder protocol(ContractVerifierHttpMetaData.Protocol protocol) {
 			this.protocol = protocol;
 			return this;
 		}

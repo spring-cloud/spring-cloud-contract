@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.verifier.builder;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
-import org.springframework.cloud.contract.verifier.http.ContractVerifierHttpMetadata;
+import org.springframework.cloud.contract.verifier.http.ContractVerifierHttpMetaData;
 
 class CustomModeSchemeProtocolGiven implements Given {
 
@@ -32,7 +32,7 @@ class CustomModeSchemeProtocolGiven implements Given {
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
 		Contract contract = metadata.getContract();
-		ContractVerifierHttpMetadata httpMetadata = ContractVerifierHttpMetadata
+		ContractVerifierHttpMetaData httpMetadata = ContractVerifierHttpMetaData
 				.fromMetadata(contract.getMetadata());
 		this.blockBuilder
 				.addIndented(".scheme(\"" + httpMetadata.getScheme().name() + "\")")

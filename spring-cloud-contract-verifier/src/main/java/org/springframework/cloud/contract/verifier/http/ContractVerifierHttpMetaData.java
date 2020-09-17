@@ -32,7 +32,7 @@ import org.springframework.lang.Nullable;
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class ContractVerifierHttpMetadata implements SpringCloudContractMetadata {
+public class ContractVerifierHttpMetaData implements SpringCloudContractMetadata {
 
 	/**
 	 * Metadata entry in the contract.
@@ -50,10 +50,10 @@ public class ContractVerifierHttpMetadata implements SpringCloudContractMetadata
 	private Protocol protocol = Protocol.HTTP_1_1;
 
 	@NonNull
-	public static ContractVerifierHttpMetadata fromMetadata(
+	public static ContractVerifierHttpMetaData fromMetadata(
 			Map<String, Object> metadata) {
 		return MetadataUtil.fromMetadata(metadata, METADATA_KEY,
-				new ContractVerifierHttpMetadata());
+				new ContractVerifierHttpMetaData());
 	}
 
 	@Override

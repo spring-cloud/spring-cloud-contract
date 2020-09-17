@@ -31,8 +31,8 @@ class RequestTests {
 							.header("header", "header-value")
 							.cookie("cookie", "cookie-value")
 							.queryParam("query", "param-value")
-							.protocol(ContractVerifierHttpMetadata.Protocol.HTTP_1_1)
-							.scheme(ContractVerifierHttpMetadata.Scheme.HTTPS)
+							.protocol(ContractVerifierHttpMetaData.Protocol.HTTP_1_1)
+							.scheme(ContractVerifierHttpMetaData.Scheme.HTTPS)
 							.build();
 
 		Request changedRequest = Request.from(request)
@@ -47,6 +47,6 @@ class RequestTests {
 		then(changedRequest.headers()).containsEntry("header-foo", "header-bar").containsEntry("header", "header-value");
 		then(changedRequest.cookies()).containsEntry("cookie-foo", "cookie-bar").containsEntry("cookie", "cookie-value");
 		then(changedRequest.queryParams()).contains(new AbstractMap.SimpleEntry<>("query", "param-value"), new AbstractMap.SimpleEntry<>("query-foo", "query-bar"));
-		then(changedRequest.protocol()).isEqualTo(ContractVerifierHttpMetadata.Protocol.HTTP_1_1);
+		then(changedRequest.protocol()).isEqualTo(ContractVerifierHttpMetaData.Protocol.HTTP_1_1);
 	}
 }
