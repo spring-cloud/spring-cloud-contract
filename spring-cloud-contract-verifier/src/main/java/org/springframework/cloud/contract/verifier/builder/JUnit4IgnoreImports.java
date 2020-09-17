@@ -25,8 +25,7 @@ class JUnit4IgnoreImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JUnit4IgnoreImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit4IgnoreImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -39,12 +38,10 @@ class JUnit4IgnoreImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT
 				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(metadata -> metadata.isIgnored()
-								|| metadata.getConvertedContractWithMetadata().stream()
-										.anyMatch(SingleContractMetadata::isIgnored));
+						.anyMatch(metadata -> metadata.isIgnored() || metadata.getConvertedContractWithMetadata()
+								.stream().anyMatch(SingleContractMetadata::isIgnored));
 	}
 
 }

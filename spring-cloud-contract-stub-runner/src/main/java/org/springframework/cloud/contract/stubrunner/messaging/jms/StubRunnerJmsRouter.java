@@ -49,12 +49,10 @@ class StubRunnerJmsRouter implements MessageListener {
 	@Override
 	public void onMessage(javax.jms.Message message) {
 		Contract dsl = this.selector.matchingContract(message);
-		if (dsl != null && dsl.getOutputMessage() != null
-				&& dsl.getOutputMessage().getSentTo() != null) {
+		if (dsl != null && dsl.getOutputMessage() != null && dsl.getOutputMessage().getSentTo() != null) {
 			String destination = dsl.getOutputMessage().getSentTo().getClientValue();
 			jmsTemplate().send(destination,
-					session -> new StubRunnerJmsTransformer(this.contracts)
-							.transform(session, dsl));
+					session -> new StubRunnerJmsTransformer(this.contracts).transform(session, dsl));
 		}
 	}
 

@@ -55,14 +55,11 @@ class FileSaver {
 	}
 
 	protected Path pathToClass(Path testBaseDir, String fileName) {
-		return Paths.get(testBaseDir.toString(), capitalize(fileName) + fileExtension)
-				.toAbsolutePath();
+		return Paths.get(testBaseDir.toString(), capitalize(fileName) + fileExtension).toAbsolutePath();
 	}
 
-	protected Path generateTestBaseDir(String basePackageClass,
-			String includedDirectoryRelativePath) {
-		Path testBaseDir = Paths.get(targetDirectory.getAbsolutePath(),
-				packageToDirectory(basePackageClass),
+	protected Path generateTestBaseDir(String basePackageClass, String includedDirectoryRelativePath) {
+		Path testBaseDir = Paths.get(targetDirectory.getAbsolutePath(), packageToDirectory(basePackageClass),
 				beforeLast(includedDirectoryRelativePath, File.separator));
 		try {
 			Files.createDirectories(testBaseDir);

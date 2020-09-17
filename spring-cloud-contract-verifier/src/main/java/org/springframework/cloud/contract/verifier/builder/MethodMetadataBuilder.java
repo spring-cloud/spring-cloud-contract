@@ -31,14 +31,12 @@ class MethodMetadataBuilder {
 	}
 
 	MethodMetadataBuilder jUnit() {
-		this.singleMethodBuilder
-				.methodMetadata(new JUnitMethodMetadata(this.builder, this.metaData));
+		this.singleMethodBuilder.methodMetadata(new JUnitMethodMetadata(this.builder, this.metaData));
 		return this;
 	}
 
 	MethodMetadataBuilder spock() {
-		this.singleMethodBuilder
-				.methodMetadata(new SpockMethodMetadata(this.builder, this.metaData));
+		this.singleMethodBuilder.methodMetadata(new SpockMethodMetadata(this.builder, this.metaData));
 		return this;
 	}
 

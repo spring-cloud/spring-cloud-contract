@@ -208,8 +208,8 @@ class GitRepo {
 		if (log.isDebugEnabled()) {
 			log.debug("Project git url [" + projectGitUrl + "]");
 		}
-		CloneCommand command = this.gitFactory.getCloneCommandByCloneRepository()
-				.setURI(projectGitUrl).setDirectory(destinationFolder);
+		CloneCommand command = this.gitFactory.getCloneCommandByCloneRepository().setURI(projectGitUrl)
+				.setDirectory(destinationFolder);
 		try {
 			Git git = command.call();
 			if (git.getRepository().getRemoteNames().isEmpty()) {
@@ -262,8 +262,7 @@ class GitRepo {
 	}
 
 	private void trackBranch(CheckoutCommand checkout, String label) {
-		checkout.setCreateBranch(true).setName(label)
-				.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+		checkout.setCreateBranch(true).setName(label).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
 				.setStartPoint("origin/" + label);
 	}
 
@@ -275,8 +274,7 @@ class GitRepo {
 		return containsBranch(git, label, null);
 	}
 
-	private boolean containsBranch(Git git, String label,
-			ListBranchCommand.ListMode listMode) throws GitAPIException {
+	private boolean containsBranch(Git git, String label, ListBranchCommand.ListMode listMode) throws GitAPIException {
 		ListBranchCommand command = git.branchList();
 		if (listMode != null) {
 			command.setListMode(listMode);
@@ -310,8 +308,7 @@ class GitRepo {
 	 */
 	static class JGitFactory {
 
-		private static final Logger log = LoggerFactory
-				.getLogger(MethodHandles.lookup().lookupClass());
+		private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 		final CredentialsProvider provider;
 
@@ -332,17 +329,14 @@ class GitRepo {
 					log.info("Successfully connected to an agent");
 				}
 				catch (AgentProxyException e) {
-					log.error(
-							"Exception occurred while trying to connect to agent. Will create"
-									+ "the default JSch connection",
-							e);
+					log.error("Exception occurred while trying to connect to agent. Will create"
+							+ "the default JSch connection", e);
 					return super.createDefaultJSch(fs);
 				}
 				final JSch jsch = super.createDefaultJSch(fs);
 				if (connector != null) {
 					JSch.setConfig("PreferredAuthentications", "publickey,password");
-					IdentityRepository identityRepository = new RemoteIdentityRepository(
-							connector);
+					IdentityRepository identityRepository = new RemoteIdentityRepository(connector);
 					jsch.setIdentityRepository(identityRepository);
 				}
 				return jsch;
@@ -358,8 +352,7 @@ class GitRepo {
 
 		JGitFactory(GitStubDownloaderProperties properties) {
 			if (org.springframework.util.StringUtils.hasText(properties.username)) {
-				log.info(
-						"Passed username and password - will set a custom credentials provider");
+				log.info("Passed username and password - will set a custom credentials provider");
 				this.provider = credentialsProvider(properties);
 			}
 			else {
@@ -376,8 +369,7 @@ class GitRepo {
 		}
 
 		CredentialsProvider credentialsProvider(GitStubDownloaderProperties properties) {
-			return new UsernamePasswordCredentialsProvider(properties.username,
-					properties.password);
+			return new UsernamePasswordCredentialsProvider(properties.username, properties.password);
 		}
 
 		CloneCommand getCloneCommandByCloneRepository() {
@@ -386,13 +378,11 @@ class GitRepo {
 		}
 
 		PushCommand push(Git git) {
-			return git.push().setCredentialsProvider(this.provider)
-					.setTransportConfigCallback(this.callback);
+			return git.push().setCredentialsProvider(this.provider).setTransportConfigCallback(this.callback);
 		}
 
 		PullCommand pull(Git git) {
-			return git.pull().setCredentialsProvider(this.provider)
-					.setTransportConfigCallback(this.callback);
+			return git.pull().setCredentialsProvider(this.provider).setTransportConfigCallback(this.callback);
 		}
 
 		Git open(File file) {

@@ -204,8 +204,7 @@ public final class WireMockRestServiceServer {
 				}
 			}
 			catch (IOException e) {
-				throw new IllegalStateException("Cannot load resources for: " + location,
-						e);
+				throw new IllegalStateException("Cannot load resources for: " + location, e);
 			}
 		}
 		if (this.ignoreExpectOrder) {
@@ -213,8 +212,7 @@ public final class WireMockRestServiceServer {
 		}
 		for (StubMapping mapping : mappings) {
 			ResponseActions expect = responseActions(server, mapping);
-			expect.andExpect(method(
-					HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
+			expect.andExpect(method(HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
 			mapping.getRequest().getBodyPatterns();
 			bodyPatterns(expect, mapping.getRequest());
 			requestHeaders(expect, mapping.getRequest());
@@ -223,8 +221,7 @@ public final class WireMockRestServiceServer {
 		return server;
 	}
 
-	private ResponseActions responseActions(MockRestServiceServer server,
-			StubMapping mapping) {
+	private ResponseActions responseActions(MockRestServiceServer server, StubMapping mapping) {
 		if (StringUtils.hasText(mapping.getRequest().getUrl())
 				|| StringUtils.hasText(mapping.getRequest().getUrlPath())) {
 			return server.expect(requestTo(request(mapping.getRequest())));
@@ -239,8 +236,7 @@ public final class WireMockRestServiceServer {
 		for (final ContentPattern<?> pattern : request.getBodyPatterns()) {
 			if (pattern instanceof MatchesJsonPathPattern) {
 				expect.andExpect(MockRestRequestMatchers
-						.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath())
-						.exists());
+						.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath()).exists());
 			}
 			else if (pattern instanceof MatchesXPathPattern) {
 				expect.andExpect(xpath((MatchesXPathPattern) pattern));
@@ -249,17 +245,14 @@ public final class WireMockRestServiceServer {
 		}
 	}
 
-	private RequestMatcher matchContents(
-			@SuppressWarnings("rawtypes") final ContentPattern pattern) {
+	private RequestMatcher matchContents(@SuppressWarnings("rawtypes") final ContentPattern pattern) {
 		return new RequestMatcher() {
 			@Override
-			public void match(ClientHttpRequest request)
-					throws IOException, AssertionError {
+			public void match(ClientHttpRequest request) throws IOException, AssertionError {
 				MockClientHttpRequest mockRequest = (MockClientHttpRequest) request;
 				@SuppressWarnings("unchecked")
 				MatchResult result = pattern.match(mockRequest.getBodyAsString());
-				MatcherAssert.assertThat(
-						"Request as string [" + mockRequest.getBodyAsString() + "]",
+				MatcherAssert.assertThat("Request as string [" + mockRequest.getBodyAsString() + "]",
 						result.isExactMatch());
 			}
 		};
@@ -275,8 +268,7 @@ public final class WireMockRestServiceServer {
 	}
 
 	private String request(RequestPattern request) {
-		return this.baseUrl + (request.getUrlPath() == null
-				? (request.getUrl() == null ? "/" : request.getUrl())
+		return this.baseUrl + (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl())
 				: request.getUrlPath());
 	}
 
@@ -293,15 +285,13 @@ public final class WireMockRestServiceServer {
 			@Override
 			protected boolean matchesSafely(String item) {
 				if (request.getUrlPathPattern() != null) {
-					return Pattern.compile(request.getUrlPathPattern())
-							.matcher(withoutBaseUrl(item)).matches();
+					return Pattern.compile(request.getUrlPathPattern()).matcher(withoutBaseUrl(item)).matches();
 				}
 				else if (request.getUrlMatcher() != null) {
 					return request.getUrlMatcher().match(item).isExactMatch();
 				}
 				else if (request.getUrlPattern() != null) {
-					return Pattern.compile(request.getUrlPattern()).matcher(item)
-							.matches();
+					return Pattern.compile(request.getUrlPattern()).matcher(item).matches();
 				}
 				return false;
 			}
@@ -324,8 +314,8 @@ public final class WireMockRestServiceServer {
 	}
 
 	private StubMapping mapping(Resource resource) throws IOException {
-		return Json.read(StreamUtils.copyToString(resource.getInputStream(),
-				Charset.defaultCharset()), StubMapping.class);
+		return Json.read(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()),
+				StubMapping.class);
 	}
 
 	private DefaultResponseCreator response(ResponseDefinition response) {
@@ -339,8 +329,7 @@ public final class WireMockRestServiceServer {
 		}
 		String file = response.getBodyFileName();
 		if (file != null) {
-			List<String> locations = this.files.isEmpty()
-					? Arrays.asList("classpath:/__files/") : this.files;
+			List<String> locations = this.files.isEmpty() ? Arrays.asList("classpath:/__files/") : this.files;
 			for (String location : locations) {
 				try {
 					if (!location.endsWith("/")) {
@@ -351,14 +340,12 @@ public final class WireMockRestServiceServer {
 							try {
 								Resource resource = files.createRelative(file);
 								if (resource.exists()) {
-									return StreamUtils.copyToString(
-											resource.getInputStream(),
+									return StreamUtils.copyToString(resource.getInputStream(),
 											Charset.forName("UTF-8"));
 								}
 							}
 							catch (IOException e) {
-								throw new IllegalStateException(
-										"Cannot locate body file: " + file, e);
+								throw new IllegalStateException("Cannot locate body file: " + file, e);
 							}
 						}
 					}
@@ -379,15 +366,12 @@ public final class WireMockRestServiceServer {
 
 					@Override
 					public boolean matches(Object item) {
-						return pattern.match(
-								new MultiValue(header, Arrays.asList((String) item)))
-								.isExactMatch();
+						return pattern.match(new MultiValue(header, Arrays.asList((String) item))).isExactMatch();
 					}
 
 					@Override
 					public void describeTo(Description description) {
-						description
-								.appendText("should match header: " + header + " with ")
+						description.appendText("should match header: " + header + " with ")
 								.appendText(pattern.getExpected());
 					}
 				}));
@@ -455,8 +439,7 @@ public final class WireMockRestServiceServer {
 				if (value == 0) {
 					// Same number of header matchers
 					if (two.getPriority() != null) {
-						return one.getPriority() != null
-								? one.getPriority() - two.getPriority() : 1;
+						return one.getPriority() != null ? one.getPriority() - two.getPriority() : 1;
 					}
 					value = (int) (one.getInsertionIndex() - two.getInsertionIndex());
 				}
@@ -465,8 +448,7 @@ public final class WireMockRestServiceServer {
 		}
 
 		private String request(RequestPattern request) {
-			return (request.getUrlPath() == null
-					? (request.getUrl() == null ? "/" : request.getUrl())
+			return (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl())
 					: request.getUrlPath());
 		}
 

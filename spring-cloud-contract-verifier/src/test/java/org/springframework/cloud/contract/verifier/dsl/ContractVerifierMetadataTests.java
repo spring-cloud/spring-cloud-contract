@@ -32,13 +32,12 @@ class ContractVerifierMetadataTests {
 				+ "  tool: graphql";
 		// @formatter:on
 
-		ContractVerifierMetadata metadata = ContractVerifierMetadata.fromMetadata(
-				this.mapper.readerForMapOf(Object.class).readValue(yamlEntry));
+		ContractVerifierMetadata metadata = ContractVerifierMetadata
+				.fromMetadata(this.mapper.readerForMapOf(Object.class).readValue(yamlEntry));
 
-		String serialized = this.mapper.writer().forType(ContractVerifierMetadata.class)
-				.writeValueAsString(metadata);
-		BDDAssertions.then(serialized).isEqualToNormalizingPunctuationAndWhitespace(
-				yamlEntry.replace("verifier:\n", ""));
+		String serialized = this.mapper.writer().forType(ContractVerifierMetadata.class).writeValueAsString(metadata);
+		BDDAssertions.then(serialized)
+				.isEqualToNormalizingPunctuationAndWhitespace(yamlEntry.replace("verifier:\n", ""));
 	}
 
 }

@@ -25,12 +25,10 @@ class TestUtils {
 
 	public static void prepareLocalRepo() throws IOException {
 		prepareLocalRepo("target/test-classes/git_samples/", "contract-git");
-		prepareLocalRepo("target/test-classes/git_samples/",
-				"contract-predefined-names-git");
+		prepareLocalRepo("target/test-classes/git_samples/", "contract-predefined-names-git");
 	}
 
-	private static void prepareLocalRepo(String buildDir, String repoPath)
-			throws IOException {
+	private static void prepareLocalRepo(String buildDir, String repoPath) throws IOException {
 		File dotGit = new File(buildDir + repoPath + "/.git");
 		File git = new File(buildDir + repoPath + "/git");
 		if (git.exists()) {

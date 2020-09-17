@@ -39,21 +39,18 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.0
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureAfter({ StubRunnerConfiguration.class,
-		CuratorServiceDiscoveryAutoConfiguration.class })
+@AutoConfigureAfter({ StubRunnerConfiguration.class, CuratorServiceDiscoveryAutoConfiguration.class })
 @ConditionalOnClass(org.apache.curator.x.discovery.ServiceInstance.class)
 @ConditionalOnStubbedDiscoveryDisabled
 @ConditionalOnZookeeperDiscoveryEnabled
-@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled",
-		matchIfMissing = true)
+@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudZookeeperAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")
-	public StubsRegistrar stubsRegistrar(StubRunning stubRunning,
-			CuratorFramework curatorFramework, StubMapperProperties stubMapperProperties,
-			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperStubsRegistrar(stubRunning, curatorFramework,
-				stubMapperProperties, zookeeperDiscoveryProperties);
+	public StubsRegistrar stubsRegistrar(StubRunning stubRunning, CuratorFramework curatorFramework,
+			StubMapperProperties stubMapperProperties, ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		return new ZookeeperStubsRegistrar(stubRunning, curatorFramework, stubMapperProperties,
+				zookeeperDiscoveryProperties);
 	}
 
 }

@@ -32,8 +32,7 @@ public class MessageSubscriberRabbitListener {
 
 	// tag::amqp_annotated_listener[]
 	@RabbitListener(bindings = @QueueBinding(value = @Queue("test.queue"),
-			exchange = @Exchange(value = "contract-test.exchange",
-					ignoreDeclarationExceptions = "true")))
+			exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))
 	public void handlePerson(Person person) {
 		this.person = person;
 	}

@@ -36,20 +36,17 @@ class GenericHttpBodyThen implements Then, BodyMethodVisitor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	GenericHttpBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			BodyParser bodyParser, ComparisonBuilder comparisonBuilder) {
+	GenericHttpBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData, BodyParser bodyParser,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.bodyParser = bodyParser;
 		this.comparisonBuilder = comparisonBuilder;
 		this.templateProcessor = new HandlebarsTemplateProcessor();
-		this.thens.addAll(Arrays.asList(
-				new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser,
-						comparisonBuilder),
-				new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser,
-						this.comparisonBuilder),
-				new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser,
-						this.comparisonBuilder),
-				new GenericXmlBodyThen(blockBuilder, this.bodyParser)));
+		this.thens.addAll(
+				Arrays.asList(new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser, comparisonBuilder),
+						new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
+						new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
+						new GenericXmlBodyThen(blockBuilder, this.bodyParser)));
 	}
 
 	@Override
@@ -57,8 +54,7 @@ class GenericHttpBodyThen implements Then, BodyMethodVisitor {
 		endBodyBlock(this.blockBuilder);
 		this.blockBuilder.addEmptyLine();
 		startBodyBlock(this.blockBuilder, "and:");
-		this.thens.stream().filter(then -> then.accept(metadata))
-				.forEach(then -> then.apply(metadata));
+		this.thens.stream().filter(then -> then.accept(metadata)).forEach(then -> then.apply(metadata));
 		return this;
 	}
 

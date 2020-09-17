@@ -26,26 +26,22 @@ class JaxRsImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity",
-			"javax.ws.rs.core.Response" };
+	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity", "javax.ws.rs.core.Response" };
 
-	JaxRsImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JaxRsImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.JAXRSCLIENT;
+		return this.generatedClassMetaData.configProperties.getTestMode() == TestMode.JAXRSCLIENT;
 	}
 
 }

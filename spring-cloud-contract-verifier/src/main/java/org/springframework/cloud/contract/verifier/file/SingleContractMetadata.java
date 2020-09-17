@@ -51,8 +51,7 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastD
 
 public class SingleContractMetadata {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(SingleContractMetadata.class);
+	private static final Logger log = LoggerFactory.getLogger(SingleContractMetadata.class);
 
 	private final ContractMetadata contractMetadata;
 
@@ -90,8 +89,7 @@ public class SingleContractMetadata {
 
 	private final boolean http;
 
-	public SingleContractMetadata(Contract currentContract,
-			ContractMetadata contractMetadata) {
+	public SingleContractMetadata(Contract currentContract, ContractMetadata contractMetadata) {
 		Assert.notNull(currentContract, "Contract must not be null");
 		this.allContracts = contractMetadata.getConvertedContract();
 		this.contract = currentContract;
@@ -102,82 +100,63 @@ public class SingleContractMetadata {
 		DslProperty<?> outputBody = outputBody(currentContract);
 		Header inputContentType = contentTypeHeader(inputHeaders);
 		Header outputContentType = contentTypeHeader(outputHeaders);
-		this.definedInputTestContentType = Optional.ofNullable(inputContentType)
-				.map(DslProperty::getServerValue).map(Object::toString).orElse("");
-		this.evaluatedInputTestContentType = tryToEvaluateTestContentType(inputHeaders,
-				inputBody);
-		this.inputTestContentType = inputBody != null ? this.evaluatedInputTestContentType
-				: UNKNOWN;
-		this.definedOutputTestContentType = Optional.ofNullable(outputContentType)
-				.map(DslProperty::getServerValue).map(Object::toString).orElse("");
-		this.evaluatedOutputTestContentType = tryToEvaluateTestContentType(outputHeaders,
-				outputBody);
-		this.outputTestContentType = outputBody != null
-				? this.evaluatedOutputTestContentType : UNKNOWN;
-		this.definedInputStubContentType = Optional.ofNullable(inputContentType)
-				.map(DslProperty::getClientValue).map(Object::toString).orElse("");
-		this.evaluatedInputStubContentType = tryToEvaluateStubContentType(inputHeaders,
-				inputBody);
-		this.inputStubContentType = inputBody != null ? this.evaluatedInputStubContentType
-				: UNKNOWN;
-		this.definedOutputStubContentType = Optional.ofNullable(outputContentType)
-				.map(DslProperty::getClientValue).map(Object::toString).orElse("");
-		this.evaluatedOutputStubContentType = tryToEvaluateStubContentType(outputHeaders,
-				outputBody);
-		this.outputStubContentType = outputBody != null
-				? this.evaluatedOutputStubContentType : UNKNOWN;
+		this.definedInputTestContentType = Optional.ofNullable(inputContentType).map(DslProperty::getServerValue)
+				.map(Object::toString).orElse("");
+		this.evaluatedInputTestContentType = tryToEvaluateTestContentType(inputHeaders, inputBody);
+		this.inputTestContentType = inputBody != null ? this.evaluatedInputTestContentType : UNKNOWN;
+		this.definedOutputTestContentType = Optional.ofNullable(outputContentType).map(DslProperty::getServerValue)
+				.map(Object::toString).orElse("");
+		this.evaluatedOutputTestContentType = tryToEvaluateTestContentType(outputHeaders, outputBody);
+		this.outputTestContentType = outputBody != null ? this.evaluatedOutputTestContentType : UNKNOWN;
+		this.definedInputStubContentType = Optional.ofNullable(inputContentType).map(DslProperty::getClientValue)
+				.map(Object::toString).orElse("");
+		this.evaluatedInputStubContentType = tryToEvaluateStubContentType(inputHeaders, inputBody);
+		this.inputStubContentType = inputBody != null ? this.evaluatedInputStubContentType : UNKNOWN;
+		this.definedOutputStubContentType = Optional.ofNullable(outputContentType).map(DslProperty::getClientValue)
+				.map(Object::toString).orElse("");
+		this.evaluatedOutputStubContentType = tryToEvaluateStubContentType(outputHeaders, outputBody);
+		this.outputStubContentType = outputBody != null ? this.evaluatedOutputStubContentType : UNKNOWN;
 		this.http = currentContract.getRequest() != null;
 		this.stubsPath = contractMetadata.getPath();
 	}
 
 	private Header contentTypeHeader(Headers headers) {
-		return headers == null ? null
-				: headers.getEntries().stream()
-						.filter(it -> "Content-Type".equalsIgnoreCase(it.getName()))
-						.findFirst().orElse(null);
+		return headers == null ? null : headers.getEntries().stream()
+				.filter(it -> "Content-Type".equalsIgnoreCase(it.getName())).findFirst().orElse(null);
 	}
 
-	private ContentType tryToEvaluateStubContentType(Headers mainHeaders,
-			DslProperty<?> body) {
-		Object clientValue = Optional.ofNullable(body).map(DslProperty::getClientValue)
-				.orElse(null);
+	private ContentType tryToEvaluateStubContentType(Headers mainHeaders, DslProperty<?> body) {
+		Object clientValue = Optional.ofNullable(body).map(DslProperty::getClientValue).orElse(null);
 		ContentType contentType = evaluateClientSideContentType(mainHeaders, clientValue);
 		if (contentType == DEFINED || contentType == UNKNOWN) {
 			// try to retrieve from the other side (e.g. stub side was a regex, but test
 			// side is concrete)
-			Object serverValue = Optional.ofNullable(body)
-					.map(DslProperty::getServerValue).orElse(null);
+			Object serverValue = Optional.ofNullable(body).map(DslProperty::getServerValue).orElse(null);
 			return evaluateServerSideContentType(mainHeaders, serverValue);
 		}
 		return contentType;
 	}
 
-	private ContentType tryToEvaluateTestContentType(Headers mainHeaders,
-			DslProperty<?> body) {
-		Object serverValue = Optional.ofNullable(body).map(DslProperty::getServerValue)
-				.orElse(null);
+	private ContentType tryToEvaluateTestContentType(Headers mainHeaders, DslProperty<?> body) {
+		Object serverValue = Optional.ofNullable(body).map(DslProperty::getServerValue).orElse(null);
 		ContentType contentType = evaluateClientSideContentType(mainHeaders, serverValue);
 		if (contentType == DEFINED || contentType == UNKNOWN) {
 			// try to retrieve from the other side (e.g. stub side was a regex, but test
 			// side is concrete)
-			Object clientValue = Optional.ofNullable(body)
-					.map(DslProperty::getClientValue).orElse(null);
+			Object clientValue = Optional.ofNullable(body).map(DslProperty::getClientValue).orElse(null);
 			return evaluateServerSideContentType(mainHeaders, clientValue);
 		}
 		return contentType;
 	}
 
 	public boolean isJson() {
-		return this.inputTestContentType.equals(JSON)
-				|| this.outputTestContentType.equals(JSON)
-				|| this.inputStubContentType.equals(JSON)
-				|| this.outputStubContentType.equals(JSON);
+		return this.inputTestContentType.equals(JSON) || this.outputTestContentType.equals(JSON)
+				|| this.inputStubContentType.equals(JSON) || this.outputStubContentType.equals(JSON);
 	}
 
 	public boolean evaluatesToJson() {
 		return isJson() || this.evaluatedInputTestContentType.equals(JSON)
-				|| this.evaluatedOutputTestContentType.equals(JSON)
-				|| this.evaluatedInputStubContentType.equals(JSON)
+				|| this.evaluatedOutputTestContentType.equals(JSON) || this.evaluatedInputStubContentType.equals(JSON)
 				|| this.evaluatedOutputStubContentType.equals(JSON);
 	}
 
@@ -186,10 +165,8 @@ public class SingleContractMetadata {
 	}
 
 	public boolean isXml() {
-		return this.inputTestContentType.equals(XML)
-				|| this.outputTestContentType.equals(XML)
-				|| this.inputStubContentType.equals(XML)
-				|| this.outputStubContentType.equals(XML);
+		return this.inputTestContentType.equals(XML) || this.outputTestContentType.equals(XML)
+				|| this.inputStubContentType.equals(XML) || this.outputStubContentType.equals(XML);
 	}
 
 	public boolean isHttp() {
@@ -205,29 +182,24 @@ public class SingleContractMetadata {
 	}
 
 	private DslProperty<?> inputBody(Contract contract) {
-		return Optional.ofNullable(contract.getRequest()).map(Request::getBody)
-				.map(DslProperty.class::cast)
-				.orElseGet(() -> Optional.ofNullable(contract.getInput())
-						.map(Input::getMessageBody).orElse(null));
+		return Optional.ofNullable(contract.getRequest()).map(Request::getBody).map(DslProperty.class::cast)
+				.orElseGet(() -> Optional.ofNullable(contract.getInput()).map(Input::getMessageBody).orElse(null));
 	}
 
 	private Headers inputHeaders(Contract contract) {
 		return Optional.ofNullable(contract.getRequest()).map(Request::getHeaders)
-				.orElseGet(() -> Optional.ofNullable(contract.getInput())
-						.map(Input::getMessageHeaders).orElse(null));
+				.orElseGet(() -> Optional.ofNullable(contract.getInput()).map(Input::getMessageHeaders).orElse(null));
 	}
 
 	private DslProperty<?> outputBody(Contract contract) {
-		return Optional.ofNullable(contract.getResponse()).map(Response::getBody)
-				.map(DslProperty.class::cast)
-				.orElseGet(() -> Optional.ofNullable(contract.getOutputMessage())
-						.map(OutputMessage::getBody).orElse(null));
+		return Optional.ofNullable(contract.getResponse()).map(Response::getBody).map(DslProperty.class::cast)
+				.orElseGet(() -> Optional.ofNullable(contract.getOutputMessage()).map(OutputMessage::getBody)
+						.orElse(null));
 	}
 
 	private Headers outputHeaders(Contract contract) {
-		return Optional.ofNullable(contract.getResponse()).map(Response::getHeaders)
-				.orElseGet(() -> Optional.ofNullable(contract.getOutputMessage())
-						.map(OutputMessage::getHeaders).orElse(null));
+		return Optional.ofNullable(contract.getResponse()).map(Response::getHeaders).orElseGet(
+				() -> Optional.ofNullable(contract.getOutputMessage()).map(OutputMessage::getHeaders).orElse(null));
 	}
 
 	public String methodName() {
@@ -245,8 +217,7 @@ public class SingleContractMetadata {
 		}
 		if (allContracts.size() > 1) {
 			int index = allContracts.indexOf(getContract());
-			String name = String.format("%s_%d", camelCasedMethodFromFileName(stubsPath),
-					index);
+			String name = String.format("%s_%d", camelCasedMethodFromFileName(stubsPath), index);
 			log.debug("Scenario found. The method name will be [{}]", name);
 			return name;
 		}
@@ -256,8 +227,7 @@ public class SingleContractMetadata {
 	}
 
 	private static String camelCasedMethodFromFileName(Path stubsPath) {
-		return camelCase(convertIllegalMethodNameChars(
-				toLastDot(afterLast(stubsPath.toString(), File.separator))));
+		return camelCase(convertIllegalMethodNameChars(toLastDot(afterLast(stubsPath.toString(), File.separator))));
 	}
 
 	public ContractMetadata getContractMetadata() {

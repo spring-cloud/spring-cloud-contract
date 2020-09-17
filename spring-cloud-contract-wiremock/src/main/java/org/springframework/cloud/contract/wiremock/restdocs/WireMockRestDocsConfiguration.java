@@ -36,8 +36,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(MockMvcRestDocumentationConfigurer.class)
-public class WireMockRestDocsConfiguration
-		implements RestDocsMockMvcConfigurationCustomizer {
+public class WireMockRestDocsConfiguration implements RestDocsMockMvcConfigurationCustomizer {
 
 	private final Environment environment;
 
@@ -47,10 +46,8 @@ public class WireMockRestDocsConfiguration
 
 	@Override
 	public void customize(MockMvcRestDocumentationConfigurer configurer) {
-		if (this.environment.getProperty("wiremock.placeholders.enabled", "true")
-				.equals("true")) {
-			configurer.operationPreprocessors().withResponseDefaults(
-					new DynamicPortPlaceholderInserterPreprocessor());
+		if (this.environment.getProperty("wiremock.placeholders.enabled", "true").equals("true")) {
+			configurer.operationPreprocessors().withResponseDefaults(new DynamicPortPlaceholderInserterPreprocessor());
 		}
 		configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
 	}

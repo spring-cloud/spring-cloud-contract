@@ -32,8 +32,7 @@ import org.springframework.util.StringUtils;
  */
 class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 
-	private static final Pattern SNAPSHOT_PATTERN = Pattern
-			.compile("^.*[\\.|\\-](BUILD-)?SNAPSHOT.*$");
+	private static final Pattern SNAPSHOT_PATTERN = Pattern.compile("^.*[\\.|\\-](BUILD-)?SNAPSHOT.*$");
 
 	private static final String MILESTONE_REGEX = ".*[\\.|\\-]M[0-9]+";
 
@@ -44,8 +43,8 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 	private static final String SR_REGEX = "^.*[\\.|\\-]SR[0-9]+.*$";
 
 	private static final List<Pattern> VALID_PATTERNS = Arrays.asList(SNAPSHOT_PATTERN,
-			Pattern.compile(MILESTONE_REGEX), Pattern.compile(RC_REGEX),
-			Pattern.compile(RELEASE_REGEX), Pattern.compile(SR_REGEX));
+			Pattern.compile(MILESTONE_REGEX), Pattern.compile(RC_REGEX), Pattern.compile(RELEASE_REGEX),
+			Pattern.compile(SR_REGEX));
 
 	/**
 	 * Version of the project.
@@ -79,8 +78,7 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 		int numberOfHyphens = splitByHyphens - 1;
 		int indexOfFirstHyphen = this.version.indexOf("-");
 		boolean buildSnapshot = this.version.endsWith("BUILD-SNAPSHOT");
-		if (numberOfHyphens == 1 && !buildSnapshot
-				|| (numberOfHyphens > 1 && buildSnapshot)) {
+		if (numberOfHyphens == 1 && !buildSnapshot || (numberOfHyphens > 1 && buildSnapshot)) {
 			// Dysprosium or 1.0.0
 			String versionName = this.version.substring(0, indexOfFirstHyphen);
 			boolean hasDots = versionName.contains(".");
@@ -100,8 +98,7 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 				return SplitVersion.hyphen(newArray);
 			}
 			else {
-				throw new UnsupportedOperationException(
-						"Unknown version [" + this.version + "]");
+				throw new UnsupportedOperationException("Unknown version [" + this.version + "]");
 			}
 		}
 		return null;
@@ -172,8 +169,7 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 		SplitVersion thatSplit = that.assertVersion();
 		int releaseTypeComparison = this.releaseType.compareTo(that.releaseType);
 		boolean thisReleaseTypeHigher = releaseTypeComparison > 0;
-		boolean bothGa = this.isReleaseOrServiceRelease()
-				&& that.isReleaseOrServiceRelease();
+		boolean bothGa = this.isReleaseOrServiceRelease() && that.isReleaseOrServiceRelease();
 		// 1.0.1.M2 vs 1.0.0.RELEASE (x)
 		if (thisReleaseTypeHigher && !bothGa) {
 			return 1;
@@ -205,8 +201,7 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 	boolean isSameWithoutSuffix(ProjectVersion that) {
 		SplitVersion thisSplit = assertVersion();
 		SplitVersion thatSplit = that.assertVersion();
-		return thisSplit.major.equals(thatSplit.major)
-				&& thisSplit.minor.equals(thatSplit.minor)
+		return thisSplit.major.equals(thatSplit.major) && thisSplit.minor.equals(thatSplit.minor)
 				&& thisSplit.patch.equals(thatSplit.patch);
 	}
 
@@ -255,8 +250,7 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 
 		// 1.0.0.RELEASE
 		// 1.0.0-RELEASE
-		private SplitVersion(String major, String minor, String patch, String delimiter,
-				String suffix) {
+		private SplitVersion(String major, String minor, String patch, String delimiter, String suffix) {
 			this.major = major;
 			this.minor = minor;
 			this.patch = patch;
@@ -314,8 +308,7 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 		}
 
 		private boolean isInvalid() {
-			return wrongReleaseTrainVersion() || wrongLibraryVersion() || wrongDelimiter()
-					|| noSuffix();
+			return wrongReleaseTrainVersion() || wrongLibraryVersion() || wrongDelimiter() || noSuffix();
 		}
 
 		private boolean noSuffix() {
@@ -345,9 +338,8 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 			// must have
 			// either major and suffix (release train)
 			// major, minor, patch and suffix
-			return isNumeric(major) && (StringUtils.isEmpty(minor)
-					|| StringUtils.isEmpty(patch) || StringUtils.isEmpty(suffix)
-					|| StringUtils.isEmpty(delimiter));
+			return isNumeric(major) && (StringUtils.isEmpty(minor) || StringUtils.isEmpty(patch)
+					|| StringUtils.isEmpty(suffix) || StringUtils.isEmpty(delimiter));
 		}
 
 		private boolean wrongReleaseTrainVersion() {

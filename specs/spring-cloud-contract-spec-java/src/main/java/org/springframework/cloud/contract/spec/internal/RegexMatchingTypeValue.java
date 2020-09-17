@@ -21,8 +21,7 @@ package org.springframework.cloud.contract.spec.internal;
  */
 public class RegexMatchingTypeValue extends MatchingTypeValue {
 
-	RegexMatchingTypeValue(MatchingType type, Object value, Integer minTypeOccurrence,
-			Integer maxTypeOccurrence) {
+	RegexMatchingTypeValue(MatchingType type, Object value, Integer minTypeOccurrence, Integer maxTypeOccurrence) {
 		super(type, value, minTypeOccurrence, maxTypeOccurrence);
 	}
 
@@ -40,8 +39,7 @@ public class RegexMatchingTypeValue extends MatchingTypeValue {
 		}
 		RegexProperty regexProperty = (RegexProperty) this.getValue();
 		return new RegexMatchingTypeValue(this.getType(),
-				new RegexProperty(regexProperty.getClientValue(),
-						regexProperty.getServerValue(), clazz),
+				new RegexProperty(regexProperty.getClientValue(), regexProperty.getServerValue(), clazz),
 				this.getMinTypeOccurrence(), this.getMaxTypeOccurrence());
 	}
 

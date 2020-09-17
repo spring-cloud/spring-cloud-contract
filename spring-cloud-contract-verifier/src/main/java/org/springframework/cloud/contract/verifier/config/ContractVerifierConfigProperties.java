@@ -32,8 +32,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ContractVerifierConfigProperties {
 
-	private static final Log log = LogFactory
-			.getLog(ContractVerifierConfigProperties.class);
+	private static final Log log = LogFactory.getLog(ContractVerifierConfigProperties.class);
 
 	/**
 	 * For which unit test library tests should be generated.

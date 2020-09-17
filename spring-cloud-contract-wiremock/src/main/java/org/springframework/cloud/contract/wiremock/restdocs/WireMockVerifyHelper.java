@@ -61,8 +61,7 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 		if (requestBodyContent != null) {
 			String actual = new String(requestBodyContent, Charset.forName("UTF-8"));
 			for (JsonPath jsonPath : this.jsonPaths.values()) {
-				new JsonPathValue(jsonPath, actual).assertHasValue(Object.class,
-						"an object");
+				new JsonPathValue(jsonPath, actual).assertHasValue(Object.class, "an object");
 			}
 		}
 		configuration.put("contract.jsonPaths", this.jsonPaths.keySet());
@@ -70,16 +69,14 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 			configuration.put("contract.contentType", this.contentType);
 			MediaType resultType = getContentType(result);
 			assertThat(resultType).isNotNull().as("no content type");
-			assertThat(this.contentType.includes(resultType)).isTrue()
-					.as("content type did not match");
+			assertThat(this.contentType.includes(resultType)).isTrue().as("content type did not match");
 		}
 		if (this.builder != null) {
 			this.builder.willReturn(getResponseDefinition(result));
 			StubMapping stubMapping = this.builder.build();
 			Request request = getWireMockRequest(result);
 			MatchResult match = stubMapping.getRequest().match(request);
-			assertThat(match.isExactMatch()).as("wiremock did not match request")
-					.isTrue();
+			assertThat(match.isExactMatch()).as("wiremock did not match request").isTrue();
 			configuration.put("contract.stubMapping", stubMapping);
 		}
 	}

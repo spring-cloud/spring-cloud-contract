@@ -32,39 +32,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ContractVerifierKafkaConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(KafkaAutoConfiguration.class,
-					ContractVerifierKafkaConfiguration.class))
+			.withConfiguration(
+					AutoConfigurations.of(KafkaAutoConfiguration.class, ContractVerifierKafkaConfiguration.class))
 			.withUserConfiguration(CustomConfiguration.class);
 
 	@Test
 	public void shouldCreateBeansByDefault() {
 		this.contextRunner.run((context) -> {
 			assertThat(context.getBeansOfType(KafkaStubMessages.class)).hasSize(1);
-			assertThat(context.getBeansOfType(ContractVerifierKafkaHelper.class))
-					.hasSize(1);
+			assertThat(context.getBeansOfType(ContractVerifierKafkaHelper.class)).hasSize(1);
 		});
 	}
 
 	@Test
 	public void shouldNotCreateBeansWhenDisabled() {
-		this.contextRunner.withPropertyValues("stubrunner.kafka.enabled=false")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(KafkaStubMessages.class))
-							.hasSize(0);
-					assertThat(context.getBeansOfType(ContractVerifierKafkaHelper.class))
-							.hasSize(0);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.kafka.enabled=false").run((context) -> {
+			assertThat(context.getBeansOfType(KafkaStubMessages.class)).hasSize(0);
+			assertThat(context.getBeansOfType(ContractVerifierKafkaHelper.class)).hasSize(0);
+		});
 	}
 
 	@Test
 	public void shouldCreateBeansWhenExplicitlyEnabled() {
-		this.contextRunner.withPropertyValues("stubrunner.kafka.enabled=true")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(KafkaStubMessages.class))
-							.hasSize(1);
-					assertThat(context.getBeansOfType(ContractVerifierKafkaHelper.class))
-							.hasSize(1);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.kafka.enabled=true").run((context) -> {
+			assertThat(context.getBeansOfType(KafkaStubMessages.class)).hasSize(1);
+			assertThat(context.getBeansOfType(ContractVerifierKafkaHelper.class)).hasSize(1);
+		});
 	}
 
 	static class CustomConfiguration {

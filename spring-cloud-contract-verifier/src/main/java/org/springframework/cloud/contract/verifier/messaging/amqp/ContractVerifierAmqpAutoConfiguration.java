@@ -77,17 +77,15 @@ public class ContractVerifierAmqpAutoConfiguration {
 	@ConditionalOnMissingBean
 	public MessageVerifier<Message> contractVerifierMessageExchange() {
 		return new SpringAmqpStubMessages(this.rabbitTemplate,
-				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry,
-						this.simpleMessageListenerContainers, this.bindings),
+				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry, this.simpleMessageListenerContainers,
+						this.bindings),
 				this.rabbitProperties);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<Message> contractVerifierMessaging(
-			MessageVerifier<Message> exchange) {
-		return new ContractVerifierHelper(exchange,
-				this.rabbitTemplate.getMessageConverter());
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifier<Message> exchange) {
+		return new ContractVerifierHelper(exchange, this.rabbitTemplate.getMessageConverter());
 	}
 
 }
@@ -96,21 +94,18 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message> {
 
 	private final MessageConverter messageConverter;
 
-	ContractVerifierHelper(MessageVerifier<Message> exchange,
-			MessageConverter messageConverter) {
+	ContractVerifierHelper(MessageVerifier<Message> exchange, MessageConverter messageConverter) {
 		super(exchange);
 		this.messageConverter = messageConverter;
 	}
 
 	@Override
 	protected ContractVerifierMessage convert(Message message) {
-		MessagingMessageConverter messageConverter = new MessagingMessageConverter(
-				this.messageConverter, new SimpleAmqpHeaderMapper());
+		MessagingMessageConverter messageConverter = new MessagingMessageConverter(this.messageConverter,
+				new SimpleAmqpHeaderMapper());
 		org.springframework.messaging.Message<?> messagingMessage;
-		messagingMessage = (org.springframework.messaging.Message<?>) messageConverter
-				.fromMessage(message);
-		return new ContractVerifierMessage(messagingMessage.getPayload(),
-				messagingMessage.getHeaders());
+		messagingMessage = (org.springframework.messaging.Message<?>) messageConverter.fromMessage(message);
+		return new ContractVerifierMessage(messagingMessage.getPayload(), messagingMessage.getHeaders());
 	}
 
 }

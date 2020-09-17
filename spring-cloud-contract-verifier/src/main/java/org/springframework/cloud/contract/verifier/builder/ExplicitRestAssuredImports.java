@@ -27,31 +27,26 @@ class ExplicitRestAssuredImports implements Imports, RestAssuredVerifier {
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] REST_ASSURED_2_IMPORTS = {
-			"com.jayway.restassured.specification.RequestSpecification",
-			"com.jayway.restassured.response.Response" };
+			"com.jayway.restassured.specification.RequestSpecification", "com.jayway.restassured.response.Response" };
 
-	private static final String[] REST_ASSURED_3_IMPORTS = {
-			"io.restassured.specification.RequestSpecification",
+	private static final String[] REST_ASSURED_3_IMPORTS = { "io.restassured.specification.RequestSpecification",
 			"io.restassured.response.Response" };
 
-	ExplicitRestAssuredImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	ExplicitRestAssuredImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(
-				isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
+		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.EXPLICIT
+		return this.generatedClassMetaData.configProperties.getTestMode() == TestMode.EXPLICIT
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

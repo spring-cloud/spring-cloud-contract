@@ -52,8 +52,7 @@ import org.springframework.util.StringUtils;
  */
 public class EurekaStubsRegistrar implements StubsRegistrar {
 
-	private static final Log log = LogFactory
-			.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private final StubRunning stubRunning;
 
@@ -71,11 +70,10 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 
 	private final ApplicationContext context;
 
-	public EurekaStubsRegistrar(StubRunning stubRunning,
-			ServiceRegistry<EurekaRegistration> serviceRegistry,
+	public EurekaStubsRegistrar(StubRunning stubRunning, ServiceRegistry<EurekaRegistration> serviceRegistry,
 			StubMapperProperties stubMapperProperties, InetUtils inetUtils,
-			EurekaInstanceConfigBean eurekaInstanceConfigBean,
-			EurekaClientConfigBean eurekaClientConfigBean, ApplicationContext context) {
+			EurekaInstanceConfigBean eurekaInstanceConfigBean, EurekaClientConfigBean eurekaClientConfigBean,
+			ApplicationContext context) {
 		this.stubRunning = stubRunning;
 		this.stubMapperProperties = stubMapperProperties;
 		this.serviceRegistry = serviceRegistry;
@@ -87,32 +85,27 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 
 	@Override
 	public void registerStubs() {
-		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs()
-				.validNamesAndPorts();
+		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs().validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
 			EurekaInstanceConfigBean instance = registration(entry);
-			log.info("Will register stub in Eureka " + "[" + instance.getAppname() + ", "
-					+ instance.getHostname() + ", " + instance.getNonSecurePort() + ", "
-					+ instance.getInstanceId() + "]");
+			log.info("Will register stub in Eureka " + "[" + instance.getAppname() + ", " + instance.getHostname()
+					+ ", " + instance.getNonSecurePort() + ", " + instance.getInstanceId() + "]");
 			InstanceInfo instanceInfo = new InstanceInfoFactory().create(instance);
-			ApplicationInfoManager applicationInfoManager = new ApplicationInfoManager(
-					instance, instanceInfo);
+			ApplicationInfoManager applicationInfoManager = new ApplicationInfoManager(instance, instanceInfo);
 			AbstractDiscoveryClientOptionalArgs args = args();
-			EurekaClient client = new CloudEurekaClient(applicationInfoManager,
-					this.eurekaClientConfigBean, args, this.context);
+			EurekaClient client = new CloudEurekaClient(applicationInfoManager, this.eurekaClientConfigBean, args,
+					this.context);
 			EurekaRegistration registration = EurekaRegistration.builder(instance)
 					.with(this.eurekaClientConfigBean, this.context).with(client).build();
 			this.registrations.add(registration);
 			try {
 				this.serviceRegistry.register(registration);
-				log.info("Successfully registered stub " + "["
-						+ entry.getKey().toColonSeparatedDependencyNotation()
+				log.info("Successfully registered stub " + "[" + entry.getKey().toColonSeparatedDependencyNotation()
 						+ "] in Service Discovery");
 			}
 			catch (Exception e) {
 				log.warn("Exception occurred while trying to register a stub ["
-						+ entry.getKey().toColonSeparatedDependencyNotation()
-						+ "] in Service Discovery", e);
+						+ entry.getKey().toColonSeparatedDependencyNotation() + "] in Service Discovery", e);
 			}
 		}
 	}
@@ -126,22 +119,19 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 		}
 	}
 
-	private EurekaInstanceConfigBean registration(
-			Map.Entry<StubConfiguration, Integer> entry) {
+	private EurekaInstanceConfigBean registration(Map.Entry<StubConfiguration, Integer> entry) {
 		EurekaInstanceConfigBean config = new EurekaInstanceConfigBean(this.inetUtils);
 		String appName = name(entry.getKey());
 		config.setInstanceEnabledOnit(true);
 		InetAddress address = this.inetUtils.findFirstNonLoopbackAddress();
 		config.setIpAddress(address.getHostAddress());
-		config.setHostname(StringUtils.hasText(hostName(entry)) ? hostName(entry)
-				: address.getHostName());
+		config.setHostname(StringUtils.hasText(hostName(entry)) ? hostName(entry) : address.getHostName());
 		config.setAppname(appName);
 		config.setVirtualHostName(appName);
 		config.setSecureVirtualHostName(appName);
 		int port = port(entry);
 		config.setNonSecurePort(port);
-		config.setInstanceId(address.getHostAddress() + ":"
-				+ entry.getKey().getArtifactId() + ":" + port);
+		config.setInstanceId(address.getHostAddress() + ":" + entry.getKey().getArtifactId() + ":" + port);
 		config.setLeaseRenewalIntervalInSeconds(1);
 		return config;
 	}
@@ -155,8 +145,8 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 	}
 
 	private String name(StubConfiguration stubConfiguration) {
-		String resolvedName = this.stubMapperProperties.fromIvyNotationToId(
-				stubConfiguration.toColonSeparatedDependencyNotation());
+		String resolvedName = this.stubMapperProperties
+				.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
 		if (StringUtils.hasText(resolvedName)) {
 			return resolvedName;
 		}

@@ -59,23 +59,20 @@ class AvailablePortScanner {
 		for (int i = 0; i < this.maxRetryCount; i++) {
 			try {
 				int numberOfPortsToBind = this.maxPortNumber - this.minPortNumber + 1;
-				int portToScan = new Random().nextInt(numberOfPortsToBind)
-						+ this.minPortNumber;
+				int portToScan = new Random().nextInt(numberOfPortsToBind) + this.minPortNumber;
 				checkIfPortIsAvailable(portToScan);
 				return executeLogicForAvailablePort(portToScan, closure);
 			}
 			catch (IOException exception) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to execute callback (try: " + i + "/"
-							+ this.maxRetryCount + ")", exception);
+					log.debug("Failed to execute callback (try: " + i + "/" + this.maxRetryCount + ")", exception);
 				}
 			}
 		}
 		throw new NoPortAvailableException(this.minPortNumber, this.maxPortNumber);
 	}
 
-	private <T> T executeLogicForAvailablePort(int portToScan, PortCallback<T> closure)
-			throws IOException {
+	private <T> T executeLogicForAvailablePort(int portToScan, PortCallback<T> closure) throws IOException {
 		if (log.isDebugEnabled()) {
 			log.debug("Trying to execute closure with port [" + portToScan + "]");
 		}
@@ -104,8 +101,7 @@ class AvailablePortScanner {
 	static class NoPortAvailableException extends RuntimeException {
 
 		NoPortAvailableException(int lowerBound, int upperBound) {
-			super("Could not find available port in range " + lowerBound + ":"
-					+ upperBound);
+			super("Could not find available port in range " + lowerBound + ":" + upperBound);
 		}
 
 	}
@@ -114,8 +110,8 @@ class AvailablePortScanner {
 	static class InvalidPortRange extends RuntimeException {
 
 		InvalidPortRange(int lowerBound, int upperBound) {
-			super("Invalid bounds exceptions, min port [" + lowerBound
-					+ "] is greater to max port [" + upperBound + "]");
+			super("Invalid bounds exceptions, min port [" + lowerBound + "] is greater to max port [" + upperBound
+					+ "]");
 		}
 
 	}

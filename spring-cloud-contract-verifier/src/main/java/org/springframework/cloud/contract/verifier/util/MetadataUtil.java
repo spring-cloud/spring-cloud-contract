@@ -61,8 +61,7 @@ public final class MetadataUtil {
 	 * @return merged object with metadata or object without metadata entries if metadata
 	 * key wasn't present
 	 */
-	public static <T> T fromMetadata(Map<String, Object> metadata, String key,
-			T objectToMerge) {
+	public static <T> T fromMetadata(Map<String, Object> metadata, String key, T objectToMerge) {
 		if (metadata == null || !metadata.containsKey(key)) {
 			return objectToMerge;
 		}
@@ -185,8 +184,7 @@ class VerifierObjectMapper extends ObjectMapper {
 				.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
 				.setDefaultPropertyInclusion(JsonInclude.Include.NON_ABSENT);
 		configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		FilterProvider filters = new SimpleFilterProvider()
-				.addFilter("non default properties", new MyFilter());
+		FilterProvider filters = new SimpleFilterProvider().addFilter("non default properties", new MyFilter());
 		addMixIn(Object.class, PropertyFilterMixIn.class);
 		setFilterProvider(filters);
 	}
@@ -203,14 +201,13 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 	private static final Map<Class, Object> CACHE = new ConcurrentHashMap<>();
 
 	@Override
-	public void serializeAsField(Object pojo, JsonGenerator jgen,
-			SerializerProvider provider, PropertyWriter writer) throws Exception {
+	public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
+			throws Exception {
 		if (pojo instanceof Map || pojo instanceof Collection) {
 			writer.serializeAsField(pojo, jgen, provider);
 			return;
 		}
-		Object defaultInstance = CACHE.computeIfAbsent(pojo.getClass(),
-				this::defaultInstance);
+		Object defaultInstance = CACHE.computeIfAbsent(pojo.getClass(), this::defaultInstance);
 		if (defaultInstance instanceof CantInstantiateThisClass
 				|| !valueSameAsDefault(pojo, defaultInstance, writer.getName())) {
 			writer.serializeAsField(pojo, jgen, provider);
@@ -226,8 +223,7 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 		}
 	}
 
-	private boolean valueSameAsDefault(Object pojo, Object defaultInstance,
-			String fieldName) {
+	private boolean valueSameAsDefault(Object pojo, Object defaultInstance, String fieldName) {
 		Field field = ReflectionUtils.findField(pojo.getClass(), fieldName);
 		if (field == null) {
 			return false;

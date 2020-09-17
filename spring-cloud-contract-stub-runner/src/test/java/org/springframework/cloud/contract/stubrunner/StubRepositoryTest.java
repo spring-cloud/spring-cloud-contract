@@ -30,14 +30,13 @@ import org.springframework.cloud.contract.spec.Contract;
  */
 public class StubRepositoryTest {
 
-	private static final File YAML_REPOSITORY_LOCATION = new File(
-			"src/test/resources/customYamlRepository");
+	private static final File YAML_REPOSITORY_LOCATION = new File("src/test/resources/customYamlRepository");
 
 	@Test
 	public void should_prefer_custom_yaml_converter_over_standard() {
 		// given:
-		StubRepository repository = new StubRepository(YAML_REPOSITORY_LOCATION,
-				new ArrayList<>(), new StubRunnerOptionsBuilder().build());
+		StubRepository repository = new StubRepository(YAML_REPOSITORY_LOCATION, new ArrayList<>(),
+				new StubRunnerOptionsBuilder().build());
 		int expectedDescriptorsSize = 1;
 
 		// when:

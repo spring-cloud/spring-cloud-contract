@@ -28,8 +28,7 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	GroovyClassMetaData(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	GroovyClassMetaData(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -46,11 +45,8 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public ClassMetaData suffix() {
-		String suffix = StringUtils.hasText(
-				this.generatedClassMetaData.configProperties.getNameSuffixForTests())
-						? this.generatedClassMetaData.configProperties
-								.getNameSuffixForTests()
-						: "Spec";
+		String suffix = StringUtils.hasText(this.generatedClassMetaData.configProperties.getNameSuffixForTests())
+				? this.generatedClassMetaData.configProperties.getNameSuffixForTests() : "Spec";
 		if (!this.blockBuilder.endsWith(suffix)) {
 			this.blockBuilder.addAtTheEnd(suffix);
 		}
@@ -64,8 +60,7 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public ClassMetaData packageDefinition() {
-		this.blockBuilder.addLineWithEnding(
-				"package " + this.generatedClassMetaData.generatedClassData.classPackage);
+		this.blockBuilder.addLineWithEnding("package " + this.generatedClassMetaData.generatedClassData.classPackage);
 		return this;
 	}
 
@@ -73,9 +68,9 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 	public ClassMetaData parentClass() {
 		ContractVerifierConfigProperties properties = generatedClassMetaData().configProperties;
 		String includedDirectoryRelativePath = generatedClassMetaData().includedDirectoryRelativePath;
-		String baseClass = baseClassProvider().retrieveBaseClass(
-				properties.getBaseClassMappings(), properties.getPackageWithBaseClasses(),
-				properties.getBaseClassForTests(), includedDirectoryRelativePath);
+		String baseClass = baseClassProvider().retrieveBaseClass(properties.getBaseClassMappings(),
+				properties.getPackageWithBaseClasses(), properties.getBaseClassForTests(),
+				includedDirectoryRelativePath);
 		baseClass = StringUtils.hasText(baseClass) ? baseClass : "Specification";
 		int lastIndexOf = baseClass.lastIndexOf(".");
 		if (lastIndexOf > 0) {
@@ -102,8 +97,7 @@ class GroovyClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK;
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK;
 	}
 
 }

@@ -35,8 +35,7 @@ import org.springframework.restdocs.restassured3.RestAssuredRestDocumentationCon
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RestAssuredRestDocumentationConfigurer.class)
-public class WireMockRestAssuredConfiguration
-		implements RestDocsRestAssuredConfigurationCustomizer {
+public class WireMockRestAssuredConfiguration implements RestDocsRestAssuredConfigurationCustomizer {
 
 	@Override
 	public void customize(RestAssuredRestDocumentationConfigurer configurer) {

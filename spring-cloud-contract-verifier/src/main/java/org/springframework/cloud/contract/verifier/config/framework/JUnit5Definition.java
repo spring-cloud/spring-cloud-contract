@@ -60,8 +60,7 @@ public class JUnit5Definition implements TestFrameworkDefinition {
 
 	@Override
 	public List<String> getOrderAnnotationImports() {
-		return Arrays.asList("org.junit.jupiter.api.TestMethodOrder",
-				"org.junit.jupiter.api.MethodOrderer");
+		return Arrays.asList("org.junit.jupiter.api.TestMethodOrder", "org.junit.jupiter.api.MethodOrderer");
 	}
 
 	@Override

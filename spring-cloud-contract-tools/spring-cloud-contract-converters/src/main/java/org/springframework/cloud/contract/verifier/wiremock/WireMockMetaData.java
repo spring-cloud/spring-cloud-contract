@@ -37,8 +37,7 @@ public class WireMockMetaData implements SpringCloudContractMetadata {
 	/**
 	 * Applicable classes for Stub Mapping.
 	 */
-	static final List<Class> APPLICABLE_CLASSES = Arrays.asList(String.class,
-			StubMapping.class, Map.class);
+	static final List<Class> APPLICABLE_CLASSES = Arrays.asList(String.class, StubMapping.class, Map.class);
 
 	/**
 	 * {@link StubMapping} represented by one of the classes in
@@ -55,8 +54,7 @@ public class WireMockMetaData implements SpringCloudContractMetadata {
 	}
 
 	public static WireMockMetaData fromMetadata(Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, WireMockMetaData.METADATA_KEY,
-				new WireMockMetaData());
+		return MetadataUtil.fromMetadata(metadata, WireMockMetaData.METADATA_KEY, new WireMockMetaData());
 	}
 
 	@Override
@@ -66,10 +64,8 @@ public class WireMockMetaData implements SpringCloudContractMetadata {
 
 	@Override
 	public String description() {
-		return "Metadata for extending WireMock stubs.\n\nStubMapping can be "
-				+ "one of the following classes "
-				+ APPLICABLE_CLASSES.stream()
-						.map(aClass -> "`" + aClass.getSimpleName() + "`")
+		return "Metadata for extending WireMock stubs.\n\nStubMapping can be " + "one of the following classes "
+				+ APPLICABLE_CLASSES.stream().map(aClass -> "`" + aClass.getSimpleName() + "`")
 						.collect(Collectors.toList())
 				+ ". Please check "
 				+ "the http://wiremock.org/docs/stubbing/ for more information about the StubMapping class properties.";

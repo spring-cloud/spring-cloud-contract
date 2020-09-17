@@ -47,15 +47,12 @@ public class WireMockStubStrategy {
 
 	private final Contract groovyDsl;
 
-	public WireMockStubStrategy(String rootName, ContractMetadata contract,
-			Contract groovyDsl) {
+	public WireMockStubStrategy(String rootName, ContractMetadata contract, Contract groovyDsl) {
 		this.rootName = rootName;
 		this.contract = contract;
 		SingleContractMetadata singleContractMetadata = contract.forContract(groovyDsl);
-		this.wireMockRequestStubStrategy = new WireMockRequestStubStrategy(groovyDsl,
-				singleContractMetadata);
-		this.wireMockResponseStubStrategy = new WireMockResponseStubStrategy(groovyDsl,
-				singleContractMetadata);
+		this.wireMockRequestStubStrategy = new WireMockRequestStubStrategy(groovyDsl, singleContractMetadata);
+		this.wireMockResponseStubStrategy = new WireMockResponseStubStrategy(groovyDsl, singleContractMetadata);
 		this.priority = groovyDsl.getPriority();
 		this.groovyDsl = groovyDsl;
 	}
@@ -66,8 +63,7 @@ public class WireMockStubStrategy {
 	public StubMapping toWireMockClientStub() {
 		StubMapping stubMapping = new StubMapping();
 		RequestPattern request = wireMockRequestStubStrategy.buildClientRequestContent();
-		ResponseDefinition response = wireMockResponseStubStrategy
-				.buildClientResponseContent();
+		ResponseDefinition response = wireMockResponseStubStrategy.buildClientResponseContent();
 		if (priority != null) {
 			stubMapping.setPriority(priority);
 		}
@@ -81,8 +77,8 @@ public class WireMockStubStrategy {
 		}
 		if (contract.getOrder() != null) {
 			stubMapping.setScenarioName("Scenario_" + rootName);
-			stubMapping.setRequiredScenarioState(contract.getOrder() == 0 ? STEP_START
-					: STEP_PREFIX + contract.getOrder());
+			stubMapping.setRequiredScenarioState(
+					contract.getOrder() == 0 ? STEP_START : STEP_PREFIX + contract.getOrder());
 			if (contract.getOrder() < contract.getGroupSize() - 1) {
 				stubMapping.setNewScenarioState(STEP_PREFIX + (contract.getOrder() + 1));
 			}

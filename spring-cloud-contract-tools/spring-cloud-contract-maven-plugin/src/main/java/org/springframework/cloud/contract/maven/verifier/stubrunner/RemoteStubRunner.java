@@ -46,23 +46,19 @@ public class RemoteStubRunner {
 		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
 	}
 
-	public BatchStubRunner run(StubRunnerOptions options,
-			RepositorySystemSession repositorySystemSession) {
-		StubDownloader stubDownloader = this.aetherStubDownloaderFactory
-				.build(repositorySystemSession).build(options);
+	public BatchStubRunner run(StubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
+		StubDownloader stubDownloader = this.aetherStubDownloaderFactory.build(repositorySystemSession).build(options);
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Launching StubRunner with args: " + options);
 			}
-			BatchStubRunner stubRunner = new BatchStubRunnerFactory(options,
-					stubDownloader).buildBatchStubRunner();
+			BatchStubRunner stubRunner = new BatchStubRunnerFactory(options, stubDownloader).buildBatchStubRunner();
 			RunningStubs runningCollaborators = stubRunner.runStubs();
 			log.info(runningCollaborators.toString());
 			return stubRunner;
 		}
 		catch (Exception e) {
-			log.error("An exception occurred while trying to execute the stubs: "
-					+ e.getMessage());
+			log.error("An exception occurred while trying to execute the stubs: " + e.getMessage());
 			throw e;
 		}
 

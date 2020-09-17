@@ -32,8 +32,7 @@ import org.springframework.messaging.Message;
  */
 class StreamInputDestinationMessageSender implements MessageVerifierSender<Message<?>> {
 
-	private static final Log log = LogFactory
-			.getLog(StreamInputDestinationMessageSender.class);
+	private static final Log log = LogFactory.getLog(StreamInputDestinationMessageSender.class);
 
 	private final ApplicationContext context;
 
@@ -44,21 +43,19 @@ class StreamInputDestinationMessageSender implements MessageVerifierSender<Messa
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			YamlContract contract) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
 		send(this.builder.create(payload, headers), destination, contract);
 	}
 
 	@Override
 	public void send(Message<?> message, String destination, YamlContract contract) {
 		try {
-			InputDestination inputDestination = this.context
-					.getBean(InputDestination.class);
+			InputDestination inputDestination = this.context.getBean(InputDestination.class);
 			inputDestination.send(message, destination);
 		}
 		catch (Exception e) {
-			log.error("Exception occurred while trying to send a message [" + message
-					+ "] " + "to a destination with name [" + destination + "]", e);
+			log.error("Exception occurred while trying to send a message [" + message + "] "
+					+ "to a destination with name [" + destination + "]", e);
 			throw e;
 		}
 	}

@@ -34,8 +34,7 @@ public class BookService implements Supplier<Flux<Message<BookReturned>>> {
 
 	private final EmitterProcessor<Message<BookReturned>> bookReturnedEmitterProcessor;
 
-	public BookService(
-			EmitterProcessor<Message<BookReturned>> bookReturnedEmitterProcessor) {
+	public BookService(EmitterProcessor<Message<BookReturned>> bookReturnedEmitterProcessor) {
 		this.bookReturnedEmitterProcessor = bookReturnedEmitterProcessor;
 	}
 
@@ -50,8 +49,8 @@ public class BookService implements Supplier<Flux<Message<BookReturned>>> {
 	 */
 	public void returnBook(BookReturned bookReturned) {
 		log.info("Returning book " + bookReturned);
-		this.bookReturnedEmitterProcessor.onNext(MessageBuilder.withPayload(bookReturned)
-				.setHeader("BOOK-NAME", bookReturned.bookName).build());
+		this.bookReturnedEmitterProcessor
+				.onNext(MessageBuilder.withPayload(bookReturned).setHeader("BOOK-NAME", bookReturned.bookName).build());
 	}
 
 	@Override

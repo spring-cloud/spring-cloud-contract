@@ -39,13 +39,11 @@ public class AutoConfigureMessageVerifierTests {
 
 	@Test
 	public void shouldConfigureForNoOpWhenMissingImplementation() {
-		this.contextRunner
-				.withClassLoader(new FilteredClassLoader(org.apache.camel.Message.class,
-						org.springframework.messaging.Message.class, JmsTemplate.class,
-						KafkaTemplate.class, RabbitTemplate.class, EnableBinding.class))
+		this.contextRunner.withClassLoader(
+				new FilteredClassLoader(org.apache.camel.Message.class, org.springframework.messaging.Message.class,
+						JmsTemplate.class, KafkaTemplate.class, RabbitTemplate.class, EnableBinding.class))
 				.run((context) -> {
-					assertThat(context.getBeansOfType(MessageVerifierSender.class))
-							.hasSize(1);
+					assertThat(context.getBeansOfType(MessageVerifierSender.class)).hasSize(1);
 					assertThat(context.getBeansOfType(NoOpStubMessages.class)).hasSize(1);
 				});
 	}

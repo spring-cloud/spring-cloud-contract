@@ -28,8 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-		classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class,
+@SpringBootTest(classes = AutoConfigureWireMockFilesApplicationWithUrlResourceTests.Config.class,
 		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
 		webEnvironment = SpringBootTest.WebEnvironment.NONE)
 // tag::load_all_stubs[]
@@ -42,16 +41,15 @@ public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 
 	@Test
 	public void should_work_for_analytics() throws Exception {
-		String count = new RestTemplate().getForObject(
-				"http://localhost:" + this.wiremockPort + "/issues/count", String.class);
+		String count = new RestTemplate().getForObject("http://localhost:" + this.wiremockPort + "/issues/count",
+				String.class);
 
 		BDDAssertions.then(count).isEqualTo("5");
 	}
 
 	@Test
 	public void should_work_for_webhook() throws Exception {
-		String response = new RestTemplate().getForObject(
-				"http://localhost:" + this.wiremockPort + "/", String.class);
+		String response = new RestTemplate().getForObject("http://localhost:" + this.wiremockPort + "/", String.class);
 
 		BDDAssertions.then(response).contains("spring-cloud/spring-cloud-netflix");
 	}

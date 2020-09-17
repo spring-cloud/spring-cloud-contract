@@ -36,8 +36,8 @@ class MockMvcMultipartGiven implements Given {
 
 	private final BodyParser bodyParser;
 
-	MockMvcMultipartGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
+	MockMvcMultipartGiven(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData,
+			BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyReader = new BodyReader(generatedClassMetaData);
 		this.bodyParser = bodyParser;
@@ -46,46 +46,40 @@ class MockMvcMultipartGiven implements Given {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		getMultipartParameters(metadata).entrySet().forEach(entry -> this.blockBuilder
-				.addLine(getMultipartParameterLine(metadata, entry)));
+		getMultipartParameters(metadata).entrySet()
+				.forEach(entry -> this.blockBuilder.addLine(getMultipartParameterLine(metadata, entry)));
 		return this;
 	}
 
-	private String getMultipartParameterLine(SingleContractMetadata metadata,
-			Map.Entry<String, Object> parameter) {
+	private String getMultipartParameterLine(SingleContractMetadata metadata, Map.Entry<String, Object> parameter) {
 		if (parameter.getValue() instanceof NamedProperty) {
-			return ".multiPart(" + getMultipartFileParameterContent(metadata,
-					parameter.getKey(), (NamedProperty) parameter.getValue()) + ")";
+			return ".multiPart(" + getMultipartFileParameterContent(metadata, parameter.getKey(),
+					(NamedProperty) parameter.getValue()) + ")";
 		}
 		return getParameterString(parameter);
 	}
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getMultipartParameters(SingleContractMetadata metadata) {
-		return (Map<String, Object>) metadata.getContract().getRequest().getMultipart()
-				.getServerValue();
+		return (Map<String, Object>) metadata.getContract().getRequest().getMultipart().getServerValue();
 	}
 
-	private String getMultipartFileParameterContent(SingleContractMetadata metadata,
-			String propertyName, NamedProperty propertyValue) {
+	private String getMultipartFileParameterContent(SingleContractMetadata metadata, String propertyName,
+			NamedProperty propertyValue) {
 		return getJavaMultipartFileParameterContent(propertyName, propertyValue,
-				fileProp -> this.bodyReader.readBytesFromFileString(metadata, fileProp,
-						CommunicationType.REQUEST));
+				fileProp -> this.bodyReader.readBytesFromFileString(metadata, fileProp, CommunicationType.REQUEST));
 	}
 
 	private String getParameterString(Map.Entry<String, Object> parameter) {
 		return ".param(" + this.bodyParser.quotedShortText(parameter.getKey()) + ", "
-				+ this.bodyParser.quotedShortText(
-						MapConverter.getTestSideValuesForNonBody(parameter.getValue()))
-				+ ")";
+				+ this.bodyParser.quotedShortText(MapConverter.getTestSideValuesForNonBody(parameter.getValue())) + ")";
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
 		return request != null && request.getMultipart() != null
-				&& this.generatedClassMetaData.configProperties
-						.getTestFramework() != TestFramework.SPOCK;
+				&& this.generatedClassMetaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }

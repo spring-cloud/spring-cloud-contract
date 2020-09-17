@@ -91,8 +91,7 @@ public final class NamesUtil {
 	 * consideration also the index of contract (for multiple contracts * stored in a
 	 * single file).
 	 */
-	public static String defaultContractName(File file, Collection contracts,
-			int counter) {
+	public static String defaultContractName(File file, Collection contracts, int counter) {
 		int lastIndexOfDot = file.getName().lastIndexOf(".");
 		String tillExtension = file.getName().substring(0, lastIndexOfDot);
 		return tillExtension + (counter > 0 || contracts.size() > 1 ? "_" + counter : "");
@@ -146,8 +145,8 @@ public final class NamesUtil {
 	 * Converts the path format to a Java package notation.
 	 */
 	public static String directoryToPackage(String directory) {
-		return directory.replace('.', '_').replace(File.separatorChar, '.')
-				.replaceAll("\\.([0-9])", "._$1").replaceAll("^([0-9].*)", "_$1");
+		return directory.replace('.', '_').replace(File.separatorChar, '.').replaceAll("\\.([0-9])", "._$1")
+				.replaceAll("^([0-9].*)", "_$1");
 	}
 
 	/**
@@ -193,8 +192,7 @@ public final class NamesUtil {
 			String name = dir.toFile().getName();
 			String convertedName = directoryToPackage(name);
 			if (!name.equals(convertedName)) {
-				this.filesToRename
-						.addFirst(new FileAndNewName(dir.toFile(), convertedName));
+				this.filesToRename.addFirst(new FileAndNewName(dir.toFile(), convertedName));
 			}
 
 			return FileVisitResult.CONTINUE;
@@ -202,8 +200,7 @@ public final class NamesUtil {
 
 		public void rename() {
 			this.filesToRename.forEach(fileAndNewName -> {
-				fileAndNewName.file.renameTo(new File(fileAndNewName.file.getParentFile(),
-						fileAndNewName.newName));
+				fileAndNewName.file.renameTo(new File(fileAndNewName.file.getParentFile(), fileAndNewName.newName));
 			});
 		}
 

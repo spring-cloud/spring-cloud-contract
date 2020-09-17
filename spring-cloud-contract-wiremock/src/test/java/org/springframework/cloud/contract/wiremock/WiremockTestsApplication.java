@@ -96,16 +96,14 @@ class Service {
 	public String pom() {
 		String requestUrl = this.base + "/pom.xml";
 		log.info("Will send a request to [" + requestUrl + "]");
-		return this.restTemplate.exchange(
-				RequestEntity.get(URI.create(requestUrl)).accept(mediaTypes()).build(),
-				String.class).getBody();
+		return this.restTemplate
+				.exchange(RequestEntity.get(URI.create(requestUrl)).accept(mediaTypes()).build(), String.class)
+				.getBody();
 	}
 
 	private MediaType[] mediaTypes() {
-		return Stream
-				.of("text/plain", "text/plain", "application/json", "application/json",
-						"application/*+json", "application/*+json", "*/*", "*/*")
-				.map(MediaType::valueOf).toArray(MediaType[]::new);
+		return Stream.of("text/plain", "text/plain", "application/json", "application/json", "application/*+json",
+				"application/*+json", "*/*", "*/*").map(MediaType::valueOf).toArray(MediaType[]::new);
 	}
 
 	public String go2() {

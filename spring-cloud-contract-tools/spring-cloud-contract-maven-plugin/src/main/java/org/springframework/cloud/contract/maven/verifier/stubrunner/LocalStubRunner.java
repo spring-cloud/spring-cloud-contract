@@ -37,8 +37,7 @@ public class LocalStubRunner {
 
 	public StubRunner run(final String contractsDir, StubRunnerOptions options) {
 		log.info("Launching StubRunner with contracts from " + contractsDir);
-		StubRunner stubRunner = new StubRunner(options, contractsDir,
-				new StubConfiguration(contractsDir));
+		StubRunner stubRunner = new StubRunner(options, contractsDir, new StubConfiguration(contractsDir));
 		stubRunner.runStubs();
 		return stubRunner;
 	}

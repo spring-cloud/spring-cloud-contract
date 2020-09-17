@@ -31,8 +31,7 @@ public class MessagingHeaders {
 	private static final Log log = LogFactory.getLog(MessagingHeaders.class);
 
 	public MessagingHeaders() {
-		log.warn(
-				"WARNING: MessagingHeaders shouldn't be instantiated. Use its static methods instead.");
+		log.warn("WARNING: MessagingHeaders shouldn't be instantiated. Use its static methods instead.");
 	}
 
 	/**

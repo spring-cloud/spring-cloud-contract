@@ -52,11 +52,8 @@ class contract_multipart implements Supplier<Collection<Contract>> {
 				});
 				r.multipart(ContractVerifierUtil.map()
 						// key (parameter name), value (parameter value) pair
-						.entry("formParameter",
-								r.$(r.c(r.regex("\".+\"")),
-										r.p("\"formParameterValue\"")))
-						.entry("someBooleanParameter",
-								r.$(r.c(r.regex(r.anyBoolean())), r.p("true")))
+						.entry("formParameter", r.$(r.c(r.regex("\".+\"")), r.p("\"formParameterValue\"")))
+						.entry("someBooleanParameter", r.$(r.c(r.regex(r.anyBoolean())), r.p("true")))
 						// a named parameter (e.g. with `file` name) that represents file
 						// with
 						// `name` and `content`. You can also call `named("fileName",

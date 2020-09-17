@@ -38,8 +38,7 @@ public interface HttpServerStubConfigurer<T> {
 	 * @param httpServerStubConfiguration - Spring Cloud Contract stub configuration
 	 * @return the modified stub configuration
 	 */
-	default T configure(T httpStubConfiguration,
-			HttpServerStubConfiguration httpServerStubConfiguration) {
+	default T configure(T httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
 		return httpStubConfiguration;
 	}
 

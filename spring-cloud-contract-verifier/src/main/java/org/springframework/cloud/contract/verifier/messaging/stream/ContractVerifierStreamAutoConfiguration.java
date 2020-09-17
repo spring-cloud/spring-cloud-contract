@@ -38,15 +38,13 @@ import org.springframework.util.Assert;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(EnableBinding.class)
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(
-			MessageVerifier<Message<?>> exchange) {
+	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
 	}
 
@@ -56,18 +54,15 @@ public class ContractVerifierStreamAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
-		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithDestinations(
-				ApplicationContext context) {
-			return new StreamStubMessages(
-					new StreamInputDestinationMessageSender(context),
+		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithDestinations(ApplicationContext context) {
+			return new StreamStubMessages(new StreamInputDestinationMessageSender(context),
 					new StreamOutputDestinationMessageReceiver(context));
 		}
 
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnMissingClass({
-			"org.springframework.cloud.stream.binder.test.InputDestination" })
+	@ConditionalOnMissingClass({ "org.springframework.cloud.stream.binder.test.InputDestination" })
 	static class NoOpStreamClassConfiguration {
 
 		@Bean

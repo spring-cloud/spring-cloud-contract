@@ -48,15 +48,12 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 	private static final Pattern ESCAPED_JSON_PATH_PATTERN = Pattern
 			.compile("^.*\\{\\{\\{jsonPath request.body '(.*)'}}}.*$");
 
-	private static final Pattern LEGACY_JSON_PATH_PATTERN = Pattern
-			.compile("^.*\\{\\{jsonpath this '(.*)'}}.*$");
+	private static final Pattern LEGACY_JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{jsonpath this '(.*)'}}.*$");
 
-	private static final Pattern JSON_PATH_PATTERN = Pattern
-			.compile("^.*\\{\\{jsonPath request.body '(.*)'}}.*$");
+	private static final Pattern JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{jsonPath request.body '(.*)'}}.*$");
 
-	private static final List<Pattern> PATTERNS = Arrays.asList(
-			ESCAPED_LEGACY_JSON_PATH_PATTERN, ESCAPED_JSON_PATH_PATTERN,
-			LEGACY_JSON_PATH_PATTERN, JSON_PATH_PATTERN);
+	private static final List<Pattern> PATTERNS = Arrays.asList(ESCAPED_LEGACY_JSON_PATH_PATTERN,
+			ESCAPED_JSON_PATH_PATTERN, LEGACY_JSON_PATH_PATTERN, JSON_PATH_PATTERN);
 
 	private static final String LEGACY_JSON_PATH_TEMPLATE_NAME = HandlebarsJsonPathHelper.NAME;
 
@@ -66,8 +63,7 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 
 	@Override
 	public String transform(Request request, String testContents) {
-		TestSideRequestTemplateModel templateModel = TestSideRequestTemplateModel
-				.from(request);
+		TestSideRequestTemplateModel templateModel = TestSideRequestTemplateModel.from(request);
 		Map<String, TestSideRequestTemplateModel> model = Collections
 				.singletonMap(HandlebarsJsonPathHelper.REQUEST_MODEL_NAME, templateModel);
 		Template bodyTemplate = uncheckedCompileTemplate(testContents);
@@ -76,8 +72,7 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 
 	@Override
 	public boolean containsTemplateEntry(String line) {
-		return (line.contains(contractTemplate.openingTemplate())
-				&& line.contains(contractTemplate.closingTemplate()))
+		return (line.contains(contractTemplate.openingTemplate()) && line.contains(contractTemplate.closingTemplate()))
 				|| (line.contains(contractTemplate.escapedOpeningTemplate())
 						&& line.contains(contractTemplate.escapedClosingTemplate()));
 	}
@@ -86,8 +81,7 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 	public boolean containsJsonPathTemplateEntry(String line) {
 		return line.contains(openingTemplate() + LEGACY_JSON_PATH_TEMPLATE_NAME)
 				|| line.contains(openingTemplate() + JSON_PATH_TEMPLATE_NAME)
-				|| line.contains(
-						escapedOpeningTemplate() + LEGACY_JSON_PATH_TEMPLATE_NAME)
+				|| line.contains(escapedOpeningTemplate() + LEGACY_JSON_PATH_TEMPLATE_NAME)
 				|| line.contains(escapedOpeningTemplate() + JSON_PATH_TEMPLATE_NAME);
 	}
 
@@ -105,8 +99,7 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 		return "";
 	}
 
-	private String templatedResponseBody(Map<String, TestSideRequestTemplateModel> model,
-			Template bodyTemplate) {
+	private String templatedResponseBody(Map<String, TestSideRequestTemplateModel> model, Template bodyTemplate) {
 		return uncheckedApplyTemplate(bodyTemplate, model);
 	}
 
@@ -122,12 +115,9 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 	private Template uncheckedCompileTemplate(String content) {
 		try {
 			final Handlebars handlebars = new Handlebars();
-			handlebars.registerHelper(HandlebarsJsonPathHelper.NAME,
-					new HandlebarsJsonPathHelper());
-			handlebars.registerHelper(WireMockHelpers.jsonPath.name(),
-					new HandlebarsJsonPathHelper());
-			Arrays.stream(WireMockHelpers.values())
-					.filter(helper -> !helper.equals(WireMockHelpers.jsonPath))
+			handlebars.registerHelper(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
+			handlebars.registerHelper(WireMockHelpers.jsonPath.name(), new HandlebarsJsonPathHelper());
+			Arrays.stream(WireMockHelpers.values()).filter(helper -> !helper.equals(WireMockHelpers.jsonPath))
 					.forEach(helper -> handlebars.registerHelper(helper.name(), helper));
 			return handlebars.compileInline(content);
 		}

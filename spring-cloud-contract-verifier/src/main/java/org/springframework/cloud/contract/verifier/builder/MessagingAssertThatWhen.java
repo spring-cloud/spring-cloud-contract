@@ -28,8 +28,7 @@ class MessagingAssertThatWhen implements When {
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		this.blockBuilder.addIndented(
-				metadata.getContract().getInput().getAssertThat().getExecutionCommand());
+		this.blockBuilder.addIndented(metadata.getContract().getInput().getAssertThat().getExecutionCommand());
 		return this;
 	}
 

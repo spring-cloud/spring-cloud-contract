@@ -50,18 +50,15 @@ class StubRunnerStreamTransformer {
 			return source;
 		}
 		byte[] outputBody = outputBodyAsBytes(groovyDsl);
-		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders()
-				.asStubSideMap();
+		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders().asStubSideMap();
 		MessageHeaders messageHeaders = new MessageHeaders(headers);
-		Message<byte[]> message = MessageBuilder.createMessage(outputBody,
-				messageHeaders);
+		Message<byte[]> message = MessageBuilder.createMessage(outputBody, messageHeaders);
 		this.selector.updateCache(message, groovyDsl);
 		return message;
 	}
 
 	private byte[] outputBodyAsBytes(Contract groovyDsl) {
-		Object outputBody = BodyExtractor
-				.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
+		Object outputBody = BodyExtractor.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
 		if (outputBody instanceof FromFileProperty) {
 			FromFileProperty property = (FromFileProperty) outputBody;
 			return property.asBytes();

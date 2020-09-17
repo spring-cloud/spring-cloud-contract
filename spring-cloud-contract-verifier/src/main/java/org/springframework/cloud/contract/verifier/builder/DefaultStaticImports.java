@@ -32,8 +32,7 @@ class DefaultStaticImports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}
 

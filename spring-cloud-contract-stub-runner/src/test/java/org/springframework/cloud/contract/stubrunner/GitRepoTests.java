@@ -42,8 +42,7 @@ public class GitRepoTests extends AbstractGitTest {
 
 	@Before
 	public void setup() throws IOException, URISyntaxException {
-		this.project = new File(
-				GitRepoTests.class.getResource("/git_samples/contract-git").toURI());
+		this.project = new File(GitRepoTests.class.getResource("/git_samples/contract-git").toURI());
 		TestUtils.prepareLocalRepo();
 		this.gitRepo = new GitRepo(this.tmpFolder);
 	}
@@ -56,20 +55,16 @@ public class GitRepoTests extends AbstractGitTest {
 	}
 
 	@Test
-	public void should_throw_exception_when_there_is_no_repo()
-			throws IOException, URISyntaxException {
-		thenThrownBy(() -> this.gitRepo
-				.cloneProject(GitRepoTests.class.getResource("/git_samples/").toURI()))
-						.isInstanceOf(IllegalStateException.class)
-						.hasMessageContaining("Exception occurred while cloning repo");
+	public void should_throw_exception_when_there_is_no_repo() throws IOException, URISyntaxException {
+		thenThrownBy(() -> this.gitRepo.cloneProject(GitRepoTests.class.getResource("/git_samples/").toURI()))
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Exception occurred while cloning repo");
 	}
 
 	@Test
-	public void should_throw_an_exception_when_failed_to_initialize_the_repo()
-			throws IOException {
+	public void should_throw_an_exception_when_failed_to_initialize_the_repo() throws IOException {
 		thenThrownBy(() -> new GitRepo(this.tmpFolder, new ExceptionThrowingJGitFactory())
-				.cloneProject(this.project.toURI()))
-						.isInstanceOf(IllegalStateException.class)
+				.cloneProject(this.project.toURI())).isInstanceOf(IllegalStateException.class)
 						.hasMessageContaining("Exception occurred while cloning repo")
 						.hasCauseInstanceOf(CustomException.class);
 	}
@@ -84,8 +79,7 @@ public class GitRepoTests extends AbstractGitTest {
 	}
 
 	@Test
-	public void should_throw_an_exception_when_checking_out_nonexisting_branch()
-			throws IOException {
+	public void should_throw_an_exception_when_checking_out_nonexisting_branch() throws IOException {
 		File project = this.gitRepo.cloneProject(this.project.toURI());
 		try {
 			this.gitRepo.checkout(project, "nonExistingBranch");

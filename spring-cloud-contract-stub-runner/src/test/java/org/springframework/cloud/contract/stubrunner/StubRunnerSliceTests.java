@@ -38,9 +38,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest
-@AutoConfigureStubRunner(ids = {
-		"org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
-		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" },
+@AutoConfigureStubRunner(
+		ids = { "org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" },
 		minPort = 10001, maxPort = 10020, mappingsOutputFolder = "target/outputmappings/",
 		properties = { "hello=world", "foo=bar" })
 @ActiveProfiles("test")
@@ -64,25 +64,21 @@ public class StubRunnerSliceTests {
 		assertThat(this.fraudDetectionServerPort).isBetween(10001, 10020);
 		assertThat(this.loanIssuancePort).isBetween(10001, 10020);
 
-		assertThat(this.stubFinder.findStubUrl(
-				"org.springframework.cloud.contract.verifier.stubs", "loanIssuance"))
-						.isNotNull();
+		assertThat(this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"))
+				.isNotNull();
 		assertThat(this.stubFinder.findStubUrl("loanIssuance")).isNotNull();
-		assertThat(this.stubFinder.findStubUrl("loanIssuance")).isEqualTo(this.stubFinder
-				.findStubUrl("org.springframework.cloud.contract.verifier.stubs",
-						"loanIssuance"));
-		assertThat(this.stubFinder.findStubUrl("loanIssuance"))
-				.isEqualTo(this.stubFinder.findStubUrl(
-						"org.springframework.cloud.contract.verifier.stubs:loanIssuance"));
-		assertThat(this.stubFinder.findStubUrl(
-				"org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT"))
+		assertThat(this.stubFinder.findStubUrl("loanIssuance")).isEqualTo(
+				this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
+		assertThat(this.stubFinder.findStubUrl("loanIssuance")).isEqualTo(
+				this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs:loanIssuance"));
+		assertThat(this.stubFinder
+				.findStubUrl("org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT"))
 						.isEqualTo(this.stubFinder.findStubUrl(
 								"org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs"));
-		assertThat(this.stubFinder.findStubUrl(
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
+		assertThat(
+				this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
 						.isNotNull();
-		assertThat(this.properties.getProperties()).containsEntry("hello", "world")
-				.containsEntry("foo", "bar");
+		assertThat(this.properties.getProperties()).containsEntry("hello", "world").containsEntry("foo", "bar");
 	}
 
 	@SpringBootConfiguration

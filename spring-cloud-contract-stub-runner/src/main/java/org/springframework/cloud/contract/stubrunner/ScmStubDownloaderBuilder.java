@@ -54,8 +54,7 @@ import org.springframework.util.StringUtils;
  */
 public final class ScmStubDownloaderBuilder implements StubDownloaderBuilder {
 
-	private static final List<String> ACCEPTABLE_PROTOCOLS = Collections
-			.singletonList("git");
+	private static final List<String> ACCEPTABLE_PROTOCOLS = Collections.singletonList("git");
 
 	/**
 	 * Does any of the accepted protocols matches the URL of the repository.
@@ -133,18 +132,15 @@ class GitContractsRepo {
 
 	File clonedRepo(Resource repo) {
 		File file = CACHED_LOCATIONS.get(repo);
-		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repo,
-				this.options);
+		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repo, this.options);
 		if (file == null) {
-			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage
-					.createTempDir(TEMP_DIR_PREFIX);
+			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
 			GitRepo gitRepo = new GitRepo(tmpDirWhereStubsWillBeUnzipped, properties);
 			file = gitRepo.cloneProject(properties.url);
 			gitRepo.checkout(file, properties.branch);
 			CACHED_LOCATIONS.put(repo, file);
 			if (log.isDebugEnabled()) {
-				log.debug("The project hasn't already been cloned. Cloned it to [" + file
-						+ "]");
+				log.debug("The project hasn't already been cloned. Cloned it to [" + file + "]");
 			}
 		}
 		else {
@@ -182,20 +178,18 @@ class GitStubDownloader implements StubDownloader {
 	}
 
 	@Override
-	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubConfiguration stubConfiguration) {
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration) {
 		try {
 			if (log.isDebugEnabled()) {
-				log.debug("Trying to find a contract for ["
-						+ stubConfiguration.toColonSeparatedDependencyNotation() + "]");
+				log.debug("Trying to find a contract for [" + stubConfiguration.toColonSeparatedDependencyNotation()
+						+ "]");
 			}
 			Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
 			File clonedRepo = this.gitContractsRepo.clonedRepo(repo);
 			FileWalker walker = new FileWalker(stubConfiguration);
 			Files.walkFileTree(clonedRepo.toPath(), walker);
 			if (walker.foundFile != null) {
-				return new AbstractMap.SimpleEntry<>(stubConfiguration,
-						walker.foundFile.toFile());
+				return new AbstractMap.SimpleEntry<>(stubConfiguration, walker.foundFile.toFile());
 			}
 		}
 		catch (IOException e) {
@@ -209,8 +203,8 @@ class GitStubDownloader implements StubDownloader {
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> TemporaryFileStorage
-				.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
+		Runtime.getRuntime().addShutdownHook(
+				new Thread(() -> TemporaryFileStorage.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
 	}
 
 }
@@ -245,21 +239,17 @@ class GitStubDownloaderProperties {
 		// if we had git://https://... we want the part starting from https
 		// if we had git://git@... we want the full address again
 		// if the URL starts with git@... and ends with .git, we want to remove it
-		String modifiedRepo = repoUrl.startsWith("git@") ? modifyUrlForGitRepo(repoUrl)
-				: repoUrl;
+		String modifiedRepo = repoUrl.startsWith("git@") ? modifyUrlForGitRepo(repoUrl) : repoUrl;
 		this.url = URI.create(modifiedRepo);
-		String username = StubRunnerPropertyUtils.getProperty(args,
-				GIT_USERNAME_PROPERTY);
+		String username = StubRunnerPropertyUtils.getProperty(args, GIT_USERNAME_PROPERTY);
 		this.username = StringUtils.hasText(username) ? username : options.getUsername();
-		String password = StubRunnerPropertyUtils.getProperty(args,
-				GIT_PASSWORD_PROPERTY);
+		String password = StubRunnerPropertyUtils.getProperty(args, GIT_PASSWORD_PROPERTY);
 		this.password = StringUtils.hasText(password) ? password : options.getPassword();
 		String branch = StubRunnerPropertyUtils.getProperty(args, GIT_BRANCH_PROPERTY);
 		this.branch = StringUtils.hasText(branch) ? branch : "master";
 		if (log.isDebugEnabled()) {
-			log.debug("Repo url is [" + repoUrl + "], modified url string " + "is ["
-					+ modifiedRepo + "] URL is [" + this.url + "] and " + "branch is ["
-					+ this.branch + "]");
+			log.debug("Repo url is [" + repoUrl + "], modified url string " + "is [" + modifiedRepo + "] URL is ["
+					+ this.url + "] and " + "branch is [" + this.branch + "]");
 		}
 	}
 
@@ -296,39 +286,27 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	Path foundFile;
 
 	FileWalker(StubConfiguration stubConfiguration) {
-		this.latestSnapshotVersion = LATEST.stream()
-				.anyMatch(s -> s.equals(stubConfiguration.version.toLowerCase()));
-		this.latestReleaseVersion = RELEASE
-				.equals(stubConfiguration.version.toLowerCase());
-		this.matcherWithDot = FileSystems.getDefault()
-				.getPathMatcher("glob:" + matcherGlob(stubConfiguration, "."));
-		this.matcherWithoutDot = FileSystems.getDefault()
-				.getPathMatcher("glob:" + matcherGlob(stubConfiguration, "/"));
+		this.latestSnapshotVersion = LATEST.stream().anyMatch(s -> s.equals(stubConfiguration.version.toLowerCase()));
+		this.latestReleaseVersion = RELEASE.equals(stubConfiguration.version.toLowerCase());
+		this.matcherWithDot = FileSystems.getDefault().getPathMatcher("glob:" + matcherGlob(stubConfiguration, "."));
+		this.matcherWithoutDot = FileSystems.getDefault().getPathMatcher("glob:" + matcherGlob(stubConfiguration, "/"));
 	}
 
-	private String matcherGlob(StubConfiguration stubConfiguration,
-			String groupArtifactSeparator) {
-		return "**" + stubConfiguration.groupId + groupArtifactSeparator
-				+ stubConfiguration.artifactId + "/"
-				+ (this.latestSnapshotVersion || this.latestReleaseVersion ? "**"
-						: stubConfiguration.version);
+	private String matcherGlob(StubConfiguration stubConfiguration, String groupArtifactSeparator) {
+		return "**" + stubConfiguration.groupId + groupArtifactSeparator + stubConfiguration.artifactId + "/"
+				+ (this.latestSnapshotVersion || this.latestReleaseVersion ? "**" : stubConfiguration.version);
 	}
 
 	@Override
-	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-			throws IOException {
-		if (this.matcherWithDot.matches(dir.toAbsolutePath())
-				|| this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
+	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+		if (this.matcherWithDot.matches(dir.toAbsolutePath()) || this.matcherWithoutDot.matches(dir.toAbsolutePath())) {
 			if (this.latestSnapshotVersion || this.latestReleaseVersion) {
 				// folders with name latest, release
-				File[] files = Objects.requireNonNull(
-						dir.getParent().toFile().listFiles(File::isDirectory));
+				File[] files = Objects.requireNonNull(dir.getParent().toFile().listFiles(File::isDirectory));
 				File file = folderWithPredefinedName(files);
 				if (file != null) {
 					if (log.isDebugEnabled()) {
-						log.debug(
-								"Found folder with name corresponding to a latest version ["
-										+ file + "] ");
+						log.debug("Found folder with name corresponding to a latest version [" + file + "] ");
 						this.foundFile = file.toPath();
 						return FileVisitResult.TERMINATE;
 					}
@@ -347,30 +325,26 @@ class FileWalker extends SimpleFileVisitor<Path> {
 		List<DefaultArtifactVersionWrapper> versions = pickLatestVersion(files);
 		if (versions.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Not a single version matching semver for path ["
-						+ dir.toAbsolutePath().toString() + "] was found");
+				log.debug("Not a single version matching semver for path [" + dir.toAbsolutePath().toString()
+						+ "] was found");
 			}
 			return FileVisitResult.CONTINUE;
 		}
 		// 2.0.0.RELEASE, 2.0.0.BUILD-SNAPSHOT
 		// 2.0.0.RELEASE
-		DefaultArtifactVersionWrapper latestFoundVersion = versions
-				.get(versions.size() - 1);
-		latestFoundVersion = replaceWithSnapshotIfSameVersions(versions,
-				latestFoundVersion);
+		DefaultArtifactVersionWrapper latestFoundVersion = versions.get(versions.size() - 1);
+		latestFoundVersion = replaceWithSnapshotIfSameVersions(versions, latestFoundVersion);
 		this.foundFile = latestFoundVersion.file.toPath();
 		return FileVisitResult.TERMINATE;
 	}
 
 	private DefaultArtifactVersionWrapper replaceWithSnapshotIfSameVersions(
-			List<DefaultArtifactVersionWrapper> versions,
-			final DefaultArtifactVersionWrapper latestFoundVersion) {
+			List<DefaultArtifactVersionWrapper> versions, final DefaultArtifactVersionWrapper latestFoundVersion) {
 		if (versions.size() > 1 && this.latestSnapshotVersion) {
 			// 2.0.1.BUILD-SNAPSHOT, 2.0.0.BUILD-SNAPSHOT
 			// 2.0.0.BUILD-SNAPSHOT, 2.0.0.RELEASE
-			DefaultArtifactVersionWrapper sameVersionButSnapshot = versions.stream()
-					.filter(w -> w.projectVersion.isSameWithoutSuffix(
-							latestFoundVersion.projectVersion) && w.isSnapshot())
+			DefaultArtifactVersionWrapper sameVersionButSnapshot = versions.stream().filter(
+					w -> w.projectVersion.isSameWithoutSuffix(latestFoundVersion.projectVersion) && w.isSnapshot())
 					.findFirst().orElse(latestFoundVersion);
 			// 2.0.0 vs 2.0.0
 			// replace the RELEASE one with SNAPSHOT
@@ -384,19 +358,17 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private File folderWithPredefinedName(File[] files) {
 		if (this.latestSnapshotVersion) {
 			return Arrays.stream(files)
-					.filter(file -> LATEST.stream()
-							.anyMatch(s -> s.equals(file.getName().toLowerCase())))
-					.findFirst().orElse(null);
+					.filter(file -> LATEST.stream().anyMatch(s -> s.equals(file.getName().toLowerCase()))).findFirst()
+					.orElse(null);
 		}
-		return Arrays.stream(files)
-				.filter(file -> RELEASE.equals(file.getName().toLowerCase())).findFirst()
+		return Arrays.stream(files).filter(file -> RELEASE.equals(file.getName().toLowerCase())).findFirst()
 				.orElse(null);
 	}
 
 	private List<DefaultArtifactVersionWrapper> pickLatestVersion(File[] files) {
 		return Arrays.stream(files).map(DefaultArtifactVersionWrapper::new)
-				.filter(wrapper -> this.latestSnapshotVersion || wrapper.isNotSnapshot())
-				.sorted().collect(Collectors.toList());
+				.filter(wrapper -> this.latestSnapshotVersion || wrapper.isNotSnapshot()).sorted()
+				.collect(Collectors.toList());
 	}
 
 }

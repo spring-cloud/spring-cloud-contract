@@ -64,8 +64,7 @@ public interface MessageVerifierReceiver<M> {
 	 * @param contract contract related to this method
 	 * @return received message
 	 */
-	M receive(String destination, long timeout, TimeUnit timeUnit,
-			@Nullable YamlContract contract);
+	M receive(String destination, long timeout, TimeUnit timeUnit, @Nullable YamlContract contract);
 
 	/**
 	 * Receives the message from the given destination. A default timeout will be applied.

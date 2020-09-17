@@ -56,48 +56,38 @@ public class StubRunner implements StubRunning {
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration) {
-		this(stubRunnerOptions, repositoryPath, stubsConfiguration,
-				new NoOpStubMessages());
+		this(stubRunnerOptions, repositoryPath, stubsConfiguration, new NoOpStubMessages());
 	}
 
-	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
-			StubConfiguration stubsConfiguration,
+	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath, StubConfiguration stubsConfiguration,
 			MessageVerifier<?> contractVerifierMessaging) {
 		this.stubsConfiguration = stubsConfiguration;
 		this.stubRunnerOptions = stubRunnerOptions;
-		List<HttpServerStub> serverStubs = SpringFactoriesLoader
-				.loadFactories(HttpServerStub.class, null);
-		this.stubRepository = new StubRepository(new File(repositoryPath), serverStubs,
-				this.stubRunnerOptions);
-		AvailablePortScanner portScanner = new AvailablePortScanner(
-				stubRunnerOptions.getMinPortValue(), stubRunnerOptions.getMaxPortValue());
-		this.localStubRunner = new StubRunnerExecutor(portScanner,
-				contractVerifierMessaging, serverStubs);
+		List<HttpServerStub> serverStubs = SpringFactoriesLoader.loadFactories(HttpServerStub.class, null);
+		this.stubRepository = new StubRepository(new File(repositoryPath), serverStubs, this.stubRunnerOptions);
+		AvailablePortScanner portScanner = new AvailablePortScanner(stubRunnerOptions.getMinPortValue(),
+				stubRunnerOptions.getMaxPortValue());
+		this.localStubRunner = new StubRunnerExecutor(portScanner, contractVerifierMessaging, serverStubs);
 	}
 
 	@Override
 	public RunningStubs runStubs() {
 		registerShutdownHook();
-		RunningStubs stubs = this.localStubRunner.runStubs(this.stubRunnerOptions,
-				this.stubRepository, this.stubsConfiguration);
+		RunningStubs stubs = this.localStubRunner.runStubs(this.stubRunnerOptions, this.stubRepository,
+				this.stubsConfiguration);
 		if (this.stubRunnerOptions.hasMappingsOutputFolder()) {
 			String registeredMappings = this.localStubRunner.registeredMappings();
 			if (StringUtils.hasText(registeredMappings)) {
-				File outputMappings = new File(
-						this.stubRunnerOptions.getMappingsOutputFolder(),
+				File outputMappings = new File(this.stubRunnerOptions.getMappingsOutputFolder(),
 						this.stubsConfiguration.artifactId + "_"
-								+ stubs.getPort(this.stubsConfiguration
-										.toColonSeparatedDependencyNotation()));
+								+ stubs.getPort(this.stubsConfiguration.toColonSeparatedDependencyNotation()));
 				try {
 					outputMappings.getParentFile().mkdirs();
-					clearOldFiles(outputMappings.getParentFile(),
-							this.stubsConfiguration.artifactId);
+					clearOldFiles(outputMappings.getParentFile(), this.stubsConfiguration.artifactId);
 					outputMappings.createNewFile();
-					Files.write(Paths.get(outputMappings.toURI()),
-							registeredMappings.getBytes());
+					Files.write(Paths.get(outputMappings.toURI()), registeredMappings.getBytes());
 					if (log.isDebugEnabled()) {
-						log.debug("Stored the mappings for artifactid ["
-								+ this.stubsConfiguration.artifactId + "] at ["
+						log.debug("Stored the mappings for artifactid [" + this.stubsConfiguration.artifactId + "] at ["
 								+ outputMappings + "] location");
 					}
 				}
@@ -126,8 +116,7 @@ public class StubRunner implements StubRunning {
 		for (final File file : files) {
 			if (!file.delete()) {
 				if (log.isDebugEnabled()) {
-					log.debug("Exception occurred while trying to remove ["
-							+ file.getAbsolutePath() + "]");
+					log.debug("Exception occurred while trying to remove [" + file.getAbsolutePath() + "]");
 				}
 			}
 		}

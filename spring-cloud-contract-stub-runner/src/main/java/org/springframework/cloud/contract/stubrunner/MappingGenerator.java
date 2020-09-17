@@ -41,25 +41,20 @@ final class MappingGenerator {
 		throw new IllegalStateException("Can't instantiate utility class");
 	}
 
-	static Collection<Path> toMappings(File contractFile, Collection<Contract> contracts,
-			File mappingsFolder) {
+	static Collection<Path> toMappings(File contractFile, Collection<Contract> contracts, File mappingsFolder) {
 		StubGeneratorProvider provider = new StubGeneratorProvider();
-		Collection<StubGenerator> stubGenerators = provider
-				.converterForName(contractFile.getName());
+		Collection<StubGenerator> stubGenerators = provider.converterForName(contractFile.getName());
 		if (log.isDebugEnabled()) {
 			log.debug("Found following matching stub generators " + stubGenerators);
 		}
 		Collection<Path> mappings = new LinkedList<>();
 		for (StubGenerator stubGenerator : stubGenerators) {
-			Map<Contract, String> map = stubGenerator.convertContents(
-					contractFile.getName(), new ContractMetadata(contractFile.toPath(),
-							false, contracts.size(), null, contracts));
+			Map<Contract, String> map = stubGenerator.convertContents(contractFile.getName(),
+					new ContractMetadata(contractFile.toPath(), false, contracts.size(), null, contracts));
 			for (Map.Entry<Contract, String> entry : map.entrySet()) {
 				String value = entry.getValue();
-				File mapping = new File(mappingsFolder,
-						StringUtils.stripFilenameExtension(contractFile.getName()) + "_"
-								+ Math.abs(entry.getKey().hashCode())
-								+ stubGenerator.fileExtension());
+				File mapping = new File(mappingsFolder, StringUtils.stripFilenameExtension(contractFile.getName()) + "_"
+						+ Math.abs(entry.getKey().hashCode()) + stubGenerator.fileExtension());
 				mappings.add(storeFile(mapping.toPath(), value.getBytes()));
 			}
 		}

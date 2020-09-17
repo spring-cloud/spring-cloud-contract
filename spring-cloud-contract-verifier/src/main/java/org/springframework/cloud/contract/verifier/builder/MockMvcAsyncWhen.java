@@ -25,8 +25,7 @@ class MockMvcAsyncWhen implements When, MockMvcAcceptor {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	MockMvcAsyncWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	MockMvcAsyncWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}

@@ -27,8 +27,7 @@ public class QueryParameters {
 	private List<QueryParameter> parameters = new LinkedList<QueryParameter>();
 
 	public void parameter(Map<String, Object> singleParameter) {
-		Iterator<Map.Entry<String, Object>> iterator = singleParameter.entrySet()
-				.iterator();
+		Iterator<Map.Entry<String, Object>> iterator = singleParameter.entrySet().iterator();
 		if (iterator.hasNext()) {
 			Map.Entry<String, Object> first = iterator.next();
 			if (first != null) {

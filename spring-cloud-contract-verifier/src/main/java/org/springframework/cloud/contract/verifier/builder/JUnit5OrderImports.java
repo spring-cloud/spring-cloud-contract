@@ -29,25 +29,21 @@ class JUnit5OrderImports implements Imports {
 	private static final String[] IMPORTS = { "org.junit.jupiter.api.TestMethodOrder",
 			"org.junit.jupiter.api.MethodOrderer" };
 
-	JUnit5OrderImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit5OrderImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT5
-				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(meta -> meta.getOrder() != null);
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT5
+				&& this.generatedClassMetaData.listOfFiles.stream().anyMatch(meta -> meta.getOrder() != null);
 	}
 
 }

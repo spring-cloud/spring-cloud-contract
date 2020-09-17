@@ -47,47 +47,41 @@ class BodyReader {
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
-	String readBytesFromFileString(SingleContractMetadata metadata,
-			FromFileProperty property, CommunicationType side) {
+	String readBytesFromFileString(SingleContractMetadata metadata, FromFileProperty property, CommunicationType side) {
 		String fileName = byteBodyToAFileForTestMethod(metadata, property, side);
 		return "fileToBytes(this, \"" + fileName + "\")";
 	}
 
-	String readStringFromFileString(SingleContractMetadata metadata,
-			FromFileProperty property, CommunicationType side) {
+	String readStringFromFileString(SingleContractMetadata metadata, FromFileProperty property,
+			CommunicationType side) {
 		if (!Charset.defaultCharset().toString().equals(property.getCharset())) {
-			return "new String(" + readBytesFromFileString(metadata, property, side)
-					+ ", \"" + property.getCharset() + "\")";
+			return "new String(" + readBytesFromFileString(metadata, property, side) + ", \"" + property.getCharset()
+					+ "\")";
 		}
 		return "new String(" + readBytesFromFileString(metadata, property, side) + ")";
 	}
 
 	void storeContractAsYaml(SingleContractMetadata metadata) {
 		Contract contract = metadata.getContract();
-		List<YamlContract> contracts = this.converter
-				.convertTo(Collections.singleton(contract));
+		List<YamlContract> contracts = this.converter.convertTo(Collections.singleton(contract));
 		Map<String, byte[]> store = this.converter.store(contracts);
-		store.forEach(
-				(name, bytes) -> writeFileForBothIdeAndBuildTool(metadata, bytes, name));
+		store.forEach((name, bytes) -> writeFileForBothIdeAndBuildTool(metadata, bytes, name));
 	}
 
-	private String byteBodyToAFileForTestMethod(SingleContractMetadata metadata,
-			FromFileProperty property, CommunicationType side) {
+	private String byteBodyToAFileForTestMethod(SingleContractMetadata metadata, FromFileProperty property,
+			CommunicationType side) {
 		GeneratedClassDataForMethod classDataForMethod = classDataForMethod(metadata);
-		String newFileName = classDataForMethod.getMethodName() + "_"
-				+ side.name().toLowerCase() + "_" + property.fileName();
+		String newFileName = classDataForMethod.getMethodName() + "_" + side.name().toLowerCase() + "_"
+				+ property.fileName();
 		writeFileForBothIdeAndBuildTool(metadata, property.asBytes(), newFileName);
 		return newFileName;
 	}
 
-	private GeneratedClassDataForMethod classDataForMethod(
-			SingleContractMetadata metadata) {
-		return new GeneratedClassDataForMethod(
-				this.generatedClassMetaData.generatedClassData, metadata.methodName());
+	private GeneratedClassDataForMethod classDataForMethod(SingleContractMetadata metadata) {
+		return new GeneratedClassDataForMethod(this.generatedClassMetaData.generatedClassData, metadata.methodName());
 	}
 
-	private void writeFileForBothIdeAndBuildTool(SingleContractMetadata metadata,
-			byte[] bytes, String newFileName) {
+	private void writeFileForBothIdeAndBuildTool(SingleContractMetadata metadata, byte[] bytes, String newFileName) {
 		GeneratedClassDataForMethod classDataForMethod = classDataForMethod(metadata);
 		java.nio.file.Path parent = classDataForMethod.testClassPath().getParent();
 		if (parent == null) {
@@ -101,8 +95,7 @@ class BodyReader {
 		try {
 			Path path = newFile.toPath();
 			if (log.isDebugEnabled()) {
-				log.debug("Writing file for [" + path
-						+ "] for body reading in generated test (for IDE)");
+				log.debug("Writing file for [" + path + "] for body reading in generated test (for IDE)");
 			}
 			Files.write(path, bytes);
 			// for plugin
@@ -113,22 +106,15 @@ class BodyReader {
 		}
 	}
 
-	private void generatedTestResourcesFileBytes(byte[] bytes, File newFile)
-			throws IOException {
-		Assert.notNull(
-				this.generatedClassMetaData.configProperties.getGeneratedTestSourcesDir(),
+	private void generatedTestResourcesFileBytes(byte[] bytes, File newFile) throws IOException {
+		Assert.notNull(this.generatedClassMetaData.configProperties.getGeneratedTestSourcesDir(),
 				"No generated test sources directory set");
-		Assert.notNull(
-				this.generatedClassMetaData.configProperties
-						.getGeneratedTestResourcesDir(),
+		Assert.notNull(this.generatedClassMetaData.configProperties.getGeneratedTestResourcesDir(),
 				"No generated test resources directory set");
-		Path path = this.generatedClassMetaData.configProperties
-				.getGeneratedTestSourcesDir().toPath();
+		Path path = this.generatedClassMetaData.configProperties.getGeneratedTestSourcesDir().toPath();
 		Path relativePath = path.relativize(newFile.toPath());
 		File newFileInGeneratedTestSources = new File(
-				this.generatedClassMetaData.configProperties
-						.getGeneratedTestResourcesDir(),
-				relativePath.toString());
+				this.generatedClassMetaData.configProperties.getGeneratedTestResourcesDir(), relativePath.toString());
 		newFileInGeneratedTestSources.getParentFile().mkdirs();
 		Path generatedTestSourceFilePath = newFileInGeneratedTestSources.toPath();
 		if (log.isDebugEnabled()) {

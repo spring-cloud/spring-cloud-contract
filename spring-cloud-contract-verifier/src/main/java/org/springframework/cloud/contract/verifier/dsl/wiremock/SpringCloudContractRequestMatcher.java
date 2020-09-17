@@ -42,16 +42,14 @@ import org.springframework.cloud.contract.verifier.converter.YamlContractConvert
  */
 public class SpringCloudContractRequestMatcher extends RequestMatcherExtension {
 
-	private static final List<String> SUPPORTED_TOOLS = Arrays
-			.asList(GraphQlMatcher.NAME);
+	private static final List<String> SUPPORTED_TOOLS = Arrays.asList(GraphQlMatcher.NAME);
 
 	/**
 	 * Name of the transformer inside the stub.
 	 */
 	public static final String NAME = "spring-cloud-contract";
 
-	private static final Log log = LogFactory
-			.getLog(SpringCloudContractRequestMatcher.class);
+	private static final Log log = LogFactory.getLog(SpringCloudContractRequestMatcher.class);
 
 	@Override
 	public MatchResult match(Request request, Parameters parameters) {
@@ -76,8 +74,7 @@ public class SpringCloudContractRequestMatcher extends RequestMatcherExtension {
 			}
 			return MatchResult.noMatch();
 		}
-		return new RequestMatcherFactory(matchers()).pick(tool).match(contracts, request,
-				parameters);
+		return new RequestMatcherFactory(matchers()).pick(tool).match(contracts, request, parameters);
 	}
 
 	List<RequestMatcher> matchers() {
@@ -108,8 +105,7 @@ class RequestMatcherFactory {
 
 interface RequestMatcher {
 
-	MatchResult match(List<YamlContract> contracts, Request request,
-			Parameters parameters);
+	MatchResult match(List<YamlContract> contracts, Request request, Parameters parameters);
 
 	default boolean assertThat(Runnable runnable) {
 		try {
@@ -130,8 +126,7 @@ interface RequestMatcher {
 class NotMatchingRequestMatcher implements RequestMatcher {
 
 	@Override
-	public MatchResult match(List<YamlContract> contracts, Request request,
-			Parameters parameters) {
+	public MatchResult match(List<YamlContract> contracts, Request request, Parameters parameters) {
 		return MatchResult.noMatch();
 	}
 
@@ -151,35 +146,29 @@ class GraphQlMatcher implements RequestMatcher {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public MatchResult match(List<YamlContract> contracts, Request request,
-			Parameters parameters) {
+	public MatchResult match(List<YamlContract> contracts, Request request, Parameters parameters) {
 		YamlContract contract = contracts.get(0);
 		// TODO: What if the body is in files?
 		Map body = (Map) contract.request.body;
 		try {
 			Map jsonBodyFromContract = body;
-			Map jsonBodyFromRequest = this.objectMapper.readerForMapOf(Object.class)
-					.readValue(request.getBody());
+			Map jsonBodyFromRequest = this.objectMapper.readerForMapOf(Object.class).readValue(request.getBody());
 			String query = (String) jsonBodyFromContract.get("query");
 			String queryFromRequest = (String) jsonBodyFromRequest.get("query");
 			Map variables = (Map) jsonBodyFromContract.get("variables");
 			Map variablesFromRequest = (Map) jsonBodyFromRequest.get("variables");
 			String operationName = (String) jsonBodyFromContract.get("operationName");
-			String operationNameFromRequest = (String) jsonBodyFromRequest
-					.get("operationName");
-			boolean queryMatches = assertThat(() -> Assertions.assertThat(query)
-					.isEqualToIgnoringWhitespace(queryFromRequest));
-			boolean variablesMatch = assertThat(() -> JsonAssertions
-					.assertThatJson(variables).isEqualTo(variablesFromRequest));
-			boolean operationMatches = StringUtils.equals(operationName,
-					operationNameFromRequest);
+			String operationNameFromRequest = (String) jsonBodyFromRequest.get("operationName");
+			boolean queryMatches = assertThat(
+					() -> Assertions.assertThat(query).isEqualToIgnoringWhitespace(queryFromRequest));
+			boolean variablesMatch = assertThat(
+					() -> JsonAssertions.assertThatJson(variables).isEqualTo(variablesFromRequest));
+			boolean operationMatches = StringUtils.equals(operationName, operationNameFromRequest);
 			return MatchResult.of(queryMatches && variablesMatch && operationMatches);
 		}
 		catch (Exception e) {
 			if (log.isWarnEnabled()) {
-				log.warn(
-						"An exception occurred while trying to parse the graphql entries",
-						e);
+				log.warn("An exception occurred while trying to parse the graphql entries", e);
 			}
 			return MatchResult.noMatch();
 		}

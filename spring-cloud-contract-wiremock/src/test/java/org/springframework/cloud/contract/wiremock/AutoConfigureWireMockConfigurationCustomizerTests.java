@@ -31,10 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-		classes = { WiremockTestsApplication.class,
-				AutoConfigureWireMockConfigurationCustomizerTests.Config.class },
-		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
-		webEnvironment = WebEnvironment.NONE)
+		classes = { WiremockTestsApplication.class, AutoConfigureWireMockConfigurationCustomizerTests.Config.class },
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock(port = 0, stubs = "file:src/test/resources/io.stubs/mappings")
 public class AutoConfigureWireMockConfigurationCustomizerTests {
 

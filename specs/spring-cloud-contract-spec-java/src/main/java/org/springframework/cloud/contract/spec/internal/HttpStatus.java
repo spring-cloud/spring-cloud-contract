@@ -31,8 +31,7 @@ public final class HttpStatus {
 	private static final Log log = LogFactory.getLog(HttpStatus.class);
 
 	public HttpStatus() {
-		log.warn(
-				"WARNING: HttpStatus shouldn't be instantiated. Use its static methods instead.");
+		log.warn("WARNING: HttpStatus shouldn't be instantiated. Use its static methods instead.");
 	}
 
 	/**

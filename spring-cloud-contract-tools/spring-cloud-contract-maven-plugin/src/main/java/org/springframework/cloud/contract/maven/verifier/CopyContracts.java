@@ -43,8 +43,7 @@ class CopyContracts {
 
 	private final ContractVerifierConfigProperties config;
 
-	CopyContracts(MavenProject project, MavenSession mavenSession,
-			MavenResourcesFiltering mavenResourcesFiltering,
+	CopyContracts(MavenProject project, MavenSession mavenSession, MavenResourcesFiltering mavenResourcesFiltering,
 			ContractVerifierConfigProperties config) {
 		this.project = project;
 		this.mavenSession = mavenSession;
@@ -52,18 +51,14 @@ class CopyContracts {
 		this.config = config;
 	}
 
-	public void copy(File contractsDirectory, File outputDirectory)
-			throws MojoExecutionException {
-		log.info("Copying Spring Cloud Contract Verifier contracts to [" + outputDirectory
-				+ "]" + ". Only files matching [" + this.config.getIncludedContracts()
-				+ "] pattern will end up in " + "the final JAR with stubs.");
+	public void copy(File contractsDirectory, File outputDirectory) throws MojoExecutionException {
+		log.info("Copying Spring Cloud Contract Verifier contracts to [" + outputDirectory + "]"
+				+ ". Only files matching [" + this.config.getIncludedContracts() + "] pattern will end up in "
+				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
-		String includedRootFolderAntPattern = this.config
-				.getIncludedRootFolderAntPattern() + "*.*";
-		String slashSeparatedGroupIdAntPattern = slashSeparatedGroupIdAntPattern(
-				includedRootFolderAntPattern);
-		String dotSeparatedGroupIdAntPattern = dotSeparatedGroupIdAntPattern(
-				includedRootFolderAntPattern);
+		String includedRootFolderAntPattern = this.config.getIncludedRootFolderAntPattern() + "*.*";
+		String slashSeparatedGroupIdAntPattern = slashSeparatedGroupIdAntPattern(includedRootFolderAntPattern);
+		String dotSeparatedGroupIdAntPattern = dotSeparatedGroupIdAntPattern(includedRootFolderAntPattern);
 		// by default group id is slash separated...
 		resource.addInclude(slashSeparatedGroupIdAntPattern);
 		if (!slashSeparatedGroupIdAntPattern.equals(dotSeparatedGroupIdAntPattern)) {
@@ -101,8 +96,7 @@ class CopyContracts {
 			return includedRootFolderAntPattern;
 		}
 		else if (includedRootFolderAntPattern.contains(dotSeparatedGroupId())) {
-			return includedRootFolderAntPattern.replace(dotSeparatedGroupId(),
-					slashSeparatedGroupId());
+			return includedRootFolderAntPattern.replace(dotSeparatedGroupId(), slashSeparatedGroupId());
 		}
 		return includedRootFolderAntPattern;
 	}
@@ -112,8 +106,7 @@ class CopyContracts {
 			return includedRootFolderAntPattern;
 		}
 		else if (includedRootFolderAntPattern.contains(slashSeparatedGroupId())) {
-			return includedRootFolderAntPattern.replace(slashSeparatedGroupId(),
-					dotSeparatedGroupId());
+			return includedRootFolderAntPattern.replace(slashSeparatedGroupId(), dotSeparatedGroupId());
 		}
 		return includedRootFolderAntPattern;
 	}

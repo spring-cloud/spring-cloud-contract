@@ -28,23 +28,20 @@ class JaxRsStaticImports implements Imports {
 
 	private static final String[] IMPORTS = { "javax.ws.rs.client.Entity.*" };
 
-	JaxRsStaticImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JaxRsStaticImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.JAXRSCLIENT;
+		return this.generatedClassMetaData.configProperties.getTestMode() == TestMode.JAXRSCLIENT;
 	}
 
 }

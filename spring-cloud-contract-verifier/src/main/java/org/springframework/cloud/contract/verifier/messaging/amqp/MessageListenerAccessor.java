@@ -48,15 +48,13 @@ class MessageListenerAccessor {
 	private final List<Binding> bindings;
 
 	MessageListenerAccessor(RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry,
-			List<SimpleMessageListenerContainer> simpleMessageListenerContainers,
-			List<Binding> bindings) {
+			List<SimpleMessageListenerContainer> simpleMessageListenerContainers, List<Binding> bindings) {
 		this.rabbitListenerEndpointRegistry = rabbitListenerEndpointRegistry;
 		this.simpleMessageListenerContainers = simpleMessageListenerContainers;
 		this.bindings = bindings;
 	}
 
-	List<SimpleMessageListenerContainer> getListenerContainersForDestination(
-			String destination, String routingKey) {
+	List<SimpleMessageListenerContainer> getListenerContainersForDestination(String destination, String routingKey) {
 		List<SimpleMessageListenerContainer> listenerContainers = collectListenerContainers();
 		// we interpret the destination as exchange name and collect all the queues bound
 		// to this exchange
@@ -65,8 +63,7 @@ class MessageListenerAccessor {
 	}
 
 	private List<SimpleMessageListenerContainer> getListenersByBoundQueues(
-			List<SimpleMessageListenerContainer> listenerContainers,
-			Set<String> queueNames) {
+			List<SimpleMessageListenerContainer> listenerContainers, Set<String> queueNames) {
 		List<SimpleMessageListenerContainer> matchingContainers = new ArrayList<>();
 		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
 			if (listenerContainer.getQueueNames() != null) {
@@ -81,8 +78,7 @@ class MessageListenerAccessor {
 		return matchingContainers;
 	}
 
-	private Set<String> collectQueuesBoundToDestination(String destination,
-			String routingKey) {
+	private Set<String> collectQueuesBoundToDestination(String destination, String routingKey) {
 		Set<String> queueNames = new HashSet<>();
 		for (Binding binding : this.bindings) {
 			if (destination.equals(binding.getExchange())
@@ -103,8 +99,7 @@ class MessageListenerAccessor {
 			for (MessageListenerContainer listenerContainer : this.rabbitListenerEndpointRegistry
 					.getListenerContainers()) {
 				if (listenerContainer instanceof SimpleMessageListenerContainer) {
-					listenerContainers
-							.add((SimpleMessageListenerContainer) listenerContainer);
+					listenerContainers.add((SimpleMessageListenerContainer) listenerContainer);
 				}
 			}
 		}

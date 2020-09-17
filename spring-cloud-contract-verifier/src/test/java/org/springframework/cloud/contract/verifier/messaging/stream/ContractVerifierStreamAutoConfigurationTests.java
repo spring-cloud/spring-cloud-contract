@@ -29,8 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ContractVerifierStreamAutoConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(
-					AutoConfigurations.of(ContractVerifierStreamAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ContractVerifierStreamAutoConfiguration.class));
 
 	@Test
 	public void shouldCreateBeansByDefault() {
@@ -42,24 +41,18 @@ public class ContractVerifierStreamAutoConfigurationTests {
 
 	@Test
 	public void shouldNotCreateBeansWhenDisabled() {
-		this.contextRunner.withPropertyValues("stubrunner.stream.enabled=false")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(ContractVerifierHelper.class))
-							.hasSize(0);
-					assertThat(context.getBeansOfType(StreamStubMessages.class))
-							.hasSize(0);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.stream.enabled=false").run((context) -> {
+			assertThat(context.getBeansOfType(ContractVerifierHelper.class)).hasSize(0);
+			assertThat(context.getBeansOfType(StreamStubMessages.class)).hasSize(0);
+		});
 	}
 
 	@Test
 	public void shouldCreateBeansWhenExplicitlyEnabled() {
-		this.contextRunner.withPropertyValues("stubrunner.stream.enabled=true")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(ContractVerifierHelper.class))
-							.hasSize(1);
-					assertThat(context.getBeansOfType(StreamStubMessages.class))
-							.hasSize(1);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.stream.enabled=true").run((context) -> {
+			assertThat(context.getBeansOfType(ContractVerifierHelper.class)).hasSize(1);
+			assertThat(context.getBeansOfType(StreamStubMessages.class)).hasSize(1);
+		});
 	}
 
 }

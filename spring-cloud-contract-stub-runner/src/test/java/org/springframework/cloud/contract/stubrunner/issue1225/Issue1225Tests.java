@@ -39,10 +39,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Biju Kunjummen
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = {
-		"ping.url=http://localhost:${stubrunner.runningstubs.loanIssuance.port}" })
-@AutoConfigureStubRunner(ids = {
-		"org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
+@SpringBootTest(properties = { "ping.url=http://localhost:${stubrunner.runningstubs.loanIssuance.port}" })
+@AutoConfigureStubRunner(ids = { "org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" })
 @ActiveProfiles("test")
 public class Issue1225Tests {
@@ -56,8 +54,7 @@ public class Issue1225Tests {
 	@Test
 	public void shouldInjectTheStubPortsAsEarlyAsPossible() {
 		assertThat(this.stubRunnerLoanIssuancePort).isPositive();
-		assertThat(this.pingProxyController.pingUrl)
-				.contains(":" + this.stubRunnerLoanIssuancePort);
+		assertThat(this.pingProxyController.pingUrl).contains(":" + this.stubRunnerLoanIssuancePort);
 	}
 
 	@ComponentScan

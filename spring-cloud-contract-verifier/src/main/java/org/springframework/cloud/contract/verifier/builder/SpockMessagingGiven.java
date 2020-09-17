@@ -23,16 +23,15 @@ class SpockMessagingGiven extends MessagingGiven {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	SpockMessagingGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	SpockMessagingGiven(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, SpockMessagingBodyParser.INSTANCE);
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		return super.accept(metadata) && this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK;
+		return super.accept(metadata)
+				&& this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK;
 	}
 
 }

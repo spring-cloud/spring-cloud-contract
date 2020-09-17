@@ -53,8 +53,7 @@ public class AetherStubDownloaderFactory {
 	private final Settings settings;
 
 	@Inject
-	public AetherStubDownloaderFactory(RepositorySystem repoSystem, MavenProject project,
-			Settings settings) {
+	public AetherStubDownloaderFactory(RepositorySystem repoSystem, MavenProject project, Settings settings) {
 		this.repoSystem = repoSystem;
 		this.project = project;
 		this.settings = settings;
@@ -64,13 +63,10 @@ public class AetherStubDownloaderFactory {
 		return new StubDownloaderBuilder() {
 			@Override
 			public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
-				log.info(
-						"Will download contracts using current build's Maven repository setup");
-				return new AetherStubDownloader(
-						AetherStubDownloaderFactory.this.repoSystem,
-						AetherStubDownloaderFactory.this.project
-								.getRemoteProjectRepositories(),
-						repoSession, AetherStubDownloaderFactory.this.settings);
+				log.info("Will download contracts using current build's Maven repository setup");
+				return new AetherStubDownloader(AetherStubDownloaderFactory.this.repoSystem,
+						AetherStubDownloaderFactory.this.project.getRemoteProjectRepositories(), repoSession,
+						AetherStubDownloaderFactory.this.settings);
 			}
 
 			@Override

@@ -41,15 +41,13 @@ public class ContractVerifierIntegrationConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MessageVerifier<Message<?>> contractVerifierMessageExchange(
-			ApplicationContext applicationContext) {
+	public MessageVerifier<Message<?>> contractVerifierMessageExchange(ApplicationContext applicationContext) {
 		return new SpringIntegrationStubMessages(applicationContext);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<Message<?>> contractVerifierMessaging(
-			MessageVerifier<Message<?>> exchange) {
+	public ContractVerifierMessaging<Message<?>> contractVerifierMessaging(MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
 	}
 

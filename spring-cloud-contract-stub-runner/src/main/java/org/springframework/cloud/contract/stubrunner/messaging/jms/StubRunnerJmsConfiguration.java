@@ -49,18 +49,15 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(JmsTemplate.class)
-@ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true", matchIfMissing = true)
 public class StubRunnerJmsConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(name = "stubFlowRegistrar")
 	public FlowRegistrar stubFlowRegistrar(ConfigurableListableBeanFactory beanFactory,
 			BatchStubRunner batchStubRunner) {
-		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
-				.getContracts();
-		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
-				.entrySet()) {
+		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner.getContracts();
+		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts.entrySet()) {
 			StubConfiguration key = entry.getKey();
 			Collection<Contract> value = entry.getValue();
 			String name = key.getGroupId() + "_" + key.getArtifactId();
@@ -70,21 +67,17 @@ public class StubRunnerJmsConfiguration {
 					continue;
 				}
 				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
-						&& StringUtils.hasText(
-								dsl.getInput().getMessageFrom().getClientValue())) {
+						&& StringUtils.hasText(dsl.getInput().getMessageFrom().getClientValue())) {
 					String from = dsl.getInput().getMessageFrom().getClientValue();
 					map.add(from, dsl);
 				}
 			}
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
 				List<Contract> matchingContracts = entries.getValue();
-				final String flowName = name + "_" + entries.getKey() + "_"
-						+ Math.abs(matchingContracts.hashCode());
+				final String flowName = name + "_" + entries.getKey() + "_" + Math.abs(matchingContracts.hashCode());
 				// listener
-				StubRunnerJmsRouter router = new StubRunnerJmsRouter(matchingContracts,
-						beanFactory);
-				StubRunnerJmsRouter listener = (StubRunnerJmsRouter) beanFactory
-						.initializeBean(router, flowName);
+				StubRunnerJmsRouter router = new StubRunnerJmsRouter(matchingContracts, beanFactory);
+				StubRunnerJmsRouter listener = (StubRunnerJmsRouter) beanFactory.initializeBean(router, flowName);
 				beanFactory.registerSingleton(flowName, listener);
 				registerContainers(beanFactory, matchingContracts, flowName, listener);
 			}
@@ -93,29 +86,25 @@ public class StubRunnerJmsConfiguration {
 		return new FlowRegistrar();
 	}
 
-	private void registerContainers(ConfigurableListableBeanFactory beanFactory,
-			List<Contract> matchingContracts, String flowName,
-			StubRunnerJmsRouter listener) {
+	private void registerContainers(ConfigurableListableBeanFactory beanFactory, List<Contract> matchingContracts,
+			String flowName, StubRunnerJmsRouter listener) {
 		// listener's container
-		ConnectionFactory connectionFactory = beanFactory
-				.getBean(ConnectionFactory.class);
+		ConnectionFactory connectionFactory = beanFactory.getBean(ConnectionFactory.class);
 		for (Contract matchingContract : matchingContracts) {
 			if (matchingContract.getInput() == null) {
 				continue;
 			}
-			String destination = MapConverter.getStubSideValuesForNonBody(
-					matchingContract.getInput().getMessageFrom()).toString();
-			MessageListenerContainer container = listenerContainer(destination,
-					connectionFactory, listener);
+			String destination = MapConverter.getStubSideValuesForNonBody(matchingContract.getInput().getMessageFrom())
+					.toString();
+			MessageListenerContainer container = listenerContainer(destination, connectionFactory, listener);
 			String containerName = flowName + ".container";
-			Object initializedContainer = beanFactory.initializeBean(container,
-					containerName);
+			Object initializedContainer = beanFactory.initializeBean(container, containerName);
 			beanFactory.registerSingleton(containerName, initializedContainer);
 		}
 	}
 
-	private MessageListenerContainer listenerContainer(String queueName,
-			ConnectionFactory connectionFactory, MessageListener listener) {
+	private MessageListenerContainer listenerContainer(String queueName, ConnectionFactory connectionFactory,
+			MessageListener listener) {
 		DefaultMessageListenerContainer container = new DefaultMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
 		container.setDestinationName(queueName);

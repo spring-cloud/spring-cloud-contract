@@ -31,20 +31,16 @@ import java.util.stream.Collectors;
 public class Body extends DslProperty {
 
 	public Body(Map<String, DslProperty> body) {
-		super(extractValue(body, ContractUtils.CLIENT_VALUE),
-				extractValue(body, ContractUtils.SERVER_VALUE));
+		super(extractValue(body, ContractUtils.CLIENT_VALUE), extractValue(body, ContractUtils.SERVER_VALUE));
 	}
 
 	public Body(List<DslProperty> bodyAsList) {
-		super(bodyAsList.stream().map(DslProperty::getClientValue)
-				.collect(Collectors.toList()),
-				bodyAsList.stream().map(DslProperty::getServerValue)
-						.collect(Collectors.toList()));
+		super(bodyAsList.stream().map(DslProperty::getClientValue).collect(Collectors.toList()),
+				bodyAsList.stream().map(DslProperty::getServerValue).collect(Collectors.toList()));
 	}
 
 	public Body(Object value) {
-		super(ContractUtils.CLIENT_VALUE.apply(value),
-				ContractUtils.SERVER_VALUE.apply(value));
+		super(ContractUtils.CLIENT_VALUE.apply(value), ContractUtils.SERVER_VALUE.apply(value));
 	}
 
 	public Body(Byte[] bodyAsValue) {
@@ -71,8 +67,7 @@ public class Body extends DslProperty {
 		super(matchingStrategy, matchingStrategy);
 	}
 
-	private static Map<String, Object> extractValue(Map<String, DslProperty> body,
-			final Function valueProvider) {
+	private static Map<String, Object> extractValue(Map<String, DslProperty> body, final Function valueProvider) {
 		final Map<String, Object> map = new LinkedHashMap<String, Object>();
 		body.forEach((key, value) -> map.put(key, valueProvider.apply(value)));
 		return map;

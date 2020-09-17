@@ -81,8 +81,7 @@ public class WireMockSnippet implements Snippet {
 
 	private String snippetName = "stubs";
 
-	private Set<String> headerBlackList = new HashSet<>(
-			Arrays.asList("host", "content-length"));
+	private Set<String> headerBlackList = new HashSet<>(Arrays.asList("host", "content-length"));
 
 	private Set<String> jsonPaths = new LinkedHashSet<>();
 
@@ -102,30 +101,24 @@ public class WireMockSnippet implements Snippet {
 		}
 		String json = Json.write(this.stubMapping);
 		RestDocumentationContext context;
-		context = (RestDocumentationContext) operation.getAttributes()
-				.get(RestDocumentationContext.class.getName());
+		context = (RestDocumentationContext) operation.getAttributes().get(RestDocumentationContext.class.getName());
 		RestDocumentationContextPlaceholderResolverFactory placeholders;
 		placeholders = new RestDocumentationContextPlaceholderResolverFactory();
-		WriterResolver writerResolver = new StandardWriterResolver(placeholders, "UTF-8",
-				TEMPLATE_FORMAT);
-		try (Writer writer = writerResolver.resolve(this.snippetName, operation.getName(),
-				context)) {
+		WriterResolver writerResolver = new StandardWriterResolver(placeholders, "UTF-8", TEMPLATE_FORMAT);
+		try (Writer writer = writerResolver.resolve(this.snippetName, operation.getName(), context)) {
 			writer.append(json);
 		}
 	}
 
 	private void extractMatchers(Operation operation) {
-		this.stubMapping = (StubMapping) operation.getAttributes()
-				.get("contract.stubMapping");
+		this.stubMapping = (StubMapping) operation.getAttributes().get("contract.stubMapping");
 		if (this.stubMapping != null) {
 			return;
 		}
 		@SuppressWarnings("unchecked")
-		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
-				.get("contract.jsonPaths");
+		Set<String> jsonPaths = (Set<String>) operation.getAttributes().get("contract.jsonPaths");
 		this.jsonPaths = jsonPaths;
-		this.contentType = (MediaType) operation.getAttributes()
-				.get("contract.contentType");
+		this.contentType = (MediaType) operation.getAttributes().get("contract.contentType");
 		if (this.contentType == null) {
 			this.hasJsonBodyRequestToMatch = hasJsonContentType(operation);
 			this.hasXmlBodyRequestToMatch = hasXmlContentType(operation);
@@ -141,24 +134,21 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private boolean hasContentType(Operation operation, MediaType mediaType) {
-		return operation.getRequest().getHeaders().getContentType() != null && (operation
-				.getRequest().getHeaders().getContentType().isCompatibleWith(mediaType));
+		return operation.getRequest().getHeaders().getContentType() != null
+				&& (operation.getRequest().getHeaders().getContentType().isCompatibleWith(mediaType));
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
 		String content = operation.getResponse().getContentAsString();
-		ResponseDefinitionBuilder response = aResponse()
-				.withHeaders(responseHeaders(operation)).withBody(content);
-		if (content != null
-				&& content.contains("localhost:{{request.requestLine.port}}")) {
+		ResponseDefinitionBuilder response = aResponse().withHeaders(responseHeaders(operation)).withBody(content);
+		if (content != null && content.contains("localhost:{{request.requestLine.port}}")) {
 			response = response.withTransformers("response-template");
 		}
 		return response.withStatus(operation.getResponse().getStatus().value());
 	}
 
 	private MappingBuilder request(Operation operation) {
-		return queryParams(requestHeaders(requestBuilder(operation), operation),
-				operation);
+		return queryParams(requestHeaders(requestBuilder(operation), operation), operation);
 	}
 
 	private MappingBuilder queryParams(MappingBuilder request, Operation operation) {
@@ -175,8 +165,7 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private MappingBuilder requestHeaders(MappingBuilder request, Operation operation) {
-		org.springframework.http.HttpHeaders headers = operation.getRequest()
-				.getHeaders();
+		org.springframework.http.HttpHeaders headers = operation.getRequest().getHeaders();
 		// TODO: whitelist headers
 		for (String name : headers.keySet()) {
 			if (!this.headerBlackList.contains(name.toLowerCase())) {
@@ -187,8 +176,7 @@ public class WireMockSnippet implements Snippet {
 			}
 		}
 		if (this.contentType != null) {
-			request = request.withHeader("Content-Type",
-					matching(Pattern.quote(this.contentType.toString()) + ".*"));
+			request = request.withHeader("Content-Type", matching(Pattern.quote(this.contentType.toString()) + ".*"));
 		}
 		return request;
 	}
@@ -198,14 +186,11 @@ public class WireMockSnippet implements Snippet {
 		case DELETE:
 			return delete(requestPattern(operation));
 		case POST:
-			return bodyPattern(post(requestPattern(operation)),
-					operation.getRequest().getContentAsString());
+			return bodyPattern(post(requestPattern(operation)), operation.getRequest().getContentAsString());
 		case PUT:
-			return bodyPattern(put(requestPattern(operation)),
-					operation.getRequest().getContentAsString());
+			return bodyPattern(put(requestPattern(operation)), operation.getRequest().getContentAsString());
 		case PATCH:
-			return bodyPattern(patch(requestPattern(operation)),
-					operation.getRequest().getContentAsString());
+			return bodyPattern(patch(requestPattern(operation)), operation.getRequest().getContentAsString());
 		case GET:
 			return get(requestPattern(operation));
 		case HEAD:
@@ -215,8 +200,7 @@ public class WireMockSnippet implements Snippet {
 		case TRACE:
 			return trace(requestPattern(operation));
 		default:
-			throw new UnsupportedOperationException(
-					"Unsupported method type: " + operation.getRequest().getMethod());
+			throw new UnsupportedOperationException("Unsupported method type: " + operation.getRequest().getMethod());
 		}
 	}
 
@@ -245,8 +229,7 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private HttpHeaders responseHeaders(Operation operation) {
-		org.springframework.http.HttpHeaders headers = operation.getResponse()
-				.getHeaders();
+		org.springframework.http.HttpHeaders headers = operation.getResponse().getHeaders();
 		HttpHeaders result = new HttpHeaders();
 		for (String name : headers.keySet()) {
 			if (!this.headerBlackList.contains(name.toLowerCase())) {

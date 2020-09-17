@@ -32,8 +32,7 @@ interface RestAssuredVerifier {
 	default boolean isRestAssured2Present() {
 		boolean restAssured2Present = checker.isClassPresent(REST_ASSURED_2_0_CLASS);
 		if (restAssured2Present) {
-			log.warn(
-					"Rest Assured 2 found on the classpath. Please upgrade to the latest version of Rest Assured");
+			log.warn("Rest Assured 2 found on the classpath. Please upgrade to the latest version of Rest Assured");
 		}
 		return restAssured2Present;
 

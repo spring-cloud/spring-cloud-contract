@@ -66,8 +66,7 @@ public class PathBodyMatcher implements BodyMatcher {
 			return false;
 		}
 		PathBodyMatcher that = (PathBodyMatcher) o;
-		return Objects.equals(path, that.path)
-				&& Objects.equals(matchingTypeValue, that.matchingTypeValue);
+		return Objects.equals(path, that.path) && Objects.equals(matchingTypeValue, that.matchingTypeValue);
 	}
 
 	@Override
@@ -77,8 +76,7 @@ public class PathBodyMatcher implements BodyMatcher {
 
 	@Override
 	public String toString() {
-		return "PathBodyMatcher{" + "path='" + path + '\'' + ", matchingTypeValue="
-				+ matchingTypeValue + '}';
+		return "PathBodyMatcher{" + "path='" + path + '\'' + ", matchingTypeValue=" + matchingTypeValue + '}';
 	}
 
 }

@@ -54,29 +54,25 @@ public class BaseClassMapping {
 			return false;
 		}
 		BaseClassMapping that = (BaseClassMapping) o;
-		if (this.contractPackageRegex != null
-				? !this.contractPackageRegex.equals(that.contractPackageRegex)
+		if (this.contractPackageRegex != null ? !this.contractPackageRegex.equals(that.contractPackageRegex)
 				: that.contractPackageRegex != null) {
 			return false;
 		}
-		return this.baseClassFQN != null ? this.baseClassFQN.equals(that.baseClassFQN)
-				: that.baseClassFQN == null;
+		return this.baseClassFQN != null ? this.baseClassFQN.equals(that.baseClassFQN) : that.baseClassFQN == null;
 
 	}
 
 	@Override
 	public int hashCode() {
-		int result = this.contractPackageRegex != null
-				? this.contractPackageRegex.hashCode() : 0;
-		result = 31 * result
-				+ (this.baseClassFQN != null ? this.baseClassFQN.hashCode() : 0);
+		int result = this.contractPackageRegex != null ? this.contractPackageRegex.hashCode() : 0;
+		result = 31 * result + (this.baseClassFQN != null ? this.baseClassFQN.hashCode() : 0);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "BaseClassMapping{" + "contractPackageRegex='" + this.contractPackageRegex
-				+ '\'' + ", baseClassFQN='" + this.baseClassFQN + '\'' + '}';
+		return "BaseClassMapping{" + "contractPackageRegex='" + this.contractPackageRegex + '\'' + ", baseClassFQN='"
+				+ this.baseClassFQN + '\'' + '}';
 	}
 
 }

@@ -48,23 +48,17 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(IntegrationFlowBuilder.class)
-@ConditionalOnProperty(name = "stubrunner.integration.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.integration.enabled", havingValue = "true", matchIfMissing = true)
 public class StubRunnerIntegrationConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(name = "stubFlowRegistrar")
-	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory,
-			BatchStubRunner batchStubRunner) {
-		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
-				.getContracts();
-		IntegrationFlowBuilder dummyBuilder = IntegrationFlows
-				.from(DummyMessageHandler.CHANNEL_NAME)
+	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory, BatchStubRunner batchStubRunner) {
+		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner.getContracts();
+		IntegrationFlowBuilder dummyBuilder = IntegrationFlows.from(DummyMessageHandler.CHANNEL_NAME)
 				.handle(new DummyMessageHandler(), "handle");
-		beanFactory.initializeBean(dummyBuilder.get(),
-				DummyMessageHandler.CHANNEL_NAME + ".flow");
-		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
-				.entrySet()) {
+		beanFactory.initializeBean(dummyBuilder.get(), DummyMessageHandler.CHANNEL_NAME + ".flow");
+		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts.entrySet()) {
 			StubConfiguration key = entry.getKey();
 			Collection<Contract> value = entry.getValue();
 			String name = key.getGroupId() + "_" + key.getArtifactId();
@@ -74,29 +68,23 @@ public class StubRunnerIntegrationConfiguration {
 					continue;
 				}
 				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
-						&& StringUtils.hasText(
-								dsl.getInput().getMessageFrom().getClientValue())) {
+						&& StringUtils.hasText(dsl.getInput().getMessageFrom().getClientValue())) {
 					String from = dsl.getInput().getMessageFrom().getClientValue();
 					map.add(from, dsl);
 				}
 			}
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
-				final String flowName = name + "_" + entries.getKey() + "_"
-						+ entries.getValue().hashCode();
-				IntegrationFlowBuilder builder = IntegrationFlows
-						.from(entries.getKey()).filter(
-								new StubRunnerIntegrationMessageSelector(
-										entries.getValue()),
+				final String flowName = name + "_" + entries.getKey() + "_" + entries.getValue().hashCode();
+				IntegrationFlowBuilder builder = IntegrationFlows.from(entries.getKey())
+						.filter(new StubRunnerIntegrationMessageSelector(entries.getValue()),
 								new Consumer<FilterEndpointSpec>() {
 									@Override
 									public void accept(FilterEndpointSpec e) {
 										e.id(flowName + ".filter");
 									}
 								})
-						.transform(
-								new StubRunnerIntegrationTransformer(entries.getValue()))
-						.route(new StubRunnerIntegrationRouter(entries.getValue(),
-								beanFactory));
+						.transform(new StubRunnerIntegrationTransformer(entries.getValue()))
+						.route(new StubRunnerIntegrationRouter(entries.getValue(), beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
 			}

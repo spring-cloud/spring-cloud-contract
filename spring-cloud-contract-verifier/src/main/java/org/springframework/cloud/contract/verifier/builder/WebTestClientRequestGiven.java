@@ -24,16 +24,14 @@ class WebTestClientRequestGiven implements Given, WebTestClientAcceptor {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	WebTestClientRequestGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData metaData) {
+	WebTestClientRequestGiven(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = metaData;
 	}
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		this.blockBuilder
-				.addIndented("WebTestClientRequestSpecification request = given()");
+		this.blockBuilder.addIndented("WebTestClientRequestSpecification request = given()");
 		return this;
 	}
 

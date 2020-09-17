@@ -39,8 +39,7 @@ class SpockMockMvcRequestGiven implements Given, MockMvcAcceptor {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return acceptType(this.generatedClassMetaData, metadata)
-				&& this.generatedClassMetaData.configProperties
-						.getTestFramework() == TestFramework.SPOCK;
+				&& this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK;
 	}
 
 }

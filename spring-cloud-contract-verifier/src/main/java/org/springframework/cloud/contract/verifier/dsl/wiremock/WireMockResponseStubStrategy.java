@@ -52,8 +52,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private final ContentType contentType;
 
-	WireMockResponseStubStrategy(Contract groovyDsl,
-			SingleContractMetadata singleContractMetadata) {
+	WireMockResponseStubStrategy(Contract groovyDsl, SingleContractMetadata singleContractMetadata) {
 		super(groovyDsl);
 		this.response = groovyDsl.getResponse();
 		this.contentType = contentType(singleContractMetadata);
@@ -67,8 +66,8 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 		if (response == null) {
 			return null;
 		}
-		ResponseDefinitionBuilder builder = new ResponseDefinitionBuilder().withStatus(
-				(Integer) MapConverter.getStubSideValues(response.getStatus()));
+		ResponseDefinitionBuilder builder = new ResponseDefinitionBuilder()
+				.withStatus((Integer) MapConverter.getStubSideValues(response.getStatus()));
 		appendHeaders(builder);
 		appendBody(builder);
 		appendResponseDelayTime(builder);
@@ -77,23 +76,19 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private String[] responseTransformerNames() {
-		List<WireMockExtensions> wireMockExtensions = SpringFactoriesLoader
-				.loadFactories(WireMockExtensions.class, null);
+		List<WireMockExtensions> wireMockExtensions = SpringFactoriesLoader.loadFactories(WireMockExtensions.class,
+				null);
 		if (!wireMockExtensions.isEmpty()) {
-			return wireMockExtensions.stream().map(WireMockExtensions::extensions)
-					.flatMap(Collection::stream).map(Extension::getName)
-					.toArray(String[]::new);
+			return wireMockExtensions.stream().map(WireMockExtensions::extensions).flatMap(Collection::stream)
+					.map(Extension::getName).toArray(String[]::new);
 		}
-		return new String[] { new DefaultResponseTransformer().getName(),
-				SpringCloudContractRequestMatcher.NAME };
+		return new String[] { new DefaultResponseTransformer().getName(), SpringCloudContractRequestMatcher.NAME };
 	}
 
 	private void appendHeaders(ResponseDefinitionBuilder builder) {
 		if (response.getHeaders() != null) {
-			HttpHeaders headers = response.getHeaders().getEntries().stream()
-					.map(it -> new HttpHeader(it.getName(),
-							MapConverter.getStubSideValues(it.getClientValue())
-									.toString()))
+			HttpHeaders headers = response.getHeaders().getEntries().stream().map(
+					it -> new HttpHeader(it.getName(), MapConverter.getStubSideValues(it.getClientValue()).toString()))
 					.collect(collectingAndThen(toList(), HttpHeaders::new));
 			builder.withHeaders(headers);
 		}
@@ -105,8 +100,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 			if (body instanceof byte[]) {
 				builder.withBody((byte[]) body);
 			}
-			else if (body instanceof FromFileProperty
-					&& ((FromFileProperty) body).isByte()) {
+			else if (body instanceof FromFileProperty && ((FromFileProperty) body).isByte()) {
 				builder.withBody(((FromFileProperty) body).asBytes());
 			}
 			else if (body instanceof Map) {

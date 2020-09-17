@@ -56,15 +56,14 @@ public class WiremockServerRestAssuredApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		given().port(this.port).when().get("/resource").then().assertThat()
-				.statusCode(is(200)).body(equalTo("Hello World"));
+		given().port(this.port).when().get("/resource").then().assertThat().statusCode(is(200))
+				.body(equalTo("Hello World"));
 	}
 
 	@Test
 	public void statusIsMaintained() throws Exception {
-		given(this.documentationSpec.port(this.port)).filter(document("status")).when()
-				.get("/status").then().assertThat().statusCode(is(202))
-				.body(equalTo("Hello World"));
+		given(this.documentationSpec.port(this.port)).filter(document("status")).when().get("/status").then()
+				.assertThat().statusCode(is(202)).body(equalTo("Hello World"));
 	}
 
 	@Configuration

@@ -44,8 +44,7 @@ class JmsStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		jmsTemplate.setReceiveTimeout(timeUnit.toMillis(timeout));
 		return jmsTemplate.receive(destination);
 	}
@@ -56,8 +55,7 @@ class JmsStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination,
-			YamlContract contract) {
+	public void send(Object payload, Map headers, String destination, YamlContract contract) {
 		jmsTemplate.send(destination, session -> {
 			Message message = createMessage(session, payload);
 			setHeaders(message, headers);

@@ -33,38 +33,33 @@ class GenericTextBodyThen implements Then {
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	GenericTextBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			BodyParser bodyParser, ComparisonBuilder comparisonBuilder) {
+	GenericTextBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData, BodyParser bodyParser,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.bodyParser = bodyParser;
 		this.comparisonBuilder = comparisonBuilder;
-		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder,
-				metaData, this.bodyParser.byteArrayString(), this.comparisonBuilder);
+		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder, metaData,
+				this.bodyParser.byteArrayString(), this.comparisonBuilder);
 	}
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		if (convertedResponseBody instanceof String) {
-			convertedResponseBody = this.bodyParser
-					.escapeForSimpleTextAssertion(convertedResponseBody.toString());
+			convertedResponseBody = this.bodyParser.escapeForSimpleTextAssertion(convertedResponseBody.toString());
 		}
 		simpleTextResponseBodyCheck(metadata, convertedResponseBody);
 		return this;
 	}
 
-	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata,
-			Object convertedResponseBody) {
-		this.blockBuilder.addLineWithEnding(
-				getSimpleResponseBodyString(this.bodyParser.responseAsString()));
-		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "",
-				convertedResponseBody);
+	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata, Object convertedResponseBody) {
+		this.blockBuilder.addLineWithEnding(getSimpleResponseBodyString(this.bodyParser.responseAsString()));
+		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "", convertedResponseBody);
 		this.blockBuilder.addEndingIfNotPresent();
 	}
 
 	private String getSimpleResponseBodyString(String responseString) {
-		return "String responseBody = " + responseString
-				+ this.blockBuilder.getLineEnding();
+		return "String responseBody = " + responseString + this.blockBuilder.getLineEnding();
 	}
 
 	@Override
@@ -72,8 +67,7 @@ class GenericTextBodyThen implements Then {
 		ContentType outputTestContentType = metadata.getOutputTestContentType();
 		return outputTestContentType != JSON && outputTestContentType != XML
 				&& this.bodyParser.responseBody(metadata) != null
-				&& !(this.bodyParser.responseBody(metadata)
-						.getServerValue() instanceof FromFileProperty);
+				&& !(this.bodyParser.responseBody(metadata).getServerValue() instanceof FromFileProperty);
 	}
 
 }

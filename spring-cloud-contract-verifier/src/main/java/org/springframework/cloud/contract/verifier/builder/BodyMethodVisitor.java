@@ -34,8 +34,7 @@ interface BodyMethodVisitor {
 	 * @return
 	 */
 	default BlockBuilder startBodyBlock(BlockBuilder blockBuilder, String label) {
-		return blockBuilder.addIndentation().appendWithLabelPrefix(label).addEmptyLine()
-				.startBlock();
+		return blockBuilder.addIndentation().appendWithLabelPrefix(label).addEmptyLine().startBlock();
 	}
 
 	/**
@@ -44,11 +43,9 @@ interface BodyMethodVisitor {
 	 * @param methodVisitors
 	 * @param singleContractMetadata
 	 */
-	default void indentedBodyBlock(BlockBuilder blockBuilder,
-			List<? extends MethodVisitor> methodVisitors,
+	default void indentedBodyBlock(BlockBuilder blockBuilder, List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
-		List<MethodVisitor> visitors = filterVisitors(methodVisitors,
-				singleContractMetadata);
+		List<MethodVisitor> visitors = filterVisitors(methodVisitors, singleContractMetadata);
 		if (visitors.isEmpty()) {
 			blockBuilder.addEndingIfNotPresent().addEmptyLine();
 			blockBuilder.endBlock();
@@ -65,11 +62,9 @@ interface BodyMethodVisitor {
 	 * @param singleContractMetadata
 	 * @return
 	 */
-	default List<MethodVisitor> filterVisitors(
-			List<? extends MethodVisitor> methodVisitors,
+	default List<MethodVisitor> filterVisitors(List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
-		return methodVisitors.stream()
-				.filter(given -> given.accept(singleContractMetadata))
+		return methodVisitors.stream().filter(given -> given.accept(singleContractMetadata))
 				.collect(Collectors.toList());
 	}
 
@@ -80,11 +75,9 @@ interface BodyMethodVisitor {
 	 * @param methodVisitors
 	 * @param singleContractMetadata
 	 */
-	default void bodyBlock(BlockBuilder blockBuilder,
-			List<? extends MethodVisitor> methodVisitors,
+	default void bodyBlock(BlockBuilder blockBuilder, List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
-		List<MethodVisitor> visitors = filterVisitors(methodVisitors,
-				singleContractMetadata);
+		List<MethodVisitor> visitors = filterVisitors(methodVisitors, singleContractMetadata);
 		if (visitors.isEmpty()) {
 			blockBuilder.addEndingIfNotPresent().addEmptyLine();
 			return;
@@ -99,8 +92,8 @@ interface BodyMethodVisitor {
 	 * @param singleContractMetadata
 	 * @param visitors
 	 */
-	default void applyVisitors(BlockBuilder blockBuilder,
-			SingleContractMetadata singleContractMetadata, List<MethodVisitor> visitors) {
+	default void applyVisitors(BlockBuilder blockBuilder, SingleContractMetadata singleContractMetadata,
+			List<MethodVisitor> visitors) {
 		Iterator<MethodVisitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			MethodVisitor visitor = iterator.next();
@@ -118,8 +111,8 @@ interface BodyMethodVisitor {
 	 * @param singleContractMetadata
 	 * @param visitors
 	 */
-	default void applyVisitorsWithEnding(BlockBuilder blockBuilder,
-			SingleContractMetadata singleContractMetadata, List<MethodVisitor> visitors) {
+	default void applyVisitorsWithEnding(BlockBuilder blockBuilder, SingleContractMetadata singleContractMetadata,
+			List<MethodVisitor> visitors) {
 		Iterator<MethodVisitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			MethodVisitor visitor = iterator.next();

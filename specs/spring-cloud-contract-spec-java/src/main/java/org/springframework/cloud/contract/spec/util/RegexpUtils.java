@@ -37,7 +37,6 @@ public final class RegexpUtils {
 		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
 	}
 
-	private static final Pattern SPECIAL_REGEX_CHARS = Pattern
-			.compile("[{}()\\[\\].+*?^$\\\\|]");
+	private static final Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
 
 }

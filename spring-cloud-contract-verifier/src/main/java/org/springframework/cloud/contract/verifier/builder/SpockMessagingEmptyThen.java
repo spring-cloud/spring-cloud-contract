@@ -41,8 +41,7 @@ class SpockMessagingEmptyThen implements Then, BodyMethodVisitor {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return metadata.isMessaging()
-				&& this.generatedClassMetaData.configProperties
-						.getTestFramework() == TestFramework.SPOCK
+				&& this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK
 				&& metadata.getContract().getOutputMessage() == null;
 	}
 

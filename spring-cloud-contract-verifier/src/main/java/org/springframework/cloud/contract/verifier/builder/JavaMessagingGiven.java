@@ -23,16 +23,15 @@ class JavaMessagingGiven extends MessagingGiven {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JavaMessagingGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JavaMessagingGiven(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, JavaMessagingBodyParser.INSTANCE);
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		return super.accept(metadata) && this.generatedClassMetaData.configProperties
-				.getTestFramework() != TestFramework.SPOCK;
+		return super.accept(metadata)
+				&& this.generatedClassMetaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }

@@ -61,8 +61,7 @@ public class JUnitDefinition implements TestFrameworkDefinition {
 
 	@Override
 	public List<String> getOrderAnnotationImports() {
-		return new ArrayList<String>(Arrays.asList("org.junit.FixMethodOrder",
-				"org.junit.runners.MethodSorters"));
+		return new ArrayList<String>(Arrays.asList("org.junit.FixMethodOrder", "org.junit.runners.MethodSorters"));
 	}
 
 	@Override

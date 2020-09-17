@@ -42,9 +42,8 @@ public interface SingleTestGenerator {
 	 * @deprecated use{@link SingleTestGenerator#buildClass(ContractVerifierConfigProperties, Collection, String, GeneratedClassData)}
 	 */
 	@Deprecated
-	String buildClass(ContractVerifierConfigProperties properties,
-			Collection<ContractMetadata> listOfFiles, String className,
-			String classPackage, String includedDirectoryRelativePath);
+	String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles,
+			String className, String classPackage, String includedDirectoryRelativePath);
 
 	/**
 	 * Creates contents of a single test class in which all test scenarios from the
@@ -55,8 +54,7 @@ public interface SingleTestGenerator {
 	 * @param includedDirectoryRelativePath - relative path to the included directory
 	 * @return contents of a single test class
 	 */
-	String buildClass(ContractVerifierConfigProperties properties,
-			Collection<ContractMetadata> listOfFiles,
+	String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles,
 			String includedDirectoryRelativePath, GeneratedClassData generatedClassData);
 
 	class GeneratedClassData {
@@ -67,8 +65,7 @@ public interface SingleTestGenerator {
 
 		public final Path testClassPath;
 
-		public GeneratedClassData(String className, String classPackage,
-				Path testClassPath) {
+		public GeneratedClassData(String className, String classPackage, Path testClassPath) {
 			this.className = className;
 			this.classPackage = classPackage;
 			this.testClassPath = testClassPath;

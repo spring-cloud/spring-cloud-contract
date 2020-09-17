@@ -21,8 +21,7 @@ import org.springframework.cloud.contract.verifier.config.TestMode;
 interface WebTestClientAcceptor {
 
 	default boolean acceptType(GeneratedClassMetaData generatedClassMetaData) {
-		return generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.WEBTESTCLIENT;
+		return generatedClassMetaData.configProperties.getTestMode() == TestMode.WEBTESTCLIENT;
 	}
 
 }

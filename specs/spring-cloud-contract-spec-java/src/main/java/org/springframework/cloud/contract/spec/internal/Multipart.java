@@ -25,20 +25,16 @@ import java.util.stream.Collectors;
 public class Multipart extends DslProperty {
 
 	public Multipart(Map<String, DslProperty> multipart) {
-		super(extractValue(multipart, ContractUtils.CLIENT_VALUE),
-				extractValue(multipart, ContractUtils.SERVER_VALUE));
+		super(extractValue(multipart, ContractUtils.CLIENT_VALUE), extractValue(multipart, ContractUtils.SERVER_VALUE));
 	}
 
 	public Multipart(List<DslProperty> multipartAsList) {
-		super(multipartAsList.stream().map(DslProperty::getClientValue)
-				.collect(Collectors.toList()),
-				multipartAsList.stream().map(DslProperty::getServerValue)
-						.collect(Collectors.toList()));
+		super(multipartAsList.stream().map(DslProperty::getClientValue).collect(Collectors.toList()),
+				multipartAsList.stream().map(DslProperty::getServerValue).collect(Collectors.toList()));
 	}
 
 	public Multipart(Object value) {
-		super(ContractUtils.CLIENT_VALUE.apply(value),
-				ContractUtils.SERVER_VALUE.apply(value));
+		super(ContractUtils.CLIENT_VALUE.apply(value), ContractUtils.SERVER_VALUE.apply(value));
 	}
 
 	public Multipart(DslProperty multipartAsValue) {
@@ -56,11 +52,9 @@ public class Multipart extends DslProperty {
 		return new Multipart(value);
 	}
 
-	private static Map<String, Object> extractValue(Map<String, DslProperty> multipart,
-			final Function valueProvider) {
+	private static Map<String, Object> extractValue(Map<String, DslProperty> multipart, final Function valueProvider) {
 		final Map<String, Object> map = new LinkedHashMap<String, Object>();
-		multipart.forEach(
-				(s, dslProperty) -> map.put(s, valueProvider.apply(dslProperty)));
+		multipart.forEach((s, dslProperty) -> map.put(s, valueProvider.apply(dslProperty)));
 		return map;
 	}
 

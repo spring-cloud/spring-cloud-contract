@@ -26,27 +26,23 @@ class DefaultJsonStaticImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = {
-			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson" };
+	private static final String[] IMPORTS = { "com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson" };
 
-	DefaultJsonStaticImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	DefaultJsonStaticImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isJson));
+		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
+				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isJson));
 	}
 
 }

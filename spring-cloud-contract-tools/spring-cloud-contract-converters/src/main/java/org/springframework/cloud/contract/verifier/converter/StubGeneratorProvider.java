@@ -33,8 +33,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 public class StubGeneratorProvider {
 
 	public StubGeneratorProvider() {
-		this.converters
-				.addAll(SpringFactoriesLoader.loadFactories(StubGenerator.class, null));
+		this.converters.addAll(SpringFactoriesLoader.loadFactories(StubGenerator.class, null));
 	}
 
 	public StubGeneratorProvider(List<StubGenerator> converters) {
@@ -42,14 +41,12 @@ public class StubGeneratorProvider {
 	}
 
 	public Collection<StubGenerator> converterForName(final String fileName) {
-		return this.converters.stream()
-				.filter(stubGenerator -> stubGenerator.canHandleFileName(fileName))
+		return this.converters.stream().filter(stubGenerator -> stubGenerator.canHandleFileName(fileName))
 				.collect(Collectors.toList());
 	}
 
 	public Collection<StubGenerator> allOrDefault(StubGenerator defaultStubGenerator) {
-		return this.converters.isEmpty() ? Collections.singletonList(defaultStubGenerator)
-				: this.converters;
+		return this.converters.isEmpty() ? Collections.singletonList(defaultStubGenerator) : this.converters;
 	}
 
 	private final List<StubGenerator> converters = new ArrayList<StubGenerator>();

@@ -73,12 +73,10 @@ class MavenContractsDownloader {
 
 	private final boolean failOnNoStubs;
 
-	MavenContractsDownloader(MavenProject project, Dependency contractDependency,
-			String contractsPath, String contractsRepositoryUrl,
-			StubRunnerProperties.StubsMode stubsMode, Log log, String repositoryUsername,
-			String repositoryPassword, String repositoryProxyHost,
-			Integer repositoryProxyPort, boolean deleteStubsAfterTest,
-			Map<String, String> contractsProperties, boolean failOnNoContracts) {
+	MavenContractsDownloader(MavenProject project, Dependency contractDependency, String contractsPath,
+			String contractsRepositoryUrl, StubRunnerProperties.StubsMode stubsMode, Log log, String repositoryUsername,
+			String repositoryPassword, String repositoryProxyHost, Integer repositoryProxyPort,
+			boolean deleteStubsAfterTest, Map<String, String> contractsProperties, boolean failOnNoContracts) {
 		this.project = project;
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
@@ -95,54 +93,42 @@ class MavenContractsDownloader {
 		this.failOnNoStubs = failOnNoContracts;
 	}
 
-	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config,
-			File defaultContractsDir) {
-		String contractsDirFromProp = this.project.getProperties()
-				.getProperty(CONTRACTS_DIRECTORY_PROP);
-		File downloadedContractsDir = StringUtils.hasText(contractsDirFromProp)
-				? new File(contractsDirFromProp) : null;
+	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config, File defaultContractsDir) {
+		String contractsDirFromProp = this.project.getProperties().getProperty(CONTRACTS_DIRECTORY_PROP);
+		File downloadedContractsDir = StringUtils.hasText(contractsDirFromProp) ? new File(contractsDirFromProp) : null;
 		// reuse downloaded contracts from another mojo
 		if (downloadedContractsDir != null && downloadedContractsDir.exists()) {
-			this.log.info(
-					"Another mojo has downloaded the contracts - will reuse them from ["
-							+ downloadedContractsDir + "]");
+			this.log.info("Another mojo has downloaded the contracts - will reuse them from [" + downloadedContractsDir
+					+ "]");
 			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader()
 					.createNewInclusionProperties(downloadedContractsDir);
 			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
-			config.setIncludedRootFolderAntPattern(
-					inclusionProperties.getIncludedRootFolderAntPattern());
+			config.setIncludedRootFolderAntPattern(inclusionProperties.getIncludedRootFolderAntPattern());
 			return downloadedContractsDir;
 		}
 		else if (shouldDownloadContracts()) {
-			this.log.info(
-					"Download dependency is provided - will retrieve contracts from a remote location");
+			this.log.info("Download dependency is provided - will retrieve contracts from a remote location");
 			final ContractDownloader contractDownloader = contractDownloader();
-			final File downloadedContracts = contractDownloader
-					.unpackAndDownloadContracts();
+			final File downloadedContracts = contractDownloader.unpackAndDownloadContracts();
 			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader
 					.createNewInclusionProperties(downloadedContracts);
 			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
-			config.setIncludedRootFolderAntPattern(
-					inclusionProperties.getIncludedRootFolderAntPattern());
-			this.project.getProperties().setProperty(CONTRACTS_DIRECTORY_PROP,
-					downloadedContracts.getAbsolutePath());
+			config.setIncludedRootFolderAntPattern(inclusionProperties.getIncludedRootFolderAntPattern());
+			this.project.getProperties().setProperty(CONTRACTS_DIRECTORY_PROP, downloadedContracts.getAbsolutePath());
 			return downloadedContracts;
 		}
-		this.log.info("Will use contracts provided in the folder [" + defaultContractsDir
-				+ "]");
+		this.log.info("Will use contracts provided in the folder [" + defaultContractsDir + "]");
 		return defaultContractsDir;
 	}
 
 	private boolean shouldDownloadContracts() {
-		return this.contractDependency != null
-				&& StringUtils.hasText(this.contractDependency.getArtifactId())
+		return this.contractDependency != null && StringUtils.hasText(this.contractDependency.getArtifactId())
 				|| StringUtils.hasText(this.contractsRepositoryUrl);
 	}
 
 	private ContractDownloader contractDownloader() {
-		return new ContractDownloader(stubDownloader(), stubConfiguration(),
-				this.contractsPath, this.project.getGroupId(),
-				this.project.getArtifactId(), this.project.getVersion());
+		return new ContractDownloader(stubDownloader(), stubConfiguration(), this.contractsPath,
+				this.project.getGroupId(), this.project.getArtifactId(), this.project.getVersion());
 	}
 
 	private StubDownloader stubDownloader() {
@@ -152,11 +138,9 @@ class MavenContractsDownloader {
 
 	StubRunnerOptions buildOptions() {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
-				.withOptions(StubRunnerOptions.fromSystemProps())
-				.withStubsMode(this.stubsMode).withUsername(this.repositoryUsername)
-				.withPassword(this.repositoryPassword)
-				.withDeleteStubsAfterTest(this.deleteStubsAfterTest)
-				.withProperties(this.contractsProperties)
+				.withOptions(StubRunnerOptions.fromSystemProps()).withStubsMode(this.stubsMode)
+				.withUsername(this.repositoryUsername).withPassword(this.repositoryPassword)
+				.withDeleteStubsAfterTest(this.deleteStubsAfterTest).withProperties(this.contractsProperties)
 				.withFailOnNoStubs(this.failOnNoStubs);
 		if (StringUtils.hasText(this.contractsRepositoryUrl)) {
 			builder.withStubRepositoryRoot(this.contractsRepositoryUrl);

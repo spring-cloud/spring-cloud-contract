@@ -36,11 +36,11 @@ import java.util.regex.Pattern;
  */
 public class Headers {
 
-	private static final BiFunction<String, Header, Object> CLIENT_SIDE = (s,
-			header) -> ContractUtils.convertStubSideRecursively(header);
+	private static final BiFunction<String, Header, Object> CLIENT_SIDE = (s, header) -> ContractUtils
+			.convertStubSideRecursively(header);
 
-	private static final BiFunction<String, Header, Object> SERVER_SIDE = (s,
-			header) -> ContractUtils.convertTestSideRecursively(header);
+	private static final BiFunction<String, Header, Object> SERVER_SIDE = (s, header) -> ContractUtils
+			.convertTestSideRecursively(header);
 
 	private Set<Header> entries = new LinkedHashSet<>();
 
@@ -95,8 +95,7 @@ public class Headers {
 
 	public Map<String, Object> asMap(final BiFunction<String, Header, Object> consumer) {
 		final Map<String, Object> map = new LinkedHashMap<>();
-		entries.forEach(header -> map.put(header.getName(),
-				consumer.apply(header.getName(), header)));
+		entries.forEach(header -> map.put(header.getName(), consumer.apply(header.getName(), header)));
 		return map;
 	}
 

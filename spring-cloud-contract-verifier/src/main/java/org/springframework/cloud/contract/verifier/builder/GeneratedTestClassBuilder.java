@@ -45,14 +45,12 @@ class GeneratedTestClassBuilder {
 
 	final GeneratedClassMetaData generatedClassMetaData;
 
-	private GeneratedTestClassBuilder(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	private GeneratedTestClassBuilder(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
-	static GeneratedTestClassBuilder builder(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	static GeneratedTestClassBuilder builder(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		return new GeneratedTestClassBuilder(blockBuilder, generatedClassMetaData);
 	}
 
@@ -128,9 +126,8 @@ class GeneratedTestClassBuilder {
 	 */
 	GeneratedTestClass build() {
 		// picks a matching class meta data
-		ClassMetaData classMetaData = this.metaData.stream().filter(Acceptor::accept)
-				.findFirst().orElseThrow(() -> new IllegalStateException(
-						"There is no matching class meta data"));
+		ClassMetaData classMetaData = this.metaData.stream().filter(Acceptor::accept).findFirst()
+				.orElseThrow(() -> new IllegalStateException("There is no matching class meta data"));
 		classMetaData.setupLineEnding().setupLabelPrefix()
 				// package com.example
 				.packageDefinition();
@@ -168,10 +165,8 @@ class GeneratedTestClassBuilder {
 		visit(list, false, false);
 	}
 
-	private void visit(List<? extends Visitor> list, boolean addEnding,
-			boolean separated) {
-		List<Visitor> elements = list.stream().filter(Acceptor::accept)
-				.collect(Collectors.toList());
+	private void visit(List<? extends Visitor> list, boolean addEnding, boolean separated) {
+		List<Visitor> elements = list.stream().filter(Acceptor::accept).collect(Collectors.toList());
 		elements.forEach(OurCallable::call);
 		if (addEnding) {
 			this.blockBuilder.addEndingIfNotPresent();

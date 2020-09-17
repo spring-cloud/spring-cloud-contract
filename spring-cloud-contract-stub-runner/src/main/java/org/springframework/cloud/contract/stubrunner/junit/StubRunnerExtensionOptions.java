@@ -78,8 +78,7 @@ interface StubRunnerExtensionOptions {
 	 * @param classifier classifier of the stub
 	 * @return the stub runner extension with ports
 	 */
-	PortStubRunnerExtensionOptions downloadStub(String groupId, String artifactId,
-			String version, String classifier);
+	PortStubRunnerExtensionOptions downloadStub(String groupId, String artifactId, String version, String classifier);
 
 	/**
 	 * @param groupId group id of the stub
@@ -87,8 +86,7 @@ interface StubRunnerExtensionOptions {
 	 * @param classifier classifier of the stub
 	 * @return the stub runner extension with ports
 	 */
-	PortStubRunnerExtensionOptions downloadLatestStub(String groupId, String artifactId,
-			String classifier);
+	PortStubRunnerExtensionOptions downloadLatestStub(String groupId, String artifactId, String classifier);
 
 	/**
 	 * @param groupId group id of the stub
@@ -96,8 +94,7 @@ interface StubRunnerExtensionOptions {
 	 * @param version version of the stub
 	 * @return the stub runner extension with ports
 	 */
-	PortStubRunnerExtensionOptions downloadStub(String groupId, String artifactId,
-			String version);
+	PortStubRunnerExtensionOptions downloadStub(String groupId, String artifactId, String version);
 
 	/**
 	 * @param groupId group id of the stub

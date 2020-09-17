@@ -36,13 +36,11 @@ public class ContractVerifierAmqpAutoConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(RabbitAutoConfiguration.class,
-					ContractVerifierAmqpAutoConfiguration.class,
-					RabbitMockConnectionFactoryAutoConfiguration.class))
+					ContractVerifierAmqpAutoConfiguration.class, RabbitMockConnectionFactoryAutoConfiguration.class))
 			// register MockitoPostProcessor manually to perform the SpyBean injection for
 			// ContractVerifierAmqpAutoConfiguration. This is normally done automatically
 			// during test setup
-			.withInitializer(context -> MockitoPostProcessor
-					.register((BeanDefinitionRegistry) context));
+			.withInitializer(context -> MockitoPostProcessor.register((BeanDefinitionRegistry) context));
 
 	@Test
 	public void shouldNotCreateBeansByDefault() {
@@ -54,34 +52,27 @@ public class ContractVerifierAmqpAutoConfigurationTests {
 
 	@Test
 	public void shouldNotCreateBeansWhenDisabled() {
-		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=false")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(SpringAmqpStubMessages.class))
-							.hasSize(0);
-					assertThat(context.getBeansOfType(ContractVerifierHelper.class))
-							.hasSize(0);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=false").run((context) -> {
+			assertThat(context.getBeansOfType(SpringAmqpStubMessages.class)).hasSize(0);
+			assertThat(context.getBeansOfType(ContractVerifierHelper.class)).hasSize(0);
+		});
 	}
 
 	@Test
 	public void shouldCreateBeansWhenExplicitlyEnabled() {
-		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=true")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(SpringAmqpStubMessages.class))
-							.hasSize(1);
-					assertThat(context.getBeansOfType(ContractVerifierHelper.class))
-							.hasSize(1);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=true").run((context) -> {
+			assertThat(context.getBeansOfType(SpringAmqpStubMessages.class)).hasSize(1);
+			assertThat(context.getBeansOfType(ContractVerifierHelper.class)).hasSize(1);
+		});
 	}
 
 	@Test
 	public void shouldNotThrowOnSendWhenRabbitTemplateIsTransacted() {
-		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=true")
-				.run(context -> assertThatCode(() -> {
-					RabbitTemplate rabbitTemplate = context.getBean(RabbitTemplate.class);
-					rabbitTemplate.setChannelTransacted(true);
-					rabbitTemplate.convertAndSend("A Message");
-				}).doesNotThrowAnyException());
+		this.contextRunner.withPropertyValues("stubrunner.amqp.enabled=true").run(context -> assertThatCode(() -> {
+			RabbitTemplate rabbitTemplate = context.getBean(RabbitTemplate.class);
+			rabbitTemplate.setChannelTransacted(true);
+			rabbitTemplate.convertAndSend("A Message");
+		}).doesNotThrowAnyException());
 	}
 
 }

@@ -31,11 +31,9 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.messaging.SubscribableChannel;
 
-class StreamPollableChannelMessageReceiver
-		implements MessageVerifierReceiver<Message<?>> {
+class StreamPollableChannelMessageReceiver implements MessageVerifierReceiver<Message<?>> {
 
-	private static final Log log = LogFactory
-			.getLog(StreamPollableChannelMessageReceiver.class);
+	private static final Log log = LogFactory.getLog(StreamPollableChannelMessageReceiver.class);
 
 	private final ApplicationContext context;
 
@@ -50,13 +48,13 @@ class StreamPollableChannelMessageReceiver
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		MessageHandler handler = this.messageChannel::send;
 		MessageChannel channel = null;
 		try {
-			channel = this.context.getBean(this.destinationResolver.resolvedDestination(
-					destination, DefaultChannels.INPUT), MessageChannel.class);
+			channel = this.context.getBean(
+					this.destinationResolver.resolvedDestination(destination, DefaultChannels.INPUT),
+					MessageChannel.class);
 			if (channel instanceof SubscribableChannel) {
 				((SubscribableChannel) channel).subscribe(handler);
 				return this.messageChannel.receive(timeUnit.toMillis(timeout));
@@ -67,8 +65,8 @@ class StreamPollableChannelMessageReceiver
 			throw new IllegalStateException("Unsupported channel type");
 		}
 		catch (Exception e) {
-			log.error("Exception occurred while trying to read a message from "
-					+ " a channel with name [" + destination + "]", e);
+			log.error("Exception occurred while trying to read a message from " + " a channel with name [" + destination
+					+ "]", e);
 			throw new IllegalStateException(e);
 		}
 		finally {

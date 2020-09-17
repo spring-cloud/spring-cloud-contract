@@ -29,12 +29,12 @@ class GenericBinaryBodyThen implements Then {
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	GenericBinaryBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			BodyParser bodyParser, ComparisonBuilder comparisonBuilder) {
+	GenericBinaryBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData, BodyParser bodyParser,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
-		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder,
-				metaData, bodyParser.byteArrayString(), this.comparisonBuilder);
+		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder, metaData,
+				bodyParser.byteArrayString(), this.comparisonBuilder);
 		this.bodyParser = bodyParser;
 	}
 
@@ -45,10 +45,8 @@ class GenericBinaryBodyThen implements Then {
 		return this;
 	}
 
-	private void byteResponseBodyCheck(SingleContractMetadata metadata,
-			FromFileProperty convertedResponseBody) {
-		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "",
-				convertedResponseBody);
+	private void byteResponseBodyCheck(SingleContractMetadata metadata, FromFileProperty convertedResponseBody) {
+		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "", convertedResponseBody);
 		this.blockBuilder.addEndingIfNotPresent();
 	}
 

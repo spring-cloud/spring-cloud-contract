@@ -48,10 +48,8 @@ public final class ResourceResolver {
 	private static final DefaultResourceLoader LOADER = new DefaultResourceLoader();
 
 	static {
-		RESOLVERS.addAll(
-				SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null));
-		RESOLVERS.addAll(
-				new StubDownloaderBuilderProvider().defaultStubDownloaderBuilders());
+		RESOLVERS.addAll(SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null));
+		RESOLVERS.addAll(new StubDownloaderBuilderProvider().defaultStubDownloaderBuilders());
 		for (ProtocolResolver resolver : RESOLVERS) {
 			LOADER.addProtocolResolver(resolver);
 		}
@@ -70,9 +68,7 @@ public final class ResourceResolver {
 			return LOADER.getResource(url);
 		}
 		catch (Exception e) {
-			log.error(
-					"Exception occurred while trying to read the resource [" + url + "]",
-					e);
+			log.error("Exception occurred while trying to read the resource [" + url + "]", e);
 			return null;
 		}
 	}

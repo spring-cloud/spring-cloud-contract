@@ -30,17 +30,14 @@ public class GeneratedClassDataForMethod {
 
 	private final String methodName;
 
-	public GeneratedClassDataForMethod(
-			SingleTestGenerator.GeneratedClassData generatedClassData,
-			String methodName) {
+	public GeneratedClassDataForMethod(SingleTestGenerator.GeneratedClassData generatedClassData, String methodName) {
 		this.generatedClassData = generatedClassData;
 		this.methodName = methodName;
 	}
 
 	private SingleTestGenerator.GeneratedClassData assertClassData() {
 		if (this.generatedClassData == null) {
-			throw new IllegalStateException(
-					"No metadata was found for the generated test class");
+			throw new IllegalStateException("No metadata was found for the generated test class");
 		}
 		return this.generatedClassData;
 	}

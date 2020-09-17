@@ -33,8 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Tim Ysewyn
  * @since 1.0.0
  */
-public class OutputMessage extends Common
-		implements RegexCreatingProperty<ServerDslProperty> {
+public class OutputMessage extends Common implements RegexCreatingProperty<ServerDslProperty> {
 
 	private static final Log log = LogFactory.getLog(OutputMessage.class);
 
@@ -86,8 +85,7 @@ public class OutputMessage extends Common
 	 */
 	@Deprecated
 	public DslProperty value(ClientDslProperty clientDslProperty) {
-		return value(new ServerDslProperty(clientDslProperty.getServerValue(),
-				clientDslProperty.getClientValue()));
+		return value(new ServerDslProperty(clientDslProperty.getServerValue(), clientDslProperty.getClientValue()));
 	}
 
 	public DslProperty value(ServerDslProperty serverDslProperty) {
@@ -361,10 +359,8 @@ public class OutputMessage extends Common
 			return false;
 		}
 		OutputMessage that = (OutputMessage) o;
-		return Objects.equals(sentTo, that.sentTo)
-				&& Objects.equals(headers, that.headers)
-				&& Objects.equals(body, that.body)
-				&& Objects.equals(assertThat, that.assertThat)
+		return Objects.equals(sentTo, that.sentTo) && Objects.equals(headers, that.headers)
+				&& Objects.equals(body, that.body) && Objects.equals(assertThat, that.assertThat)
 				&& Objects.equals(bodyMatchers, that.bodyMatchers);
 	}
 
@@ -375,17 +371,14 @@ public class OutputMessage extends Common
 
 	@Override
 	public String toString() {
-		return "OutputMessage{" + "\n\tsentTo=" + sentTo + ", \n\theaders=" + headers
-				+ ", \n\tbody=" + body + ", \n\tassertThat=" + assertThat
-				+ ", \n\tbodyMatchers=" + bodyMatchers + "} \n\t" + super.toString();
+		return "OutputMessage{" + "\n\tsentTo=" + sentTo + ", \n\theaders=" + headers + ", \n\tbody=" + body
+				+ ", \n\tassertThat=" + assertThat + ", \n\tbodyMatchers=" + bodyMatchers + "} \n\t" + super.toString();
 	}
 
-	private class ServerPatternValueDslProperty
-			extends PatternValueDslProperty<ServerDslProperty> {
+	private class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
 
 		@Override
-		protected ServerDslProperty createProperty(Pattern pattern,
-				Object generatedValue) {
+		protected ServerDslProperty createProperty(Pattern pattern, Object generatedValue) {
 			return new ServerDslProperty(pattern, generatedValue);
 		}
 

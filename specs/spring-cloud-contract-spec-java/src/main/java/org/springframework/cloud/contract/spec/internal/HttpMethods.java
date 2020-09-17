@@ -31,8 +31,7 @@ public final class HttpMethods {
 	private static final Log log = LogFactory.getLog(HttpMethods.class);
 
 	public HttpMethods() {
-		log.warn(
-				"WARNING: HttpMethods shouldn't be instantiated. Use its static methods instead.");
+		log.warn("WARNING: HttpMethods shouldn't be instantiated. Use its static methods instead.");
 	}
 
 	/**
@@ -149,10 +148,8 @@ public final class HttpMethods {
 
 	public enum HttpMethod {
 
-		GET(HttpMethods.GET), HEAD(HttpMethods.HEAD), POST(HttpMethods.POST), PUT(
-				HttpMethods.PUT), PATCH(HttpMethods.PATCH), DELETE(
-						HttpMethods.DELETE), OPTIONS(
-								HttpMethods.OPTIONS), TRACE(HttpMethods.TRACE),;
+		GET(HttpMethods.GET), HEAD(HttpMethods.HEAD), POST(HttpMethods.POST), PUT(HttpMethods.PUT), PATCH(
+				HttpMethods.PATCH), DELETE(HttpMethods.DELETE), OPTIONS(HttpMethods.OPTIONS), TRACE(HttpMethods.TRACE),;
 
 		private final String methodName;
 

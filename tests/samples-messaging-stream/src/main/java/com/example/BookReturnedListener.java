@@ -26,8 +26,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 @Component("bookReturned")
-public class BookReturnedListener
-		implements Function<BookReturned, Message<BookReturned>> {
+public class BookReturnedListener implements Function<BookReturned, Message<BookReturned>> {
 
 	private static final Logger log = LoggerFactory.getLogger(BookReturnedListener.class);
 
@@ -40,8 +39,7 @@ public class BookReturnedListener
 	@Override
 	public Message<BookReturned> apply(BookReturned bookReturned) {
 		log.info("Got the book " + bookReturned);
-		return MessageBuilder.withPayload(bookReturned)
-				.setHeader("BOOK-NAME", bookReturned.bookName).build();
+		return MessageBuilder.withPayload(bookReturned).setHeader("BOOK-NAME", bookReturned.bookName).build();
 	}
 
 }

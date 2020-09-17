@@ -37,10 +37,8 @@ interface CookieElementProcessor {
 		Iterator<Cookie> iterator = cookies.getEntries().iterator();
 		while (iterator.hasNext()) {
 			Cookie cookie = iterator.next();
-			String text = processCookieElement(cookie.getKey(),
-					cookie.getServerValue() instanceof NotToEscapePattern
-							? cookie.getServerValue()
-							: MapConverter.getTestSideValues(cookie.getServerValue()));
+			String text = processCookieElement(cookie.getKey(), cookie.getServerValue() instanceof NotToEscapePattern
+					? cookie.getServerValue() : MapConverter.getTestSideValues(cookie.getServerValue()));
 			if (iterator.hasNext()) {
 				blockBuilder().addLine(text).addEndingIfNotPresent();
 			}
@@ -55,9 +53,8 @@ interface CookieElementProcessor {
 	default String processCookieElement(String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
 			verifyCookieNotNull(property);
-			return comparisonBuilder().assertThat(cookieValue(property))
-					+ comparisonBuilder().matches(((NotToEscapePattern) value)
-							.getServerValue().pattern().replace("\\", "\\\\"));
+			return comparisonBuilder().assertThat(cookieValue(property)) + comparisonBuilder()
+					.matches(((NotToEscapePattern) value).getServerValue().pattern().replace("\\", "\\\\"));
 		}
 		else if (value instanceof String || value instanceof Pattern) {
 			verifyCookieNotNull(property);
@@ -79,8 +76,7 @@ interface CookieElementProcessor {
 	}
 
 	default void verifyCookieNotNull(String key) {
-		blockBuilder().addLineWithEnding(
-				comparisonBuilder().assertThatIsNotNull(cookieKey(key)));
+		blockBuilder().addLineWithEnding(comparisonBuilder().assertThatIsNotNull(cookieKey(key)));
 	}
 
 	String cookieKey(String key);

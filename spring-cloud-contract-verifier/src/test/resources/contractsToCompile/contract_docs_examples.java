@@ -131,21 +131,15 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 
 							// `containing` function matches strings
 							// that contains passed substring.
-							q.parameter("gender",
-									r.value(r.consumer(r.containing("[mf]")),
-											r.producer("mf")));
+							q.parameter("gender", r.value(r.consumer(r.containing("[mf]")), r.producer("mf")));
 
 							// `matching` function tests parameter
 							// against passed regular expression.
-							q.parameter("offset",
-									r.value(r.consumer(r.matching("[0-9]+")),
-											r.producer(123)));
+							q.parameter("offset", r.value(r.consumer(r.matching("[0-9]+")), r.producer(123)));
 
 							// `notMatching` functions tests if parameter
 							// does not match passed regular expression.
-							q.parameter("loginStartsWith",
-									r.value(r.consumer(r.notMatching(".{0,2}")),
-											r.producer(3)));
+							q.parameter("loginStartsWith", r.value(r.consumer(r.notMatching(".{0,2}")), r.producer(3)));
 						});
 					});
 
@@ -242,8 +236,7 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 					r.url("/foo");
 
 					// In this case body will be formatted as XML.
-					r.body(r.equalToXml(
-							"<user><login>john</login><name>John The Contract</name></user>"));
+					r.body(r.equalToXml("<user><login>john</login><name>John The Contract</name></user>"));
 				});
 
 				c.response(r -> {
@@ -280,9 +273,8 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 				});
 				c.response(r -> {
 					r.status(r.OK());
-					r.body(ContractVerifierUtil.map().entry("id", r.$(r.anyNumber()))
-							.entry("surname", r.$(r.consumer("Kowalsky"),
-									r.producer(r.regex("[a-zA-Z]+")))));
+					r.body(ContractVerifierUtil.map().entry("id", r.$(r.anyNumber())).entry("surname",
+							r.$(r.consumer("Kowalsky"), r.producer(r.regex("[a-zA-Z]+")))));
 					r.headers(h -> {
 						h.header("Content-Type", "text/plain");
 					});
@@ -303,19 +295,17 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 						h.contentType(h.applicationJson());
 					});
 					r.body(ContractVerifierUtil.map()
-							.entry("email",
-									r.$(r.consumer(r.optional(r.regex(r.email()))),
-											r.producer("abc@abc.com")))
-							.entry("callback_url", r.$(r.consumer(r.regex(r.hostname())),
-									r.producer("https://partners.com"))));
+							.entry("email", r.$(r.consumer(r.optional(r.regex(r.email()))), r.producer("abc@abc.com")))
+							.entry("callback_url",
+									r.$(r.consumer(r.regex(r.hostname())), r.producer("https://partners.com"))));
 				});
 				c.response(r -> {
 					r.status(404);
 					r.headers(h -> {
 						h.header("Content-Type", "application/json");
 					});
-					r.body(ContractVerifierUtil.map().entry("code", r.value(
-							r.consumer("123123"), r.producer(r.optional("123123")))));
+					r.body(ContractVerifierUtil.map().entry("code",
+							r.value(r.consumer("123123"), r.producer(r.optional("123123")))));
 				});
 			});
 
@@ -326,8 +316,7 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 			org.springframework.cloud.contract.spec.Contract.make(c -> {
 				c.request(r -> {
 					r.method("PUT");
-					r.url(r.$(r.consumer(r.regex("^/api/[0-9]{2}$")),
-							r.producer("/api/12")));
+					r.url(r.$(r.consumer(r.regex("^/api/[0-9]{2}$")), r.producer("/api/12")));
 					r.headers(h -> {
 						h.header("Content-Type", "application/json");
 					});
@@ -335,11 +324,9 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 				});
 				c.response(r -> {
 					r.body(ContractVerifierUtil.map()
-							.entry("path",
-									r.$(r.consumer("/api/12"),
-											r.producer(r.regex("^/api/[0-9]{2}$"))))
-							.entry("correlationId", r.$(r.consumer("1223456"), r
-									.producer(r.execute("isProperCorrelationId($it)")))));
+							.entry("path", r.$(r.consumer("/api/12"), r.producer(r.regex("^/api/[0-9]{2}$"))))
+							.entry("correlationId",
+									r.$(r.consumer("1223456"), r.producer(r.execute("isProperCorrelationId($it)")))));
 					r.status(r.OK());
 				});
 			});

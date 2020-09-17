@@ -53,13 +53,12 @@ class JaxRsRequestWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 		if (request.getHeaders() == null || request.getHeaders().getEntries() == null) {
 			return "";
 		}
-		Header foundHeader = request.getHeaders().getEntries().stream()
-				.filter(header -> name.equals(header.getName())).findFirst().orElse(null);
+		Header foundHeader = request.getHeaders().getEntries().stream().filter(header -> name.equals(header.getName()))
+				.findFirst().orElse(null);
 		if (foundHeader == null) {
 			return "";
 		}
-		return MapConverter.getTestSideValuesForNonBody(foundHeader.getServerValue())
-				.toString();
+		return MapConverter.getTestSideValuesForNonBody(foundHeader.getServerValue()).toString();
 	}
 
 	@Override

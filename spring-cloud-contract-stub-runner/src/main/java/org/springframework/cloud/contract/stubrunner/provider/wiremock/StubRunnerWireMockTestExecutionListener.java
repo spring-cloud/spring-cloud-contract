@@ -30,32 +30,28 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  * @author Marcin Grzejszczak
  * @since 1.2.6
  */
-public final class StubRunnerWireMockTestExecutionListener
-		extends AbstractTestExecutionListener {
+public final class StubRunnerWireMockTestExecutionListener extends AbstractTestExecutionListener {
 
-	private static final Log log = LogFactory
-			.getLog(StubRunnerWireMockTestExecutionListener.class);
+	private static final Log log = LogFactory.getLog(StubRunnerWireMockTestExecutionListener.class);
 
 	@Override
 	public void afterTestClass(TestContext testContext) {
-		if (testContext.getTestClass()
-				.getAnnotationsByType(AutoConfigureStubRunner.class).length == 0) {
+		if (testContext.getTestClass().getAnnotationsByType(AutoConfigureStubRunner.class).length == 0) {
 			if (log.isDebugEnabled()) {
-				log.debug("No @AutoConfigureStubRunner annotation found on ["
-						+ testContext.getTestClass() + "]. Skipping");
+				log.debug("No @AutoConfigureStubRunner annotation found on [" + testContext.getTestClass()
+						+ "]. Skipping");
 			}
 			return;
 		}
-		if (!WireMockHttpServerStub.SERVERS.isEmpty() && WireMockHttpServerStub.SERVERS
-				.values().stream().noneMatch(p -> p.random)) {
+		if (!WireMockHttpServerStub.SERVERS.isEmpty()
+				&& WireMockHttpServerStub.SERVERS.values().stream().noneMatch(p -> p.random)) {
 			if (log.isWarnEnabled()) {
 				log.warn("You've used fixed ports for WireMock setup - "
 						+ "will mark context as dirty. Please use random ports, as much "
 						+ "as possible. Your tests will be faster and more reliable and this "
 						+ "warning will go away");
 			}
-			testContext
-					.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
+			testContext.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
 		}
 		// potential race condition
 		WireMockHttpServerStub.SERVERS.clear();

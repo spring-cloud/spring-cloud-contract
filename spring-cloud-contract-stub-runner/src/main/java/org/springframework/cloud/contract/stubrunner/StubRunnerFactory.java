@@ -60,22 +60,18 @@ class StubRunnerFactory {
 
 	public Collection<StubRunner> createStubsFromServiceConfiguration() {
 		if (log.isDebugEnabled()) {
-			log.debug("Will download stubs for dependencies "
-					+ this.stubRunnerOptions.getDependencies());
+			log.debug("Will download stubs for dependencies " + this.stubRunnerOptions.getDependencies());
 		}
 		if (this.stubRunnerOptions.getDependencies().isEmpty()) {
-			log.warn(
-					"No stubs to download have been passed. Most likely you have forgotten to pass "
-							+ "them either via annotation or a property");
+			log.warn("No stubs to download have been passed. Most likely you have forgotten to pass "
+					+ "them either via annotation or a property");
 		}
 		Collection<StubRunner> result = new ArrayList<>();
-		for (StubConfiguration stubsConfiguration : this.stubRunnerOptions
-				.getDependencies()) {
-			Map.Entry<StubConfiguration, File> entry = this.stubDownloader
-					.downloadAndUnpackStubJar(stubsConfiguration);
+		for (StubConfiguration stubsConfiguration : this.stubRunnerOptions.getDependencies()) {
+			Map.Entry<StubConfiguration, File> entry = this.stubDownloader.downloadAndUnpackStubJar(stubsConfiguration);
 			if (log.isDebugEnabled()) {
-				log.debug("For stub configuration [" + stubsConfiguration
-						+ "] the downloaded entry is [" + entry + "]");
+				log.debug(
+						"For stub configuration [" + stubsConfiguration + "] the downloaded entry is [" + entry + "]");
 			}
 			if (entry != null) {
 				Path path = resolvePath(entry.getValue());
@@ -122,8 +118,7 @@ class StubRunnerFactory {
 
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-					Collection<StubGenerator> stubGenerators = this.provider
-							.converterForName(file.toString());
+					Collection<StubGenerator> stubGenerators = this.provider.converterForName(file.toString());
 					if (!stubGenerators.isEmpty()) {
 						if (log.isDebugEnabled()) {
 							log.debug("Deleting file [" + file.toString()
@@ -133,8 +128,7 @@ class StubRunnerFactory {
 							Files.delete(file);
 						}
 						catch (IOException ex) {
-							log.warn("Failed to delete file [" + file.toString() + "]",
-									ex);
+							log.warn("Failed to delete file [" + file.toString() + "]", ex);
 						}
 					}
 					return FileVisitResult.CONTINUE;
@@ -149,9 +143,8 @@ class StubRunnerFactory {
 	private void generateNewMappings(Path path) {
 		File unpackedLocation = path.toFile();
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(
-				subfolderIfPresent(unpackedLocation, "mappings"),
-				subfolderIfPresent(unpackedLocation, "contracts"), new ArrayList<>(),
-				".*", false);
+				subfolderIfPresent(unpackedLocation, "mappings"), subfolderIfPresent(unpackedLocation, "contracts"),
+				new ArrayList<>(), ".*", false);
 		converter.processFiles();
 	}
 
@@ -163,19 +156,17 @@ class StubRunnerFactory {
 		return unpackedLocation;
 	}
 
-	private StubRunner createStubRunner(StubConfiguration stubsConfiguration,
-			File unzipedStubDir) {
+	private StubRunner createStubRunner(StubConfiguration stubsConfiguration, File unzipedStubDir) {
 		if (unzipedStubDir == null) {
 			return null;
 		}
-		return createStubRunner(unzipedStubDir, stubsConfiguration,
-				this.stubRunnerOptions);
+		return createStubRunner(unzipedStubDir, stubsConfiguration, this.stubRunnerOptions);
 	}
 
-	private StubRunner createStubRunner(File unzippedStubsDir,
-			StubConfiguration stubsConfiguration, StubRunnerOptions stubRunnerOptions) {
-		return new StubRunner(stubRunnerOptions, unzippedStubsDir.getPath(),
-				stubsConfiguration, this.contractVerifierMessaging);
+	private StubRunner createStubRunner(File unzippedStubsDir, StubConfiguration stubsConfiguration,
+			StubRunnerOptions stubRunnerOptions) {
+		return new StubRunner(stubRunnerOptions, unzippedStubsDir.getPath(), stubsConfiguration,
+				this.contractVerifierMessaging);
 	}
 
 }

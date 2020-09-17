@@ -51,8 +51,7 @@ public class NamedProperty {
 	}
 
 	public NamedProperty(Map<String, DslProperty> namedMap) {
-		this(asDslProperty(value(namedMap, NAME)),
-				asDslProperty(value(namedMap, CONTENT)),
+		this(asDslProperty(value(namedMap, NAME)), asDslProperty(value(namedMap, CONTENT)),
 				asDslProperty(value(namedMap, CONTENT_TYPE)));
 	}
 
@@ -120,8 +119,7 @@ public class NamedProperty {
 
 	@Override
 	public String toString() {
-		return "NamedProperty{" + "name=" + name + ", value=" + value + ", contentType="
-				+ contentType + '}';
+		return "NamedProperty{" + "name=" + name + ", value=" + value + ", contentType=" + contentType + '}';
 	}
 
 }

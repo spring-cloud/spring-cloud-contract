@@ -65,13 +65,11 @@ public final class ContractScanner {
 	 * @param predicate - test applied against a file
 	 * @return collection of converted contracts
 	 */
-	public static Collection<Contract> collectContractDescriptors(File rootDirectory,
-			Predicate<File> predicate) {
+	public static Collection<Contract> collectContractDescriptors(File rootDirectory, Predicate<File> predicate) {
 		try {
-			return Files.walk(rootDirectory.toPath()).map(Path::toFile)
-					.filter(file -> !file.isDirectory()).filter(predicate)
-					.map(ContractScanner::doCollectContractDescriptors)
-					.flatMap(Collection::stream).collect(Collectors.toList());
+			return Files.walk(rootDirectory.toPath()).map(Path::toFile).filter(file -> !file.isDirectory())
+					.filter(predicate).map(ContractScanner::doCollectContractDescriptors).flatMap(Collection::stream)
+					.collect(Collectors.toList());
 		}
 		catch (IOException e) {
 			log.warn("Exception occurred while trying to parse file", e);
@@ -81,8 +79,7 @@ public final class ContractScanner {
 
 	private static Collection<Contract> doCollectContractDescriptors(File file) {
 		if (isContractDescriptor(file)) {
-			return ContractVerifierDslConverter.convertAsCollection(file.getParentFile(),
-					file);
+			return ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file);
 		}
 		ContractConverter<?> converter = contractConverter(file);
 		if (converter != null && converter.isAccepted(file)) {

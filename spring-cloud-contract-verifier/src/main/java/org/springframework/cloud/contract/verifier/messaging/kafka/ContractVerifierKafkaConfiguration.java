@@ -41,21 +41,17 @@ import org.springframework.messaging.Message;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ KafkaTemplate.class, EmbeddedKafkaBroker.class })
-@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true",
-		matchIfMissing = true)
-@AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class,
-		NoOpContractVerifierAutoConfiguration.class })
+@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true", matchIfMissing = true)
+@AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class, NoOpContractVerifierAutoConfiguration.class })
 @ConditionalOnBean(EmbeddedKafkaBroker.class)
 public class ContractVerifierKafkaConfiguration {
 
-	private static final Log log = LogFactory
-			.getLog(ContractVerifierKafkaConfiguration.class);
+	private static final Log log = LogFactory.getLog(ContractVerifierKafkaConfiguration.class);
 
 	@Bean
 	@ConditionalOnMissingBean
-	MessageVerifier<Message<?>> contractVerifierKafkaMessageExchange(
-			KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker,
-			KafkaProperties kafkaProperties, KafkaStubMessagesInitializer initializer) {
+	MessageVerifier<Message<?>> contractVerifierKafkaMessageExchange(KafkaTemplate kafkaTemplate,
+			EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties, KafkaStubMessagesInitializer initializer) {
 		return new KafkaStubMessages(kafkaTemplate, broker, kafkaProperties, initializer);
 	}
 
@@ -70,8 +66,7 @@ public class ContractVerifierKafkaConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	ContractVerifierMessaging<Message<?>> contractVerifierKafkaMessaging(
-			MessageVerifier<Message<?>> exchange) {
+	ContractVerifierMessaging<Message<?>> contractVerifierKafkaMessaging(MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierKafkaHelper(exchange);
 	}
 

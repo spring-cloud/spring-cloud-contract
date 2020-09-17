@@ -22,8 +22,7 @@ interface DefaultClassMetadata extends ClassMetaData, DefaultBaseClassProvider {
 
 	@Override
 	default ClassMetaData packageDefinition() {
-		blockBuilder().addLineWithEnding(
-				"package " + generatedClassMetaData().generatedClassData.classPackage);
+		blockBuilder().addLineWithEnding("package " + generatedClassMetaData().generatedClassData.classPackage);
 		return this;
 	}
 
@@ -35,8 +34,7 @@ interface DefaultClassMetadata extends ClassMetaData, DefaultBaseClassProvider {
 
 	@Override
 	default ClassMetaData className() {
-		String className = capitalize(
-				generatedClassMetaData().generatedClassData.className);
+		String className = capitalize(generatedClassMetaData().generatedClassData.className);
 		blockBuilder().addAtTheEnd(className);
 		return this;
 	}

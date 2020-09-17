@@ -63,15 +63,13 @@ final class AetherFactories {
 
 	public static RepositorySystem newRepositorySystem() {
 		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-		locator.addService(RepositoryConnectorFactory.class,
-				BasicRepositoryConnectorFactory.class);
+		locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
 		locator.addService(TransporterFactory.class, FileTransporterFactory.class);
 		locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
 		return locator.getService(RepositorySystem.class);
 	}
 
-	public static RepositorySystemSession newSession(RepositorySystem system,
-			boolean workOffline) {
+	public static RepositorySystemSession newSession(RepositorySystem system, boolean workOffline) {
 		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 		session.setOffline(workOffline);
 		if (!workOffline) {
@@ -80,19 +78,17 @@ final class AetherFactories {
 		session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
 		String localRepositoryDirectory = localRepositoryDirectory(workOffline);
 		if (log.isDebugEnabled()) {
-			log.debug("Local Repository Directory set to [" + localRepositoryDirectory
-					+ "]. Work offline: [" + workOffline + "]");
+			log.debug("Local Repository Directory set to [" + localRepositoryDirectory + "]. Work offline: ["
+					+ workOffline + "]");
 		}
 		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory);
-		session.setLocalRepositoryManager(
-				system.newLocalRepositoryManager(session, localRepo));
+		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 		return session;
 	}
 
 	protected static String localRepositoryDirectory(boolean workOffline) {
 		String localRepoLocationFromSettings = settings().getLocalRepository();
-		String currentLocalRepo = readPropertyFromSystemProps(
-				localRepoLocationFromSettings);
+		String currentLocalRepo = readPropertyFromSystemProps(localRepoLocationFromSettings);
 		if (workOffline) {
 			return currentLocalRepo;
 		}
@@ -105,21 +101,17 @@ final class AetherFactories {
 		}
 		catch (IOException e) {
 			if (log.isDebugEnabled()) {
-				log.debug(
-						"Failed to create a new temporary directory, will generate a new one under temp dir");
+				log.debug("Failed to create a new temporary directory, will generate a new one under temp dir");
 			}
-			return System.getProperty("java.io.tmpdir") + File.separator
-					+ RANDOM.nextInt();
+			return System.getProperty("java.io.tmpdir") + File.separator + RANDOM.nextInt();
 		}
 	}
 
-	private static String readPropertyFromSystemProps(
-			String localRepoLocationFromSettings) {
+	private static String readPropertyFromSystemProps(String localRepoLocationFromSettings) {
 		String mavenLocalRepo = fromSystemPropOrEnv(MAVEN_LOCAL_REPOSITORY_LOCATION);
 		return StringUtils.hasText(mavenLocalRepo) ? mavenLocalRepo
 				: localRepoLocationFromSettings != null ? localRepoLocationFromSettings
-						: System.getProperty("user.home") + File.separator + ".m2"
-								+ File.separator + "repository";
+						: System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
 	}
 
 	// system prop takes precedence over env var
@@ -134,12 +126,10 @@ final class AetherFactories {
 	private static File userSettings() {
 		String user = fromSystemPropOrEnv(MAVEN_USER_SETTINGS_LOCATION);
 		if (user == null) {
-			File file = new File(
-					new File(System.getProperty("user.home")).getAbsoluteFile(),
+			File file = new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
 					File.separator + ".m2" + File.separator + "settings.xml");
 			if (log.isDebugEnabled()) {
-				log.debug("No custom maven user settings provided, will use [" + file
-						+ "]");
+				log.debug("No custom maven user settings provided, will use [" + file + "]");
 			}
 			return file;
 		}

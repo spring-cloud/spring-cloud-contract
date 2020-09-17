@@ -63,9 +63,8 @@ class contract_rest_with_tags implements Supplier<Collection<Contract>> {
 	static Object metadata = Collections.singletonList(
 			// tag::metadata[]
 			Contract.make(c -> {
-				c.metadata(MetadataUtil.map().entry("wiremock",
-						ContractVerifierUtil.map().entry("stubMapping",
-								"{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }")));
+				c.metadata(MetadataUtil.map().entry("wiremock", ContractVerifierUtil.map().entry("stubMapping",
+						"{ \"response\" : { \"fixedDelayMilliseconds\" : 2000 } }")));
 			}));
 
 	// end::metadata[]
@@ -100,12 +99,10 @@ class contract_rest_with_tags implements Supplier<Collection<Contract>> {
 				r.status(r.OK());
 				r.headers(h -> {
 					h.header("foo2", r.value(r.server(r.regex("bar")), r.client("bar")));
-					h.header("foo3", r.value(r.server(r.execute("andMeToo($it)")),
-							r.client("foo33")));
+					h.header("foo3", r.value(r.server(r.execute("andMeToo($it)")), r.client("foo33")));
 					h.header("fooRes", "baz");
 				});
-				r.body(ContractVerifierUtil.map().entry("foo2", "bar")
-						.entry("foo3", "baz").entry("nullValue", null));
+				r.body(ContractVerifierUtil.map().entry("foo2", "bar").entry("foo3", "baz").entry("nullValue", null));
 				r.bodyMatchers(m -> {
 					m.jsonPath("$.foo2", m.byRegex("bar"));
 					m.jsonPath("$.foo3", m.byCommand("executeMe($it)"));

@@ -46,8 +46,7 @@ class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			YamlContract contract) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
 		send(this.builder.create(payload, headers), destination, contract);
 	}
 
@@ -58,8 +57,8 @@ class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 			messageChannel.send(message);
 		}
 		catch (Exception e) {
-			log.error("Exception occurred while trying to send a message [" + message
-					+ "] " + "to a channel with name [" + destination + "]", e);
+			log.error("Exception occurred while trying to send a message [" + message + "] "
+					+ "to a channel with name [" + destination + "]", e);
 			throw e;
 		}
 	}

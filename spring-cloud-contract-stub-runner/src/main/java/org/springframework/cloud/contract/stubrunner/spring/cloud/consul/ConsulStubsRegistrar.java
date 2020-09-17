@@ -42,8 +42,7 @@ import org.springframework.util.StringUtils;
  */
 public class ConsulStubsRegistrar implements StubsRegistrar {
 
-	private static final Log log = LogFactory
-			.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private final StubRunning stubRunning;
 
@@ -58,8 +57,8 @@ public class ConsulStubsRegistrar implements StubsRegistrar {
 	private final List<NewService> services = new LinkedList<>();
 
 	public ConsulStubsRegistrar(StubRunning stubRunning, ConsulClient consulClient,
-			StubMapperProperties stubMapperProperties,
-			ConsulDiscoveryProperties consulDiscoveryProperties, InetUtils inetUtils) {
+			StubMapperProperties stubMapperProperties, ConsulDiscoveryProperties consulDiscoveryProperties,
+			InetUtils inetUtils) {
 		this.stubRunning = stubRunning;
 		this.consulClient = consulClient;
 		this.stubMapperProperties = stubMapperProperties;
@@ -69,33 +68,29 @@ public class ConsulStubsRegistrar implements StubsRegistrar {
 
 	@Override
 	public void registerStubs() {
-		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs()
-				.validNamesAndPorts();
+		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs().validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
 			NewService newService = newService(entry.getKey(), entry.getValue());
 			this.services.add(newService);
 			try {
 				this.consulClient.agentServiceRegister(newService);
 				if (log.isDebugEnabled()) {
-					log.debug("Successfully registered stub ["
-							+ entry.getKey().toColonSeparatedDependencyNotation()
+					log.debug("Successfully registered stub [" + entry.getKey().toColonSeparatedDependencyNotation()
 							+ "] in Service Discovery");
 				}
 			}
 			catch (Exception e) {
 				log.warn("Exception occurred while trying to register a stub ["
-						+ entry.getKey().toColonSeparatedDependencyNotation()
-						+ "] in Service Discovery", e);
+						+ entry.getKey().toColonSeparatedDependencyNotation() + "] in Service Discovery", e);
 			}
 		}
 	}
 
 	protected NewService newService(StubConfiguration stubConfiguration, Integer port) {
 		NewService newService = new NewService();
-		newService.setAddress(
-				StringUtils.hasText(this.consulDiscoveryProperties.getHostname())
-						? this.consulDiscoveryProperties.getHostname()
-						: this.inetUtils.findFirstNonLoopbackAddress().getHostName());
+		newService.setAddress(StringUtils.hasText(this.consulDiscoveryProperties.getHostname())
+				? this.consulDiscoveryProperties.getHostname()
+				: this.inetUtils.findFirstNonLoopbackAddress().getHostName());
 		newService.setId(stubConfiguration.getArtifactId());
 		newService.setName(name(stubConfiguration));
 		newService.setPort(port);
@@ -103,8 +98,8 @@ public class ConsulStubsRegistrar implements StubsRegistrar {
 	}
 
 	protected String name(StubConfiguration stubConfiguration) {
-		String resolvedName = this.stubMapperProperties.fromIvyNotationToId(
-				stubConfiguration.toColonSeparatedDependencyNotation());
+		String resolvedName = this.stubMapperProperties
+				.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
 		if (StringUtils.hasText(resolvedName)) {
 			return resolvedName;
 		}

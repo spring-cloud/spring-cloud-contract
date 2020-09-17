@@ -33,8 +33,7 @@ class Arguments {
 		this(stubRunnerOptions, "", null);
 	}
 
-	Arguments(StubRunnerOptions stubRunnerOptions, String repositoryPath,
-			StubConfiguration stub) {
+	Arguments(StubRunnerOptions stubRunnerOptions, String repositoryPath, StubConfiguration stub) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.repositoryPath = repositoryPath == null ? "" : repositoryPath;
 		this.stub = stub;
@@ -54,9 +53,8 @@ class Arguments {
 
 	@Override
 	public String toString() {
-		return "Arguments{" + "stubRunnerOptions=" + this.stubRunnerOptions
-				+ ", repositoryPath='" + this.repositoryPath + '\'' + ", stub="
-				+ this.stub + '}';
+		return "Arguments{" + "stubRunnerOptions=" + this.stubRunnerOptions + ", repositoryPath='" + this.repositoryPath
+				+ '\'' + ", stub=" + this.stub + '}';
 	}
 
 }

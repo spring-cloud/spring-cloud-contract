@@ -26,8 +26,7 @@ class MessagingHeadersTests {
 
 	@Test
 	public void MESSAGING_CONTENT_TYPE() {
-		BDDAssertions.then(MessagingHeaders.MESSAGING_CONTENT_TYPE)
-				.isEqualTo("contentType");
+		BDDAssertions.then(MessagingHeaders.MESSAGING_CONTENT_TYPE).isEqualTo("contentType");
 		BDDAssertions.then(new MessagingHeaders().messagingContentType())
 				.isEqualTo(MessagingHeaders.MESSAGING_CONTENT_TYPE);
 	}

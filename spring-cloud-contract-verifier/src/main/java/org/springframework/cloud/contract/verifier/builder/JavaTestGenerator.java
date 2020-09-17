@@ -34,32 +34,29 @@ public class JavaTestGenerator implements SingleTestGenerator {
 	private static final Log log = LogFactory.getLog(JavaTestGenerator.class);
 
 	@Override
-	public String buildClass(ContractVerifierConfigProperties properties,
-			Collection<ContractMetadata> listOfFiles, String className,
-			String classPackage, String includedDirectoryRelativePath) {
+	public String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles,
+			String className, String classPackage, String includedDirectoryRelativePath) {
 		throw new UnsupportedOperationException("Deprecated method");
 	}
 
 	@Override
-	public String buildClass(ContractVerifierConfigProperties properties,
-			Collection<ContractMetadata> listOfFiles,
+	public String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles,
 			String includedDirectoryRelativePath, GeneratedClassData generatedClassData) {
 		BlockBuilder builder = new BlockBuilder("\t");
-		GeneratedClassMetaData metaData = new GeneratedClassMetaData(properties,
-				listOfFiles, includedDirectoryRelativePath, generatedClassData);
+		GeneratedClassMetaData metaData = new GeneratedClassMetaData(properties, listOfFiles,
+				includedDirectoryRelativePath, generatedClassData);
 		return classAsString(builder, metaData);
 	}
 
 	private String classAsString(BlockBuilder builder, GeneratedClassMetaData metaData) {
 		SingleMethodBuilder methodBuilder = singleMethodBuilder(builder, metaData);
 		ClassBodyBuilder bodyBuilder = classBodyBuilder(builder, metaData, methodBuilder);
-		GeneratedTestClass generatedTestClass = generatedTestClass(builder, metaData,
-				bodyBuilder);
+		GeneratedTestClass generatedTestClass = generatedTestClass(builder, metaData, bodyBuilder);
 		return generatedTestClass.asClassString();
 	}
 
-	GeneratedTestClass generatedTestClass(BlockBuilder builder,
-			GeneratedClassMetaData metaData, ClassBodyBuilder bodyBuilder) {
+	GeneratedTestClass generatedTestClass(BlockBuilder builder, GeneratedClassMetaData metaData,
+			ClassBodyBuilder bodyBuilder) {
 		// @formatter:off
 		return GeneratedTestClassBuilder.builder(builder, metaData)
 				.classBodyBuilder(bodyBuilder)
@@ -90,8 +87,8 @@ public class JavaTestGenerator implements SingleTestGenerator {
 		// @formatter:on
 	}
 
-	ClassBodyBuilder classBodyBuilder(BlockBuilder builder,
-			GeneratedClassMetaData metaData, SingleMethodBuilder methodBuilder) {
+	ClassBodyBuilder classBodyBuilder(BlockBuilder builder, GeneratedClassMetaData metaData,
+			SingleMethodBuilder methodBuilder) {
 		// @formatter:off
 		return ClassBodyBuilder.builder(builder, metaData)
 				.field()
@@ -101,8 +98,7 @@ public class JavaTestGenerator implements SingleTestGenerator {
 		// @formatter:on
 	}
 
-	SingleMethodBuilder singleMethodBuilder(BlockBuilder builder,
-			GeneratedClassMetaData metaData) {
+	SingleMethodBuilder singleMethodBuilder(BlockBuilder builder, GeneratedClassMetaData metaData) {
 		// @formatter:off
 		return SingleMethodBuilder.builder(builder, metaData)
 				.methodAnnotation()

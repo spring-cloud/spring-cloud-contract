@@ -63,8 +63,7 @@ public abstract class AbstractMojoTest {
 		return new File(this.tmpFolder, name);
 	}
 
-	protected void executeMojo(File baseDir, String goal, Xpp3Dom... parameters)
-			throws Exception {
+	protected void executeMojo(File baseDir, String goal, Xpp3Dom... parameters) throws Exception {
 		MavenProject mavenProject = rule.readMavenProject(baseDir);
 		MavenSession mavenSession = rule.newMavenSession(mavenProject);
 		rule.executeMojo(mavenSession, mavenProject, goal, parameters);

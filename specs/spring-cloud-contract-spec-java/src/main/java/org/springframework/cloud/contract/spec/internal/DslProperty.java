@@ -42,8 +42,7 @@ public class DslProperty<T> implements Serializable {
 	}
 
 	public boolean isSingleValue() {
-		return this.clientValue.equals(this.serverValue)
-				|| (this.clientValue != null && this.serverValue == null)
+		return this.clientValue.equals(this.serverValue) || (this.clientValue != null && this.serverValue == null)
 				|| (this.serverValue != null && this.clientValue == null);
 	}
 
@@ -60,8 +59,7 @@ public class DslProperty<T> implements Serializable {
 		Object thatClientValue = stringPatternIfPattern(that.clientValue);
 		Object thisServerValue = stringPatternIfPattern(serverValue);
 		Object thatServerValue = stringPatternIfPattern(that.serverValue);
-		return Objects.equals(thisClientValue, thatClientValue)
-				&& Objects.equals(thisServerValue, thatServerValue);
+		return Objects.equals(thisClientValue, thatClientValue) && Objects.equals(thisServerValue, thatServerValue);
 	}
 
 	private Object stringPatternIfPattern(Object value) {
@@ -70,14 +68,13 @@ public class DslProperty<T> implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(stringPatternIfPattern(clientValue),
-				stringPatternIfPattern(serverValue));
+		return Objects.hash(stringPatternIfPattern(clientValue), stringPatternIfPattern(serverValue));
 	}
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "{" + "\nclientValue=" + clientValue
-				+ ", \n\tserverValue=" + serverValue + '}';
+		return getClass().getSimpleName() + "{" + "\nclientValue=" + clientValue + ", \n\tserverValue=" + serverValue
+				+ '}';
 	}
 
 	public final T getClientValue() {

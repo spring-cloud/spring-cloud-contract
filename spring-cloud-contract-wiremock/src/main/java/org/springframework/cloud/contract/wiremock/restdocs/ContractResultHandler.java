@@ -52,8 +52,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Dave Syer
  */
-public class ContractResultHandler extends
-		WireMockVerifyHelper<MvcResult, ContractResultHandler> implements ResultHandler {
+public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, ContractResultHandler>
+		implements ResultHandler {
 
 	static final String ATTRIBUTE_NAME_CONFIGURATION = "org.springframework.restdocs.configuration";
 
@@ -67,8 +67,7 @@ public class ContractResultHandler extends
 		MockHttpServletResponse response = result.getResponse();
 		ResponseDefinitionBuilder definition;
 		try {
-			definition = ResponseDefinitionBuilder.responseDefinition()
-					.withBody(response.getContentAsString())
+			definition = ResponseDefinitionBuilder.responseDefinition().withBody(response.getContentAsString())
 					.withStatus(response.getStatus());
 			addResponseHeaders(definition, response);
 			return definition;
@@ -78,8 +77,7 @@ public class ContractResultHandler extends
 		}
 	}
 
-	private void addResponseHeaders(ResponseDefinitionBuilder definition,
-			MockHttpServletResponse input) {
+	private void addResponseHeaders(ResponseDefinitionBuilder definition, MockHttpServletResponse input) {
 		for (String name : input.getHeaderNames()) {
 			definition.withHeader(name, input.getHeader(name));
 		}
@@ -88,8 +86,7 @@ public class ContractResultHandler extends
 	@Override
 	protected Map<String, Object> getConfiguration(MvcResult result) {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> map = (Map<String, Object>) result.getRequest()
-				.getAttribute(ATTRIBUTE_NAME_CONFIGURATION);
+		Map<String, Object> map = (Map<String, Object>) result.getRequest().getAttribute(ATTRIBUTE_NAME_CONFIGURATION);
 		if (map == null) {
 			map = new HashMap<>();
 			result.getRequest().setAttribute(ATTRIBUTE_NAME_CONFIGURATION, map);
@@ -185,8 +182,7 @@ public class ContractResultHandler extends
 				if (result.getRequest().getCookies() == null) {
 					return nameToCookie;
 				}
-				for (javax.servlet.http.Cookie cookie : result.getRequest()
-						.getCookies()) {
+				for (javax.servlet.http.Cookie cookie : result.getRequest().getCookies()) {
 					nameToCookie.put(cookie.getName(), new Cookie(cookie.getValue()));
 				}
 				return nameToCookie;
@@ -194,8 +190,7 @@ public class ContractResultHandler extends
 
 			@Override
 			public QueryParameter queryParameter(String key) {
-				return new QueryParameter(key,
-						Collections.singletonList(result.getRequest().getParameter(key)));
+				return new QueryParameter(key, Collections.singletonList(result.getRequest().getParameter(key)));
 			}
 
 			@Override
@@ -215,53 +210,48 @@ public class ContractResultHandler extends
 
 			@Override
 			public String getBodyAsBase64() {
-				return Base64Utils
-						.encodeToString(result.getRequest().getContentAsByteArray());
+				return Base64Utils.encodeToString(result.getRequest().getContentAsByteArray());
 			}
 
 			@Override
 			public boolean isMultipart() {
-				return StringUtils
-						.hasText(result.getRequest().getHeader("multipart/form-data"));
+				return StringUtils.hasText(result.getRequest().getHeader("multipart/form-data"));
 			}
 
 			@Override
 			public Collection<Part> getParts() {
 				try {
-					return result.getRequest().getParts().stream()
-							.map(part -> new Part() {
-								@Override
-								public String getName() {
-									return part.getName();
-								}
+					return result.getRequest().getParts().stream().map(part -> new Part() {
+						@Override
+						public String getName() {
+							return part.getName();
+						}
 
-								@Override
-								public HttpHeader getHeader(String name) {
-									String header = part.getHeader(name);
-									return new HttpHeader(name, header);
-								}
+						@Override
+						public HttpHeader getHeader(String name) {
+							String header = part.getHeader(name);
+							return new HttpHeader(name, header);
+						}
 
-								@Override
-								public HttpHeaders getHeaders() {
-									List<HttpHeader> headers = new ArrayList<>();
-									for (String headerName : part.getHeaderNames()) {
-										headers.add(new HttpHeader(headerName,
-												getHeader(headerName).values()));
-									}
-									return new HttpHeaders(headers);
-								}
+						@Override
+						public HttpHeaders getHeaders() {
+							List<HttpHeader> headers = new ArrayList<>();
+							for (String headerName : part.getHeaderNames()) {
+								headers.add(new HttpHeader(headerName, getHeader(headerName).values()));
+							}
+							return new HttpHeaders(headers);
+						}
 
-								@Override
-								public Body getBody() {
-									try {
-										return new Body(IOUtils
-												.toByteArray(part.getInputStream()));
-									}
-									catch (IOException ex) {
-										throw new IllegalStateException(ex);
-									}
-								}
-							}).collect(Collectors.toList());
+						@Override
+						public Body getBody() {
+							try {
+								return new Body(IOUtils.toByteArray(part.getInputStream()));
+							}
+							catch (IOException ex) {
+								throw new IllegalStateException(ex);
+							}
+						}
+					}).collect(Collectors.toList());
 				}
 				catch (Exception ex) {
 					throw new IllegalStateException(ex);
@@ -270,8 +260,7 @@ public class ContractResultHandler extends
 
 			@Override
 			public Part getPart(String name) {
-				return getParts().stream().filter(part -> part.getName().equals(name))
-						.findFirst().orElse(null);
+				return getParts().stream().filter(part -> part.getName().equals(name)).findFirst().orElse(null);
 			}
 
 			@Override

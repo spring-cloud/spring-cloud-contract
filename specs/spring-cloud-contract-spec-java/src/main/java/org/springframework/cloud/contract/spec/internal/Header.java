@@ -38,8 +38,7 @@ public class Header extends DslProperty {
 	}
 
 	public Header(String name, Object value) {
-		super(ContractUtils.CLIENT_VALUE.apply(value),
-				ContractUtils.SERVER_VALUE.apply(value));
+		super(ContractUtils.CLIENT_VALUE.apply(value), ContractUtils.SERVER_VALUE.apply(value));
 		this.name = name;
 	}
 

@@ -29,38 +29,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ContractVerifierCamelConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(
-					AutoConfigurations.of(ContractVerifierCamelConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ContractVerifierCamelConfiguration.class));
 
 	@Test
 	public void shouldCreateBeansByDefault() {
 		this.contextRunner.run((context) -> {
 			assertThat(context.getBeansOfType(CamelStubMessages.class)).hasSize(1);
-			assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class))
-					.hasSize(1);
+			assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class)).hasSize(1);
 		});
 	}
 
 	@Test
 	public void shouldNotCreateBeansWhenDisabled() {
-		this.contextRunner.withPropertyValues("stubrunner.camel.enabled=false")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(CamelStubMessages.class))
-							.hasSize(0);
-					assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class))
-							.hasSize(0);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.camel.enabled=false").run((context) -> {
+			assertThat(context.getBeansOfType(CamelStubMessages.class)).hasSize(0);
+			assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class)).hasSize(0);
+		});
 	}
 
 	@Test
 	public void shouldCreateBeansWhenExplicitlyEnabled() {
-		this.contextRunner.withPropertyValues("stubrunner.camel.enabled=true")
-				.run((context) -> {
-					assertThat(context.getBeansOfType(CamelStubMessages.class))
-							.hasSize(1);
-					assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class))
-							.hasSize(1);
-				});
+		this.contextRunner.withPropertyValues("stubrunner.camel.enabled=true").run((context) -> {
+			assertThat(context.getBeansOfType(CamelStubMessages.class)).hasSize(1);
+			assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class)).hasSize(1);
+		});
 	}
 
 }

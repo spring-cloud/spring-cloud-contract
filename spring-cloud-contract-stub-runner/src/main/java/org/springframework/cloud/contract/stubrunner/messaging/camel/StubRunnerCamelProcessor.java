@@ -65,8 +65,7 @@ class StubRunnerCamelProcessor implements Processor {
 	}
 
 	private Object outputBody(Contract groovyDsl) {
-		Object outputBody = BodyExtractor
-				.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
+		Object outputBody = BodyExtractor.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
 		if (outputBody instanceof FromFileProperty) {
 			FromFileProperty property = (FromFileProperty) outputBody;
 			return property.asBytes();
@@ -74,15 +73,13 @@ class StubRunnerCamelProcessor implements Processor {
 		return BodyExtractor.extractStubValueFrom(outputBody);
 	}
 
-	private void setStubRunnerDestinationHeader(Exchange exchange,
-			StubRunnerCamelPayload body) {
+	private void setStubRunnerDestinationHeader(Exchange exchange, StubRunnerCamelPayload body) {
 		boolean outputPart = body.contract.getOutputMessage() != null;
 		String url = DUMMY_BEAN_URL;
 		if (outputPart && body.contract.getOutputMessage().getSentTo() != null) {
 			url = body.contract.getOutputMessage().getSentTo().getClientValue();
 		}
-		exchange.getIn().setHeader(
-				StubRunnerCamelConfiguration.STUBRUNNER_DESTINATION_URL_HEADER_NAME, url);
+		exchange.getIn().setHeader(StubRunnerCamelConfiguration.STUBRUNNER_DESTINATION_URL_HEADER_NAME, url);
 		if (log.isDebugEnabled()) {
 			log.debug("Set stub runner destination header to [" + url + "]");
 		}

@@ -74,8 +74,7 @@ interface StubRunnerRuleOptions {
 	 * @param classifier classifier of the stub
 	 * @return the rule with port
 	 */
-	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId,
-			String version, String classifier);
+	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId, String version, String classifier);
 
 	/**
 	 * @param groupId group id of the stub
@@ -83,8 +82,7 @@ interface StubRunnerRuleOptions {
 	 * @param classifier classifier of the stub
 	 * @return the rule with port
 	 */
-	PortStubRunnerRuleOptions downloadLatestStub(String groupId, String artifactId,
-			String classifier);
+	PortStubRunnerRuleOptions downloadLatestStub(String groupId, String artifactId, String classifier);
 
 	/**
 	 * @param groupId group id of the stub
@@ -92,8 +90,7 @@ interface StubRunnerRuleOptions {
 	 * @param version version of the stub
 	 * @return the rule with port
 	 */
-	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId,
-			String version);
+	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId, String version);
 
 	/**
 	 * @param groupId group id of the stub
@@ -170,7 +167,6 @@ interface StubRunnerRuleOptions {
 	 * @param httpServerStubConfigurer Configuration for an HTTP server stub
 	 * @return the rule
 	 */
-	StubRunnerRule withHttpServerStubConfigurer(
-			Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer);
+	StubRunnerRule withHttpServerStubConfigurer(Class<? extends HttpServerStubConfigurer> httpServerStubConfigurer);
 
 }

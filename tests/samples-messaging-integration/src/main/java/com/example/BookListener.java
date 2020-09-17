@@ -40,8 +40,7 @@ public class BookListener {
 	 */
 	public Message<BookReturned> returnBook(BookReturned bookReturned) {
 		log.info("Returning book [" + bookReturned + "]");
-		return MessageBuilder.withPayload(bookReturned)
-				.setHeader("BOOK-NAME", bookReturned.bookName).build();
+		return MessageBuilder.withPayload(bookReturned).setHeader("BOOK-NAME", bookReturned.bookName).build();
 	}
 
 	/**

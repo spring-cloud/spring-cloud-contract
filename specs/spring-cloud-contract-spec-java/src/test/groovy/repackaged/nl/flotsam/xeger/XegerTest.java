@@ -90,8 +90,7 @@ public class XegerTest {
 			List<String> secondRegexList = generateRegex(generator2, 100);
 
 			for (int i = 0; i < firstRegexList.size(); i++) {
-				assertEquals("Index mismatch: " + i, firstRegexList.get(i),
-						secondRegexList.get(i));
+				assertEquals("Index mismatch: " + i, firstRegexList.get(i), secondRegexList.get(i));
 			}
 		}
 	}

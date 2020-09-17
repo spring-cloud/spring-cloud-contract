@@ -86,8 +86,7 @@ public class Cookies {
 	 */
 	public Map<String, Object> asStubSideMap() {
 		final Map<String, Object> map = new LinkedHashMap<>();
-		entries.forEach(cookie -> map.put(cookie.getKey(),
-				ContractUtils.convertStubSideRecursively(cookie)));
+		entries.forEach(cookie -> map.put(cookie.getKey(), ContractUtils.convertStubSideRecursively(cookie)));
 		return map;
 	}
 
@@ -98,8 +97,7 @@ public class Cookies {
 	 */
 	public Map<String, Object> asTestSideMap() {
 		final Map<String, Object> map = new HashMap<String, Object>();
-		entries.forEach(cookie -> map.put(cookie.getKey(),
-				ContractUtils.convertTestSideRecursively(cookie)));
+		entries.forEach(cookie -> map.put(cookie.getKey(), ContractUtils.convertTestSideRecursively(cookie)));
 		return map;
 	}
 

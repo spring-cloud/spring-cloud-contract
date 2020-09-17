@@ -35,24 +35,21 @@ class MockMvcRestAssuredImports implements Imports, RestAssuredVerifier {
 			"io.restassured.module.mockmvc.specification.MockMvcRequestSpecification",
 			"io.restassured.response.ResponseOptions" };
 
-	MockMvcRestAssuredImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	MockMvcRestAssuredImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(
-				isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
+		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
 				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.MOCKMVC
+		return this.generatedClassMetaData.configProperties.getTestMode() == TestMode.MOCKMVC
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

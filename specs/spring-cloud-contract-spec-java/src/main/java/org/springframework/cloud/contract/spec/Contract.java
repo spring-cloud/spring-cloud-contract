@@ -393,29 +393,24 @@ public class Contract {
 		}
 		Contract contract = (Contract) o;
 		return ignored == contract.ignored && Objects.equals(priority, contract.priority)
-				&& Objects.equals(request, contract.request)
-				&& Objects.equals(response, contract.response)
-				&& Objects.equals(label, contract.label)
-				&& Objects.equals(description, contract.description)
-				&& Objects.equals(name, contract.name)
-				&& Objects.equals(input, contract.input)
-				&& Objects.equals(metadata, contract.metadata)
-				&& Objects.equals(outputMessage, contract.outputMessage);
+				&& Objects.equals(request, contract.request) && Objects.equals(response, contract.response)
+				&& Objects.equals(label, contract.label) && Objects.equals(description, contract.description)
+				&& Objects.equals(name, contract.name) && Objects.equals(input, contract.input)
+				&& Objects.equals(metadata, contract.metadata) && Objects.equals(outputMessage, contract.outputMessage);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(priority, request, response, label, description, name, input,
-				outputMessage, metadata, ignored);
+		return Objects.hash(priority, request, response, label, description, name, input, outputMessage, metadata,
+				ignored);
 	}
 
 	@Override
 	public String toString() {
-		return "Contract{" + "\npriority=" + priority + ", \n\trequest=" + request
-				+ ", \n\tresponse=" + response + ", \n\tlabel='" + label + '\''
-				+ ", \n\tdescription='" + description + '\'' + ", \n\tname='" + name
-				+ '\'' + ", \n\tinput=" + input + ", \n\toutputMessage=" + outputMessage
-				+ ", \n\tignored=" + ignored + '}';
+		return "Contract{" + "\npriority=" + priority + ", \n\trequest=" + request + ", \n\tresponse=" + response
+				+ ", \n\tlabel='" + label + '\'' + ", \n\tdescription='" + description + '\'' + ", \n\tname='" + name
+				+ '\'' + ", \n\tinput=" + input + ", \n\toutputMessage=" + outputMessage + ", \n\tignored=" + ignored
+				+ '}';
 	}
 
 }

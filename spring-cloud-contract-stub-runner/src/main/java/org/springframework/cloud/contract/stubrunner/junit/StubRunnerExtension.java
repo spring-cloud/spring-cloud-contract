@@ -51,8 +51,8 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
-		BeforeEachCallback, AfterEachCallback, StubFinder, StubRunnerExtensionOptions {
+public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback,
+		StubFinder, StubRunnerExtensionOptions {
 
 	private static final String DELIMITER = ":";
 
@@ -121,8 +121,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	private void before() {
-		stubFinder(new BatchStubRunnerFactory(builder().build(), verifier())
-				.buildBatchStubRunner());
+		stubFinder(new BatchStubRunnerFactory(builder().build(), verifier()).buildBatchStubRunner());
 		stubFinder().runStubs();
 	}
 
@@ -136,8 +135,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
-	public URL findStubUrl(String groupId, String artifactId)
-			throws StubNotFoundException {
+	public URL findStubUrl(String groupId, String artifactId) throws StubNotFoundException {
 		return stubFinder().findStubUrl(groupId, artifactId);
 	}
 
@@ -160,8 +158,8 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	public boolean trigger(String ivyNotation, String labelName) {
 		boolean result = stubFinder().trigger(ivyNotation, labelName);
 		if (!result) {
-			throw new IllegalStateException("Failed to trigger a message with notation ["
-					+ ivyNotation + "] and label [" + labelName + "]");
+			throw new IllegalStateException(
+					"Failed to trigger a message with notation [" + ivyNotation + "] and label [" + labelName + "]");
 		}
 		return result;
 	}
@@ -170,8 +168,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	public boolean trigger(String labelName) {
 		boolean result = stubFinder().trigger(labelName);
 		if (!result) {
-			throw new IllegalStateException(
-					"Failed to trigger a message with label [" + labelName + "]");
+			throw new IllegalStateException("Failed to trigger a message with label [" + labelName + "]");
 		}
 		return result;
 	}
@@ -227,24 +224,19 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
-	public PortStubRunnerExtension downloadStub(String groupId, String artifactId,
-			String version, String classifier) {
-		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version
-				+ DELIMITER + classifier);
+	public PortStubRunnerExtension downloadStub(String groupId, String artifactId, String version, String classifier) {
+		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
 		return new PortStubRunnerExtension(this.delegate);
 	}
 
 	@Override
-	public PortStubRunnerExtension downloadLatestStub(String groupId, String artifactId,
-			String classifier) {
-		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION
-				+ DELIMITER + classifier);
+	public PortStubRunnerExtension downloadLatestStub(String groupId, String artifactId, String classifier) {
+		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
 		return new PortStubRunnerExtension(this.delegate);
 	}
 
 	@Override
-	public PortStubRunnerExtension downloadStub(String groupId, String artifactId,
-			String version) {
+	public PortStubRunnerExtension downloadStub(String groupId, String artifactId, String version) {
 		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
 		return new PortStubRunnerExtension(this.delegate);
 	}
@@ -348,8 +340,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	 *
 	 * @since 1.2.0
 	 */
-	public static class PortStubRunnerExtension extends StubRunnerExtension
-			implements PortStubRunnerExtensionOptions {
+	public static class PortStubRunnerExtension extends StubRunnerExtension implements PortStubRunnerExtensionOptions {
 
 		PortStubRunnerExtension(StubRunnerExtension delegate) {
 			super(delegate);

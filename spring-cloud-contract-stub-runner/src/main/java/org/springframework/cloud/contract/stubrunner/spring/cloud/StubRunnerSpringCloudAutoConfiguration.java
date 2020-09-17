@@ -44,16 +44,14 @@ import org.springframework.core.env.Environment;
 public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
-	public StubRunnerDiscoveryClientWrapper stubRunnerDiscoveryClientWrapper(
-			BeanFactory beanFactory) {
+	public StubRunnerDiscoveryClientWrapper stubRunnerDiscoveryClientWrapper(BeanFactory beanFactory) {
 		return new StubRunnerDiscoveryClientWrapper(beanFactory);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(DiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
-	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled",
-			havingValue = "false", matchIfMissing = true)
+	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
 	public DiscoveryClient noOpStubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties) {
 		return new StubRunnerDiscoveryClient(stubFinder, stubMapperProperties);
@@ -62,10 +60,9 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(ReactiveDiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
-	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled",
-			havingValue = "false", matchIfMissing = true)
-	public ReactiveDiscoveryClient noOpStubRunnerReactiveDiscoveryClient(
-			StubFinder stubFinder, StubMapperProperties stubMapperProperties) {
+	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
+	public ReactiveDiscoveryClient noOpStubRunnerReactiveDiscoveryClient(StubFinder stubFinder,
+			StubMapperProperties stubMapperProperties) {
 		return new StubRunnerReactiveDiscoveryClient(stubFinder, stubMapperProperties);
 	}
 
@@ -90,22 +87,18 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 	}
 
 	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName)
-			throws BeansException {
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		return bean;
 	}
 
 	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName)
-			throws BeansException {
-		if (bean instanceof DiscoveryClient
-				&& !(bean instanceof StubRunnerDiscoveryClient)) {
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		if (bean instanceof DiscoveryClient && !(bean instanceof StubRunnerDiscoveryClient)) {
 			if (!isStubbedDiscoveryEnabled()) {
 				return bean;
 			}
 			if (isCloudDelegateEnabled()) {
-				return new StubRunnerDiscoveryClient((DiscoveryClient) bean, stubFinder(),
-						stubMapperProperties());
+				return new StubRunnerDiscoveryClient((DiscoveryClient) bean, stubFinder(), stubMapperProperties());
 			}
 			return new StubRunnerDiscoveryClient(stubFinder(), stubMapperProperties());
 		}
@@ -121,26 +114,23 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 
 	StubMapperProperties stubMapperProperties() {
 		if (this.stubMapperProperties == null) {
-			this.stubMapperProperties = this.beanFactory
-					.getBean(StubMapperProperties.class);
+			this.stubMapperProperties = this.beanFactory.getBean(StubMapperProperties.class);
 		}
 		return this.stubMapperProperties;
 	}
 
 	boolean isStubbedDiscoveryEnabled() {
 		if (this.stubbedDiscoveryEnabled == null) {
-			this.stubbedDiscoveryEnabled = Boolean
-					.valueOf(this.beanFactory.getBean(Environment.class).getProperty(
-							"stubrunner.cloud.stubbed.discovery.enabled", "true"));
+			this.stubbedDiscoveryEnabled = Boolean.valueOf(this.beanFactory.getBean(Environment.class)
+					.getProperty("stubrunner.cloud.stubbed.discovery.enabled", "true"));
 		}
 		return this.stubbedDiscoveryEnabled;
 	}
 
 	boolean isCloudDelegateEnabled() {
 		if (this.cloudDelegateEnabled == null) {
-			this.cloudDelegateEnabled = Boolean
-					.valueOf(this.beanFactory.getBean(Environment.class)
-							.getProperty("stubrunner.cloud.delegate.enabled", "false"));
+			this.cloudDelegateEnabled = Boolean.valueOf(this.beanFactory.getBean(Environment.class)
+					.getProperty("stubrunner.cloud.delegate.enabled", "false"));
 		}
 		return this.cloudDelegateEnabled;
 	}

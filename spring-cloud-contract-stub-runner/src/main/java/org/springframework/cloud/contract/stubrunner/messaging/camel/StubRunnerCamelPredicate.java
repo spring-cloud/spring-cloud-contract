@@ -67,8 +67,7 @@ class StubRunnerCamelPredicate implements Predicate {
 	public boolean matches(Exchange exchange) {
 		Contract contract = getContract(exchange.getMessage());
 		if (log.isDebugEnabled()) {
-			log.debug(
-					"For exchange [" + exchange + "] found contract [" + contract + "]");
+			log.debug("For exchange [" + exchange + "] found contract [" + contract + "]");
 		}
 		if (contract == null) {
 			return false;
@@ -91,14 +90,12 @@ class StubRunnerCamelPredicate implements Predicate {
 		List<String> unmatchedHeaders = headersMatch(message, groovyDsl);
 		if (!unmatchedHeaders.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + groovyDsl
-						+ "] hasn't matched the following headers " + unmatchedHeaders);
+				log.debug("Contract [" + groovyDsl + "] hasn't matched the following headers " + unmatchedHeaders);
 			}
 			return null;
 		}
 		Object inputMessage = message.getBody();
-		Object dslBody = MapConverter
-				.getStubSideValues(groovyDsl.getInput().getMessageBody());
+		Object dslBody = MapConverter.getStubSideValues(groovyDsl.getInput().getMessageBody());
 		if (dslBody instanceof FromFileProperty) {
 			if (log.isDebugEnabled()) {
 				log.debug("Will compare file content");
@@ -110,19 +107,15 @@ class StubRunnerCamelPredicate implements Predicate {
 			}
 			else if (!(inputMessage instanceof byte[])) {
 				if (log.isDebugEnabled()) {
-					log.debug(
-							"Contract provided byte comparison, but the input message is of type ["
-									+ inputMessage.getClass()
-									+ "]. Can't compare the two.");
+					log.debug("Contract provided byte comparison, but the input message is of type ["
+							+ inputMessage.getClass() + "]. Can't compare the two.");
 				}
 				return null;
 			}
 			else {
-				boolean matches = Arrays.equals(property.asBytes(),
-						(byte[]) inputMessage);
+				boolean matches = Arrays.equals(property.asBytes(), (byte[]) inputMessage);
 				if (log.isDebugEnabled() && !matches) {
-					log.debug(
-							"Contract provided byte comparison, but the byte arrays don't match");
+					log.debug("Contract provided byte comparison, but the byte arrays don't match");
 				}
 				return matches ? groovyDsl : null;
 			}
@@ -133,11 +126,9 @@ class StubRunnerCamelPredicate implements Predicate {
 		return null;
 	}
 
-	private boolean matchViaContent(Contract groovyDsl, Object inputMessage,
-			Object dslBody) {
+	private boolean matchViaContent(Contract groovyDsl, Object inputMessage, Object dslBody) {
 		boolean matches;
-		ContentType type = ContentUtils.getClientContentType(inputMessage,
-				groovyDsl.getInput().getMessageHeaders());
+		ContentType type = ContentUtils.getClientContentType(inputMessage, groovyDsl.getInput().getMessageHeaders());
 		if (type == ContentType.JSON) {
 			BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
 			matches = matchesForJsonPayload(groovyDsl, inputMessage, matchers, dslBody);
@@ -156,22 +147,19 @@ class StubRunnerCamelPredicate implements Predicate {
 
 	private void bodyUnmatchedLog(Object dslBody, boolean matches, Object pattern) {
 		if (log.isDebugEnabled() && !matches) {
-			log.debug("Body was supposed to " + unmatchedText(pattern)
-					+ " but the value is [" + dslBody.toString() + "]");
+			log.debug("Body was supposed to " + unmatchedText(pattern) + " but the value is [" + dslBody.toString()
+					+ "]");
 		}
 	}
 
-	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage,
-			BodyMatchers matchers, Object dslBody) {
-		Object matchingInputMessage = JsonToJsonPathsConverter
-				.removeMatchingJsonPaths(dslBody, matchers);
+	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage, BodyMatchers matchers,
+			Object dslBody) {
+		Object matchingInputMessage = JsonToJsonPathsConverter.removeMatchingJsonPaths(dslBody, matchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
-				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
-						matchingInputMessage);
+				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(matchingInputMessage);
 		DocumentContext parsedJson;
 		try {
-			parsedJson = JsonPath
-					.parse(this.objectMapper.writeValueAsString(inputMessage));
+			parsedJson = JsonPath.parse(this.objectMapper.writeValueAsString(inputMessage));
 		}
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
@@ -183,22 +171,19 @@ class StubRunnerCamelPredicate implements Predicate {
 		}
 		if (matchers != null && matchers.hasMatchers()) {
 			for (BodyMatcher matcher : matchers.matchers()) {
-				String jsonPath = JsonToJsonPathsConverter
-						.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
+				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
 				matches &= matchesJsonPath(unmatchedJsonPath, parsedJson, jsonPath);
 			}
 		}
 		if (!unmatchedJsonPath.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + groovyDsl + "] didn't match the body due to "
-						+ unmatchedJsonPath);
+				log.debug("Contract [" + groovyDsl + "] didn't match the body due to " + unmatchedJsonPath);
 			}
 		}
 		return matches;
 	}
 
-	private boolean matchesJsonPath(List<String> unmatchedJsonPath,
-			DocumentContext parsedJson, String jsonPath) {
+	private boolean matchesJsonPath(List<String> unmatchedJsonPath, DocumentContext parsedJson, String jsonPath) {
 		try {
 			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonPath);
 			return true;
@@ -222,14 +207,11 @@ class StubRunnerCamelPredicate implements Predicate {
 				matches = pattern.matcher(valueInHeader.toString()).matches();
 			}
 			else {
-				matches = valueInHeader != null
-						&& valueInHeader.toString().equals(value.toString());
+				matches = valueInHeader != null && valueInHeader.toString().equals(value.toString());
 			}
 			if (!matches) {
-				unmatchedHeaders.add("Header with name [" + name + "] was supposed to "
-						+ unmatchedText(value) + " but the value is ["
-						+ (valueInHeader != null ? valueInHeader.toString() : "null")
-						+ "]");
+				unmatchedHeaders.add("Header with name [" + name + "] was supposed to " + unmatchedText(value)
+						+ " but the value is [" + (valueInHeader != null ? valueInHeader.toString() : "null") + "]");
 			}
 		}
 		return unmatchedHeaders;

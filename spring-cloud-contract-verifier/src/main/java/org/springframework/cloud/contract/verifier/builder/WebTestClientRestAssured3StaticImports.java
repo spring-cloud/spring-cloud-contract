@@ -26,26 +26,22 @@ class WebTestClientRestAssured3StaticImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = {
-			"io.restassured.module.webtestclient.RestAssuredWebTestClient.*" };
+	private static final String[] IMPORTS = { "io.restassured.module.webtestclient.RestAssuredWebTestClient.*" };
 
-	WebTestClientRestAssured3StaticImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	WebTestClientRestAssured3StaticImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.WEBTESTCLIENT
+		return this.generatedClassMetaData.configProperties.getTestMode() == TestMode.WEBTESTCLIENT
 				&& this.generatedClassMetaData.isAnyHttp();
 	}
 

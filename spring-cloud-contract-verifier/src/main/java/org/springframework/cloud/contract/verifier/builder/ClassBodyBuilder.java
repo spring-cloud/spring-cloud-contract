@@ -38,14 +38,12 @@ class ClassBodyBuilder {
 
 	final GeneratedClassMetaData generatedClassMetaData;
 
-	private ClassBodyBuilder(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	private ClassBodyBuilder(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
-	static ClassBodyBuilder builder(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	static ClassBodyBuilder builder(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		return new ClassBodyBuilder(blockBuilder, generatedClassMetaData);
 	}
 
@@ -78,8 +76,7 @@ class ClassBodyBuilder {
 	}
 
 	void visit(List<? extends Visitor> list) {
-		List<? extends Visitor> visitors = list.stream().filter(Acceptor::accept)
-				.collect(Collectors.toList());
+		List<? extends Visitor> visitors = list.stream().filter(Acceptor::accept).collect(Collectors.toList());
 		Iterator<? extends Visitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			Visitor visitor = iterator.next();

@@ -35,8 +35,7 @@ import org.springframework.util.StringUtils;
  */
 public class ContractDownloader {
 
-	private static final Log log = LogFactory
-			.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private final StubDownloader stubDownloader;
 
@@ -50,9 +49,8 @@ public class ContractDownloader {
 
 	private final String projectVersion;
 
-	public ContractDownloader(StubDownloader stubDownloader,
-			StubConfiguration contractsJarStubConfiguration, String contractsPath,
-			String projectGroupId, String projectArtifactId, String projectVersion) {
+	public ContractDownloader(StubDownloader stubDownloader, StubConfiguration contractsJarStubConfiguration,
+			String contractsPath, String projectGroupId, String projectArtifactId, String projectVersion) {
 		this.stubDownloader = stubDownloader;
 		this.contractsJarStubConfiguration = contractsJarStubConfiguration;
 		this.contractsPath = contractsPath;
@@ -80,13 +78,11 @@ public class ContractDownloader {
 
 	// Use createNewInclusionProperties() instead
 	@Deprecated
-	public ContractVerifierConfigProperties updatePropertiesWithInclusion(
-			File contractsDirectory, ContractVerifierConfigProperties config) {
-		final InclusionProperties newInclusionProperties = createNewInclusionProperties(
-				contractsDirectory);
+	public ContractVerifierConfigProperties updatePropertiesWithInclusion(File contractsDirectory,
+			ContractVerifierConfigProperties config) {
+		final InclusionProperties newInclusionProperties = createNewInclusionProperties(contractsDirectory);
 		config.setIncludedContracts(newInclusionProperties.getIncludedContracts());
-		config.setIncludedRootFolderAntPattern(
-				newInclusionProperties.getIncludedRootFolderAntPattern());
+		config.setIncludedRootFolderAntPattern(newInclusionProperties.getIncludedRootFolderAntPattern());
 		return config;
 	}
 
@@ -97,8 +93,7 @@ public class ContractDownloader {
 	 */
 	public File unpackAndDownloadContracts() {
 		if (log.isDebugEnabled()) {
-			log.debug("Will download contracts for [" + this.contractsJarStubConfiguration
-					+ "]");
+			log.debug("Will download contracts for [" + this.contractsJarStubConfiguration + "]");
 		}
 		Map.Entry<StubConfiguration, File> unpackedContractStubs = this.stubDownloader
 				.downloadAndUnpackStubJar(this.contractsJarStubConfiguration);
@@ -139,8 +134,7 @@ public class ContractDownloader {
 					log.debug("No group & artifact in path");
 				}
 				pattern = groupArtifactToPattern(contractsDirectory);
-				includedAntPattern = wrapWithAntPattern(
-						slashSeparatedGroupId() + "/" + this.projectArtifactId);
+				includedAntPattern = wrapWithAntPattern(slashSeparatedGroupId() + "/" + this.projectArtifactId);
 			}
 		}
 		log.info("Pattern to pick contracts equals [" + pattern + "]");
@@ -177,9 +171,8 @@ public class ContractDownloader {
 	}
 
 	private String patternFromProperty(File contractsDirectory) {
-		return ("^" + contractsDirectory.getAbsolutePath() + "(" + File.separator + ")?"
-				+ ".*" + contractsPath().replace("/", File.separator) + ".*$")
-						.replace("\\", "\\\\");
+		return ("^" + contractsDirectory.getAbsolutePath() + "(" + File.separator + ")?" + ".*"
+				+ contractsPath().replace("/", File.separator) + ".*$").replace("\\", "\\\\");
 	}
 
 	private String contractsPath() {
@@ -187,8 +180,7 @@ public class ContractDownloader {
 	}
 
 	private String surroundWithSeparator(String string) {
-		String path = string.startsWith(File.separator) ? string
-				: File.separator + string;
+		String path = string.startsWith(File.separator) ? string : File.separator + string;
 		return path.endsWith(File.separator) ? path : path + File.separator;
 	}
 
@@ -198,9 +190,9 @@ public class ContractDownloader {
 	}
 
 	private String groupArtifactToPattern(File contractsDirectory) {
-		return ("^" + contractsDirectory.getAbsolutePath() + "(" + File.separator + ")?"
-				+ ".*" + slashSeparatedGroupId() + File.separator + this.projectArtifactId
-				+ File.separator + ".*$").replace("\\", "\\\\");
+		return ("^" + contractsDirectory.getAbsolutePath() + "(" + File.separator + ")?" + ".*"
+				+ slashSeparatedGroupId() + File.separator + this.projectArtifactId + File.separator + ".*$")
+						.replace("\\", "\\\\");
 	}
 
 	private String fileToPattern(File contractsDirectory) {
@@ -227,8 +219,7 @@ public class ContractDownloader {
 		 */
 		private final String includedRootFolderAntPattern;
 
-		InclusionProperties(final String includedContracts,
-				final String includedRootFolderAntPattern) {
+		InclusionProperties(final String includedContracts, final String includedRootFolderAntPattern) {
 			this.includedContracts = includedContracts;
 			this.includedRootFolderAntPattern = includedRootFolderAntPattern;
 		}

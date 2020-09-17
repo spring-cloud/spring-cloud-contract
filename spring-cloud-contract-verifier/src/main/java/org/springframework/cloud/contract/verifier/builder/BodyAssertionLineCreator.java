@@ -33,24 +33,21 @@ class BodyAssertionLineCreator {
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	BodyAssertionLineCreator(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			String byteArrayString, ComparisonBuilder comparisonBuilder) {
+	BodyAssertionLineCreator(BlockBuilder blockBuilder, GeneratedClassMetaData metaData, String byteArrayString,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.bodyReader = new BodyReader(metaData);
 		this.byteArrayString = byteArrayString;
 		this.comparisonBuilder = comparisonBuilder;
 	}
 
-	void appendBodyAssertionLine(SingleContractMetadata metadata, String property,
-			Object value) {
+	void appendBodyAssertionLine(SingleContractMetadata metadata, String property, Object value) {
 		if (value instanceof String && ((String) value).startsWith("$")) {
-			String newValue = stripFirstChar((String) value).replaceAll("\\$value",
-					"responseBody" + property);
+			String newValue = stripFirstChar((String) value).replaceAll("\\$value", "responseBody" + property);
 			this.blockBuilder.addLineWithEnding(newValue);
 		}
 		else {
-			this.blockBuilder.addLineWithEnding(
-					getResponseBodyPropertyComparisonString(metadata, property, value));
+			this.blockBuilder.addLineWithEnding(getResponseBodyPropertyComparisonString(metadata, property, value));
 		}
 	}
 
@@ -58,23 +55,20 @@ class BodyAssertionLineCreator {
 	 * Builds the code that for the given {@code property} will compare it to the given
 	 * Object {@code value}
 	 */
-	private String getResponseBodyPropertyComparisonString(
-			SingleContractMetadata singleContractMetadata, String property,
-			Object value) {
+	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata,
+			String property, Object value) {
 		if (value instanceof FromFileProperty) {
-			return getResponseBodyPropertyComparisonString(singleContractMetadata,
-					property, (FromFileProperty) value);
+			return getResponseBodyPropertyComparisonString(singleContractMetadata, property, (FromFileProperty) value);
 		}
 		else if (value instanceof Pattern) {
 			return getResponseBodyPropertyComparisonString(property, (Pattern) value);
 		}
 		else if (value instanceof ExecutionProperty) {
-			return getResponseBodyPropertyComparisonString(property,
-					(ExecutionProperty) value);
+			return getResponseBodyPropertyComparisonString(property, (ExecutionProperty) value);
 		}
 		else if (value instanceof DslProperty) {
-			return getResponseBodyPropertyComparisonString(singleContractMetadata,
-					property, ((DslProperty) value).getServerValue());
+			return getResponseBodyPropertyComparisonString(singleContractMetadata, property,
+					((DslProperty) value).getServerValue());
 		}
 		return getResponseBodyPropertyComparisonString(property, value.toString());
 	}
@@ -83,14 +77,11 @@ class BodyAssertionLineCreator {
 	 * Builds the code that for the given {@code property} will compare it to the given
 	 * byte[] {@code value}
 	 */
-	private String getResponseBodyPropertyComparisonString(
-			SingleContractMetadata singleContractMetadata, String property,
-			FromFileProperty value) {
+	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata,
+			String property, FromFileProperty value) {
 		if (value.isByte()) {
-			return this.comparisonBuilder.assertThat(this.byteArrayString)
-					+ this.comparisonBuilder.isEqualToUnquoted(this.bodyReader
-							.readBytesFromFileString(singleContractMetadata, value,
-									CommunicationType.RESPONSE));
+			return this.comparisonBuilder.assertThat(this.byteArrayString) + this.comparisonBuilder.isEqualToUnquoted(
+					this.bodyReader.readBytesFromFileString(singleContractMetadata, value, CommunicationType.RESPONSE));
 		}
 		return getResponseBodyPropertyComparisonString(property, value.asString());
 	}
@@ -99,18 +90,15 @@ class BodyAssertionLineCreator {
 	 * Builds the code that for the given {@code property} will compare it to the given
 	 * String {@code value}
 	 */
-	private String getResponseBodyPropertyComparisonString(String property,
-			String value) {
-		return this.comparisonBuilder.assertThatUnescaped("responseBody" + property,
-				value);
+	private String getResponseBodyPropertyComparisonString(String property, String value) {
+		return this.comparisonBuilder.assertThatUnescaped("responseBody" + property, value);
 	}
 
 	/**
 	 * Builds the code that for the given {@code property} will match it to the given
 	 * regular expression {@code value}
 	 */
-	private String getResponseBodyPropertyComparisonString(String property,
-			Pattern value) {
+	private String getResponseBodyPropertyComparisonString(String property, Pattern value) {
 		return this.comparisonBuilder.assertThat("responseBody" + property, value);
 	}
 
@@ -118,8 +106,7 @@ class BodyAssertionLineCreator {
 	 * Builds the code that for the given {@code property} will match it to the given
 	 * {@link ExecutionProperty} value
 	 */
-	private String getResponseBodyPropertyComparisonString(String property,
-			ExecutionProperty value) {
+	private String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
 		return value.insertValue("responseBody" + property);
 	}
 

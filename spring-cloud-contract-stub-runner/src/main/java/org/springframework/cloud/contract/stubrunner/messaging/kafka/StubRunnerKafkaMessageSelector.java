@@ -53,11 +53,9 @@ import org.springframework.messaging.Message;
  */
 class StubRunnerKafkaMessageSelector {
 
-	private static final Map<Message<?>, Contract> CACHE = Collections
-			.synchronizedMap(new WeakHashMap<>());
+	private static final Map<Message<?>, Contract> CACHE = Collections.synchronizedMap(new WeakHashMap<>());
 
-	private static final Log log = LogFactory
-			.getLog(StubRunnerKafkaMessageSelector.class);
+	private static final Log log = LogFactory.getLog(StubRunnerKafkaMessageSelector.class);
 
 	private final List<Contract> groovyDsls;
 
@@ -96,14 +94,12 @@ class StubRunnerKafkaMessageSelector {
 		List<String> unmatchedHeaders = headersMatch(message, groovyDsl);
 		if (!unmatchedHeaders.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + groovyDsl
-						+ "] hasn't matched the following headers " + unmatchedHeaders);
+				log.debug("Contract [" + groovyDsl + "] hasn't matched the following headers " + unmatchedHeaders);
 			}
 			return null;
 		}
 		Object inputMessage = message.getPayload();
-		Object dslBody = MapConverter
-				.getStubSideValues(groovyDsl.getInput().getMessageBody());
+		Object dslBody = MapConverter.getStubSideValues(groovyDsl.getInput().getMessageBody());
 		if (dslBody instanceof FromFileProperty) {
 			if (log.isDebugEnabled()) {
 				log.debug("Will compare file content");
@@ -115,19 +111,15 @@ class StubRunnerKafkaMessageSelector {
 			}
 			else if (!(inputMessage instanceof byte[])) {
 				if (log.isDebugEnabled()) {
-					log.debug(
-							"Contract provided byte comparison, but the input message is of type ["
-									+ inputMessage.getClass()
-									+ "]. Can't compare the two.");
+					log.debug("Contract provided byte comparison, but the input message is of type ["
+							+ inputMessage.getClass() + "]. Can't compare the two.");
 				}
 				return null;
 			}
 			else {
-				boolean matches = Arrays.equals(property.asBytes(),
-						(byte[]) inputMessage);
+				boolean matches = Arrays.equals(property.asBytes(), (byte[]) inputMessage);
 				if (log.isDebugEnabled() && !matches) {
-					log.debug(
-							"Contract provided byte comparison, but the byte arrays don't match");
+					log.debug("Contract provided byte comparison, but the byte arrays don't match");
 				}
 				return matches ? groovyDsl : null;
 			}
@@ -138,11 +130,9 @@ class StubRunnerKafkaMessageSelector {
 		return null;
 	}
 
-	private boolean matchViaContent(Contract groovyDsl, Object inputMessage,
-			Object dslBody) {
+	private boolean matchViaContent(Contract groovyDsl, Object inputMessage, Object dslBody) {
 		boolean matches;
-		ContentType type = ContentUtils.getClientContentType(inputMessage,
-				groovyDsl.getInput().getMessageHeaders());
+		ContentType type = ContentUtils.getClientContentType(inputMessage, groovyDsl.getInput().getMessageHeaders());
 		if (type == ContentType.JSON) {
 			BodyMatchers matchers = groovyDsl.getInput().getBodyMatchers();
 			matches = matchesForJsonPayload(groovyDsl, inputMessage, matchers, dslBody);
@@ -161,22 +151,19 @@ class StubRunnerKafkaMessageSelector {
 
 	private void bodyUnmatchedLog(Object dslBody, boolean matches, Object pattern) {
 		if (log.isDebugEnabled() && !matches) {
-			log.debug("Body was supposed to " + unmatchedText(pattern)
-					+ " but the value is [" + dslBody.toString() + "]");
+			log.debug("Body was supposed to " + unmatchedText(pattern) + " but the value is [" + dslBody.toString()
+					+ "]");
 		}
 	}
 
-	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage,
-			BodyMatchers matchers, Object dslBody) {
-		Object matchingInputMessage = JsonToJsonPathsConverter
-				.removeMatchingJsonPaths(dslBody, matchers);
+	private boolean matchesForJsonPayload(Contract groovyDsl, Object inputMessage, BodyMatchers matchers,
+			Object dslBody) {
+		Object matchingInputMessage = JsonToJsonPathsConverter.removeMatchingJsonPaths(dslBody, matchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
-				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
-						matchingInputMessage);
+				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(matchingInputMessage);
 		DocumentContext parsedJson;
 		try {
-			parsedJson = JsonPath
-					.parse(this.objectMapper.writeValueAsString(inputMessage));
+			parsedJson = JsonPath.parse(this.objectMapper.writeValueAsString(inputMessage));
 		}
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
@@ -188,22 +175,19 @@ class StubRunnerKafkaMessageSelector {
 		}
 		if (matchers != null && matchers.hasMatchers()) {
 			for (BodyMatcher matcher : matchers.matchers()) {
-				String jsonPath = JsonToJsonPathsConverter
-						.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
+				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
 				matches &= matchesJsonPath(unmatchedJsonPath, parsedJson, jsonPath);
 			}
 		}
 		if (!unmatchedJsonPath.isEmpty()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contract [" + groovyDsl + "] didn't match the body due to "
-						+ unmatchedJsonPath);
+				log.debug("Contract [" + groovyDsl + "] didn't match the body due to " + unmatchedJsonPath);
 			}
 		}
 		return matches;
 	}
 
-	private boolean matchesJsonPath(List<String> unmatchedJsonPath,
-			DocumentContext parsedJson, String jsonPath) {
+	private boolean matchesJsonPath(List<String> unmatchedJsonPath, DocumentContext parsedJson, String jsonPath) {
 		try {
 			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonPath);
 			return true;
@@ -221,22 +205,18 @@ class StubRunnerKafkaMessageSelector {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
-			valueInHeader = valueInHeader instanceof byte[]
-					? fromByte((byte[]) valueInHeader) : valueInHeader;
+			valueInHeader = valueInHeader instanceof byte[] ? fromByte((byte[]) valueInHeader) : valueInHeader;
 			boolean matches;
 			if (value instanceof RegexProperty) {
 				Pattern pattern = ((RegexProperty) value).getPattern();
 				matches = pattern.matcher(valueInHeader.toString()).matches();
 			}
 			else {
-				matches = valueInHeader != null
-						&& valueInHeader.toString().equals(value.toString());
+				matches = valueInHeader != null && valueInHeader.toString().equals(value.toString());
 			}
 			if (!matches) {
-				unmatchedHeaders.add("Header with name [" + name + "] was supposed to "
-						+ unmatchedText(value) + " but the value is ["
-						+ (valueInHeader != null ? valueInHeader.toString() : "null")
-						+ "]");
+				unmatchedHeaders.add("Header with name [" + name + "] was supposed to " + unmatchedText(value)
+						+ " but the value is [" + (valueInHeader != null ? valueInHeader.toString() : "null") + "]");
 			}
 		}
 		return unmatchedHeaders;

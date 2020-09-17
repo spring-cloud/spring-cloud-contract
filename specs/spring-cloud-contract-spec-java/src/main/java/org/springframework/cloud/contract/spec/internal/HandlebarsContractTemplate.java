@@ -119,8 +119,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String escapedQuery(String key, int index) {
-		return escapedWrapped(
-				"request.query." + key + ".[" + String.valueOf(index) + "]");
+		return escapedWrapped("request.query." + key + ".[" + String.valueOf(index) + "]");
 	}
 
 	@Override
@@ -140,8 +139,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String escapedHeader(String key, int index) {
-		return escapedWrapped(
-				"request.headers." + key + ".[" + String.valueOf(index) + "]");
+		return escapedWrapped("request.headers." + key + ".[" + String.valueOf(index) + "]");
 	}
 
 	@Override

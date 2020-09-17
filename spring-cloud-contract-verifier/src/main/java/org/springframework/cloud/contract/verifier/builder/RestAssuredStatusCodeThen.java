@@ -25,8 +25,7 @@ class RestAssuredStatusCodeThen implements Then {
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	RestAssuredStatusCodeThen(BlockBuilder blockBuilder,
-			ComparisonBuilder comparisonBuilder) {
+	RestAssuredStatusCodeThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
 	}
@@ -34,9 +33,8 @@ class RestAssuredStatusCodeThen implements Then {
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Response response = metadata.getContract().getResponse();
-		this.blockBuilder
-				.addIndented(this.comparisonBuilder.assertThat("response.statusCode()",
-						response.getStatus().getServerValue()))
+		this.blockBuilder.addIndented(
+				this.comparisonBuilder.assertThat("response.statusCode()", response.getStatus().getServerValue()))
 				.addEndingIfNotPresent();
 		return this;
 	}

@@ -25,25 +25,21 @@ class TestNGMethodAnnotation implements MethodAnnotations {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	TestNGMethodAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	TestNGMethodAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
-		final String annotation = singleContractMetadata.isIgnored()
-				? "@Test(enabled = false)" : "@Test";
+	public MethodVisitor<MethodAnnotations> apply(SingleContractMetadata singleContractMetadata) {
+		final String annotation = singleContractMetadata.isIgnored() ? "@Test(enabled = false)" : "@Test";
 		this.blockBuilder.addIndented(annotation);
 		return this;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.TESTNG;
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.TESTNG;
 	}
 
 }

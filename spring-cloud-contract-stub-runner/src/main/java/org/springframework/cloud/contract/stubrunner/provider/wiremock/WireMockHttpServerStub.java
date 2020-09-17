@@ -77,16 +77,15 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	private WireMockConfiguration wireMockConfiguration;
 
 	private WireMockConfiguration config() {
-		if (ClassUtils.isPresent(
-				"org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
+		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
 			return WireMockSpring.options().extensions(responseTransformers());
 		}
 		return new WireMockConfiguration().extensions(responseTransformers());
 	}
 
 	private Extension[] responseTransformers() {
-		List<WireMockExtensions> wireMockExtensions = SpringFactoriesLoader
-				.loadFactories(WireMockExtensions.class, null);
+		List<WireMockExtensions> wireMockExtensions = SpringFactoriesLoader.loadFactories(WireMockExtensions.class,
+				null);
 		List<Extension> extensions = new ArrayList<>();
 		if (!wireMockExtensions.isEmpty()) {
 			for (WireMockExtensions wireMockExtension : wireMockExtensions) {
@@ -94,9 +93,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 		}
 		else {
-			extensions.addAll(
-					Arrays.asList(new DefaultResponseTransformer(false, helpers()),
-							new SpringCloudContractRequestMatcher()));
+			extensions.addAll(Arrays.asList(new DefaultResponseTransformer(false, helpers()),
+					new SpringCloudContractRequestMatcher()));
 		}
 		return extensions.toArray(new Extension[extensions.size()]);
 	}
@@ -117,8 +115,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	@Override
 	public int port() {
-		return isRunning() ? (this.https ? this.wireMockServer.httpsPort()
-				: this.wireMockServer.port()) : INVALID_PORT;
+		return isRunning() ? (this.https ? this.wireMockServer.httpsPort() : this.wireMockServer.port()) : INVALID_PORT;
 	}
 
 	@Override
@@ -141,15 +138,13 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private HttpServerStubConfiguration defaultConfiguration(int port) {
-		return new HttpServerStubConfiguration(
-				HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
+		return new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
 				null, port);
 	}
 
 	private HttpServerStubConfiguration defaultConfiguration() {
 		int port = SocketUtils.findAvailableTcpPort();
-		return new HttpServerStubConfiguration(
-				HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
+		return new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
 				null, port, true);
 	}
 
@@ -167,24 +162,20 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			return this;
 		}
 		int port = configuration.port;
-		WireMockConfiguration wireMockConfiguration = config().port(port)
-				.notifier(new Slf4jNotifier(true));
+		WireMockConfiguration wireMockConfiguration = config().port(port).notifier(new Slf4jNotifier(true));
 		if (configuration.configurer.isAccepted(wireMockConfiguration)) {
 			@SuppressWarnings("unchecked")
 			HttpServerStubConfigurer<WireMockConfiguration> configurer = configuration.configurer;
-			wireMockConfiguration = configurer.configure(wireMockConfiguration,
-					configuration);
+			wireMockConfiguration = configurer.configure(wireMockConfiguration, configuration);
 		}
 		this.wireMockConfiguration = wireMockConfiguration;
 		this.https = wireMockConfiguration.httpsSettings().enabled();
-		port = this.https ? wireMockConfiguration.httpsSettings().port()
-				: wireMockConfiguration.portNumber();
+		port = this.https ? wireMockConfiguration.httpsSettings().port() : wireMockConfiguration.portNumber();
 		this.wireMockServer = new WireMockServer(wireMockConfiguration);
 		this.wireMockServer.start();
 		if (log.isDebugEnabled()) {
-			log.debug("For " + configuration.toColonSeparatedDependencyNotation()
-					+ " Started WireMock at [" + (this.https ? "https" : "http")
-					+ "] port [" + port + "]");
+			log.debug("For " + configuration.toColonSeparatedDependencyNotation() + " Started WireMock at ["
+					+ (this.https ? "https" : "http") + "] port [" + port + "]");
 		}
 		cacheStubServer(configuration.randomPort, port);
 		return this;
@@ -246,8 +237,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	StubMapping getMapping(File file) {
 		try (InputStream stream = Files.newInputStream(file.toPath())) {
-			return StubMapping.buildFrom(
-					StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
+			return StubMapping.buildFrom(StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
 		}
 		catch (IOException e) {
 			throw new IllegalStateException("Cannot read file", e);
@@ -269,8 +259,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		String proxyHost = this.wireMockConfiguration.proxyHostHeader();
 		int proxyPort = this.wireMockConfiguration.proxyVia().port();
 		ClientAuthenticator authenticator = NoClientAuthenticator.noClientAuthenticator();
-		return new WireMock(scheme, host, port, urlPathPrefix, hostHeader, proxyHost,
-				proxyPort, authenticator);
+		return new WireMock(scheme, host, port, urlPathPrefix, hostHeader, proxyHost, proxyPort, authenticator);
 	}
 
 	private void registerDefaultHealthChecks(WireMock wireMock) {
@@ -284,20 +273,17 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			try {
 				stubMappings.add(registerDescriptor(wireMock, mappingDescriptor));
 				if (log.isDebugEnabled()) {
-					log.debug(
-							"Registered stub mappings from [" + mappingDescriptor + "]");
+					log.debug("Registered stub mappings from [" + mappingDescriptor + "]");
 				}
 			}
 			catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to register the stub mapping [" + mappingDescriptor
-							+ "]", e);
+					log.debug("Failed to register the stub mapping [" + mappingDescriptor + "]", e);
 				}
 			}
 		}
 		PortAndMappings portAndMappings = SERVERS.get(this);
-		SERVERS.put(this, new PortAndMappings(portAndMappings.random,
-				portAndMappings.port, stubMappings));
+		SERVERS.put(this, new PortAndMappings(portAndMappings.random, portAndMappings.port, stubMappings));
 	}
 
 	private StubMapping registerDescriptor(WireMock wireMock, File mappingDescriptor) {
@@ -311,8 +297,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private void registerHealthCheck(WireMock wireMock, String url, String body) {
-		wireMock.register(WireMock.get(WireMock.urlEqualTo(url))
-				.willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
+		wireMock.register(
+				WireMock.get(WireMock.urlEqualTo(url)).willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
 	}
 
 }
@@ -333,8 +319,8 @@ class PortAndMappings {
 
 	@Override
 	public String toString() {
-		return "PortAndMappings{" + "random=" + this.random + ", port=" + this.port
-				+ ", mappings=" + this.mappings + '}';
+		return "PortAndMappings{" + "random=" + this.random + ", port=" + this.port + ", mappings=" + this.mappings
+				+ '}';
 	}
 
 }

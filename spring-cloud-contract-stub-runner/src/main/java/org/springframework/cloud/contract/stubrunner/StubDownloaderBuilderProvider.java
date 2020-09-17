@@ -34,8 +34,7 @@ public class StubDownloaderBuilderProvider {
 	private final List<StubDownloaderBuilder> builders = new ArrayList<>();
 
 	public StubDownloaderBuilderProvider() {
-		this.builders.addAll(
-				SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null));
+		this.builders.addAll(SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null));
 	}
 
 	StubDownloaderBuilderProvider(List<StubDownloaderBuilder> builders) {
@@ -49,8 +48,7 @@ public class StubDownloaderBuilderProvider {
 	 * @return composite {@link StubDownloader} that iterates over a list of stub
 	 * downloaders
 	 */
-	public StubDownloader get(StubRunnerOptions stubRunnerOptions,
-			StubDownloaderBuilder... additionalBuilders) {
+	public StubDownloader get(StubRunnerOptions stubRunnerOptions, StubDownloaderBuilder... additionalBuilders) {
 		List<StubDownloaderBuilder> builders = this.builders;
 		if (additionalBuilders != null) {
 			builders.addAll(Arrays.asList(additionalBuilders));
@@ -61,8 +59,8 @@ public class StubDownloaderBuilderProvider {
 	}
 
 	List<StubDownloaderBuilder> defaultStubDownloaderBuilders() {
-		return Arrays.asList(new ScmStubDownloaderBuilder(), new ClasspathStubProvider(),
-				new FileStubDownloader(), new AetherStubDownloaderBuilder());
+		return Arrays.asList(new ScmStubDownloaderBuilder(), new ClasspathStubProvider(), new FileStubDownloader(),
+				new AetherStubDownloaderBuilder());
 	}
 
 }

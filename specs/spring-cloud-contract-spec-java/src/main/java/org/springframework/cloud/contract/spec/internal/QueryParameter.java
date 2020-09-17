@@ -31,23 +31,19 @@ public class QueryParameter extends DslProperty {
 
 	public QueryParameter(String name, DslProperty dslProperty) {
 		super(dslProperty.getClientValue(), dslProperty.getServerValue());
-		ValidateUtils.validateServerValueIsAvailable(dslProperty.getServerValue(),
-				"Query parameter \'" + name + "\'");
+		ValidateUtils.validateServerValueIsAvailable(dslProperty.getServerValue(), "Query parameter \'" + name + "\'");
 		this.name = name;
 	}
 
 	public QueryParameter(String name, MatchingStrategy matchingStrategy) {
 		super(matchingStrategy);
-		ValidateUtils.validateServerValueIsAvailable(matchingStrategy,
-				"Query parameter \'" + name + "\'");
+		ValidateUtils.validateServerValueIsAvailable(matchingStrategy, "Query parameter \'" + name + "\'");
 		this.name = name;
 	}
 
 	public QueryParameter(String name, Object value) {
-		super(ContractUtils.CLIENT_VALUE.apply(value),
-				ContractUtils.SERVER_VALUE.apply(value));
-		ValidateUtils.validateServerValueIsAvailable(value,
-				"Query parameter \'" + name + "\'");
+		super(ContractUtils.CLIENT_VALUE.apply(value), ContractUtils.SERVER_VALUE.apply(value));
+		ValidateUtils.validateServerValueIsAvailable(value, "Query parameter \'" + name + "\'");
 		this.name = name;
 	}
 
@@ -56,8 +52,7 @@ public class QueryParameter extends DslProperty {
 			return new QueryParameter(key, (MatchingStrategy) value);
 		}
 		else if (value instanceof RegexProperty) {
-			return new QueryParameter(key,
-					((RegexProperty) value).dynamicClientEscapedConcreteProducer());
+			return new QueryParameter(key, ((RegexProperty) value).dynamicClientEscapedConcreteProducer());
 		}
 		return new QueryParameter(key, value);
 	}
@@ -92,8 +87,7 @@ public class QueryParameter extends DslProperty {
 
 	@Override
 	public String toString() {
-		return "QueryParameter{" + "name='" + name + '\'' + ", value=" + super.toString()
-				+ '}';
+		return "QueryParameter{" + "name='" + name + '\'' + ", value=" + super.toString() + '}';
 	}
 
 }

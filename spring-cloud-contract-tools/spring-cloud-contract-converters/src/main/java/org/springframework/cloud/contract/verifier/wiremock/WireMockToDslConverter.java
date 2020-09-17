@@ -49,35 +49,25 @@ public class WireMockToDslConverter {
 
 	private static final JsonPointer PRIORITY_POINTER = JsonPointer.compile("/priority");
 
-	private static final JsonPointer REQUEST_METHOD_POINTER = JsonPointer
-			.compile("/request/method");
+	private static final JsonPointer REQUEST_METHOD_POINTER = JsonPointer.compile("/request/method");
 
-	private static final JsonPointer REQUEST_URL_POINTER = JsonPointer
-			.compile("/request/url");
+	private static final JsonPointer REQUEST_URL_POINTER = JsonPointer.compile("/request/url");
 
-	private static final JsonPointer REQUEST_URL_PATH_POINTER = JsonPointer
-			.compile("/request/urlPath");
+	private static final JsonPointer REQUEST_URL_PATH_POINTER = JsonPointer.compile("/request/urlPath");
 
-	private static final JsonPointer REQUEST_URL_PATTERN_POINTER = JsonPointer
-			.compile("/request/urlPattern");
+	private static final JsonPointer REQUEST_URL_PATTERN_POINTER = JsonPointer.compile("/request/urlPattern");
 
-	private static final JsonPointer REQUEST_URL_PATH_PATTERN_POINTER = JsonPointer
-			.compile("/request/urlPathPattern");
+	private static final JsonPointer REQUEST_URL_PATH_PATTERN_POINTER = JsonPointer.compile("/request/urlPathPattern");
 
-	private static final JsonPointer REQUEST_HEADERS_POINTER = JsonPointer
-			.compile("/request/headers");
+	private static final JsonPointer REQUEST_HEADERS_POINTER = JsonPointer.compile("/request/headers");
 
-	private static final JsonPointer REQUEST_BODY_POINTER = JsonPointer
-			.compile("/request/bodyPatterns");
+	private static final JsonPointer REQUEST_BODY_POINTER = JsonPointer.compile("/request/bodyPatterns");
 
-	private static final JsonPointer RESPONSE_STATUS_POINTER = JsonPointer
-			.compile("/response/status");
+	private static final JsonPointer RESPONSE_STATUS_POINTER = JsonPointer.compile("/response/status");
 
-	private static final JsonPointer RESPONSE_BODY_POINTER = JsonPointer
-			.compile("/response/body");
+	private static final JsonPointer RESPONSE_BODY_POINTER = JsonPointer.compile("/response/body");
 
-	private static final JsonPointer RESPONSE_HEADERS_POINTER = JsonPointer
-			.compile("/response/headers");
+	private static final JsonPointer RESPONSE_HEADERS_POINTER = JsonPointer.compile("/response/headers");
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -98,12 +88,10 @@ public class WireMockToDslConverter {
 
 	private String convertFromWireMockStub(String wireMockStringStub) {
 		JsonNode wireMockStub = parseStubDefinition(wireMockStringStub);
-		return buildPriority(wireMockStub) + "request {\n"
-				+ buildRequestMethod(wireMockStub) + buildRequestUrl(wireMockStub)
-				+ buildRequestUrlPattern(wireMockStub)
-				+ buildRequestUrlPathPattern(wireMockStub)
-				+ buildRequestUrlPath(wireMockStub) + buildRequestHeaders(wireMockStub)
-				+ buildRequestBody(wireMockStub) + "}\n" + "response {\n"
+		return buildPriority(wireMockStub) + "request {\n" + buildRequestMethod(wireMockStub)
+				+ buildRequestUrl(wireMockStub) + buildRequestUrlPattern(wireMockStub)
+				+ buildRequestUrlPathPattern(wireMockStub) + buildRequestUrlPath(wireMockStub)
+				+ buildRequestHeaders(wireMockStub) + buildRequestBody(wireMockStub) + "}\n" + "response {\n"
 				+ buildResponseStatus(wireMockStub) + buildResponseBody(wireMockStub)
 				+ buildResponseHeaders(wireMockStub) + "}" + "\n";
 	}
@@ -157,10 +145,8 @@ public class WireMockToDslConverter {
 		String requestUrlPattern = "";
 		JsonNode requestUrlPatternNode = wireMockStub.at(REQUEST_URL_PATTERN_POINTER);
 		if (!requestUrlPatternNode.isMissingNode()) {
-			String escapedRequestUrlPatternValue = escapeJava(
-					requestUrlPatternNode.asText());
-			requestUrlPattern = "url $(consumer(regex('" + escapedRequestUrlPatternValue
-					+ "')), producer('"
+			String escapedRequestUrlPatternValue = escapeJava(requestUrlPatternNode.asText());
+			requestUrlPattern = "url $(consumer(regex('" + escapedRequestUrlPatternValue + "')), producer('"
 					+ new Xeger(escapedRequestUrlPatternValue).generate() + "'))\n";
 		}
 		return requestUrlPattern;
@@ -168,13 +154,10 @@ public class WireMockToDslConverter {
 
 	private String buildRequestUrlPathPattern(JsonNode wireMockStub) {
 		String requestUrlPathPattern = "";
-		JsonNode requestUrlPathPatternNode = wireMockStub
-				.at(REQUEST_URL_PATH_PATTERN_POINTER);
+		JsonNode requestUrlPathPatternNode = wireMockStub.at(REQUEST_URL_PATH_PATTERN_POINTER);
 		if (!requestUrlPathPatternNode.isMissingNode()) {
-			String escapedRequestUrlPathPatternValue = escapeJava(
-					requestUrlPathPatternNode.asText());
-			requestUrlPathPattern = "urlPath $(consumer(regex('"
-					+ escapedRequestUrlPathPatternValue + "')), producer('"
+			String escapedRequestUrlPathPatternValue = escapeJava(requestUrlPathPatternNode.asText());
+			requestUrlPathPattern = "urlPath $(consumer(regex('" + escapedRequestUrlPathPatternValue + "')), producer('"
 					+ new Xeger(escapedRequestUrlPathPatternValue).generate() + "'))'\n";
 		}
 		return requestUrlPathPattern;
@@ -187,14 +170,11 @@ public class WireMockToDslConverter {
 		if (requestHeadersNode.isObject()) {
 			requestHeadersBuilder.append("headers {\n");
 			ObjectNode requestHeadersObjectNode = requestHeadersNode.deepCopy();
-			Iterator<Map.Entry<String, JsonNode>> fields = requestHeadersObjectNode
-					.fields();
+			Iterator<Map.Entry<String, JsonNode>> fields = requestHeadersObjectNode.fields();
 			fields.forEachRemaining(c -> {
 				requestHeadersBuilder.append("header('").append(c.getKey()).append("',");
-				Map.Entry<String, JsonNode> headerValue = c.getValue().deepCopy().fields()
-						.next();
-				String header = buildHeader(headerValue.getKey(),
-						headerValue.getValue().asText());
+				Map.Entry<String, JsonNode> headerValue = c.getValue().deepCopy().fields().next();
+				String header = buildHeader(headerValue.getKey(), headerValue.getValue().asText());
 				requestHeadersBuilder.append(header).append(")").append("\n");
 			});
 			requestHeadersBuilder.append("}");
@@ -222,24 +202,17 @@ public class WireMockToDslConverter {
 			Iterator<JsonNode> elements = requestBodyArrayNode.elements();
 			Iterable<JsonNode> iterableFields = () -> elements;
 			List<Map.Entry<String, JsonNode>> requestBodyObjectNodes = new ArrayList<>();
-			StreamSupport.stream(iterableFields.spliterator(), false)
-					.filter(f -> f instanceof ObjectNode).map(f -> (ObjectNode) f)
-					.map(ObjectNode::fields)
+			StreamSupport.stream(iterableFields.spliterator(), false).filter(f -> f instanceof ObjectNode)
+					.map(f -> (ObjectNode) f).map(ObjectNode::fields)
 					.forEachOrdered(i -> i.forEachRemaining(requestBodyObjectNodes::add));
-			requestBodyObjectNodes.stream().filter(b -> b.getKey().equals("equalTo"))
-					.findFirst().ifPresent(b -> requestBody.append("body ('")
-							.append(b.getValue().asText()).append("')"));
-			requestBodyObjectNodes.stream().filter(b -> b.getKey().equals("equalToJson"))
-					.findFirst().ifPresent(b -> requestBody.append("body ('")
-							.append(b.getValue().asText()).append("')"));
-			requestBodyObjectNodes.stream().filter(b -> b.getKey().equals("matches"))
-					.findFirst()
+			requestBodyObjectNodes.stream().filter(b -> b.getKey().equals("equalTo")).findFirst()
+					.ifPresent(b -> requestBody.append("body ('").append(b.getValue().asText()).append("')"));
+			requestBodyObjectNodes.stream().filter(b -> b.getKey().equals("equalToJson")).findFirst()
+					.ifPresent(b -> requestBody.append("body ('").append(b.getValue().asText()).append("')"));
+			requestBodyObjectNodes.stream().filter(b -> b.getKey().equals("matches")).findFirst()
 					.ifPresent(b -> requestBody.append("body $(consumer(regex('")
-							.append(escapeJava(b.getValue().asText()))
-							.append("')), producer('")
-							.append(new Xeger(escapeJava(b.getValue().asText()))
-									.generate())
-							.append("'))"));
+							.append(escapeJava(b.getValue().asText())).append("')), producer('")
+							.append(new Xeger(escapeJava(b.getValue().asText())).generate()).append("'))"));
 		}
 		return requestBody.toString();
 	}
@@ -258,14 +231,10 @@ public class WireMockToDslConverter {
 		String responseBody = "";
 		JsonNode responseBodyNode = wireMockStub.at(RESPONSE_BODY_POINTER);
 		if (responseBodyNode.isInt()) {
-			responseBody += "body( "
-					+ escapeJava(buildPrettyPrintResponseBody((IntNode) responseBodyNode))
-					+ ")\n";
+			responseBody += "body( " + escapeJava(buildPrettyPrintResponseBody((IntNode) responseBodyNode)) + ")\n";
 		}
 		if (responseBodyNode.isTextual()) {
-			responseBody += "body( \""
-					+ escapeJava(
-							buildPrettyPrintResponseBody((TextNode) responseBodyNode))
+			responseBody += "body( \"" + escapeJava(buildPrettyPrintResponseBody((TextNode) responseBodyNode))
 					+ "\")\n";
 		}
 		return responseBody;
@@ -278,8 +247,7 @@ public class WireMockToDslConverter {
 	private String buildPrettyPrintResponseBody(TextNode node) {
 		try {
 			String textNode = node.asText();
-			Object intermediateObjectForPrettyPrinting = OBJECT_MAPPER.reader()
-					.readValue(textNode, Object.class);
+			Object intermediateObjectForPrettyPrinting = OBJECT_MAPPER.reader().readValue(textNode, Object.class);
 			DefaultIndenter customIndenter = new DefaultIndenter("    ", "\n");
 			return OBJECT_MAPPER
 					.writer(new PrivatePrettyPrinter().withArrayIndenter(customIndenter)
@@ -287,8 +255,7 @@ public class WireMockToDslConverter {
 					.writeValueAsString(intermediateObjectForPrettyPrinting);
 		}
 		catch (IOException e) {
-			throw new RuntimeException(
-					"WireMock response body could not be pretty printed");
+			throw new RuntimeException("WireMock response body could not be pretty printed");
 		}
 	}
 
@@ -299,11 +266,9 @@ public class WireMockToDslConverter {
 		if (requestHeadersNode.isObject()) {
 			responseHeadersBuilder.append("headers {\n");
 			ObjectNode responseHeadersObjectNode = requestHeadersNode.deepCopy();
-			Iterator<Map.Entry<String, JsonNode>> fields = responseHeadersObjectNode
-					.fields();
-			fields.forEachRemaining(c -> responseHeadersBuilder.append("header('")
-					.append(c.getKey()).append("',").append("'")
-					.append(c.getValue().asText()).append("')\n"));
+			Iterator<Map.Entry<String, JsonNode>> fields = responseHeadersObjectNode.fields();
+			fields.forEachRemaining(c -> responseHeadersBuilder.append("header('").append(c.getKey()).append("',")
+					.append("'").append(c.getValue().asText()).append("')\n"));
 			responseHeadersBuilder.append("}");
 		}
 		return responseHeadersBuilder.toString();
@@ -319,8 +284,7 @@ public class WireMockToDslConverter {
 		@Override
 		public DefaultPrettyPrinter withSeparators(Separators separators) {
 			_separators = separators;
-			_objectFieldValueSeparatorWithSpaces = separators
-					.getObjectFieldValueSeparator() + " ";
+			_objectFieldValueSeparatorWithSpaces = separators.getObjectFieldValueSeparator() + " ";
 			return this;
 		}
 

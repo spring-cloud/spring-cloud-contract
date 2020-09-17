@@ -62,12 +62,10 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 	public void matchesRequest() throws Exception {
 		FileSystemUtils.deleteRecursively(new File("target/snippets/stubs/posted.json"));
 		this.mockMvc
-				.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
-						.contentType(MediaType.TEXT_PLAIN))
+				.perform(MockMvcRequestBuilders.post("/resource").content("greeting").contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
-				.andDo(WireMockRestDocs.verify()
-						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
-								.withRequestBody(WireMock.matching("greeting.*"))))
+				.andDo(WireMockRestDocs.verify().wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
+						.withRequestBody(WireMock.matching("greeting.*"))))
 				.andDo(document("posted"));
 		assertThat(new File("target/snippets/stubs/posted.json")).exists();
 	}
@@ -77,12 +75,10 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 		this.expected.expect(AssertionError.class);
 		this.expected.expectMessage("wiremock did not match");
 		this.mockMvc
-				.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
-						.contentType(MediaType.TEXT_PLAIN))
+				.perform(MockMvcRequestBuilders.post("/resource").content("greeting").contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
-				.andDo(WireMockRestDocs.verify()
-						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
-								.withRequestBody(WireMock.matching("garbage.*"))))
+				.andDo(WireMockRestDocs.verify().wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
+						.withRequestBody(WireMock.matching("garbage.*"))))
 				.andDo(document("posted"));
 	}
 

@@ -39,8 +39,8 @@ import org.springframework.context.annotation.Configuration;
 class Issue178ListenerConfiguration {
 
 	@Bean
-	SimpleMessageListenerContainer messageListenerContainer(
-			ConnectionFactory connectionFactory, RabbitTemplate rabbitTemplate) {
+	SimpleMessageListenerContainer messageListenerContainer(ConnectionFactory connectionFactory,
+			RabbitTemplate rabbitTemplate) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
 		container.addQueueNames("rated-item-service.rated-item-event.exchange");
@@ -54,12 +54,10 @@ class Issue178ListenerConfiguration {
 			public void onMessage(Message message) {
 				System.out.println("received: " + message);
 				try {
-					String payload = new ObjectMapper().writeValueAsString(new MyPojo(
-							"992e46d8-ab05-4a26-a740-6ef7b0daeab3", "CREATED"));
-					Message outputMessage = MessageBuilder.withBody(payload.getBytes())
-							.build();
-					rabbitTemplate.send(issue178OutputExchange().getName(), "routingkey",
-							outputMessage);
+					String payload = new ObjectMapper()
+							.writeValueAsString(new MyPojo("992e46d8-ab05-4a26-a740-6ef7b0daeab3", "CREATED"));
+					Message outputMessage = MessageBuilder.withBody(payload.getBytes()).build();
+					rabbitTemplate.send(issue178OutputExchange().getName(), "routingkey", outputMessage);
 				}
 				catch (JsonProcessingException e) {
 					throw new RuntimeException(e);

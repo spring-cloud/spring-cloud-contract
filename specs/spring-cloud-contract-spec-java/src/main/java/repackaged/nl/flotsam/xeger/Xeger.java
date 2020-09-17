@@ -63,10 +63,8 @@ public class Xeger {
 				.replace("\\s", "[ \t\r\n]"); // Used s="White"Space
 		this.automaton = new RegExp(pattern).toAutomaton();
 		this.random = random;
-		String generatedCharsSysProp = System
-				.getProperty("springCloudContractGeneratedCharsFromRegex");
-		String generatedCharsEnvVar = System
-				.getenv("SPRING_CLOUD_CONTRACT_GENERATED_CHARS_FROM_REGEX");
+		String generatedCharsSysProp = System.getProperty("springCloudContractGeneratedCharsFromRegex");
+		String generatedCharsEnvVar = System.getenv("SPRING_CLOUD_CONTRACT_GENERATED_CHARS_FROM_REGEX");
 		if (StringUtils.isNotEmpty(generatedCharsSysProp)) {
 			ITERATION_LIMIT = Integer.parseInt(generatedCharsSysProp);
 		}
@@ -130,8 +128,7 @@ public class Xeger {
 	}
 
 	private void appendChoice(StringBuilder builder, Transition transition) {
-		char c = (char) Xeger.getRandomInt(transition.getMin(), transition.getMax(),
-				this.random);
+		char c = (char) Xeger.getRandomInt(transition.getMin(), transition.getMax(), this.random);
 		builder.append(c);
 	}
 

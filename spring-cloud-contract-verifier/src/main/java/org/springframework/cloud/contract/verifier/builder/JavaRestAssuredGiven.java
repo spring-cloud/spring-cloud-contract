@@ -23,16 +23,15 @@ class JavaRestAssuredGiven extends RestAssuredGiven {
 
 	private final GeneratedClassMetaData metaData;
 
-	JavaRestAssuredGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JavaRestAssuredGiven(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, RestAssuredBodyParser.INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return super.accept(singleContractMetadata) && this.metaData.configProperties
-				.getTestFramework() != TestFramework.SPOCK;
+		return super.accept(singleContractMetadata)
+				&& this.metaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }

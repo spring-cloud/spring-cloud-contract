@@ -23,16 +23,15 @@ class SpockJaxRsWhen extends JaxRsWhen {
 
 	private final GeneratedClassMetaData metaData;
 
-	SpockJaxRsWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	SpockJaxRsWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, SpockJaxRsBodyParser.INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return super.accept(singleContractMetadata) && this.metaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK;
+		return super.accept(singleContractMetadata)
+				&& this.metaData.configProperties.getTestFramework() == TestFramework.SPOCK;
 	}
 
 }

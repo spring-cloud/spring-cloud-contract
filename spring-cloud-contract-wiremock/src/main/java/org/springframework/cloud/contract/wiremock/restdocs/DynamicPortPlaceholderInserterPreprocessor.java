@@ -34,8 +34,7 @@ class DynamicPortPlaceholderInserterPreprocessor implements OperationPreprocesso
 	public OperationResponse preprocess(OperationResponse response) {
 		String content = response.getContentAsString();
 		if (content.contains("localhost:8080")) {
-			content = content.replace("localhost:8080",
-					"localhost:{{request.requestLine.port}}");
+			content = content.replace("localhost:8080", "localhost:{{request.requestLine.port}}");
 			response = this.responseFactory.createFrom(response, content.getBytes());
 		}
 		return response;

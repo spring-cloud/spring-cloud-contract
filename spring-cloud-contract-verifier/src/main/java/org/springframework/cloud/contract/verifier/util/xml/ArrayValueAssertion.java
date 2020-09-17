@@ -29,17 +29,14 @@ class ArrayValueAssertion extends FieldAssertion implements XmlArrayVerifiable {
 	ArrayValueAssertion(XmlCachedObjects cachedObjects, LinkedList<String> xPathBuffer,
 			LinkedList<String> specialCaseXPathBuffer, Object arrayName,
 			XmlAsserterConfiguration xmlAsserterConfiguration) {
-		super(cachedObjects, xPathBuffer, specialCaseXPathBuffer, arrayName,
-				xmlAsserterConfiguration);
+		super(cachedObjects, xPathBuffer, specialCaseXPathBuffer, arrayName, xmlAsserterConfiguration);
 		this.checkingPrimitiveType = true;
 	}
 
-	private ArrayValueAssertion(XmlCachedObjects cachedObjects,
-			LinkedList<String> xPathBuffer, LinkedList<String> specialCaseXPathBuffer,
-			Object arrayName, XmlAsserterConfiguration xmlAsserterConfiguration,
-			boolean checkingPrimitiveType) {
-		super(cachedObjects, xPathBuffer, specialCaseXPathBuffer, arrayName,
-				xmlAsserterConfiguration);
+	private ArrayValueAssertion(XmlCachedObjects cachedObjects, LinkedList<String> xPathBuffer,
+			LinkedList<String> specialCaseXPathBuffer, Object arrayName,
+			XmlAsserterConfiguration xmlAsserterConfiguration, boolean checkingPrimitiveType) {
+		super(cachedObjects, xPathBuffer, specialCaseXPathBuffer, arrayName, xmlAsserterConfiguration);
 		this.checkingPrimitiveType = checkingPrimitiveType;
 	}
 
@@ -50,30 +47,27 @@ class ArrayValueAssertion extends FieldAssertion implements XmlArrayVerifiable {
 
 	@Override
 	public XmlArrayVerifiable contains(String value) {
-		return new ArrayValueAssertion(this.cachedObjects, this.xPathBuffer,
-				this.specialCaseXPathBuffer, value, this.xmlAsserterConfiguration, false);
+		return new ArrayValueAssertion(this.cachedObjects, this.xPathBuffer, this.specialCaseXPathBuffer, value,
+				this.xmlAsserterConfiguration, false);
 	}
 
 	@Override
 	public XmlArrayVerifiable hasSize(int size) {
 		String xPath = "count(" + createXPathString() + ")";
-		ArrayValueAssertion verifiable = new ArrayValueAssertion(this,
-				this.checkingPrimitiveType);
+		ArrayValueAssertion verifiable = new ArrayValueAssertion(this, this.checkingPrimitiveType);
 		verifiable.specialCaseXPathBuffer.clear();
 		verifiable.specialCaseXPathBuffer.add(xPath);
 		String xPathString = verifiable.createSpecialCaseXPathString();
 		ResultSequence sequence = verifiable.resultSequence(xPathString);
 		Iterator<Item> iterator = sequence.iterator();
 		if (!iterator.hasNext()) {
-			throw new IllegalStateException(
-					"Parsed XML [" + this.cachedObjects.xmlAsString
-							+ "] doesn't match the XPath <" + xPathString + ">");
+			throw new IllegalStateException("Parsed XML [" + this.cachedObjects.xmlAsString
+					+ "] doesn't match the XPath <" + xPathString + ">");
 		}
 		int retrievedSize = Integer.valueOf(iterator.next().getStringValue());
 		if (retrievedSize != size) {
-			throw new IllegalStateException("Parsed XML ["
-					+ this.cachedObjects.xmlAsString + "] has size [" + retrievedSize
-					+ "] and not [" + size + "] for XPath <" + xPathString + "> ");
+			throw new IllegalStateException("Parsed XML [" + this.cachedObjects.xmlAsString + "] has size ["
+					+ retrievedSize + "] and not [" + size + "] for XPath <" + xPathString + "> ");
 		}
 		return verifiable;
 	}
@@ -112,8 +106,8 @@ class ArrayValueAssertion extends FieldAssertion implements XmlArrayVerifiable {
 	}
 
 	private XmlVerifiable equalityOnAPrimitive(String xPath) {
-		ReadyToCheckAsserter readyToCheck = new ReadyToCheckAsserter(this.cachedObjects,
-				this.xPathBuffer, this.fieldName, this.xmlAsserterConfiguration);
+		ReadyToCheckAsserter readyToCheck = new ReadyToCheckAsserter(this.cachedObjects, this.xPathBuffer,
+				this.fieldName, this.xmlAsserterConfiguration);
 		readyToCheck.xPathBuffer.removeLast();
 		readyToCheck.xPathBuffer.offer(xPath);
 		readyToCheck.checkBufferedXPathString();
@@ -125,8 +119,7 @@ class ArrayValueAssertion extends FieldAssertion implements XmlArrayVerifiable {
 		if (!this.checkingPrimitiveType) {
 			return super.matches(value);
 		}
-		return equalityOnAPrimitive(
-				"[matches(text(), " + escapeText(escapeRegex(value)) + ")]");
+		return equalityOnAPrimitive("[matches(text(), " + escapeText(escapeRegex(value)) + ")]");
 	}
 
 	@Override

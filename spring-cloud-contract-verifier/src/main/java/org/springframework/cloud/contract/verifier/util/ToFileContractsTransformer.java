@@ -42,8 +42,7 @@ import static org.springframework.cloud.contract.verifier.util.ContractScanner.c
  */
 public final class ToFileContractsTransformer {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(ToFileContractsTransformer.class);
+	private static final Logger log = LoggerFactory.getLogger(ToFileContractsTransformer.class);
 
 	/**
 	 * Dumps contracts as files for the given {@link ContractConverter}.
@@ -58,8 +57,7 @@ public final class ToFileContractsTransformer {
 		if (args.length == 0) {
 			throw new IllegalStateException(exceptionMessage());
 		}
-		log.warn(
-				"You're using an incubating feature. Note, that it can be changed / removed in the future");
+		log.warn("You're using an incubating feature. Note, that it can be changed / removed in the future");
 		String fqn = args[0];
 		String outputPath = args.length >= 2 ? args[1] : "target/converted-contracts";
 		String path = args.length >= 3 ? args[2] : "src/test/resources/contracts";
@@ -84,8 +82,7 @@ public final class ToFileContractsTransformer {
 			Collection<Contract> contracts = collectContractDescriptors(new File(path));
 			log.info("Found [{}] contract definition", contracts.size());
 			Class<?> name = Class.forName(fqn);
-			ContractConverter<Collection> contractConverter = (ContractConverter) name
-					.newInstance();
+			ContractConverter<Collection> contractConverter = (ContractConverter) name.newInstance();
 			Collection converted = contractConverter.convertTo(contracts);
 			log.info("Successfully converted contracts definitions");
 			Map<String, byte[]> stored = contractConverter.store(converted);
@@ -98,8 +95,7 @@ public final class ToFileContractsTransformer {
 			for (Map.Entry<String, byte[]> entry : entries) {
 				File outputFile = new File(outputFolder, entry.getKey());
 				Files.write(outputFile.toPath(), entry.getValue());
-				log.info("[{}/{}] Successfully stored [{}]", i, entries.size(),
-						outputFile.getName());
+				log.info("[{}/{}] Successfully stored [{}]", i, entries.size(), outputFile.getName());
 				files.add(outputFile);
 			}
 			return files;

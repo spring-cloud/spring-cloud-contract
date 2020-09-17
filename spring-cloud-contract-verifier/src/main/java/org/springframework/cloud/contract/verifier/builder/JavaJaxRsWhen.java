@@ -23,16 +23,15 @@ class JavaJaxRsWhen extends JaxRsWhen {
 
 	private final GeneratedClassMetaData metaData;
 
-	JavaJaxRsWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JavaJaxRsWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, JaxRsBodyParser.INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return super.accept(singleContractMetadata) && this.metaData.configProperties
-				.getTestFramework() != TestFramework.SPOCK;
+		return super.accept(singleContractMetadata)
+				&& this.metaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }

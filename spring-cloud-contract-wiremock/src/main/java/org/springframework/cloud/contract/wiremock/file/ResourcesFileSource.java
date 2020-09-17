@@ -67,9 +67,7 @@ public class ResourcesFileSource implements FileSource {
 				sources[i] = fileOrFallbackToClasspath(resource);
 			}
 			else {
-				throw new IllegalArgumentException(
-						"Unsupported resource type for file source: "
-								+ resource.getClass());
+				throw new IllegalArgumentException("Unsupported resource type for file source: " + resource.getClass());
 			}
 		}
 		return sources;
@@ -148,8 +146,7 @@ public class ResourcesFileSource implements FileSource {
 		List<FileSource> childSources = new ArrayList<>();
 		for (FileSource resource : this.sources) {
 			try {
-				UrlResource uri = new UrlResource(
-						resource.child(subDirectoryName).getUri());
+				UrlResource uri = new UrlResource(resource.child(subDirectoryName).getUri());
 				if (uri.createRelative(subDirectoryName).exists()) {
 					childSources.add(resource.child(subDirectoryName));
 				}

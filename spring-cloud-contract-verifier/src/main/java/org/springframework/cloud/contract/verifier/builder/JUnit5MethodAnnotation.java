@@ -29,23 +29,20 @@ class JUnit5MethodAnnotation implements MethodAnnotations {
 
 	private static final String[] ANNOTATIONS = { "@Test" };
 
-	JUnit5MethodAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit5MethodAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
+	public MethodVisitor<MethodAnnotations> apply(SingleContractMetadata singleContractMetadata) {
 		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
 		return this;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT5;
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT5;
 	}
 
 }

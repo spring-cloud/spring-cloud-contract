@@ -50,8 +50,7 @@ public class StubConfiguration {
 		this.classifier = DEFAULT_CLASSIFIER;
 	}
 
-	public StubConfiguration(String groupId, String artifactId, String version,
-			String classifier) {
+	public StubConfiguration(String groupId, String artifactId, String version, String classifier) {
 		this.groupId = groupId;
 		this.artifactId = artifactId;
 		this.version = version;
@@ -59,8 +58,7 @@ public class StubConfiguration {
 	}
 
 	public StubConfiguration(String stubPath, String defaultClassifier) {
-		String[] parsedPath = parsedPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER,
-				defaultClassifier);
+		String[] parsedPath = parsedPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER, defaultClassifier);
 		this.groupId = parsedPath[0];
 		this.artifactId = parsedPath[1];
 		this.version = parsedPath[2];
@@ -68,16 +66,14 @@ public class StubConfiguration {
 	}
 
 	public StubConfiguration(String stubPath) {
-		String[] parsedPath = parsedPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER,
-				DEFAULT_CLASSIFIER);
+		String[] parsedPath = parsedPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER, DEFAULT_CLASSIFIER);
 		this.groupId = parsedPath[0];
 		this.artifactId = parsedPath[1];
 		this.version = parsedPath[2];
 		this.classifier = parsedPath[3];
 	}
 
-	private String[] parsedPathEmptyByDefault(String path, String delimiter,
-			String defaultClassifier) {
+	private String[] parsedPathEmptyByDefault(String path, String delimiter, String defaultClassifier) {
 		String[] splitPath = path.split(delimiter, -1);
 		String stubsGroupId = "";
 		String stubsArtifactId = "";
@@ -89,8 +85,7 @@ public class StubConfiguration {
 			stubsVersion = splitPath.length >= 3 ? splitPath[2] : DEFAULT_VERSION;
 			stubsClassifier = splitPath.length >= 4 ? splitPath[3] : defaultClassifier;
 		}
-		return new String[] { stubsGroupId, stubsArtifactId, stubsVersion,
-				stubsClassifier };
+		return new String[] { stubsGroupId, stubsArtifactId, stubsVersion, stubsClassifier };
 	}
 
 	private boolean isDefined() {
@@ -105,10 +100,8 @@ public class StubConfiguration {
 		if (!isDefined()) {
 			return "";
 		}
-		return StringUtils.arrayToDelimitedString(
-				new String[] { nullCheck(this.groupId), nullCheck(this.artifactId),
-						nullCheck(this.version), nullCheck(this.classifier) },
-				STUB_COLON_DELIMITER);
+		return StringUtils.arrayToDelimitedString(new String[] { nullCheck(this.groupId), nullCheck(this.artifactId),
+				nullCheck(this.version), nullCheck(this.classifier) }, STUB_COLON_DELIMITER);
 	}
 
 	private String nullCheck(String value) {
@@ -135,8 +128,7 @@ public class StubConfiguration {
 	 * @return {@code true} for a snapshot or a LATEST (+) version.
 	 */
 	public boolean isVersionChanging() {
-		return DEFAULT_VERSION.equals(this.version)
-				|| this.version.toLowerCase().contains("snapshot");
+		return DEFAULT_VERSION.equals(this.version) || this.version.toLowerCase().contains("snapshot");
 	}
 
 	public String getGroupId() {
@@ -159,8 +151,7 @@ public class StubConfiguration {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((this.artifactId == null) ? 0 : this.artifactId.hashCode());
+		result = prime * result + ((this.artifactId == null) ? 0 : this.artifactId.hashCode());
 		result = prime * result + ((this.groupId == null) ? 0 : this.groupId.hashCode());
 		return result;
 	}
@@ -201,16 +192,13 @@ public class StubConfiguration {
 		if (strings.length == 1) {
 			return this.artifactId.equals(ivyNotationAsString);
 		}
-		if (strings.length >= 2 && !(this.groupId.equals(strings[0])
-				&& this.artifactId.equals(strings[1]))) {
+		if (strings.length >= 2 && !(this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1]))) {
 			return false;
 		}
-		if (strings.length >= 3 && !(this.version.equals(strings[2])
-				|| DEFAULT_VERSION.equals(strings[2]))) {
+		if (strings.length >= 3 && !(this.version.equals(strings[2]) || DEFAULT_VERSION.equals(strings[2]))) {
 			return false;
 		}
-		if (strings.length == 4 && !(this.classifier.equals(strings[3])
-				|| DEFAULT_CLASSIFIER.equals(strings[3]))) {
+		if (strings.length == 4 && !(this.classifier.equals(strings[3]) || DEFAULT_CLASSIFIER.equals(strings[3]))) {
 			return false;
 		}
 		return true;

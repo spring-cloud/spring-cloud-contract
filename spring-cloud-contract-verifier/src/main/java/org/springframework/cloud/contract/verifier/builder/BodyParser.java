@@ -68,15 +68,13 @@ interface BodyParser extends BodyThen {
 	default Object convertResponseBody(SingleContractMetadata metadata) {
 		ContentType contentType = metadata.getOutputTestContentType();
 		DslProperty body = responseBody(metadata);
-		Object responseBody = extractServerValueFromBody(contentType,
-				body.getServerValue());
+		Object responseBody = extractServerValueFromBody(contentType, body.getServerValue());
 		if (responseBody instanceof FromFileProperty) {
 			responseBody = ((FromFileProperty) responseBody).asString();
 		}
 		else if (responseBody instanceof GString) {
 			responseBody = extractValue((GString) responseBody, contentType,
-					o -> o instanceof DslProperty ? ((DslProperty) o).getServerValue()
-							: o);
+					o -> o instanceof DslProperty ? ((DslProperty) o).getServerValue() : o);
 		}
 		else if (responseBody instanceof DslProperty) {
 			responseBody = MapConverter.getTestSideValues(responseBody);
@@ -96,15 +94,14 @@ interface BodyParser extends BodyThen {
 				// [a:3, b:4] == "a=3&b=4"
 				return ((Map) bodyValue).entrySet().stream().map(o -> {
 					Map.Entry entry = (Map.Entry) o;
-					return convertUnicodeEscapesIfRequired(entry.getKey().toString() + "="
-							+ MapConverter.getTestSideValuesForText(entry.getValue()));
+					return convertUnicodeEscapesIfRequired(
+							entry.getKey().toString() + "=" + MapConverter.getTestSideValuesForText(entry.getValue()));
 				}).collect(Collectors.joining("&")).toString();
 			}
 			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
 				return ((List) bodyValue).stream()
-						.map(o -> convertUnicodeEscapesIfRequired(
-								MapConverter.getTestSideValuesForText(o).toString()))
+						.map(o -> convertUnicodeEscapesIfRequired(MapConverter.getTestSideValuesForText(o).toString()))
 						.collect(Collectors.joining("&")).toString();
 			}
 		}
@@ -120,16 +117,14 @@ interface BodyParser extends BodyThen {
 	 */
 	default Object extractServerValueFromBody(ContentType contentType, Object bodyValue) {
 		if (bodyValue instanceof GString) {
-			return extractValue((GString) bodyValue, contentType,
-					ContentUtils.GET_TEST_SIDE);
+			return extractValue((GString) bodyValue, contentType, ContentUtils.GET_TEST_SIDE);
 		}
 		else if (bodyValue instanceof FromFileProperty) {
 			return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE);
 		}
 		else if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
 			boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
-			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
-					: MapConverter.JSON_PARSING_CLOSURE;
+			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE;
 			return MapConverter.getTestSideValues(bodyValue, parsingClosure);
 		}
 		return bodyValue;

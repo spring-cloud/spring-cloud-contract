@@ -37,13 +37,11 @@ interface BodyMethodGeneration {
 		return SerializationUtils.deserialize(serializedObject);
 	}
 
-	default void addColonIfRequired(Optional<String> lineSuffix,
-			BlockBuilder blockBuilder) {
+	default void addColonIfRequired(Optional<String> lineSuffix, BlockBuilder blockBuilder) {
 		lineSuffix.ifPresent(s -> blockBuilder.addAtTheEnd(lineSuffix.get()));
 	}
 
-	default void addBodyMatchingBlock(List<BodyMatcher> matchers,
-			BlockBuilder blockBuilder, Object responseBody,
+	default void addBodyMatchingBlock(List<BodyMatcher> matchers, BlockBuilder blockBuilder, Object responseBody,
 			boolean shouldCommentOutBDDBlocks) {
 		blockBuilder.endBlock();
 		blockBuilder.addLine(getAssertionJoiner(shouldCommentOutBDDBlocks));
@@ -52,8 +50,7 @@ interface BodyMethodGeneration {
 			if (it.matchingType() == MatchingType.NULL) {
 				methodForNullCheck(it, blockBuilder);
 			}
-			else if (MatchingType.regexRelated(it.matchingType())
-					|| it.matchingType() == MatchingType.EQUALITY) {
+			else if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {
 				methodForEqualityCheck(it, blockBuilder, responseBody);
 			}
 			else if (it.matchingType() == MatchingType.COMMAND) {

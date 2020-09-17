@@ -43,8 +43,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 class ResourceResolvingStubDownloader implements StubDownloader {
 
-	private static final Log log = LogFactory
-			.getLog(ResourceResolvingStubDownloader.class);
+	private static final Log log = LogFactory.getLog(ResourceResolvingStubDownloader.class);
 
 	private final StubRunnerOptions stubRunnerOptions;
 
@@ -64,8 +63,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 	}
 
 	@Override
-	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubConfiguration config) {
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration config) {
 		registerShutdownHook();
 		List<RepoRoot> repoRoots = repoRootFunction.apply(stubRunnerOptions, config);
 		List<String> paths = toPaths(repoRoots);
@@ -74,8 +72,8 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 			log.debug("For paths " + paths + " found following resources " + resources);
 		}
 		if (resources.isEmpty() && this.stubRunnerOptions.isFailOnNoStubs()) {
-			throw new IllegalStateException("No stubs were found on classpath for ["
-					+ config.getGroupId() + ":" + config.getArtifactId() + "]");
+			throw new IllegalStateException("No stubs were found on classpath for [" + config.getGroupId() + ":"
+					+ config.getArtifactId() + "]");
 		}
 		final File tmp = TemporaryFileStorage.createTempDir("classpath-stubs");
 		if (stubRunnerOptions.isDeleteStubsAfterTest()) {
@@ -84,8 +82,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 		boolean atLeastOneFound = false;
 		for (Resource resource : resources) {
 			try {
-				String relativePath = relativePathPicker(resource,
-						this.gavPattern.apply(config));
+				String relativePath = relativePathPicker(resource, this.gavPattern.apply(config));
 				if (log.isDebugEnabled()) {
 					log.debug("Relative path for resource is [" + relativePath + "]");
 				}
@@ -105,31 +102,25 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 			log.warn("Didn't find any matching stubs");
 			return null;
 		}
-		log.info("Unpacked files for [" + config.getGroupId() + ":"
-				+ config.getArtifactId() + ":" + config.getVersion() + "] to folder ["
-				+ tmp + "]");
-		return new AbstractMap.SimpleEntry<>(new StubConfiguration(config.getGroupId(),
-				config.getArtifactId(), config.getVersion(), config.getClassifier()),
-				tmp);
+		log.info("Unpacked files for [" + config.getGroupId() + ":" + config.getArtifactId() + ":" + config.getVersion()
+				+ "] to folder [" + tmp + "]");
+		return new AbstractMap.SimpleEntry<>(new StubConfiguration(config.getGroupId(), config.getArtifactId(),
+				config.getVersion(), config.getClassifier()), tmp);
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> TemporaryFileStorage
-				.cleanup(stubRunnerOptions.isDeleteStubsAfterTest())));
+		Runtime.getRuntime().addShutdownHook(
+				new Thread(() -> TemporaryFileStorage.cleanup(stubRunnerOptions.isDeleteStubsAfterTest())));
 	}
 
-	private void copyTheFoundFiles(File tmp, Resource resource, String relativePath)
-			throws IOException {
+	private void copyTheFoundFiles(File tmp, Resource resource, String relativePath) throws IOException {
 		// the relative path is OS agnostic and contains / only
 		int lastIndexOf = relativePath.lastIndexOf("/");
-		String relativePathWithoutFile = lastIndexOf > -1
-				? relativePath.substring(0, lastIndexOf) : relativePath;
+		String relativePathWithoutFile = lastIndexOf > -1 ? relativePath.substring(0, lastIndexOf) : relativePath;
 		if (log.isDebugEnabled()) {
-			log.debug("Relative path without file name is [" + relativePathWithoutFile
-					+ "]");
+			log.debug("Relative path without file name is [" + relativePathWithoutFile + "]");
 		}
-		Path directory = Files
-				.createDirectories(new File(tmp, relativePathWithoutFile).toPath());
+		Path directory = Files.createDirectories(new File(tmp, relativePathWithoutFile).toPath());
 		File newFile = new File(directory.toFile(), resource.getFilename());
 		if (!newFile.exists() && !isDirectory(resource)) {
 			try (InputStream stream = resource.getInputStream()) {
@@ -148,20 +139,15 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 		}
 		catch (Exception e) {
 			if (log.isTraceEnabled()) {
-				log.trace(
-						"Exception occurred while trying to convert path to file for resource ["
-								+ resource + "]",
-						e);
+				log.trace("Exception occurred while trying to convert path to file for resource [" + resource + "]", e);
 			}
 			return false;
 		}
 	}
 
-	String relativePathPicker(Resource resource, Pattern groupAndArtifactPattern)
-			throws IOException {
+	String relativePathPicker(Resource resource, Pattern groupAndArtifactPattern) throws IOException {
 		Matcher groupAndArtifactMatcher = matcher(resource, groupAndArtifactPattern);
-		if (groupAndArtifactMatcher.matches()
-				&& groupAndArtifactMatcher.groupCount() > 2) {
+		if (groupAndArtifactMatcher.matches() && groupAndArtifactMatcher.groupCount() > 2) {
 			MatchResult groupAndArtifactResult = groupAndArtifactMatcher.toMatchResult();
 			return groupAndArtifactResult.group(2) + groupAndArtifactResult.group(3);
 		}
@@ -173,8 +159,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 		}
 	}
 
-	private Matcher matcher(Resource resource, Pattern groupAndArtifactPattern)
-			throws IOException {
+	private Matcher matcher(Resource resource, Pattern groupAndArtifactPattern) throws IOException {
 		try {
 			String path = resource.getURI().getPath();
 			return groupAndArtifactPattern.matcher(path);
@@ -201,8 +186,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 				resources.addAll(list);
 			}
 			catch (IOException e) {
-				log.error("Exception occurred while trying to fetch resources from ["
-						+ path + "]");
+				log.error("Exception occurred while trying to fetch resources from [" + path + "]");
 				throw new IllegalStateException(e);
 			}
 		}

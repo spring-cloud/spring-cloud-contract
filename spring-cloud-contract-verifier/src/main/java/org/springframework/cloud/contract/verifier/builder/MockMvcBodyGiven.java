@@ -30,8 +30,7 @@ class MockMvcBodyGiven implements Given {
 
 	private final BodyParser bodyParser;
 
-	MockMvcBodyGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
+	MockMvcBodyGiven(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyReader = new BodyReader(generatedClassMetaData);
 		this.bodyParser = bodyParser;
@@ -47,8 +46,7 @@ class MockMvcBodyGiven implements Given {
 		Object body;
 		Request request = metadata.getContract().getRequest();
 		Object serverValue = request.getBody().getServerValue();
-		if (serverValue instanceof ExecutionProperty
-				|| serverValue instanceof FromFileProperty) {
+		if (serverValue instanceof ExecutionProperty || serverValue instanceof FromFileProperty) {
 			body = request.getBody().getServerValue();
 		}
 		else {
@@ -65,10 +63,8 @@ class MockMvcBodyGiven implements Given {
 		else if (body instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) body;
 			value = fileProperty.isByte()
-					? this.bodyReader.readBytesFromFileString(metadata, fileProperty,
-							CommunicationType.REQUEST)
-					: this.bodyReader.readStringFromFileString(metadata, fileProperty,
-							CommunicationType.REQUEST);
+					? this.bodyReader.readBytesFromFileString(metadata, fileProperty, CommunicationType.REQUEST)
+					: this.bodyReader.readStringFromFileString(metadata, fileProperty, CommunicationType.REQUEST);
 		}
 		else {
 			String escaped = escapeRequestSpecialChars(metadata, body.toString());
@@ -77,8 +73,7 @@ class MockMvcBodyGiven implements Given {
 		return ".body(" + value + ")";
 	}
 
-	private String escapeRequestSpecialChars(SingleContractMetadata metadata,
-			String string) {
+	private String escapeRequestSpecialChars(SingleContractMetadata metadata, String string) {
 		if (metadata.getInputTestContentType() == ContentType.JSON) {
 			return string.replaceAll("\\\\n", "\\\\\\\\n");
 		}

@@ -73,12 +73,10 @@ public final class ValidateUtils {
 		throw new IllegalStateException(msg + " can\'t be a pattern for the server side");
 	}
 
-	public static void validateServerValue(MatchingStrategy matchingStrategy,
-			String msg) {
+	public static void validateServerValue(MatchingStrategy matchingStrategy, String msg) {
 		if (!ALLOWED_MATCHING_TYPES_ON_SERVER_SIDE.contains(matchingStrategy.getType())) {
 			throw new IllegalStateException(msg + " can\'t be of a matching type: "
-					+ String.valueOf(matchingStrategy.getType())
-					+ " for the server side");
+					+ String.valueOf(matchingStrategy.getType()) + " for the server side");
 		}
 
 		validateServerValue(matchingStrategy.getServerValue(), msg);

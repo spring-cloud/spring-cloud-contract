@@ -38,7 +38,6 @@ public interface KafkaStubMessagesInitializer {
 	 * @param kafkaProperties - kafka properties
 	 * @return topic to initialized consumer mapping
 	 */
-	Map<String, Consumer> initialize(EmbeddedKafkaBroker broker,
-			KafkaProperties kafkaProperties);
+	Map<String, Consumer> initialize(EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties);
 
 }

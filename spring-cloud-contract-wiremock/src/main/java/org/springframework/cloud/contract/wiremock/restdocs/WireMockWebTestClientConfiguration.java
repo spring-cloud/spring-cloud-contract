@@ -36,8 +36,7 @@ import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(WebTestClientRestDocumentationConfigurer.class)
-public class WireMockWebTestClientConfiguration
-		implements RestDocsWebTestClientConfigurationCustomizer {
+public class WireMockWebTestClientConfiguration implements RestDocsWebTestClientConfigurationCustomizer {
 
 	private final Environment environment;
 
@@ -47,10 +46,8 @@ public class WireMockWebTestClientConfiguration
 
 	@Override
 	public void customize(WebTestClientRestDocumentationConfigurer configurer) {
-		if (this.environment.getProperty("wiremock.placeholders.enabled", "true")
-				.equals("true")) {
-			configurer.operationPreprocessors().withResponseDefaults(
-					new DynamicPortPlaceholderInserterPreprocessor());
+		if (this.environment.getProperty("wiremock.placeholders.enabled", "true").equals("true")) {
+			configurer.operationPreprocessors().withResponseDefaults(new DynamicPortPlaceholderInserterPreprocessor());
 		}
 		configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
 	}

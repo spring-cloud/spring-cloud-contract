@@ -29,8 +29,7 @@ class MessagingBodyGiven implements Given, MethodVisitor<Given> {
 
 	private final BodyParser bodyParser;
 
-	MessagingBodyGiven(BlockBuilder blockBuilder, BodyReader bodyReader,
-			BodyParser bodyParser) {
+	MessagingBodyGiven(BlockBuilder blockBuilder, BodyReader bodyReader, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.bodyReader = bodyReader;
 		this.bodyParser = bodyParser;
@@ -50,11 +49,9 @@ class MessagingBodyGiven implements Given, MethodVisitor<Given> {
 		if (bodyValue instanceof FromFileProperty) {
 			FromFileProperty fileProperty = (FromFileProperty) bodyValue;
 			String byteText = fileProperty.isByte()
-					? this.bodyReader.readBytesFromFileString(metadata, fileProperty,
-							CommunicationType.REQUEST)
-					: this.bodyParser.quotedLongText(
-							this.bodyReader.readStringFromFileString(metadata,
-									fileProperty, CommunicationType.REQUEST));
+					? this.bodyReader.readBytesFromFileString(metadata, fileProperty, CommunicationType.REQUEST)
+					: this.bodyParser.quotedLongText(this.bodyReader.readStringFromFileString(metadata, fileProperty,
+							CommunicationType.REQUEST));
 			this.blockBuilder.addIndented(byteText);
 		}
 		else {

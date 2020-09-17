@@ -62,8 +62,7 @@ public enum MatchingType {
 	NULL;
 
 	public static boolean regexRelated(MatchingType type) {
-		return !type.equals(EQUALITY) && !type.equals(TYPE) && !type.equals(COMMAND)
-				&& !type.equals(NULL);
+		return !type.equals(EQUALITY) && !type.equals(TYPE) && !type.equals(COMMAND) && !type.equals(NULL);
 	}
 
 }

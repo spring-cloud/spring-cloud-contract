@@ -54,15 +54,13 @@ public final class XmlAssertion {
 		XmlCachedObjects cachedObjects = CACHE.get(xml);
 		if (cachedObjects == null && !empty(xml)) {
 			try {
-				InputStream inputXml = new ByteArrayInputStream(
-						xml.getBytes(StandardCharsets.UTF_8));
+				InputStream inputXml = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 				DOMLoader loader = new XercesLoader();
 				Document document = loader.load(inputXml);
 				cachedObjects = new XmlCachedObjects(document, xml);
 			}
 			catch (Exception e) {
-				throw new IllegalStateException(
-						"Exception occurred while trying to parse the XML", e);
+				throw new IllegalStateException("Exception occurred while trying to parse the XML", e);
 			}
 			CACHE.put(xml, cachedObjects);
 		}
@@ -112,8 +110,8 @@ public final class XmlAssertion {
 	}
 
 	private XmlVerifiable root() {
-		return new FieldAssertion(this.cachedObjects, this.xPathBuffer,
-				this.specialCaseXPathBuffer, "", this.xmlAsserterConfiguration).node("");
+		return new FieldAssertion(this.cachedObjects, this.xPathBuffer, this.specialCaseXPathBuffer, "",
+				this.xmlAsserterConfiguration).node("");
 	}
 
 }

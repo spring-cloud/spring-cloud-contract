@@ -40,24 +40,21 @@ public class TestGeneratorTests {
 		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 		properties.setFailOnInProgress(true);
 		properties.setContractsDslDir(new File("."));
-		SingleTestGenerator singleTestGenerator = BDDMockito
-				.mock(SingleTestGenerator.class);
+		SingleTestGenerator singleTestGenerator = BDDMockito.mock(SingleTestGenerator.class);
 		FileSaver fileSaver = BDDMockito.mock(FileSaver.class);
 		// and:
-		MultiValueMap<Path, ContractMetadata> multimap = CollectionUtils
-				.toMultiValueMap(new LinkedHashMap<>());
+		MultiValueMap<Path, ContractMetadata> multimap = CollectionUtils.toMultiValueMap(new LinkedHashMap<>());
 		Path path = new File(".").toPath();
-		multimap.add(path,
-				new ContractMetadata(path, false, 0, null, Contract.make(it -> {
-					it.inProgress();
-					it.request(r -> {
-						r.method(r.GET());
-						r.url("/foo");
-					});
-					it.response(r -> {
-						r.status(r.OK());
-					});
-				})));
+		multimap.add(path, new ContractMetadata(path, false, 0, null, Contract.make(it -> {
+			it.inProgress();
+			it.request(r -> {
+				r.method(r.GET());
+				r.url("/foo");
+			});
+			it.response(r -> {
+				r.status(r.OK());
+			});
+		})));
 		ContractFileScanner scanner = new ContractFileScanner(null, null, null) {
 			@Override
 			public MultiValueMap<Path, ContractMetadata> findContractsRecursively() {
@@ -65,15 +62,13 @@ public class TestGeneratorTests {
 			}
 		};
 		// and:
-		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator,
-				fileSaver, scanner);
+		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator, fileSaver, scanner);
 
 		// then:
 		BDDAssertions.thenThrownBy(() -> {
 			// when:
 			testGenerator.generateTestClasses("com.example");
-		}).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("In progress contracts found in");
+		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("In progress contracts found in");
 	}
 
 	@Test
@@ -82,24 +77,21 @@ public class TestGeneratorTests {
 		ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 		properties.setFailOnInProgress(false);
 		properties.setContractsDslDir(new File("."));
-		SingleTestGenerator singleTestGenerator = BDDMockito
-				.mock(SingleTestGenerator.class);
+		SingleTestGenerator singleTestGenerator = BDDMockito.mock(SingleTestGenerator.class);
 		FileSaver fileSaver = BDDMockito.mock(FileSaver.class);
 		// and:
-		MultiValueMap<Path, ContractMetadata> multimap = CollectionUtils
-				.toMultiValueMap(new LinkedHashMap<>());
+		MultiValueMap<Path, ContractMetadata> multimap = CollectionUtils.toMultiValueMap(new LinkedHashMap<>());
 		Path path = new File(".").toPath();
-		multimap.add(path,
-				new ContractMetadata(path, false, 0, null, Contract.make(it -> {
-					it.inProgress();
-					it.request(r -> {
-						r.method(r.GET());
-						r.url("/foo");
-					});
-					it.response(r -> {
-						r.status(r.OK());
-					});
-				})));
+		multimap.add(path, new ContractMetadata(path, false, 0, null, Contract.make(it -> {
+			it.inProgress();
+			it.request(r -> {
+				r.method(r.GET());
+				r.url("/foo");
+			});
+			it.response(r -> {
+				r.status(r.OK());
+			});
+		})));
 		ContractFileScanner scanner = new ContractFileScanner(null, null, null) {
 			@Override
 			public MultiValueMap<Path, ContractMetadata> findContractsRecursively() {
@@ -107,11 +99,9 @@ public class TestGeneratorTests {
 			}
 		};
 		// and:
-		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator,
-				fileSaver, scanner) {
+		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator, fileSaver, scanner) {
 			@Override
-			void processAllNotInProgress(MultiValueMap<Path, ContractMetadata> contracts,
-					String basePackageName) {
+			void processAllNotInProgress(MultiValueMap<Path, ContractMetadata> contracts, String basePackageName) {
 			}
 		};
 

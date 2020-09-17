@@ -41,8 +41,7 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 	@RegisterExtension
 	static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE).repoRoot(repoRoot())
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs",
-					"bootService")
+			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService")
 			.messageVerifier(new MyMessageVerifier());
 
 	@BeforeAll
@@ -54,8 +53,7 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 
 	private static String repoRoot() {
 		try {
-			return StubRunnerRuleCustomPortJUnitTest.class
-					.getResource("/m2repo/repository/").toURI().toString();
+			return StubRunnerRuleCustomPortJUnitTest.class.getResource("/m2repo/repository/").toURI().toString();
 		}
 		catch (Exception e) {
 			return "";
@@ -64,20 +62,15 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 
 	@Test
 	void should_use_provided_message_verifier_in_junit5_extension() {
-		IllegalStateException emptyTriggerException = assertThrows(
-				IllegalStateException.class, () -> stubRunnerExtension.trigger());
-		assertThat(emptyTriggerException.getMessage())
-				.contains("Failed to send a message with headers");
-		IllegalStateException wrongLabelException = assertThrows(
-				IllegalStateException.class,
+		IllegalStateException emptyTriggerException = assertThrows(IllegalStateException.class,
+				() -> stubRunnerExtension.trigger());
+		assertThat(emptyTriggerException.getMessage()).contains("Failed to send a message with headers");
+		IllegalStateException wrongLabelException = assertThrows(IllegalStateException.class,
 				() -> stubRunnerExtension.trigger("return_book_1"));
-		assertThat(wrongLabelException.getMessage())
-				.contains("Failed to send a message with headers");
-		IllegalStateException wrongLabelWithIvyNotation = assertThrows(
-				IllegalStateException.class,
+		assertThat(wrongLabelException.getMessage()).contains("Failed to send a message with headers");
+		IllegalStateException wrongLabelWithIvyNotation = assertThrows(IllegalStateException.class,
 				() -> stubRunnerExtension.trigger("bootService", "return_book_1"));
-		assertThat(wrongLabelWithIvyNotation.getMessage())
-				.contains("Failed to send a message with headers");
+		assertThat(wrongLabelWithIvyNotation.getMessage()).contains("Failed to send a message with headers");
 	}
 
 	static class MyMessageVerifier implements MessageVerifier {
@@ -88,8 +81,7 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 		}
 
 		@Override
-		public Object receive(String destination, long timeout, TimeUnit timeUnit,
-				YamlContract contract) {
+		public Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 			throw new IllegalStateException("Failed to receive a message with timeout");
 		}
 
@@ -99,8 +91,7 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 		}
 
 		@Override
-		public void send(Object payload, Map headers, String destination,
-				YamlContract contract) {
+		public void send(Object payload, Map headers, String destination, YamlContract contract) {
 			throw new IllegalStateException("Failed to send a message with headers");
 		}
 

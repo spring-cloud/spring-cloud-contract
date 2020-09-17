@@ -25,8 +25,7 @@ class JUnit5IgnoreImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JUnit5IgnoreImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit5IgnoreImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -39,12 +38,10 @@ class JUnit5IgnoreImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT5
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT5
 				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(metadata -> metadata.isIgnored()
-								|| metadata.getConvertedContractWithMetadata().stream()
-										.anyMatch(SingleContractMetadata::isIgnored));
+						.anyMatch(metadata -> metadata.isIgnored() || metadata.getConvertedContractWithMetadata()
+								.stream().anyMatch(SingleContractMetadata::isIgnored));
 	}
 
 }

@@ -24,8 +24,7 @@ class CustomImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	CustomImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	CustomImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}

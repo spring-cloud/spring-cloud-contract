@@ -32,9 +32,8 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.BDDAssertions.then;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = WiremockTestsApplication.class,
-		properties = { "app.baseUrl=http://localhost:${wiremock.server.port}",
-				"wiremock.reset-mappings-after-each-test=true" },
+@SpringBootTest(classes = WiremockTestsApplication.class, properties = {
+		"app.baseUrl=http://localhost:${wiremock.server.port}", "wiremock.reset-mappings-after-each-test=true" },
 		webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock(port = 0)
 @FixMethodOrder
@@ -48,19 +47,19 @@ public class AutoConfigureWireMockWithResetAfterEachTestApplicationTests {
 
 	@Test
 	public void _01_test() throws Exception {
-		this.wireMockServer.givenThat(WireMock.get("/should_register_mapping")
-				.willReturn(WireMock.aResponse().withBody("bar")));
+		this.wireMockServer
+				.givenThat(WireMock.get("/should_register_mapping").willReturn(WireMock.aResponse().withBody("bar")));
 
-		String result = new RestTemplate().getForObject(
-				"http://" + this.hostname + "/should_register_mapping", String.class);
+		String result = new RestTemplate().getForObject("http://" + this.hostname + "/should_register_mapping",
+				String.class);
 
 		then(result).isEqualTo("bar");
 	}
 
 	@Test
 	public void _02_test() throws Exception {
-		String result = new RestTemplate().getForObject(
-				"http://" + this.hostname + "/should_register_mapping", String.class);
+		String result = new RestTemplate().getForObject("http://" + this.hostname + "/should_register_mapping",
+				String.class);
 
 		// taken from test/resources/mappings/resource-without-content-type.json
 		then(result).isEqualTo("Hello World");
@@ -68,19 +67,18 @@ public class AutoConfigureWireMockWithResetAfterEachTestApplicationTests {
 
 	@Test
 	public void _03_test() throws Exception {
-		WireMock.givenThat(WireMock.get("/should_register_mapping")
-				.willReturn(WireMock.aResponse().withBody("bar")));
+		WireMock.givenThat(WireMock.get("/should_register_mapping").willReturn(WireMock.aResponse().withBody("bar")));
 
-		String result = new RestTemplate().getForObject(
-				"http://" + this.hostname + "/should_register_mapping", String.class);
+		String result = new RestTemplate().getForObject("http://" + this.hostname + "/should_register_mapping",
+				String.class);
 
 		then(result).isEqualTo("bar");
 	}
 
 	@Test
 	public void _04_test() throws Exception {
-		String result = new RestTemplate().getForObject(
-				"http://" + this.hostname + "/should_register_mapping", String.class);
+		String result = new RestTemplate().getForObject("http://" + this.hostname + "/should_register_mapping",
+				String.class);
 
 		// taken from test/resources/mappings/resource-without-content-type.json
 		then(result).isEqualTo("Hello World");

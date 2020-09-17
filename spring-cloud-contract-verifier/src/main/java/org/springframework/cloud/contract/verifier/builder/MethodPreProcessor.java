@@ -21,8 +21,7 @@ import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 interface MethodPreProcessor extends MethodVisitor<MethodPreProcessor> {
 
 	@Override
-	default MethodVisitor<MethodPreProcessor> apply(
-			SingleContractMetadata singleContractMetadata) {
+	default MethodVisitor<MethodPreProcessor> apply(SingleContractMetadata singleContractMetadata) {
 		return this;
 	}
 

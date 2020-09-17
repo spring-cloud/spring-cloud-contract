@@ -26,8 +26,7 @@ import org.apache.commons.lang3.RandomStringUtils;
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
  */
-abstract class PatternValueDslProperty<T extends DslProperty>
-		implements RegexCreatingProperty<T> {
+abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCreatingProperty<T> {
 
 	private final Random random = new Random();
 
@@ -61,14 +60,12 @@ abstract class PatternValueDslProperty<T extends DslProperty>
 
 	@Override
 	public T anyAlphaUnicode() {
-		return createAndValidateProperty(RegexPatterns.ONLY_ALPHA_UNICODE,
-				RandomStringGenerator.randomString(20));
+		return createAndValidateProperty(RegexPatterns.ONLY_ALPHA_UNICODE, RandomStringGenerator.randomString(20));
 	}
 
 	@Override
 	public T anyAlphaNumeric() {
-		return createAndValidateProperty(RegexPatterns.ALPHA_NUMERIC,
-				RandomStringUtils.randomAlphanumeric(20));
+		return createAndValidateProperty(RegexPatterns.ALPHA_NUMERIC, RandomStringUtils.randomAlphanumeric(20));
 	}
 
 	@Override
@@ -83,20 +80,17 @@ abstract class PatternValueDslProperty<T extends DslProperty>
 
 	@Override
 	public T anyPositiveInt() {
-		return createAndValidateProperty(RegexPatterns.POSITIVE_INT,
-				Math.abs(this.random.nextInt() + 1));
+		return createAndValidateProperty(RegexPatterns.POSITIVE_INT, Math.abs(this.random.nextInt() + 1));
 	}
 
 	@Override
 	public T anyDouble() {
-		return createAndValidateProperty(RegexPatterns.DOUBLE,
-				this.random.nextInt(100) + this.random.nextDouble());
+		return createAndValidateProperty(RegexPatterns.DOUBLE, this.random.nextInt(100) + this.random.nextDouble());
 	}
 
 	@Override
 	public T anyHex() {
-		return createAndValidateProperty(RegexPatterns.HEX,
-				RandomStringUtils.random(10, "0123456789abcdef"));
+		return createAndValidateProperty(RegexPatterns.HEX, RandomStringUtils.random(10, "0123456789abcdef"));
 	}
 
 	@Override
@@ -106,8 +100,7 @@ abstract class PatternValueDslProperty<T extends DslProperty>
 
 	@Override
 	public T anyIpAddress() {
-		return createAndValidateProperty(RegexPatterns.IP_ADDRESS,
-				"192.168.0." + this.random.nextInt(10));
+		return createAndValidateProperty(RegexPatterns.IP_ADDRESS, "192.168.0." + this.random.nextInt(10));
 	}
 
 	@Override
@@ -118,68 +111,59 @@ abstract class PatternValueDslProperty<T extends DslProperty>
 
 	@Override
 	public T anyEmail() {
-		return createAndValidateProperty(RegexPatterns.EMAIL,
-				"foo@bar" + this.random.nextInt() + ".com");
+		return createAndValidateProperty(RegexPatterns.EMAIL, "foo@bar" + this.random.nextInt() + ".com");
 	}
 
 	@Override
 	public T anyUrl() {
-		return createAndValidateProperty(RegexPatterns.URL,
-				"https://foo" + this.random.nextInt() + ".com");
+		return createAndValidateProperty(RegexPatterns.URL, "https://foo" + this.random.nextInt() + ".com");
 	}
 
 	@Override
 	public T anyHttpsUrl() {
-		return createAndValidateProperty(RegexPatterns.HTTPS_URL,
-				"https://baz" + this.random.nextInt() + ".com");
+		return createAndValidateProperty(RegexPatterns.HTTPS_URL, "https://baz" + this.random.nextInt() + ".com");
 	}
 
 	@Override
 	public T anyUuid() {
-		return createAndValidateProperty(RegexPatterns.UUID,
-				UUID.randomUUID().toString());
+		return createAndValidateProperty(RegexPatterns.UUID, UUID.randomUUID().toString());
 	}
 
 	@Override
 	public T anyDate() {
 		int d = this.random.nextInt(8) + 1;
-		return createAndValidateProperty(RegexPatterns.ANY_DATE, "201" + String.valueOf(d)
-				+ "-0" + String.valueOf(d) + "-1" + String.valueOf(d));
+		return createAndValidateProperty(RegexPatterns.ANY_DATE,
+				"201" + String.valueOf(d) + "-0" + String.valueOf(d) + "-1" + String.valueOf(d));
 	}
 
 	@Override
 	public T anyDateTime() {
 		final int d = this.random.nextInt(8) + 1;
 		return createAndValidateProperty(RegexPatterns.ANY_DATE_TIME,
-				"201" + String.valueOf(d) + "-0" + String.valueOf(d) + "-1"
-						+ String.valueOf(d) + "T12:23:34");
+				"201" + String.valueOf(d) + "-0" + String.valueOf(d) + "-1" + String.valueOf(d) + "T12:23:34");
 	}
 
 	@Override
 	public T anyTime() {
 		int d = this.random.nextInt(9);
-		return createAndValidateProperty(RegexPatterns.ANY_TIME,
-				"12:2" + String.valueOf(d) + ":3" + String.valueOf(d));
+		return createAndValidateProperty(RegexPatterns.ANY_TIME, "12:2" + String.valueOf(d) + ":3" + String.valueOf(d));
 	}
 
 	@Override
 	public T anyIso8601WithOffset() {
 		final int d = this.random.nextInt(8) + 1;
 		return createAndValidateProperty(RegexPatterns.ISO8601_WITH_OFFSET,
-				"201" + String.valueOf(d) + "-0" + String.valueOf(d) + "-1"
-						+ String.valueOf(d) + "T12:23:34.123Z");
+				"201" + String.valueOf(d) + "-0" + String.valueOf(d) + "-1" + String.valueOf(d) + "T12:23:34.123Z");
 	}
 
 	@Override
 	public T anyNonBlankString() {
-		return createAndValidateProperty(RegexPatterns.NON_BLANK,
-				RandomStringGenerator.randomString(20));
+		return createAndValidateProperty(RegexPatterns.NON_BLANK, RandomStringGenerator.randomString(20));
 	}
 
 	@Override
 	public T anyNonEmptyString() {
-		return createAndValidateProperty(RegexPatterns.NON_EMPTY,
-				RandomStringGenerator.randomString(20));
+		return createAndValidateProperty(RegexPatterns.NON_EMPTY, RandomStringGenerator.randomString(20));
 	}
 
 	@Override

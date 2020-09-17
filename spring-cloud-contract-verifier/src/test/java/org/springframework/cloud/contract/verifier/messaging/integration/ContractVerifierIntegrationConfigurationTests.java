@@ -29,14 +29,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ContractVerifierIntegrationConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations
-					.of(ContractVerifierIntegrationConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ContractVerifierIntegrationConfiguration.class));
 
 	@Test
 	public void shouldCreateBeansWhenOnClasspath() {
 		this.contextRunner.run((context) -> {
-			assertThat(context.getBeansOfType(SpringIntegrationStubMessages.class))
-					.hasSize(1);
+			assertThat(context.getBeansOfType(SpringIntegrationStubMessages.class)).hasSize(1);
 			assertThat(context.getBeansOfType(ContractVerifierHelper.class)).hasSize(1);
 		});
 	}

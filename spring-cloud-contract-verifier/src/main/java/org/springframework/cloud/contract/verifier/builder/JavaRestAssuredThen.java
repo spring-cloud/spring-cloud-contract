@@ -23,8 +23,7 @@ class JavaRestAssuredThen extends RestAssuredThen {
 
 	private final GeneratedClassMetaData metaData;
 
-	JavaRestAssuredThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JavaRestAssuredThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, RestAssuredBodyParser.INSTANCE,
 				ComparisonBuilder.JAVA_HTTP_INSTANCE);
 		this.metaData = generatedClassMetaData;
@@ -32,8 +31,8 @@ class JavaRestAssuredThen extends RestAssuredThen {
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return super.accept(singleContractMetadata) && this.metaData.configProperties
-				.getTestFramework() != TestFramework.SPOCK;
+		return super.accept(singleContractMetadata)
+				&& this.metaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }

@@ -39,8 +39,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 // tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureStubRunner(repositoryRoot = "classpath:m2repo/repository/", ids = {
-		"org.springframework.cloud.contract.verifier.stubs:contextPathFraudDetectionServer" },
+@AutoConfigureStubRunner(repositoryRoot = "classpath:m2repo/repository/",
+		ids = { "org.springframework.cloud.contract.verifier.stubs:contextPathFraudDetectionServer" },
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE)
 public class LoanApplicationServiceTests {
 
@@ -58,14 +58,13 @@ public class LoanApplicationServiceTests {
 	@Before
 	public void setPort() {
 		this.service.setFraudUrl(
-				this.stubFinder.findStubUrl("contextPathFraudDetectionServer").toString()
-						+ "/fraud-path/");
+				this.stubFinder.findStubUrl("contextPathFraudDetectionServer").toString() + "/fraud-path/");
 	}
 
 	@Test
 	public void shouldStartThisAppWithContextPath() {
-		String response = new RestTemplate().getForObject(
-				"http://localhost:" + this.port + "/my-path/foo", String.class);
+		String response = new RestTemplate().getForObject("http://localhost:" + this.port + "/my-path/foo",
+				String.class);
 
 		assertThat(response).isNotEmpty();
 	}
@@ -73,13 +72,11 @@ public class LoanApplicationServiceTests {
 	@Test
 	public void shouldSuccessfullyApplyForLoan() {
 		// given:
-		LoanApplication application = new LoanApplication(new Client("1234567890"),
-				123.123);
+		LoanApplication application = new LoanApplication(new Client("1234567890"), 123.123);
 		// when:
 		LoanApplicationResult loanApplication = this.service.loanApplication(application);
 		// then:
-		assertThat(loanApplication.getLoanApplicationStatus())
-				.isEqualTo(LoanApplicationStatus.LOAN_APPLIED);
+		assertThat(loanApplication.getLoanApplicationStatus()).isEqualTo(LoanApplicationStatus.LOAN_APPLIED);
 		assertThat(loanApplication.getRejectionReason()).isNull();
 	}
 
@@ -87,8 +84,7 @@ public class LoanApplicationServiceTests {
 	@Test
 	public void shouldBeRejectedDueToAbnormalLoanAmount() {
 		// given:
-		LoanApplication application = new LoanApplication(new Client("1234567890"),
-				99999);
+		LoanApplication application = new LoanApplication(new Client("1234567890"), 99999);
 		// when:
 		LoanApplicationResult loanApplication = this.service.loanApplication(application);
 		// then:

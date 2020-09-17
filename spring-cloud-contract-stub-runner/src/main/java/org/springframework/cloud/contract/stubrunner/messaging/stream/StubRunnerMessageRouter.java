@@ -43,16 +43,12 @@ class StubRunnerMessageRouter extends AbstractMessageRouter {
 	@Override
 	protected Collection<MessageChannel> determineTargetChannels(Message<?> message) {
 		Contract dsl = this.selector.matchingContract(message);
-		if (dsl != null && dsl.getOutputMessage() != null
-				&& dsl.getOutputMessage().getSentTo() != null) {
-			String channelName = StubRunnerStreamConfiguration.resolvedDestination(
-					this.beanFactory,
+		if (dsl != null && dsl.getOutputMessage() != null && dsl.getOutputMessage().getSentTo() != null) {
+			String channelName = StubRunnerStreamConfiguration.resolvedDestination(this.beanFactory,
 					dsl.getOutputMessage().getSentTo().getClientValue());
-			return Collections
-					.singleton((MessageChannel) this.beanFactory.getBean(channelName));
+			return Collections.singleton((MessageChannel) this.beanFactory.getBean(channelName));
 		}
-		return Collections
-				.singleton((MessageChannel) this.beanFactory.getBean("nullChannel"));
+		return Collections.singleton((MessageChannel) this.beanFactory.getBean("nullChannel"));
 	}
 
 }

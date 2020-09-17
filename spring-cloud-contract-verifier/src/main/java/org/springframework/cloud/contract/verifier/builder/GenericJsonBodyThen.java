@@ -56,13 +56,13 @@ class GenericJsonBodyThen implements Then {
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	GenericJsonBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			BodyParser bodyParser, ComparisonBuilder comparisonBuilder) {
+	GenericJsonBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData, BodyParser bodyParser,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.bodyParser = bodyParser;
 		this.comparisonBuilder = comparisonBuilder;
-		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder,
-				metaData, this.bodyParser.byteArrayString(), this.comparisonBuilder);
+		this.bodyAssertionLineCreator = new BodyAssertionLineCreator(blockBuilder, metaData,
+				this.bodyParser.byteArrayString(), this.comparisonBuilder);
 		this.generatedClassMetaData = metaData;
 		this.templateProcessor = new HandlebarsTemplateProcessor();
 		this.contractTemplate = new HandlebarsTemplateProcessor();
@@ -74,37 +74,28 @@ class GenericJsonBodyThen implements Then {
 		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		ContentType contentType = metadata.getOutputTestContentType();
 		if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
-			boolean dontParseStrings = contentType == JSON
-					&& convertedResponseBody instanceof Map;
-			Function parsingClosure = dontParseStrings ? Function.identity()
-					: MapConverter.JSON_PARSING_FUNCTION;
-			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody,
-					parsingClosure);
+			boolean dontParseStrings = contentType == JSON && convertedResponseBody instanceof Map;
+			Function parsingClosure = dontParseStrings ? Function.identity() : MapConverter.JSON_PARSING_FUNCTION;
+			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody, parsingClosure);
 		}
 		else {
-			convertedResponseBody = StringEscapeUtils
-					.escapeJava(convertedResponseBody.toString());
+			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString());
 		}
 		addJsonBodyVerification(metadata, convertedResponseBody, bodyMatchers);
 		return this;
 	}
 
-	private void addJsonBodyVerification(SingleContractMetadata contractMetadata,
-			Object responseBody, BodyMatchers bodyMatchers) {
+	private void addJsonBodyVerification(SingleContractMetadata contractMetadata, Object responseBody,
+			BodyMatchers bodyMatchers) {
 		JsonBodyVerificationBuilder jsonBodyVerificationBuilder = new JsonBodyVerificationBuilder(
-				this.generatedClassMetaData.configProperties.getAssertJsonSize(),
-				this.templateProcessor, this.contractTemplate,
-				contractMetadata.getContract(),
-				Optional.of(this.blockBuilder.getLineEnding()),
+				this.generatedClassMetaData.configProperties.getAssertJsonSize(), this.templateProcessor,
+				this.contractTemplate, contractMetadata.getContract(), Optional.of(this.blockBuilder.getLineEnding()),
 				bodyParser::postProcessJsonPath);
 		// TODO: Refactor spock from should comment out bdd blocks
-		Object convertedResponseBody = jsonBodyVerificationBuilder
-				.addJsonResponseBodyCheck(this.blockBuilder, responseBody, bodyMatchers,
-						this.bodyParser.responseAsString(),
-						this.generatedClassMetaData.configProperties
-								.getTestFramework() != TestFramework.SPOCK);
-		if (!(convertedResponseBody instanceof Map
-				|| convertedResponseBody instanceof List
+		Object convertedResponseBody = jsonBodyVerificationBuilder.addJsonResponseBodyCheck(this.blockBuilder,
+				responseBody, bodyMatchers, this.bodyParser.responseAsString(),
+				this.generatedClassMetaData.configProperties.getTestFramework() != TestFramework.SPOCK);
+		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List
 				|| convertedResponseBody instanceof ExecutionProperty)) {
 			simpleTextResponseBodyCheck(contractMetadata, convertedResponseBody);
 		}
@@ -130,13 +121,12 @@ class GenericJsonBodyThen implements Then {
 	}
 
 	private void processBodyElement(String property, ExecutionProperty exec) {
-		this.blockBuilder.addLineWithEnding(exec.insertValue(this.bodyParser
-				.postProcessJsonPath("parsedJson.read(\"$" + property + "\")")));
+		this.blockBuilder.addLineWithEnding(
+				exec.insertValue(this.bodyParser.postProcessJsonPath("parsedJson.read(\"$" + property + "\")")));
 	}
 
 	private void processBodyElement(String property, Map.Entry entry) {
-		processBodyElement(property, getMapKeyReferenceString(property, entry),
-				entry.getValue());
+		processBodyElement(property, getMapKeyReferenceString(property, entry), entry.getValue());
 	}
 
 	private void processBodyElement(String property, Map map) {
@@ -193,29 +183,23 @@ class GenericJsonBodyThen implements Then {
 		return self.substring(0, index);
 	}
 
-	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata,
-			Object convertedResponseBody) {
-		this.blockBuilder.addLineWithEnding(
-				getSimpleResponseBodyString(this.bodyParser.responseAsString()));
-		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "",
-				convertedResponseBody);
+	private void simpleTextResponseBodyCheck(SingleContractMetadata metadata, Object convertedResponseBody) {
+		this.blockBuilder.addLineWithEnding(getSimpleResponseBodyString(this.bodyParser.responseAsString()));
+		this.bodyAssertionLineCreator.appendBodyAssertionLine(metadata, "", convertedResponseBody);
 		this.blockBuilder.addEndingIfNotPresent();
 	}
 
 	private String getSimpleResponseBodyString(String responseString) {
-		return "String responseBody = " + responseString
-				+ this.blockBuilder.getLineEnding();
+		return "String responseBody = " + responseString + this.blockBuilder.getLineEnding();
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		ContentType outputTestContentType = metadata.getOutputTestContentType();
-		return JSON == outputTestContentType
-				|| mostLikelyJson(outputTestContentType, metadata);
+		return JSON == outputTestContentType || mostLikelyJson(outputTestContentType, metadata);
 	}
 
-	private boolean mostLikelyJson(ContentType outputTestContentType,
-			SingleContractMetadata metadata) {
+	private boolean mostLikelyJson(ContentType outputTestContentType, SingleContractMetadata metadata) {
 		return DEFINED == outputTestContentType && metadata.evaluatesToJson();
 	}
 

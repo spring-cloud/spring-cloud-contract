@@ -46,15 +46,12 @@ public class StubDownloaderBuilderProviderTests {
 				Collections.singletonList(this.one)) {
 			@Override
 			List<StubDownloaderBuilder> defaultStubDownloaderBuilders() {
-				return Collections
-						.singletonList(StubDownloaderBuilderProviderTests.this.two);
+				return Collections.singletonList(StubDownloaderBuilderProviderTests.this.two);
 			}
 		};
-		StubRunnerOptions options = new StubRunnerOptionsBuilder()
-				.withFailOnNoStubs(false).build();
+		StubRunnerOptions options = new StubRunnerOptionsBuilder().withFailOnNoStubs(false).build();
 
-		provider.get(options, this.three)
-				.downloadAndUnpackStubJar(new StubConfiguration("a:b:c"));
+		provider.get(options, this.three).downloadAndUnpackStubJar(new StubConfiguration("a:b:c"));
 
 		BDDMockito.then(this.one).should().build(options);
 		BDDMockito.then(this.two).should().build(options);

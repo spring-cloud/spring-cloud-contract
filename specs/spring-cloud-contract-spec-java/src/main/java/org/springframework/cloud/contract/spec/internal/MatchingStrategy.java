@@ -43,8 +43,7 @@ public class MatchingStrategy extends DslProperty {
 		this(value, type, null);
 	}
 
-	public MatchingStrategy(DslProperty value, Type type,
-			JSONCompareMode jsonCompareMode) {
+	public MatchingStrategy(DslProperty value, Type type, JSONCompareMode jsonCompareMode) {
 		super(value.getClientValue(), value.getServerValue());
 		this.type = type;
 		this.jsonCompareMode = jsonCompareMode;
@@ -68,8 +67,7 @@ public class MatchingStrategy extends DslProperty {
 
 	@Override
 	public String toString() {
-		return "MatchingStrategy{" + "type=" + type + ", jsonCompareMode="
-				+ jsonCompareMode + '}';
+		return "MatchingStrategy{" + "type=" + type + ", jsonCompareMode=" + jsonCompareMode + '}';
 	}
 
 	@Override

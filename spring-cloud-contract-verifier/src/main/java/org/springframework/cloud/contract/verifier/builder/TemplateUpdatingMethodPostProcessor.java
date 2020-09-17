@@ -35,8 +35,7 @@ class TemplateUpdatingMethodPostProcessor implements MethodPostProcessor {
 	@Override
 	public MethodVisitor<MethodPostProcessor> apply(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
-		String newBody = this.templateProcessor.transform(request,
-				this.blockBuilder.toString());
+		String newBody = this.templateProcessor.transform(request, this.blockBuilder.toString());
 		this.blockBuilder.updateContents(newBody);
 		return this;
 	}

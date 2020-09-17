@@ -41,8 +41,7 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = "service.port=${wiremock.server.port}",
-		classes = SecondTests.Config.class)
+@SpringBootTest(properties = "service.port=${wiremock.server.port}", classes = SecondTests.Config.class)
 @AutoConfigureWireMock(port = 0)
 public class SecondTests {
 
@@ -54,11 +53,10 @@ public class SecondTests {
 
 	@Test
 	public void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
-		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
-				markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
+		server.addStubMapping(StubMapping
+				.buildFrom(StreamUtils.copyToString(markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:
-		LoanApplication loanApplication = new LoanApplication(new Client("1234567890"),
-				123.123);
+		LoanApplication loanApplication = new LoanApplication(new Client("1234567890"), 123.123);
 
 		// when:
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -66,11 +64,9 @@ public class SecondTests {
 
 		ResponseEntity<FraudServiceResponse> response = new RestTemplate().exchange(
 				"http://localhost:" + server.port() + "/fraudcheck", HttpMethod.PUT,
-				new HttpEntity<>(new FraudServiceRequest(loanApplication), httpHeaders),
-				FraudServiceResponse.class);
+				new HttpEntity<>(new FraudServiceRequest(loanApplication), httpHeaders), FraudServiceResponse.class);
 		// then:
-		assertThat(response.getBody().getFraudCheckStatus())
-				.isEqualTo(FraudCheckStatus.OK);
+		assertThat(response.getBody().getFraudCheckStatus()).isEqualTo(FraudCheckStatus.OK);
 	}
 
 	@EnableAutoConfiguration

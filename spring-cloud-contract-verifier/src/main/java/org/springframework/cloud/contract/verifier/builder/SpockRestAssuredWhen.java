@@ -23,16 +23,15 @@ class SpockRestAssuredWhen extends RestAssuredWhen {
 
 	private final GeneratedClassMetaData metaData;
 
-	SpockRestAssuredWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	SpockRestAssuredWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		super(blockBuilder, generatedClassMetaData, RestAssuredBodyParser.INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return super.accept(singleContractMetadata) && this.metaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK;
+		return super.accept(singleContractMetadata)
+				&& this.metaData.configProperties.getTestFramework() == TestFramework.SPOCK;
 	}
 
 }

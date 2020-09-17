@@ -32,18 +32,15 @@ class JaxRsWhen implements When, BodyMethodVisitor, JaxRsAcceptor {
 
 	private final List<When> whens = new LinkedList<>();
 
-	JaxRsWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData,
-			JaxRsBodyParser bodyParser) {
+	JaxRsWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData, JaxRsBodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.bodyParser = bodyParser;
-		this.whens.addAll(Arrays.asList(
-				new JaxRsUrlPathWhen(this.blockBuilder, this.generatedClassMetaData),
+		this.whens.addAll(Arrays.asList(new JaxRsUrlPathWhen(this.blockBuilder, this.generatedClassMetaData),
 				new JaxRsRequestWhen(this.blockBuilder, this.generatedClassMetaData),
 				new JaxRsRequestHeadersWhen(this.blockBuilder, bodyParser),
 				new JaxRsRequestCookiesWhen(this.blockBuilder, bodyParser),
-				new JaxRsRequestMethodWhen(this.blockBuilder,
-						this.generatedClassMetaData),
+				new JaxRsRequestMethodWhen(this.blockBuilder, this.generatedClassMetaData),
 				new JaxRsRequestInvokerWhen(this.blockBuilder)));
 	}
 
@@ -55,8 +52,7 @@ class JaxRsWhen implements When, BodyMethodVisitor, JaxRsAcceptor {
 		indentedBodyBlock(this.blockBuilder, this.whens, singleContractMetadata);
 		this.blockBuilder.addEmptyLine().endBlock();
 		if (expectsResponseBody(singleContractMetadata)) {
-			this.blockBuilder.addLineWithEnding(
-					"String responseAsString = " + this.bodyParser.readEntity());
+			this.blockBuilder.addLineWithEnding("String responseAsString = " + this.bodyParser.readEntity());
 		}
 		this.blockBuilder.endBlock();
 		return this;

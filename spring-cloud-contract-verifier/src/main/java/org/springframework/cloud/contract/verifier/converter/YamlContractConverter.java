@@ -44,8 +44,7 @@ import static java.util.stream.Collectors.toMap;
  */
 public class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(YamlContractConverter.class);
+	private static final Logger log = LoggerFactory.getLogger(YamlContractConverter.class);
 
 	public static final YamlContractConverter INSTANCE = new YamlContractConverter();
 
@@ -102,8 +101,7 @@ public class YamlContractConverter implements ContractConverter<List<YamlContrac
 	}
 
 	protected String name(YamlContract contract) {
-		return StringUtils.defaultIfEmpty(contract.name,
-				String.valueOf(Math.abs((contract.hashCode())))) + ".yml";
+		return StringUtils.defaultIfEmpty(contract.name, String.valueOf(Math.abs((contract.hashCode())))) + ".yml";
 	}
 
 	protected byte[] getBytes(YamlContract yamlContract) {

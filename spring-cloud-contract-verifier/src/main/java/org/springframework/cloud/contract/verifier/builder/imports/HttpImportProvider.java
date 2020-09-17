@@ -61,69 +61,57 @@ public class HttpImportProvider {
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(TESTNG, JAXRSCLIENT),
 				new ImportDefinitions(singletonList("javax.ws.rs.core.Response")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(JUNIT, MOCKMVC),
-				new ImportDefinitions(Arrays.asList(restAssuredPackage
-						+ ".module.mockmvc.specification.MockMvcRequestSpecification",
-						restAssuredPackage + ".response.ResponseOptions")));
+				new ImportDefinitions(
+						Arrays.asList(restAssuredPackage + ".module.mockmvc.specification.MockMvcRequestSpecification",
+								restAssuredPackage + ".response.ResponseOptions")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(JUNIT, WEBTESTCLIENT),
 				new ImportDefinitions(Arrays.asList(
 						"io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification",
 						"io.restassured.module.webtestclient.response.WebTestClientResponse")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(JUNIT5, MOCKMVC),
-				new ImportDefinitions(Arrays.asList(restAssuredPackage
-						+ ".module.mockmvc.specification.MockMvcRequestSpecification",
-						restAssuredPackage + ".response.ResponseOptions")));
+				new ImportDefinitions(
+						Arrays.asList(restAssuredPackage + ".module.mockmvc.specification.MockMvcRequestSpecification",
+								restAssuredPackage + ".response.ResponseOptions")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(JUNIT5, WEBTESTCLIENT),
 				new ImportDefinitions(Arrays.asList(
 						"io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification",
 						"io.restassured.module.webtestclient.response.WebTestClientResponse")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(TESTNG, MOCKMVC),
-				new ImportDefinitions(Arrays.asList(restAssuredPackage
-						+ ".module.mockmvc.specification.MockMvcRequestSpecification",
-						restAssuredPackage + ".response.ResponseOptions")));
+				new ImportDefinitions(
+						Arrays.asList(restAssuredPackage + ".module.mockmvc.specification.MockMvcRequestSpecification",
+								restAssuredPackage + ".response.ResponseOptions")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(TESTNG, WEBTESTCLIENT),
 				new ImportDefinitions(Arrays.asList(
 						"io.restassured.module.webtestclient.specification.WebTestClientRequestSpecification",
 						"io.restassured.module.webtestclient.response.WebTestClientResponse")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(JUNIT, EXPLICIT),
-				new ImportDefinitions(Arrays.asList(
-						restAssuredPackage + ".specification.RequestSpecification",
+				new ImportDefinitions(Arrays.asList(restAssuredPackage + ".specification.RequestSpecification",
 						restAssuredPackage + ".response.Response")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(JUNIT5, EXPLICIT),
-				new ImportDefinitions(Arrays.asList(
-						restAssuredPackage + ".specification.RequestSpecification",
+				new ImportDefinitions(Arrays.asList(restAssuredPackage + ".specification.RequestSpecification",
 						restAssuredPackage + ".response.Response")));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(TESTNG, EXPLICIT),
-				new ImportDefinitions(Arrays.asList(
-						restAssuredPackage + ".specification.RequestSpecification",
+				new ImportDefinitions(Arrays.asList(restAssuredPackage + ".specification.RequestSpecification",
 						restAssuredPackage + ".response.Response")));
-		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, JAXRSCLIENT),
-				new ImportDefinitions(emptyList()));
-		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(CUSTOM, JAXRSCLIENT),
-				new ImportDefinitions(emptyList()));
-		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, MOCKMVC),
-				new ImportDefinitions(emptyList()));
-		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(CUSTOM, MOCKMVC),
-				new ImportDefinitions(emptyList()));
-		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, EXPLICIT),
-				new ImportDefinitions(emptyList()));
-		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(CUSTOM, EXPLICIT),
-				new ImportDefinitions(emptyList()));
-		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, WEBTESTCLIENT),
-				new ImportDefinitions(emptyList()));
+		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, JAXRSCLIENT), new ImportDefinitions(emptyList()));
+		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(CUSTOM, JAXRSCLIENT), new ImportDefinitions(emptyList()));
+		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, MOCKMVC), new ImportDefinitions(emptyList()));
+		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(CUSTOM, MOCKMVC), new ImportDefinitions(emptyList()));
+		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, EXPLICIT), new ImportDefinitions(emptyList()));
+		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(CUSTOM, EXPLICIT), new ImportDefinitions(emptyList()));
+		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(SPOCK, WEBTESTCLIENT), new ImportDefinitions(emptyList()));
 		FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.put(Pair.of(CUSTOM, WEBTESTCLIENT),
 				new ImportDefinitions(emptyList()));
 
 		TEST_MODE_SPECIFIC_IMPORTS = new HashMap<>(4);
-		TEST_MODE_SPECIFIC_IMPORTS.put(JAXRSCLIENT, new ImportDefinitions(emptyList(),
-				singletonList("javax.ws.rs.client.Entity.*")));
-		TEST_MODE_SPECIFIC_IMPORTS.put(MOCKMVC,
-				new ImportDefinitions(emptyList(), singletonList(
-						restAssuredPackage + ".module.mockmvc.RestAssuredMockMvc.*")));
-		TEST_MODE_SPECIFIC_IMPORTS.put(EXPLICIT, new ImportDefinitions(emptyList(),
-				singletonList(restAssuredPackage + ".RestAssured.*")));
-		TEST_MODE_SPECIFIC_IMPORTS.put(WEBTESTCLIENT,
-				new ImportDefinitions(emptyList(), singletonList(
-						"io.restassured.module.webtestclient.RestAssuredWebTestClient.*")));
+		TEST_MODE_SPECIFIC_IMPORTS.put(JAXRSCLIENT,
+				new ImportDefinitions(emptyList(), singletonList("javax.ws.rs.client.Entity.*")));
+		TEST_MODE_SPECIFIC_IMPORTS.put(MOCKMVC, new ImportDefinitions(emptyList(),
+				singletonList(restAssuredPackage + ".module.mockmvc.RestAssuredMockMvc.*")));
+		TEST_MODE_SPECIFIC_IMPORTS.put(EXPLICIT,
+				new ImportDefinitions(emptyList(), singletonList(restAssuredPackage + ".RestAssured.*")));
+		TEST_MODE_SPECIFIC_IMPORTS.put(WEBTESTCLIENT, new ImportDefinitions(emptyList(),
+				singletonList("io.restassured.module.webtestclient.RestAssuredWebTestClient.*")));
 	}
 
 	/**
@@ -134,10 +122,8 @@ public class HttpImportProvider {
 	 * @return list of imports
 	 */
 	public List<String> getImports(TestFramework testFramework, TestMode testMode) {
-		List<String> result = new ArrayList<>(
-				TEST_MODE_SPECIFIC_IMPORTS.get(testMode).getImports());
-		result.addAll(FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS
-				.get(Pair.of(testFramework, testMode)).getImports());
+		List<String> result = new ArrayList<>(TEST_MODE_SPECIFIC_IMPORTS.get(testMode).getImports());
+		result.addAll(FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.get(Pair.of(testFramework, testMode)).getImports());
 		return result;
 	}
 
@@ -149,10 +135,9 @@ public class HttpImportProvider {
 	 * @return list of static imports
 	 */
 	public List<String> getStaticImports(TestFramework testFramework, TestMode testMode) {
-		List<String> result = new ArrayList<>(
-				TEST_MODE_SPECIFIC_IMPORTS.get(testMode).getStaticImports());
-		result.addAll(FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS
-				.get(Pair.of(testFramework, testMode)).getStaticImports());
+		List<String> result = new ArrayList<>(TEST_MODE_SPECIFIC_IMPORTS.get(testMode).getStaticImports());
+		result.addAll(
+				FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS.get(Pair.of(testFramework, testMode)).getStaticImports());
 		return result;
 	}
 

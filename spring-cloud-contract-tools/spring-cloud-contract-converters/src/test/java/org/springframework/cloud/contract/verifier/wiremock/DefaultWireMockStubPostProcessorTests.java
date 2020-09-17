@@ -60,8 +60,7 @@ class DefaultWireMockStubPostProcessorTests {
 
 	@Test
 	void should_not_be_applicable_for_missing_metadata_entry() {
-		then(new DefaultWireMockStubPostProcessor().isApplicable(new Contract()))
-				.isFalse();
+		then(new DefaultWireMockStubPostProcessor().isApplicable(new Contract())).isFalse();
 	}
 
 	@Test
@@ -100,8 +99,7 @@ class DefaultWireMockStubPostProcessorTests {
 		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
-		StubMapping result = new DefaultWireMockStubPostProcessor()
-				.postProcess(stubMapping, contract);
+		StubMapping result = new DefaultWireMockStubPostProcessor().postProcess(stubMapping, contract);
 
 		thenPostServerActionWasSet(result);
 	}
@@ -114,24 +112,20 @@ class DefaultWireMockStubPostProcessorTests {
 		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
-		StubMapping result = new DefaultWireMockStubPostProcessor()
-				.postProcess(stubMapping, contract);
+		StubMapping result = new DefaultWireMockStubPostProcessor().postProcess(stubMapping, contract);
 
 		thenPostServerActionWasSet(result);
 	}
 
 	@Test
-	void should_merge_stub_mappings_when_stub_mapping_is_map()
-			throws JsonProcessingException {
+	void should_merge_stub_mappings_when_stub_mapping_is_map() throws JsonProcessingException {
 		Contract contract = new Contract();
 		Map<String, Object> map = new HashMap<>();
-		map.put("stubMapping",
-				new ObjectMapper().readValue(POST_SERVE_ACTION, HashMap.class));
+		map.put("stubMapping", new ObjectMapper().readValue(POST_SERVE_ACTION, HashMap.class));
 		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
-		StubMapping result = new DefaultWireMockStubPostProcessor()
-				.postProcess(stubMapping, contract);
+		StubMapping result = new DefaultWireMockStubPostProcessor().postProcess(stubMapping, contract);
 
 		thenPostServerActionWasSet(result);
 	}
@@ -144,8 +138,7 @@ class DefaultWireMockStubPostProcessorTests {
 		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
-		StubMapping result = new DefaultWireMockStubPostProcessor()
-				.postProcess(stubMapping, contract);
+		StubMapping result = new DefaultWireMockStubPostProcessor().postProcess(stubMapping, contract);
 
 		then(result.getRequest().getMethod().getName()).isEqualTo("GET");
 		then(result.getResponse().getStatus()).isEqualTo(200);

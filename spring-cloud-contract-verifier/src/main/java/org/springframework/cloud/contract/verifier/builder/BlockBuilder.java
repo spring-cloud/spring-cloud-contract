@@ -188,8 +188,7 @@ public class BlockBuilder {
 	 */
 	public BlockBuilder addAtTheEnd(String toAdd) {
 		String lastChar = String.valueOf(builder.charAt(builder.length() - 1));
-		String secondLastChar = builder.length() >= 2
-				? String.valueOf(builder.charAt(builder.length() - 2)) : "";
+		String secondLastChar = builder.length() >= 2 ? String.valueOf(builder.charAt(builder.length() - 2)) : "";
 		boolean isEndWithNewLine = endsWithNewLine(lastChar);
 		boolean lastCharSpecial = aSpecialSign(lastChar, toAdd);
 		boolean secondLastCharSpecial = aSpecialSign(secondLastChar, toAdd);
@@ -225,9 +224,8 @@ public class BlockBuilder {
 			return false;
 		}
 		return character.equals("{") || (character.equals(spacer) && toAdd.equals(spacer))
-				|| (character.equals(spacer) && toAdd.equals(" "))
-				|| character.equals(toAdd) || (endsWithNewLine(character)
-						&& StringUtils.equalsAny(toAdd, "\n", " ", lineEnding));
+				|| (character.equals(spacer) && toAdd.equals(" ")) || character.equals(toAdd)
+				|| (endsWithNewLine(character) && StringUtils.equalsAny(toAdd, "\n", " ", lineEnding));
 	}
 
 	/**

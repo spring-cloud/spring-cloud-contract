@@ -41,8 +41,8 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/resource.json").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class)).isEqualTo("Hello World");
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualTo("Hello World");
 		server.verify();
 	}
 
@@ -51,8 +51,7 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/resource.json").build();
-		RequestEntity<Void> postRequest = RequestEntity
-				.post(URI.create("https://example.org/resource"))
+		RequestEntity<Void> postRequest = RequestEntity.post(URI.create("https://example.org/resource"))
 				.accept(MediaType.TEXT_PLAIN).build();
 		ResponseEntity<String> response;
 		try {
@@ -62,8 +61,7 @@ public class WiremockMockServerApplicationTests {
 			response = null;
 		}
 		if (null != response) {
-			fail("There was a response for POST request: " + postRequest
-					+ "\n\tresponse: " + response);
+			fail("There was a response for POST request: " + postRequest + "\n\tresponse: " + response);
 		}
 	}
 
@@ -72,9 +70,8 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/resource-with-body-file.json").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class))
-						.isEqualToIgnoringWhitespace("{\"message\":\"Hello World\"}");
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualToIgnoringWhitespace("{\"message\":\"Hello World\"}");
 		server.verify();
 	}
 
@@ -82,11 +79,9 @@ public class WiremockMockServerApplicationTests {
 	public void simpleGetWithBodyFileCustomLocation() throws Exception {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
-				.stubs("classpath:/mappings/resource-with-body-file.json")
-				.files("classpath:/custom/").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class))
-						.isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom\"}");
+				.stubs("classpath:/mappings/resource-with-body-file.json").files("classpath:/custom/").build();
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom\"}");
 		server.verify();
 	}
 
@@ -94,11 +89,10 @@ public class WiremockMockServerApplicationTests {
 	public void simpleGetWithBodyFileCustomLocationDirectory() throws Exception {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
-				.stubs("classpath:/mappings/resource-with-body-file.json")
-				.files("file:src/test/resources/custom").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class))
-						.isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom\"}");
+				.stubs("classpath:/mappings/resource-with-body-file.json").files("file:src/test/resources/custom")
+				.build();
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom\"}");
 		server.verify();
 	}
 
@@ -107,8 +101,7 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/resource-with-empty-path.json").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/", String.class))
-				.isEqualTo("Hello World");
+		assertThat(this.restTemplate.getForObject("https://example.org/", String.class)).isEqualTo("Hello World");
 		server.verify();
 	}
 
@@ -117,8 +110,8 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/resource-with-content-type.json").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class)).isEqualTo("Hello World");
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualTo("Hello World");
 		server.verify();
 	}
 
@@ -127,8 +120,8 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/resource-without-content-type.json").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class)).isEqualTo("Hello World");
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualTo("Hello World");
 		server.verify();
 	}
 
@@ -137,8 +130,8 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/poster.json").build();
-		assertThat(this.restTemplate.postForObject("https://example.org/poster",
-				"greeting", String.class)).isEqualTo("Hello World");
+		assertThat(this.restTemplate.postForObject("https://example.org/poster", "greeting", String.class))
+				.isEqualTo("Hello World");
 		server.verify();
 	}
 
@@ -146,76 +139,56 @@ public class WiremockMockServerApplicationTests {
 	public void postWithHeader() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") // order determined by content...
-				.stubs("classpath:/mappings/poster.json",
-						"classpath:/mappings/accept.json")
-				.build();
-		assertThat(
-				this.restTemplate
-						.exchange(
-								RequestEntity.post(new URI("https://example.org/poster"))
-										.accept(MediaType.TEXT_PLAIN).build(),
-								String.class)
-						.getBody()).isEqualTo("Accepted World");
+				.stubs("classpath:/mappings/poster.json", "classpath:/mappings/accept.json").build();
+		assertThat(this.restTemplate.exchange(
+				RequestEntity.post(new URI("https://example.org/poster")).accept(MediaType.TEXT_PLAIN).build(),
+				String.class).getBody()).isEqualTo("Accepted World");
 	}
 
 	@Test
 	public void postWithHeaderContains() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") // order determined by content...
-				.stubs("classpath:/mappings/poster.json",
-						"classpath:/mappings/header-contains.json")
-				.build();
-		assertThat(this.restTemplate.exchange(
-				RequestEntity.post(new URI("https://example.org/poster"))
-						.accept(MediaType.valueOf("application/v.foo")).build(),
-				String.class).getBody()).isEqualTo("Foo World");
+				.stubs("classpath:/mappings/poster.json", "classpath:/mappings/header-contains.json").build();
+		assertThat(this.restTemplate.exchange(RequestEntity.post(new URI("https://example.org/poster"))
+				.accept(MediaType.valueOf("application/v.foo")).build(), String.class).getBody())
+						.isEqualTo("Foo World");
 	}
 
 	@Test
 	public void postWithHeaderMatches() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") // order determined by content...
-				.stubs("classpath:/mappings/poster.json",
-						"classpath:/mappings/header-matches.json")
-				.build();
-		assertThat(this.restTemplate.exchange(
-				RequestEntity.post(new URI("https://example.org/poster"))
-						.accept(MediaType.valueOf("application/v.bar")).build(),
-				String.class).getBody()).isEqualTo("Bar World");
+				.stubs("classpath:/mappings/poster.json", "classpath:/mappings/header-matches.json").build();
+		assertThat(this.restTemplate.exchange(RequestEntity.post(new URI("https://example.org/poster"))
+				.accept(MediaType.valueOf("application/v.bar")).build(), String.class).getBody())
+						.isEqualTo("Bar World");
 	}
 
 	@Test
 	public void postWithMoreExactHeaderMatch() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") // order determined by content...
-				.stubs("classpath:/mappings/header-matches.json",
-						"classpath:/mappings/header-matches-precise.json")
+				.stubs("classpath:/mappings/header-matches.json", "classpath:/mappings/header-matches-precise.json")
 				.build();
 		assertThat(
-				this.restTemplate
-						.exchange(
-								RequestEntity.post(new URI("https://example.org/poster"))
-										.accept(MediaType.valueOf("application/v.bar"))
-										.header("X-Precise", "true").build(),
-								String.class)
-						.getBody()).isEqualTo("Precise World");
+				this.restTemplate.exchange(
+						RequestEntity.post(new URI("https://example.org/poster"))
+								.accept(MediaType.valueOf("application/v.bar")).header("X-Precise", "true").build(),
+						String.class).getBody()).isEqualTo("Precise World");
 	}
 
 	@Test
 	public void postWithMoreExactHeaderMatchButOrdered() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") // order matters...
-				.stubs("classpath:/mappings/header-matches.json",
-						"classpath:/mappings/header-matches-precise.json")
+				.stubs("classpath:/mappings/header-matches.json", "classpath:/mappings/header-matches-precise.json")
 				.ignoreExpectOrder(false).build();
 		assertThat(
-				this.restTemplate
-						.exchange(
-								RequestEntity.post(new URI("https://example.org/poster"))
-										.accept(MediaType.valueOf("application/v.bar"))
-										.header("X-Precise", "true").build(),
-								String.class)
-						.getBody()).isEqualTo("Bar World");
+				this.restTemplate.exchange(
+						RequestEntity.post(new URI("https://example.org/poster"))
+								.accept(MediaType.valueOf("application/v.bar")).header("X-Precise", "true").build(),
+						String.class).getBody()).isEqualTo("Bar World");
 		// The first one matches, not the most precise!
 	}
 
@@ -226,8 +199,8 @@ public class WiremockMockServerApplicationTests {
 				.stubs("classpath:/mappings/resource-with-low-priority.json",
 						"classpath:/mappings/resource-with-high-priority.json")
 				.build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class)).isEqualTo("Hello High");
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualTo("Hello High");
 	}
 
 	@Test
@@ -235,8 +208,8 @@ public class WiremockMockServerApplicationTests {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class)).isEqualTo("Hello World");
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualTo("Hello World");
 	}
 
 	@Test
@@ -244,8 +217,8 @@ public class WiremockMockServerApplicationTests {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/io.stubs/mappings").build();
-		assertThat(this.restTemplate.getForObject("https://example.org/resource",
-				String.class)).isEqualTo("Hello World");
+		assertThat(this.restTemplate.getForObject("https://example.org/resource", String.class))
+				.isEqualTo("Hello World");
 	}
 
 	// Issue #135
@@ -256,8 +229,8 @@ public class WiremockMockServerApplicationTests {
 				.stubs("classpath:/mappings/body-matches-jsonpath.json").build();
 
 		assertThat(this.restTemplate.postForObject("https://example.org/body",
-				new Things(Collections.singletonList(new Thing("RequiredThing"))),
-				String.class)).isEqualTo("Hello Body");
+				new Things(Collections.singletonList(new Thing("RequiredThing"))), String.class))
+						.isEqualTo("Hello Body");
 	}
 
 	@Test
@@ -269,15 +242,13 @@ public class WiremockMockServerApplicationTests {
 		String response;
 		try {
 			response = this.restTemplate.postForObject("https://example.org/body",
-					new Things(Collections.singletonList(new Thing("AbsentThing"))),
-					String.class);
+					new Things(Collections.singletonList(new Thing("AbsentThing"))), String.class);
 		}
 		catch (AssertionError e) {
 			response = null;
 		}
 		if (null != response) {
-			fail("There was a response for a request that shouldn't be matched : "
-					+ response);
+			fail("There was a response for a request that shouldn't be matched : " + response);
 		}
 	}
 
@@ -287,10 +258,9 @@ public class WiremockMockServerApplicationTests {
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/body-matches-xpath.json").build();
 
-		assertThat(this.restTemplate.exchange(RequestEntity
-				.post(URI.create("https://example.org/body"))
-				.contentType(MediaType.APPLICATION_XML)
-				.body("<things><thing><name>RequiredThing</name></thing></things>"),
+		assertThat(this.restTemplate.exchange(
+				RequestEntity.post(URI.create("https://example.org/body")).contentType(MediaType.APPLICATION_XML)
+						.body("<things><thing><name>RequiredThing</name></thing></things>"),
 				String.class).getBody()).isEqualTo("Hello Body");
 	}
 
@@ -302,17 +272,14 @@ public class WiremockMockServerApplicationTests {
 
 		ResponseEntity<String> response;
 		try {
-			response = this.restTemplate.exchange(
-					RequestEntity.post(URI.create("https://example.org/body"))
-							.contentType(MediaType.APPLICATION_XML).body("<foo/>"),
-					String.class);
+			response = this.restTemplate.exchange(RequestEntity.post(URI.create("https://example.org/body"))
+					.contentType(MediaType.APPLICATION_XML).body("<foo/>"), String.class);
 		}
 		catch (AssertionError e) {
 			response = null;
 		}
 		if (null != response) {
-			fail("There was a response for a request that shouldn't be matched : "
-					+ response);
+			fail("There was a response for a request that shouldn't be matched : " + response);
 		}
 	}
 
@@ -323,8 +290,8 @@ public class WiremockMockServerApplicationTests {
 				.stubs("classpath:/mappings/body-matches-equaltojson.json").build();
 
 		assertThat(this.restTemplate.postForObject("https://example.org/body",
-				new Things(Collections.singletonList(new Thing("RequiredThing"))),
-				String.class)).isEqualTo("Hello Body");
+				new Things(Collections.singletonList(new Thing("RequiredThing"))), String.class))
+						.isEqualTo("Hello Body");
 	}
 
 	@Test
@@ -336,15 +303,13 @@ public class WiremockMockServerApplicationTests {
 		String response;
 		try {
 			response = this.restTemplate.postForObject("https://example.org/body",
-					new Things(Collections.singletonList(new Thing("AbsentThing"))),
-					String.class);
+					new Things(Collections.singletonList(new Thing("AbsentThing"))), String.class);
 		}
 		catch (AssertionError e) {
 			response = null;
 		}
 		if (null != response) {
-			fail("There was a response for a request that shouldn't be matched : "
-					+ response);
+			fail("There was a response for a request that shouldn't be matched : " + response);
 		}
 	}
 
@@ -354,10 +319,9 @@ public class WiremockMockServerApplicationTests {
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/body-matches-equaltoxml.json").build();
 
-		assertThat(this.restTemplate.exchange(RequestEntity
-				.post(URI.create("https://example.org/body"))
-				.contentType(MediaType.APPLICATION_XML)
-				.body("<things><thing><name>RequiredThing</name></thing></things>"),
+		assertThat(this.restTemplate.exchange(
+				RequestEntity.post(URI.create("https://example.org/body")).contentType(MediaType.APPLICATION_XML)
+						.body("<things><thing><name>RequiredThing</name></thing></things>"),
 				String.class).getBody()).isEqualTo("Hello Body");
 	}
 
@@ -369,18 +333,16 @@ public class WiremockMockServerApplicationTests {
 
 		ResponseEntity<String> response;
 		try {
-			response = this.restTemplate.exchange(RequestEntity
-					.post(URI.create("https://example.org/body"))
-					.contentType(MediaType.APPLICATION_XML)
-					.body("<things><thing><name>AbsentThing</name></thing></things>"),
+			response = this.restTemplate.exchange(
+					RequestEntity.post(URI.create("https://example.org/body")).contentType(MediaType.APPLICATION_XML)
+							.body("<things><thing><name>AbsentThing</name></thing></things>"),
 					String.class);
 		}
 		catch (AssertionError e) {
 			response = null;
 		}
 		if (null != response) {
-			fail("There was a response for a request that shouldn't be matched : "
-					+ response);
+			fail("There was a response for a request that shouldn't be matched : " + response);
 		}
 	}
 
@@ -390,10 +352,9 @@ public class WiremockMockServerApplicationTests {
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/body-matches-regex.json").build();
 
-		assertThat(this.restTemplate.exchange(RequestEntity
-				.post(URI.create("https://example.org/body"))
-				.contentType(MediaType.APPLICATION_XML)
-				.body("<things><thing><name>RequiredThing</name></thing></things>"),
+		assertThat(this.restTemplate.exchange(
+				RequestEntity.post(URI.create("https://example.org/body")).contentType(MediaType.APPLICATION_XML)
+						.body("<things><thing><name>RequiredThing</name></thing></things>"),
 				String.class).getBody()).isEqualTo("Hello Body");
 	}
 
@@ -405,18 +366,16 @@ public class WiremockMockServerApplicationTests {
 
 		ResponseEntity<String> response;
 		try {
-			response = this.restTemplate.exchange(RequestEntity
-					.post(URI.create("https://example.org/body"))
-					.contentType(MediaType.APPLICATION_XML)
-					.body("<things><thing><name>AbsentThing</name></thing></things>"),
+			response = this.restTemplate.exchange(
+					RequestEntity.post(URI.create("https://example.org/body")).contentType(MediaType.APPLICATION_XML)
+							.body("<things><thing><name>AbsentThing</name></thing></things>"),
 					String.class);
 		}
 		catch (AssertionError e) {
 			response = null;
 		}
 		if (null != response) {
-			fail("There was a response for a request that shouldn't be matched : "
-					+ response);
+			fail("There was a response for a request that shouldn't be matched : " + response);
 		}
 	}
 
@@ -425,9 +384,8 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/url-path-pattern.json").build();
-		assertThat(this.restTemplate
-				.getForObject("https://example.org/123/url-path-pattern/", String.class))
-						.isEqualTo("Hello Url Path Matcher");
+		assertThat(this.restTemplate.getForObject("https://example.org/123/url-path-pattern/", String.class))
+				.isEqualTo("Hello Url Path Matcher");
 		server.verify();
 	}
 
@@ -436,9 +394,8 @@ public class WiremockMockServerApplicationTests {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
 				.stubs("classpath:/mappings/url-matches.json").build();
-		assertThat(this.restTemplate
-				.getForObject("https://example.org/123/hello-url-matcher/", String.class))
-						.isEqualTo("Hello Url Matcher");
+		assertThat(this.restTemplate.getForObject("https://example.org/123/hello-url-matcher/", String.class))
+				.isEqualTo("Hello Url Matcher");
 		server.verify();
 	}
 

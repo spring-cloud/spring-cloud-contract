@@ -26,8 +26,7 @@ class DefaultImports implements Imports, DefaultBaseClassProvider {
 
 	private final BaseClassProvider baseClassProvider;
 
-	DefaultImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	DefaultImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.baseClassProvider = new BaseClassProvider();

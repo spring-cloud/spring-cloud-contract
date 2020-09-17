@@ -39,8 +39,8 @@ class StubServer {
 
 	private final HttpServerStub httpServerStub;
 
-	StubServer(StubConfiguration stubConfiguration, Collection<File> mappings,
-			Collection<Contract> contracts, HttpServerStub httpServerStub) {
+	StubServer(StubConfiguration stubConfiguration, Collection<File> mappings, Collection<Contract> contracts,
+			HttpServerStub httpServerStub) {
 		this.stubConfiguration = stubConfiguration;
 		this.mappings = mappings;
 		this.httpServerStub = httpServerStub;
@@ -54,10 +54,8 @@ class StubServer {
 
 	private StubServer stubServer() {
 		this.httpServerStub.registerMappings(this.mappings);
-		log.info("Started stub server for project ["
-				+ this.stubConfiguration.toColonSeparatedDependencyNotation()
-				+ "] on port " + this.httpServerStub.port() + " with ["
-				+ this.mappings.size() + "] mappings");
+		log.info("Started stub server for project [" + this.stubConfiguration.toColonSeparatedDependencyNotation()
+				+ "] on port " + this.httpServerStub.port() + " with [" + this.mappings.size() + "] mappings");
 		if (this.mappings.isEmpty() && getPort() != -1) {
 			log.warn(
 					"There are no HTTP mappings registered, if your contracts are not messaging based then something went wrong");
@@ -81,8 +79,7 @@ class StubServer {
 			int httpsPort = this.httpServerStub.httpsPort();
 			int httpPort = this.httpServerStub.port();
 			if (log.isDebugEnabled()) {
-				log.debug("Ports for this server are https [" + httpsPort + "] and http ["
-						+ httpPort + "]");
+				log.debug("Ports for this server are https [" + httpsPort + "] and http [" + httpPort + "]");
 			}
 			return httpsPort != -1 ? httpsPort : httpPort;
 		}
@@ -100,8 +97,7 @@ class StubServer {
 
 	public URL getStubUrl() {
 		try {
-			return new URL(
-					(hasHttps() ? "https:" : "http:") + "//localhost:" + getPort());
+			return new URL((hasHttps() ? "https:" : "http:") + "//localhost:" + getPort());
 		}
 		catch (MalformedURLException e) {
 			throw new IllegalStateException("Cannot parse URL", e);
@@ -144,8 +140,8 @@ class StubServer {
 
 	@Override
 	public String toString() {
-		return "StubServer{" + "stubConfiguration=" + this.stubConfiguration
-				+ ", mappingsSize=" + this.mappings.size() + '}';
+		return "StubServer{" + "stubConfiguration=" + this.stubConfiguration + ", mappingsSize=" + this.mappings.size()
+				+ '}';
 	}
 
 }

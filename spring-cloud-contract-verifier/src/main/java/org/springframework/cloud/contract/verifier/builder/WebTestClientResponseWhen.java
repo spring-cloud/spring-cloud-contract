@@ -24,16 +24,14 @@ class WebTestClientResponseWhen implements When, WebTestClientAcceptor {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	WebTestClientResponseWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData metaData) {
+	WebTestClientResponseWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = metaData;
 	}
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		this.blockBuilder
-				.addIndented("WebTestClientResponse response = given().spec(request)");
+		this.blockBuilder.addIndented("WebTestClientResponse response = given().spec(request)");
 		return this;
 	}
 

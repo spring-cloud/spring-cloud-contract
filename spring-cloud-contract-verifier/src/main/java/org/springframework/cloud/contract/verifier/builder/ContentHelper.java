@@ -32,8 +32,7 @@ final class ContentHelper {
 		if (object instanceof ExecutionProperty) {
 			return getTestSideValue(object);
 		}
-		return quotedAndEscaped(
-				MapConverter.getTestSideValuesForNonBody(object).toString());
+		return quotedAndEscaped(MapConverter.getTestSideValuesForNonBody(object).toString());
 	}
 
 	/**

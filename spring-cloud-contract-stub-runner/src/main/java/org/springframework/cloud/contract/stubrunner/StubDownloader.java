@@ -40,7 +40,6 @@ public interface StubDownloader {
 	 * version) and the location of the downloaded stubs. If there was no artifact this
 	 * method will return {@code null}.
 	 */
-	Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubConfiguration stubConfiguration);
+	Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration);
 
 }

@@ -57,8 +57,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ KafkaTemplate.class, EmbeddedKafkaBroker.class })
-@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnBean(EmbeddedKafkaBroker.class)
 @AutoConfigureBefore(ContractVerifierKafkaConfiguration.class)
 public class StubRunnerKafkaConfiguration {
@@ -67,8 +66,7 @@ public class StubRunnerKafkaConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnProperty(name = "stubrunner.kafka.initializer.enabled",
-			havingValue = "true", matchIfMissing = true)
+	@ConditionalOnProperty(name = "stubrunner.kafka.initializer.enabled", havingValue = "true", matchIfMissing = true)
 	KafkaStubMessagesInitializer stubRunnerKafkaStubMessagesInitializer() {
 		if (log.isDebugEnabled()) {
 			log.debug("Registering a noop kafka messages initializer");
@@ -80,10 +78,8 @@ public class StubRunnerKafkaConfiguration {
 	@ConditionalOnMissingBean(name = "stubFlowRegistrar")
 	public FlowRegistrar stubFlowRegistrar(ConfigurableListableBeanFactory beanFactory,
 			BatchStubRunner batchStubRunner) {
-		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
-				.getContracts();
-		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
-				.entrySet()) {
+		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner.getContracts();
+		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts.entrySet()) {
 			StubConfiguration key = entry.getKey();
 			Collection<Contract> value = entry.getValue();
 			String name = key.getGroupId() + "_" + key.getArtifactId();
@@ -93,21 +89,17 @@ public class StubRunnerKafkaConfiguration {
 					continue;
 				}
 				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
-						&& StringUtils.hasText(
-								dsl.getInput().getMessageFrom().getClientValue())) {
+						&& StringUtils.hasText(dsl.getInput().getMessageFrom().getClientValue())) {
 					String from = dsl.getInput().getMessageFrom().getClientValue();
 					map.add(from, dsl);
 				}
 			}
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
 				List<Contract> matchingContracts = entries.getValue();
-				final String flowName = name + "_" + entries.getKey() + "_"
-						+ Math.abs(matchingContracts.hashCode());
+				final String flowName = name + "_" + entries.getKey() + "_" + Math.abs(matchingContracts.hashCode());
 				// listener
-				StubRunnerKafkaRouter router = new StubRunnerKafkaRouter(
-						matchingContracts, beanFactory);
-				StubRunnerKafkaRouter listener = (StubRunnerKafkaRouter) beanFactory
-						.initializeBean(router, flowName);
+				StubRunnerKafkaRouter router = new StubRunnerKafkaRouter(matchingContracts, beanFactory);
+				StubRunnerKafkaRouter listener = (StubRunnerKafkaRouter) beanFactory.initializeBean(router, flowName);
 				if (log.isDebugEnabled()) {
 					log.debug("Initialized kafka router with name [" + flowName + "]");
 				}
@@ -119,38 +111,32 @@ public class StubRunnerKafkaConfiguration {
 		return new FlowRegistrar();
 	}
 
-	private void registerContainers(ConfigurableListableBeanFactory beanFactory,
-			List<Contract> matchingContracts, String flowName,
-			StubRunnerKafkaRouter listener) {
+	private void registerContainers(ConfigurableListableBeanFactory beanFactory, List<Contract> matchingContracts,
+			String flowName, StubRunnerKafkaRouter listener) {
 		// listener's container
 		ConsumerFactory consumerFactory = beanFactory.getBean(ConsumerFactory.class);
 		for (Contract matchingContract : matchingContracts) {
 			if (matchingContract.getInput() == null) {
 				continue;
 			}
-			String destination = MapConverter.getStubSideValuesForNonBody(
-					matchingContract.getInput().getMessageFrom()).toString();
-			ContainerProperties containerProperties = new ContainerProperties(
-					destination);
-			KafkaMessageListenerContainer container = listenerContainer(consumerFactory,
-					containerProperties, listener);
+			String destination = MapConverter.getStubSideValuesForNonBody(matchingContract.getInput().getMessageFrom())
+					.toString();
+			ContainerProperties containerProperties = new ContainerProperties(destination);
+			KafkaMessageListenerContainer container = listenerContainer(consumerFactory, containerProperties, listener);
 			String containerName = flowName + ".container";
-			Object initializedContainer = beanFactory.initializeBean(container,
-					containerName);
+			Object initializedContainer = beanFactory.initializeBean(container, containerName);
 			beanFactory.registerSingleton(containerName, initializedContainer);
 			if (log.isDebugEnabled()) {
-				log.debug(
-						"Initialized kafka message container with name [" + containerName
-								+ "] listening to destination [" + destination + "]");
+				log.debug("Initialized kafka message container with name [" + containerName
+						+ "] listening to destination [" + destination + "]");
 			}
 		}
 	}
 
-	private KafkaMessageListenerContainer listenerContainer(
-			ConsumerFactory consumerFactory, ContainerProperties containerProperties,
-			GenericMessageListener listener) {
-		KafkaMessageListenerContainer container = new KafkaMessageListenerContainer(
-				consumerFactory, containerProperties);
+	private KafkaMessageListenerContainer listenerContainer(ConsumerFactory consumerFactory,
+			ContainerProperties containerProperties, GenericMessageListener listener) {
+		KafkaMessageListenerContainer container = new KafkaMessageListenerContainer(consumerFactory,
+				containerProperties);
 		container.setupMessageListener(listener);
 		return container;
 	}

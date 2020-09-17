@@ -25,8 +25,7 @@ class RestAssuredCookiesThen implements Then, MockMvcAcceptor, CookieElementProc
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	RestAssuredCookiesThen(BlockBuilder blockBuilder,
-			ComparisonBuilder comparisonBuilder) {
+	RestAssuredCookiesThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
 	}

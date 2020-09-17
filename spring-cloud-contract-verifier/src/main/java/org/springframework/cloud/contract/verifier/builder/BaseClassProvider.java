@@ -31,24 +31,19 @@ class BaseClassProvider {
 
 	private static final String SEPARATOR = "_REPLACEME_";
 
-	String retrieveBaseClass(Map<String, String> baseClassMappings,
-			String packageWithBaseClasses, String baseClassForTests,
-			String includedDirectoryRelativePath) {
-		String contractPathAsPackage = includedDirectoryRelativePath
-				.replace(File.separator, ".");
-		String contractPackage = includedDirectoryRelativePath.replace(File.separator,
-				SEPARATOR);
+	String retrieveBaseClass(Map<String, String> baseClassMappings, String packageWithBaseClasses,
+			String baseClassForTests, String includedDirectoryRelativePath) {
+		String contractPathAsPackage = includedDirectoryRelativePath.replace(File.separator, ".");
+		String contractPackage = includedDirectoryRelativePath.replace(File.separator, SEPARATOR);
 		// package mapping takes super precedence
 		if (baseClassMappings != null && !baseClassMappings.isEmpty()) {
-			Optional<Map.Entry<String, String>> mapping = baseClassMappings.entrySet()
-					.stream().filter(entry -> {
-						String pattern = entry.getKey();
-						return contractPathAsPackage.matches(pattern);
-					}).findFirst();
+			Optional<Map.Entry<String, String>> mapping = baseClassMappings.entrySet().stream().filter(entry -> {
+				String pattern = entry.getKey();
+				return contractPathAsPackage.matches(pattern);
+			}).findFirst();
 			if (log.isDebugEnabled()) {
-				log.debug("Matching pattern for contract package ["
-						+ contractPathAsPackage + "] with setup " + baseClassMappings
-						+ " is [" + mapping + "]");
+				log.debug("Matching pattern for contract package [" + contractPathAsPackage + "] with setup "
+						+ baseClassMappings + " is [" + mapping + "]");
 			}
 			if (mapping.isPresent()) {
 				return mapping.get().getValue();
@@ -57,15 +52,12 @@ class BaseClassProvider {
 		if (StringUtils.isEmpty(packageWithBaseClasses)) {
 			return baseClassForTests;
 		}
-		String generatedClassName = generateDefaultBaseClassName(contractPackage,
-				packageWithBaseClasses);
+		String generatedClassName = generateDefaultBaseClassName(contractPackage, packageWithBaseClasses);
 		return generatedClassName + "Base";
 	}
 
-	private String generateDefaultBaseClassName(String classPackage,
-			String packageWithBaseClasses) {
-		String[] splitPackage = NamesUtil.convertIllegalPackageChars(classPackage)
-				.split(SEPARATOR);
+	private String generateDefaultBaseClassName(String classPackage, String packageWithBaseClasses) {
+		String[] splitPackage = NamesUtil.convertIllegalPackageChars(classPackage).split(SEPARATOR);
 		if (splitPackage.length > 1) {
 			String last = NamesUtil.capitalize(splitPackage[splitPackage.length - 1]);
 			String butLast = NamesUtil.capitalize(splitPackage[splitPackage.length - 2]);

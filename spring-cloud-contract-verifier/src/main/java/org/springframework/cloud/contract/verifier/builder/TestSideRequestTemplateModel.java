@@ -80,9 +80,8 @@ public class TestSideRequestTemplateModel {
 	 */
 	private final String escapedBody;
 
-	private TestSideRequestTemplateModel(String url, Map<String, List<Object>> query,
-			Path path, Map<String, List<String>> headers, String body,
-			String escapedBody) {
+	private TestSideRequestTemplateModel(String url, Map<String, List<Object>> query, Path path,
+			Map<String, List<String>> headers, String body, String escapedBody) {
 		this.url = url;
 		this.query = query;
 		this.path = path;
@@ -123,36 +122,29 @@ public class TestSideRequestTemplateModel {
 		Map<String, List<Object>> query = query(queryParameters);
 		boolean queryParamsPresent = query == null || query.isEmpty();
 		String fullUrl = fullUrl(url, query, queryParamsPresent);
-		boolean headersEntriesPresent = request.getHeaders() != null
-				&& !request.getHeaders().getEntries().isEmpty();
+		boolean headersEntriesPresent = request.getHeaders() != null && !request.getHeaders().getEntries().isEmpty();
 		Map<String, List<String>> headers = headers(request, headersEntriesPresent);
 		String escapedBody = trimmedAndEscapedBody(request.getBody());
 		String body = getBodyAsRawJson(request.getBody());
-		return new TestSideRequestTemplateModel(fullUrl, query, paths, headers, body,
-				escapedBody);
+		return new TestSideRequestTemplateModel(fullUrl, query, paths, headers, body, escapedBody);
 	}
 
-	private static Map<String, List<String>> headers(Request request,
-			boolean headersEntriesPresent) {
+	private static Map<String, List<String>> headers(Request request, boolean headersEntriesPresent) {
 		if (!headersEntriesPresent) {
 			return new HashMap<>();
 		}
 		return request.getHeaders().getEntries().stream()
 				.collect(Collectors.groupingBy(Header::getName,
-						Collectors.mapping(
-								(Function<Object, String>) o -> MapConverter
-										.getTestSideValues(o).toString(),
+						Collectors.mapping((Function<Object, String>) o -> MapConverter.getTestSideValues(o).toString(),
 								Collectors.toList())));
 	}
 
-	private static String fullUrl(String url, Map<String, List<Object>> query,
-			boolean queryParamsPresent) {
+	private static String fullUrl(String url, Map<String, List<Object>> query, boolean queryParamsPresent) {
 		if (queryParamsPresent) {
 			return url;
 		}
-		String joinedParams = query.entrySet().stream()
-				.map(entry -> entry.getValue().stream().map(s -> entry.getKey() + "=" + s)
-						.collect(Collectors.joining("&")))
+		String joinedParams = query.entrySet().stream().map(
+				entry -> entry.getValue().stream().map(s -> entry.getKey() + "=" + s).collect(Collectors.joining("&")))
 				.collect(Collectors.joining("&"));
 		return url + "?" + joinedParams;
 	}
@@ -161,17 +153,15 @@ public class TestSideRequestTemplateModel {
 		if (queryParameters == null) {
 			return new HashMap<>();
 		}
-		return queryParameters.getParameters().stream()
-				.collect(Collectors.groupingBy(QueryParameter::getName, Collectors
-						.mapping(MapConverter::getTestSideValues, Collectors.toList())));
+		return queryParameters.getParameters().stream().collect(Collectors.groupingBy(QueryParameter::getName,
+				Collectors.mapping(MapConverter::getTestSideValues, Collectors.toList())));
 	}
 
 	private static List<String> buildPathsFromUrl(String url) {
 		String fakeUrl = "https://foo.bar" + (url.startsWith("/") ? url : "/" + url);
 		List<String> paths;
 		try {
-			paths = new LinkedList<>(
-					Arrays.asList(new URL(fakeUrl).getPath().split("/")));
+			paths = new LinkedList<>(Arrays.asList(new URL(fakeUrl).getPath().split("/")));
 		}
 		catch (MalformedURLException ex) {
 			throw new IllegalStateException(ex);
@@ -200,12 +190,10 @@ public class TestSideRequestTemplateModel {
 
 	private static Object extractServerValueFromBody(Object bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = ContentUtils.extractValue((GString) bodyValue,
-					ContentUtils.GET_TEST_SIDE_FUNCTION);
+			bodyValue = ContentUtils.extractValue((GString) bodyValue, ContentUtils.GET_TEST_SIDE_FUNCTION);
 		}
 		else {
-			bodyValue = MapConverter.transformValues(bodyValue,
-					ContentUtils.GET_TEST_SIDE);
+			bodyValue = MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE);
 		}
 		return bodyValue;
 	}

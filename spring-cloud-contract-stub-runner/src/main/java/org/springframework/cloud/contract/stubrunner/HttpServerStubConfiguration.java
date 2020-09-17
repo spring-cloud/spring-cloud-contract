@@ -49,15 +49,13 @@ public final class HttpServerStubConfiguration {
 	 */
 	public boolean randomPort;
 
-	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer,
-			StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
-			Integer port) {
+	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer, StubRunnerOptions stubRunnerOptions,
+			StubConfiguration stubConfiguration, Integer port) {
 		this(configurer, stubRunnerOptions, stubConfiguration, port, randomPort(port));
 	}
 
-	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer,
-			StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
-			Integer port, boolean randomPort) {
+	public HttpServerStubConfiguration(HttpServerStubConfigurer configurer, StubRunnerOptions stubRunnerOptions,
+			StubConfiguration stubConfiguration, Integer port, boolean randomPort) {
 		this.configurer = configurer;
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubConfiguration = stubConfiguration;
@@ -74,8 +72,7 @@ public final class HttpServerStubConfiguration {
 	}
 
 	public String toColonSeparatedDependencyNotation() {
-		return this.stubConfiguration != null
-				? this.stubConfiguration.toColonSeparatedDependencyNotation() : "";
+		return this.stubConfiguration != null ? this.stubConfiguration.toColonSeparatedDependencyNotation() : "";
 	}
 
 }

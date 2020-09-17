@@ -36,8 +36,7 @@ class ExceptionThrowingMessageVerifier implements MessageVerifier {
 	}
 
 	@Override
-	public Object receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
 	}
 
@@ -47,8 +46,7 @@ class ExceptionThrowingMessageVerifier implements MessageVerifier {
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination,
-			YamlContract contract) {
+	public void send(Object payload, Map headers, String destination, YamlContract contract) {
 		throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
 	}
 

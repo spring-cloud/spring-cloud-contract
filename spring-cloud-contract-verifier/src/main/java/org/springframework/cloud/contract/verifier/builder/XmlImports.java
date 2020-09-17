@@ -27,8 +27,8 @@ class XmlImports implements Imports {
 	private final GeneratedClassMetaData generatedClassMetaData;
 
 	private static final String[] IMPORTS = { "javax.xml.parsers.DocumentBuilder",
-			"javax.xml.parsers.DocumentBuilderFactory", "org.w3c.dom.Document",
-			"org.xml.sax.InputSource", "java.io.StringReader" };
+			"javax.xml.parsers.DocumentBuilderFactory", "org.w3c.dom.Document", "org.xml.sax.InputSource",
+			"java.io.StringReader" };
 
 	XmlImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
@@ -37,16 +37,14 @@ class XmlImports implements Imports {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isXml));
+		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
+				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isXml));
 	}
 
 }

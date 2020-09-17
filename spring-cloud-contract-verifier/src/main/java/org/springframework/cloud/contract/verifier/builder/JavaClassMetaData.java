@@ -27,8 +27,7 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JavaClassMetaData(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JavaClassMetaData(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -41,11 +40,8 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public ClassMetaData suffix() {
-		String suffix = StringUtils.hasText(
-				this.generatedClassMetaData.configProperties.getNameSuffixForTests())
-						? this.generatedClassMetaData.configProperties
-								.getNameSuffixForTests()
-						: "Test";
+		String suffix = StringUtils.hasText(this.generatedClassMetaData.configProperties.getNameSuffixForTests())
+				? this.generatedClassMetaData.configProperties.getNameSuffixForTests() : "Test";
 		if (!this.blockBuilder.endsWith(suffix)) {
 			this.blockBuilder.addAtTheEnd(suffix);
 		}
@@ -94,12 +90,9 @@ class JavaClassMetaData implements ClassMetaData, DefaultClassMetadata {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
-				|| this.generatedClassMetaData.configProperties
-						.getTestFramework() == TestFramework.JUNIT5
-				|| this.generatedClassMetaData.configProperties
-						.getTestFramework() == TestFramework.TESTNG;
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT
+				|| this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT5
+				|| this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.TESTNG;
 	}
 
 }

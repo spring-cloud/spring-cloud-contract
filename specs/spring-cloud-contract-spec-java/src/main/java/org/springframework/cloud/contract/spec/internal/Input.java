@@ -357,26 +357,22 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 			return false;
 		}
 		Input input = (Input) o;
-		return Objects.equals(messageFrom, input.messageFrom)
-				&& Objects.equals(triggeredBy, input.triggeredBy)
+		return Objects.equals(messageFrom, input.messageFrom) && Objects.equals(triggeredBy, input.triggeredBy)
 				&& Objects.equals(messageHeaders, input.messageHeaders)
-				&& Objects.equals(messageBody, input.messageBody)
-				&& Objects.equals(assertThat, input.assertThat)
+				&& Objects.equals(messageBody, input.messageBody) && Objects.equals(assertThat, input.assertThat)
 				&& Objects.equals(bodyMatchers, input.bodyMatchers);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(messageFrom, triggeredBy, messageHeaders, messageBody,
-				assertThat, bodyMatchers);
+		return Objects.hash(messageFrom, triggeredBy, messageHeaders, messageBody, assertThat, bodyMatchers);
 	}
 
 	@Override
 	public String toString() {
-		return "Input{\n\tmessageFrom=" + messageFrom + ", \n\ttriggeredBy=" + triggeredBy
-				+ ", \n\tmessageHeaders=" + messageHeaders + ", \n\tmessageBody="
-				+ messageBody + ", \n\tassertThat=" + assertThat + ", \n\tbodyMatchers="
-				+ bodyMatchers + "} \n\t" + super.toString();
+		return "Input{\n\tmessageFrom=" + messageFrom + ", \n\ttriggeredBy=" + triggeredBy + ", \n\tmessageHeaders="
+				+ messageHeaders + ", \n\tmessageBody=" + messageBody + ", \n\tassertThat=" + assertThat
+				+ ", \n\tbodyMatchers=" + bodyMatchers + "} \n\t" + super.toString();
 	}
 
 	public static class BodyType extends DslProperty {
@@ -391,12 +387,10 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 
 	}
 
-	private class ClientPatternValueDslProperty
-			extends PatternValueDslProperty<ClientDslProperty> {
+	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
 
 		@Override
-		protected ClientDslProperty createProperty(Pattern pattern,
-				Object generatedValue) {
+		protected ClientDslProperty createProperty(Pattern pattern, Object generatedValue) {
 			return new ClientDslProperty(pattern, generatedValue);
 		}
 

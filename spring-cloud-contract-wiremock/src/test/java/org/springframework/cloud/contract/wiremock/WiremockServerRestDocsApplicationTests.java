@@ -65,56 +65,45 @@ public class WiremockServerRestDocsApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/resource"))
-				.andExpect(content().string("Hello World")).andDo(document("resource"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/resource")).andExpect(content().string("Hello World"))
+				.andDo(document("resource"));
 	}
 
 	@Test
 	public void statusIsMaintained() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/status"))
-				.andExpect(content().string("Hello World"))
-				.andExpect(status().is(HttpStatus.ACCEPTED_202))
-				.andDo(document("status"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/status")).andExpect(content().string("Hello World"))
+				.andExpect(status().is(HttpStatus.ACCEPTED_202)).andDo(document("status"));
 	}
 
 	@Test
 	public void queryParamsAreFetchedFromStubs() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get(
-				"/project_metadata/spring-framework?callback=a_function_name&foo=foo&bar=bar"))
-				.andExpect(status().isOk())
-				.andExpect(content().string("spring-framework a_function_name foo bar"))
+		this.mockMvc
+				.perform(MockMvcRequestBuilders
+						.get("/project_metadata/spring-framework?callback=a_function_name&foo=foo&bar=bar"))
+				.andExpect(status().isOk()).andExpect(content().string("spring-framework a_function_name foo bar"))
 				.andDo(document("query"));
 
 		File file = new File("target/snippets/stubs", "query.json");
 		BDDAssertions.then(file).exists();
-		StubMapping stubMapping = StubMapping
-				.buildFrom(new String(Files.readAllBytes(file.toPath())));
-		Map<String, MultiValuePattern> queryParameters = stubMapping.getRequest()
-				.getQueryParameters();
+		StubMapping stubMapping = StubMapping.buildFrom(new String(Files.readAllBytes(file.toPath())));
+		Map<String, MultiValuePattern> queryParameters = stubMapping.getRequest().getQueryParameters();
 		BDDAssertions.then(queryParameters.get("callback").getValuePattern())
 				.isEqualTo(WireMock.equalTo("a_function_name"));
-		BDDAssertions.then(queryParameters.get("foo").getValuePattern())
-				.isEqualTo(WireMock.equalTo("foo"));
-		BDDAssertions.then(queryParameters.get("bar").getValuePattern())
-				.isEqualTo(WireMock.equalTo("bar"));
+		BDDAssertions.then(queryParameters.get("foo").getValuePattern()).isEqualTo(WireMock.equalTo("foo"));
+		BDDAssertions.then(queryParameters.get("bar").getValuePattern()).isEqualTo(WireMock.equalTo("bar"));
 	}
 
 	@Test
 	public void stubsRenderLinksWithPlaceholder() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/link"))
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("link:")))
-				.andDo(document("link"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/link")).andExpect(status().isOk())
+				.andExpect(content().string(containsString("link:"))).andDo(document("link"));
 
 		File file = new File("target/snippets/stubs", "link.json");
 		BDDAssertions.then(file).exists();
-		StubMapping stubMapping = StubMapping
-				.buildFrom(new String(Files.readAllBytes(file.toPath())));
+		StubMapping stubMapping = StubMapping.buildFrom(new String(Files.readAllBytes(file.toPath())));
 		String body = stubMapping.getResponse().getBody();
-		BDDAssertions.then(body)
-				.contains("http://localhost:{{request.requestLine.port}}/link");
-		BDDAssertions.then(stubMapping.getResponse().getTransformers())
-				.contains("response-template");
+		BDDAssertions.then(body).contains("http://localhost:{{request.requestLine.port}}/link");
+		BDDAssertions.then(stubMapping.getResponse().getTransformers()).contains("response-template");
 	}
 
 	@Configuration
@@ -130,8 +119,8 @@ public class WiremockServerRestDocsApplicationTests {
 		@ResponseBody
 		@RequestMapping("/link")
 		public String link(HttpServletRequest request) {
-			UriComponents uriComponents = UriComponentsBuilder
-					.fromHttpRequest(new ServletServerHttpRequest(request)).build();
+			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request))
+					.build();
 			return "link: " + uriComponents.toUriString();
 		}
 
@@ -144,10 +133,9 @@ public class WiremockServerRestDocsApplicationTests {
 		@ResponseBody
 		@RequestMapping("/project_metadata/{projectId}")
 		public ResponseEntity<String> query(@PathVariable("projectId") String projectId,
-				@RequestParam("callback") String callback,
-				@RequestParam("foo") String foo, @RequestParam("bar") String bar) {
-			return ResponseEntity.ok()
-					.body(projectId + " " + callback + " " + foo + " " + bar);
+				@RequestParam("callback") String callback, @RequestParam("foo") String foo,
+				@RequestParam("bar") String bar) {
+			return ResponseEntity.ok().body(projectId + " " + callback + " " + foo + " " + bar);
 		}
 
 	}

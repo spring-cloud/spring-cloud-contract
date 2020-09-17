@@ -30,8 +30,7 @@ class MessagingReceiveMessageThen implements Then, BodyMethodVisitor {
 
 	private final BodyReader bodyReader;
 
-	MessagingReceiveMessageThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData,
+	MessagingReceiveMessageThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
@@ -41,17 +40,15 @@ class MessagingReceiveMessageThen implements Then, BodyMethodVisitor {
 
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
-		OutputMessage outputMessage = singleContractMetadata.getContract()
-				.getOutputMessage();
+		OutputMessage outputMessage = singleContractMetadata.getContract().getOutputMessage();
 		this.bodyReader.storeContractAsYaml(singleContractMetadata);
-		this.blockBuilder.addIndented(
-				"ContractVerifierMessage response = contractVerifierMessaging.receive("
+		this.blockBuilder
+				.addIndented("ContractVerifierMessage response = contractVerifierMessaging.receive("
 						+ sentToValue(outputMessage.getSentTo().getServerValue()) + ",")
-				.addEmptyLine().indent().addIndented("contract(this, \""
-						+ singleContractMetadata.methodName() + ".yml\"))")
-				.unindent().addEndingIfNotPresent().addEmptyLine();
-		this.blockBuilder.addLineWithEnding(
-				this.comparisonBuilder.assertThatIsNotNull("response"));
+				.addEmptyLine().indent()
+				.addIndented("contract(this, \"" + singleContractMetadata.methodName() + ".yml\"))").unindent()
+				.addEndingIfNotPresent().addEmptyLine();
+		this.blockBuilder.addLineWithEnding(this.comparisonBuilder.assertThatIsNotNull("response"));
 		return this;
 	}
 
@@ -64,8 +61,8 @@ class MessagingReceiveMessageThen implements Then, BodyMethodVisitor {
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return singleContractMetadata.isMessaging() && singleContractMetadata
-				.getContract().getOutputMessage().getSentTo() != null;
+		return singleContractMetadata.isMessaging()
+				&& singleContractMetadata.getContract().getOutputMessage().getSentTo() != null;
 	}
 
 }

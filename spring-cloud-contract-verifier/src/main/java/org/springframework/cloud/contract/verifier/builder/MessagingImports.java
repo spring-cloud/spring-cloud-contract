@@ -31,24 +31,21 @@ class MessagingImports implements Imports {
 			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage",
 			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging" };
 
-	MessagingImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	MessagingImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isMessaging));
+		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
+				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isMessaging));
 	}
 
 }

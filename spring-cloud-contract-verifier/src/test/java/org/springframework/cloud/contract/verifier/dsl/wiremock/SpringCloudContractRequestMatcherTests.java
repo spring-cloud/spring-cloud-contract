@@ -46,8 +46,7 @@ class SpringCloudContractRequestMatcherTests {
 			}
 		};
 
-		MatchResult result = matcher.match(BDDMockito.mock(Request.class),
-				Parameters.one("tool", "foo"));
+		MatchResult result = matcher.match(BDDMockito.mock(Request.class), Parameters.one("tool", "foo"));
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
 	}
@@ -64,8 +63,7 @@ class SpringCloudContractRequestMatcherTests {
 			}
 		};
 
-		MatchResult result = matcher.match(BDDMockito.mock(Request.class),
-				Parameters.one("contract", "value"));
+		MatchResult result = matcher.match(BDDMockito.mock(Request.class), Parameters.one("contract", "value"));
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
 	}
@@ -82,28 +80,22 @@ class SpringCloudContractRequestMatcherTests {
 			}
 		};
 
-		MatchResult result = matcher.match(BDDMockito.mock(Request.class),
-				Parameters.one("contract", "value"));
+		MatchResult result = matcher.match(BDDMockito.mock(Request.class), Parameters.one("contract", "value"));
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
 	}
 
-	private static final String PROPER_YAML = "---\n" + "request:\n"
-			+ "  method: \"POST\"\n" + "  url: \"/graphql\"\n" + "  headers:\n"
-			+ "    Content-Type: \"application/json\"\n" + "  body:\n"
-			+ "    query: \"query queryName($personName: String!) { personToCheck(name: $personName)"
-			+ "      {         name    age  } }\"\n" + "    variables:\n"
-			+ "      personName: \"Old Enough\"\n" + "    operationName: \"queryName\"\n"
-			+ "  matchers:\n" + "    headers:\n" + "      - key: \"Content-Type\"\n"
-			+ "        regex: \"application/json.*\"\n"
-			+ "        regexType: \"as_string\"\n" + "response:\n" + "  status: 200\n"
+	private static final String PROPER_YAML = "---\n" + "request:\n" + "  method: \"POST\"\n" + "  url: \"/graphql\"\n"
 			+ "  headers:\n" + "    Content-Type: \"application/json\"\n" + "  body:\n"
-			+ "    data:\n" + "      personToCheck:\n" + "        name: \"Old Enough\"\n"
-			+ "        age: \"40\"\n" + "  matchers:\n" + "    headers:\n"
-			+ "      - key: \"Content-Type\"\n"
-			+ "        regex: \"application/json.*\"\n"
-			+ "        regexType: \"as_string\"\n"
-			+ "name: \"shouldRetrieveOldEnoughPerson\"\n" + "metadata:\n"
+			+ "    query: \"query queryName($personName: String!) { personToCheck(name: $personName)"
+			+ "      {         name    age  } }\"\n" + "    variables:\n" + "      personName: \"Old Enough\"\n"
+			+ "    operationName: \"queryName\"\n" + "  matchers:\n" + "    headers:\n"
+			+ "      - key: \"Content-Type\"\n" + "        regex: \"application/json.*\"\n"
+			+ "        regexType: \"as_string\"\n" + "response:\n" + "  status: 200\n" + "  headers:\n"
+			+ "    Content-Type: \"application/json\"\n" + "  body:\n" + "    data:\n" + "      personToCheck:\n"
+			+ "        name: \"Old Enough\"\n" + "        age: \"40\"\n" + "  matchers:\n" + "    headers:\n"
+			+ "      - key: \"Content-Type\"\n" + "        regex: \"application/json.*\"\n"
+			+ "        regexType: \"as_string\"\n" + "name: \"shouldRetrieveOldEnoughPerson\"\n" + "metadata:\n"
 			+ "  verifier:\n" + "    tool: \"graphql\"\n";
 
 	@Test
@@ -117,8 +109,8 @@ class SpringCloudContractRequestMatcherTests {
 			}
 		};
 
-		MatchResult result = matcher.match(BDDMockito.mock(Request.class), toMap(
-				Tuples.of("tool", "unsupported"), Tuples.of("contract", PROPER_YAML)));
+		MatchResult result = matcher.match(BDDMockito.mock(Request.class),
+				toMap(Tuples.of("tool", "unsupported"), Tuples.of("contract", PROPER_YAML)));
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
 	}
@@ -153,8 +145,7 @@ class SpringCloudContractRequestMatcherTests {
 class ApplicableRequestMatcher implements RequestMatcher {
 
 	@Override
-	public MatchResult match(List<YamlContract> contracts, Request request,
-			Parameters parameters) {
+	public MatchResult match(List<YamlContract> contracts, Request request, Parameters parameters) {
 		return MatchResult.of(true);
 	}
 

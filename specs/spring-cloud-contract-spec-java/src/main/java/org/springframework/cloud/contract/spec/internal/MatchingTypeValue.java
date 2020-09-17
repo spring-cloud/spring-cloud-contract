@@ -58,8 +58,7 @@ public class MatchingTypeValue {
 		this.minTypeOccurrence = minTypeOccurrence;
 	}
 
-	MatchingTypeValue(MatchingType type, Object value, Integer minTypeOccurrence,
-			Integer maxTypeOccurrence) {
+	MatchingTypeValue(MatchingType type, Object value, Integer minTypeOccurrence, Integer maxTypeOccurrence) {
 		this.type = type;
 		this.value = value;
 		this.minTypeOccurrence = minTypeOccurrence;
@@ -119,9 +118,8 @@ public class MatchingTypeValue {
 
 	@Override
 	public String toString() {
-		return "MatchingTypeValue{" + "type=" + type + ", value=" + value
-				+ ", minTypeOccurrence=" + minTypeOccurrence + ", maxTypeOccurrence="
-				+ maxTypeOccurrence + '}';
+		return "MatchingTypeValue{" + "type=" + type + ", value=" + value + ", minTypeOccurrence=" + minTypeOccurrence
+				+ ", maxTypeOccurrence=" + maxTypeOccurrence + '}';
 	}
 
 }

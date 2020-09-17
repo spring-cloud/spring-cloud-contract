@@ -48,24 +48,20 @@ import org.springframework.jms.core.JmsTemplate;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(JmsTemplate.class)
-@ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true",
-		matchIfMissing = true)
-@AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class,
-		NoOpContractVerifierAutoConfiguration.class })
+@ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true", matchIfMissing = true)
+@AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class, NoOpContractVerifierAutoConfiguration.class })
 public class ContractVerifierJmsConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	MessageVerifier<Message> contractVerifierJmsMessageExchange(
-			ObjectProvider<JmsTemplate> jmsTemplateProvider) {
+	MessageVerifier<Message> contractVerifierJmsMessageExchange(ObjectProvider<JmsTemplate> jmsTemplateProvider) {
 		JmsTemplate jmsTemplate = jmsTemplateProvider.getIfAvailable(JmsTemplate::new);
 		return new JmsStubMessages(jmsTemplate);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(
-			MessageVerifier<Message> exchange) {
+	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(MessageVerifier<Message> exchange) {
 		return new ContractVerifierJmsHelper(exchange);
 	}
 

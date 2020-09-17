@@ -29,23 +29,20 @@ class JUnit5IgnoreMethodAnnotation implements MethodAnnotations {
 
 	private static final String[] ANNOTATIONS = { "@Disabled" };
 
-	JUnit5IgnoreMethodAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit5IgnoreMethodAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
+	public MethodVisitor<MethodAnnotations> apply(SingleContractMetadata singleContractMetadata) {
 		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
 		return this;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT5
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT5
 				&& (singleContractMetadata.getContractMetadata().isIgnored()
 						|| singleContractMetadata.getContract().isIgnored());
 	}

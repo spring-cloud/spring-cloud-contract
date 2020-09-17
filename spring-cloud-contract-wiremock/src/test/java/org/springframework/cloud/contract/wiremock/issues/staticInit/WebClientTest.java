@@ -33,8 +33,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
-@SpringBootTest(
-		properties = "my-client.url=http://localhost:${wiremock.server.port}/resources")
+@SpringBootTest(properties = "my-client.url=http://localhost:${wiremock.server.port}/resources")
 @AutoConfigureWireMock(port = 0, httpsPort = 0, files = "src/test/resources/__files")
 class WebClientTest {
 
@@ -67,14 +66,13 @@ class WebClientTest {
 
 		Stubber() {
 			log.info("Setting up GET");
-			stubFor(get(urlEqualTo("/resources"))
-					.willReturn(aResponse().withBody("Everything seems fine!")));
+			stubFor(get(urlEqualTo("/resources")).willReturn(aResponse().withBody("Everything seems fine!")));
 		}
 
 		Stubber(WireMockServer wireMockServer) {
 			log.info("Setting up GET");
-			wireMockServer.stubFor(get(urlEqualTo("/resources"))
-					.willReturn(aResponse().withBody("Everything seems fine!")));
+			wireMockServer
+					.stubFor(get(urlEqualTo("/resources")).willReturn(aResponse().withBody("Everything seems fine!")));
 		}
 
 	}

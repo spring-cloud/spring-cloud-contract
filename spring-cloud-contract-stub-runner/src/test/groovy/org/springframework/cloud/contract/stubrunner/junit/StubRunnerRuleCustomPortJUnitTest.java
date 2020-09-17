@@ -39,10 +39,8 @@ public class StubRunnerRuleCustomPortJUnitTest {
 	@ClassRule
 	public static StubRunnerRule rule = new StubRunnerRule().repoRoot(repoRoot())
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs",
-					"loanIssuance")
-			.withPort(12345).downloadStub(
-					"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");
+			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance").withPort(12345)
+			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");
 
 	@BeforeClass
 	@AfterClass
@@ -55,8 +53,7 @@ public class StubRunnerRuleCustomPortJUnitTest {
 
 	private static String repoRoot() {
 		try {
-			return StubRunnerRuleCustomPortJUnitTest.class
-					.getResource("/m2repo/repository/").toURI().toString();
+			return StubRunnerRuleCustomPortJUnitTest.class.getResource("/m2repo/repository/").toURI().toString();
 		}
 		catch (Exception e) {
 			return "";
@@ -66,33 +63,24 @@ public class StubRunnerRuleCustomPortJUnitTest {
 	@Test
 	public void should_start_wiremock_servers() throws Exception {
 		// expect: 'WireMocks are running'
-		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs",
-				"loanIssuance")).isNotNull();
+		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")).isNotNull();
 		then(rule.findStubUrl("loanIssuance")).isNotNull();
-		then(rule.findStubUrl("loanIssuance")).isEqualTo(rule.findStubUrl(
-				"org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
-		then(rule.findStubUrl(
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
-						.isNotNull();
+		then(rule.findStubUrl("loanIssuance"))
+				.isEqualTo(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
+		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
 		// and:
 		then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
-		then(rule.findAllRunningStubs().isPresent(
-				"org.springframework.cloud.contract.verifier.stubs",
+		then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs",
 				"fraudDetectionServer")).isTrue();
-		then(rule.findAllRunningStubs().isPresent(
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
-						.isTrue();
+		then(rule.findAllRunningStubs()
+				.isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
 		// and: 'Stubs were registered'
-		then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name"))
-				.isEqualTo("loanIssuance");
-		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name"))
-				.isEqualTo("fraudDetectionServer");
+		then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
+		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
 		// and: 'The port is fixed'
 		// tag::test_with_port[]
-		then(rule.findStubUrl("loanIssuance"))
-				.isEqualTo(URI.create("http://localhost:12345").toURL());
-		then(rule.findStubUrl("fraudDetectionServer"))
-				.isEqualTo(URI.create("http://localhost:12346").toURL());
+		then(rule.findStubUrl("loanIssuance")).isEqualTo(URI.create("http://localhost:12345").toURL());
+		then(rule.findStubUrl("fraudDetectionServer")).isEqualTo(URI.create("http://localhost:12346").toURL());
 		// end::test_with_port[]
 	}
 

@@ -40,12 +40,11 @@ public class GroovyDslPropertyConverter implements DslPropertyConverter {
 				return object;
 			}
 			List<Object> generatedValues = Arrays.stream(((GString) object).getValues())
-					.map(it -> it instanceof RegexProperty
-							? ((RegexProperty) it).generate() : it)
+					.map(it -> it instanceof RegexProperty ? ((RegexProperty) it).generate() : it)
 					.collect(Collectors.toList());
 			Object[] arrayOfObjects = generatedValues.toArray();
-			String[] strings = Arrays.copyOf(((GString) object).getStrings(),
-					((GString) object).getStrings().length, String[].class);
+			String[] strings = Arrays.copyOf(((GString) object).getStrings(), ((GString) object).getStrings().length,
+					String[].class);
 			String newUrl = new GStringImpl(arrayOfObjects, strings).toString();
 			return new Url(newUrl);
 		}

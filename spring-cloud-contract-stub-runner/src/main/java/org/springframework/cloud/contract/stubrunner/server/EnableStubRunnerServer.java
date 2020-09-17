@@ -35,8 +35,7 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({ HttpStubsController.class, StubRunnerConfiguration.class,
-		StubRunnerServerConfiguration.class })
+@Import({ HttpStubsController.class, StubRunnerConfiguration.class, StubRunnerServerConfiguration.class })
 public @interface EnableStubRunnerServer {
 
 }

@@ -57,17 +57,13 @@ class StubRepository {
 
 	private final StubRunnerOptions options;
 
-	StubRepository(File repository, List<HttpServerStub> httpServerStubs,
-			StubRunnerOptions options) {
+	StubRepository(File repository, List<HttpServerStub> httpServerStubs, StubRunnerOptions options) {
 		if (!repository.isDirectory()) {
-			throw new IllegalArgumentException(
-					"Missing descriptor repository under path [" + repository + "]");
+			throw new IllegalArgumentException("Missing descriptor repository under path [" + repository + "]");
 		}
-		this.contractConverters = SpringFactoriesLoader
-				.loadFactories(ContractConverter.class, null);
+		this.contractConverters = SpringFactoriesLoader.loadFactories(ContractConverter.class, null);
 		if (log.isTraceEnabled()) {
-			log.trace(
-					"Found the following contract converters " + this.contractConverters);
+			log.trace("Found the following contract converters " + this.contractConverters);
 		}
 		this.httpServerStubs = httpServerStubs;
 		this.path = repository;
@@ -110,26 +106,22 @@ class StubRepository {
 	}
 
 	private List<File> collectedStubs() {
-		return this.path.exists() ? collectMappings(this.path)
-				: Collections.<File>emptyList();
+		return this.path.exists() ? collectMappings(this.path) : Collections.<File>emptyList();
 	}
 
 	private List<File> collectMappings(File descriptorsDirectory) {
 		final List<File> mappingDescriptors = new ArrayList<>();
 		try {
-			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
-					new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult visitFile(Path path,
-								BasicFileAttributes attrs) throws IOException {
-							File file = path.toFile();
-							if (httpServerStubAccepts(file)
-									&& isStubPerConsumerPathMatching(file)) {
-								mappingDescriptors.add(file);
-							}
-							return super.visitFile(path, attrs);
-						}
-					});
+			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()), new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+					File file = path.toFile();
+					if (httpServerStubAccepts(file) && isStubPerConsumerPathMatching(file)) {
+						mappingDescriptors.add(file);
+					}
+					return super.visitFile(path, attrs);
+				}
+			});
 		}
 		catch (IOException e) {
 			log.warn("Exception occurred while trying to parse file", e);
@@ -158,8 +150,7 @@ class StubRepository {
 
 	private Collection<Contract> contractDescriptors() {
 		return (this.path.exists()
-				? ContractScanner.collectContractDescriptors(this.path,
-						this::isStubPerConsumerPathMatching)
+				? ContractScanner.collectContractDescriptors(this.path, this::isStubPerConsumerPathMatching)
 				: Collections.<Contract>emptySet());
 	}
 
@@ -172,9 +163,8 @@ class StubRepository {
 		String absolutePath = file.getAbsolutePath();
 		boolean stubPerConsumerMatching = absolutePath.contains(searchedConsumerName);
 		if (log.isDebugEnabled()) {
-			log.debug("Absolute path [" + absolutePath + "] contains ["
-					+ searchedConsumerName + "] in its path [" + stubPerConsumerMatching
-					+ "]");
+			log.debug("Absolute path [" + absolutePath + "] contains [" + searchedConsumerName + "] in its path ["
+					+ stubPerConsumerMatching + "]");
 		}
 		return stubPerConsumerMatching;
 	}

@@ -26,7 +26,6 @@ package org.springframework.cloud.contract.verifier.messaging;
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-public interface MessageVerifier<M>
-		extends MessageVerifierSender<M>, MessageVerifierReceiver<M> {
+public interface MessageVerifier<M> extends MessageVerifierSender<M>, MessageVerifierReceiver<M> {
 
 }

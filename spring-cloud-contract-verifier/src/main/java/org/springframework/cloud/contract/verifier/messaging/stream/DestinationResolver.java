@@ -42,12 +42,12 @@ class DestinationResolver {
 			BindingServiceProperties channelBindingServiceProperties = this.context
 					.getBean(BindingServiceProperties.class);
 			Map<String, String> channels = new HashMap<>();
-			for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
-					.getBindings().entrySet()) {
+			for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties.getBindings()
+					.entrySet()) {
 				if (destination.equals(entry.getValue().getDestination())) {
 					if (log.isDebugEnabled()) {
-						log.debug("Found a channel named [" + entry.getKey()
-								+ "] with destination [" + destination + "]");
+						log.debug("Found a channel named [" + entry.getKey() + "] with destination [" + destination
+								+ "]");
 					}
 					channels.put(entry.getKey(), destination);
 				}
@@ -57,15 +57,12 @@ class DestinationResolver {
 			}
 			else if (channels.size() > 0) {
 				if (log.isDebugEnabled()) {
-					log.debug("Found following channels [" + channels
-							+ "] for destination [" + destination + "]. "
+					log.debug("Found following channels [" + channels + "] for destination [" + destination + "]. "
 							+ "Will pick the one that matches the default channel name or the first one if none is matching");
 				}
-				String defaultChannelName = channels
-						.get(defaultChannel.name().toLowerCase());
+				String defaultChannelName = channels.get(defaultChannel.name().toLowerCase());
 				String matchingChannelName = StringUtils.hasText(defaultChannelName)
-						? defaultChannel.name().toLowerCase()
-						: channels.keySet().iterator().next();
+						? defaultChannel.name().toLowerCase() : channels.keySet().iterator().next();
 				if (log.isDebugEnabled()) {
 					log.debug("Picked channel name is [" + matchingChannelName + "]");
 				}
@@ -73,10 +70,8 @@ class DestinationResolver {
 			}
 		}
 		catch (Exception e) {
-			log.error(
-					"Exception took place while trying to resolve the destination. Will assume the name ["
-							+ destination + "]",
-					e);
+			log.error("Exception took place while trying to resolve the destination. Will assume the name ["
+					+ destination + "]", e);
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("No destination named [" + destination

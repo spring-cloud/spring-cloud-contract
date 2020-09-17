@@ -29,21 +29,18 @@ class JUnit4MethodAnnotation implements MethodAnnotations {
 
 	private static final String[] ANNOTATIONS = { "@Test" };
 
-	JUnit4MethodAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit4MethodAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT;
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT;
 	}
 
 	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
+	public MethodVisitor<MethodAnnotations> apply(SingleContractMetadata singleContractMetadata) {
 		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
 		return this;
 	}

@@ -43,8 +43,7 @@ import org.springframework.util.StringUtils;
  */
 public class FileStubDownloader implements StubDownloaderBuilder {
 
-	private static final List<String> ACCEPTABLE_PROTOCOLS = Collections
-			.singletonList("stubs");
+	private static final List<String> ACCEPTABLE_PROTOCOLS = Collections.singletonList("stubs");
 
 	/**
 	 * Does any of the accepted protocols matches the URL of the repository.
@@ -94,8 +93,7 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 	}
 
 	private String separatorsToUnix(String location) {
-		return location != null && location.indexOf(92) != -1
-				? location.replace('\\', '/') : location;
+		return location != null && location.indexOf(92) != -1 ? location.replace('\\', '/') : location;
 	}
 
 }
@@ -148,19 +146,16 @@ class StubsStubDownloader implements StubDownloader {
 
 	// StubConfiguration is the concrete stub to be fetched
 	@Override
-	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubConfiguration stubConfiguration) {
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration) {
 		boolean shouldFindProducer = shouldFindProducer();
 		if (!shouldFindProducer) {
 			String schemeSpecific = schemeSpecificPart();
-			log.info("Stubs are present under [" + schemeSpecific
-					+ "]. Will copy them to a temporary directory.");
-			return new ResourceResolvingStubDownloader(stubRunnerOptions,
-					this::repoRootForSchemeSpecificPart, this::anyPattern)
-							.downloadAndUnpackStubJar(stubConfiguration);
+			log.info("Stubs are present under [" + schemeSpecific + "]. Will copy them to a temporary directory.");
+			return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRootForSchemeSpecificPart,
+					this::anyPattern).downloadAndUnpackStubJar(stubConfiguration);
 		}
-		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
-				this::gavPattern).downloadAndUnpackStubJar(stubConfiguration);
+		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot, this::gavPattern)
+				.downloadAndUnpackStubJar(stubConfiguration);
 	}
 
 	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions,
@@ -192,30 +187,21 @@ class StubsStubDownloader implements StubDownloader {
 	// for group id a.b.c and artifact id d
 	// a.b.c/d
 	// a/b/c/d
-	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions,
-			StubConfiguration configuration) {
-		String pathWithGroupAndArtifactId = "/" + configuration.getGroupId() + "/"
-				+ configuration.getArtifactId();
-		String pathWithGroupAndArtifactIdSlashSeparated = "/"
-				+ configuration.getGroupId().replace(".", File.separator) + "/"
-				+ configuration.getArtifactId();
+	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions, StubConfiguration configuration) {
+		String pathWithGroupAndArtifactId = "/" + configuration.getGroupId() + "/" + configuration.getArtifactId();
+		String pathWithGroupAndArtifactIdSlashSeparated = "/" + configuration.getGroupId().replace(".", File.separator)
+				+ "/" + configuration.getArtifactId();
 		String anyFileSuffix = "/**/*.*";
 		RepoRoots roots = RepoRoots.asList(
-				new RepoRoot(schemeSpecificPart() + pathWithGroupAndArtifactId,
-						anyFileSuffix),
-				new RepoRoot(
-						schemeSpecificPart() + pathWithGroupAndArtifactIdSlashSeparated,
-						anyFileSuffix),
+				new RepoRoot(schemeSpecificPart() + pathWithGroupAndArtifactId, anyFileSuffix),
+				new RepoRoot(schemeSpecificPart() + pathWithGroupAndArtifactIdSlashSeparated, anyFileSuffix),
 				new RepoRoot(schemeSpecificPart() + anyFileSuffix));
 		if (!latestVersionIsSet(configuration)) {
-			String pathWithGAV = pathWithGroupAndArtifactId + "/"
+			String pathWithGAV = pathWithGroupAndArtifactId + "/" + configuration.getVersion();
+			String pathWithSlashSeparatedGAV = pathWithGroupAndArtifactIdSlashSeparated + "/"
 					+ configuration.getVersion();
-			String pathWithSlashSeparatedGAV = pathWithGroupAndArtifactIdSlashSeparated
-					+ "/" + configuration.getVersion();
-			roots.addAll(RepoRoots.asList(
-					new RepoRoot(schemeSpecificPart() + pathWithGAV, anyFileSuffix),
-					new RepoRoot(schemeSpecificPart() + pathWithSlashSeparatedGAV,
-							anyFileSuffix)));
+			roots.addAll(RepoRoots.asList(new RepoRoot(schemeSpecificPart() + pathWithGAV, anyFileSuffix),
+					new RepoRoot(schemeSpecificPart() + pathWithSlashSeparatedGAV, anyFileSuffix)));
 		}
 		return roots;
 	}
@@ -233,16 +219,14 @@ class StubsStubDownloader implements StubDownloader {
 
 	private boolean shouldFindProducer() {
 		Map<String, String> args = this.stubRunnerOptions.getProperties();
-		String findProducer = StubRunnerPropertyUtils.getProperty(args,
-				STUBS_FIND_PRODUCER_PROPERTY);
+		String findProducer = StubRunnerPropertyUtils.getProperty(args, STUBS_FIND_PRODUCER_PROPERTY);
 		return Boolean.parseBoolean(findProducer);
 	}
 
 	// stubs://foo -> foo
 	private String schemeSpecificPart() {
 		try {
-			String part = this.stubRunnerOptions.getStubRepositoryRoot().getURI()
-					.getSchemeSpecificPart();
+			String part = this.stubRunnerOptions.getStubRepositoryRoot().getURI().getSchemeSpecificPart();
 			if (StringUtils.isEmpty(part)) {
 				return part;
 			}

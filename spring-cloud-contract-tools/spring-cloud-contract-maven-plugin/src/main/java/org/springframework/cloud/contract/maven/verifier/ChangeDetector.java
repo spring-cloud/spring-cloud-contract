@@ -29,12 +29,10 @@ final class ChangeDetector {
 	private ChangeDetector() {
 	}
 
-	static boolean inputFilesChangeDetected(File contractsDirectory,
-			MojoExecution mojoExecution, MavenSession session)
+	static boolean inputFilesChangeDetected(File contractsDirectory, MojoExecution mojoExecution, MavenSession session)
 			throws MojoExecutionException {
 
-		IncrementalBuildHelper incrementalBuildHelper = new IncrementalBuildHelper(
-				mojoExecution, session);
+		IncrementalBuildHelper incrementalBuildHelper = new IncrementalBuildHelper(mojoExecution, session);
 
 		DirectoryScanner scanner = incrementalBuildHelper.getDirectoryScanner();
 		scanner.setBasedir(contractsDirectory);

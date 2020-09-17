@@ -26,27 +26,23 @@ class JsonPathImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = { "com.jayway.jsonpath.DocumentContext",
-			"com.jayway.jsonpath.JsonPath" };
+	private static final String[] IMPORTS = { "com.jayway.jsonpath.DocumentContext", "com.jayway.jsonpath.JsonPath" };
 
-	JsonPathImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JsonPathImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isJson));
+		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
+				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isJson));
 	}
 
 }

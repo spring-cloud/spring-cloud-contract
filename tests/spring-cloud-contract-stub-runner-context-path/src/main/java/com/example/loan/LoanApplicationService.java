@@ -51,22 +51,19 @@ public class LoanApplicationService {
 		return buildResponseFromFraudResult(response);
 	}
 
-	private FraudServiceResponse sendRequestToFraudDetectionService(
-			FraudServiceRequest request) {
+	private FraudServiceResponse sendRequestToFraudDetectionService(FraudServiceRequest request) {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
 
 		// tag::client_call_server[]
-		ResponseEntity<FraudServiceResponse> response = this.restTemplate.exchange(
-				this.fraudUrl + "/fraudcheck", HttpMethod.PUT,
-				new HttpEntity<>(request, httpHeaders), FraudServiceResponse.class);
+		ResponseEntity<FraudServiceResponse> response = this.restTemplate.exchange(this.fraudUrl + "/fraudcheck",
+				HttpMethod.PUT, new HttpEntity<>(request, httpHeaders), FraudServiceResponse.class);
 		// end::client_call_server[]
 
 		return response.getBody();
 	}
 
-	private LoanApplicationResult buildResponseFromFraudResult(
-			FraudServiceResponse response) {
+	private LoanApplicationResult buildResponseFromFraudResult(FraudServiceResponse response) {
 		LoanApplicationStatus applicationStatus = null;
 		if (FraudCheckStatus.OK == response.getFraudCheckStatus()) {
 			applicationStatus = LoanApplicationStatus.LOAN_APPLIED;
@@ -75,8 +72,7 @@ public class LoanApplicationService {
 			applicationStatus = LoanApplicationStatus.LOAN_APPLICATION_REJECTED;
 		}
 
-		return new LoanApplicationResult(applicationStatus,
-				response.getRejectionReason());
+		return new LoanApplicationResult(applicationStatus, response.getRejectionReason());
 	}
 
 	public void setFraudUrl(String fraudUrl) {

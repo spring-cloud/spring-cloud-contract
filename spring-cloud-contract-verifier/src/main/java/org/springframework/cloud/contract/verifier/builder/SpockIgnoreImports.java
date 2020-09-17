@@ -25,8 +25,7 @@ class SpockIgnoreImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	SpockIgnoreImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	SpockIgnoreImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -39,12 +38,10 @@ class SpockIgnoreImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK
 				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(metadata -> metadata.isIgnored()
-								|| metadata.getConvertedContractWithMetadata().stream()
-										.anyMatch(SingleContractMetadata::isIgnored));
+						.anyMatch(metadata -> metadata.isIgnored() || metadata.getConvertedContractWithMetadata()
+								.stream().anyMatch(SingleContractMetadata::isIgnored));
 	}
 
 }

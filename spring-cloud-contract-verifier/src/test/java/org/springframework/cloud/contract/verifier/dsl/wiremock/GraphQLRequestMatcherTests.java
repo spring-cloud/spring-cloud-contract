@@ -67,9 +67,7 @@ class GraphQLRequestMatcherTests {
 	void should_not_match_when_exception_occurs_while_trying_to_read_missing_request_body() {
 		GraphQlMatcher matcher = new GraphQlMatcher();
 
-		MatchResult result = matcher.match(
-				YamlContractConverter.INSTANCE
-						.read(YAML_WITH_INVALID_VARIABLES.getBytes()),
+		MatchResult result = matcher.match(YamlContractConverter.INSTANCE.read(YAML_WITH_INVALID_VARIABLES.getBytes()),
 				BDDMockito.mock(Request.class), null);
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
@@ -79,8 +77,8 @@ class GraphQLRequestMatcherTests {
 	void should_not_match_when_exception_occurs_while_trying_to_parse_graphql_entries() {
 		GraphQlMatcher matcher = new GraphQlMatcher();
 
-		MatchResult result = matcher.match(YamlContractConverter.INSTANCE
-				.read(YAML_WITH_INVALID_VARIABLES.getBytes()), request(), null);
+		MatchResult result = matcher.match(YamlContractConverter.INSTANCE.read(YAML_WITH_INVALID_VARIABLES.getBytes()),
+				request(), null);
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
 	}
@@ -132,8 +130,7 @@ class GraphQLRequestMatcherTests {
 	void should_match_when_the_graphql_part_matches_regardless_of_whitespace_entries_in_the_query() {
 		GraphQlMatcher matcher = new GraphQlMatcher();
 
-		MatchResult result = matcher.match(
-				YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()), request(),
+		MatchResult result = matcher.match(YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()), request(),
 				null);
 
 		BDDAssertions.then(result.isExactMatch()).isTrue();
@@ -151,8 +148,7 @@ class GraphQLRequestMatcherTests {
 	void should_not_match_when_the_query_does_not_match() {
 		GraphQlMatcher matcher = new GraphQlMatcher();
 
-		MatchResult result = matcher.match(
-				YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()),
+		MatchResult result = matcher.match(YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()),
 				request(NOT_MATCHING_QUERY_BODY), null);
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
@@ -170,8 +166,7 @@ class GraphQLRequestMatcherTests {
 	void should_not_match_when_the_variables_does_not_match() {
 		GraphQlMatcher matcher = new GraphQlMatcher();
 
-		MatchResult result = matcher.match(
-				YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()),
+		MatchResult result = matcher.match(YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()),
 				request(NOT_MATCHING_VARIABLES_BODY), null);
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();
@@ -189,8 +184,7 @@ class GraphQLRequestMatcherTests {
 	void should_not_match_when_the_operation_name_does_not_match() {
 		GraphQlMatcher matcher = new GraphQlMatcher();
 
-		MatchResult result = matcher.match(
-				YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()),
+		MatchResult result = matcher.match(YamlContractConverter.INSTANCE.read(PROPER_YAML.getBytes()),
 				request(NOT_MATCHING_OPERATION_NAME_BODY), null);
 
 		BDDAssertions.then(result.isExactMatch()).isFalse();

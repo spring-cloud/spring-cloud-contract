@@ -69,9 +69,8 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	// Passing way more arguments here than I would like to, but since we are planning a
 	// major
 	// refactoring of this module for Hoxton release, leaving it this way for now
-	JsonBodyVerificationBuilder(boolean assertJsonSize,
-			TemplateProcessor templateProcessor, ContractTemplate contractTemplate,
-			Contract contract, Optional<String> lineSuffix,
+	JsonBodyVerificationBuilder(boolean assertJsonSize, TemplateProcessor templateProcessor,
+			ContractTemplate contractTemplate, Contract contract, Optional<String> lineSuffix,
 			Function<String, String> postProcessJsonPathCall) {
 		this.assertJsonSize = assertJsonSize;
 		this.templateProcessor = templateProcessor;
@@ -81,17 +80,15 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		this.postProcessJsonPathCall = postProcessJsonPathCall;
 	}
 
-	Object addJsonResponseBodyCheck(BlockBuilder bb, Object convertedResponseBody,
-			BodyMatchers bodyMatchers, String responseString,
-			boolean shouldCommentOutBDDBlocks) {
+	Object addJsonResponseBodyCheck(BlockBuilder bb, Object convertedResponseBody, BodyMatchers bodyMatchers,
+			String responseString, boolean shouldCommentOutBDDBlocks) {
 		appendJsonPath(bb, responseString);
 		DocumentContext parsedRequestBody = null;
 		boolean dontParseStrings = convertedResponseBody instanceof Map;
-		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY
-				: MapConverter.JSON_PARSING_CLOSURE;
+		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE;
 		if (hasRequestBody()) {
-			Object testSideRequestBody = MapConverter
-					.getTestSideValues(contract.getRequest().getBody(), parsingClosure);
+			Object testSideRequestBody = MapConverter.getTestSideValues(contract.getRequest().getBody(),
+					parsingClosure);
 			parsedRequestBody = JsonPath.parse(testSideRequestBody);
 			if (convertedResponseBody instanceof String
 					&& !textContainsJsonPathTemplate(convertedResponseBody.toString())) {
@@ -100,22 +97,20 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 			}
 		}
 		Object copiedBody = cloneBody(convertedResponseBody);
-		convertedResponseBody = JsonToJsonPathsConverter
-				.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers);
+		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers);
 		// remove quotes from fromRequest objects before picking json paths
 		TestSideRequestTemplateModel templateModel = hasRequestBody()
 				? TestSideRequestTemplateModel.from(contract.getRequest()) : null;
 		convertedResponseBody = MapConverter.transformValues(convertedResponseBody,
 				returnReferencedEntries(templateModel), parsingClosure);
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(assertJsonSize)
-				.transformToJsonPathWithTestsSideValues(convertedResponseBody,
-						parsingClosure);
+				.transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingClosure);
 		DocumentContext finalParsedRequestBody = parsedRequestBody;
 		jsonPaths.forEach(it -> {
 			String method = it.method();
 			method = processIfTemplateIsPresent(method, finalParsedRequestBody);
-			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(
-					method) ? method : postProcessJsonPathCall.apply(method);
+			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ? method
+					: postProcessJsonPathCall.apply(method);
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod);
 			addColonIfRequired(lineSuffix, bb);
 		});
@@ -128,25 +123,20 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	private void checkType(BlockBuilder bb, BodyMatcher it, Object elementFromBody) {
-		String method = "assertThat((Object) parsedJson.read("
-				+ quotedAndEscaped(it.path()) + ")).isInstanceOf("
+		String method = "assertThat((Object) parsedJson.read(" + quotedAndEscaped(it.path()) + ")).isInstanceOf("
 				+ classToCheck(elementFromBody).getName() + ".class)";
 		bb.addLine(postProcessJsonPathCall.apply(method));
 		addColonIfRequired(lineSuffix, bb);
 	}
 
 	// we want to make the type more generic (e.g. not ArrayList but List)
-	private String sizeCheckMethod(BodyMatcher bodyMatcher,
-			String quotedAndEscaptedPath) {
+	private String sizeCheckMethod(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
 		String prefix = sizeCheckPrefix(bodyMatcher, quotedAndEscaptedPath);
-		if (bodyMatcher.minTypeOccurrence() != null
-				&& bodyMatcher.maxTypeOccurrence() != null) {
-			return prefix + "Between(" + bodyMatcher.minTypeOccurrence() + ", "
-					+ bodyMatcher.maxTypeOccurrence() + ")";
+		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
+			return prefix + "Between(" + bodyMatcher.minTypeOccurrence() + ", " + bodyMatcher.maxTypeOccurrence() + ")";
 		}
 		else if (bodyMatcher.minTypeOccurrence() != null) {
-			return prefix + "GreaterThanOrEqualTo(" + bodyMatcher.minTypeOccurrence()
-					+ ")";
+			return prefix + "GreaterThanOrEqualTo(" + bodyMatcher.minTypeOccurrence() + ")";
 		}
 		else if (bodyMatcher.maxTypeOccurrence() != null) {
 			return prefix + "LessThanOrEqualTo(" + bodyMatcher.maxTypeOccurrence() + ")";
@@ -154,42 +144,35 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		return prefix;
 	}
 
-	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb,
-			String path, String valueAsParam) {
-		String method = "assertThat((java.lang.Iterable) parsedJson.read(" + path
-				+ ", java.util.Collection.class)).as(" + path + ").allElementsMatch("
-				+ valueAsParam + ")";
+	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
+		String method = "assertThat((java.lang.Iterable) parsedJson.read(" + path + ", java.util.Collection.class)).as("
+				+ path + ").allElementsMatch(" + valueAsParam + ")";
 		bb.addLine(postProcessJsonPathCall.apply(method));
 	}
 
 	@Override
-	public void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb,
-			Object copiedBody) {
+	public void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		String path = quotedAndEscaped(bodyMatcher.path());
 		Object retrievedValue = value(copiedBody, bodyMatcher);
 		retrievedValue = retrievedValue instanceof RegexProperty
-				? ((RegexProperty) retrievedValue).getPattern().pattern()
-				: retrievedValue;
-		String valueAsParam = retrievedValue instanceof String
-				? quotedAndEscaped(retrievedValue.toString())
+				? ((RegexProperty) retrievedValue).getPattern().pattern() : retrievedValue;
+		String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString())
 				: objectToString(retrievedValue);
 		if (arrayRelated(path) && MatchingType.regexRelated(bodyMatcher.matchingType())) {
 			buildCustomMatchingConditionForEachElement(bb, path, valueAsParam);
 		}
 		else {
-			String comparisonMethod = bodyMatcher.matchingType() == MatchingType.EQUALITY
-					? "isEqualTo" : "matches";
+			String comparisonMethod = bodyMatcher.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches";
 			String classToCastTo = className(retrievedValue) + ".class";
-			String method = "assertThat(parsedJson.read(" + path + ", " + classToCastTo
-					+ "))." + comparisonMethod + "(" + valueAsParam + ")";
+			String method = "assertThat(parsedJson.read(" + path + ", " + classToCastTo + "))." + comparisonMethod + "("
+					+ valueAsParam + ")";
 			bb.addLine(postProcessJsonPathCall.apply(method));
 		}
 		addColonIfRequired(lineSuffix, bb);
 	}
 
 	private String className(Object retrievedValue) {
-		return retrievedValue.getClass().getName().startsWith("java.lang")
-				? retrievedValue.getClass().getSimpleName()
+		return retrievedValue.getClass().getName().startsWith("java.lang") ? retrievedValue.getClass().getSimpleName()
 				: retrievedValue.getClass().getName();
 	}
 
@@ -206,8 +189,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		return String.valueOf(value);
 	}
 
-	protected String processIfTemplateIsPresent(String method,
-			DocumentContext parsedRequestBody) {
+	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
 		if (textContainsJsonPathTemplate(method) && hasRequestBody()) {
 			// Unquoting the values of non strings
 			String jsonPathEntry = templateProcessor.jsonPathFromTemplateEntry(method);
@@ -218,32 +200,27 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 								contractTemplate.escapedOpeningTemplate())
 						.replace(contractTemplate.escapedClosingTemplate() + '"',
 								contractTemplate.escapedClosingTemplate())
-						.replace('"' + contractTemplate.openingTemplate(),
-								contractTemplate.openingTemplate())
-						.replace(contractTemplate.closingTemplate() + '"',
-								contractTemplate.closingTemplate());
+						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
+						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate());
 			}
 		}
 		return method;
 	}
 
 	@Override
-	public void methodForCommandExecution(BodyMatcher bodyMatcher, BlockBuilder bb,
-			Object copiedBody) {
+	public void methodForCommandExecution(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		String path = quotedAndEscaped(bodyMatcher.path());
 		// assert that path exists
 		retrieveObjectByPath(copiedBody, bodyMatcher.path());
 		ExecutionProperty property = (ExecutionProperty) bodyMatcher.value();
-		bb.addLine(postProcessJsonPathCall
-				.apply(property.insertValue("parsedJson.read(" + path + ")")));
+		bb.addLine(postProcessJsonPathCall.apply(property.insertValue("parsedJson.read(" + path + ")")));
 		addColonIfRequired(lineSuffix, bb);
 	}
 
 	@Override
 	public void methodForNullCheck(BodyMatcher bodyMatcher, BlockBuilder bb) {
 		String quotedAndEscapedPath = quotedAndEscaped(bodyMatcher.path());
-		String method = "assertThat((Object) parsedJson.read(" + quotedAndEscapedPath
-				+ ")).isNull()";
+		String method = "assertThat((Object) parsedJson.read(" + quotedAndEscapedPath + ")).isNull()";
 		bb.addLine(postProcessJsonPathCall.apply(method));
 		addColonIfRequired(lineSuffix, bb);
 	}
@@ -253,16 +230,13 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	@Override
-	public void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb,
-			Object copiedBody) {
+	public void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		Object elementFromBody = value(copiedBody, bodyMatcher);
-		if (bodyMatcher.minTypeOccurrence() != null
-				|| bodyMatcher.maxTypeOccurrence() != null) {
+		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.maxTypeOccurrence() != null) {
 			checkType(bb, bodyMatcher, elementFromBody);
 			String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path());
-			String method = "assertThat((java.lang.Iterable) parsedJson.read("
-					+ quotedAndEscaptedPath + ", java.util.Collection.class))."
-					+ sizeCheckMethod(bodyMatcher, quotedAndEscaptedPath);
+			String method = "assertThat((java.lang.Iterable) parsedJson.read(" + quotedAndEscaptedPath
+					+ ", java.util.Collection.class))." + sizeCheckMethod(bodyMatcher, quotedAndEscaptedPath);
 			bb.addLine(postProcessJsonPathCall.apply(method));
 			addColonIfRequired(lineSuffix, bb);
 		}
@@ -272,8 +246,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	private static Object value(Object body, BodyMatcher bodyMatcher) {
-		if (bodyMatcher.matchingType() == MatchingType.EQUALITY
-				|| bodyMatcher.value() == null) {
+		if (bodyMatcher.matchingType() == MatchingType.EQUALITY || bodyMatcher.value() == null) {
 			return retrieveObjectByPath(body, bodyMatcher.path());
 		}
 		return bodyMatcher.value();
@@ -289,31 +262,27 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		}
 	}
 
-	private Closure<Object> returnReferencedEntries(
-			TestSideRequestTemplateModel templateModel) {
+	private Closure<Object> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
 		return MapConverter.fromFunction(entry -> {
 			if (!(entry instanceof String) || templateModel == null) {
 				return entry;
 			}
 			String entryAsString = (String) entry;
 			if (this.templateProcessor.containsTemplateEntry(entryAsString)
-					&& !this.templateProcessor
-							.containsJsonPathTemplateEntry(entryAsString)) {
+					&& !this.templateProcessor.containsJsonPathTemplateEntry(entryAsString)) {
 				// TODO: HANDLEBARS LEAKING VIA request.
-				String justEntry = minus(entryAsString,
-						contractTemplate.escapedOpeningTemplate());
+				String justEntry = minus(entryAsString, contractTemplate.escapedOpeningTemplate());
 				justEntry = minus(justEntry, contractTemplate.openingTemplate());
 				justEntry = minus(justEntry, contractTemplate.escapedClosingTemplate());
 				justEntry = minus(justEntry, contractTemplate.closingTemplate());
 				justEntry = minus(justEntry, FROM_REQUEST_PREFIX);
 				if (FROM_REQUEST_BODY.equalsIgnoreCase(justEntry)) {
 					// the body should be transformed by standard mechanism
-					return contractTemplate.escapedOpeningTemplate() + FROM_REQUEST_PREFIX
-							+ "escapedBody" + contractTemplate.escapedClosingTemplate();
+					return contractTemplate.escapedOpeningTemplate() + FROM_REQUEST_PREFIX + "escapedBody"
+							+ contractTemplate.escapedClosingTemplate();
 				}
 				try {
-					Object result = new PropertyUtilsBean().getProperty(templateModel,
-							justEntry);
+					Object result = new PropertyUtilsBean().getProperty(templateModel, justEntry);
 					// Path from the Test model is an object and we'd like to return its
 					// String representation
 					if (FROM_REQUEST_PATH.equals(justEntry)) {
@@ -365,12 +334,11 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		return prefix + "Size";
 	}
 
-	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb,
-			Object responseBody, boolean shouldCommentOutBDDBlocks) {
+	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb, Object responseBody,
+			boolean shouldCommentOutBDDBlocks) {
 		if (bodyMatchers != null && bodyMatchers.hasMatchers()) {
 			bb.addEmptyLine();
-			addBodyMatchingBlock(bodyMatchers.matchers(), bb, responseBody,
-					shouldCommentOutBDDBlocks);
+			addBodyMatchingBlock(bodyMatchers.matchers(), bb, responseBody, shouldCommentOutBDDBlocks);
 		}
 	}
 

@@ -55,12 +55,10 @@ class contract_rest implements Supplier<Collection<Contract>> {
 				r.status(r.OK());
 				r.headers(h -> {
 					h.header("foo2", r.value(r.server(r.regex("bar")), r.client("bar")));
-					h.header("foo3", r.value(r.server(r.execute("andMeToo($it)")),
-							r.client("foo33")));
+					h.header("foo3", r.value(r.server(r.execute("andMeToo($it)")), r.client("foo33")));
 					h.header("fooRes", "baz");
 				});
-				r.body(ContractVerifierUtil.map().entry("foo2", "bar")
-						.entry("foo3", "baz").entry("nullValue", null));
+				r.body(ContractVerifierUtil.map().entry("foo2", "bar").entry("foo3", "baz").entry("nullValue", null));
 				r.bodyMatchers(m -> {
 					m.jsonPath("$.foo2", m.byRegex("bar"));
 					m.jsonPath("$.foo3", m.byCommand("executeMe($it)"));

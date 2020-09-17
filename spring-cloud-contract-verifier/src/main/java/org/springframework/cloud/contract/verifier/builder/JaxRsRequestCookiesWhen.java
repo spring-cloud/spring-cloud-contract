@@ -47,9 +47,8 @@ class JaxRsRequestCookiesWhen implements When {
 				.filter(cookie -> !cookieOfAbsentType(cookie)).iterator();
 		while (iterator.hasNext()) {
 			Cookie cookie = iterator.next();
-			String value = ".cookie(" + this.bodyParser.quotedShortText(cookie.getKey())
-					+ ", " + this.bodyParser.quotedShortText(MapConverter
-							.getTestSideValuesForNonBody(cookie.getServerValue()))
+			String value = ".cookie(" + this.bodyParser.quotedShortText(cookie.getKey()) + ", "
+					+ this.bodyParser.quotedShortText(MapConverter.getTestSideValuesForNonBody(cookie.getServerValue()))
 					+ ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(value);
@@ -62,20 +61,18 @@ class JaxRsRequestCookiesWhen implements When {
 
 	private boolean cookieOfAbsentType(Cookie cookie) {
 		return cookie.getServerValue() instanceof MatchingStrategy
-				&& ((MatchingStrategy) cookie.getServerValue())
-						.getType() == MatchingStrategy.Type.ABSENT;
+				&& ((MatchingStrategy) cookie.getServerValue()).getType() == MatchingStrategy.Type.ABSENT;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		return metadata.getContract().getRequest().getCookies() != null && !metadata
-				.getContract().getRequest().getCookies().getEntries().isEmpty()
+		return metadata.getContract().getRequest().getCookies() != null
+				&& !metadata.getContract().getRequest().getCookies().getEntries().isEmpty()
 				&& !hasOnlyAbsentCookies(metadata);
 	}
 
 	private boolean hasOnlyAbsentCookies(SingleContractMetadata metadata) {
-		Set<Cookie> entries = metadata.getContract().getRequest().getCookies()
-				.getEntries();
+		Set<Cookie> entries = metadata.getContract().getRequest().getCookies().getEntries();
 		long filteredOut = entries.stream().filter(this::cookieOfAbsentType).count();
 		return filteredOut == entries.size();
 	}

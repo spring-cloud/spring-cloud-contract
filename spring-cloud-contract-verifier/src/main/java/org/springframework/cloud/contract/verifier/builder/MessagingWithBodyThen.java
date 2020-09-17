@@ -32,21 +32,15 @@ class MessagingWithBodyThen implements Then, BodyMethodVisitor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	MessagingWithBodyThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData,
+	MessagingWithBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.comparisonBuilder = comparisonBuilder;
-		this.thens.addAll(Arrays.asList(
-				new MessagingSpockNoMessageThen(this.blockBuilder,
-						generatedClassMetaData),
-				new MessagingReceiveMessageThen(this.blockBuilder, generatedClassMetaData,
-						this.comparisonBuilder),
-				new MessagingHeadersThen(this.blockBuilder, generatedClassMetaData,
-						this.comparisonBuilder),
-				new MessagingBodyThen(this.blockBuilder, generatedClassMetaData,
-						comparisonBuilder),
+		this.thens.addAll(Arrays.asList(new MessagingSpockNoMessageThen(this.blockBuilder, generatedClassMetaData),
+				new MessagingReceiveMessageThen(this.blockBuilder, generatedClassMetaData, this.comparisonBuilder),
+				new MessagingHeadersThen(this.blockBuilder, generatedClassMetaData, this.comparisonBuilder),
+				new MessagingBodyThen(this.blockBuilder, generatedClassMetaData, comparisonBuilder),
 				new MessagingAssertThatThen(this.blockBuilder)));
 	}
 
@@ -59,8 +53,7 @@ class MessagingWithBodyThen implements Then, BodyMethodVisitor {
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return singleContractMetadata.isMessaging()
-				&& singleContractMetadata.getContract().getOutputMessage() != null;
+		return singleContractMetadata.isMessaging() && singleContractMetadata.getContract().getOutputMessage() != null;
 	}
 
 }

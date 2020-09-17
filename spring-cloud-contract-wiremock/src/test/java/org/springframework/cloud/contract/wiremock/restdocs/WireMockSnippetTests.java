@@ -70,80 +70,65 @@ public class WireMockSnippetTests {
 	@Before
 	public void setup() throws IOException {
 		this.outputFolder = this.tmp.newFolder();
-		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(
-				this.outputFolder.getAbsolutePath());
+		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder.getAbsolutePath());
 		restDocumentation.beforeTest(this.getClass(), "method");
 		this.context = restDocumentation.beforeOperation();
 		this.operation = operation(request(), response(), this.context);
 	}
 
 	@Test
-	public void should_maintain_the_response_status_when_generating_stub()
-			throws Exception {
+	public void should_maintain_the_response_status_when_generating_stub() throws Exception {
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMockStubMapping
-				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
-		assertThat(stubMapping.getResponse().getStatus())
-				.isEqualTo(HttpStatus.ACCEPTED.value());
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getResponse().getStatus()).isEqualTo(HttpStatus.ACCEPTED.value());
 	}
 
 	@Test
 	public void should_use_placeholders_in_stub_file_name() throws Exception {
-		this.operation = operation("{method-name}/{step}", request(), response(),
-				this.context);
+		this.operation = operation("{method-name}/{step}", request(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
 
 		File stub = new File(this.outputFolder, "stubs/method/1.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMockStubMapping
-				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
-		assertThat(stubMapping.getResponse().getStatus())
-				.isEqualTo(HttpStatus.ACCEPTED.value());
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getResponse().getStatus()).isEqualTo(HttpStatus.ACCEPTED.value());
 	}
 
 	@Test
 	public void should_use_equal_to_json_pattern_for_body_when_request_content_type_is_json_when_generating_stub()
 			throws Exception {
-		this.operation = operation(requestPostWithJsonContentType(), response(),
-				this.context);
+		this.operation = operation(requestPostWithJsonContentType(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMockStubMapping
-				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
-		assertThat(stubMapping.getRequest().getBodyPatterns().get(0))
-				.isInstanceOf(EqualToJsonPattern.class);
-		assertThat(stubMapping.getRequest().getBodyPatterns().get(0).getValue())
-				.isEqualTo("{\"name\": \"12\"}");
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getRequest().getBodyPatterns().get(0)).isInstanceOf(EqualToJsonPattern.class);
+		assertThat(stubMapping.getRequest().getBodyPatterns().get(0).getValue()).isEqualTo("{\"name\": \"12\"}");
 	}
 
 	@Test
 	public void should_use_equal_to_xml_pattern_for_body_when_request_content_type_is_xml_when_generating_stub()
 			throws Exception {
-		this.operation = operation(requestPostWithXmlContentType(), response(),
-				this.context);
+		this.operation = operation(requestPostWithXmlContentType(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMockStubMapping
-				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
-		assertThat(stubMapping.getRequest().getBodyPatterns().get(0))
-				.isInstanceOf(EqualToXmlPattern.class);
-		assertThat(stubMapping.getRequest().getBodyPatterns().get(0).getValue())
-				.isEqualTo("<name>foo</name>");
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getRequest().getBodyPatterns().get(0)).isInstanceOf(EqualToXmlPattern.class);
+		assertThat(stubMapping.getRequest().getBodyPatterns().get(0).getValue()).isEqualTo("<name>foo</name>");
 	}
 
 	@Test
@@ -155,17 +140,14 @@ public class WireMockSnippetTests {
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMockStubMapping
-				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getRequest().getBodyPatterns()).isNullOrEmpty();
-		assertThat(stubMapping.getResponse().getStatus())
-				.isEqualTo(HttpStatus.ACCEPTED.value());
+		assertThat(stubMapping.getResponse().getStatus()).isEqualTo(HttpStatus.ACCEPTED.value());
 	}
 
 	@Test
 	public void should_accept_empty_value_for_query_params() throws IOException {
-		this.operation = operation(requestPostWithEmptyQueryParamValue(), response(),
-				this.context);
+		this.operation = operation(requestPostWithEmptyQueryParamValue(), response(), this.context);
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -184,11 +166,10 @@ public class WireMockSnippetTests {
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMockStubMapping
-				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getRequest().getUrlPath()).isEqualTo("/bar");
-		assertThat(stubMapping.getRequest().getQueryParameters()).containsOnly(
-				Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
+		assertThat(stubMapping.getRequest().getQueryParameters())
+				.containsOnly(Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
 	}
 
 	private Operation operation(OperationRequest request, OperationResponse response,
@@ -196,8 +177,8 @@ public class WireMockSnippetTests {
 		return operation("foo", request, response, context);
 	}
 
-	private Operation operation(String name, OperationRequest request,
-			OperationResponse response, RestDocumentationContext context) {
+	private Operation operation(String name, OperationRequest request, OperationResponse response,
+			RestDocumentationContext context) {
 		return new Operation() {
 
 			Map<String, Object> map = new HashMap<>();
@@ -406,8 +387,7 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpHeaders getHeaders() {
 				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
-						MediaType.APPLICATION_JSON_VALUE);
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 				return httpHeaders;
 			}
 
@@ -453,8 +433,7 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpHeaders getHeaders() {
 				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
-						MediaType.APPLICATION_JSON_VALUE);
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 				return httpHeaders;
 			}
 
@@ -502,8 +481,7 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpHeaders getHeaders() {
 				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
-						MediaType.APPLICATION_JSON_VALUE);
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 				return httpHeaders;
 			}
 

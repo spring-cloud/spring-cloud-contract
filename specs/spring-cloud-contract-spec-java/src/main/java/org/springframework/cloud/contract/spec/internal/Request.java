@@ -277,8 +277,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	@Override
 	public void assertThatSidesMatch(Object stubSide, Object testSide) {
 		if (testSide instanceof OptionalProperty) {
-			throw new IllegalStateException(
-					"Optional can be used only for the stub side of the request!");
+			throw new IllegalStateException("Optional can be used only for the stub side of the request!");
 		}
 		super.assertThatSidesMatch(stubSide, testSide);
 	}
@@ -360,8 +359,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	@Override
 	public DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		if (server.getClientValue() instanceof RegexProperty) {
-			throw new IllegalStateException(
-					"You can't have a regular expression for the request on the server side");
+			throw new IllegalStateException("You can't have a regular expression for the request on the server side");
 		}
 		return super.value(client, server);
 	}
@@ -375,8 +373,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	@Override
 	public DslProperty value(ServerDslProperty server, ClientDslProperty client) {
 		if (server.getClientValue() instanceof RegexProperty) {
-			throw new IllegalStateException(
-					"You can't have a regular expression for the request on the server side");
+			throw new IllegalStateException("You can't have a regular expression for the request on the server side");
 		}
 
 		return super.value(server, client);
@@ -593,25 +590,20 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 		}
 		Request request = (Request) o;
 		return Objects.equals(method, request.method) && Objects.equals(url, request.url)
-				&& Objects.equals(urlPath, request.urlPath)
-				&& Objects.equals(headers, request.headers)
-				&& Objects.equals(cookies, request.cookies)
-				&& Objects.equals(body, request.body)
-				&& Objects.equals(multipart, request.multipart)
-				&& Objects.equals(bodyMatchers, request.bodyMatchers);
+				&& Objects.equals(urlPath, request.urlPath) && Objects.equals(headers, request.headers)
+				&& Objects.equals(cookies, request.cookies) && Objects.equals(body, request.body)
+				&& Objects.equals(multipart, request.multipart) && Objects.equals(bodyMatchers, request.bodyMatchers);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(method, url, urlPath, headers, cookies, body, multipart,
-				bodyMatchers);
+		return Objects.hash(method, url, urlPath, headers, cookies, body, multipart, bodyMatchers);
 	}
 
 	@Override
 	public String toString() {
-		return "Request{" + "\nmethod=" + method + ", \n\turl=" + url + ", \n\turlPath="
-				+ urlPath + ", \n\theaders=" + headers + ", \n\tcookies=" + cookies
-				+ ", \n\tbody=" + body + ", \n\tmultipart=" + multipart
+		return "Request{" + "\nmethod=" + method + ", \n\turl=" + url + ", \n\turlPath=" + urlPath + ", \n\theaders="
+				+ headers + ", \n\tcookies=" + cookies + ", \n\tbody=" + body + ", \n\tmultipart=" + multipart
 				+ ", \n\tbodyMatchers=" + bodyMatchers + '}';
 	}
 
@@ -790,8 +782,8 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 
 		@Override
 		public DslProperty matching(String value) {
-			return this.common.$(this.common.c(this.common
-					.regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
+			return this.common.$(
+					this.common.c(this.common.regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
 					this.common.p(value));
 		}
 
@@ -803,8 +795,8 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 
 		@Override
 		public DslProperty matching(String value) {
-			return this.common.$(this.common.c(this.common
-					.regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
+			return this.common.$(
+					this.common.c(this.common.regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
 					this.common.p(value));
 		}
 
@@ -826,12 +818,10 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 
 	}
 
-	private class ClientPatternValueDslProperty
-			extends PatternValueDslProperty<ClientDslProperty> {
+	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
 
 		@Override
-		protected ClientDslProperty createProperty(Pattern pattern,
-				Object generatedValue) {
+		protected ClientDslProperty createProperty(Pattern pattern, Object generatedValue) {
 			return new ClientDslProperty(pattern, generatedValue);
 		}
 

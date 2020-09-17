@@ -55,8 +55,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	private static final Set<String> IGNORED_HEADERS = new HashSet<>(
 			Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
 
-	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper(
-			"{", "}");
+	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("{", "}");
 
 	private Map<String, Object> model = new HashMap<>();
 
@@ -83,10 +82,8 @@ public class ContractDslSnippet extends TemplatedSnippet {
 
 	@Override
 	public void document(Operation operation) throws IOException {
-		TemplateEngine templateEngine = (TemplateEngine) operation.getAttributes()
-				.get(TemplateEngine.class.getName());
-		String renderedContract = templateEngine
-				.compileTemplate("default-dsl-contract-only")
+		TemplateEngine templateEngine = (TemplateEngine) operation.getAttributes().get(TemplateEngine.class.getName());
+		String renderedContract = templateEngine.compileTemplate("default-dsl-contract-only")
 				.render(createModelForContract(operation));
 		this.model.put("contract", renderedContract);
 		storeDslContract(operation, renderedContract);
@@ -98,8 +95,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("response_status", response.getStatus().value());
 		model.put("response_body_present", response.getContent().length > 0);
 		model.put("response_body", response.getContentAsString());
-		Map<String, String> headers = new HashMap<>(
-				response.getHeaders().toSingleValueMap());
+		Map<String, String> headers = new HashMap<>(response.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("response_headers_present", !headers.isEmpty());
 		model.put("response_headers", headers.entrySet());
@@ -125,21 +121,17 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("request_urlpath_present", urlPathPresent);
 		if (urlPathPresent) {
 			// TODO: Add support for multiple values
-			model.put("request_queryparams",
-					request.getParameters().toSingleValueMap().entrySet());
+			model.put("request_queryparams", request.getParameters().toSingleValueMap().entrySet());
 		}
 		model.put("request_body_present", request.getContent().length > 0);
 		model.put("request_body", request.getContentAsString());
-		Map<String, String> headers = new HashMap<>(
-				request.getHeaders().toSingleValueMap());
+		Map<String, String> headers = new HashMap<>(request.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("request_headers_present", !headers.isEmpty());
 		model.put("request_headers", headers.entrySet());
 		@SuppressWarnings("unchecked")
-		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
-				.get("contract.jsonPaths");
-		model.put("request_json_paths_present",
-				jsonPaths != null && !jsonPaths.isEmpty());
+		Set<String> jsonPaths = (Set<String>) operation.getAttributes().get("contract.jsonPaths");
+		model.put("request_json_paths_present", jsonPaths != null && !jsonPaths.isEmpty());
 		model.put("request_json_paths", jsonPaths(jsonPaths));
 	}
 
@@ -162,24 +154,19 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		return modelForContract;
 	}
 
-	private void storeDslContract(Operation operation, String content)
-			throws IOException {
-		RestDocumentationContext context = (RestDocumentationContext) operation
-				.getAttributes().get(RestDocumentationContext.class.getName());
-		RestDocumentationContextPlaceholderResolver resolver = new RestDocumentationContextPlaceholderResolver(
-				context);
+	private void storeDslContract(Operation operation, String content) throws IOException {
+		RestDocumentationContext context = (RestDocumentationContext) operation.getAttributes()
+				.get(RestDocumentationContext.class.getName());
+		RestDocumentationContextPlaceholderResolver resolver = new RestDocumentationContextPlaceholderResolver(context);
 		String resolvedName = replacePlaceholders(resolver, operation.getName());
-		File output = new File(context.getOutputDirectory(),
-				CONTRACTS_FOLDER + "/" + resolvedName + ".groovy");
+		File output = new File(context.getOutputDirectory(), CONTRACTS_FOLDER + "/" + resolvedName + ".groovy");
 		output.getParentFile().mkdirs();
-		try (Writer writer = new OutputStreamWriter(
-				Files.newOutputStream(output.toPath()))) {
+		try (Writer writer = new OutputStreamWriter(Files.newOutputStream(output.toPath()))) {
 			writer.append(content);
 		}
 	}
 
-	private String replacePlaceholders(
-			PropertyPlaceholderHelper.PlaceholderResolver resolver, String input) {
+	private String replacePlaceholders(PropertyPlaceholderHelper.PlaceholderResolver resolver, String input) {
 		return this.propertyPlaceholderHelper.replacePlaceholders(input, resolver);
 	}
 

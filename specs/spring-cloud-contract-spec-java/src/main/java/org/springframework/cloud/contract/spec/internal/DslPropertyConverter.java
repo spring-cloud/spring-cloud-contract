@@ -48,8 +48,7 @@ public interface DslPropertyConverter {
 		if (INSTANCE != null) {
 			return INSTANCE;
 		}
-		List<DslPropertyConverter> converters = SpringFactoriesLoader
-				.loadFactories(DslPropertyConverter.class, null);
+		List<DslPropertyConverter> converters = SpringFactoriesLoader.loadFactories(DslPropertyConverter.class, null);
 		if (converters.isEmpty()) {
 			return DEFAULT;
 		}

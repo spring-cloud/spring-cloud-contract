@@ -23,17 +23,15 @@ class JavaJaxRsThen extends JaxRsThen {
 
 	private final GeneratedClassMetaData metaData;
 
-	JavaJaxRsThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		super(blockBuilder, generatedClassMetaData, JaxRsBodyParser.INSTANCE,
-				ComparisonBuilder.JAVA_HTTP_INSTANCE);
+	JavaJaxRsThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
+		super(blockBuilder, generatedClassMetaData, JaxRsBodyParser.INSTANCE, ComparisonBuilder.JAVA_HTTP_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return super.accept(singleContractMetadata) && this.metaData.configProperties
-				.getTestFramework() != TestFramework.SPOCK;
+		return super.accept(singleContractMetadata)
+				&& this.metaData.configProperties.getTestFramework() != TestFramework.SPOCK;
 	}
 
 }

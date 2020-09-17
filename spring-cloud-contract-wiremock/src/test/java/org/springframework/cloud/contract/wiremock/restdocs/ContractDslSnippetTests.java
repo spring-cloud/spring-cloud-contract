@@ -86,10 +86,8 @@ public class ContractDslSnippetTests {
 	public void should_create_contract_template_and_doc() throws Exception {
 		// tag::contract_snippet[]
 		this.mockMvc
-				.perform(post("/foo").accept(MediaType.APPLICATION_PDF)
-						.accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
+				.perform(post("/foo").accept(MediaType.APPLICATION_PDF).accept(MediaType.APPLICATION_JSON)
+						.contentType(MediaType.APPLICATION_JSON).content("{\"foo\": 23, \"bar\" : \"baz\" }"))
 				.andExpect(status().isOk()).andExpect(content().string("bar"))
 				// first WireMock
 				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
@@ -102,18 +100,17 @@ public class ContractDslSnippetTests {
 		then(file("/contracts/index.groovy")).exists();
 		then(file("/stubs/index.json")).exists();
 		then(file("/index/dsl-contract.adoc")).exists();
-		Collection<Contract> parsedContracts = ContractVerifierDslConverter
-				.convertAsCollection(new File("/"), file("/contracts/index.groovy"));
+		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(new File("/"),
+				file("/contracts/index.groovy"));
 		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders().getEntries()).isNotNull();
-		then(headerNames(parsedContract.getRequest().getHeaders().getEntries()))
-				.doesNotContain(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
-		then(headerNames(parsedContract.getResponse().getHeaders().getEntries()))
-				.doesNotContain(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
+		then(headerNames(parsedContract.getRequest().getHeaders().getEntries())).doesNotContain(HttpHeaders.HOST,
+				HttpHeaders.CONTENT_LENGTH);
+		then(headerNames(parsedContract.getResponse().getHeaders().getEntries())).doesNotContain(HttpHeaders.HOST,
+				HttpHeaders.CONTENT_LENGTH);
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrlPath().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrlPath().getClientValue().toString())
-				.startsWith("/");
+		then(parsedContract.getRequest().getUrlPath().getClientValue().toString()).startsWith("/");
 		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getBodyMatchers().hasMatchers()).isTrue();
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
@@ -122,44 +119,32 @@ public class ContractDslSnippetTests {
 	}
 
 	@Test
-	public void should_create_contract_template_and_doc_with_placeholder_names()
-			throws Exception {
+	public void should_create_contract_template_and_doc_with_placeholder_names() throws Exception {
 		this.mockMvc
-				.perform(post("/foo").accept(MediaType.APPLICATION_PDF)
-						.accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
+				.perform(post("/foo").accept(MediaType.APPLICATION_PDF).accept(MediaType.APPLICATION_JSON)
+						.contentType(MediaType.APPLICATION_JSON).content("{\"foo\": 23, \"bar\" : \"baz\" }"))
 				.andExpect(status().isOk()).andExpect(content().string("bar"))
 				// first WireMock
 				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
 						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
 						.contentType(MediaType.valueOf("application/json")))
 				// then Contract DSL documentation
-				.andDo(document("{methodName}",
-						SpringCloudContractRestDocs.dslContract()));
+				.andDo(document("{methodName}", SpringCloudContractRestDocs.dslContract()));
 
-		then(file(
-				"/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy"))
-						.exists();
-		then(file(
-				"/stubs/should_create_contract_template_and_doc_with_placeholder_names.json"))
-						.exists();
-		then(file(
-				"/should_create_contract_template_and_doc_with_placeholder_names/dsl-contract.adoc"))
-						.exists();
-		Collection<Contract> parsedContracts = ContractVerifierDslConverter
-				.convertAsCollection(new File("/"), file(
-						"/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy"));
+		then(file("/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy")).exists();
+		then(file("/stubs/should_create_contract_template_and_doc_with_placeholder_names.json")).exists();
+		then(file("/should_create_contract_template_and_doc_with_placeholder_names/dsl-contract.adoc")).exists();
+		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(new File("/"),
+				file("/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy"));
 		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders().getEntries()).isNotNull();
-		then(headerNames(parsedContract.getRequest().getHeaders().getEntries()))
-				.doesNotContain(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
-		then(headerNames(parsedContract.getResponse().getHeaders().getEntries()))
-				.doesNotContain(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
+		then(headerNames(parsedContract.getRequest().getHeaders().getEntries())).doesNotContain(HttpHeaders.HOST,
+				HttpHeaders.CONTENT_LENGTH);
+		then(headerNames(parsedContract.getResponse().getHeaders().getEntries())).doesNotContain(HttpHeaders.HOST,
+				HttpHeaders.CONTENT_LENGTH);
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrlPath().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrlPath().getClientValue().toString())
-				.startsWith("/");
+		then(parsedContract.getRequest().getUrlPath().getClientValue().toString()).startsWith("/");
 		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getBodyMatchers().hasMatchers()).isTrue();
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
@@ -168,25 +153,20 @@ public class ContractDslSnippetTests {
 	}
 
 	@Test
-	public void should_create_contract_template_and_doc_without_body_and_headers()
-			throws Exception {
-		this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/foo").param("one", "newValueOne")
-						.param("two", "newValueTwo"))
+	public void should_create_contract_template_and_doc_without_body_and_headers() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/foo").param("one", "newValueOne").param("two", "newValueTwo"))
 				.andExpect(status().isOk()).andDo(document("empty", dslContract()));
 
 		then(file("/contracts/empty.groovy")).exists();
 		then(file("/empty/dsl-contract.adoc")).exists();
-		Collection<Contract> parsedContracts = ContractVerifierDslConverter
-				.convertAsCollection(new File("/"), file("/contracts/empty.groovy"));
+		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(new File("/"),
+				file("/contracts/empty.groovy"));
 		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders()).isNull();
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrlPath().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrlPath().getClientValue().toString())
-				.startsWith("/");
-		List<QueryParameter> parameters = parsedContract.getRequest().getUrlPath()
-				.getQueryParameters().getParameters();
+		then(parsedContract.getRequest().getUrlPath().getClientValue().toString()).startsWith("/");
+		List<QueryParameter> parameters = parsedContract.getRequest().getUrlPath().getQueryParameters().getParameters();
 		QueryParameter one = parameter(parameters, "one");
 		QueryParameter two = parameter(parameters, "two");
 		then(one.getClientValue()).isEqualTo("newValueOne");
@@ -199,9 +179,8 @@ public class ContractDslSnippetTests {
 	}
 
 	private QueryParameter parameter(List<QueryParameter> parameters, String name) {
-		return parameters.stream()
-				.filter(queryParameter -> queryParameter.getName().equals(name))
-				.findFirst().orElseThrow(() -> new AssertionError("Missing entry"));
+		return parameters.stream().filter(queryParameter -> queryParameter.getName().equals(name)).findFirst()
+				.orElseThrow(() -> new AssertionError("Missing entry"));
 	}
 
 	private Set<String> headerNames(Set<Header> headers) {

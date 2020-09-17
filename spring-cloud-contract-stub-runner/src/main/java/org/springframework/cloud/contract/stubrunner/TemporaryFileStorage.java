@@ -47,8 +47,7 @@ final class TemporaryFileStorage {
 	 * we're creating a bounded in-memory storage of unpacked files and later we register
 	 * a shutdown hook to remove all these files.
 	 */
-	private static final BlockingQueue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(
-			20_000);
+	private static final BlockingQueue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(20_000);
 
 	private TemporaryFileStorage() {
 		throw new IllegalStateException("Can't instantiate a utility class");
@@ -72,8 +71,7 @@ final class TemporaryFileStorage {
 				if (file.isDirectory()) {
 					Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
 						@Override
-						public FileVisitResult visitFile(Path file,
-								BasicFileAttributes attrs) throws IOException {
+						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 							if (log.isTraceEnabled()) {
 								log.trace("Removing file [" + file + "]");
 							}
@@ -82,8 +80,7 @@ final class TemporaryFileStorage {
 						}
 
 						@Override
-						public FileVisitResult postVisitDirectory(Path dir,
-								IOException exc) throws IOException {
+						public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 							if (log.isTraceEnabled()) {
 								log.trace("Removing dir [" + dir + "]");
 							}
@@ -117,9 +114,8 @@ final class TemporaryFileStorage {
 				return tempDir;
 			}
 		}
-		throw new IllegalStateException("Failed to create directory within "
-				+ TEMP_DIR_ATTEMPTS + " attempts (tried " + baseName + "0 to " + baseName
-				+ (TEMP_DIR_ATTEMPTS - 1) + ")");
+		throw new IllegalStateException("Failed to create directory within " + TEMP_DIR_ATTEMPTS + " attempts (tried "
+				+ baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ")");
 	}
 
 }

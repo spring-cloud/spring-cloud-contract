@@ -32,13 +32,11 @@ public class NoOpStubMessages implements MessageVerifier<Object> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			YamlContract contract) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
 	}
 
 	@Override
-	public Object receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		return null;
 	}
 

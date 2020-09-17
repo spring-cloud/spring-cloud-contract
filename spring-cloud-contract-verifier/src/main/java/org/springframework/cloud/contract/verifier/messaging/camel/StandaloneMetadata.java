@@ -74,8 +74,7 @@ public class StandaloneMetadata implements SpringCloudContractMetadata {
 	}
 
 	public static StandaloneMetadata fromMetadata(Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, StandaloneMetadata.METADATA_KEY,
-				new StandaloneMetadata());
+		return MetadataUtil.fromMetadata(metadata, StandaloneMetadata.METADATA_KEY, new StandaloneMetadata());
 	}
 
 	@Override

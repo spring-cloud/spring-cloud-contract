@@ -43,20 +43,16 @@ import static org.springframework.cloud.contract.maven.verifier.ChangeDetector.i
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE,
-		requiresProject = true)
+@Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true)
 public class GenerateStubsMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
-			required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(defaultValue = "${project.build.finalName}", readonly = true,
-			required = true)
+	@Parameter(defaultValue = "${project.build.finalName}", readonly = true, required = true)
 	private String projectFinalName;
 
-	@Parameter(property = "stubsDirectory",
-			defaultValue = "${project.build.directory}/stubs")
+	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -68,8 +64,7 @@ public class GenerateStubsMojo extends AbstractMojo {
 	/**
 	 * Set this to "true" to bypass only JAR creation.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.jar.skip",
-			defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.jar.skip", defaultValue = "false")
 	private boolean jarSkip;
 
 	@Component
@@ -112,10 +107,8 @@ public class GenerateStubsMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.jarSkip) {
-			getLog().info(
-					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
-							+ this.skip + ", spring.cloud.contract.verifier.jar.skip="
-							+ this.jarSkip);
+			getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
+					+ this.skip + ", spring.cloud.contract.verifier.jar.skip=" + this.jarSkip);
 			return;
 		}
 		else if (stubsOutputMissing(this.outputDirectory) && !this.failOnNoContracts) {
@@ -124,44 +117,37 @@ public class GenerateStubsMojo extends AbstractMojo {
 			return;
 		}
 		else if (stubsOutputMissing(this.outputDirectory) && this.failOnNoContracts) {
-			throw new MojoExecutionException("Stubs could not be found: ["
-					+ this.outputDirectory.getAbsolutePath()
+			throw new MojoExecutionException("Stubs could not be found: [" + this.outputDirectory.getAbsolutePath()
 					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
-		if (this.incrementalContractStubsJar
-				&& !inputFilesChangeDetected(outputDirectory, mojoExecution, session)) {
+		if (this.incrementalContractStubsJar && !inputFilesChangeDetected(outputDirectory, mojoExecution, session)) {
 			getLog().info("Nothing to generate - stubs jar is up to date");
 			return;
 		}
 		File stubsJarFile = createStubJar(this.outputDirectory);
-		this.projectHelper.attachArtifact(this.project, "jar", this.classifier,
-				stubsJarFile);
+		this.projectHelper.attachArtifact(this.project, "jar", this.classifier, stubsJarFile);
 	}
 
-	private File createStubJar(File stubsOutputDir)
-			throws MojoFailureException, MojoExecutionException {
+	private File createStubJar(File stubsOutputDir) throws MojoFailureException, MojoExecutionException {
 		if (!stubsOutputDir.exists()) {
-			throw new MojoExecutionException("Stubs could not be found: ["
-					+ stubsOutputDir.getAbsolutePath()
+			throw new MojoExecutionException("Stubs could not be found: [" + stubsOutputDir.getAbsolutePath()
 					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
 		String stubArchiveName = this.projectFinalName + "-" + this.classifier + ".jar";
 		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
 		String[] excludes = excludes();
-		getLog().info("Files matching this pattern will be excluded from "
-				+ "stubs generation " + Arrays.toString(excludes));
+		getLog().info(
+				"Files matching this pattern will be excluded from " + "stubs generation " + Arrays.toString(excludes));
 		try {
 			this.archiver.addDirectory(stubsOutputDir, new String[] { "**/*.*" },
 					excludedFilesEmpty() ? new String[0] : this.excludedFiles);
 			this.archiver.setCompress(true);
 			this.archiver.setDestFile(stubsJarFile);
-			this.archiver
-					.addConfiguredManifest(ManifestCreator.createManifest(this.project));
+			this.archiver.addConfiguredManifest(ManifestCreator.createManifest(this.project));
 			this.archiver.createArchive();
 		}
 		catch (Exception e) {
-			throw new MojoFailureException(
-					"Exception while packaging " + this.classifier + " jar.", e);
+			throw new MojoFailureException("Exception while packaging " + this.classifier + " jar.", e);
 		}
 		return stubsJarFile;
 	}

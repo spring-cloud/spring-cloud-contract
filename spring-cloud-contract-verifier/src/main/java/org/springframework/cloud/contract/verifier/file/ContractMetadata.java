@@ -65,8 +65,7 @@ public class ContractMetadata {
 	 */
 	private final Collection<SingleContractMetadata> convertedContractWithMetadata = new ArrayList<>();
 
-	public ContractMetadata(Path path, boolean ignored, int groupSize, Integer order,
-			Contract convertedContract) {
+	public ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Contract convertedContract) {
 		this(path, ignored, groupSize, order, singletonList(convertedContract));
 	}
 
@@ -77,14 +76,13 @@ public class ContractMetadata {
 		this.ignored = ignored;
 		this.order = order;
 		this.convertedContract.addAll(convertedContract);
-		this.convertedContractWithMetadata.addAll(this.convertedContract.stream()
-				.filter(Objects::nonNull).map(it -> new SingleContractMetadata(it, this))
-				.collect(toList()));
+		this.convertedContractWithMetadata.addAll(this.convertedContract.stream().filter(Objects::nonNull)
+				.map(it -> new SingleContractMetadata(it, this)).collect(toList()));
 	}
 
 	public SingleContractMetadata forContract(Contract contract) {
-		return this.convertedContractWithMetadata.stream()
-				.filter(it -> it.getContract().equals(contract)).findFirst().orElse(null);
+		return this.convertedContractWithMetadata.stream().filter(it -> it.getContract().equals(contract)).findFirst()
+				.orElse(null);
 	}
 
 	public boolean anyInProgress() {

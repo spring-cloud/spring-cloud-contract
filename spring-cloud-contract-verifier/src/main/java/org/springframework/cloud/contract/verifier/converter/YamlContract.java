@@ -66,22 +66,18 @@ public class YamlContract {
 			return false;
 		}
 		YamlContract that = (YamlContract) o;
-		return ignored == that.ignored && inProgress == that.inProgress
-				&& Objects.equals(this.request, that.request)
-				&& Objects.equals(this.response, that.response)
-				&& Objects.equals(this.input, that.input)
+		return ignored == that.ignored && inProgress == that.inProgress && Objects.equals(this.request, that.request)
+				&& Objects.equals(this.response, that.response) && Objects.equals(this.input, that.input)
 				&& Objects.equals(this.outputMessage, that.outputMessage)
-				&& Objects.equals(this.description, that.description)
-				&& Objects.equals(this.label, that.label)
-				&& Objects.equals(this.name, that.name)
-				&& Objects.equals(this.priority, that.priority)
+				&& Objects.equals(this.description, that.description) && Objects.equals(this.label, that.label)
+				&& Objects.equals(this.name, that.name) && Objects.equals(this.priority, that.priority)
 				&& this.metadata.equals(that.metadata);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(request, response, input, outputMessage, description, label,
-				name, priority, ignored, inProgress, metadata);
+		return Objects.hash(request, response, input, outputMessage, description, label, name, priority, ignored,
+				inProgress, metadata);
 	}
 
 	public static class Request {
@@ -117,33 +113,27 @@ public class YamlContract {
 				return false;
 			}
 			Request request = (Request) o;
-			return Objects.equals(method, request.method)
-					&& Objects.equals(url, request.url)
+			return Objects.equals(method, request.method) && Objects.equals(url, request.url)
 					&& Objects.equals(urlPath, request.urlPath)
 					&& Objects.equals(queryParameters, request.queryParameters)
-					&& Objects.equals(headers, request.headers)
-					&& Objects.equals(cookies, request.cookies)
-					&& Objects.equals(body, request.body)
-					&& Objects.equals(bodyFromFile, request.bodyFromFile)
+					&& Objects.equals(headers, request.headers) && Objects.equals(cookies, request.cookies)
+					&& Objects.equals(body, request.body) && Objects.equals(bodyFromFile, request.bodyFromFile)
 					&& Objects.equals(bodyFromFileAsBytes, request.bodyFromFileAsBytes)
-					&& Objects.equals(matchers, request.matchers)
-					&& Objects.equals(multipart, request.multipart);
+					&& Objects.equals(matchers, request.matchers) && Objects.equals(multipart, request.multipart);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(method, url, urlPath, queryParameters, headers, cookies,
-					body, bodyFromFile, bodyFromFileAsBytes, matchers, multipart);
+			return Objects.hash(method, url, urlPath, queryParameters, headers, cookies, body, bodyFromFile,
+					bodyFromFileAsBytes, matchers, multipart);
 		}
 
 		@Override
 		public String toString() {
-			return "Request{" + "method='" + method + '\'' + ", url='" + url + '\''
-					+ ", urlPath='" + urlPath + '\'' + ", queryParameters="
-					+ queryParameters + ", headers=" + headers + ", cookies=" + cookies
-					+ ", body=" + body + ", bodyFromFile='" + bodyFromFile + '\''
-					+ ", bodyFromFileAsBytes='" + bodyFromFileAsBytes + '\''
-					+ ", matchers=" + matchers + ", multipart=" + multipart + '}';
+			return "Request{" + "method='" + method + '\'' + ", url='" + url + '\'' + ", urlPath='" + urlPath + '\''
+					+ ", queryParameters=" + queryParameters + ", headers=" + headers + ", cookies=" + cookies
+					+ ", body=" + body + ", bodyFromFile='" + bodyFromFile + '\'' + ", bodyFromFileAsBytes='"
+					+ bodyFromFileAsBytes + '\'' + ", matchers=" + matchers + ", multipart=" + multipart + '}';
 		}
 
 	}
@@ -163,8 +153,7 @@ public class YamlContract {
 				return false;
 			}
 			Multipart multipart = (Multipart) o;
-			return Objects.equals(params, multipart.params)
-					&& Objects.equals(named, multipart.named);
+			return Objects.equals(params, multipart.params) && Objects.equals(named, multipart.named);
 		}
 
 		@Override
@@ -208,12 +197,10 @@ public class YamlContract {
 				return false;
 			}
 			Named named = (Named) o;
-			return Objects.equals(paramName, named.paramName)
-					&& Objects.equals(fileName, named.fileName)
+			return Objects.equals(paramName, named.paramName) && Objects.equals(fileName, named.fileName)
 					&& Objects.equals(fileContent, named.fileContent)
 					&& Objects.equals(fileContentAsBytes, named.fileContentAsBytes)
-					&& Objects.equals(fileContentFromFileAsBytes,
-							named.fileContentFromFileAsBytes)
+					&& Objects.equals(fileContentFromFileAsBytes, named.fileContentFromFileAsBytes)
 					&& Objects.equals(contentType, named.contentType)
 					&& Objects.equals(fileNameCommand, named.fileNameCommand)
 					&& Objects.equals(fileContentCommand, named.fileContentCommand)
@@ -222,21 +209,17 @@ public class YamlContract {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(paramName, fileName, fileContent, fileContentAsBytes,
-					fileContentFromFileAsBytes, contentType, fileNameCommand,
-					fileContentCommand, contentTypeCommand);
+			return Objects.hash(paramName, fileName, fileContent, fileContentAsBytes, fileContentFromFileAsBytes,
+					contentType, fileNameCommand, fileContentCommand, contentTypeCommand);
 		}
 
 		@Override
 		public String toString() {
-			return "Named{" + "paramName='" + paramName + '\'' + ", fileName='" + fileName
-					+ '\'' + ", fileContent='" + fileContent + '\''
-					+ ", fileContentAsBytes='" + fileContentAsBytes + '\''
-					+ ", fileContentFromFileAsBytes='" + fileContentFromFileAsBytes + '\''
-					+ ", contentType='" + contentType + '\'' + ", fileNameCommand='"
-					+ fileNameCommand + '\'' + ", fileContentCommand='"
-					+ fileContentCommand + '\'' + ", contentTypeCommand='"
-					+ contentTypeCommand + '\'' + '}';
+			return "Named{" + "paramName='" + paramName + '\'' + ", fileName='" + fileName + '\'' + ", fileContent='"
+					+ fileContent + '\'' + ", fileContentAsBytes='" + fileContentAsBytes + '\''
+					+ ", fileContentFromFileAsBytes='" + fileContentFromFileAsBytes + '\'' + ", contentType='"
+					+ contentType + '\'' + ", fileNameCommand='" + fileNameCommand + '\'' + ", fileContentCommand='"
+					+ fileContentCommand + '\'' + ", contentTypeCommand='" + contentTypeCommand + '\'' + '}';
 		}
 
 	}
@@ -265,10 +248,8 @@ public class YamlContract {
 			}
 			StubMatchers that = (StubMatchers) o;
 			return Objects.equals(url, that.url) && Objects.equals(body, that.body)
-					&& Objects.equals(headers, that.headers)
-					&& Objects.equals(queryParameters, that.queryParameters)
-					&& Objects.equals(cookies, that.cookies)
-					&& Objects.equals(multipart, that.multipart);
+					&& Objects.equals(headers, that.headers) && Objects.equals(queryParameters, that.queryParameters)
+					&& Objects.equals(cookies, that.cookies) && Objects.equals(multipart, that.multipart);
 		}
 
 		@Override
@@ -278,9 +259,8 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "StubMatchers{" + "url=" + url + ", body=" + body + ", headers="
-					+ headers + ", queryParameters=" + queryParameters + ", cookies="
-					+ cookies + ", multipart=" + multipart + '}';
+			return "StubMatchers{" + "url=" + url + ", body=" + body + ", headers=" + headers + ", queryParameters="
+					+ queryParameters + ", cookies=" + cookies + ", multipart=" + multipart + '}';
 		}
 
 	}
@@ -290,10 +270,8 @@ public class YamlContract {
 		equal_to, containing, matching, not_matching, equal_to_json, equal_to_xml, absent, binary_equal_to;
 
 		static MatchingType from(String string) {
-			return Arrays.stream(values())
-					.filter(matchingType -> matchingType.name().replace("_", "")
-							.equalsIgnoreCase(string.toLowerCase().replace("_", "")))
-					.findFirst().orElse(null);
+			return Arrays.stream(values()).filter(matchingType -> matchingType.name().replace("_", "")
+					.equalsIgnoreCase(string.toLowerCase().replace("_", ""))).findFirst().orElse(null);
 		}
 
 	}
@@ -323,24 +301,20 @@ public class YamlContract {
 				return false;
 			}
 			BodyStubMatcher that = (BodyStubMatcher) o;
-			return Objects.equals(path, that.path) && type == that.type
-					&& Objects.equals(value, that.value) && predefined == that.predefined
-					&& Objects.equals(minOccurrence, that.minOccurrence)
-					&& Objects.equals(maxOccurrence, that.maxOccurrence)
-					&& regexType == that.regexType;
+			return Objects.equals(path, that.path) && type == that.type && Objects.equals(value, that.value)
+					&& predefined == that.predefined && Objects.equals(minOccurrence, that.minOccurrence)
+					&& Objects.equals(maxOccurrence, that.maxOccurrence) && regexType == that.regexType;
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(path, type, value, predefined, minOccurrence,
-					maxOccurrence, regexType);
+			return Objects.hash(path, type, value, predefined, minOccurrence, maxOccurrence, regexType);
 		}
 
 		@Override
 		public String toString() {
-			return "BodyStubMatcher{" + "path='" + path + '\'' + ", type=" + type
-					+ ", value='" + value + '\'' + ", predefined=" + predefined
-					+ ", minOccurrence=" + minOccurrence + ", maxOccurrence="
+			return "BodyStubMatcher{" + "path='" + path + '\'' + ", type=" + type + ", value='" + value + '\''
+					+ ", predefined=" + predefined + ", minOccurrence=" + minOccurrence + ", maxOccurrence="
 					+ maxOccurrence + ", regexType=" + regexType + '}';
 		}
 
@@ -367,8 +341,7 @@ public class YamlContract {
 				return false;
 			}
 			MultipartStubMatcher that = (MultipartStubMatcher) o;
-			return Objects.equals(params, that.params)
-					&& Objects.equals(named, that.named);
+			return Objects.equals(params, that.params) && Objects.equals(named, that.named);
 		}
 
 		@Override
@@ -378,8 +351,7 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "MultipartStubMatcher{" + "params=" + params + ", named=" + named
-					+ '}';
+			return "MultipartStubMatcher{" + "params=" + params + ", named=" + named + '}';
 		}
 
 	}
@@ -403,10 +375,8 @@ public class YamlContract {
 				return false;
 			}
 			MultipartNamedStubMatcher that = (MultipartNamedStubMatcher) o;
-			return Objects.equals(paramName, that.paramName)
-					&& Objects.equals(fileName, that.fileName)
-					&& Objects.equals(fileContent, that.fileContent)
-					&& Objects.equals(contentType, that.contentType);
+			return Objects.equals(paramName, that.paramName) && Objects.equals(fileName, that.fileName)
+					&& Objects.equals(fileContent, that.fileContent) && Objects.equals(contentType, that.contentType);
 		}
 
 		@Override
@@ -416,9 +386,8 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "MultipartNamedStubMatcher{" + "paramName='" + paramName + '\''
-					+ ", fileName=" + fileName + ", fileContent=" + fileContent
-					+ ", contentType=" + contentType + '}';
+			return "MultipartNamedStubMatcher{" + "paramName='" + paramName + '\'' + ", fileName=" + fileName
+					+ ", fileContent=" + fileContent + ", contentType=" + contentType + '}';
 		}
 
 	}
@@ -455,8 +424,7 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "ValueMatcher{" + "regex='" + regex + '\'' + ", predefined="
-					+ predefined + '}';
+			return "ValueMatcher{" + "regex='" + regex + '\'' + ", predefined=" + predefined + '}';
 		}
 
 	}
@@ -486,25 +454,22 @@ public class YamlContract {
 				return false;
 			}
 			BodyTestMatcher that = (BodyTestMatcher) o;
-			return Objects.equals(path, that.path) && type == that.type
-					&& Objects.equals(value, that.value)
+			return Objects.equals(path, that.path) && type == that.type && Objects.equals(value, that.value)
 					&& Objects.equals(minOccurrence, that.minOccurrence)
-					&& Objects.equals(maxOccurrence, that.maxOccurrence)
-					&& predefined == that.predefined && regexType == that.regexType;
+					&& Objects.equals(maxOccurrence, that.maxOccurrence) && predefined == that.predefined
+					&& regexType == that.regexType;
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(path, type, value, minOccurrence, maxOccurrence,
-					predefined, regexType);
+			return Objects.hash(path, type, value, minOccurrence, maxOccurrence, predefined, regexType);
 		}
 
 		@Override
 		public String toString() {
-			return "BodyTestMatcher{" + "path='" + path + '\'' + ", type=" + type
-					+ ", value='" + value + '\'' + ", minOccurrence=" + minOccurrence
-					+ ", maxOccurrence=" + maxOccurrence + ", predefined=" + predefined
-					+ ", regexType=" + regexType + '}';
+			return "BodyTestMatcher{" + "path='" + path + '\'' + ", type=" + type + ", value='" + value + '\''
+					+ ", minOccurrence=" + minOccurrence + ", maxOccurrence=" + maxOccurrence + ", predefined="
+					+ predefined + ", regexType=" + regexType + '}';
 		}
 
 	}
@@ -530,10 +495,8 @@ public class YamlContract {
 				return false;
 			}
 			KeyValueMatcher that = (KeyValueMatcher) o;
-			return Objects.equals(key, that.key) && Objects.equals(regex, that.regex)
-					&& predefined == that.predefined
-					&& Objects.equals(command, that.command)
-					&& regexType == that.regexType;
+			return Objects.equals(key, that.key) && Objects.equals(regex, that.regex) && predefined == that.predefined
+					&& Objects.equals(command, that.command) && regexType == that.regexType;
 		}
 
 		@Override
@@ -543,9 +506,8 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "KeyValueMatcher{" + "key='" + key + '\'' + ", regex='" + regex + '\''
-					+ ", predefined=" + predefined + ", command='" + command + '\''
-					+ ", regexType=" + regexType + '}';
+			return "KeyValueMatcher{" + "key='" + key + '\'' + ", regex='" + regex + '\'' + ", predefined=" + predefined
+					+ ", command='" + command + '\'' + ", regexType=" + regexType + '}';
 		}
 
 	}
@@ -571,8 +533,7 @@ public class YamlContract {
 				return false;
 			}
 			QueryParameterMatcher that = (QueryParameterMatcher) o;
-			return Objects.equals(key, that.key) && type == that.type
-					&& Objects.equals(value, that.value);
+			return Objects.equals(key, that.key) && type == that.type && Objects.equals(value, that.value);
 		}
 
 		@Override
@@ -582,8 +543,7 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "QueryParameterMatcher{" + "key='" + key + '\'' + ", type=" + type
-					+ ", value=" + value + '}';
+			return "QueryParameterMatcher{" + "key='" + key + '\'' + ", type=" + type + ", value=" + value + '}';
 		}
 
 	}
@@ -610,8 +570,8 @@ public class YamlContract {
 			}
 			TestHeaderMatcher that = (TestHeaderMatcher) o;
 			return Objects.equals(key, that.key) && Objects.equals(regex, that.regex)
-					&& Objects.equals(command, that.command)
-					&& predefined == that.predefined && regexType == that.regexType;
+					&& Objects.equals(command, that.command) && predefined == that.predefined
+					&& regexType == that.regexType;
 		}
 
 		@Override
@@ -621,9 +581,8 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "TestHeaderMatcher{" + "key='" + key + '\'' + ", regex='" + regex
-					+ '\'' + ", command='" + command + '\'' + ", predefined=" + predefined
-					+ ", regexType=" + regexType + '}';
+			return "TestHeaderMatcher{" + "key='" + key + '\'' + ", regex='" + regex + '\'' + ", command='" + command
+					+ '\'' + ", predefined=" + predefined + ", regexType=" + regexType + '}';
 		}
 
 	}
@@ -650,8 +609,8 @@ public class YamlContract {
 			}
 			TestCookieMatcher that = (TestCookieMatcher) o;
 			return Objects.equals(key, that.key) && Objects.equals(regex, that.regex)
-					&& Objects.equals(command, that.command)
-					&& predefined == that.predefined && regexType == that.regexType;
+					&& Objects.equals(command, that.command) && predefined == that.predefined
+					&& regexType == that.regexType;
 		}
 
 		@Override
@@ -661,9 +620,8 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "TestCookieMatcher{" + "key='" + key + '\'' + ", regex='" + regex
-					+ '\'' + ", command='" + command + '\'' + ", predefined=" + predefined
-					+ ", regexType=" + regexType + '}';
+			return "TestCookieMatcher{" + "key='" + key + '\'' + ", regex='" + regex + '\'' + ", command='" + command
+					+ '\'' + ", predefined=" + predefined + ", regexType=" + regexType + '}';
 		}
 
 	}
@@ -716,28 +674,25 @@ public class YamlContract {
 			}
 			Response response = (Response) o;
 			return status == response.status && Objects.equals(headers, response.headers)
-					&& Objects.equals(cookies, response.cookies)
-					&& Objects.equals(body, response.body)
+					&& Objects.equals(cookies, response.cookies) && Objects.equals(body, response.body)
 					&& Objects.equals(bodyFromFile, response.bodyFromFile)
 					&& Objects.equals(bodyFromFileAsBytes, response.bodyFromFileAsBytes)
-					&& Objects.equals(matchers, response.matchers)
-					&& Objects.equals(async, response.async) && Objects.equals(
-							fixedDelayMilliseconds, response.fixedDelayMilliseconds);
+					&& Objects.equals(matchers, response.matchers) && Objects.equals(async, response.async)
+					&& Objects.equals(fixedDelayMilliseconds, response.fixedDelayMilliseconds);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(status, headers, cookies, body, bodyFromFile,
-					bodyFromFileAsBytes, matchers, async, fixedDelayMilliseconds);
+			return Objects.hash(status, headers, cookies, body, bodyFromFile, bodyFromFileAsBytes, matchers, async,
+					fixedDelayMilliseconds);
 		}
 
 		@Override
 		public String toString() {
-			return "Response{" + "status=" + status + ", headers=" + headers
-					+ ", cookies=" + cookies + ", body=" + body + ", bodyFromFile='"
-					+ bodyFromFile + '\'' + ", bodyFromFileAsBytes='"
-					+ bodyFromFileAsBytes + '\'' + ", matchers=" + matchers + ", async="
-					+ async + ", fixedDelayMilliseconds=" + fixedDelayMilliseconds + '}';
+			return "Response{" + "status=" + status + ", headers=" + headers + ", cookies=" + cookies + ", body=" + body
+					+ ", bodyFromFile='" + bodyFromFile + '\'' + ", bodyFromFileAsBytes='" + bodyFromFileAsBytes + '\''
+					+ ", matchers=" + matchers + ", async=" + async + ", fixedDelayMilliseconds="
+					+ fixedDelayMilliseconds + '}';
 		}
 
 	}
@@ -759,8 +714,7 @@ public class YamlContract {
 				return false;
 			}
 			TestMatchers that = (TestMatchers) o;
-			return Objects.equals(body, that.body)
-					&& Objects.equals(headers, that.headers)
+			return Objects.equals(body, that.body) && Objects.equals(headers, that.headers)
 					&& Objects.equals(cookies, that.cookies);
 		}
 
@@ -771,8 +725,7 @@ public class YamlContract {
 
 		@Override
 		public String toString() {
-			return "TestMatchers{" + "body=" + body + ", headers=" + headers
-					+ ", cookies=" + cookies + '}';
+			return "TestMatchers{" + "body=" + body + ", headers=" + headers + ", cookies=" + cookies + '}';
 		}
 
 	}
@@ -804,32 +757,26 @@ public class YamlContract {
 				return false;
 			}
 			Input input = (Input) o;
-			return Objects.equals(messageFrom, input.messageFrom)
-					&& Objects.equals(triggeredBy, input.triggeredBy)
+			return Objects.equals(messageFrom, input.messageFrom) && Objects.equals(triggeredBy, input.triggeredBy)
 					&& Objects.equals(messageHeaders, input.messageHeaders)
 					&& Objects.equals(messageBody, input.messageBody)
 					&& Objects.equals(messageBodyFromFile, input.messageBodyFromFile)
-					&& Objects.equals(messageBodyFromFileAsBytes,
-							input.messageBodyFromFileAsBytes)
-					&& Objects.equals(assertThat, input.assertThat)
-					&& Objects.equals(matchers, input.matchers);
+					&& Objects.equals(messageBodyFromFileAsBytes, input.messageBodyFromFileAsBytes)
+					&& Objects.equals(assertThat, input.assertThat) && Objects.equals(matchers, input.matchers);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(messageFrom, triggeredBy, messageHeaders, messageBody,
-					messageBodyFromFile, messageBodyFromFileAsBytes, assertThat,
-					matchers);
+			return Objects.hash(messageFrom, triggeredBy, messageHeaders, messageBody, messageBodyFromFile,
+					messageBodyFromFileAsBytes, assertThat, matchers);
 		}
 
 		@Override
 		public String toString() {
-			return "Input{" + "messageFrom='" + messageFrom + '\'' + ", triggeredBy='"
-					+ triggeredBy + '\'' + ", messageHeaders=" + messageHeaders
-					+ ", messageBody=" + messageBody + ", messageBodyFromFile='"
-					+ messageBodyFromFile + '\'' + ", messageBodyFromFileAsBytes='"
-					+ messageBodyFromFileAsBytes + '\'' + ", assertThat='" + assertThat
-					+ '\'' + ", matchers=" + matchers + '}';
+			return "Input{" + "messageFrom='" + messageFrom + '\'' + ", triggeredBy='" + triggeredBy + '\''
+					+ ", messageHeaders=" + messageHeaders + ", messageBody=" + messageBody + ", messageBodyFromFile='"
+					+ messageBodyFromFile + '\'' + ", messageBodyFromFileAsBytes='" + messageBodyFromFileAsBytes + '\''
+					+ ", assertThat='" + assertThat + '\'' + ", matchers=" + matchers + '}';
 		}
 
 	}
@@ -859,28 +806,22 @@ public class YamlContract {
 				return false;
 			}
 			OutputMessage that = (OutputMessage) o;
-			return Objects.equals(sentTo, that.sentTo)
-					&& Objects.equals(headers, that.headers)
-					&& Objects.equals(body, that.body)
-					&& Objects.equals(bodyFromFile, that.bodyFromFile)
+			return Objects.equals(sentTo, that.sentTo) && Objects.equals(headers, that.headers)
+					&& Objects.equals(body, that.body) && Objects.equals(bodyFromFile, that.bodyFromFile)
 					&& Objects.equals(bodyFromFileAsBytes, that.bodyFromFileAsBytes)
-					&& Objects.equals(assertThat, that.assertThat)
-					&& Objects.equals(matchers, that.matchers);
+					&& Objects.equals(assertThat, that.assertThat) && Objects.equals(matchers, that.matchers);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(sentTo, headers, body, bodyFromFile, bodyFromFileAsBytes,
-					assertThat, matchers);
+			return Objects.hash(sentTo, headers, body, bodyFromFile, bodyFromFileAsBytes, assertThat, matchers);
 		}
 
 		@Override
 		public String toString() {
-			return "OutputMessage{" + "sentTo='" + sentTo + '\'' + ", headers=" + headers
-					+ ", body=" + body + ", bodyFromFile='" + bodyFromFile + '\''
-					+ ", bodyFromFileAsBytes='" + bodyFromFileAsBytes + '\''
-					+ ", assertThat='" + assertThat + '\'' + ", matchers=" + matchers
-					+ '}';
+			return "OutputMessage{" + "sentTo='" + sentTo + '\'' + ", headers=" + headers + ", body=" + body
+					+ ", bodyFromFile='" + bodyFromFile + '\'' + ", bodyFromFileAsBytes='" + bodyFromFileAsBytes + '\''
+					+ ", assertThat='" + assertThat + '\'' + ", matchers=" + matchers + '}';
 		}
 
 	}

@@ -45,22 +45,19 @@ import static org.mockito.Mockito.when;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnBean(ContractVerifierAmqpAutoConfiguration.class)
-@ConditionalOnProperty(value = "stubrunner.amqp.mockConnection", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(value = "stubrunner.amqp.mockConnection", havingValue = "true", matchIfMissing = true)
 public class RabbitMockConnectionFactoryAutoConfiguration {
 
 	@Bean
 	public ConnectionFactory connectionFactory() {
 		final Connection mockConnection = mock(Connection.class);
 		final AMQP.Queue.DeclareOk mockDeclareOk = mock(AMQP.Queue.DeclareOk.class);
-		com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(
-				com.rabbitmq.client.ConnectionFactory.class, new Answer() {
+		com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(com.rabbitmq.client.ConnectionFactory.class,
+				new Answer() {
 					@Override
-					public Object answer(InvocationOnMock invocationOnMock)
-							throws Throwable {
+					public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
 						// hack for keeping backward compatibility with #303
-						if ("newConnection"
-								.equals(invocationOnMock.getMethod().getName())) {
+						if ("newConnection".equals(invocationOnMock.getMethod().getName())) {
 							return mockConnection;
 						}
 						return Mockito.RETURNS_DEFAULTS.answer(invocationOnMock);

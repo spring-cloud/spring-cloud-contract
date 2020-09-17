@@ -48,8 +48,7 @@ public class HandlebarsJsonPathHelper implements Helper<Object> {
 			String jsonPath = options.param(0);
 			Object model = oldContext.get(REQUEST_MODEL_NAME);
 			if (model instanceof TestSideRequestTemplateModel) {
-				return returnObjectForTest((TestSideRequestTemplateModel) model,
-						jsonPath);
+				return returnObjectForTest((TestSideRequestTemplateModel) model, jsonPath);
 			}
 			else if (model instanceof RequestTemplateModel) {
 				return returnObjectForStub(model, jsonPath);
@@ -73,20 +72,16 @@ public class HandlebarsJsonPathHelper implements Helper<Object> {
 		}
 
 		Map map = (Map) model;
-		return map.values().stream()
-				.anyMatch(o -> o instanceof TestSideRequestTemplateModel);
+		return map.values().stream().anyMatch(o -> o instanceof TestSideRequestTemplateModel);
 	}
 
 	private Object returnObjectForStub(Object model, String jsonPath) {
-		DocumentContext documentContext = JsonPath
-				.parse(((RequestTemplateModel) model).getBody());
+		DocumentContext documentContext = JsonPath.parse(((RequestTemplateModel) model).getBody());
 		return documentContext.read(jsonPath);
 	}
 
-	private Object returnObjectForTest(TestSideRequestTemplateModel model,
-			String jsonPath) {
-		String body = removeSurroundingQuotes(model.getEscapedBody()).replace("\\\"",
-				"\"");
+	private Object returnObjectForTest(TestSideRequestTemplateModel model, String jsonPath) {
+		String body = removeSurroundingQuotes(model.getEscapedBody()).replace("\\\"", "\"");
 		DocumentContext documentContext = JsonPath.parse(body);
 		Object value = documentContext.read(jsonPath);
 		return processTestResponseValue(value);

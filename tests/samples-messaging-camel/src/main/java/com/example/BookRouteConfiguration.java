@@ -32,8 +32,7 @@ import org.springframework.context.annotation.Configuration;
 public class BookRouteConfiguration {
 
 	@Bean
-	ActiveMQComponent activeMQComponent(
-			@Value("${activemq.url:vm://localhost?broker.persistent=false}") String url) {
+	ActiveMQComponent activeMQComponent(@Value("${activemq.url:vm://localhost?broker.persistent=false}") String url) {
 		ActiveMQComponent component = new ActiveMQComponent();
 		component.setBrokerURL(url);
 		return component;
@@ -46,16 +45,13 @@ public class BookRouteConfiguration {
 			@Override
 			public void configure() throws Exception {
 				// scenario 1 - from bean to output
-				from("direct:start").unmarshal()
-						.json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
+				from("direct:start").unmarshal().json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
 						.to("jms:output");
 				// scenario 2 - from input to output
-				from("jms:input").unmarshal()
-						.json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
+				from("jms:input").unmarshal().json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
 						.to("jms:output");
 				// scenario 3 - from input to no output
-				from("jms:delete").unmarshal()
-						.json(JsonLibrary.Jackson, BookDeleted.class).bean(bookDeleter);
+				from("jms:delete").unmarshal().json(JsonLibrary.Jackson, BookDeleted.class).bean(bookDeleter);
 			}
 
 		};

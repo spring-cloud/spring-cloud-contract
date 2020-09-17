@@ -40,14 +40,12 @@ public class WireMockRestTemplateConfiguration {
 
 	@Bean
 	@ConditionalOnClass(SSLContextBuilder.class)
-	@ConditionalOnProperty(value = "wiremock.rest-template-ssl-enabled",
-			matchIfMissing = true)
+	@ConditionalOnProperty(value = "wiremock.rest-template-ssl-enabled", matchIfMissing = true)
 	public RestTemplateCustomizer wiremockRestTemplateCustomizer() {
 		return new RestTemplateCustomizer() {
 			@Override
 			public void customize(RestTemplate restTemplate) {
-				if (restTemplate
-						.getRequestFactory() instanceof HttpComponentsClientHttpRequestFactory) {
+				if (restTemplate.getRequestFactory() instanceof HttpComponentsClientHttpRequestFactory) {
 					HttpComponentsClientHttpRequestFactory factory = (HttpComponentsClientHttpRequestFactory) restTemplate
 							.getRequestFactory();
 					factory.setHttpClient(createSslHttpClient());
@@ -57,15 +55,12 @@ public class WireMockRestTemplateConfiguration {
 			private HttpClient createSslHttpClient() {
 				try {
 					SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
-							new SSLContextBuilder().loadTrustMaterial(null,
-									TrustSelfSignedStrategy.INSTANCE).build(),
+							new SSLContextBuilder().loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE).build(),
 							NoopHostnameVerifier.INSTANCE);
-					return HttpClients.custom().setSSLSocketFactory(socketFactory)
-							.build();
+					return HttpClients.custom().setSSLSocketFactory(socketFactory).build();
 				}
 				catch (Exception ex) {
-					throw new IllegalStateException("Unable to create SSL HttpClient",
-							ex);
+					throw new IllegalStateException("Unable to create SSL HttpClient", ex);
 				}
 			}
 		};

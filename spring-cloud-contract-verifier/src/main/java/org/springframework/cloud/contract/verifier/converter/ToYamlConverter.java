@@ -50,8 +50,7 @@ public final class ToYamlConverter {
 
 	private static final List<ContractConverter> CONTRACT_CONVERTERS = converters();
 
-	protected static void doReplaceContractWithYaml(ContractConverter converter,
-			File file) {
+	protected static void doReplaceContractWithYaml(ContractConverter converter, File file) {
 		if (log.isDebugEnabled()) {
 			log.debug("Will replace contract [{}] with a YAML version", file.getName());
 		}
@@ -59,13 +58,11 @@ public final class ToYamlConverter {
 		// target/copied_contracts/contracts/foo/baz/bar.groovy
 		Collection<Contract> collection = converter.convertFrom(file);
 		if (log.isDebugEnabled()) {
-			log.debug("Converted file [{}] to collection of [{}] contracts", file,
-					collection.size());
+			log.debug("Converted file [{}] to collection of [{}] contracts", file, collection.size());
 		}
 		List<YamlContract> yamls = yamlContractConverter.convertTo(collection);
 		if (log.isDebugEnabled()) {
-			log.debug("Converted collection of [{}] contracts to [{}] YAML contracts",
-					collection.size(), yamls.size());
+			log.debug("Converted collection of [{}] contracts to [{}] YAML contracts", collection.size(), yamls.size());
 		}
 		// rm target/copied_contracts/contracts/foo/baz/bar.groovy
 		file.delete();
@@ -84,8 +81,7 @@ public final class ToYamlConverter {
 				throw new RuntimeException(e);
 			}
 			if (log.isDebugEnabled()) {
-				log.debug("Written file [{}] with YAML contract definition",
-						ymlContractVersion);
+				log.debug("Written file [{}] with YAML contract definition", ymlContractVersion);
 			}
 		});
 	}
@@ -100,10 +96,8 @@ public final class ToYamlConverter {
 	public static void replaceContractWithYaml(File baseDir) {
 		try {
 			Files.walk(baseDir.toPath()).map(Path::toFile)
-					.forEach(file -> CONTRACT_CONVERTERS.stream()
-							.filter(converter -> converter.isAccepted(file)).findFirst()
-							.ifPresent(converter -> doReplaceContractWithYaml(converter,
-									file)));
+					.forEach(file -> CONTRACT_CONVERTERS.stream().filter(converter -> converter.isAccepted(file))
+							.findFirst().ifPresent(converter -> doReplaceContractWithYaml(converter, file)));
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -111,8 +105,7 @@ public final class ToYamlConverter {
 	}
 
 	private static List<ContractConverter> converters() {
-		List<ContractConverter> converters = SpringFactoriesLoader
-				.loadFactories(ContractConverter.class, null);
+		List<ContractConverter> converters = SpringFactoriesLoader.loadFactories(ContractConverter.class, null);
 		converters.add(YamlContractConverter.INSTANCE);
 		converters.add(ContractVerifierDslConverter.INSTANCE);
 		return converters;

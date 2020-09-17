@@ -27,8 +27,7 @@ import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
  * @author Marcin Grzejszczak
  * @since 2.1.0
  */
-public class WireMockHttpServerStubConfigurer
-		implements HttpServerStubConfigurer<WireMockConfiguration> {
+public class WireMockHttpServerStubConfigurer implements HttpServerStubConfigurer<WireMockConfiguration> {
 
 	@Override
 	public boolean isAccepted(Object httpStubConfiguration) {

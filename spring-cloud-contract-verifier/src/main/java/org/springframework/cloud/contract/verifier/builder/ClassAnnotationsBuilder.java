@@ -36,20 +36,17 @@ class ClassAnnotationsBuilder {
 	}
 
 	ClassAnnotationsBuilder jUnit4() {
-		this.parentBuilder
-				.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData));
+		this.parentBuilder.classAnnotations(new JUnit4OrderClassAnnotation(builder, metaData));
 		return this;
 	}
 
 	ClassAnnotationsBuilder jUnit5() {
-		this.parentBuilder
-				.classAnnotations(new JUnit5OrderClassAnnotation(builder, metaData));
+		this.parentBuilder.classAnnotations(new JUnit5OrderClassAnnotation(builder, metaData));
 		return this;
 	}
 
 	ClassAnnotationsBuilder spock() {
-		this.parentBuilder
-				.classAnnotations(new SpockOrderClassAnnotation(builder, metaData));
+		this.parentBuilder.classAnnotations(new SpockOrderClassAnnotation(builder, metaData));
 		return this;
 	}
 

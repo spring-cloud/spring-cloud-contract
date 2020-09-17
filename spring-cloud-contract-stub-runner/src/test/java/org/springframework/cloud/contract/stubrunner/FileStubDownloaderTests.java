@@ -30,17 +30,14 @@ public class FileStubDownloaderTests {
 	public void resolve() {
 		final FileStubDownloader fileStubDownloader = new FileStubDownloader();
 		Resource expectedUnixResource = new StubsResource("stubs://file:///User/A/B/C");
-		Resource expectedWindowsResource = new StubsResource(
-				"stubs://file:///C:/Users/A/B/C");
+		Resource expectedWindowsResource = new StubsResource("stubs://file:///C:/Users/A/B/C");
 		String unixFileFormat = "stubs://file:///User/A/B/C";
 		String windowsFileFormat = "stubs://file://C:\\Users\\A\\B\\C";
 		String windowsFileFormatCorrectPathStart = "stubs://file:///C:\\Users\\A\\B\\C";
-		Assertions.assertThat(expectedUnixResource)
-				.isEqualTo(fileStubDownloader.resolve(unixFileFormat, null));
+		Assertions.assertThat(expectedUnixResource).isEqualTo(fileStubDownloader.resolve(unixFileFormat, null));
+		Assertions.assertThat(expectedWindowsResource).isEqualTo(fileStubDownloader.resolve(windowsFileFormat, null));
 		Assertions.assertThat(expectedWindowsResource)
-				.isEqualTo(fileStubDownloader.resolve(windowsFileFormat, null));
-		Assertions.assertThat(expectedWindowsResource).isEqualTo(
-				fileStubDownloader.resolve(windowsFileFormatCorrectPathStart, null));
+				.isEqualTo(fileStubDownloader.resolve(windowsFileFormatCorrectPathStart, null));
 	}
 
 }

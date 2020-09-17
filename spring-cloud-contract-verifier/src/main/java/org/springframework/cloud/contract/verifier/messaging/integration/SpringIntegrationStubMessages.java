@@ -47,36 +47,32 @@ public class SpringIntegrationStubMessages implements MessageVerifier<Message<?>
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			YamlContract contract) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
 		send(this.builder.create(payload, headers), destination, contract);
 	}
 
 	@Override
 	public void send(Message<?> message, String destination, YamlContract contract) {
 		try {
-			MessageChannel messageChannel = this.context.getBean(destination,
-					MessageChannel.class);
+			MessageChannel messageChannel = this.context.getBean(destination, MessageChannel.class);
 			messageChannel.send(message);
 		}
 		catch (Exception e) {
-			log.error("Exception occurred while trying to send a message [" + message
-					+ "] " + "to a channel with name [" + destination + "]", e);
+			log.error("Exception occurred while trying to send a message [" + message + "] "
+					+ "to a channel with name [" + destination + "]", e);
 			throw e;
 		}
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		try {
-			PollableChannel messageChannel = this.context.getBean(destination,
-					PollableChannel.class);
+			PollableChannel messageChannel = this.context.getBean(destination, PollableChannel.class);
 			return messageChannel.receive(timeUnit.toMillis(timeout));
 		}
 		catch (Exception e) {
-			log.error("Exception occurred while trying to read a message from "
-					+ " a channel with name [" + destination + "]", e);
+			log.error("Exception occurred while trying to read a message from " + " a channel with name [" + destination
+					+ "]", e);
 			throw new IllegalStateException(e);
 		}
 	}

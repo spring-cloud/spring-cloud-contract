@@ -51,10 +51,8 @@ public class ContractVerifierMessageMetadata implements SpringCloudContractMetad
 		this.messageType = messageType;
 	}
 
-	public static ContractVerifierMessageMetadata fromMetadata(
-			Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, METADATA_KEY,
-				new ContractVerifierMessageMetadata());
+	public static ContractVerifierMessageMetadata fromMetadata(Map<String, Object> metadata) {
+		return MetadataUtil.fromMetadata(metadata, METADATA_KEY, new ContractVerifierMessageMetadata());
 	}
 
 	@Override

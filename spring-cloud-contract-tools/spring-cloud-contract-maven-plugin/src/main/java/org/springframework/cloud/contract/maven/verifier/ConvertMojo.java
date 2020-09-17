@@ -48,8 +48,7 @@ import static org.springframework.cloud.contract.maven.verifier.ChangeDetector.i
  *
  * @author Mariusz Smykula
  */
-@Mojo(name = "convert", requiresProject = false,
-		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
+@Mojo(name = "convert", requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
 
 	static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
@@ -222,58 +221,50 @@ public class ConvertMojo extends AbstractMojo {
 		File contractsDirectory = locationOfContracts(config);
 		contractsDirectory = contractSubfolderIfPresent(contractsDirectory);
 
-		if (this.incrementalContractStubs && !inputFilesChangeDetected(contractsDirectory,
-				mojoExecution, session)) {
+		if (this.incrementalContractStubs && !inputFilesChangeDetected(contractsDirectory, mojoExecution, session)) {
 			getLog().info("Nothing to generate - all stubs are up to date");
 			return;
 		}
 
 		File contractsDslDir = contractsDslDir(contractsDirectory);
-		LeftOverPrevention leftOverPrevention = new LeftOverPrevention(
-				this.stubsDirectory, mojoExecution, session);
+		LeftOverPrevention leftOverPrevention = new LeftOverPrevention(this.stubsDirectory, mojoExecution, session);
 
 		File copiedContracts = copyContracts(rootPath, config, contractsDirectory);
 		if (this.convertToYaml) {
 			contractsDslDir = copiedContracts;
-			convertBackedUpDslsToYaml(rootPath, config, contractsDirectory,
-					contractsDslDir);
+			convertBackedUpDslsToYaml(rootPath, config, contractsDirectory, contractsDslDir);
 		}
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		logSetup(config, contractsDslDir);
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(
-				config.getStubsOutputDir(), config.getContractsDslDir(),
-				config.getExcludedFiles(), config.getIncludedContracts(),
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(config.getStubsOutputDir(),
+				config.getContractsDslDir(), config.getExcludedFiles(), config.getIncludedContracts(),
 				config.isExcludeBuildFolders());
 		converter.processFiles();
 		leftOverPrevention.deleteLeftOvers();
 	}
 
-	private void convertBackedUpDslsToYaml(String rootPath,
-			ContractVerifierConfigProperties config, File contractsDirectory,
-			File contractsDslDir) throws MojoExecutionException {
+	private void convertBackedUpDslsToYaml(String rootPath, ContractVerifierConfigProperties config,
+			File contractsDirectory, File contractsDslDir) throws MojoExecutionException {
 		copyOriginals(rootPath, config, contractsDirectory);
 		ToYamlConverter.replaceContractWithYaml(contractsDslDir);
-		getLog().info("Replaced DSL files with their YAML representation at ["
-				+ contractsDslDir + "]");
+		getLog().info("Replaced DSL files with their YAML representation at [" + contractsDslDir + "]");
 	}
 
-	private File copyOriginals(String rootPath, ContractVerifierConfigProperties config,
-			File contractsDirectory) throws MojoExecutionException {
-		File outputFolderWithOriginals = new File(this.stubsDirectory,
-				rootPath + ORIGINAL_PATH);
-		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering,
-				config).copy(contractsDirectory, outputFolderWithOriginals);
+	private File copyOriginals(String rootPath, ContractVerifierConfigProperties config, File contractsDirectory)
+			throws MojoExecutionException {
+		File outputFolderWithOriginals = new File(this.stubsDirectory, rootPath + ORIGINAL_PATH);
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
+				.copy(contractsDirectory, outputFolderWithOriginals);
 		return outputFolderWithOriginals;
 	}
 
-	private File copyContracts(String rootPath, ContractVerifierConfigProperties config,
-			File contractsDirectory) throws MojoExecutionException {
-		File outputFolderWithContracts = this.stubsDirectory.getPath()
-				.endsWith("contracts") ? this.stubsDirectory
-						: new File(this.stubsDirectory, rootPath + CONTRACTS_PATH);
-		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering,
-				config).copy(contractsDirectory, outputFolderWithContracts);
+	private File copyContracts(String rootPath, ContractVerifierConfigProperties config, File contractsDirectory)
+			throws MojoExecutionException {
+		File outputFolderWithContracts = this.stubsDirectory.getPath().endsWith("contracts") ? this.stubsDirectory
+				: new File(this.stubsDirectory, rootPath + CONTRACTS_PATH);
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
+				.copy(contractsDirectory, outputFolderWithContracts);
 		return outputFolderWithContracts;
 	}
 
@@ -281,21 +272,17 @@ public class ConvertMojo extends AbstractMojo {
 		if (getLog().isDebugEnabled()) {
 			getLog().debug("The contracts dir equals [" + contractsDslDir + "]");
 		}
-		getLog().info(
-				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
-		getLog().info(String.format(
-				"     Spring Cloud Contract Verifier contracts directory: %s",
+		getLog().info("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
+		getLog().info(String.format("     Spring Cloud Contract Verifier contracts directory: %s",
 				config.getContractsDslDir()));
-		getLog().info(String.format("Stub Server stubs mappings directory: %s",
-				config.getStubsOutputDir()));
+		getLog().info(String.format("Stub Server stubs mappings directory: %s", config.getStubsOutputDir()));
 	}
 
 	private File contractSubfolderIfPresent(File contractsDirectory) {
 		File contractsSubFolder = new File(contractsDirectory, "contracts");
 		if (contractsSubFolder.exists()) {
 			if (getLog().isDebugEnabled()) {
-				getLog().debug(
-						"The subfolder [contracts] exists, will pick it as a source of contracts");
+				getLog().debug("The subfolder [contracts] exists, will pick it as a source of contracts");
 			}
 			contractsDirectory = contractsSubFolder;
 		}
@@ -303,19 +290,15 @@ public class ConvertMojo extends AbstractMojo {
 	}
 
 	private File locationOfContracts(ContractVerifierConfigProperties config) {
-		return new MavenContractsDownloader(this.project, this.contractDependency,
-				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode,
-				getLog(), this.contractsRepositoryUsername,
-				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
-				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
-				this.contractsProperties, this.failOnNoContracts)
-						.downloadAndUnpackContractsIfRequired(config,
-								this.contractsDirectory);
+		return new MavenContractsDownloader(this.project, this.contractDependency, this.contractsPath,
+				this.contractsRepositoryUrl, this.contractsMode, getLog(), this.contractsRepositoryUsername,
+				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
+				this.deleteStubsAfterTest, this.contractsProperties, this.failOnNoContracts)
+						.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 	}
 
 	private File stubsOutputDir(String rootPath) {
-		return isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH)
-				: this.destination;
+		return isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH) : this.destination;
 	}
 
 	private File contractsDslDir(File contractsDirectory) {

@@ -48,11 +48,10 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	private final Receiver receiver;
 
-	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker,
-			KafkaProperties kafkaProperties, KafkaStubMessagesInitializer initializer) {
+	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties,
+			KafkaStubMessagesInitializer initializer) {
 		this.kafkaTemplate = kafkaTemplate;
-		Map<String, Consumer> topicToConsumer = initializer.initialize(broker,
-				kafkaProperties);
+		Map<String, Consumer> topicToConsumer = initializer.initialize(broker, kafkaProperties);
 		this.receiver = new Receiver(topicToConsumer);
 	}
 
@@ -62,8 +61,7 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 		try {
 			this.kafkaTemplate.setDefaultTopic(destination);
 			if (log.isDebugEnabled()) {
-				log.debug("Will send a message [" + message + "] to destination ["
-						+ destination + "]");
+				log.debug("Will send a message [" + message + "] to destination [" + destination + "]");
 			}
 			this.kafkaTemplate.send(message).get(5, TimeUnit.SECONDS);
 			this.kafkaTemplate.flush();
@@ -77,8 +75,7 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		return this.receiver.receive(destination, timeout, timeUnit, contract);
 	}
 
@@ -88,10 +85,8 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination,
-			YamlContract contract) {
-		Message<?> message = MessageBuilder.createMessage(payload,
-				new MessageHeaders(headers));
+	public void send(Object payload, Map headers, String destination, YamlContract contract) {
+		Message<?> message = MessageBuilder.createMessage(payload, new MessageHeaders(headers));
 		send(message, destination, contract);
 	}
 
@@ -107,15 +102,13 @@ class Receiver {
 		this.consumers = consumers;
 	}
 
-	Message receive(String topic, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	Message receive(String topic, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		Consumer consumer = this.consumers.get(topic);
 		if (consumer == null) {
-			throw new IllegalStateException(
-					"No consumer set up for topic [" + topic + "]");
+			throw new IllegalStateException("No consumer set up for topic [" + topic + "]");
 		}
-		ConsumerRecord<String, String> record = KafkaTestUtils.getSingleRecord(consumer,
-				topic, timeUnit.toMillis(timeout));
+		ConsumerRecord<String, String> record = KafkaTestUtils.getSingleRecord(consumer, topic,
+				timeUnit.toMillis(timeout));
 		if (log.isDebugEnabled()) {
 			log.debug("Got a single record for destination [" + topic + "]");
 		}
@@ -147,15 +140,13 @@ class Record {
 		if (textPayload instanceof String && ((String) textPayload).contains("payload")
 				&& ((String) textPayload).contains("headers")) {
 			try {
-				Object object = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE)
-						.parse((String) textPayload);
+				Object object = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE).parse((String) textPayload);
 				JSONObject jo = (JSONObject) object;
 				String payload = (String) jo.get("payload");
 				JSONObject headersInJson = (JSONObject) jo.get("headers");
 				Map newHeaders = new HashMap(headers);
 				newHeaders.putAll(headersInJson);
-				return MessageBuilder.createMessage(unquoted(payload),
-						new MessageHeaders(newHeaders));
+				return MessageBuilder.createMessage(unquoted(payload), new MessageHeaders(newHeaders));
 			}
 			catch (ParseException ex) {
 				throw new IllegalStateException(ex);
@@ -165,11 +156,9 @@ class Record {
 	}
 
 	private Object unquoted(Object value) {
-		String textPayload = value instanceof byte[] ? new String((byte[]) value)
-				: value.toString();
+		String textPayload = value instanceof byte[] ? new String((byte[]) value) : value.toString();
 		if (textPayload.startsWith("\"") && textPayload.endsWith("\"")) {
-			return textPayload.substring(1, textPayload.length() - 1).replace("\\\"",
-					"\"");
+			return textPayload.substring(1, textPayload.length() - 1).replace("\\\"", "\"");
 		}
 		return textPayload;
 	}

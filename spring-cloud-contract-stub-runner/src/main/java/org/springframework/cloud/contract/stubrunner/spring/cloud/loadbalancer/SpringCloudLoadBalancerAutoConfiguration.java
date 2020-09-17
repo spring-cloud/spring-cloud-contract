@@ -62,26 +62,22 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ LoadBalancerClient.class, LoadBalancerClientFactory.class })
-@ConditionalOnProperty(value = "stubrunner.cloud.loadbalancer.enabled",
-		matchIfMissing = true)
+@ConditionalOnProperty(value = "stubrunner.cloud.loadbalancer.enabled", matchIfMissing = true)
 @ConditionalOnBean(StubMapperProperties.class)
 @AutoConfigureBefore(LoadBalancerAutoConfiguration.class)
-@AutoConfigureAfter({ LoadBalancerClientConfiguration.class,
-		StubRunnerSpringCloudAutoConfiguration.class })
+@AutoConfigureAfter({ LoadBalancerClientConfiguration.class, StubRunnerSpringCloudAutoConfiguration.class })
 @ConditionalOnStubbedDiscoveryEnabled
 public class SpringCloudLoadBalancerAutoConfiguration {
 
 	@Bean
 	@Primary
-	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(
-			BeanFactory beanFactory) {
+	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(BeanFactory beanFactory) {
 		return new StubRunnerLoadBalancerClientFactory(beanFactory);
 	}
 
 }
 
-class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory
-		implements Closeable {
+class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory implements Closeable {
 
 	private final BeanFactory beanFactory;
 
@@ -91,8 +87,7 @@ class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory
 
 	@Override
 	public ReactiveLoadBalancer<ServiceInstance> getInstance(String serviceId) {
-		return new ContractReactorServiceInstanceLoadBalancer(this.beanFactory,
-				serviceId);
+		return new ContractReactorServiceInstanceLoadBalancer(this.beanFactory, serviceId);
 	}
 
 	@Override
@@ -138,8 +133,7 @@ class StubbedServiceInstance implements ServiceInstance {
 
 	static final Map<String, Map.Entry<StubConfiguration, Integer>> CACHE = new ConcurrentHashMap<>();
 
-	StubbedServiceInstance(StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties, String serviceId) {
+	StubbedServiceInstance(StubFinder stubFinder, StubMapperProperties stubMapperProperties, String serviceId) {
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
 		this.serviceId = serviceId;
@@ -151,11 +145,9 @@ class StubbedServiceInstance implements ServiceInstance {
 			return entry;
 		}
 		RunningStubs runningStubs = this.stubFinder.findAllRunningStubs();
-		String mappedServiceName = StringUtils.hasText(
-				this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId))
-						? this.stubMapperProperties.fromServiceIdToIvyNotation(
-								this.serviceId)
-						: this.serviceId;
+		String mappedServiceName = StringUtils
+				.hasText(this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId))
+						? this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId) : this.serviceId;
 		entry = runningStubs.getEntry(mappedServiceName);
 		CACHE.put(this.serviceId, entry);
 		return entry;
@@ -188,8 +180,7 @@ class StubbedServiceInstance implements ServiceInstance {
 
 	@Override
 	public URI getUri() {
-		return URI.create(
-				(isSecure() ? "https://" : "http://") + getHost() + ":" + getPort());
+		return URI.create((isSecure() ? "https://" : "http://") + getHost() + ":" + getPort());
 	}
 
 	@Override
@@ -199,8 +190,7 @@ class StubbedServiceInstance implements ServiceInstance {
 
 }
 
-class ContractReactorServiceInstanceLoadBalancer
-		implements ReactorServiceInstanceLoadBalancer, LoadBalancerLifecycle {
+class ContractReactorServiceInstanceLoadBalancer implements ReactorServiceInstanceLoadBalancer, LoadBalancerLifecycle {
 
 	private final BeanFactory beanFactory;
 
@@ -210,8 +200,7 @@ class ContractReactorServiceInstanceLoadBalancer
 
 	private StubMapperProperties stubMapperProperties;
 
-	ContractReactorServiceInstanceLoadBalancer(BeanFactory beanFactory,
-			String serviceId) {
+	ContractReactorServiceInstanceLoadBalancer(BeanFactory beanFactory, String serviceId) {
 		this.beanFactory = beanFactory;
 		this.serviceId = serviceId;
 	}
@@ -228,8 +217,8 @@ class ContractReactorServiceInstanceLoadBalancer
 
 	@Override
 	public Mono<Response<ServiceInstance>> choose(Request request) {
-		return Mono.just(new DefaultResponse(new StubbedServiceInstance(stubFinder(),
-				stubMapperProperties(), this.serviceId)));
+		return Mono.just(
+				new DefaultResponse(new StubbedServiceInstance(stubFinder(), stubMapperProperties(), this.serviceId)));
 	}
 
 	private StubFinder stubFinder() {
@@ -241,8 +230,7 @@ class ContractReactorServiceInstanceLoadBalancer
 
 	private StubMapperProperties stubMapperProperties() {
 		if (this.stubMapperProperties == null) {
-			this.stubMapperProperties = this.beanFactory
-					.getBean(StubMapperProperties.class);
+			this.stubMapperProperties = this.beanFactory.getBean(StubMapperProperties.class);
 		}
 		return this.stubMapperProperties;
 	}

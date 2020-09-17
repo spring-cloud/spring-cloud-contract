@@ -32,8 +32,7 @@ import org.springframework.messaging.MessageChannel;
  */
 class StreamFromBinderMappingMessageSender implements MessageVerifierSender<Message<?>> {
 
-	private static final Log log = LogFactory
-			.getLog(StreamFromBinderMappingMessageSender.class);
+	private static final Log log = LogFactory.getLog(StreamFromBinderMappingMessageSender.class);
 
 	private final ApplicationContext context;
 
@@ -41,29 +40,26 @@ class StreamFromBinderMappingMessageSender implements MessageVerifierSender<Mess
 
 	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
 
-	StreamFromBinderMappingMessageSender(ApplicationContext context,
-			DestinationResolver resolver) {
+	StreamFromBinderMappingMessageSender(ApplicationContext context, DestinationResolver resolver) {
 		this.context = context;
 		this.resolver = resolver;
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			YamlContract contract) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
 		send(this.builder.create(payload, headers), destination, contract);
 	}
 
 	@Override
 	public void send(Message<?> message, String destination, YamlContract contract) {
 		try {
-			MessageChannel messageChannel = this.context.getBean(this.resolver
-					.resolvedDestination(destination, DefaultChannels.OUTPUT),
-					MessageChannel.class);
+			MessageChannel messageChannel = this.context.getBean(
+					this.resolver.resolvedDestination(destination, DefaultChannels.OUTPUT), MessageChannel.class);
 			messageChannel.send(message);
 		}
 		catch (Exception e) {
-			log.error("Exception occurred while trying to send a message [" + message
-					+ "] " + "to a channel with name [" + destination + "]", e);
+			log.error("Exception occurred while trying to send a message [" + message + "] "
+					+ "to a channel with name [" + destination + "]", e);
 			throw e;
 		}
 	}

@@ -35,8 +35,7 @@ public final class RegexPatterns {
 	private static final Log log = LogFactory.getLog(RegexPatterns.class);
 
 	public RegexPatterns() {
-		log.warn(
-				"WARNING: RegexPatterns shouldn't be instantiated. Use its static methods instead.");
+		log.warn("WARNING: RegexPatterns shouldn't be instantiated. Use its static methods instead.");
 	}
 
 	protected static final Pattern TRUE_OR_FALSE = Pattern.compile("(true|false)");
@@ -58,11 +57,9 @@ public final class RegexPatterns {
 	protected static final Pattern IP_ADDRESS = Pattern.compile(
 			"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
 
-	protected static final Pattern HOSTNAME_PATTERN = Pattern
-			.compile("((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?");
+	protected static final Pattern HOSTNAME_PATTERN = Pattern.compile("((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?");
 
-	protected static final Pattern EMAIL = Pattern
-			.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}");
+	protected static final Pattern EMAIL = Pattern.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}");
 
 	protected static final Pattern URL = UrlHelper.URL;
 
@@ -77,8 +74,7 @@ public final class RegexPatterns {
 	protected static final Pattern ANY_DATE_TIME = Pattern.compile(
 			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
 
-	protected static final Pattern ANY_TIME = Pattern
-			.compile("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+	protected static final Pattern ANY_TIME = Pattern.compile("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
 
 	protected static final Pattern NON_EMPTY = Pattern.compile("[\\S\\s]+");
 
@@ -88,8 +84,7 @@ public final class RegexPatterns {
 			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.\\d+)?(Z|[+-][01]\\d:[0-5]\\d)");
 
 	protected static Pattern anyOf(String... values) {
-		return Pattern.compile(Arrays.stream(values).map(it -> '^' + it + '$')
-				.collect(Collectors.joining("|")));
+		return Pattern.compile(Arrays.stream(values).map(it -> '^' + it + '$').collect(Collectors.joining("|")));
 	}
 
 	public static String multipartParam(Object name, Object value) {
@@ -98,13 +93,10 @@ public final class RegexPatterns {
 				+ value + "\r\n--\\1.*";
 	}
 
-	public static String multipartFile(Object name, Object filename, Object content,
-			Object contentType) {
-		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"" + name
-				+ "\"; filename=\"" + filename + "\"\r\n(Content-Type: "
-				+ toContentType(contentType)
-				+ "\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n"
-				+ content + "\r\n--\\1.*";
+	public static String multipartFile(Object name, Object filename, Object content, Object contentType) {
+		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"" + name + "\"; filename=\"" + filename
+				+ "\"\r\n(Content-Type: " + toContentType(contentType)
+				+ "\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n" + content + "\r\n--\\1.*";
 	}
 
 	private static String toContentType(Object contentType) {

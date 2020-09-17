@@ -23,8 +23,7 @@ class FieldAssertion extends XmlAsserter {
 	FieldAssertion(XmlCachedObjects cachedObjects, LinkedList<String> xPathBuffer,
 			LinkedList<String> specialCaseXPathBuffer, Object value,
 			XmlAsserterConfiguration xmlAsserterConfiguration) {
-		super(cachedObjects, xPathBuffer, specialCaseXPathBuffer, value,
-				xmlAsserterConfiguration);
+		super(cachedObjects, xPathBuffer, specialCaseXPathBuffer, value, xmlAsserterConfiguration);
 	}
 
 	FieldAssertion(XmlAsserter asserter) {

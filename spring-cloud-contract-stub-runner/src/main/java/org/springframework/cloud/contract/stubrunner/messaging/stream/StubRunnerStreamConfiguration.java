@@ -57,8 +57,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ IntegrationFlows.class, InputDestination.class })
-@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
 
@@ -69,8 +68,7 @@ public class StubRunnerStreamConfiguration {
 		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
 			if (destination.equals(entry.getValue().getDestination())) {
 				if (log.isDebugEnabled()) {
-					log.debug("Found a channel named [" + entry.getKey()
-							+ "] with destination [" + destination + "]");
+					log.debug("Found a channel named [" + entry.getKey() + "] with destination [" + destination + "]");
 				}
 				return entry.getKey();
 			}
@@ -89,12 +87,9 @@ public class StubRunnerStreamConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(name = "stubFlowRegistrar")
 	@ConditionalOnBean(BindingServiceProperties.class)
-	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory,
-			BatchStubRunner batchStubRunner) {
-		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
-				.getContracts();
-		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
-				.entrySet()) {
+	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory, BatchStubRunner batchStubRunner) {
+		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner.getContracts();
+		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts.entrySet()) {
 			StubConfiguration key = entry.getKey();
 			Collection<Contract> value = entry.getValue();
 			String name = key.getGroupId() + "_" + key.getArtifactId();
@@ -104,16 +99,13 @@ public class StubRunnerStreamConfiguration {
 					continue;
 				}
 				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
-						&& StringUtils.hasText(
-								dsl.getInput().getMessageFrom().getClientValue())) {
-					String from = resolvedDestination(beanFactory,
-							dsl.getInput().getMessageFrom().getClientValue());
+						&& StringUtils.hasText(dsl.getInput().getMessageFrom().getClientValue())) {
+					String from = resolvedDestination(beanFactory, dsl.getInput().getMessageFrom().getClientValue());
 					map.add(from, dsl);
 				}
 			}
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
-				final String flowName = name + "_" + entries.getKey() + "_"
-						+ entries.getValue().hashCode();
+				final String flowName = name + "_" + entries.getKey() + "_" + entries.getValue().hashCode();
 				IntegrationFlowBuilder builder = IntegrationFlows.from(entries.getKey())
 						.filter(new StubRunnerStreamMessageSelector(entries.getValue()),
 								new Consumer<FilterEndpointSpec>() {
@@ -123,8 +115,7 @@ public class StubRunnerStreamConfiguration {
 									}
 								})
 						.transform(new StubRunnerStreamTransformer(entries.getValue()))
-						.route(new StubRunnerMessageRouter(entries.getValue(),
-								beanFactory));
+						.route(new StubRunnerMessageRouter(entries.getValue(), beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
 				beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
 			}

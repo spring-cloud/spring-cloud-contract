@@ -46,8 +46,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RoutesBuilder.class)
-@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true", matchIfMissing = true)
 public class StubRunnerCamelConfiguration {
 
 	static final String STUBRUNNER_DESTINATION_URL_HEADER_NAME = "STUBRUNNER_DESTINATION_URL";
@@ -57,31 +56,24 @@ public class StubRunnerCamelConfiguration {
 		return new SpringRouteBuilder() {
 			@Override
 			public void configure() throws Exception {
-				Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
-						.getContracts();
-				for (Map.Entry<StubConfiguration, Collection<Contract>> entry : contracts
-						.entrySet()) {
+				Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner.getContracts();
+				for (Map.Entry<StubConfiguration, Collection<Contract>> entry : contracts.entrySet()) {
 					Collection<Contract> value = entry.getValue();
 					MultiValueMap<String, Contract> map = new LinkedMultiValueMap<>();
 					for (Contract dsl : value) {
 						if (dsl == null) {
 							continue;
 						}
-						if (dsl.getInput() != null
-								&& dsl.getInput().getMessageFrom() != null
-								&& StringUtils.hasText(dsl.getInput().getMessageFrom()
-										.getClientValue())) {
-							String from = dsl.getInput().getMessageFrom()
-									.getClientValue();
+						if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
+								&& StringUtils.hasText(dsl.getInput().getMessageFrom().getClientValue())) {
+							String from = dsl.getInput().getMessageFrom().getClientValue();
 							map.add(from, dsl);
 						}
 					}
 					for (Map.Entry<String, List<Contract>> entries : map.entrySet()) {
-						from(entries.getKey())
-								.filter(new StubRunnerCamelPredicate(entries.getValue()))
-								.process(new StubRunnerCamelProcessor())
-								.dynamicRouter(header(
-										StubRunnerCamelConfiguration.STUBRUNNER_DESTINATION_URL_HEADER_NAME));
+						from(entries.getKey()).filter(new StubRunnerCamelPredicate(entries.getValue()))
+								.process(new StubRunnerCamelProcessor()).dynamicRouter(
+										header(StubRunnerCamelConfiguration.STUBRUNNER_DESTINATION_URL_HEADER_NAME));
 					}
 				}
 			}

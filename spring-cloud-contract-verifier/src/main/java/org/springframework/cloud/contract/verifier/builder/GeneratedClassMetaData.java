@@ -40,10 +40,8 @@ class GeneratedClassMetaData {
 
 	final SingleTestGenerator.GeneratedClassData generatedClassData;
 
-	GeneratedClassMetaData(ContractVerifierConfigProperties configProperties,
-			Collection<ContractMetadata> listOfFiles,
-			String includedDirectoryRelativePath,
-			SingleTestGenerator.GeneratedClassData generatedClassData) {
+	GeneratedClassMetaData(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles,
+			String includedDirectoryRelativePath, SingleTestGenerator.GeneratedClassData generatedClassData) {
 		this.configProperties = configProperties;
 		this.listOfFiles = listOfFiles;
 		this.includedDirectoryRelativePath = includedDirectoryRelativePath;
@@ -51,34 +49,28 @@ class GeneratedClassMetaData {
 	}
 
 	Collection<SingleContractMetadata> toSingleContractMetadata() {
-		return this.listOfFiles.stream()
-				.flatMap(metadata -> metadata.getConvertedContractWithMetadata().stream())
+		return this.listOfFiles.stream().flatMap(metadata -> metadata.getConvertedContractWithMetadata().stream())
 				.collect(Collectors.toList());
 	}
 
 	boolean isAnyJson() {
-		return toSingleContractMetadata().stream()
-				.anyMatch(SingleContractMetadata::isJson);
+		return toSingleContractMetadata().stream().anyMatch(SingleContractMetadata::isJson);
 	}
 
 	boolean isAnyIgnored() {
-		return toSingleContractMetadata().stream()
-				.anyMatch(SingleContractMetadata::isIgnored);
+		return toSingleContractMetadata().stream().anyMatch(SingleContractMetadata::isIgnored);
 	}
 
 	boolean isAnyXml() {
-		return toSingleContractMetadata().stream()
-				.anyMatch(SingleContractMetadata::isXml);
+		return toSingleContractMetadata().stream().anyMatch(SingleContractMetadata::isXml);
 	}
 
 	boolean isAnyHttp() {
-		return toSingleContractMetadata().stream()
-				.anyMatch(SingleContractMetadata::isHttp);
+		return toSingleContractMetadata().stream().anyMatch(SingleContractMetadata::isHttp);
 	}
 
 	boolean isAnyMessaging() {
-		return toSingleContractMetadata().stream()
-				.anyMatch(SingleContractMetadata::isMessaging);
+		return toSingleContractMetadata().stream().anyMatch(SingleContractMetadata::isMessaging);
 	}
 
 }

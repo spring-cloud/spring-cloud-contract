@@ -61,8 +61,7 @@ public class KafkaMetadata implements SpringCloudContractMetadata {
 	}
 
 	public static KafkaMetadata fromMetadata(Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, KafkaMetadata.METADATA_KEY,
-				new KafkaMetadata());
+		return MetadataUtil.fromMetadata(metadata, KafkaMetadata.METADATA_KEY, new KafkaMetadata());
 	}
 
 	@Override

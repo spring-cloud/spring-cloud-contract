@@ -42,8 +42,7 @@ import org.springframework.cloud.contract.verifier.config.TestFramework;
 @Deprecated
 public class BaseImportProvider {
 
-	private static final ImportDefinitions GENERAL_IMPORTS = new ImportDefinitions(
-			emptyList(),
+	private static final ImportDefinitions GENERAL_IMPORTS = new ImportDefinitions(emptyList(),
 			Arrays.asList(
 					"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat",
 					"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*"));
@@ -54,10 +53,8 @@ public class BaseImportProvider {
 
 	static {
 		TEST_FRAMEWORK_SPECIFIC_IMPORTS = new HashMap<>(5);
-		TEST_FRAMEWORK_SPECIFIC_IMPORTS.put(JUNIT,
-				new ImportDefinitions(singletonList("org.junit.Test")));
-		TEST_FRAMEWORK_SPECIFIC_IMPORTS.put(JUNIT5,
-				new ImportDefinitions(singletonList("org.junit.jupiter.api.Test")));
+		TEST_FRAMEWORK_SPECIFIC_IMPORTS.put(JUNIT, new ImportDefinitions(singletonList("org.junit.Test")));
+		TEST_FRAMEWORK_SPECIFIC_IMPORTS.put(JUNIT5, new ImportDefinitions(singletonList("org.junit.jupiter.api.Test")));
 		TEST_FRAMEWORK_SPECIFIC_IMPORTS.put(SPOCK, new ImportDefinitions(emptyList()));
 		TEST_FRAMEWORK_SPECIFIC_IMPORTS.put(TESTNG,
 				new ImportDefinitions(singletonList("org.testng.annotations.Test")));
@@ -88,8 +85,7 @@ public class BaseImportProvider {
 	 */
 	public static List<String> getStaticImports(TestFramework testFramework) {
 		List<String> result = new ArrayList<>(GENERAL_IMPORTS.getStaticImports());
-		result.addAll(
-				TEST_FRAMEWORK_SPECIFIC_IMPORTS.get(testFramework).getStaticImports());
+		result.addAll(TEST_FRAMEWORK_SPECIFIC_IMPORTS.get(testFramework).getStaticImports());
 		return result;
 	}
 

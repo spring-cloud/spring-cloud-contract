@@ -54,15 +54,13 @@ class ImportsBuilder {
 	}
 
 	ImportsBuilder jUnit4() {
-		this.parentBuilder.imports(new JUnit4Imports(builder, metaData),
-				new JUnit4IgnoreImports(builder, metaData),
+		this.parentBuilder.imports(new JUnit4Imports(builder, metaData), new JUnit4IgnoreImports(builder, metaData),
 				new JUnit4OrderImports(builder, metaData));
 		return this;
 	}
 
 	ImportsBuilder jUnit5() {
-		this.parentBuilder.imports(new JUnit5Imports(builder, metaData),
-				new JUnit5IgnoreImports(builder, metaData),
+		this.parentBuilder.imports(new JUnit5Imports(builder, metaData), new JUnit5IgnoreImports(builder, metaData),
 				new JUnit5OrderImports(builder, metaData));
 		return this;
 	}
@@ -73,8 +71,7 @@ class ImportsBuilder {
 	}
 
 	ImportsBuilder spock() {
-		this.parentBuilder.imports(new SpockImports(builder, metaData),
-				new SpockIgnoreImports(builder, metaData),
+		this.parentBuilder.imports(new SpockImports(builder, metaData), new SpockIgnoreImports(builder, metaData),
 				new SpockOrderImports(builder, metaData));
 		return this;
 	}
@@ -89,8 +86,7 @@ class ImportsBuilder {
 		this.parentBuilder.imports(new MockMvcRestAssuredImports(builder, metaData),
 				new ExplicitRestAssuredImports(builder, metaData),
 				new WebTestClientRestAssuredImports(builder, metaData));
-		this.parentBuilder.staticImports(
-				new MockMvcRestAssuredStaticImports(builder, metaData),
+		this.parentBuilder.staticImports(new MockMvcRestAssuredStaticImports(builder, metaData),
 				new ExplicitRestAssuredStaticImports(builder, metaData),
 				new WebTestClientRestAssured3StaticImports(builder, metaData));
 		return this;

@@ -253,8 +253,7 @@ public class StubRunnerProperties {
 	}
 
 	public void setProperties(String[] properties) {
-		Properties elements = StringUtils.splitArrayElementsIntoProperties(properties,
-				"=");
+		Properties elements = StringUtils.splitArrayElementsIntoProperties(properties, "=");
 		if (elements == null) {
 			return;
 		}
@@ -297,12 +296,10 @@ public class StubRunnerProperties {
 
 	@Override
 	public String toString() {
-		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort="
-				+ this.maxPort + ", repositoryRoot=" + this.repositoryRoot + ", ids="
-				+ Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
-				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='"
-				+ this.consumerName + '\'' + ", stubsMode='" + this.stubsMode + '\''
-				+ ", size of properties=" + this.properties.size() + '}';
+		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort=" + this.maxPort + ", repositoryRoot="
+				+ this.repositoryRoot + ", ids=" + Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
+				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='" + this.consumerName + '\''
+				+ ", stubsMode='" + this.stubsMode + '\'' + ", size of properties=" + this.properties.size() + '}';
 	}
 
 	/**

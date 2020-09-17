@@ -44,10 +44,8 @@ public class RegexProperty extends DslProperty implements CanBeDynamic {
 
 	public RegexProperty(Object client, Object server, Class clazz) {
 		super(client, server);
-		boolean clientDynamic = client instanceof Pattern
-				|| client instanceof RegexProperty;
-		boolean serverDynamic = server instanceof Pattern
-				|| server instanceof RegexProperty;
+		boolean clientDynamic = client instanceof Pattern || client instanceof RegexProperty;
+		boolean serverDynamic = server instanceof Pattern || server instanceof RegexProperty;
 		if (!clientDynamic && !serverDynamic) {
 			throw new IllegalStateException("Neither client not server side is dynamic");
 		}
@@ -80,38 +78,31 @@ public class RegexProperty extends DslProperty implements CanBeDynamic {
 	}
 
 	public RegexProperty asInteger() {
-		return new RegexProperty(this.getClientValue(), this.getServerValue(),
-				Integer.class);
+		return new RegexProperty(this.getClientValue(), this.getServerValue(), Integer.class);
 	}
 
 	public RegexProperty asDouble() {
-		return new RegexProperty(this.getClientValue(), this.getServerValue(),
-				Double.class);
+		return new RegexProperty(this.getClientValue(), this.getServerValue(), Double.class);
 	}
 
 	public RegexProperty asFloat() {
-		return new RegexProperty(this.getClientValue(), this.getServerValue(),
-				Float.class);
+		return new RegexProperty(this.getClientValue(), this.getServerValue(), Float.class);
 	}
 
 	public RegexProperty asLong() {
-		return new RegexProperty(this.getClientValue(), this.getServerValue(),
-				Long.class);
+		return new RegexProperty(this.getClientValue(), this.getServerValue(), Long.class);
 	}
 
 	public RegexProperty asShort() {
-		return new RegexProperty(this.getClientValue(), this.getServerValue(),
-				Short.class);
+		return new RegexProperty(this.getClientValue(), this.getServerValue(), Short.class);
 	}
 
 	public RegexProperty asString() {
-		return new RegexProperty(this.getClientValue(), this.getServerValue(),
-				String.class);
+		return new RegexProperty(this.getClientValue(), this.getServerValue(), String.class);
 	}
 
 	public RegexProperty asBooleanType() {
-		return new RegexProperty(this.getClientValue(), this.getServerValue(),
-				Boolean.class);
+		return new RegexProperty(this.getClientValue(), this.getServerValue(), Boolean.class);
 	}
 
 	public Object generate() {
@@ -171,13 +162,11 @@ public class RegexProperty extends DslProperty implements CanBeDynamic {
 	}
 
 	public RegexProperty concreteClientEscapedDynamicProducer() {
-		return new RegexProperty(generateAndEscapeJavaStringIfNeeded(), this.pattern,
-				this.clazz);
+		return new RegexProperty(generateAndEscapeJavaStringIfNeeded(), this.pattern, this.clazz);
 	}
 
 	public RegexProperty dynamicClientEscapedConcreteProducer() {
-		return new RegexProperty(this.pattern, generateAndEscapeJavaStringIfNeeded(),
-				this.clazz);
+		return new RegexProperty(this.pattern, generateAndEscapeJavaStringIfNeeded(), this.clazz);
 	}
 
 	@Override
@@ -189,8 +178,7 @@ public class RegexProperty extends DslProperty implements CanBeDynamic {
 			return false;
 		}
 		RegexProperty that = (RegexProperty) o;
-		return Objects.equals(stringPatternIfPresent(pattern),
-				stringPatternIfPresent(that.pattern))
+		return Objects.equals(stringPatternIfPresent(pattern), stringPatternIfPresent(that.pattern))
 				&& Objects.equals(clazz, that.clazz);
 	}
 

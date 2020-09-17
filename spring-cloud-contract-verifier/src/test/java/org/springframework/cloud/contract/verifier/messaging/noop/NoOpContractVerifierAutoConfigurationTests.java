@@ -29,8 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NoOpContractVerifierAutoConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(
-					AutoConfigurations.of(NoOpContractVerifierAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(NoOpContractVerifierAutoConfiguration.class));
 
 	@Test
 	public void shouldCreateBeansByDefault() {

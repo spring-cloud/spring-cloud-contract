@@ -31,8 +31,7 @@ public class MediaTypes {
 	private static final Log log = LogFactory.getLog(MediaTypes.class);
 
 	public MediaTypes() {
-		log.warn(
-				"WARNING: MediaTypes shouldn't be instantiated. Use its static methods instead.");
+		log.warn("WARNING: MediaTypes shouldn't be instantiated. Use its static methods instead.");
 	}
 
 	/**
@@ -58,8 +57,7 @@ public class MediaTypes {
 	/**
 	 * Public constant for {@code application/json;charset=UTF-8}.
 	 */
-	public static final String APPLICATION_JSON_UTF8 = APPLICATION_JSON
-			+ ";charset=UTF-8";
+	public static final String APPLICATION_JSON_UTF8 = APPLICATION_JSON + ";charset=UTF-8";
 
 	/**
 	 * Public constant for {@code application/octet-stream}.

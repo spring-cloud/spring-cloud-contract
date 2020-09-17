@@ -39,10 +39,8 @@ import org.springframework.util.StringUtils;
  */
 public class DslToWireMockClientConverter extends DslToWireMockConverter {
 
-	private String convertASingleContract(String rootName, ContractMetadata contract,
-			Contract dsl) {
-		StubMapping stubMapping = new WireMockStubStrategy(rootName, contract, dsl)
-				.toWireMockClientStub();
+	private String convertASingleContract(String rootName, ContractMetadata contract, Contract dsl) {
+		StubMapping stubMapping = new WireMockStubStrategy(rootName, contract, dsl).toWireMockClientStub();
 		StubMapping mapping = postProcessStubMapping(stubMapping, dsl);
 		if (mapping == null) {
 			return "";
@@ -51,16 +49,14 @@ public class DslToWireMockClientConverter extends DslToWireMockConverter {
 	}
 
 	@Override
-	public StubMapping postProcessStubMapping(StubMapping stubMapping,
-			Contract contract) {
+	public StubMapping postProcessStubMapping(StubMapping stubMapping, Contract contract) {
 		StubMapping mapping = super.postProcessStubMapping(stubMapping, contract);
 		// apply the default WireMock processor as the last one
 		return defaultStubMappingPostProcessing(mapping, contract);
 	}
 
 	@Override
-	public StubMapping defaultStubMappingPostProcessing(StubMapping stubMapping,
-			Contract contract) {
+	public StubMapping defaultStubMappingPostProcessing(StubMapping stubMapping, Contract contract) {
 		DefaultWireMockStubPostProcessor processor = new DefaultWireMockStubPostProcessor();
 		if (processor.isApplicable(contract)) {
 			return processor.postProcess(stubMapping, contract);
@@ -69,15 +65,13 @@ public class DslToWireMockClientConverter extends DslToWireMockConverter {
 	}
 
 	@Override
-	public Map<Contract, String> convertContents(String rootName,
-			ContractMetadata contract) {
+	public Map<Contract, String> convertContents(String rootName, ContractMetadata contract) {
 		List<Contract> httpContracts = httpContracts(contract);
 		if (httpContracts.isEmpty()) {
 			return new HashMap<>();
 		}
 		if (contract.getConvertedContract().size() == 1) {
-			return Collections.singletonMap(
-					first((List<Contract>) contract.getConvertedContract()),
+			return Collections.singletonMap(first((List<Contract>) contract.getConvertedContract()),
 					convertASingleContract(rootName, contract,
 							first((List<Contract>) contract.getConvertedContract())));
 		}
@@ -85,17 +79,16 @@ public class DslToWireMockClientConverter extends DslToWireMockConverter {
 	}
 
 	private List<Contract> httpContracts(ContractMetadata contract) {
-		return contract.getConvertedContract().stream()
-				.filter(c -> c.getRequest() != null).collect(Collectors.toList());
+		return contract.getConvertedContract().stream().filter(c -> c.getRequest() != null)
+				.collect(Collectors.toList());
 	}
 
-	private Map<Contract, String> convertContracts(String rootName,
-			ContractMetadata contract, List<Contract> contractsWithRequest) {
+	private Map<Contract, String> convertContracts(String rootName, ContractMetadata contract,
+			List<Contract> contractsWithRequest) {
 		Map<Contract, String> convertedContracts = new LinkedHashMap<>();
 		for (int i = 0; i < contractsWithRequest.size(); i++) {
 			Contract dsl = contractsWithRequest.get(i);
-			String name = StringUtils.hasText(dsl.getName())
-					? NamesUtil.convertIllegalPackageChars(dsl.getName())
+			String name = StringUtils.hasText(dsl.getName()) ? NamesUtil.convertIllegalPackageChars(dsl.getName())
 					: rootName + "_" + i;
 			convertedContracts.put(dsl, convertASingleContract(name, contract, dsl));
 		}
@@ -104,8 +97,7 @@ public class DslToWireMockClientConverter extends DslToWireMockConverter {
 
 	private static <T> T first(List<T> self) {
 		if (self.isEmpty()) {
-			throw new NoSuchElementException(
-					"Cannot access first() element from an empty List");
+			throw new NoSuchElementException("Cannot access first() element from an empty List");
 		}
 		return self.get(0);
 	}

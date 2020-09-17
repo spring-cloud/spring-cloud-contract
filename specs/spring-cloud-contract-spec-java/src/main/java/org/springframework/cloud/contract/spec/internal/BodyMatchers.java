@@ -143,8 +143,7 @@ public class BodyMatchers {
 	 * @param consumer function to manipulate the output message
 	 * @return matching type
 	 */
-	public MatchingTypeValue byType(
-			@DelegatesTo(MatchingTypeValueHolder.class) Closure consumer) {
+	public MatchingTypeValue byType(@DelegatesTo(MatchingTypeValueHolder.class) Closure consumer) {
 		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder();
 		consumer.setDelegate(matchingTypeValue);
 		consumer.call();

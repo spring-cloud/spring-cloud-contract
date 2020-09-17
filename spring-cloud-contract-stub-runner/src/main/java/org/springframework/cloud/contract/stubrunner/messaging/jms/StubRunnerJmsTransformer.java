@@ -44,8 +44,7 @@ class StubRunnerJmsTransformer {
 
 	public Message transform(Session session, Contract groovyDsl) {
 		Object outputBody = outputBody(groovyDsl);
-		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders()
-				.asStubSideMap();
+		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders().asStubSideMap();
 		Message newMessage = createMessage(session, outputBody);
 		setHeaders(newMessage, headers);
 		this.selector.updateCache(newMessage, groovyDsl);
@@ -53,8 +52,7 @@ class StubRunnerJmsTransformer {
 	}
 
 	private Object outputBody(Contract groovyDsl) {
-		Object outputBody = BodyExtractor
-				.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
+		Object outputBody = BodyExtractor.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
 		if (outputBody instanceof FromFileProperty) {
 			FromFileProperty property = (FromFileProperty) outputBody;
 			return property.asBytes();

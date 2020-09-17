@@ -28,8 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class,
-		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
-		webEnvironment = WebEnvironment.NONE)
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock(port = 0)
 // Default stubs work at classpath:/mappings
 public class AutoConfigureWireMockAutoStubsApplicationTests {
@@ -48,8 +47,7 @@ public class AutoConfigureWireMockAutoStubsApplicationTests {
 	@Test
 	public void portsAreNotFixed() {
 		boolean httpPortDynamic = this.wireMockProperties.getServer().isPortDynamic();
-		boolean httpsPortDynamic = this.wireMockProperties.getServer()
-				.isHttpsPortDynamic();
+		boolean httpsPortDynamic = this.wireMockProperties.getServer().isHttpsPortDynamic();
 		assertThat(!httpPortDynamic || !httpsPortDynamic).isFalse();
 	}
 

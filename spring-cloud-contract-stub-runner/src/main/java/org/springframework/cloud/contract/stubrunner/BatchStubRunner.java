@@ -87,8 +87,7 @@ public class BatchStubRunner implements StubRunning {
 	public Map<StubConfiguration, Collection<Contract>> getContracts() {
 		Map<StubConfiguration, Collection<Contract>> map = new LinkedHashMap<>();
 		for (StubRunner stubRunner : this.stubRunners) {
-			for (Entry<StubConfiguration, Collection<Contract>> entry : stubRunner
-					.getContracts().entrySet()) {
+			for (Entry<StubConfiguration, Collection<Contract>> entry : stubRunner.getContracts().entrySet()) {
 				if (map.containsKey(entry.getKey())) {
 					map.get(entry.getKey()).addAll(entry.getValue());
 				}
@@ -109,10 +108,9 @@ public class BatchStubRunner implements StubRunning {
 			}
 		}
 		if (!success) {
-			throw new IllegalArgumentException("No label with name [" + labelName
-					+ "] for " + "dependency [" + ivyNotation
-					+ "] was found. Here you have the list of dependencies "
-					+ "and their labels [" + ivyToLabels() + "]");
+			throw new IllegalArgumentException("No label with name [" + labelName + "] for " + "dependency ["
+					+ ivyNotation + "] was found. Here you have the list of dependencies " + "and their labels ["
+					+ ivyToLabels() + "]");
 		}
 		return success;
 	}
@@ -123,8 +121,7 @@ public class BatchStubRunner implements StubRunning {
 			if (builder.length() > 0) {
 				builder.append("\n");
 			}
-			builder.append("Dependency [").append(entry.getKey()).append("] has labels ")
-					.append(entry.getValue());
+			builder.append("Dependency [").append(entry.getKey()).append("] has labels ").append(entry.getValue());
 		}
 		return builder.toString();
 	}
@@ -138,10 +135,8 @@ public class BatchStubRunner implements StubRunning {
 			}
 		}
 		if (!success) {
-			throw new IllegalArgumentException(
-					"No label with name [" + labelName + "] was found. "
-							+ "Here you have the list of dependencies and their labels ["
-							+ ivyToLabels() + "]");
+			throw new IllegalArgumentException("No label with name [" + labelName + "] was found. "
+					+ "Here you have the list of dependencies and their labels [" + ivyToLabels() + "]");
 		}
 		return success;
 	}
@@ -161,8 +156,7 @@ public class BatchStubRunner implements StubRunning {
 	public Map<String, Collection<String>> labels() {
 		Map<String, Collection<String>> map = new LinkedHashMap<>();
 		for (StubRunner stubRunner : this.stubRunners) {
-			for (Entry<String, Collection<String>> entry : stubRunner.labels()
-					.entrySet()) {
+			for (Entry<String, Collection<String>> entry : stubRunner.labels().entrySet()) {
 				if (map.containsKey(entry.getKey())) {
 					map.get(entry.getKey()).addAll(entry.getValue());
 				}

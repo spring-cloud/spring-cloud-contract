@@ -30,18 +30,14 @@ class JaxRsThen implements Then, BodyMethodVisitor, JaxRsAcceptor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	JaxRsThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData,
-			BodyParser bodyParser, ComparisonBuilder comparisonBuilder) {
+	JaxRsThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser,
+			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-		this.thens.addAll(Arrays.asList(
-				new JaxRsStatusCodeThen(this.blockBuilder, comparisonBuilder),
-				new JaxRsResponseHeadersThen(this.blockBuilder, generatedClassMetaData,
-						comparisonBuilder),
-				new JaxRsResponseCookiesThen(this.blockBuilder, generatedClassMetaData,
-						comparisonBuilder),
-				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
-						bodyParser, comparisonBuilder)));
+		this.thens.addAll(Arrays.asList(new JaxRsStatusCodeThen(this.blockBuilder, comparisonBuilder),
+				new JaxRsResponseHeadersThen(this.blockBuilder, generatedClassMetaData, comparisonBuilder),
+				new JaxRsResponseCookiesThen(this.blockBuilder, generatedClassMetaData, comparisonBuilder),
+				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData, bodyParser, comparisonBuilder)));
 	}
 
 	@Override

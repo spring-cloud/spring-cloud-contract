@@ -40,12 +40,10 @@ import org.springframework.util.StringUtils;
 @Mojo(name = "pushStubsToScm")
 public class PushStubsToScmMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
-			required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "stubsDirectory",
-			defaultValue = "${project.build.directory}/stubs")
+	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -57,8 +55,7 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	/**
 	 * Set this to "true" to bypass only JAR creation.
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.publish-stubs-to-scm.skip",
-			defaultValue = "false")
+	@Parameter(property = "spring.cloud.contract.verifier.publish-stubs-to-scm.skip", defaultValue = "false")
 	private boolean taskSkip;
 
 	@Parameter(defaultValue = "${project}", readonly = true)
@@ -107,34 +104,27 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	@Override
 	public void execute() {
 		if (this.skip || this.taskSkip) {
-			getLog().info(
-					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
-							+ this.skip
-							+ ", spring.cloud.contract.verifier.publish-stubs-to-scm.skip="
-							+ this.taskSkip);
+			getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
+					+ this.skip + ", spring.cloud.contract.verifier.publish-stubs-to-scm.skip=" + this.taskSkip);
 			return;
 		}
-		if (StringUtils.isEmpty(this.contractsRepositoryUrl) || !ScmStubDownloaderBuilder
-				.isProtocolAccepted(this.contractsRepositoryUrl)) {
+		if (StringUtils.isEmpty(this.contractsRepositoryUrl)
+				|| !ScmStubDownloaderBuilder.isProtocolAccepted(this.contractsRepositoryUrl)) {
 			getLog().info("Skipping pushing stubs to scm since your "
 					+ "[contractsRepositoryUrl] property doesn't match any of the accepted protocols");
 			return;
 		}
-		String projectName = this.project.getGroupId() + ":"
-				+ this.project.getArtifactId() + ":" + this.project.getVersion();
+		String projectName = this.project.getGroupId() + ":" + this.project.getArtifactId() + ":"
+				+ this.project.getVersion();
 		getLog().info("Pushing Stubs to SCM for project [" + projectName + "]");
-		new ContractProjectUpdater(buildOptions()).updateContractProject(projectName,
-				this.outputDirectory.toPath());
+		new ContractProjectUpdater(buildOptions()).updateContractProject(projectName, this.outputDirectory.toPath());
 	}
 
 	StubRunnerOptions buildOptions() {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
-				.withOptions(StubRunnerOptions.fromSystemProps())
-				.withStubRepositoryRoot(this.contractsRepositoryUrl)
-				.withStubsMode(this.contractsMode)
-				.withUsername(this.contractsRepositoryUsername)
-				.withPassword(this.contractsRepositoryPassword)
-				.withDeleteStubsAfterTest(this.deleteStubsAfterTest)
+				.withOptions(StubRunnerOptions.fromSystemProps()).withStubRepositoryRoot(this.contractsRepositoryUrl)
+				.withStubsMode(this.contractsMode).withUsername(this.contractsRepositoryUsername)
+				.withPassword(this.contractsRepositoryPassword).withDeleteStubsAfterTest(this.deleteStubsAfterTest)
 				.withProperties(this.contractsProperties);
 		return builder.build();
 	}

@@ -34,22 +34,19 @@ public class HttpStatusTests {
 	@Test
 	public void SWITCHING_PROTOCOLS() {
 		BDDAssertions.then(HttpStatus.SWITCHING_PROTOCOLS).isEqualTo(101);
-		BDDAssertions.then(new HttpStatus().SWITCHING_PROTOCOLS())
-				.isEqualTo(HttpStatus.SWITCHING_PROTOCOLS);
+		BDDAssertions.then(new HttpStatus().SWITCHING_PROTOCOLS()).isEqualTo(HttpStatus.SWITCHING_PROTOCOLS);
 	}
 
 	@Test
 	public void PROCESSING() {
 		BDDAssertions.then(HttpStatus.PROCESSING).isEqualTo(102);
-		BDDAssertions.then(new HttpStatus().PROCESSING())
-				.isEqualTo(HttpStatus.PROCESSING);
+		BDDAssertions.then(new HttpStatus().PROCESSING()).isEqualTo(HttpStatus.PROCESSING);
 	}
 
 	@Test
 	public void CHECKPOINT() {
 		BDDAssertions.then(HttpStatus.CHECKPOINT).isEqualTo(103);
-		BDDAssertions.then(new HttpStatus().CHECKPOINT())
-				.isEqualTo(HttpStatus.CHECKPOINT);
+		BDDAssertions.then(new HttpStatus().CHECKPOINT()).isEqualTo(HttpStatus.CHECKPOINT);
 	}
 
 	@Test
@@ -80,36 +77,31 @@ public class HttpStatusTests {
 	@Test
 	public void NO_CONTENT() {
 		BDDAssertions.then(HttpStatus.NO_CONTENT).isEqualTo(204);
-		BDDAssertions.then(new HttpStatus().NO_CONTENT())
-				.isEqualTo(HttpStatus.NO_CONTENT);
+		BDDAssertions.then(new HttpStatus().NO_CONTENT()).isEqualTo(HttpStatus.NO_CONTENT);
 	}
 
 	@Test
 	public void RESET_CONTENT() {
 		BDDAssertions.then(HttpStatus.RESET_CONTENT).isEqualTo(205);
-		BDDAssertions.then(new HttpStatus().RESET_CONTENT())
-				.isEqualTo(HttpStatus.RESET_CONTENT);
+		BDDAssertions.then(new HttpStatus().RESET_CONTENT()).isEqualTo(HttpStatus.RESET_CONTENT);
 	}
 
 	@Test
 	public void PARTIAL_CONTENT() {
 		BDDAssertions.then(HttpStatus.PARTIAL_CONTENT).isEqualTo(206);
-		BDDAssertions.then(new HttpStatus().PARTIAL_CONTENT())
-				.isEqualTo(HttpStatus.PARTIAL_CONTENT);
+		BDDAssertions.then(new HttpStatus().PARTIAL_CONTENT()).isEqualTo(HttpStatus.PARTIAL_CONTENT);
 	}
 
 	@Test
 	public void MULTI_STATUS() {
 		BDDAssertions.then(HttpStatus.MULTI_STATUS).isEqualTo(207);
-		BDDAssertions.then(new HttpStatus().MULTI_STATUS())
-				.isEqualTo(HttpStatus.MULTI_STATUS);
+		BDDAssertions.then(new HttpStatus().MULTI_STATUS()).isEqualTo(HttpStatus.MULTI_STATUS);
 	}
 
 	@Test
 	public void ALREADY_REPORTED() {
 		BDDAssertions.then(HttpStatus.ALREADY_REPORTED).isEqualTo(208);
-		BDDAssertions.then(new HttpStatus().ALREADY_REPORTED())
-				.isEqualTo(HttpStatus.ALREADY_REPORTED);
+		BDDAssertions.then(new HttpStatus().ALREADY_REPORTED()).isEqualTo(HttpStatus.ALREADY_REPORTED);
 	}
 
 	@Test
@@ -121,15 +113,13 @@ public class HttpStatusTests {
 	@Test
 	public void MULTIPLE_CHOICES() {
 		BDDAssertions.then(HttpStatus.MULTIPLE_CHOICES).isEqualTo(300);
-		BDDAssertions.then(new HttpStatus().MULTIPLE_CHOICES())
-				.isEqualTo(HttpStatus.MULTIPLE_CHOICES);
+		BDDAssertions.then(new HttpStatus().MULTIPLE_CHOICES()).isEqualTo(HttpStatus.MULTIPLE_CHOICES);
 	}
 
 	@Test
 	public void MOVED_PERMANENTLY() {
 		BDDAssertions.then(HttpStatus.MOVED_PERMANENTLY).isEqualTo(301);
-		BDDAssertions.then(new HttpStatus().MOVED_PERMANENTLY())
-				.isEqualTo(HttpStatus.MOVED_PERMANENTLY);
+		BDDAssertions.then(new HttpStatus().MOVED_PERMANENTLY()).isEqualTo(HttpStatus.MOVED_PERMANENTLY);
 	}
 
 	@Test
@@ -141,8 +131,7 @@ public class HttpStatusTests {
 	@Test
 	public void MOVED_TEMPORARILY() {
 		BDDAssertions.then(HttpStatus.MOVED_TEMPORARILY).isEqualTo(302);
-		BDDAssertions.then(new HttpStatus().MOVED_TEMPORARILY())
-				.isEqualTo(HttpStatus.MOVED_TEMPORARILY);
+		BDDAssertions.then(new HttpStatus().MOVED_TEMPORARILY()).isEqualTo(HttpStatus.MOVED_TEMPORARILY);
 	}
 
 	@Test
@@ -154,8 +143,7 @@ public class HttpStatusTests {
 	@Test
 	public void NOT_MODIFIED() {
 		BDDAssertions.then(HttpStatus.NOT_MODIFIED).isEqualTo(304);
-		BDDAssertions.then(new HttpStatus().NOT_MODIFIED())
-				.isEqualTo(HttpStatus.NOT_MODIFIED);
+		BDDAssertions.then(new HttpStatus().NOT_MODIFIED()).isEqualTo(HttpStatus.NOT_MODIFIED);
 	}
 
 	@Test
@@ -167,36 +155,31 @@ public class HttpStatusTests {
 	@Test
 	public void TEMPORARY_REDIRECT() {
 		BDDAssertions.then(HttpStatus.TEMPORARY_REDIRECT).isEqualTo(307);
-		BDDAssertions.then(new HttpStatus().TEMPORARY_REDIRECT())
-				.isEqualTo(HttpStatus.TEMPORARY_REDIRECT);
+		BDDAssertions.then(new HttpStatus().TEMPORARY_REDIRECT()).isEqualTo(HttpStatus.TEMPORARY_REDIRECT);
 	}
 
 	@Test
 	public void PERMANENT_REDIRECT() {
 		BDDAssertions.then(HttpStatus.PERMANENT_REDIRECT).isEqualTo(308);
-		BDDAssertions.then(new HttpStatus().PERMANENT_REDIRECT())
-				.isEqualTo(HttpStatus.PERMANENT_REDIRECT);
+		BDDAssertions.then(new HttpStatus().PERMANENT_REDIRECT()).isEqualTo(HttpStatus.PERMANENT_REDIRECT);
 	}
 
 	@Test
 	public void BAD_REQUEST() {
 		BDDAssertions.then(HttpStatus.BAD_REQUEST).isEqualTo(400);
-		BDDAssertions.then(new HttpStatus().BAD_REQUEST())
-				.isEqualTo(HttpStatus.BAD_REQUEST);
+		BDDAssertions.then(new HttpStatus().BAD_REQUEST()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
 	@Test
 	public void UNAUTHORIZED() {
 		BDDAssertions.then(HttpStatus.UNAUTHORIZED).isEqualTo(401);
-		BDDAssertions.then(new HttpStatus().UNAUTHORIZED())
-				.isEqualTo(HttpStatus.UNAUTHORIZED);
+		BDDAssertions.then(new HttpStatus().UNAUTHORIZED()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 
 	@Test
 	public void PAYMENT_REQUIRED() {
 		BDDAssertions.then(HttpStatus.PAYMENT_REQUIRED).isEqualTo(402);
-		BDDAssertions.then(new HttpStatus().PAYMENT_REQUIRED())
-				.isEqualTo(HttpStatus.PAYMENT_REQUIRED);
+		BDDAssertions.then(new HttpStatus().PAYMENT_REQUIRED()).isEqualTo(HttpStatus.PAYMENT_REQUIRED);
 	}
 
 	@Test
@@ -214,15 +197,13 @@ public class HttpStatusTests {
 	@Test
 	public void METHOD_NOT_ALLOWED() {
 		BDDAssertions.then(HttpStatus.METHOD_NOT_ALLOWED).isEqualTo(405);
-		BDDAssertions.then(new HttpStatus().METHOD_NOT_ALLOWED())
-				.isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+		BDDAssertions.then(new HttpStatus().METHOD_NOT_ALLOWED()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
 	@Test
 	public void NOT_ACCEPTABLE() {
 		BDDAssertions.then(HttpStatus.NOT_ACCEPTABLE).isEqualTo(406);
-		BDDAssertions.then(new HttpStatus().NOT_ACCEPTABLE())
-				.isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+		BDDAssertions.then(new HttpStatus().NOT_ACCEPTABLE()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@Test
@@ -235,8 +216,7 @@ public class HttpStatusTests {
 	@Test
 	public void REQUEST_TIMEOUT() {
 		BDDAssertions.then(HttpStatus.REQUEST_TIMEOUT).isEqualTo(408);
-		BDDAssertions.then(new HttpStatus().REQUEST_TIMEOUT())
-				.isEqualTo(HttpStatus.REQUEST_TIMEOUT);
+		BDDAssertions.then(new HttpStatus().REQUEST_TIMEOUT()).isEqualTo(HttpStatus.REQUEST_TIMEOUT);
 	}
 
 	@Test
@@ -254,50 +234,43 @@ public class HttpStatusTests {
 	@Test
 	public void LENGTH_REQUIRED() {
 		BDDAssertions.then(HttpStatus.LENGTH_REQUIRED).isEqualTo(411);
-		BDDAssertions.then(new HttpStatus().LENGTH_REQUIRED())
-				.isEqualTo(HttpStatus.LENGTH_REQUIRED);
+		BDDAssertions.then(new HttpStatus().LENGTH_REQUIRED()).isEqualTo(HttpStatus.LENGTH_REQUIRED);
 	}
 
 	@Test
 	public void PRECONDITION_FAILED() {
 		BDDAssertions.then(HttpStatus.PRECONDITION_FAILED).isEqualTo(412);
-		BDDAssertions.then(new HttpStatus().PRECONDITION_FAILED())
-				.isEqualTo(HttpStatus.PRECONDITION_FAILED);
+		BDDAssertions.then(new HttpStatus().PRECONDITION_FAILED()).isEqualTo(HttpStatus.PRECONDITION_FAILED);
 	}
 
 	@Test
 	public void PAYLOAD_TOO_LARGE() {
 		BDDAssertions.then(HttpStatus.PAYLOAD_TOO_LARGE).isEqualTo(413);
-		BDDAssertions.then(new HttpStatus().PAYLOAD_TOO_LARGE())
-				.isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE);
+		BDDAssertions.then(new HttpStatus().PAYLOAD_TOO_LARGE()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE);
 	}
 
 	@Test
 	public void REQUEST_ENTITY_TOO_LARGE() {
 		BDDAssertions.then(HttpStatus.REQUEST_ENTITY_TOO_LARGE).isEqualTo(413);
-		BDDAssertions.then(new HttpStatus().REQUEST_ENTITY_TOO_LARGE())
-				.isEqualTo(HttpStatus.REQUEST_ENTITY_TOO_LARGE);
+		BDDAssertions.then(new HttpStatus().REQUEST_ENTITY_TOO_LARGE()).isEqualTo(HttpStatus.REQUEST_ENTITY_TOO_LARGE);
 	}
 
 	@Test
 	public void URI_TOO_LONG() {
 		BDDAssertions.then(HttpStatus.URI_TOO_LONG).isEqualTo(414);
-		BDDAssertions.then(new HttpStatus().URI_TOO_LONG())
-				.isEqualTo(HttpStatus.URI_TOO_LONG);
+		BDDAssertions.then(new HttpStatus().URI_TOO_LONG()).isEqualTo(HttpStatus.URI_TOO_LONG);
 	}
 
 	@Test
 	public void REQUEST_URI_TOO_LONG() {
 		BDDAssertions.then(HttpStatus.REQUEST_URI_TOO_LONG).isEqualTo(414);
-		BDDAssertions.then(new HttpStatus().REQUEST_URI_TOO_LONG())
-				.isEqualTo(HttpStatus.REQUEST_URI_TOO_LONG);
+		BDDAssertions.then(new HttpStatus().REQUEST_URI_TOO_LONG()).isEqualTo(HttpStatus.REQUEST_URI_TOO_LONG);
 	}
 
 	@Test
 	public void UNSUPPORTED_MEDIA_TYPE() {
 		BDDAssertions.then(HttpStatus.UNSUPPORTED_MEDIA_TYPE).isEqualTo(415);
-		BDDAssertions.then(new HttpStatus().UNSUPPORTED_MEDIA_TYPE())
-				.isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+		BDDAssertions.then(new HttpStatus().UNSUPPORTED_MEDIA_TYPE()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
 	}
 
 	@Test
@@ -310,15 +283,13 @@ public class HttpStatusTests {
 	@Test
 	public void EXPECTATION_FAILED() {
 		BDDAssertions.then(HttpStatus.EXPECTATION_FAILED).isEqualTo(417);
-		BDDAssertions.then(new HttpStatus().EXPECTATION_FAILED())
-				.isEqualTo(HttpStatus.EXPECTATION_FAILED);
+		BDDAssertions.then(new HttpStatus().EXPECTATION_FAILED()).isEqualTo(HttpStatus.EXPECTATION_FAILED);
 	}
 
 	@Test
 	public void I_AM_A_TEAPOT() {
 		BDDAssertions.then(HttpStatus.I_AM_A_TEAPOT).isEqualTo(418);
-		BDDAssertions.then(new HttpStatus().I_AM_A_TEAPOT())
-				.isEqualTo(HttpStatus.I_AM_A_TEAPOT);
+		BDDAssertions.then(new HttpStatus().I_AM_A_TEAPOT()).isEqualTo(HttpStatus.I_AM_A_TEAPOT);
 	}
 
 	@Test
@@ -331,22 +302,19 @@ public class HttpStatusTests {
 	@Test
 	public void METHOD_FAILURE() {
 		BDDAssertions.then(HttpStatus.METHOD_FAILURE).isEqualTo(420);
-		BDDAssertions.then(new HttpStatus().METHOD_FAILURE())
-				.isEqualTo(HttpStatus.METHOD_FAILURE);
+		BDDAssertions.then(new HttpStatus().METHOD_FAILURE()).isEqualTo(HttpStatus.METHOD_FAILURE);
 	}
 
 	@Test
 	public void DESTINATION_LOCKED() {
 		BDDAssertions.then(HttpStatus.DESTINATION_LOCKED).isEqualTo(421);
-		BDDAssertions.then(new HttpStatus().DESTINATION_LOCKED())
-				.isEqualTo(HttpStatus.DESTINATION_LOCKED);
+		BDDAssertions.then(new HttpStatus().DESTINATION_LOCKED()).isEqualTo(HttpStatus.DESTINATION_LOCKED);
 	}
 
 	@Test
 	public void UNPROCESSABLE_ENTITY() {
 		BDDAssertions.then(HttpStatus.UNPROCESSABLE_ENTITY).isEqualTo(422);
-		BDDAssertions.then(new HttpStatus().UNPROCESSABLE_ENTITY())
-				.isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+		BDDAssertions.then(new HttpStatus().UNPROCESSABLE_ENTITY()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 
 	@Test
@@ -358,29 +326,25 @@ public class HttpStatusTests {
 	@Test
 	public void FAILED_DEPENDENCY() {
 		BDDAssertions.then(HttpStatus.FAILED_DEPENDENCY).isEqualTo(424);
-		BDDAssertions.then(new HttpStatus().FAILED_DEPENDENCY())
-				.isEqualTo(HttpStatus.FAILED_DEPENDENCY);
+		BDDAssertions.then(new HttpStatus().FAILED_DEPENDENCY()).isEqualTo(HttpStatus.FAILED_DEPENDENCY);
 	}
 
 	@Test
 	public void UPGRADE_REQUIRED() {
 		BDDAssertions.then(HttpStatus.UPGRADE_REQUIRED).isEqualTo(426);
-		BDDAssertions.then(new HttpStatus().UPGRADE_REQUIRED())
-				.isEqualTo(HttpStatus.UPGRADE_REQUIRED);
+		BDDAssertions.then(new HttpStatus().UPGRADE_REQUIRED()).isEqualTo(HttpStatus.UPGRADE_REQUIRED);
 	}
 
 	@Test
 	public void PRECONDITION_REQUIRED() {
 		BDDAssertions.then(HttpStatus.PRECONDITION_REQUIRED).isEqualTo(428);
-		BDDAssertions.then(new HttpStatus().PRECONDITION_REQUIRED())
-				.isEqualTo(HttpStatus.PRECONDITION_REQUIRED);
+		BDDAssertions.then(new HttpStatus().PRECONDITION_REQUIRED()).isEqualTo(HttpStatus.PRECONDITION_REQUIRED);
 	}
 
 	@Test
 	public void TOO_MANY_REQUESTS() {
 		BDDAssertions.then(HttpStatus.TOO_MANY_REQUESTS).isEqualTo(429);
-		BDDAssertions.then(new HttpStatus().TOO_MANY_REQUESTS())
-				.isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
+		BDDAssertions.then(new HttpStatus().TOO_MANY_REQUESTS()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
 	}
 
 	@Test
@@ -400,36 +364,31 @@ public class HttpStatusTests {
 	@Test
 	public void INTERNAL_SERVER_ERROR() {
 		BDDAssertions.then(HttpStatus.INTERNAL_SERVER_ERROR).isEqualTo(500);
-		BDDAssertions.then(new HttpStatus().INTERNAL_SERVER_ERROR())
-				.isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+		BDDAssertions.then(new HttpStatus().INTERNAL_SERVER_ERROR()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@Test
 	public void NOT_IMPLEMENTED() {
 		BDDAssertions.then(HttpStatus.NOT_IMPLEMENTED).isEqualTo(501);
-		BDDAssertions.then(new HttpStatus().NOT_IMPLEMENTED())
-				.isEqualTo(HttpStatus.NOT_IMPLEMENTED);
+		BDDAssertions.then(new HttpStatus().NOT_IMPLEMENTED()).isEqualTo(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Test
 	public void BAD_GATEWAY() {
 		BDDAssertions.then(HttpStatus.BAD_GATEWAY).isEqualTo(502);
-		BDDAssertions.then(new HttpStatus().BAD_GATEWAY())
-				.isEqualTo(HttpStatus.BAD_GATEWAY);
+		BDDAssertions.then(new HttpStatus().BAD_GATEWAY()).isEqualTo(HttpStatus.BAD_GATEWAY);
 	}
 
 	@Test
 	public void SERVICE_UNAVAILABLE() {
 		BDDAssertions.then(HttpStatus.SERVICE_UNAVAILABLE).isEqualTo(503);
-		BDDAssertions.then(new HttpStatus().SERVICE_UNAVAILABLE())
-				.isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+		BDDAssertions.then(new HttpStatus().SERVICE_UNAVAILABLE()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
 	}
 
 	@Test
 	public void GATEWAY_TIMEOUT() {
 		BDDAssertions.then(HttpStatus.GATEWAY_TIMEOUT).isEqualTo(504);
-		BDDAssertions.then(new HttpStatus().GATEWAY_TIMEOUT())
-				.isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
+		BDDAssertions.then(new HttpStatus().GATEWAY_TIMEOUT()).isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
 	}
 
 	@Test
@@ -442,36 +401,31 @@ public class HttpStatusTests {
 	@Test
 	public void VARIANT_ALSO_NEGOTIATES() {
 		BDDAssertions.then(HttpStatus.VARIANT_ALSO_NEGOTIATES).isEqualTo(506);
-		BDDAssertions.then(new HttpStatus().VARIANT_ALSO_NEGOTIATES())
-				.isEqualTo(HttpStatus.VARIANT_ALSO_NEGOTIATES);
+		BDDAssertions.then(new HttpStatus().VARIANT_ALSO_NEGOTIATES()).isEqualTo(HttpStatus.VARIANT_ALSO_NEGOTIATES);
 	}
 
 	@Test
 	public void INSUFFICIENT_STORAGE() {
 		BDDAssertions.then(HttpStatus.INSUFFICIENT_STORAGE).isEqualTo(507);
-		BDDAssertions.then(new HttpStatus().INSUFFICIENT_STORAGE())
-				.isEqualTo(HttpStatus.INSUFFICIENT_STORAGE);
+		BDDAssertions.then(new HttpStatus().INSUFFICIENT_STORAGE()).isEqualTo(HttpStatus.INSUFFICIENT_STORAGE);
 	}
 
 	@Test
 	public void LOOP_DETECTED() {
 		BDDAssertions.then(HttpStatus.LOOP_DETECTED).isEqualTo(508);
-		BDDAssertions.then(new HttpStatus().LOOP_DETECTED())
-				.isEqualTo(HttpStatus.LOOP_DETECTED);
+		BDDAssertions.then(new HttpStatus().LOOP_DETECTED()).isEqualTo(HttpStatus.LOOP_DETECTED);
 	}
 
 	@Test
 	public void BANDWIDTH_LIMIT_EXCEEDED() {
 		BDDAssertions.then(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).isEqualTo(509);
-		BDDAssertions.then(new HttpStatus().BANDWIDTH_LIMIT_EXCEEDED())
-				.isEqualTo(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED);
+		BDDAssertions.then(new HttpStatus().BANDWIDTH_LIMIT_EXCEEDED()).isEqualTo(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED);
 	}
 
 	@Test
 	public void NOT_EXTENDED() {
 		BDDAssertions.then(HttpStatus.NOT_EXTENDED).isEqualTo(510);
-		BDDAssertions.then(new HttpStatus().NOT_EXTENDED())
-				.isEqualTo(HttpStatus.NOT_EXTENDED);
+		BDDAssertions.then(new HttpStatus().NOT_EXTENDED()).isEqualTo(HttpStatus.NOT_EXTENDED);
 	}
 
 	@Test

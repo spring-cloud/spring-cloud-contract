@@ -80,8 +80,7 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize >= size)) {
-			failWithMessage("The flattened size <%s> is not greater or equal to <%s>",
-					flattenedSize, size);
+			failWithMessage("The flattened size <%s> is not greater or equal to <%s>", flattenedSize, size);
 		}
 		return this;
 	}
@@ -97,8 +96,7 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize <= size)) {
-			failWithMessage("The flattened size <%s> is not less or equal to <%s>",
-					flattenedSize, size);
+			failWithMessage("The flattened size <%s> is not less or equal to <%s>", flattenedSize, size);
 		}
 		return this;
 	}
@@ -115,8 +113,8 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize >= lowerBound && flattenedSize <= higherBound)) {
-			failWithMessage("The flattened size <%s> is not between <%s> and <%s>",
-					flattenedSize, lowerBound, higherBound);
+			failWithMessage("The flattened size <%s> is not between <%s> and <%s>", flattenedSize, lowerBound,
+					higherBound);
 		}
 		return this;
 	}
@@ -130,8 +128,7 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int actualSize = size(this.actual);
 		if (!(actualSize >= size)) {
-			failWithMessage("The size <%s> is not greater or equal to <%s>", actualSize,
-					size);
+			failWithMessage("The size <%s> is not greater or equal to <%s>", actualSize, size);
 		}
 		return this;
 	}
@@ -145,8 +142,7 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int actualSize = size(this.actual);
 		if (!(actualSize <= size)) {
-			failWithMessage("The size <%s> is not less or equal to <%s>", actualSize,
-					size);
+			failWithMessage("The size <%s> is not less or equal to <%s>", actualSize, size);
 		}
 		return this;
 	}
@@ -163,8 +159,7 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		int size = size(this.actual);
 		if (!(size >= lowerBound && size <= higherBound)) {
-			failWithMessage("The size <%s> is not between <%s> and <%s>", size,
-					lowerBound, higherBound);
+			failWithMessage("The size <%s> is not between <%s> and <%s>", size, lowerBound, higherBound);
 		}
 		return this;
 	}

@@ -34,15 +34,13 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 
 	private final MessageVerifierReceiver<Message<?>> receiver;
 
-	public StreamStubMessages(MessageVerifierSender<Message<?>> sender,
-			MessageVerifierReceiver<Message<?>> receiver) {
+	public StreamStubMessages(MessageVerifierSender<Message<?>> sender, MessageVerifierReceiver<Message<?>> receiver) {
 		this.sender = sender;
 		this.receiver = receiver;
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			YamlContract contract) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
 		this.sender.send(payload, headers, destination, contract);
 	}
 
@@ -52,8 +50,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		return this.receiver.receive(destination, timeout, timeUnit, contract);
 	}
 

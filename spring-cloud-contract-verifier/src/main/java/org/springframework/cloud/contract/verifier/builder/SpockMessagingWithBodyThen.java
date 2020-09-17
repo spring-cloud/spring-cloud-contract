@@ -23,17 +23,15 @@ class SpockMessagingWithBodyThen extends MessagingWithBodyThen {
 
 	private final GeneratedClassMetaData metaData;
 
-	SpockMessagingWithBodyThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
-		super(blockBuilder, generatedClassMetaData,
-				GroovyComparisonBuilder.SPOCK_MESSAGING_INSTANCE);
+	SpockMessagingWithBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
+		super(blockBuilder, generatedClassMetaData, GroovyComparisonBuilder.SPOCK_MESSAGING_INSTANCE);
 		this.metaData = generatedClassMetaData;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return super.accept(singleContractMetadata) && this.metaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK;
+		return super.accept(singleContractMetadata)
+				&& this.metaData.configProperties.getTestFramework() == TestFramework.SPOCK;
 	}
 
 }

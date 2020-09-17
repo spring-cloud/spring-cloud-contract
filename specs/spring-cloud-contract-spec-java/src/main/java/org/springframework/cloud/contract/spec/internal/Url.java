@@ -78,8 +78,7 @@ public class Url extends DslProperty {
 
 	@Override
 	public String toString() {
-		return "Url{" + "\nqueryParameters=" + queryParameters + "} \n"
-				+ super.toString();
+		return "Url{" + "\nqueryParameters=" + queryParameters + "} \n" + super.toString();
 	}
 
 	/**

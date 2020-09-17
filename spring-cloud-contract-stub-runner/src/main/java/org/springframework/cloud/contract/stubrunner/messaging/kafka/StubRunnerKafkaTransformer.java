@@ -41,17 +41,14 @@ class StubRunnerKafkaTransformer {
 
 	public Message<?> transform(Contract groovyDsl) {
 		Object outputBody = outputBody(groovyDsl);
-		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders()
-				.asStubSideMap();
-		Message newMessage = MessageBuilder.createMessage(outputBody,
-				new MessageHeaders(headers));
+		Map<String, Object> headers = groovyDsl.getOutputMessage().getHeaders().asStubSideMap();
+		Message newMessage = MessageBuilder.createMessage(outputBody, new MessageHeaders(headers));
 		this.selector.updateCache(newMessage, groovyDsl);
 		return newMessage;
 	}
 
 	private Object outputBody(Contract groovyDsl) {
-		Object outputBody = BodyExtractor
-				.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
+		Object outputBody = BodyExtractor.extractClientValueFromBody(groovyDsl.getOutputMessage().getBody());
 		if (outputBody instanceof FromFileProperty) {
 			FromFileProperty property = (FromFileProperty) outputBody;
 			return property.asBytes();

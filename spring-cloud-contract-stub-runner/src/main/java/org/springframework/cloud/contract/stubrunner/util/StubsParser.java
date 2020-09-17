@@ -56,8 +56,7 @@ public final class StubsParser {
 	 * @param defaultClassifier default classifier to append if one is missing
 	 * @return parsed stub configurations
 	 */
-	public static List<StubConfiguration> fromString(Collection<String> collection,
-			String defaultClassifier) {
+	public static List<StubConfiguration> fromString(Collection<String> collection, String defaultClassifier) {
 		List<StubConfiguration> stubs = new ArrayList<>();
 		for (String config : collection) {
 			if (StringUtils.hasText(config)) {
@@ -72,8 +71,7 @@ public final class StubsParser {
 	 * @return mapping of parsed stub configurations to ports on which the stub is running
 	 */
 	public static Map<StubConfiguration, Integer> fromStringWithPort(String notation) {
-		StubSpecification stub = StubSpecification.parse(notation,
-				StubConfiguration.DEFAULT_CLASSIFIER);
+		StubSpecification stub = StubSpecification.parse(notation, StubConfiguration.DEFAULT_CLASSIFIER);
 		if (!stub.hasPort()) {
 			return Collections.emptyMap();
 		}
@@ -86,8 +84,7 @@ public final class StubsParser {
 	 * present
 	 */
 	public static String ivyFromStringWithPort(String notation) {
-		StubSpecification stub = StubSpecification.parse(notation,
-				StubConfiguration.DEFAULT_CLASSIFIER);
+		StubSpecification stub = StubSpecification.parse(notation, StubConfiguration.DEFAULT_CLASSIFIER);
 		if (!stub.hasPort()) {
 			return "";
 		}
@@ -129,8 +126,7 @@ public final class StubsParser {
 			}
 			catch (NumberFormatException e) {
 			}
-			return new StubSpecification(new StubConfiguration(id, defaultClassifier),
-					port);
+			return new StubSpecification(new StubConfiguration(id, defaultClassifier), port);
 		}
 
 		public boolean hasPort() {

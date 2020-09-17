@@ -44,12 +44,11 @@ class JaxRsRequestHeadersWhen implements When {
 	}
 
 	private void appendHeaders(Request request) {
-		Iterator<Header> iterator = request.getHeaders().getEntries().stream()
-				.filter(header -> !headerToIgnore(header)).iterator();
+		Iterator<Header> iterator = request.getHeaders().getEntries().stream().filter(header -> !headerToIgnore(header))
+				.iterator();
 		while (iterator.hasNext()) {
 			Header header = iterator.next();
-			String text = ".header(\"" + header.getName() + "\", " + headerValue(header)
-					+ ")";
+			String text = ".header(\"" + header.getName() + "\", " + headerValue(header) + ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
 			}
@@ -64,8 +63,7 @@ class JaxRsRequestHeadersWhen implements When {
 		if (headerServerValue instanceof ExecutionProperty) {
 			return ((ExecutionProperty) headerServerValue).getExecutionCommand();
 		}
-		return this.bodyParser.quotedLongText(
-				MapConverter.getTestSideValuesForNonBody(header.getServerValue()));
+		return this.bodyParser.quotedLongText(MapConverter.getTestSideValuesForNonBody(header.getServerValue()));
 	}
 
 	private boolean headerToIgnore(Header header) {
@@ -73,26 +71,23 @@ class JaxRsRequestHeadersWhen implements When {
 	}
 
 	private boolean contentTypeOrAccept(Header header) {
-		return "Content-Type".equalsIgnoreCase(header.getName())
-				|| "Accept".equalsIgnoreCase(header.getName());
+		return "Content-Type".equalsIgnoreCase(header.getName()) || "Accept".equalsIgnoreCase(header.getName());
 	}
 
 	private boolean headerOfAbsentType(Header header) {
 		return header.getServerValue() instanceof MatchingStrategy
-				&& ((MatchingStrategy) header.getServerValue())
-						.getType() == MatchingStrategy.Type.ABSENT;
+				&& ((MatchingStrategy) header.getServerValue()).getType() == MatchingStrategy.Type.ABSENT;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
-		return metadata.getContract().getRequest().getHeaders() != null && !metadata
-				.getContract().getRequest().getHeaders().getEntries().isEmpty()
+		return metadata.getContract().getRequest().getHeaders() != null
+				&& !metadata.getContract().getRequest().getHeaders().getEntries().isEmpty()
 				&& !hasHeaderOnlyContentTypeOrAccept(metadata);
 	}
 
 	private boolean hasHeaderOnlyContentTypeOrAccept(SingleContractMetadata metadata) {
-		Set<Header> entries = metadata.getContract().getRequest().getHeaders()
-				.getEntries();
+		Set<Header> entries = metadata.getContract().getRequest().getHeaders().getEntries();
 		long filteredOut = entries.stream().filter(this::headerToIgnore).count();
 		return filteredOut == entries.size();
 	}

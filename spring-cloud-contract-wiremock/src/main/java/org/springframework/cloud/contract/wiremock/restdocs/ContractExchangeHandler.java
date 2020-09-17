@@ -56,8 +56,7 @@ import org.springframework.web.multipart.support.StandardMultipartHttpServletReq
  * @author Dave Syer
  *
  */
-public class ContractExchangeHandler
-		extends WireMockVerifyHelper<EntityExchangeResult<?>, ContractExchangeHandler>
+public class ContractExchangeHandler extends WireMockVerifyHelper<EntityExchangeResult<?>, ContractExchangeHandler>
 		implements Consumer<EntityExchangeResult<byte[]>> {
 
 	@Override
@@ -66,17 +65,14 @@ public class ContractExchangeHandler
 	}
 
 	@Override
-	protected ResponseDefinitionBuilder getResponseDefinition(
-			EntityExchangeResult<?> result) {
-		ResponseDefinitionBuilder definition = ResponseDefinitionBuilder
-				.responseDefinition().withBody(result.getResponseBodyContent())
-				.withStatus(result.getStatus().value());
+	protected ResponseDefinitionBuilder getResponseDefinition(EntityExchangeResult<?> result) {
+		ResponseDefinitionBuilder definition = ResponseDefinitionBuilder.responseDefinition()
+				.withBody(result.getResponseBodyContent()).withStatus(result.getStatus().value());
 		addResponseHeaders(definition, result.getResponseHeaders());
 		return definition;
 	}
 
-	private void addResponseHeaders(ResponseDefinitionBuilder definition,
-			HttpHeaders httpHeaders) {
+	private void addResponseHeaders(ResponseDefinitionBuilder definition, HttpHeaders httpHeaders) {
 		for (String name : httpHeaders.keySet()) {
 			definition.withHeader(name, httpHeaders.get(name).toArray(new String[0]));
 		}
@@ -84,14 +80,12 @@ public class ContractExchangeHandler
 
 	@Override
 	protected Map<String, Object> getConfiguration(EntityExchangeResult<?> result) {
-		Field field = ReflectionUtils.findField(
-				WebTestClientRestDocumentationConfigurer.class, "configurations");
+		Field field = ReflectionUtils.findField(WebTestClientRestDocumentationConfigurer.class, "configurations");
 		ReflectionUtils.makeAccessible(field);
-		String index = result.getRequestHeaders()
-				.getFirst(WebTestClient.WEBTESTCLIENT_REQUEST_ID);
+		String index = result.getRequestHeaders().getFirst(WebTestClient.WEBTESTCLIENT_REQUEST_ID);
 		@SuppressWarnings("unchecked")
-		Map<String, Object> map = (((Map<String, Map<String, Object>>) ReflectionUtils
-				.getField(field, null)).get(index));
+		Map<String, Object> map = (((Map<String, Map<String, Object>>) ReflectionUtils.getField(field, null))
+				.get(index));
 		if (map == null) {
 			return new HashMap<>();
 		}
@@ -167,8 +161,7 @@ class WireMockHttpRequestAdapter implements Request {
 	@Override
 	public HttpHeader header(String key) {
 		HttpHeaders headers = this.result.getRequestHeaders();
-		return headers.containsKey(key)
-				? new HttpHeader(key, headers.getValuesAsList(key)) : null;
+		return headers.containsKey(key) ? new HttpHeader(key, headers.getValuesAsList(key)) : null;
 	}
 
 	@Override
@@ -247,8 +240,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public boolean isMultipart() {
-		return MediaType.MULTIPART_FORM_DATA
-				.isCompatibleWith(this.result.getRequestHeaders().getContentType());
+		return MediaType.MULTIPART_FORM_DATA.isCompatibleWith(this.result.getRequestHeaders().getContentType());
 	}
 
 	@Override
@@ -266,8 +258,7 @@ class WireMockHttpRequestAdapter implements Request {
 		MockHttpServletRequest request = MockMvcRequestBuilders
 				.request(this.result.getMethod(), this.result.getUriTemplate())
 				.contentType(this.result.getRequestHeaders().getContentType())
-				.content(this.result.getRequestBodyContent())
-				.buildRequest(new MockServletContext());
+				.content(this.result.getRequestBodyContent()).buildRequest(new MockServletContext());
 		try {
 			return new StandardMultipartHttpServletRequest(request).getParts().stream()
 					.map(part -> partFromServletPart(part)).collect(Collectors.toList());
@@ -315,8 +306,7 @@ class WireMockHttpRequestAdapter implements Request {
 	// TODO: Consider caching this
 	@Override
 	public Part getPart(String name) {
-		return getWireMockParts().stream().filter(part -> name.equals(part.getName()))
-				.findFirst().get();
+		return getWireMockParts().stream().filter(part -> name.equals(part.getName())).findFirst().get();
 	}
 
 	@Override

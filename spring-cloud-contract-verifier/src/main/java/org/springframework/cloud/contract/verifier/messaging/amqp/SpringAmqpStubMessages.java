@@ -74,25 +74,19 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	private RabbitProperties rabbitProperties;
 
 	@Deprecated
-	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate,
-			MessageListenerAccessor messageListenerAccessor) {
+	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAccessor messageListenerAccessor) {
 		Assert.notNull(rabbitTemplate, "RabbitTemplate must be set");
-		Assert.isTrue(
-				mockingDetails(rabbitTemplate).isSpy()
-						|| mockingDetails(rabbitTemplate).isMock(),
+		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock(),
 				"StubRunner AMQP will work only if RabbiTemplate is a spy");
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
 	}
 
 	@Autowired
-	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate,
-			MessageListenerAccessor messageListenerAccessor,
+	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAccessor messageListenerAccessor,
 			RabbitProperties rabbitProperties) {
 		Assert.notNull(rabbitTemplate, "RabbitTemplate must be set");
-		Assert.isTrue(
-				mockingDetails(rabbitTemplate).isSpy()
-						|| mockingDetails(rabbitTemplate).isMock(),
+		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock(),
 				"StubRunner AMQP will work only if RabbiTemplate is a spy");
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
@@ -100,12 +94,9 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			YamlContract contract) {
-		Message message = org.springframework.amqp.core.MessageBuilder
-				.withBody(((String) payload).getBytes())
-				.andProperties(MessagePropertiesBuilder.newInstance()
-						.setContentType(header(headers, "contentType"))
+	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
+		Message message = org.springframework.amqp.core.MessageBuilder.withBody(((String) payload).getBytes())
+				.andProperties(MessagePropertiesBuilder.newInstance().setContentType(header(headers, "contentType"))
 						.copyHeaders(headers).build())
 				.build();
 		if (headers != null && headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
@@ -113,30 +104,25 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 					headers.get(DEFAULT_CLASSID_FIELD_NAME));
 		}
 		if (headers != null && headers.containsKey(AmqpHeaders.RECEIVED_ROUTING_KEY)) {
-			message.getMessageProperties().setReceivedRoutingKey(
-					header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
+			message.getMessageProperties().setReceivedRoutingKey(header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
 		}
 		send(message, destination, contract);
 	}
 
-	public void mergeMessagePropertiesFromMetadata(YamlContract contract,
-			Message message) {
-		if (contract != null
-				&& contract.metadata.containsKey(AmqpMetadata.METADATA_KEY)) {
+	public void mergeMessagePropertiesFromMetadata(YamlContract contract, Message message) {
+		if (contract != null && contract.metadata.containsKey(AmqpMetadata.METADATA_KEY)) {
 			AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
 			ContractVerifierMessageMetadata messageMetadata = ContractVerifierMessageMetadata
 					.fromMetadata(contract.metadata);
 			boolean isInput = isInputMessage(messageMetadata);
-			MessageProperties fromMetadata = isInput
-					? amqpMetadata.getInput().getMessageProperties()
+			MessageProperties fromMetadata = isInput ? amqpMetadata.getInput().getMessageProperties()
 					: amqpMetadata.getOutputMessage().getMessageProperties();
 			MetadataUtil.merge(message.getMessageProperties(), fromMetadata);
 		}
 	}
 
 	public boolean isInputMessage(ContractVerifierMessageMetadata messageMetadata) {
-		return messageMetadata
-				.getMessageType() == ContractVerifierMessageMetadata.MessageType.INPUT;
+		return messageMetadata.getMessageType() == ContractVerifierMessageMetadata.MessageType.INPUT;
 	}
 
 	private String header(Map<String, Object> headers, String headerName) {
@@ -161,8 +147,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor
 				.getListenerContainersForDestination(destination, routingKey);
 		if (listenerContainers.isEmpty()) {
-			throw new IllegalStateException(
-					"no listeners found for destination " + destination);
+			throw new IllegalStateException("no listeners found for destination " + destination);
 		}
 		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
 			Object messageListener = listenerContainer.getMessageListener();
@@ -181,14 +166,11 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		}
 	}
 
-	Channel createChannel(SimpleMessageListenerContainer listenerContainer,
-			boolean transactional) {
-		return listenerContainer.getConnectionFactory().createConnection()
-				.createChannel(transactional);
+	Channel createChannel(SimpleMessageListenerContainer listenerContainer, boolean transactional) {
+		return listenerContainer.getConnectionFactory().createConnection().createChannel(transactional);
 	}
 
-	boolean isChannelAwareListener(SimpleMessageListenerContainer listenerContainer,
-			Object messageListener) {
+	boolean isChannelAwareListener(SimpleMessageListenerContainer listenerContainer, Object messageListener) {
 		return messageListener instanceof ChannelAwareMessageListener
 				&& listenerContainer.getConnectionFactory() != null;
 	}
@@ -199,25 +181,21 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 			return true;
 		}
 		return this.rabbitProperties.getPublisherConfirmType() == null
-				|| this.rabbitProperties
-						.getPublisherConfirmType() == CachingConnectionFactory.ConfirmType.NONE;
+				|| this.rabbitProperties.getPublisherConfirmType() == CachingConnectionFactory.ConfirmType.NONE;
 	}
 
 	@Override
-	public Message receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
 		ArgumentCaptor<String> routingKeyCaptor = ArgumentCaptor.forClass(String.class);
-		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination),
-				routingKeyCaptor.capture(), messageCaptor.capture(),
-				ArgumentMatchers.any());
+		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination), routingKeyCaptor.capture(),
+				messageCaptor.capture(), ArgumentMatchers.any());
 		if (messageCaptor.getAllValues().isEmpty()) {
 			log.info("no messages found on destination [" + destination + "]");
 			return null;
 		}
 		else if (messageCaptor.getAllValues().size() > 1) {
-			log.info("multiple messages found on destination [" + destination
-					+ "] returning last one");
+			log.info("multiple messages found on destination [" + destination + "] returning last one");
 			return messageCaptor.getValue();
 		}
 		Message message = messageCaptor.getValue();
@@ -227,8 +205,7 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		}
 		if (!routingKeyCaptor.getValue().isEmpty()) {
 			log.info("routing key passed [" + routingKeyCaptor.getValue() + "]");
-			message.getMessageProperties()
-					.setReceivedRoutingKey(routingKeyCaptor.getValue());
+			message.getMessageProperties().setReceivedRoutingKey(routingKeyCaptor.getValue());
 		}
 		return message;
 	}

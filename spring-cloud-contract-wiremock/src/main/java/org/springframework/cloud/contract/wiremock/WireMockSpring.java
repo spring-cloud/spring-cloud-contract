@@ -47,18 +47,14 @@ public abstract class WireMockSpring {
 
 	public static WireMockConfiguration options() {
 		if (!initialized) {
-			if (ClassUtils.isPresent("org.apache.http.conn.ssl.NoopHostnameVerifier",
-					null)) {
-				HttpsURLConnection
-						.setDefaultHostnameVerifier(NoopHostnameVerifier.INSTANCE);
+			if (ClassUtils.isPresent("org.apache.http.conn.ssl.NoopHostnameVerifier", null)) {
+				HttpsURLConnection.setDefaultHostnameVerifier(NoopHostnameVerifier.INSTANCE);
 				try {
 					HttpsURLConnection.setDefaultSSLSocketFactory(SSLContexts.custom()
-							.loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE)
-							.build().getSocketFactory());
+							.loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE).build().getSocketFactory());
 				}
 				catch (Exception e) {
-					throw new AssertionError("Cannot install custom socket factory: ["
-							+ e.getMessage() + "]");
+					throw new AssertionError("Cannot install custom socket factory: [" + e.getMessage() + "]");
 				}
 			}
 			initialized = true;

@@ -39,8 +39,8 @@ final class UrlHelper {
 	private static final String REGEX_USERINFO = "(?:\\S+(?::\\S*)?@)?";
 
 	private static final String REGEX_HOST = "(?:"
-			+ "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-			+ "|" + "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)"
+			+ "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" + "|"
+			+ "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)"
 			+ "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*"
 			+ "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))|(?:localhost))";
 
@@ -48,13 +48,11 @@ final class UrlHelper {
 
 	private static final String REGEX_RESOURCE_PATH = "(?:/\\S*)?";
 
-	protected static final Pattern HTTPS_URL = Pattern.compile(
-			"^(?:" + HTTPS_REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION + REGEX_USERINFO
-					+ REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")$");
+	protected static final Pattern HTTPS_URL = Pattern.compile("^(?:" + HTTPS_REGEX_SCHEME
+			+ REGEX_AUTHORATIVE_DECLARATION + REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")$");
 
-	protected static final Pattern URL = Pattern.compile("^(?:(?:" + REGEX_SCHEME
-			+ REGEX_AUTHORATIVE_DECLARATION + ")?" + REGEX_USERINFO + REGEX_HOST
-			+ REGEX_PORT + REGEX_RESOURCE_PATH + ")$");
+	protected static final Pattern URL = Pattern.compile("^(?:(?:" + REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION + ")?"
+			+ REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")$");
 
 	private UrlHelper() {
 		throw new IllegalStateException("Can't instantiate an utility class");

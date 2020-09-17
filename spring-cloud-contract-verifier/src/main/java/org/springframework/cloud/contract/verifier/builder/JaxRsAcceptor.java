@@ -23,8 +23,8 @@ interface JaxRsAcceptor {
 
 	default boolean acceptType(GeneratedClassMetaData generatedClassMetaData,
 			SingleContractMetadata singleContractMetadata) {
-		return generatedClassMetaData.configProperties
-				.getTestMode() == TestMode.JAXRSCLIENT && singleContractMetadata.isHttp();
+		return generatedClassMetaData.configProperties.getTestMode() == TestMode.JAXRSCLIENT
+				&& singleContractMetadata.isHttp();
 	}
 
 }

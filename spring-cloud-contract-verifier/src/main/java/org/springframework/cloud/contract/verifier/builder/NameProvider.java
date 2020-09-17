@@ -34,8 +34,7 @@ class NameProvider {
 	private static final Log log = LogFactory.getLog(NameProvider.class);
 
 	String methodName(SingleContractMetadata singleContractMetadata) {
-		return ContractVerifierUtil.TEST_METHOD_PREFIX
-				+ generateMethodName(singleContractMetadata);
+		return ContractVerifierUtil.TEST_METHOD_PREFIX + generateMethodName(singleContractMetadata);
 	}
 
 	private String generateMethodName(SingleContractMetadata singleContractMetadata) {
@@ -43,8 +42,7 @@ class NameProvider {
 		File stubsFile = contractMetadata.getPath().toFile();
 		Contract stubContent = singleContractMetadata.getContract();
 		if (StringUtils.hasText(stubContent.getName())) {
-			String name = NamesUtil.camelCase(
-					NamesUtil.convertIllegalPackageChars(stubContent.getName()));
+			String name = NamesUtil.camelCase(NamesUtil.convertIllegalPackageChars(stubContent.getName()));
 			if (log.isDebugEnabled()) {
 				log.debug("Overriding the default test name with [" + name + "]");
 			}
@@ -77,8 +75,8 @@ class NameProvider {
 	}
 
 	private String camelCasedMethodFromFileName(File stubsFile) {
-		return NamesUtil.camelCase(NamesUtil.convertIllegalMethodNameChars(NamesUtil
-				.toLastDot(NamesUtil.afterLast(stubsFile.getPath(), File.separator))));
+		return NamesUtil.camelCase(NamesUtil.convertIllegalMethodNameChars(
+				NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.getPath(), File.separator))));
 	}
 
 }

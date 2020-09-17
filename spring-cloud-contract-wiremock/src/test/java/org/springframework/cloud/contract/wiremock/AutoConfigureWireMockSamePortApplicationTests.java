@@ -32,8 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class,
-		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
-		webEnvironment = WebEnvironment.NONE)
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock(port = 9999)
 // Should manage to register
 public class AutoConfigureWireMockSamePortApplicationTests {
@@ -43,8 +42,8 @@ public class AutoConfigureWireMockSamePortApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/test2")).willReturn(aResponse()
-				.withHeader("Content-Type", "text/plain").withBody("Hello World2!")));
+		stubFor(get(urlEqualTo("/test2"))
+				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World2!")));
 		assertThat(this.service.go2()).isEqualTo("Hello World2!");
 	}
 

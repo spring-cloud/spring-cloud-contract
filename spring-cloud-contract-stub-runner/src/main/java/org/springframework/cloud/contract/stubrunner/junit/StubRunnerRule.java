@@ -76,8 +76,7 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 			}
 
 			private void before() {
-				stubFinder(new BatchStubRunnerFactory(builder().build(), verifier())
-						.buildBatchStubRunner());
+				stubFinder(new BatchStubRunnerFactory(builder().build(), verifier()).buildBatchStubRunner());
 				StubRunnerRule.this.stubFinder().runStubs();
 			}
 		};
@@ -120,24 +119,19 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	}
 
 	@Override
-	public PortStubRunnerRule downloadStub(String groupId, String artifactId,
-			String version, String classifier) {
-		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version
-				+ DELIMITER + classifier);
+	public PortStubRunnerRule downloadStub(String groupId, String artifactId, String version, String classifier) {
+		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
 		return new PortStubRunnerRule(this.delegate);
 	}
 
 	@Override
-	public PortStubRunnerRule downloadLatestStub(String groupId, String artifactId,
-			String classifier) {
-		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION
-				+ DELIMITER + classifier);
+	public PortStubRunnerRule downloadLatestStub(String groupId, String artifactId, String classifier) {
+		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
 		return new PortStubRunnerRule(this.delegate);
 	}
 
 	@Override
-	public PortStubRunnerRule downloadStub(String groupId, String artifactId,
-			String version) {
+	public PortStubRunnerRule downloadStub(String groupId, String artifactId, String version) {
 		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
 		return new PortStubRunnerRule(this.delegate);
 	}
@@ -239,8 +233,8 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	public boolean trigger(String ivyNotation, String labelName) {
 		boolean result = this.stubFinder().trigger(ivyNotation, labelName);
 		if (!result) {
-			throw new IllegalStateException("Failed to trigger a message with notation ["
-					+ ivyNotation + "] and label [" + labelName + "]");
+			throw new IllegalStateException(
+					"Failed to trigger a message with notation [" + ivyNotation + "] and label [" + labelName + "]");
 		}
 		return result;
 	}
@@ -249,8 +243,7 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	public boolean trigger(String labelName) {
 		boolean result = this.stubFinder().trigger(labelName);
 		if (!result) {
-			throw new IllegalStateException(
-					"Failed to trigger a message with label [" + labelName + "]");
+			throw new IllegalStateException("Failed to trigger a message with label [" + labelName + "]");
 		}
 		return result;
 	}
@@ -295,8 +288,7 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	 *
 	 * @since 1.2.0
 	 */
-	public static class PortStubRunnerRule extends StubRunnerRule
-			implements PortStubRunnerRuleOptions {
+	public static class PortStubRunnerRule extends StubRunnerRule implements PortStubRunnerRuleOptions {
 
 		PortStubRunnerRule(StubRunnerRule delegate) {
 			super(delegate);

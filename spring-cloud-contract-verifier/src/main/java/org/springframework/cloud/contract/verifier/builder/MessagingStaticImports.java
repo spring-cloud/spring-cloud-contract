@@ -30,24 +30,21 @@ class MessagingStaticImports implements Imports {
 			"org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers",
 			"org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes" };
 
-	MessagingStaticImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	MessagingStaticImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
 	public Imports call() {
-		Arrays.stream(IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
+		Arrays.stream(IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import static " + s));
 		return this;
 	}
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream()
-				.anyMatch(metadata -> metadata.getConvertedContractWithMetadata().stream()
-						.anyMatch(SingleContractMetadata::isMessaging));
+		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
+				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isMessaging));
 	}
 
 }

@@ -28,10 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class,
-		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
-		webEnvironment = WebEnvironment.NONE)
-@AutoConfigureWireMock(port = 0, files = "classpath:/root/",
-		stubs = "file:src/test/resources/io.stubs/mappings")
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
+@AutoConfigureWireMock(port = 0, files = "classpath:/root/", stubs = "file:src/test/resources/io.stubs/mappings")
 public class AutoConfigureWireMockStubsAndFilesApplicationTests {
 
 	@Autowired
@@ -39,8 +37,7 @@ public class AutoConfigureWireMockStubsAndFilesApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		assertThat(this.service.go())
-				.isEqualToIgnoringWhitespace("{\"message\":\"Hello Root\"}");
+		assertThat(this.service.go()).isEqualToIgnoringWhitespace("{\"message\":\"Hello Root\"}");
 	}
 
 }

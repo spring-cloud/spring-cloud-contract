@@ -72,40 +72,32 @@ public class ContractProjectUpdater {
 	 * @param rootStubsFolder root folder of the stubs
 	 */
 	public void updateContractProject(String projectName, Path rootStubsFolder) {
-		File clonedRepo = this.gitContractsRepo
-				.clonedRepo(this.stubRunnerOptions.stubRepositoryRoot);
+		File clonedRepo = this.gitContractsRepo.clonedRepo(this.stubRunnerOptions.stubRepositoryRoot);
 		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(
 				this.stubRunnerOptions.stubRepositoryRoot, this.stubRunnerOptions);
 		copyStubs(projectName, rootStubsFolder, clonedRepo);
 		GitRepo gitRepo = new GitRepo(clonedRepo, properties);
-		String msg = StubRunnerPropertyUtils
-				.getProperty(this.stubRunnerOptions.getProperties(), GIT_COMMIT_MESSAGE);
-		GitRepo.CommitResult commit = gitRepo.commit(clonedRepo,
-				commitMessage(projectName, msg));
+		String msg = StubRunnerPropertyUtils.getProperty(this.stubRunnerOptions.getProperties(), GIT_COMMIT_MESSAGE);
+		GitRepo.CommitResult commit = gitRepo.commit(clonedRepo, commitMessage(projectName, msg));
 		if (commit == GitRepo.CommitResult.EMPTY) {
 			log.info("There were no changes to commit. Won't push the changes");
 			return;
 		}
-		String attempts = StubRunnerPropertyUtils.getProperty(
-				this.stubRunnerOptions.getProperties(), GIT_ATTEMPTS_NO_PROP);
-		int intAttempts = StringUtils.hasText(attempts) ? Integer.parseInt(attempts)
-				: DEFAULT_ATTEMPTS_NO;
-		String wait = StubRunnerPropertyUtils.getProperty(
-				this.stubRunnerOptions.getProperties(), GIT_WAIT_BETWEEN_ATTEMPTS);
-		long longWait = StringUtils.hasText(wait) ? Long.parseLong(wait)
-				: DEFAULT_WAIT_BETWEEN_ATTEMPTS;
+		String attempts = StubRunnerPropertyUtils.getProperty(this.stubRunnerOptions.getProperties(),
+				GIT_ATTEMPTS_NO_PROP);
+		int intAttempts = StringUtils.hasText(attempts) ? Integer.parseInt(attempts) : DEFAULT_ATTEMPTS_NO;
+		String wait = StubRunnerPropertyUtils.getProperty(this.stubRunnerOptions.getProperties(),
+				GIT_WAIT_BETWEEN_ATTEMPTS);
+		long longWait = StringUtils.hasText(wait) ? Long.parseLong(wait) : DEFAULT_WAIT_BETWEEN_ATTEMPTS;
 		tryToPushCurrentBranch(clonedRepo, gitRepo, intAttempts, longWait);
 	}
 
-	private void tryToPushCurrentBranch(File clonedRepo, GitRepo gitRepo, int intAttempts,
-			long longWait) {
+	private void tryToPushCurrentBranch(File clonedRepo, GitRepo gitRepo, int intAttempts, long longWait) {
 		int currentAttempt = 0;
 		while (currentAttempt < intAttempts) {
-			log.info("Trying to push changes, attempt " + (currentAttempt + 1) + "/"
-					+ intAttempts);
+			log.info("Trying to push changes, attempt " + (currentAttempt + 1) + "/" + intAttempts);
 			gitRepo.pull(clonedRepo);
-			log.info(
-					"Successfully pulled changes from remote for project with contract and stubs");
+			log.info("Successfully pulled changes from remote for project with contract and stubs");
 			try {
 				gitRepo.pushCurrentBranch(clonedRepo);
 				log.info("Successfully pushed changes with current stubs");
@@ -142,15 +134,12 @@ public class ContractProjectUpdater {
 	private void copyStubs(String projectName, Path rootStubsFolder, File clonedRepo) {
 		try {
 			if (log.isDebugEnabled()) {
-				log.debug("Copying stubs from [" + rootStubsFolder.toString()
-						+ "] to the cloned repo [" + clonedRepo.getAbsolutePath()
-						+ "] for project [" + projectName + "]");
+				log.debug("Copying stubs from [" + rootStubsFolder.toString() + "] to the cloned repo ["
+						+ clonedRepo.getAbsolutePath() + "] for project [" + projectName + "]");
 			}
-			Files.walkFileTree(rootStubsFolder,
-					new DirectoryCopyingVisitor(rootStubsFolder, clonedRepo.toPath()));
+			Files.walkFileTree(rootStubsFolder, new DirectoryCopyingVisitor(rootStubsFolder, clonedRepo.toPath()));
 			if (log.isDebugEnabled()) {
-				log.debug("Successfully copied stubs to the cloned repo for project ["
-						+ projectName + "]");
+				log.debug("Successfully copied stubs to the cloned repo for project [" + projectName + "]");
 			}
 		}
 		catch (IOException e) {
@@ -162,8 +151,7 @@ public class ContractProjectUpdater {
 
 class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 
-	private static final List<String> FOLDERS_TO_DELETE = Arrays.asList("contracts",
-			"mappings");
+	private static final List<String> FOLDERS_TO_DELETE = Arrays.asList("contracts", "mappings");
 
 	private static final Log log = LogFactory.getLog(DirectoryCopyingVisitor.class);
 
@@ -175,14 +163,12 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 		this.from = from;
 		this.to = to;
 		if (log.isDebugEnabled()) {
-			log.debug("Will copy from [" + from.toString() + "] to [" + to.toString()
-					+ "]");
+			log.debug("Will copy from [" + from.toString() + "] to [" + to.toString() + "]");
 		}
 	}
 
 	@Override
-	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-			throws IOException {
+	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 		Path relativePath = this.from.relativize(dir);
 		if (".git".equals(relativePath.toString())) {
 			return FileVisitResult.SKIP_SUBTREE;
@@ -221,15 +207,13 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 		}
 		Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
 			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-					throws IOException {
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				Files.delete(file);
 				return FileVisitResult.CONTINUE;
 			}
 
 			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-					throws IOException {
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 				// a hack for Windows not to fail when directory is removed
 				// related to
 				// https://github.com/spring-cloud/spring-cloud-sleuth/issues/834
@@ -262,8 +246,7 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 					while (count < maxTries);
 					if (!deleted) {
 						if (log.isDebugEnabled()) {
-							log.debug("Failed to delete [" + dir + "] after [" + maxTries
-									+ "] attempts to do it");
+							log.debug("Failed to delete [" + dir + "] after [" + maxTries + "] attempts to do it");
 						}
 						throw new DirectoryNotEmptyException(dir.toString());
 					}
@@ -288,13 +271,11 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 	}
 
 	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-			throws IOException {
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 		Path relativePath = this.to.resolve(this.from.relativize(file));
 		Files.copy(file, relativePath, StandardCopyOption.REPLACE_EXISTING);
 		if (log.isDebugEnabled()) {
-			log.debug("Copied file from [" + file.toString() + "] to ["
-					+ relativePath.toString() + "]");
+			log.debug("Copied file from [" + file.toString() + "] to [" + relativePath.toString() + "]");
 		}
 		return FileVisitResult.CONTINUE;
 	}

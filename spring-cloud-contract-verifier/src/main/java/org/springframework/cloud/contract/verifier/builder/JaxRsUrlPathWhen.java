@@ -50,8 +50,7 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 			appendQueryParams(request.getUrl().getQueryParameters());
 		}
 		else if (request.getUrlPath() != null) {
-			this.blockBuilder
-					.addIndented(".path(" + concreteUrl(request.getUrlPath()) + ")");
+			this.blockBuilder.addIndented(".path(" + concreteUrl(request.getUrlPath()) + ")");
 			appendQueryParams(request.getUrlPath().getQueryParameters());
 		}
 	}
@@ -69,12 +68,11 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 			return;
 		}
 		this.blockBuilder.addEmptyLine();
-		Iterator<QueryParameter> iterator = queryParameters.getParameters().stream()
-				.filter(this::allowedQueryParameter).iterator();
+		Iterator<QueryParameter> iterator = queryParameters.getParameters().stream().filter(this::allowedQueryParameter)
+				.iterator();
 		while (iterator.hasNext()) {
 			QueryParameter param = iterator.next();
-			String text = ".queryParam(\"" + param.getName() + "\", \""
-					+ resolveParamValue(param) + "\")";
+			String text = ".queryParam(\"" + param.getName() + "\", \"" + resolveParamValue(param) + "\")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
 			}

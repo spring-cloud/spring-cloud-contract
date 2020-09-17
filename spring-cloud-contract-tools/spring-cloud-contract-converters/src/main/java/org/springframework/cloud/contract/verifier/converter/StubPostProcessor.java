@@ -33,8 +33,7 @@ public interface StubPostProcessor<T> {
 	/**
 	 * List of registered stub post processors.
 	 */
-	List<StubPostProcessor> PROCESSORS = SpringFactoriesLoader
-			.loadFactories(StubPostProcessor.class, null);
+	List<StubPostProcessor> PROCESSORS = SpringFactoriesLoader.loadFactories(StubPostProcessor.class, null);
 
 	/**
 	 * @param stubMapping - generated stub mapping

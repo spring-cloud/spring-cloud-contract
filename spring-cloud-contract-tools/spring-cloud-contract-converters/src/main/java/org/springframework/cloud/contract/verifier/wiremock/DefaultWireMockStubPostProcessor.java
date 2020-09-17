@@ -38,10 +38,8 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
 	@Override
 	public StubMapping postProcess(StubMapping stubMapping, Contract contract) {
-		WireMockMetaData wireMockMetaData = WireMockMetaData
-				.fromMetadata(contract.getMetadata());
-		StubMapping stubMappingFromMetadata = stubMappingFromMetadata(
-				wireMockMetaData.getStubMapping());
+		WireMockMetaData wireMockMetaData = WireMockMetaData.fromMetadata(contract.getMetadata());
+		StubMapping stubMappingFromMetadata = stubMappingFromMetadata(wireMockMetaData.getStubMapping());
 		stubMapping.setResponse(mergedResponse(stubMapping, stubMappingFromMetadata));
 		if (stubMappingFromMetadata.getPostServeActions() != null) {
 			setPostServeActions(stubMapping, stubMappingFromMetadata);
@@ -52,94 +50,76 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 		return stubMapping;
 	}
 
-	public void setPostServeActions(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public void setPostServeActions(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		Map<String, Parameters> postServeActions = stubMapping.getPostServeActions();
 		postServeActions = postServeActions != null ? postServeActions : new HashMap<>();
 		postServeActions.putAll(stubMappingFromMetadata.getPostServeActions());
 		stubMapping.setPostServeActions(postServeActions);
 	}
 
-	public void setMetadata(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public void setMetadata(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		Metadata metadata = stubMapping.getMetadata();
 		metadata = metadata != null ? metadata : new Metadata();
 		metadata.putAll(stubMappingFromMetadata.getPostServeActions());
 		stubMapping.setMetadata(metadata);
 	}
 
-	public ResponseDefinition mergedResponse(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
-		ResponseDefinition responseDefinition = new ResponseDefinition(
-				stubMapping.getResponse().getStatus(),
-				stubMapping.getResponse().getStatusMessage(),
-				stubMapping.getResponse().getBody(),
-				stubMapping.getResponse().getJsonBody(),
-				stubMapping.getResponse().getBase64Body(),
-				stubMapping.getResponse().getBodyFileName(),
-				stubMapping.getResponse().getHeaders(),
+	public ResponseDefinition mergedResponse(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
+		ResponseDefinition responseDefinition = new ResponseDefinition(stubMapping.getResponse().getStatus(),
+				stubMapping.getResponse().getStatusMessage(), stubMapping.getResponse().getBody(),
+				stubMapping.getResponse().getJsonBody(), stubMapping.getResponse().getBase64Body(),
+				stubMapping.getResponse().getBodyFileName(), stubMapping.getResponse().getHeaders(),
 				stubMapping.getResponse().getAdditionalProxyRequestHeaders(),
 				fixedDelayMilliseconds(stubMapping, stubMappingFromMetadata),
 				delayDistribution(stubMapping, stubMappingFromMetadata),
 				chunkedDribbleDelay(stubMapping, stubMappingFromMetadata),
-				proxyBaseUrl(stubMapping, stubMappingFromMetadata),
-				fault(stubMapping, stubMappingFromMetadata),
+				proxyBaseUrl(stubMapping, stubMappingFromMetadata), fault(stubMapping, stubMappingFromMetadata),
 				transformers(stubMapping, stubMappingFromMetadata),
 				transformerParameters(stubMapping, stubMappingFromMetadata),
 				wasConfigured(stubMapping, stubMappingFromMetadata));
 		return responseDefinition;
 	}
 
-	public Boolean wasConfigured(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public Boolean wasConfigured(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().isFromConfiguredStub() != null
 				? stubMappingFromMetadata.getResponse().isFromConfiguredStub()
 				: stubMapping.getResponse().isFromConfiguredStub();
 	}
 
-	public Parameters transformerParameters(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public Parameters transformerParameters(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getTransformerParameters() != null
 				? stubMappingFromMetadata.getResponse().getTransformerParameters()
 				: stubMapping.getResponse().getTransformerParameters();
 	}
 
-	public List<String> transformers(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public List<String> transformers(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getTransformers() != null
-				? stubMappingFromMetadata.getResponse().getTransformers()
-				: stubMapping.getResponse().getTransformers();
+				? stubMappingFromMetadata.getResponse().getTransformers() : stubMapping.getResponse().getTransformers();
 	}
 
 	public Fault fault(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getFault() != null
-				? stubMappingFromMetadata.getResponse().getFault()
-				: stubMapping.getResponse().getFault();
+				? stubMappingFromMetadata.getResponse().getFault() : stubMapping.getResponse().getFault();
 	}
 
-	public String proxyBaseUrl(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public String proxyBaseUrl(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getProxyBaseUrl() != null
-				? stubMappingFromMetadata.getResponse().getProxyBaseUrl()
-				: stubMapping.getResponse().getProxyBaseUrl();
+				? stubMappingFromMetadata.getResponse().getProxyBaseUrl() : stubMapping.getResponse().getProxyBaseUrl();
 	}
 
-	public ChunkedDribbleDelay chunkedDribbleDelay(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public ChunkedDribbleDelay chunkedDribbleDelay(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getChunkedDribbleDelay() != null
 				? stubMappingFromMetadata.getResponse().getChunkedDribbleDelay()
 				: stubMapping.getResponse().getChunkedDribbleDelay();
 	}
 
-	public DelayDistribution delayDistribution(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public DelayDistribution delayDistribution(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getDelayDistribution() != null
 				? stubMappingFromMetadata.getResponse().getDelayDistribution()
 				: stubMapping.getResponse().getDelayDistribution();
 	}
 
-	public Integer fixedDelayMilliseconds(StubMapping stubMapping,
-			StubMapping stubMappingFromMetadata) {
+	public Integer fixedDelayMilliseconds(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getFixedDelayMilliseconds() != null
 				? stubMappingFromMetadata.getResponse().getFixedDelayMilliseconds()
 				: stubMapping.getResponse().getFixedDelayMilliseconds();
@@ -154,27 +134,22 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 		}
 		else if (wiremock instanceof Map) {
 			try {
-				return StubMapping
-						.buildFrom(this.objectMapper.writeValueAsString(wiremock));
+				return StubMapping.buildFrom(this.objectMapper.writeValueAsString(wiremock));
 			}
 			catch (JsonProcessingException e) {
-				throw new IllegalStateException(
-						"Failed to build StubMapping for map [" + wiremock + "]", e);
+				throw new IllegalStateException("Failed to build StubMapping for map [" + wiremock + "]", e);
 			}
 		}
-		throw new UnsupportedOperationException(
-				"Unsupported type for wiremock metadata extension");
+		throw new UnsupportedOperationException("Unsupported type for wiremock metadata extension");
 	}
 
 	@Override
 	public boolean isApplicable(Contract contract) {
-		boolean contains = contract.getMetadata()
-				.containsKey(WireMockMetaData.METADATA_KEY);
+		boolean contains = contract.getMetadata().containsKey(WireMockMetaData.METADATA_KEY);
 		if (!contains) {
 			return false;
 		}
-		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata())
-				.getStubMapping();
+		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata()).getStubMapping();
 		return WireMockMetaData.APPLICABLE_CLASSES.stream()
 				.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
 	}

@@ -131,8 +131,7 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	@Override
 	public void assertThatSidesMatch(Object stubSide, Object testSide) {
 		if (stubSide instanceof OptionalProperty) {
-			throw new IllegalStateException(
-					"Optional can be used only in the test side of the response!");
+			throw new IllegalStateException("Optional can be used only in the test side of the response!");
 		}
 		super.assertThatSidesMatch(stubSide, testSide);
 	}
@@ -218,8 +217,7 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	@Override
 	public DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		if (client.getClientValue() instanceof RegexProperty) {
-			throw new IllegalStateException(
-					"You can't have a regular expression for the response on the client side");
+			throw new IllegalStateException("You can't have a regular expression for the response on the client side");
 		}
 
 		return super.value(client, server);
@@ -234,8 +232,7 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	@Override
 	public DslProperty value(ServerDslProperty server, ClientDslProperty client) {
 		if (client.getClientValue() instanceof RegexProperty) {
-			throw new IllegalStateException(
-					"You can't have a regular expression for the response on the client side");
+			throw new IllegalStateException("You can't have a regular expression for the response on the client side");
 		}
 
 		return super.value(server, client);
@@ -699,10 +696,8 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 		}
 		Response response = (Response) o;
 		return async == response.async && Objects.equals(status, response.status)
-				&& Objects.equals(delay, response.delay)
-				&& Objects.equals(headers, response.headers)
-				&& Objects.equals(cookies, response.cookies)
-				&& Objects.equals(body, response.body)
+				&& Objects.equals(delay, response.delay) && Objects.equals(headers, response.headers)
+				&& Objects.equals(cookies, response.cookies) && Objects.equals(body, response.body)
 				&& Objects.equals(bodyMatchers, response.bodyMatchers);
 	}
 
@@ -713,10 +708,9 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 	@Override
 	public String toString() {
-		return "Response{" + "\nstatus=" + status + ", \n\tdelay=" + delay
-				+ ", \n\theaders=" + headers + ", \n\tcookies=" + cookies + ", \n\tbody="
-				+ body + ", \n\tasync=" + async + ", \n\tbodyMatchers=" + bodyMatchers
-				+ '}';
+		return "Response{" + "\nstatus=" + status + ", \n\tdelay=" + delay + ", \n\theaders=" + headers
+				+ ", \n\tcookies=" + cookies + ", \n\tbody=" + body + ", \n\tasync=" + async + ", \n\tbodyMatchers="
+				+ bodyMatchers + '}';
 	}
 
 	/**
@@ -804,8 +798,9 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 		@Override
 		public DslProperty matching(final String value) {
-			return this.common.$(this.common.p(notEscaped(Pattern.compile(
-					RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*"))),
+			return this.common.$(
+					this.common.p(
+							notEscaped(Pattern.compile(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*"))),
 					this.common.c(value));
 		}
 
@@ -817,8 +812,8 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 		@Override
 		public DslProperty matching(final String value) {
-			return this.common.$(this.common.p(this.common
-					.regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
+			return this.common.$(
+					this.common.p(this.common.regex(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*")),
 					this.common.c(value));
 		}
 
@@ -840,12 +835,10 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 	}
 
-	private class ServerPatternValueDslProperty
-			extends PatternValueDslProperty<ServerDslProperty> {
+	private class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
 
 		@Override
-		protected ServerDslProperty createProperty(Pattern pattern,
-				Object generatedValue) {
+		protected ServerDslProperty createProperty(Pattern pattern, Object generatedValue) {
 			return new ServerDslProperty(pattern, generatedValue);
 		}
 

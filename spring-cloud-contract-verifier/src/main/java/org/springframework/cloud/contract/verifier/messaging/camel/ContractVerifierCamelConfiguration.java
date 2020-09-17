@@ -41,10 +41,8 @@ import org.springframework.context.annotation.Import;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Message.class)
 @Import(CamelAutoConfiguration.class)
-@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true",
-		matchIfMissing = true)
-@AutoConfigureBefore({ NoOpContractVerifierAutoConfiguration.class,
-		ContractVerifierJmsConfiguration.class })
+@ConditionalOnProperty(name = "stubrunner.camel.enabled", havingValue = "true", matchIfMissing = true)
+@AutoConfigureBefore({ NoOpContractVerifierAutoConfiguration.class, ContractVerifierJmsConfiguration.class })
 public class ContractVerifierCamelConfiguration {
 
 	@Bean
@@ -56,8 +54,7 @@ public class ContractVerifierCamelConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<Message> contractVerifierMessaging(
-			MessageVerifier<Message> exchange) {
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifier<Message> exchange) {
 		return new ContractVerifierCamelHelper(exchange);
 	}
 

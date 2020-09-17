@@ -64,8 +64,7 @@ public class AmqpMetadata implements SpringCloudContractMetadata {
 	}
 
 	public static AmqpMetadata fromMetadata(Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, AmqpMetadata.METADATA_KEY,
-				new AmqpMetadata());
+		return MetadataUtil.fromMetadata(metadata, AmqpMetadata.METADATA_KEY, new AmqpMetadata());
 	}
 
 	@Override

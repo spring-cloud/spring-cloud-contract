@@ -34,19 +34,15 @@ class MessagingBodyThen implements Then, BodyMethodVisitor {
 
 	private final BodyParser bodyParser;
 
-	MessagingBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			ComparisonBuilder comparisonBuilder) {
+	MessagingBodyThen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData, ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = metaData;
 		this.comparisonBuilder = comparisonBuilder;
 		this.bodyParser = comparisonBuilder.bodyParser();
 		this.thens.addAll(Arrays.asList(
-				new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser,
-						this.comparisonBuilder),
-				new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser,
-						this.comparisonBuilder),
-				new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser,
-						this.comparisonBuilder),
+				new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
+				new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
+				new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
 				new GenericXmlBodyThen(blockBuilder, this.bodyParser)));
 	}
 
@@ -61,8 +57,7 @@ class MessagingBodyThen implements Then, BodyMethodVisitor {
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return singleContractMetadata.isMessaging()
-				&& this.bodyParser.responseBody(singleContractMetadata) != null;
+		return singleContractMetadata.isMessaging() && this.bodyParser.responseBody(singleContractMetadata) != null;
 	}
 
 }

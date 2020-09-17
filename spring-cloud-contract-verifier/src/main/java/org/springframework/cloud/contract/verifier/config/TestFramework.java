@@ -74,9 +74,8 @@ public enum TestFramework {
 	 * @param orderAnnotation order annotation
 	 */
 	@Deprecated
-	TestFramework(final String classModifier, final String methodModifier,
-			final String lineSuffix, final String classExtension,
-			final String classNameSuffix, final String ignoreClass,
+	TestFramework(final String classModifier, final String methodModifier, final String lineSuffix,
+			final String classExtension, final String classNameSuffix, final String ignoreClass,
 			final List<String> orderAnnotationImports, final String orderAnnotation) {
 		testFrameworkDefinition = new TestFrameworkDefinition() {
 			@Override

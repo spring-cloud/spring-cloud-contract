@@ -55,8 +55,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(StubRunnerProperties.class)
-@ConditionalOnMissingBean(
-		type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
+@ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 @Import(StubRunnerPortBeanPostProcessor.class)
 public class StubRunnerConfiguration {
 
@@ -83,8 +82,7 @@ public class StubRunnerConfiguration {
 		}
 		StubRunnerOptions stubRunnerOptions = stubRunnerOptions(builder);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
-				this.provider.get(stubRunnerOptions),
-				new LazyMessageVerifier(beanFactory)).buildBatchStubRunner();
+				this.provider.get(stubRunnerOptions), new LazyMessageVerifier(beanFactory)).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		RunningStubs runningStubs = batchStubRunner.runStubs();
 		registerPort(runningStubs);
@@ -103,28 +101,19 @@ public class StubRunnerConfiguration {
 
 	private StubRunnerOptionsBuilder builder(StubRunnerProperties props) {
 		return new StubRunnerOptionsBuilder()
-				.withMinMaxPort(
-						Integer.valueOf(resolvePlaceholder(props.getMinPort(),
-								props.getMinPort())),
-						Integer.valueOf(resolvePlaceholder(props.getMaxPort(),
-								props.getMaxPort())))
+				.withMinMaxPort(Integer.valueOf(resolvePlaceholder(props.getMinPort(), props.getMinPort())),
+						Integer.valueOf(resolvePlaceholder(props.getMaxPort(), props.getMaxPort())))
 				.withStubRepositoryRoot(props.getRepositoryRoot())
 				.withStubsMode(resolvePlaceholder(props.getStubsMode()))
 				.withStubsClassifier(resolvePlaceholder(props.getClassifier()))
-				.withStubs(resolvePlaceholder(props.getIds()))
-				.withUsername(resolvePlaceholder(props.getUsername()))
+				.withStubs(resolvePlaceholder(props.getIds())).withUsername(resolvePlaceholder(props.getUsername()))
 				.withPassword(resolvePlaceholder(props.getPassword()))
-				.withStubPerConsumer(Boolean
-						.parseBoolean(resolvePlaceholder(props.isStubsPerConsumer())))
+				.withStubPerConsumer(Boolean.parseBoolean(resolvePlaceholder(props.isStubsPerConsumer())))
 				.withConsumerName(consumerName(props))
-				.withMappingsOutputFolder(
-						resolvePlaceholder(props.getMappingsOutputFolder()))
-				.withDeleteStubsAfterTest(Boolean
-						.parseBoolean(resolvePlaceholder(props.isDeleteStubsAfterTest())))
-				.withGenerateStubs(
-						Boolean.parseBoolean(resolvePlaceholder(props.isGenerateStubs())))
-				.withProperties(props.getProperties())
-				.withHttpServerStubConfigurer(props.getHttpServerStubConfigurer())
+				.withMappingsOutputFolder(resolvePlaceholder(props.getMappingsOutputFolder()))
+				.withDeleteStubsAfterTest(Boolean.parseBoolean(resolvePlaceholder(props.isDeleteStubsAfterTest())))
+				.withGenerateStubs(Boolean.parseBoolean(resolvePlaceholder(props.isGenerateStubs())))
+				.withProperties(props.getProperties()).withHttpServerStubConfigurer(props.getHttpServerStubConfigurer())
 				.withServerId(resolvePlaceholder(props.getServerId()));
 	}
 
@@ -153,19 +142,15 @@ public class StubRunnerConfiguration {
 	private void registerPort(RunningStubs runStubs) {
 		MutablePropertySources propertySources = this.environment.getPropertySources();
 		if (!propertySources.contains(STUBRUNNER_PREFIX)) {
-			propertySources
-					.addFirst(new MapPropertySource(STUBRUNNER_PREFIX, new HashMap<>()));
+			propertySources.addFirst(new MapPropertySource(STUBRUNNER_PREFIX, new HashMap<>()));
 		}
-		Map<String, Object> source = ((MapPropertySource) propertySources
-				.get(STUBRUNNER_PREFIX)).getSource();
-		for (Map.Entry<StubConfiguration, Integer> entry : runStubs.validNamesAndPorts()
-				.entrySet()) {
-			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getArtifactId() + ".port",
-					entry.getValue());
+		Map<String, Object> source = ((MapPropertySource) propertySources.get(STUBRUNNER_PREFIX)).getSource();
+		for (Map.Entry<StubConfiguration, Integer> entry : runStubs.validNamesAndPorts().entrySet()) {
+			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
 			// there are projects where artifact id is the same, what differs is the group
 			// id
-			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "."
-					+ entry.getKey().getArtifactId() + ".port", entry.getValue());
+			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "." + entry.getKey().getArtifactId()
+					+ ".port", entry.getValue());
 		}
 	}
 
@@ -199,8 +184,7 @@ class LazyMessageVerifier implements MessageVerifier {
 	}
 
 	@Override
-	public Object receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		return messageVerifier().receive(destination, timeout, timeUnit, contract);
 	}
 
@@ -210,8 +194,7 @@ class LazyMessageVerifier implements MessageVerifier {
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination,
-			YamlContract contract) {
+	public void send(Object payload, Map headers, String destination, YamlContract contract) {
 		messageVerifier().send(payload, headers, destination, contract);
 	}
 

@@ -74,8 +74,7 @@ public abstract class AbstractGitTest {
 			command.call();
 			StoredConfig config = git.getRepository().getConfig();
 			RemoteConfig originConfig = new RemoteConfig(config, "origin");
-			originConfig
-					.addFetchRefSpec(new RefSpec("+refs/heads/*:refs/remotes/origin/*"));
+			originConfig.addFetchRefSpec(new RefSpec("+refs/heads/*:refs/remotes/origin/*"));
 			originConfig.update(config);
 			config.save();
 		}

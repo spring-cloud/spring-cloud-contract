@@ -41,8 +41,7 @@ class MessagingHeadersGiven implements Given, MethodVisitor<Given> {
 	}
 
 	private String getHeaderString(Header header) {
-		return ".header(" + getTestSideValue(header.getName()) + ", "
-				+ getTestSideValue(header.getServerValue()) + ")";
+		return ".header(" + getTestSideValue(header.getName()) + ", " + getTestSideValue(header.getServerValue()) + ")";
 	}
 
 	private String getTestSideValue(Object object) {

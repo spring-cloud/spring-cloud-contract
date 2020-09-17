@@ -70,8 +70,7 @@ public class Main {
 		log.info("Generated schema!");
 	}
 
-	private String generateJsonSchemaForClass(Class clazz)
-			throws JsonProcessingException {
+	private String generateJsonSchemaForClass(Class clazz) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
@@ -94,8 +93,7 @@ public class Main {
 		mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
 		StringBuilder sb = new StringBuilder();
 		for (Class metadatum : metadata) {
-			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) metadatum
-					.newInstance();
+			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) metadatum.newInstance();
 			String description = newInstance.description();
 			String key = newInstance.key();
 			List<Class> additionalClasses = classesToLookAt(metadatum, newInstance);
@@ -119,8 +117,7 @@ public class Main {
 		return sb;
 	}
 
-	private List<Class> classesToLookAt(Class metadatum,
-			SpringCloudContractMetadata newInstance) {
+	private List<Class> classesToLookAt(Class metadatum, SpringCloudContractMetadata newInstance) {
 		List<Class> additionalClasses = new ArrayList<>();
 		additionalClasses.add(metadatum);
 		additionalClasses.addAll(newInstance.additionalClassesToLookAt());

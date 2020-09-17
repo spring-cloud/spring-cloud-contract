@@ -29,23 +29,20 @@ class JUnit4IgnoreMethodAnnotation implements MethodAnnotations {
 
 	private static final String[] ANNOTATIONS = { "@Ignore" };
 
-	JUnit4IgnoreMethodAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit4IgnoreMethodAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
 
 	@Override
-	public MethodVisitor<MethodAnnotations> apply(
-			SingleContractMetadata singleContractMetadata) {
+	public MethodVisitor<MethodAnnotations> apply(SingleContractMetadata singleContractMetadata) {
 		Arrays.stream(ANNOTATIONS).forEach(this.blockBuilder::addIndented);
 		return this;
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata singleContractMetadata) {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT
 				&& (singleContractMetadata.getContractMetadata().isIgnored()
 						|| singleContractMetadata.getContract().isIgnored());
 	}

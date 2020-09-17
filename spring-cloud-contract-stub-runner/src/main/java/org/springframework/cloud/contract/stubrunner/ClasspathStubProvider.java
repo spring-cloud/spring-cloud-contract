@@ -62,23 +62,19 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 			return null;
 		}
 		log.info("Will download stubs from classpath");
-		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot,
-				this::gavPattern);
+		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot, this::gavPattern);
 	}
 
-	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions,
-			StubConfiguration configuration) {
+	private RepoRoots repoRoot(StubRunnerOptions stubRunnerOptions, StubConfiguration configuration) {
 		Resource repositoryRoot = stubRunnerOptions.getStubRepositoryRoot();
 		if (repositoryRoot instanceof ClassPathResource) {
 			ClassPathResource classPathResource = (ClassPathResource) repositoryRoot;
 			String path = classPathResource.getPath();
 			if (StringUtils.hasText(path)) {
-				return RepoRoots.asList(
-						new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
+				return RepoRoots.asList(new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
 			}
 		}
-		String path = "/**/" + configuration.getGroupId() + "/"
-				+ configuration.getArtifactId();
+		String path = "/**/" + configuration.getGroupId() + "/" + configuration.getArtifactId();
 		return RepoRoots.asList(new RepoRoot("classpath*:/META-INF" + path, "/**/*.*"),
 				new RepoRoot("classpath*:/contracts" + path, "/**/*.*"),
 				new RepoRoot("classpath*:/mappings" + path, "/**/*.*"));

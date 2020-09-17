@@ -39,8 +39,7 @@ public class Cookie extends DslProperty {
 	}
 
 	public Cookie(String key, Object value) {
-		super(ContractUtils.CLIENT_VALUE.apply(value),
-				ContractUtils.SERVER_VALUE.apply(value));
+		super(ContractUtils.CLIENT_VALUE.apply(value), ContractUtils.SERVER_VALUE.apply(value));
 		this.key = key;
 	}
 

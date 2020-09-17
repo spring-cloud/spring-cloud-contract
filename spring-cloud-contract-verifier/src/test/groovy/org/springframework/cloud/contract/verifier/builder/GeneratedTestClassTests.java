@@ -123,8 +123,7 @@ public class GeneratedTestClassTests {
 		this.file = this.tmpFolder.newFile();
 		Files.write(this.file.toPath(), this.contract.getBytes());
 		this.tmp = this.tmpFolder.newFolder();
-		File classpath = new File(
-				GeneratedTestClassTests.class.getResource("/classpath/").toURI());
+		File classpath = new File(GeneratedTestClassTests.class.getResource("/classpath/").toURI());
 		FileSystemUtils.copyRecursively(classpath, this.tmp);
 	}
 
@@ -134,9 +133,8 @@ public class GeneratedTestClassTests {
 		JavaTestGenerator generator = new JavaTestGenerator();
 		ContractVerifierConfigProperties configProperties = new ContractVerifierConfigProperties();
 		configProperties.setTestFramework(TestFramework.JUNIT);
-		Collection<ContractMetadata> contracts = Collections
-				.singletonList(new ContractMetadata(this.file.toPath(), true, 1, 2,
-						convertAsCollection(new File("/"), this.file)));
+		Collection<ContractMetadata> contracts = Collections.singletonList(
+				new ContractMetadata(this.file.toPath(), true, 1, 2, convertAsCollection(new File("/"), this.file)));
 		String includedDirectoryRelativePath = "some/path";
 		String convertedClassName = "fooBar";
 		String packageName = "test";
@@ -144,9 +142,8 @@ public class GeneratedTestClassTests {
 		configProperties.setBaseClassForTests("BazBar");
 
 		// when
-		String builtClass = generator.buildClass(configProperties, contracts,
-				includedDirectoryRelativePath, new SingleTestGenerator.GeneratedClassData(
-						convertedClassName, packageName, classPath));
+		String builtClass = generator.buildClass(configProperties, contracts, includedDirectoryRelativePath,
+				new SingleTestGenerator.GeneratedClassData(convertedClassName, packageName, classPath));
 
 		// then
 		BDDAssertions.then(builtClass).isEqualTo(this.expectedTest);

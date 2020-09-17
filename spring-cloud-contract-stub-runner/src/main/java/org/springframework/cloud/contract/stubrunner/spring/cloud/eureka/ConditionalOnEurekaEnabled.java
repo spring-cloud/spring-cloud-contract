@@ -34,8 +34,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
-@ConditionalOnProperty(value = "eureka.client.enabled", havingValue = "true",
-		matchIfMissing = true)
+@ConditionalOnProperty(value = "eureka.client.enabled", havingValue = "true", matchIfMissing = true)
 @interface ConditionalOnEurekaEnabled {
 
 }

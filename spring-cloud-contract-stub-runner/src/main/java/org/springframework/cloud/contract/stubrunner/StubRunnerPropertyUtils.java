@@ -73,8 +73,7 @@ public final class StubRunnerPropertyUtils {
 		if (options != null && options.containsKey(propName)) {
 			String value = options.get(propName);
 			if (log.isTraceEnabled()) {
-				log.trace("Options map contains the prop [" + propName + "] with value ["
-						+ value + "]");
+				log.trace("Options map contains the prop [" + propName + "] with value [" + value + "]");
 			}
 			return value;
 		}
@@ -92,17 +91,14 @@ public final class StubRunnerPropertyUtils {
 		String systemProp = FETCHER.systemProp(stubRunnerProp);
 		if (StringUtils.hasText(systemProp)) {
 			if (log.isTraceEnabled()) {
-				log.trace("System property [" + stubRunnerProp + "] has value ["
-						+ systemProp + "]");
+				log.trace("System property [" + stubRunnerProp + "] has value [" + systemProp + "]");
 			}
 			return systemProp;
 		}
-		String convertedEnvProp = stubRunnerProp.replaceAll("\\.", "_")
-				.replaceAll("-", "_").toUpperCase();
+		String convertedEnvProp = stubRunnerProp.replaceAll("\\.", "_").replaceAll("-", "_").toUpperCase();
 		String envVar = FETCHER.envVar(convertedEnvProp);
 		if (log.isTraceEnabled()) {
-			log.trace("Environment variable [" + convertedEnvProp + "] has value ["
-					+ envVar + "]");
+			log.trace("Environment variable [" + convertedEnvProp + "] has value [" + envVar + "]");
 		}
 		return envVar;
 	}

@@ -41,19 +41,18 @@ class LeftOverPrevention {
 
 	private final File generatedDirectory;
 
-	LeftOverPrevention(File generatedDirectory, MojoExecution mojoExecution,
-			MavenSession session) throws MojoExecutionException {
+	LeftOverPrevention(File generatedDirectory, MojoExecution mojoExecution, MavenSession session)
+			throws MojoExecutionException {
 		this.generatedDirectory = generatedDirectory;
 		this.incrementalBuildHelper = new IncrementalBuildHelper(mojoExecution, session);
-		this.incrementalBuildHelper.beforeRebuildExecution(
-				new IncrementalBuildHelperRequest().outputDirectory(generatedDirectory));
+		this.incrementalBuildHelper
+				.beforeRebuildExecution(new IncrementalBuildHelperRequest().outputDirectory(generatedDirectory));
 	}
 
 	void deleteLeftOvers() throws MojoExecutionException {
 		if (generatedDirectory.exists()) {
 			incrementalBuildHelper
-					.afterRebuildExecution(new IncrementalBuildHelperRequest()
-							.outputDirectory(generatedDirectory));
+					.afterRebuildExecution(new IncrementalBuildHelperRequest().outputDirectory(generatedDirectory));
 		}
 	}
 

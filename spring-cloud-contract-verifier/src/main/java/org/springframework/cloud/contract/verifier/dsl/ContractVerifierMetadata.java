@@ -54,8 +54,7 @@ public class ContractVerifierMetadata implements SpringCloudContractMetadata {
 
 	@NonNull
 	public static ContractVerifierMetadata fromMetadata(Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, METADATA_KEY,
-				new ContractVerifierMetadata());
+		return MetadataUtil.fromMetadata(metadata, METADATA_KEY, new ContractVerifierMetadata());
 	}
 
 	@Override

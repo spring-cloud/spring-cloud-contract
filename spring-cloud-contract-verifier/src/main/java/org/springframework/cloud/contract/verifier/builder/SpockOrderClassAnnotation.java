@@ -28,8 +28,7 @@ class SpockOrderClassAnnotation implements ClassAnnotation {
 
 	private static final String[] ANNOTATIONS = { "@Stepwise" };
 
-	SpockOrderClassAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	SpockOrderClassAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -42,10 +41,8 @@ class SpockOrderClassAnnotation implements ClassAnnotation {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.SPOCK
-				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(meta -> meta.getOrder() != null);
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK
+				&& this.generatedClassMetaData.listOfFiles.stream().anyMatch(meta -> meta.getOrder() != null);
 	}
 
 }

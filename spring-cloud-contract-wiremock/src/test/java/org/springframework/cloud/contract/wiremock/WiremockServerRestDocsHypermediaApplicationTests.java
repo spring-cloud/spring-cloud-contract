@@ -48,8 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestConfiguration.class,
-		properties = "wiremock.placeholders.enabled=false")
+@SpringBootTest(classes = TestConfiguration.class, properties = "wiremock.placeholders.enabled=false")
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
 public class WiremockServerRestDocsHypermediaApplicationTests {
@@ -59,15 +58,12 @@ public class WiremockServerRestDocsHypermediaApplicationTests {
 
 	@Test
 	public void stubsRenderLinksWithoutPlaceholder() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/link"))
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("link:")))
-				.andDo(document("link"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/link")).andExpect(status().isOk())
+				.andExpect(content().string(containsString("link:"))).andDo(document("link"));
 
 		File file = new File("target/snippets/stubs", "link.json");
 		BDDAssertions.then(file).exists();
-		StubMapping stubMapping = StubMapping
-				.buildFrom(new String(Files.readAllBytes(file.toPath())));
+		StubMapping stubMapping = StubMapping.buildFrom(new String(Files.readAllBytes(file.toPath())));
 		String body = stubMapping.getResponse().getBody();
 		BDDAssertions.then(body).contains("http://localhost:8080/link");
 	}
@@ -79,8 +75,8 @@ public class WiremockServerRestDocsHypermediaApplicationTests {
 		@ResponseBody
 		@RequestMapping("/link")
 		public String resource(HttpServletRequest request) {
-			UriComponents uriComponents = UriComponentsBuilder
-					.fromHttpRequest(new ServletServerHttpRequest(request)).build();
+			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request))
+					.build();
 			return "link: " + uriComponents.toUriString();
 		}
 

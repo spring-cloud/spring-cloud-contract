@@ -27,11 +27,9 @@ import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 
-class StreamOutputDestinationMessageReceiver
-		implements MessageVerifierReceiver<Message<?>> {
+class StreamOutputDestinationMessageReceiver implements MessageVerifierReceiver<Message<?>> {
 
-	private static final Log log = LogFactory
-			.getLog(StreamOutputDestinationMessageReceiver.class);
+	private static final Log log = LogFactory.getLog(StreamOutputDestinationMessageReceiver.class);
 
 	private final ApplicationContext context;
 
@@ -40,16 +38,14 @@ class StreamOutputDestinationMessageReceiver
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
-			YamlContract contract) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		try {
-			OutputDestination outputDestination = this.context
-					.getBean(OutputDestination.class);
+			OutputDestination outputDestination = this.context.getBean(OutputDestination.class);
 			return outputDestination.receive(timeUnit.toMillis(timeout), destination);
 		}
 		catch (Exception e) {
-			log.error("Exception occurred while trying to read a message from "
-					+ " a channel with name [" + destination + "]", e);
+			log.error("Exception occurred while trying to read a message from " + " a channel with name [" + destination
+					+ "]", e);
 			throw new IllegalStateException(e);
 		}
 	}

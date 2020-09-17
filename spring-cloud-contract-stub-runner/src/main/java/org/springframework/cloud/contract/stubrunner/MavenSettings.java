@@ -64,16 +64,14 @@ public class MavenSettings {
 		return settingsDecrypter;
 	}
 
-	private void setField(Class<?> sourceClass, String fieldName, Object target,
-			Object value) {
+	private void setField(Class<?> sourceClass, String fieldName, Object target, Object value) {
 		try {
 			Field field = sourceClass.getDeclaredField(fieldName);
 			field.setAccessible(true);
 			field.set(target, value);
 		}
 		catch (Exception ex) {
-			throw new IllegalStateException(
-					"Failed to set field '" + fieldName + "' on '" + target + "'", ex);
+			throw new IllegalStateException("Failed to set field '" + fieldName + "' on '" + target + "'", ex);
 		}
 	}
 

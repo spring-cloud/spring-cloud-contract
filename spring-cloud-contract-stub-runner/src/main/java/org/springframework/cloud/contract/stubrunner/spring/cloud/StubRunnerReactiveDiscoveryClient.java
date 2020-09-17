@@ -34,8 +34,7 @@ import org.springframework.cloud.contract.stubrunner.StubFinder;
  */
 class StubRunnerReactiveDiscoveryClient implements ReactiveDiscoveryClient {
 
-	private static final Log log = LogFactory
-			.getLog(StubRunnerReactiveDiscoveryClient.class);
+	private static final Log log = LogFactory.getLog(StubRunnerReactiveDiscoveryClient.class);
 
 	private final ReactiveDiscoveryClient delegate;
 
@@ -43,24 +42,20 @@ class StubRunnerReactiveDiscoveryClient implements ReactiveDiscoveryClient {
 
 	private final StubMapperProperties stubMapperProperties;
 
-	StubRunnerReactiveDiscoveryClient(ReactiveDiscoveryClient delegate,
-			StubFinder stubFinder, StubMapperProperties stubMapperProperties) {
-		this.delegate = delegate instanceof StubRunnerDiscoveryClient
-				? noOpDiscoveryClient() : delegate;
+	StubRunnerReactiveDiscoveryClient(ReactiveDiscoveryClient delegate, StubFinder stubFinder,
+			StubMapperProperties stubMapperProperties) {
+		this.delegate = delegate instanceof StubRunnerDiscoveryClient ? noOpDiscoveryClient() : delegate;
 		if (log.isDebugEnabled()) {
-			log.debug("Will delegate calls to discovery service [" + this.delegate
-					+ "] if a stub is not found");
+			log.debug("Will delegate calls to discovery service [" + this.delegate + "] if a stub is not found");
 		}
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
 	}
 
-	StubRunnerReactiveDiscoveryClient(StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties) {
+	StubRunnerReactiveDiscoveryClient(StubFinder stubFinder, StubMapperProperties stubMapperProperties) {
 		this.delegate = noOpDiscoveryClient();
 		if (log.isDebugEnabled()) {
-			log.debug("Will delegate calls to discovery service [" + this.delegate
-					+ "] if a stub is not found");
+			log.debug("Will delegate calls to discovery service [" + this.delegate + "] if a stub is not found");
 		}
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
@@ -94,8 +89,7 @@ class StubRunnerReactiveDiscoveryClient implements ReactiveDiscoveryClient {
 
 	@Override
 	public Flux<String> getServices() {
-		return Flux.just(client())
-				.flatMapIterable(StubRunnerDiscoveryClient::getServices);
+		return Flux.just(client()).flatMapIterable(StubRunnerDiscoveryClient::getServices);
 	}
 
 	@Override

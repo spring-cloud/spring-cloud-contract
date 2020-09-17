@@ -39,12 +39,11 @@ import java.util.stream.Collectors;
  */
 public class Common {
 
-	public Map<String, DslProperty> convertObjectsToDslProperties(
-			Map<String, Object> body) {
-		return body.entrySet().stream().collect(Collectors.toMap(
-				(Function<Map.Entry, String>) t -> t.getKey().toString(),
-				(Function<Map.Entry, DslProperty>) t -> toDslProperty(t.getValue()),
-				throwingMerger(), LinkedHashMap::new));
+	public Map<String, DslProperty> convertObjectsToDslProperties(Map<String, Object> body) {
+		return body.entrySet().stream()
+				.collect(Collectors.toMap((Function<Map.Entry, String>) t -> t.getKey().toString(),
+						(Function<Map.Entry, DslProperty>) t -> toDslProperty(t.getValue()), throwingMerger(),
+						LinkedHashMap::new));
 	}
 
 	private static <T> BinaryOperator<T> throwingMerger() {
@@ -77,8 +76,7 @@ public class Common {
 		return new NamedProperty(name, value);
 	}
 
-	public NamedProperty named(DslProperty name, DslProperty value,
-			DslProperty contentType) {
+	public NamedProperty named(DslProperty name, DslProperty value, DslProperty contentType) {
 		return new NamedProperty(name, value, contentType);
 	}
 
@@ -241,8 +239,7 @@ public class Common {
 	 * @return file contents as an array of bytes
 	 */
 	private File fileLocation(String relativePath) {
-		URL resource = Thread.currentThread().getContextClassLoader()
-				.getResource(relativePath);
+		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath);
 		if (resource == null) {
 			throw new IllegalStateException("File [" + relativePath + "] is not present");
 		}
@@ -278,48 +275,38 @@ public class Common {
 			if (secondSide == null) {
 				return;
 			}
-			assertThat(
-					secondSide.toString()
-							.matches(((OptionalProperty) firstSide).optionalPattern()),
-					"Pattern [" + ((OptionalProperty) firstSide).optionalPattern()
-							+ "] is not matched by [" + secondSide.toString() + "]");
+			assertThat(secondSide.toString().matches(((OptionalProperty) firstSide).optionalPattern()),
+					"Pattern [" + ((OptionalProperty) firstSide).optionalPattern() + "] is not matched by ["
+							+ secondSide.toString() + "]");
 		}
-		else if ((firstSide instanceof Pattern || firstSide instanceof RegexProperty)
-				&& secondSide instanceof String) {
+		else if ((firstSide instanceof Pattern || firstSide instanceof RegexProperty) && secondSide instanceof String) {
 			Pattern pattern = firstSide instanceof Pattern ? (Pattern) firstSide
 					: ((RegexProperty) firstSide).getPattern();
 			assertThat(((String) secondSide).toString().matches(pattern.pattern()),
-					"Pattern [" + pattern.pattern() + "] is not matched by ["
-							+ secondSide.toString() + "]");
+					"Pattern [" + pattern.pattern() + "] is not matched by [" + secondSide.toString() + "]");
 		}
 		else if ((secondSide instanceof Pattern || secondSide instanceof RegexProperty)
 				&& firstSide instanceof String) {
 			Pattern pattern = secondSide instanceof Pattern ? (Pattern) secondSide
 					: ((RegexProperty) secondSide).getPattern();
 			assertThat(((String) firstSide).matches(pattern.pattern()),
-					"Pattern [" + pattern.pattern() + "] is not matched by ["
-							+ firstSide.toString() + "]");
+					"Pattern [" + pattern.pattern() + "] is not matched by [" + firstSide.toString() + "]");
 		}
-		else if (firstSide instanceof MatchingStrategy
-				&& secondSide instanceof MatchingStrategy) {
-			if (((MatchingStrategy) firstSide).getType()
-					.equals(MatchingStrategy.Type.ABSENT)
-					&& !((MatchingStrategy) secondSide).getType()
-							.equals(MatchingStrategy.Type.ABSENT)) {
+		else if (firstSide instanceof MatchingStrategy && secondSide instanceof MatchingStrategy) {
+			if (((MatchingStrategy) firstSide).getType().equals(MatchingStrategy.Type.ABSENT)
+					&& !((MatchingStrategy) secondSide).getType().equals(MatchingStrategy.Type.ABSENT)) {
 				throwAbsentError();
 			}
 
 		}
 		else if (firstSide instanceof MatchingStrategy) {
-			if (((MatchingStrategy) firstSide).getType()
-					.equals(MatchingStrategy.Type.ABSENT)) {
+			if (((MatchingStrategy) firstSide).getType().equals(MatchingStrategy.Type.ABSENT)) {
 				throwAbsentError();
 			}
 
 		}
 		else if (secondSide instanceof MatchingStrategy) {
-			if (((MatchingStrategy) secondSide).getType()
-					.equals(MatchingStrategy.Type.ABSENT)) {
+			if (((MatchingStrategy) secondSide).getType().equals(MatchingStrategy.Type.ABSENT)) {
 				throwAbsentError();
 			}
 

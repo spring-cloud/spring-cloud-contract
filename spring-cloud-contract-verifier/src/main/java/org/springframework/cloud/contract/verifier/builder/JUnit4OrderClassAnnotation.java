@@ -26,11 +26,9 @@ class JUnit4OrderClassAnnotation implements ClassAnnotation {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] ANNOTATIONS = {
-			"@FixMethodOrder(MethodSorters.NAME_ASCENDING)" };
+	private static final String[] ANNOTATIONS = { "@FixMethodOrder(MethodSorters.NAME_ASCENDING)" };
 
-	JUnit4OrderClassAnnotation(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	JUnit4OrderClassAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -43,10 +41,8 @@ class JUnit4OrderClassAnnotation implements ClassAnnotation {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.configProperties
-				.getTestFramework() == TestFramework.JUNIT
-				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(meta -> meta.getOrder() != null);
+		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.JUNIT
+				&& this.generatedClassMetaData.listOfFiles.stream().anyMatch(meta -> meta.getOrder() != null);
 	}
 
 }

@@ -86,8 +86,7 @@ public class AetherStubDownloader implements StubDownloader {
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		this.deleteStubsAfterTest = stubRunnerOptions.isDeleteStubsAfterTest();
 		if (log.isDebugEnabled()) {
-			log.debug("Will be resolving versions for the following options: ["
-					+ stubRunnerOptions + "]");
+			log.debug("Will be resolving versions for the following options: [" + stubRunnerOptions + "]");
 		}
 		this.settings = settings();
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
@@ -119,25 +118,22 @@ public class AetherStubDownloader implements StubDownloader {
 	 * @param remoteRepositories remote artifact repositories
 	 * @param session repository system session
 	 */
-	public AetherStubDownloader(RepositorySystem repositorySystem,
-			List<RemoteRepository> remoteRepositories, RepositorySystemSession session,
-			Settings settings) {
+	public AetherStubDownloader(RepositorySystem repositorySystem, List<RemoteRepository> remoteRepositories,
+			RepositorySystemSession session, Settings settings) {
 		this.deleteStubsAfterTest = true;
 		this.remoteRepos = remoteRepositories;
 		this.settings = settings;
 		this.repositorySystem = repositorySystem;
 		this.session = session;
 		if (remoteReposMissing()) {
-			log.error(
-					"Remote repositories for stubs are not specified and work offline flag wasn't passed");
+			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.workOffline = false;
 		registerShutdownHook();
 	}
 
 	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {
-		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage
-				.createTempDir(TEMP_DIR_PREFIX);
+		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
 		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
 		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
 		TemporaryFileStorage.add(tmpDirWhereStubsWillBeUnzipped);
@@ -148,19 +144,16 @@ public class AetherStubDownloader implements StubDownloader {
 		return this.remoteRepos == null || this.remoteRepos.isEmpty();
 	}
 
-	private List<RemoteRepository> remoteRepositories(
-			StubRunnerOptions stubRunnerOptions) {
+	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
 		if (stubRunnerOptions.stubRepositoryRoot == null) {
 			return new ArrayList<>();
 		}
-		final String[] repos = stubRunnerOptions.getStubRepositoryRootAsString()
-				.split(",");
+		final String[] repos = stubRunnerOptions.getStubRepositoryRootAsString().split(",");
 		final List<RemoteRepository> remoteRepos = new ArrayList<>();
 		for (int i = 0; i < repos.length; i++) {
 			if (StringUtils.hasText(repos[i])) {
-				final RemoteRepository.Builder builder = new RemoteRepository.Builder(
-						"remote" + i, "default", repos[i]).setAuthentication(
-								resolveAuthentication(stubRunnerOptions));
+				final RemoteRepository.Builder builder = new RemoteRepository.Builder("remote" + i, "default", repos[i])
+						.setAuthentication(resolveAuthentication(stubRunnerOptions));
 				if (stubRunnerOptions.getProxyOptions() != null) {
 					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
@@ -179,49 +172,38 @@ public class AetherStubDownloader implements StubDownloader {
 			Server stubServer = this.settings.getServer(stubRunnerOptions.serverId);
 			if (stubServer != null) {
 				if (log.isDebugEnabled()) {
-					log.debug("Custom server id [" + stubServer.getId()
-							+ "] passed will resolve credentials");
+					log.debug("Custom server id [" + stubServer.getId() + "] passed will resolve credentials");
 				}
-				SettingsDecryptionRequest settingsDecryptionRequest = new DefaultSettingsDecryptionRequest(
-						stubServer);
+				SettingsDecryptionRequest settingsDecryptionRequest = new DefaultSettingsDecryptionRequest(stubServer);
 				String stubServerPassword = new MavenSettings().createSettingsDecrypter()
 						.decrypt(settingsDecryptionRequest).getServer().getPassword();
 				return buildAuthentication(stubServerPassword, stubServer.getUsername());
 			}
 		}
-		return buildAuthentication(stubRunnerOptions.password,
-				stubRunnerOptions.username);
+		return buildAuthentication(stubRunnerOptions.password, stubRunnerOptions.username);
 	}
 
 	Authentication buildAuthentication(String stubServerPassword, String username) {
-		return new AuthenticationBuilder().addUsername(username)
-				.addPassword(stubServerPassword).build();
+		return new AuthenticationBuilder().addUsername(username).addPassword(stubServerPassword).build();
 	}
 
-	private File unpackedJar(String resolvedVersion, String stubsGroup,
-			String stubsModule, String classifier) {
+	private File unpackedJar(String resolvedVersion, String stubsGroup, String stubsModule, String classifier) {
 		try {
 			log.info("Resolved version is [" + resolvedVersion + "]");
 			if (StringUtils.isEmpty(resolvedVersion)) {
-				log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule
-						+ "] and classifier [" + classifier + "] not found in "
-						+ this.remoteRepos);
+				log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule + "] and classifier ["
+						+ classifier + "] not found in " + this.remoteRepos);
 				return null;
 			}
-			Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
-					ARTIFACT_EXTENSION, resolvedVersion);
-			ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos,
-					null);
+			Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier, ARTIFACT_EXTENSION,
+					resolvedVersion);
+			ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos, null);
 			if (log.isDebugEnabled()) {
-				log.debug("Resolving artifact [" + artifact
-						+ "] using remote repositories " + this.remoteRepos);
+				log.debug("Resolving artifact [" + artifact + "] using remote repositories " + this.remoteRepos);
 			}
-			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session,
-					request);
-			log.info("Resolved artifact [" + artifact + "] to "
-					+ result.getArtifact().getFile());
-			File temporaryFile = unpackStubJarToATemporaryFolder(
-					result.getArtifact().getFile().toURI());
+			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
+			log.info("Resolved artifact [" + artifact + "] to " + result.getArtifact().getFile());
+			File temporaryFile = unpackStubJarToATemporaryFolder(result.getArtifact().getFile().toURI());
 			log.info("Unpacked file to [" + temporaryFile + "]");
 			return temporaryFile;
 		}
@@ -230,44 +212,35 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(
-					"Exception occurred while trying to download a stub for group ["
-							+ stubsGroup + "] module [" + stubsModule
-							+ "] and classifier [" + classifier + "] in "
-							+ this.remoteRepos,
+					"Exception occurred while trying to download a stub for group [" + stubsGroup + "] module ["
+							+ stubsModule + "] and classifier [" + classifier + "] in " + this.remoteRepos,
 					e);
 		}
 	}
 
-	private String getVersion(String stubsGroup, String stubsModule, String version,
-			String classifier) {
+	private String getVersion(String stubsGroup, String stubsModule, String version, String classifier) {
 		if (StringUtils.isEmpty(version) || LATEST_VERSION_IN_IVY.equals(version)) {
-			log.info("Desired version is [" + version
-					+ "] - will try to resolve the latest version");
-			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier,
-					LATEST_ARTIFACT_VERSION);
+			log.info("Desired version is [" + version + "] - will try to resolve the latest version");
+			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier, LATEST_ARTIFACT_VERSION);
 		}
-		return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier,
-				version);
+		return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier, version);
 	}
 
 	@Override
-	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubConfiguration stubConfiguration) {
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration) {
 		try {
-			String version = getVersion(stubConfiguration.groupId,
-					stubConfiguration.artifactId, stubConfiguration.version,
-					stubConfiguration.classifier);
+			String version = getVersion(stubConfiguration.groupId, stubConfiguration.artifactId,
+					stubConfiguration.version, stubConfiguration.classifier);
 			if (log.isDebugEnabled()) {
 				log.debug("Will download the stub for version [" + version + "]");
 			}
-			File unpackedJar = unpackedJar(version, stubConfiguration.groupId,
-					stubConfiguration.artifactId, stubConfiguration.classifier);
+			File unpackedJar = unpackedJar(version, stubConfiguration.groupId, stubConfiguration.artifactId,
+					stubConfiguration.classifier);
 			if (unpackedJar == null) {
 				return null;
 			}
-			return new AbstractMap.SimpleEntry<>(new StubConfiguration(
-					stubConfiguration.groupId, stubConfiguration.artifactId, version,
-					stubConfiguration.classifier), unpackedJar);
+			return new AbstractMap.SimpleEntry<>(new StubConfiguration(stubConfiguration.groupId,
+					stubConfiguration.artifactId, version, stubConfiguration.classifier), unpackedJar);
 		}
 		catch (Exception ex) {
 			log.warn("Exception occurred while trying to fetch the stubs", ex);
@@ -275,16 +248,13 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 	}
 
-	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule,
-			String classifier, String version) {
-		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
-				ARTIFACT_EXTENSION, version);
-		VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact,
-				this.remoteRepos, null);
+	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule, String classifier,
+			String version) {
+		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier, ARTIFACT_EXTENSION, version);
+		VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact, this.remoteRepos, null);
 		VersionRangeResult rangeResult;
 		try {
-			rangeResult = this.repositorySystem.resolveVersionRange(this.session,
-					versionRangeRequest);
+			rangeResult = this.repositorySystem.resolveVersionRange(this.session, versionRangeRequest);
 			if (log.isDebugEnabled()) {
 				log.debug("Resolved version range is [" + rangeResult + "]");
 			}
@@ -293,19 +263,17 @@ public class AetherStubDownloader implements StubDownloader {
 			throw new IllegalStateException("Cannot resolve version range", e);
 		}
 		if (rangeResult.getHighestVersion() == null) {
-			throw new IllegalArgumentException("For groupId [" + stubsGroup
-					+ "] artifactId [" + stubsModule + "] " + "and classifier ["
-					+ classifier
-					+ "] the version was not resolved! The following exceptions took place "
-					+ rangeResult.getExceptions());
+			throw new IllegalArgumentException(
+					"For groupId [" + stubsGroup + "] artifactId [" + stubsModule + "] " + "and classifier ["
+							+ classifier + "] the version was not resolved! The following exceptions took place "
+							+ rangeResult.getExceptions());
 		}
-		return rangeResult.getHighestVersion() == null ? null
-				: rangeResult.getHighestVersion().toString();
+		return rangeResult.getHighestVersion() == null ? null : rangeResult.getHighestVersion().toString();
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> TemporaryFileStorage
-				.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
+		Runtime.getRuntime().addShutdownHook(
+				new Thread(() -> TemporaryFileStorage.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
 	}
 
 }
