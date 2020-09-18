@@ -32,21 +32,16 @@ class RestAssuredWhen implements When, BodyMethodVisitor, RestAssuredAcceptor {
 
 	private final List<When> whens = new LinkedList<>();
 
-	RestAssuredWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
+	RestAssuredWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-		this.responseWhens.addAll(Arrays.asList(
-				new MockMvcResponseWhen(blockBuilder, this.generatedClassMetaData),
+		this.responseWhens.addAll(Arrays.asList(new MockMvcResponseWhen(blockBuilder, this.generatedClassMetaData),
 				new SpockMockMvcResponseWhen(blockBuilder, this.generatedClassMetaData),
 				new ExplicitResponseWhen(blockBuilder, this.generatedClassMetaData),
-				new WebTestClientResponseWhen(blockBuilder,
-						this.generatedClassMetaData)));
-		this.whens.addAll(
-				Arrays.asList(new MockMvcQueryParamsWhen(this.blockBuilder, bodyParser),
-						new MockMvcAsyncWhen(this.blockBuilder,
-								this.generatedClassMetaData),
-						new MockMvcUrlWhen(this.blockBuilder, bodyParser)));
+				new WebTestClientResponseWhen(blockBuilder, this.generatedClassMetaData)));
+		this.whens.addAll(Arrays.asList(new MockMvcQueryParamsWhen(this.blockBuilder, bodyParser),
+				new MockMvcAsyncWhen(this.blockBuilder, this.generatedClassMetaData),
+				new MockMvcUrlWhen(this.blockBuilder, bodyParser)));
 	}
 
 	@Override
@@ -59,10 +54,8 @@ class RestAssuredWhen implements When, BodyMethodVisitor, RestAssuredAcceptor {
 	}
 
 	private void addResponseWhenLine(SingleContractMetadata singleContractMetadata) {
-		this.responseWhens.stream().filter(when -> when.accept(singleContractMetadata))
-				.findFirst()
-				.orElseThrow(() -> new IllegalStateException(
-						"No matching request building When implementation for Rest Assured"))
+		this.responseWhens.stream().filter(when -> when.accept(singleContractMetadata)).findFirst().orElseThrow(
+				() -> new IllegalStateException("No matching request building When implementation for Rest Assured"))
 				.apply(singleContractMetadata);
 	}
 

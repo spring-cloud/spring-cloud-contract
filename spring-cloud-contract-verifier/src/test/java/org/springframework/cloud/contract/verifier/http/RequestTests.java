@@ -26,27 +26,23 @@ class RequestTests {
 
 	@Test
 	void should_override_entries_when_using_builder_from_request() {
-		Request request = Request.given()
-							.delete("/foo")
-							.header("header", "header-value")
-							.cookie("cookie", "cookie-value")
-							.queryParam("query", "param-value")
-							.protocol(ContractVerifierHttpMetaData.Protocol.HTTP_1_1)
-							.scheme(ContractVerifierHttpMetaData.Scheme.HTTPS)
-							.build();
+		Request request = Request.given().delete("/foo").header("header", "header-value")
+				.cookie("cookie", "cookie-value").queryParam("query", "param-value")
+				.protocol(ContractVerifierHttpMetaData.Protocol.HTTP_1_1)
+				.scheme(ContractVerifierHttpMetaData.Scheme.HTTPS).build();
 
-		Request changedRequest = Request.from(request)
-									.path("/bar")
-									.header("header-foo", "header-bar")
-									.cookie("cookie-foo", "cookie-bar")
-									.queryParam("query-foo", "query-bar")
-									.build();
+		Request changedRequest = Request.from(request).path("/bar").header("header-foo", "header-bar")
+				.cookie("cookie-foo", "cookie-bar").queryParam("query-foo", "query-bar").build();
 
 		then(changedRequest.path()).isEqualTo("/bar");
 		then(changedRequest.method().name()).isEqualTo("DELETE");
-		then(changedRequest.headers()).containsEntry("header-foo", "header-bar").containsEntry("header", "header-value");
-		then(changedRequest.cookies()).containsEntry("cookie-foo", "cookie-bar").containsEntry("cookie", "cookie-value");
-		then(changedRequest.queryParams()).contains(new AbstractMap.SimpleEntry<>("query", "param-value"), new AbstractMap.SimpleEntry<>("query-foo", "query-bar"));
+		then(changedRequest.headers()).containsEntry("header-foo", "header-bar").containsEntry("header",
+				"header-value");
+		then(changedRequest.cookies()).containsEntry("cookie-foo", "cookie-bar").containsEntry("cookie",
+				"cookie-value");
+		then(changedRequest.queryParams()).contains(new AbstractMap.SimpleEntry<>("query", "param-value"),
+				new AbstractMap.SimpleEntry<>("query-foo", "query-bar"));
 		then(changedRequest.protocol()).isEqualTo(ContractVerifierHttpMetaData.Protocol.HTTP_1_1);
 	}
+
 }

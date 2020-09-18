@@ -35,8 +35,7 @@ class CustomModeMethodWithUrlGiven implements Given {
 
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
-		addUrl(getUrl(metadata.getContract().getRequest()),
-				metadata.getContract().getRequest());
+		addUrl(getUrl(metadata.getContract().getRequest()), metadata.getContract().getRequest());
 		return this;
 	}
 

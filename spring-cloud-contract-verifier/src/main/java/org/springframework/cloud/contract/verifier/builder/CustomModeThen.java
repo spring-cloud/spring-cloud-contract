@@ -30,17 +30,14 @@ class CustomModeThen implements Then, BodyMethodVisitor, CustomModeAcceptor {
 
 	private final List<Then> thens = new LinkedList<>();
 
-	CustomModeThen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser,
+	CustomModeThen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser,
 			ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-		this.thens.addAll(Arrays.asList(
-				new CustomModeStatusCodeThen(this.blockBuilder, comparisonBuilder),
+		this.thens.addAll(Arrays.asList(new CustomModeStatusCodeThen(this.blockBuilder, comparisonBuilder),
 				new CustomModeHeadersThen(this.blockBuilder, comparisonBuilder),
 				new CustomModeCookiesThen(this.blockBuilder, comparisonBuilder),
-				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData,
-						bodyParser, comparisonBuilder)));
+				new GenericHttpBodyThen(this.blockBuilder, generatedClassMetaData, bodyParser, comparisonBuilder)));
 	}
 
 	@Override

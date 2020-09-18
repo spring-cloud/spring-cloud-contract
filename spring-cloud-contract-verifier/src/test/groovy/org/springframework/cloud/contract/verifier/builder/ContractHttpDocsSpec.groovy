@@ -368,8 +368,8 @@ class ContractHttpDocsSpec extends Specification {
 			String test = singleTestGenerator(optionals)
 		expect:
 			String expectedTest =
-// tag::optionals_test[]
 					"""\
+// tag::optionals_test[]
 package com.example
 
 import com.jayway.jsonpath.DocumentContext
@@ -406,9 +406,15 @@ class FooSpec extends Specification {
 \t}
 
 }
-"""
 // end::optionals_test[]
-			test.trim() == expectedTest.trim()
+"""
+
+			test.trim()
+				.replace("\\\t", "\t") == expectedTest.trim()
+														  .replace("  ", "\t")
+														  .replace("\\\t", "\t")
+														  .replace("// tag::optionals_test[]\n", "")
+														  .replace("\n// end::optionals_test[]", "")
 		and:
 			SyntaxChecker.tryToCompile("spock", test)
 	}

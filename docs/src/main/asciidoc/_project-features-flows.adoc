@@ -10,7 +10,7 @@ to define `protected WebTarget webTarget` and server initialization. The only op
 testing JAX-RS API is to start a web server. Also, a request with a body needs to have a
 content type be set. Otherwise, the default of `application/octet-stream` gets used.
 
-In order to use JAX-RS mode, use the following settings:
+To use JAX-RS mode, use the following setting:
 
 ====
 [source,groovy,indent=0]
@@ -130,10 +130,12 @@ include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.j
 [[features-custom-mode]]
 === Custom Mode
 
-IMPORTANT: This mode is experimental and can change in the future!
+IMPORTANT: This mode is experimental and can change in the future.
 
-The Spring Cloud Contract allows you to provide your own, custom implementation of the
-`org.springframework.cloud.contract.verifier.http.HttpVerifier`. That way you can use any client you want to send and receive a request. The default implementation in Spring Cloud Contract is `OkHttpHttpVerifier` and it leverages OkHttp3 http client.
+The Spring Cloud Contract lets you provide your own, custom, implementation of the
+`org.springframework.cloud.contract.verifier.http.HttpVerifier`. That way, you can use any client you want to send and receive a request. The default implementation in Spring Cloud Contract is `OkHttpHttpVerifier` and it uses OkHttp3 http client.
+
+To get started, set `testMode` to `CUSTOM`:
 
 ====
 [source,groovy,indent=0]
@@ -196,7 +198,7 @@ public class RestTest extends BeerRestBase {
 ----
 ====
 
-Corresponding base class could look like this:
+The following example shows a corresponding base class:
 
 ====
 [source,java,indent=0]

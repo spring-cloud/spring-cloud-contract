@@ -24,19 +24,17 @@ class ResponseTests {
 
 	@Test
 	void should_override_entries_when_using_builder_from_response() {
-		Response response = Response.builder()
-							.statusCode(200)
-							.header("header", "header-value")
-							.cookie("cookie", "cookie-value")
-							.build();
+		Response response = Response.builder().statusCode(200).header("header", "header-value")
+				.cookie("cookie", "cookie-value").build();
 
-		Response changedResponse = Response.from(response)
-									.header("header-foo", "header-bar")
-									.cookie("cookie-foo", "cookie-bar")
-									.build();
+		Response changedResponse = Response.from(response).header("header-foo", "header-bar")
+				.cookie("cookie-foo", "cookie-bar").build();
 
 		then(changedResponse.statusCode()).isEqualTo(200);
-		then(changedResponse.headers()).containsEntry("header-foo", "header-bar").containsEntry("header", "header-value");
-		then(changedResponse.cookies()).containsEntry("cookie-foo", "cookie-bar").containsEntry("cookie", "cookie-value");
+		then(changedResponse.headers()).containsEntry("header-foo", "header-bar").containsEntry("header",
+				"header-value");
+		then(changedResponse.cookies()).containsEntry("cookie-foo", "cookie-bar").containsEntry("cookie",
+				"cookie-value");
 	}
+
 }

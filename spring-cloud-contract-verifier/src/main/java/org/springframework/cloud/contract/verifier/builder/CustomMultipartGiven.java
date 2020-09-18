@@ -35,8 +35,7 @@ class CustomMultipartGiven implements Given, CustomModeAcceptor {
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
-		return request != null && request.getMultipart() != null
-				&& acceptType(this.generatedClassMetaData, metadata);
+		return request != null && request.getMultipart() != null && acceptType(this.generatedClassMetaData, metadata);
 	}
 
 }

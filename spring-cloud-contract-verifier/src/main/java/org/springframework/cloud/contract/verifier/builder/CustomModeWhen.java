@@ -30,12 +30,10 @@ class CustomModeWhen implements When, BodyMethodVisitor, CustomModeAcceptor {
 
 	private final List<When> responseWhens = new LinkedList<>();
 
-	CustomModeWhen(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	CustomModeWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-		this.responseWhens.addAll(Arrays.asList(
-				new CustomModeResponseWhen(blockBuilder, this.generatedClassMetaData)));
+		this.responseWhens.addAll(Arrays.asList(new CustomModeResponseWhen(blockBuilder, this.generatedClassMetaData)));
 	}
 
 	@Override
@@ -47,10 +45,8 @@ class CustomModeWhen implements When, BodyMethodVisitor, CustomModeAcceptor {
 	}
 
 	private void addResponseWhenLine(SingleContractMetadata singleContractMetadata) {
-		this.responseWhens.stream().filter(when -> when.accept(singleContractMetadata))
-				.findFirst()
-				.orElseThrow(() -> new IllegalStateException(
-						"No matching request building When implementation for Rest Assured"))
+		this.responseWhens.stream().filter(when -> when.accept(singleContractMetadata)).findFirst().orElseThrow(
+				() -> new IllegalStateException("No matching request building When implementation for Rest Assured"))
 				.apply(singleContractMetadata);
 	}
 

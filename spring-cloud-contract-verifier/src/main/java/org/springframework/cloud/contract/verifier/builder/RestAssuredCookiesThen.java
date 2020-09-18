@@ -19,8 +19,7 @@ package org.springframework.cloud.contract.verifier.builder;
 import org.springframework.cloud.contract.spec.internal.Response;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
-class RestAssuredCookiesThen
-		implements Then, RestAssuredAcceptor, CookieElementProcessor {
+class RestAssuredCookiesThen implements Then, RestAssuredAcceptor, CookieElementProcessor {
 
 	private final BlockBuilder blockBuilder;
 

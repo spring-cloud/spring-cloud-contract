@@ -50,10 +50,8 @@ public class ContractVerifierHttpMetaData implements SpringCloudContractMetadata
 	private Protocol protocol = Protocol.HTTP_1_1;
 
 	@NonNull
-	public static ContractVerifierHttpMetaData fromMetadata(
-			Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, METADATA_KEY,
-				new ContractVerifierHttpMetaData());
+	public static ContractVerifierHttpMetaData fromMetadata(Map<String, Object> metadata) {
+		return MetadataUtil.fromMetadata(metadata, METADATA_KEY, new ContractVerifierHttpMetaData());
 	}
 
 	@Override
@@ -110,8 +108,7 @@ public class ContractVerifierHttpMetaData implements SpringCloudContractMetadata
 		 */
 		@Nullable
 		public static Scheme fromString(String scheme) {
-			return Arrays.stream(values()).filter(p -> p.name().equalsIgnoreCase(scheme))
-					.findFirst().orElse(null);
+			return Arrays.stream(values()).filter(p -> p.name().equalsIgnoreCase(scheme)).findFirst().orElse(null);
 		}
 
 	}
@@ -184,9 +181,7 @@ public class ContractVerifierHttpMetaData implements SpringCloudContractMetadata
 		 */
 		@Nullable
 		public static Protocol fromString(String protocol) {
-			return Arrays.stream(values())
-					.filter(p -> p.protocol.equalsIgnoreCase(protocol)).findFirst()
-					.orElse(null);
+			return Arrays.stream(values()).filter(p -> p.protocol.equalsIgnoreCase(protocol)).findFirst().orElse(null);
 		}
 
 	}

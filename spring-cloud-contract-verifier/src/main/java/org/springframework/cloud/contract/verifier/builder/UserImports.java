@@ -24,8 +24,7 @@ class UserImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	UserImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	UserImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}

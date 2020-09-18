@@ -33,22 +33,17 @@ class CustomModeGiven implements Given, BodyMethodVisitor, CustomModeAcceptor {
 
 	private final List<Given> bodyGivens = new LinkedList<>();
 
-	CustomModeGiven(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
+	CustomModeGiven(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
-		this.requestGivens.addAll(Collections.singletonList(
-				new CustomModeRequestGiven(blockBuilder, generatedClassMetaData)));
-		this.bodyGivens.addAll(
-				Arrays.asList(new CustomModeMethodWithUrlGiven(blockBuilder, bodyParser),
-						new CustomModeQueryParamsGiven(blockBuilder, bodyParser),
-						new CustomModeSchemeProtocolGiven(blockBuilder),
-						new CustomModeHeadersGiven(blockBuilder),
-						new CustomModeCookiesGiven(blockBuilder),
-						new CustomModeBodyGiven(blockBuilder, generatedClassMetaData,
-								bodyParser),
-						new CustomMultipartGiven(generatedClassMetaData),
-						new CustomModeRequestBuildGiven(blockBuilder)));
+		this.requestGivens
+				.addAll(Collections.singletonList(new CustomModeRequestGiven(blockBuilder, generatedClassMetaData)));
+		this.bodyGivens.addAll(Arrays.asList(new CustomModeMethodWithUrlGiven(blockBuilder, bodyParser),
+				new CustomModeQueryParamsGiven(blockBuilder, bodyParser),
+				new CustomModeSchemeProtocolGiven(blockBuilder), new CustomModeHeadersGiven(blockBuilder),
+				new CustomModeCookiesGiven(blockBuilder),
+				new CustomModeBodyGiven(blockBuilder, generatedClassMetaData, bodyParser),
+				new CustomMultipartGiven(generatedClassMetaData), new CustomModeRequestBuildGiven(blockBuilder)));
 	}
 
 	@Override
@@ -61,8 +56,7 @@ class CustomModeGiven implements Given, BodyMethodVisitor, CustomModeAcceptor {
 	}
 
 	private void addRequestGivenLine(SingleContractMetadata singleContractMetadata) {
-		this.requestGivens.stream().filter(given -> given.accept(singleContractMetadata))
-				.findFirst()
+		this.requestGivens.stream().filter(given -> given.accept(singleContractMetadata)).findFirst()
 				.orElseThrow(() -> new IllegalStateException(
 						"No matching request building Given implementation for a custom test mode"))
 				.apply(singleContractMetadata);

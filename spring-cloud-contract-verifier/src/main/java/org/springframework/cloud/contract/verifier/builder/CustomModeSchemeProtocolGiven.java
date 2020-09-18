@@ -32,13 +32,9 @@ class CustomModeSchemeProtocolGiven implements Given {
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
 		Contract contract = metadata.getContract();
-		ContractVerifierHttpMetaData httpMetadata = ContractVerifierHttpMetaData
-				.fromMetadata(contract.getMetadata());
-		this.blockBuilder
-				.addIndented(".scheme(\"" + httpMetadata.getScheme().name() + "\")")
-				.addEmptyLine();
-		this.blockBuilder.addIndented(
-				".protocol(\"" + httpMetadata.getProtocol().toString() + "\")");
+		ContractVerifierHttpMetaData httpMetadata = ContractVerifierHttpMetaData.fromMetadata(contract.getMetadata());
+		this.blockBuilder.addIndented(".scheme(\"" + httpMetadata.getScheme().name() + "\")").addEmptyLine();
+		this.blockBuilder.addIndented(".protocol(\"" + httpMetadata.getProtocol().toString() + "\")");
 		return this;
 	}
 

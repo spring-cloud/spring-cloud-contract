@@ -25,8 +25,7 @@ class CustomModeCookiesThen implements Then, CustomModeAcceptor, CookieElementPr
 
 	private final ComparisonBuilder comparisonBuilder;
 
-	CustomModeCookiesThen(BlockBuilder blockBuilder,
-			ComparisonBuilder comparisonBuilder) {
+	CustomModeCookiesThen(BlockBuilder blockBuilder, ComparisonBuilder comparisonBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.comparisonBuilder = comparisonBuilder;
 	}

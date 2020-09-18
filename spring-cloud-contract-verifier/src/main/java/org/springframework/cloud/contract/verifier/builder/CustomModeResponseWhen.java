@@ -31,9 +31,7 @@ class CustomModeResponseWhen implements When, CustomModeAcceptor {
 
 	@Override
 	public MethodVisitor<When> apply(SingleContractMetadata metadata) {
-		this.blockBuilder
-				.addLineWithEnding("Response response = httpVerifier.exchange(request)")
-				.endBlock();
+		this.blockBuilder.addLineWithEnding("Response response = httpVerifier.exchange(request)").endBlock();
 		return this;
 	}
 

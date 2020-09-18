@@ -24,8 +24,7 @@ class UserStaticImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	UserStaticImports(BlockBuilder blockBuilder,
-			GeneratedClassMetaData generatedClassMetaData) {
+	UserStaticImports(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = generatedClassMetaData;
 	}
@@ -40,8 +39,7 @@ class UserStaticImports implements Imports {
 	@Override
 	public boolean accept() {
 		return this.generatedClassMetaData.configProperties.getStaticImports() != null
-				&& this.generatedClassMetaData.configProperties
-						.getStaticImports().length > 0;
+				&& this.generatedClassMetaData.configProperties.getStaticImports().length > 0;
 	}
 
 }

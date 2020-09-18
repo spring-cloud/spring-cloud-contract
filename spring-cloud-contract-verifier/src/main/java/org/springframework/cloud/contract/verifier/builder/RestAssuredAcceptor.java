@@ -24,8 +24,7 @@ interface RestAssuredAcceptor {
 	default boolean acceptType(GeneratedClassMetaData generatedClassMetaData,
 			SingleContractMetadata singleContractMetadata) {
 		return generatedClassMetaData.configProperties.getTestMode() != TestMode.CUSTOM
-				&& generatedClassMetaData.configProperties
-						.getTestMode() != TestMode.JAXRSCLIENT
+				&& generatedClassMetaData.configProperties.getTestMode() != TestMode.JAXRSCLIENT
 				&& singleContractMetadata.isHttp();
 	}
 

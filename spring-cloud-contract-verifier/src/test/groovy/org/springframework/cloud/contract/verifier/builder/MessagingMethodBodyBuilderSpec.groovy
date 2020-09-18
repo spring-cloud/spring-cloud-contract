@@ -98,8 +98,8 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
-// tag::trigger_method_test[]
 					'''\
+// tag::trigger_method_test[]
 package com.example
 
 import com.jayway.jsonpath.DocumentContext
@@ -118,34 +118,46 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\twhen:
-\t\t\tbookReturnedTriggered()
+	def validate_foo() throws Exception {
+		when:
+			bookReturnedTriggered()
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("BOOK-NAME") != null
-\t\t\tresponse.getHeader("BOOK-NAME").toString() == 'foo'
-\t\t\tresponse.getHeader("contentType") != null
-\t\t\tresponse.getHeader("contentType").toString() == 'application/json'
+		and:
+			response.getHeader("BOOK-NAME") != null
+			response.getHeader("BOOK-NAME").toString() == 'foo'
+			response.getHeader("contentType") != null
+			response.getHeader("contentType").toString() == 'application/json'
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
+	}
 
 }
-
-'''
 // end::trigger_method_test[]
-			test.trim() == expectedMessage.trim()
+'''
+			test.trim() == messageWithoutTags(expectedMessage, "trigger_method_test")
+	}
+
+
+	String messageWithoutTags(String message) {
+		return messageWithoutTags(message, "invalidTag")
+	}
+
+	String messageWithoutTags(String message, String tagName) {
+		return message.trim()
+					   .replace("  ", "	")
+					   .replace("\\	", "	")
+					   .replace("// tag::${tagName}[]\n", "")
+					   .replace("\n// end::${tagName}[]", "")
 	}
 
 	def "should work for triggered based messaging with JUnit"() {
@@ -171,8 +183,8 @@ class FooSpec extends Specification {
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
-// tag::trigger_method_junit_test[]
 					'''\
+// tag::trigger_method_junit_test[]
 package com.example;
 
 import com.jayway.jsonpath.DocumentContext;
@@ -192,35 +204,34 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// when:
-\t\t\tbookReturnedTriggered();
+	@Test
+	public void validate_foo() throws Exception {
+		// when:
+			bookReturnedTriggered();
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tassertThat(response.getHeader("BOOK-NAME")).isNotNull();
-\t\t\tassertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
-\t\t\tassertThat(response.getHeader("contentType")).isNotNull();
-\t\t\tassertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
+		// and:
+			assertThat(response.getHeader("BOOK-NAME")).isNotNull();
+			assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
+			assertThat(response.getHeader("contentType")).isNotNull();
+			assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+	}
 
 }
-
-'''
 // end::trigger_method_junit_test[]
-			test.trim() == expectedMessage.trim()
+'''
+			test.trim() == messageWithoutTags(expectedMessage, "trigger_method_junit_test")
 	}
 
 	def "should generate tests triggered by a message for Spock"() {
@@ -254,8 +265,8 @@ public class FooTest {
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
-// tag::trigger_message_spock[]
 					"""\
+// tag::trigger_message_spock[]
 package com.example
 
 import com.jayway.jsonpath.DocumentContext
@@ -274,40 +285,39 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\tgiven:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\t'''{"bookName":"foo"}'''
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("sample", "header")
-\t\t\t)
+	def validate_foo() throws Exception {
+		given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					'''{"bookName":"foo"}'''
+						, headers()
+							.header("sample", "header")
+			)
 
-\t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
-\t\t\t\t\tcontract(this, "foo.yml"))
+		when:
+			contractVerifierMessaging.send(inputMessage, "jms:input",
+					contract(this, "foo.yml"))
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("BOOK-NAME") != null
-\t\t\tresponse.getHeader("BOOK-NAME").toString() == 'foo'
+		and:
+			response.getHeader("BOOK-NAME") != null
+			response.getHeader("BOOK-NAME").toString() == 'foo'
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
+	}
 
 }
-
-"""
 // end::trigger_message_spock[]
-			test.trim() == expectedMessage.trim()
+"""
+			test.trim() == messageWithoutTags(expectedMessage, "trigger_message_spock")
 	}
 
 	def "should generate tests triggered by a message for JUnit"() {
@@ -340,8 +350,8 @@ class FooSpec extends Specification {
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedMessage =
-// tag::trigger_message_junit[]
 					'''\
+// tag::trigger_message_junit[]
 package com.example;
 
 import com.jayway.jsonpath.DocumentContext;
@@ -361,41 +371,40 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// given:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("sample", "header")
-\t\t\t);
+	@Test
+	public void validate_foo() throws Exception {
+		// given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					"{\\"bookName\\":\\"foo\\"}"
+						, headers()
+							.header("sample", "header")
+			);
 
-\t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
-\t\t\t\t\tcontract(this, "foo.yml"));
+		// when:
+			contractVerifierMessaging.send(inputMessage, "jms:input",
+					contract(this, "foo.yml"));
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tassertThat(response.getHeader("BOOK-NAME")).isNotNull();
-\t\t\tassertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
+		// and:
+			assertThat(response.getHeader("BOOK-NAME")).isNotNull();
+			assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+	}
 
 }
-
-'''
 // end::trigger_message_junit[]
-			test.trim() == expectedMessage.trim()
+'''
+			test.trim() == messageWithoutTags(expectedMessage, "trigger_message_junit")
 	}
 
 	def "should generate tests without destination, triggered by a message"() {
@@ -420,9 +429,9 @@ public class FooTest {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
-// tag::trigger_no_output_spock[]
+			String expectedMessage =
 					"""\
+// tag::trigger_no_output_spock[]
 package com.example
 
 import com.jayway.jsonpath.DocumentContext
@@ -441,30 +450,30 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\tgiven:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\t'''{"bookName":"foo"}'''
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("sample", "header")
-\t\t\t)
+	def validate_foo() throws Exception {
+		given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					'''{"bookName":"foo"}'''
+						, headers()
+							.header("sample", "header")
+			)
 
-\t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tbookWasDeleted()
+		when:
+			contractVerifierMessaging.send(inputMessage, "jms:delete",
+					contract(this, "foo.yml"))
+			bookWasDeleted()
 
-\t\tthen:
-\t\t\tnoExceptionThrown()
-\t}
+		then:
+			noExceptionThrown()
+	}
 
 }
-"""
 // end::trigger_no_output_spock[]
-			test.trim() == expectedMsg.trim()
+"""
+			test.trim() == messageWithoutTags(expectedMessage, "trigger_no_output_spock")
 	}
 
 	def "should generate tests without destination, triggered by a message for JUnit"() {
@@ -488,9 +497,9 @@ class FooSpec extends Specification {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
-// tag::trigger_no_output_junit[]
+			String expectedMessage =
 					"""\
+// tag::trigger_no_output_junit[]
 package com.example;
 
 import com.jayway.jsonpath.DocumentContext;
@@ -510,30 +519,29 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// given:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("sample", "header")
-\t\t\t);
+	@Test
+	public void validate_foo() throws Exception {
+		// given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					"{\\"bookName\\":\\"foo\\"}"
+						, headers()
+							.header("sample", "header")
+			);
 
-\t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:delete",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tbookWasDeleted();
+		// when:
+			contractVerifierMessaging.send(inputMessage, "jms:delete",
+					contract(this, "foo.yml"));
+			bookWasDeleted();
 
-\t}
+	}
 
 }
-
-"""
 // end::trigger_no_output_junit[]
-			test.trim() == expectedMsg.trim()
+"""
+			test.trim() == messageWithoutTags(expectedMessage, "trigger_no_output_junit")
 	}
 
 	def "should generate tests without headers for JUnit"() {
@@ -561,7 +569,7 @@ public class FooTest {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					"""\
 package com.example;
 
@@ -582,35 +590,35 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// given:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("sample", "header")
-\t\t\t);
+	@Test
+	public void validate_foo() throws Exception {
+		// given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					"{\\"bookName\\":\\"foo\\"}"
+						, headers()
+							.header("sample", "header")
+			);
 
-\t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
-\t\t\t\t\tcontract(this, "foo.yml"));
+		// when:
+			contractVerifierMessaging.send(inputMessage, "jms:input",
+					contract(this, "foo.yml"));
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+	}
 
 }
 """
-			test.trim() == expectedMsg.trim()
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	def "should generate tests without headers for Spock"() {
@@ -638,7 +646,7 @@ public class FooTest {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					"""\
 package com.example
 
@@ -658,39 +666,35 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\tgiven:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\t'''{"bookName":"foo"}'''
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("sample", "header")
-\t\t\t)
+	def validate_foo() throws Exception {
+		given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					'''{"bookName":"foo"}'''
+						, headers()
+							.header("sample", "header")
+			)
 
-\t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
-\t\t\t\t\tcontract(this, "foo.yml"))
+		when:
+			contractVerifierMessaging.send(inputMessage, "jms:input",
+					contract(this, "foo.yml"))
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['bookName']").isEqualTo("foo")
+	}
 
 }
 
 """
-			test.trim() == expectedMsg.trim()
-	}
-
-	private String stripped(String text) {
-		return text.stripIndent().stripMargin().replace('  ', '').replace('\n', '').replace('\t', '').replaceAll("\\W", "")
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	def "should generate tests without headers for JUnit with consumer / producer notation"() {
@@ -722,7 +726,7 @@ class FooSpec extends Specification {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					'''
 package com.example;
 
@@ -743,35 +747,35 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// given:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\t"{\\"bookName\\":\\"foo\\"}"
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("sample", "header")
-\t\t\t);
+	@Test
+	public void validate_foo() throws Exception {
+		// given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					"{\\"bookName\\":\\"foo\\"}"
+						, headers()
+							.header("sample", "header")
+			);
 
-\t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "jms:input",
-\t\t\t\t\tcontract(this, "foo.yml"));
+		// when:
+			contractVerifierMessaging.send(inputMessage, "jms:input",
+					contract(this, "foo.yml"));
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['bookName']").isEqualTo("foo");
+	}
 
 }
 '''
-			test.trim() == expectedMsg.trim()
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	@Issue("336")
@@ -801,7 +805,7 @@ public class FooTest {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					"""\
 package com.example;
 
@@ -822,32 +826,32 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// when:
-\t\t\trequestIsCalled();
+	@Test
+	public void validate_foo() throws Exception {
+		// when:
+			requestIsCalled();
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tassertThat(response.getHeader("processId")).isNotNull();
-\t\t\tassertThat(response.getHeader("processId").toString()).matches("[0-9]+");
+		// and:
+			assertThat(response.getHeader("processId")).isNotNull();
+			assertThat(response.getHeader("processId").toString()).matches("[0-9]+");
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
+	}
 
 }
 
 """
-			test.trim() == expectedMsg.trim()
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	@Issue("567")
@@ -1012,7 +1016,7 @@ public class FooTest {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					"""\
 package com.example
 
@@ -1032,30 +1036,30 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\twhen:
-\t\t\trequestIsCalled()
+	def validate_foo() throws Exception {
+		when:
+			requestIsCalled()
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("processId") != null
-\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
+		and:
+			response.getHeader("processId") != null
+			response.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
+	}
 
 }
 """
-			test.trim() == expectedMsg.trim()
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	@Issue("587")
@@ -1084,7 +1088,7 @@ class FooSpec extends Specification {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					"""\
 package com.example
 
@@ -1104,30 +1108,30 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\twhen:
-\t\t\trequestIsCalled()
+	def validate_foo() throws Exception {
+		when:
+			requestIsCalled()
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("processId") != null
-\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[\\\\S\\\\s]+')
+		and:
+			response.getHeader("processId") != null
+			response.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[\\\\S\\\\s]+')
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[\\\\S\\\\s]+")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['eventId']").matches("[\\\\S\\\\s]+")
+	}
 
 }
 """
-			test.trim() == expectedMsg.trim()
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	@Issue("440")
@@ -1156,7 +1160,7 @@ class FooSpec extends Specification {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					"""\
 package com.example
 
@@ -1176,30 +1180,30 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\twhen:
-\t\t\trequestIsCalled()
+	def validate_foo() throws Exception {
+		when:
+			requestIsCalled()
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString(),
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive(toString(),
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("processId") != null
-\t\t\tresponse.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
+		and:
+			response.getHeader("processId") != null
+			response.getHeader("processId").toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
+	}
 
 }
 """
-			test.trim() == expectedMsg.trim()
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	@Issue("440")
@@ -1229,7 +1233,7 @@ class FooSpec extends Specification {
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			String expectedMsg =
+			String expectedMessage =
 					"""\
 package com.example;
 
@@ -1250,31 +1254,31 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// when:
-\t\t\trequestIsCalled();
+	@Test
+	public void validate_foo() throws Exception {
+		// when:
+			requestIsCalled();
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive(toString(),
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive(toString(),
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tassertThat(response.getHeader("processId")).isNotNull();
-\t\t\tassertThat(response.getHeader("processId").toString()).matches("[0-9]+");
+		// and:
+			assertThat(response.getHeader("processId")).isNotNull();
+			assertThat(response.getHeader("processId").toString()).matches("[0-9]+");
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
+	}
 
 }
 """
-			test.trim() == expectedMsg.trim()
+			test.trim() == messageWithoutTags(expectedMessage, "expectedMsg")
 	}
 
 	@Issue('#620')
@@ -1329,26 +1333,26 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\twhen:
-\t\t\tfoo()
+	def validate_foo() throws Exception {
+		when:
+			foo()
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("Authorization") != null
-\t\t\tresponse.getHeader("Authorization").toString() ==~ java.util.regex.Pattern.compile('Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*')
+		and:
+			response.getHeader("Authorization") != null
+			response.getHeader("Authorization").toString() ==~ java.util.regex.Pattern.compile('Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*')
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['field']").isEqualTo("value")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['field']").isEqualTo("value")
+	}
 
 }
 """
@@ -1372,27 +1376,27 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// when:
-\t\t\tfoo();
+	@Test
+	public void validate_foo() throws Exception {
+		// when:
+			foo();
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tassertThat(response.getHeader("Authorization")).isNotNull();
-\t\t\tassertThat(response.getHeader("Authorization").toString()).matches("Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*");
+		// and:
+			assertThat(response.getHeader("Authorization")).isNotNull();
+			assertThat(response.getHeader("Authorization").toString()).matches("Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*");
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['field']").isEqualTo("value");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['field']").isEqualTo("value");
+	}
 
 }
 """
@@ -1444,33 +1448,33 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\tgiven:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\tfileToBytes(this, "foo_request_request.pdf")
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("contentType", "application/octet-stream")
-\t\t\t)
+	def validate_foo() throws Exception {
+		given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					fileToBytes(this, "foo_request_request.pdf")
+						, headers()
+							.header("contentType", "application/octet-stream")
+			)
 
-\t\twhen:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "foo",
-\t\t\t\t\tcontract(this, "foo.yml"))
+		when:
+			contractVerifierMessaging.send(inputMessage, "foo",
+					contract(this, "foo.yml"))
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("contentType") != null
-\t\t\tresponse.getHeader("contentType").toString() == 'application/octet-stream'
+		and:
+			response.getHeader("contentType") != null
+			response.getHeader("contentType").toString() == 'application/octet-stream'
 
-\t\tand:
-\t\t\tresponse.getPayloadAsByteArray() == fileToBytes(this, "foo_response_response.pdf")
-\t}
+		and:
+			response.getPayloadAsByteArray() == fileToBytes(this, "foo_response_response.pdf")
+	}
 
 }
 """
@@ -1491,34 +1495,34 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// given:
-\t\t\tContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-\t\t\t\t\tfileToBytes(this, "foo_request_request.pdf")
-\t\t\t\t\t\t, headers()
-\t\t\t\t\t\t\t.header("contentType", "application/octet-stream")
-\t\t\t);
+	@Test
+	public void validate_foo() throws Exception {
+		// given:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					fileToBytes(this, "foo_request_request.pdf")
+						, headers()
+							.header("contentType", "application/octet-stream")
+			);
 
-\t\t// when:
-\t\t\tcontractVerifierMessaging.send(inputMessage, "foo",
-\t\t\t\t\tcontract(this, "foo.yml"));
+		// when:
+			contractVerifierMessaging.send(inputMessage, "foo",
+					contract(this, "foo.yml"));
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tassertThat(response.getHeader("contentType")).isNotNull();
-\t\t\tassertThat(response.getHeader("contentType").toString()).isEqualTo("application/octet-stream");
+		// and:
+			assertThat(response.getHeader("contentType")).isNotNull();
+			assertThat(response.getHeader("contentType").toString()).isEqualTo("application/octet-stream");
 
-\t\t// and:
-\t\t\tassertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "foo_response_response.pdf"));
-\t}
+		// and:
+			assertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "foo_response_response.pdf"));
+	}
 
 }
 """
@@ -1584,39 +1588,39 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
 
-\tdef validate_foo() throws Exception {
-\t\twhen:
-\t\t\tcreateNewPerson()
+	def validate_foo() throws Exception {
+		when:
+			createNewPerson()
 
-\t\tthen:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic",
-\t\t\t\t\tcontract(this, "foo.yml"))
-\t\t\tresponse != null
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic",
+					contract(this, "foo.yml"))
+			response != null
 
-\t\tand:
-\t\t\tresponse.getHeader("contentType") != null
-\t\t\tresponse.getHeader("contentType").toString() == 'application/json'
-\t\t\tresponse.getHeader("type") != null
-\t\t\tresponse.getHeader("type").toString() == 'person'
-\t\t\tresponse.getHeader("eventType") != null
-\t\t\tresponse.getHeader("eventType").toString() == 'PersonChangedEvent'
-\t\t\tresponse.getHeader("customerId") != null
-\t\t\tresponse.getHeader("customerId").toString() ==~ java.util.regex.Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
+		and:
+			response.getHeader("contentType") != null
+			response.getHeader("contentType").toString() == 'application/json'
+			response.getHeader("type") != null
+			response.getHeader("type").toString() == 'person'
+			response.getHeader("eventType") != null
+			response.getHeader("eventType").toString() == 'PersonChangedEvent'
+			response.getHeader("customerId") != null
+			response.getHeader("customerId").toString() ==~ java.util.regex.Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
 
-\t\tand:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-\t\t\tassertThatJson(parsedJson).field("['type']").isEqualTo("CREATED")
-\t\t\tassertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
-\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?")
-\t\t\tassertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+")
-\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?")
-\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+")
-\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")
-\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
-\t}
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['type']").isEqualTo("CREATED")
+			assertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
+			assertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?")
+			assertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+")
+			assertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?")
+			assertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+")
+			assertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")
+			assertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")
+	}
 
 }
 """
@@ -1640,40 +1644,40 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\t@Inject ContractVerifierMessaging contractVerifierMessaging;
-\t@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
 
-\t@Test
-\tpublic void validate_foo() throws Exception {
-\t\t// when:
-\t\t\tcreateNewPerson();
+	@Test
+	public void validate_foo() throws Exception {
+		// when:
+			createNewPerson();
 
-\t\t// then:
-\t\t\tContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic",
-\t\t\t\t\tcontract(this, "foo.yml"));
-\t\t\tassertThat(response).isNotNull();
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("personEventsTopic",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
 
-\t\t// and:
-\t\t\tassertThat(response.getHeader("contentType")).isNotNull();
-\t\t\tassertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
-\t\t\tassertThat(response.getHeader("type")).isNotNull();
-\t\t\tassertThat(response.getHeader("type").toString()).isEqualTo("person");
-\t\t\tassertThat(response.getHeader("eventType")).isNotNull();
-\t\t\tassertThat(response.getHeader("eventType").toString()).isEqualTo("PersonChangedEvent");
-\t\t\tassertThat(response.getHeader("customerId")).isNotNull();
-\t\t\tassertThat(response.getHeader("customerId").toString()).matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+		// and:
+			assertThat(response.getHeader("contentType")).isNotNull();
+			assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
+			assertThat(response.getHeader("type")).isNotNull();
+			assertThat(response.getHeader("type").toString()).isEqualTo("person");
+			assertThat(response.getHeader("eventType")).isNotNull();
+			assertThat(response.getHeader("eventType").toString()).isEqualTo("PersonChangedEvent");
+			assertThat(response.getHeader("customerId")).isNotNull();
+			assertThat(response.getHeader("customerId").toString()).matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-\t\t\tassertThatJson(parsedJson).field("['type']").isEqualTo("CREATED");
-\t\t\tassertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
-\t\t\tassertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?");
-\t\t\tassertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+");
-\t\t\tassertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?");
-\t\t\tassertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+");
-\t\t\tassertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)");
-\t\t\tassertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
-\t}
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+			assertThatJson(parsedJson).field("['type']").isEqualTo("CREATED");
+			assertThatJson(parsedJson).field("['personId']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+			assertThatJson(parsedJson).field("['userId']").matches("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?");
+			assertThatJson(parsedJson).field("['firstName']").matches("[\\\\S\\\\s]+");
+			assertThatJson(parsedJson).field("['middleName']").matches("([\\\\S\\\\s]+)?");
+			assertThatJson(parsedJson).field("['lastName']").matches("[\\\\S\\\\s]+");
+			assertThatJson(parsedJson).field("['version']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)");
+			assertThatJson(parsedJson).field("['uid']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+	}
 
 }
 """

@@ -27,8 +27,7 @@ import org.springframework.cloud.contract.spec.internal.Url;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 
-class CustomModeQueryParamsGiven
-		implements Given, CustomModeAcceptor, QueryParamsResolver {
+class CustomModeQueryParamsGiven implements Given, CustomModeAcceptor, QueryParamsResolver {
 
 	private final BlockBuilder blockBuilder;
 
@@ -58,9 +57,8 @@ class CustomModeQueryParamsGiven
 	}
 
 	private void addQueryParameters(Url buildUrl) {
-		List<QueryParameter> queryParameters = buildUrl.getQueryParameters()
-				.getParameters().stream().filter(this::allowedQueryParameter)
-				.collect(Collectors.toList());
+		List<QueryParameter> queryParameters = buildUrl.getQueryParameters().getParameters().stream()
+				.filter(this::allowedQueryParameter).collect(Collectors.toList());
 		Iterator<QueryParameter> iterator = queryParameters.iterator();
 		while (iterator.hasNext()) {
 			QueryParameter parameter = iterator.next();
@@ -85,17 +83,14 @@ class CustomModeQueryParamsGiven
 	}
 
 	private String addQueryParameter(QueryParameter queryParam) {
-		return "." + "queryParam(" + this.bodyParser.quotedLongText(queryParam.getName())
-				+ "," + this.bodyParser.quotedLongText(resolveParamValue(
-						MapConverter.getTestSideValuesForNonBody(queryParam)))
-				+ ")";
+		return "." + "queryParam(" + this.bodyParser.quotedLongText(queryParam.getName()) + "," + this.bodyParser
+				.quotedLongText(resolveParamValue(MapConverter.getTestSideValuesForNonBody(queryParam))) + ")";
 	}
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
 		return acceptType(metadata) && metadata.getContract().getRequest() != null
-				&& getUrl(metadata.getContract().getRequest())
-						.getQueryParameters() != null;
+				&& getUrl(metadata.getContract().getRequest()).getQueryParameters() != null;
 	}
 
 }

@@ -56,17 +56,15 @@ class CustomModeHeadersGiven implements Given {
 	}
 
 	private String string(Header header) {
-		return ".header(" + ContentHelper.getTestSideForNonBodyValue(header.getName())
-				+ ", "
-				+ ContentHelper.getTestSideForNonBodyValue(
-						MapConverter.getTestSideValuesForNonBody(header.getServerValue()))
+		return ".header("
+				+ ContentHelper.getTestSideForNonBodyValue(header.getName()) + ", " + ContentHelper
+						.getTestSideForNonBodyValue(MapConverter.getTestSideValuesForNonBody(header.getServerValue()))
 				+ ")";
 	}
 
 	private boolean ofAbsentType(Header header) {
 		return header.getServerValue() instanceof MatchingStrategy
-				&& MatchingStrategy.Type.ABSENT
-						.equals(((MatchingStrategy) header.getServerValue()).getType());
+				&& MatchingStrategy.Type.ABSENT.equals(((MatchingStrategy) header.getServerValue()).getType());
 	}
 
 	@Override

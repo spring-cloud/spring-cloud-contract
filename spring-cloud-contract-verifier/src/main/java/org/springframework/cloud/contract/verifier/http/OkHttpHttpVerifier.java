@@ -56,18 +56,15 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 	@Override
 	public Response exchange(Request request) {
 		String requestContentType = request.contentType();
-		OkHttpClient client = new OkHttpClient.Builder()
-				.protocols(toProtocol(request.protocol().toString())).build();
+		OkHttpClient client = new OkHttpClient.Builder().protocols(toProtocol(request.protocol().toString())).build();
 		Map<String, String> headers = stringTyped(request.headers());
 		if (!request.cookies().isEmpty()) {
-			headers.put("Set-Cookie",
-					request.cookies().entrySet().stream()
-							.map(e -> e.getKey() + "=" + e.getValue().toString())
-							.collect(Collectors.joining(";")));
+			headers.put("Set-Cookie", request.cookies().entrySet().stream()
+					.map(e -> e.getKey() + "=" + e.getValue().toString()).collect(Collectors.joining(";")));
 		}
 		okhttp3.Request req = new okhttp3.Request.Builder().url(url(request))
-				.method(request.method().name(), requestBody(request, requestContentType))
-				.headers(Headers.of(headers)).build();
+				.method(request.method().name(), requestBody(request, requestContentType)).headers(Headers.of(headers))
+				.build();
 		try (okhttp3.Response res = client.newCall(req).execute()) {
 			return response(res);
 		}
@@ -78,13 +75,10 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 
 	private String url(Request request) {
 		String url = request.scheme().name().toLowerCase() + ":" + this.hostAndPort
-				+ (request.path().startsWith("/") ? request.path()
-						: "/" + request.path());
+				+ (request.path().startsWith("/") ? request.path() : "/" + request.path());
 		if (!request.queryParams().isEmpty()) {
-			return url + "?"
-					+ request.queryParams().stream()
-							.map(e -> e.getKey() + "=" + e.getValue())
-							.collect(Collectors.joining("&"));
+			return url + "?" + request.queryParams().stream().map(e -> e.getKey() + "=" + e.getValue())
+					.collect(Collectors.joining("&"));
 		}
 		return url;
 	}
@@ -111,16 +105,13 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 
 	private Response response(okhttp3.Response res) throws IOException {
 		byte[] responseBody = responseBody(res);
-		return Response.builder().body(responseBody).statusCode(res.code())
-				.headers(withSingleHeader(res)).cookies(res.headers().values("Set-Cookie")
-						.stream().flatMap(s -> Arrays.stream(s.split(";"))).map(s -> {
-							String[] singleCookie = s.split("=");
-							return new AbstractMap.SimpleEntry<>(singleCookie[0],
-									singleCookie.length > 1 ? singleCookie[1] : "");
-						})
-						.collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey,
-								AbstractMap.SimpleEntry::getValue, (a, b) -> a,
-								HashMap::new)))
+		return Response.builder().body(responseBody).statusCode(res.code()).headers(withSingleHeader(res)).cookies(
+				res.headers().values("Set-Cookie").stream().flatMap(s -> Arrays.stream(s.split(";"))).map(s -> {
+					String[] singleCookie = s.split("=");
+					return new AbstractMap.SimpleEntry<>(singleCookie[0],
+							singleCookie.length > 1 ? singleCookie[1] : "");
+				}).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue,
+						(a, b) -> a, HashMap::new)))
 				.build();
 	}
 
@@ -138,13 +129,12 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 	}
 
 	private Map<String, Object> withSingleHeader(okhttp3.Response res) {
-		return res.headers().toMultimap().entrySet().stream().collect(Collectors.toMap(
-				Map.Entry::getKey, e -> e.getValue().get(0), (a, b) -> a, HashMap::new));
+		return res.headers().toMultimap().entrySet().stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0), (a, b) -> a, HashMap::new));
 	}
 
 	private Map<String, String> stringTyped(Map<String, Object> headers) {
-		return headers.entrySet().stream().collect(
-				Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toString()));
+		return headers.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toString()));
 	}
 
 }

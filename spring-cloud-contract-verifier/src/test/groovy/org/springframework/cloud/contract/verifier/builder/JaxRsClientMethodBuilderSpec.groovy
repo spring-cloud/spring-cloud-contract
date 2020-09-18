@@ -914,8 +914,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			String test = singleTestGenerator(contractDsl)
 		then:
 			String expectedResponse =
-// tag::jaxrs[]
 					"""\
+// tag::jaxrs[]
 package com.example;
 
 import com.jayway.jsonpath.DocumentContext;
@@ -932,40 +932,45 @@ import static javax.ws.rs.client.Entity.*;
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-\tWebTarget webTarget;
+  WebTarget webTarget;
 
-\t@Test
-\tpublic void validate_() throws Exception {
+  @Test
+  public void validate_() throws Exception {
 
-\t\t// when:
-\t\t\tResponse response = webTarget
-\t\t\t\t\t\t\t.path("/users")
-\t\t\t\t\t\t\t.queryParam("limit", "10")
-\t\t\t\t\t\t\t.queryParam("offset", "20")
-\t\t\t\t\t\t\t.queryParam("filter", "email")
-\t\t\t\t\t\t\t.queryParam("sort", "name")
-\t\t\t\t\t\t\t.queryParam("search", "55")
-\t\t\t\t\t\t\t.queryParam("age", "99")
-\t\t\t\t\t\t\t.queryParam("name", "Denis.Stepanov")
-\t\t\t\t\t\t\t.queryParam("email", "bob@email.com")
-\t\t\t\t\t\t\t.request()
-\t\t\t\t\t\t\t.build("GET")
-\t\t\t\t\t\t\t.invoke();
-\t\t\tString responseAsString = response.readEntity(String.class);
+    // when:
+      Response response = webTarget
+              .path("/users")
+              .queryParam("limit", "10")
+              .queryParam("offset", "20")
+              .queryParam("filter", "email")
+              .queryParam("sort", "name")
+              .queryParam("search", "55")
+              .queryParam("age", "99")
+              .queryParam("name", "Denis.Stepanov")
+              .queryParam("email", "bob@email.com")
+              .request()
+              .build("GET")
+              .invoke();
+      String responseAsString = response.readEntity(String.class);
 
-\t\t// then:
-\t\t\tassertThat(response.getStatus()).isEqualTo(200);
+    // then:
+      assertThat(response.getStatus()).isEqualTo(200);
 
-\t\t// and:
-\t\t\tDocumentContext parsedJson = JsonPath.parse(responseAsString);
-\t\t\tassertThatJson(parsedJson).field("['property1']").isEqualTo("a");
-\t}
+    // and:
+      DocumentContext parsedJson = JsonPath.parse(responseAsString);
+      assertThatJson(parsedJson).field("['property1']").isEqualTo("a");
+  }
 
 }
 
-"""
 // end::jaxrs[]
-			test.trim() == expectedResponse.trim()
+"""
+			test.trim()
+					.replace("\\\t", "\t") == expectedResponse.trim()
+																		 .replace("  ", "\t")
+																		 .replace("\\\t", "\t")
+																		 .replace("// tag::jaxrs[]\n", "")
+																		 .replace("\n\n// end::jaxrs[]", "")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
