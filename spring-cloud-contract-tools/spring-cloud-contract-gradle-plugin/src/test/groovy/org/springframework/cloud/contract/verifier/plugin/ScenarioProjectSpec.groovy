@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Ignore
 import spock.lang.Stepwise
 
@@ -35,6 +37,9 @@ class ScenarioProjectSpec extends ContractVerifierIntegrationSpec {
 		expect:
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+			BuildResult result = run("check", "--info", "--stacktrace")
+			result.task(":fraudDetectionService:check").outcome == TaskOutcome.UP_TO_DATE
+			result.task(":loanApplicationService:check").outcome == TaskOutcome.UP_TO_DATE
 	}
 
 	def "should pass basic flow for JUnit"() {
@@ -45,6 +50,9 @@ class ScenarioProjectSpec extends ContractVerifierIntegrationSpec {
 			emptySourceSet()
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+			BuildResult result = run("check", "--info", "--stacktrace")
+			result.task(":fraudDetectionService:check").outcome == TaskOutcome.UP_TO_DATE
+			result.task(":loanApplicationService:check").outcome == TaskOutcome.UP_TO_DATE
 	}
 
 }
