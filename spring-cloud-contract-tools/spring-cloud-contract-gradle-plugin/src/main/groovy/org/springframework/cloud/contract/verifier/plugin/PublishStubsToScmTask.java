@@ -59,7 +59,12 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	private final Property<StubRunnerProperties.StubsMode> contractsMode;
 
-	// FIXME: deleting the stubs after tests breaks incremental builds
+	/**
+	 * @see ContractVerifierExtension#deleteStubsAfterTest
+	 *
+	 * This property will delete the Git repository where the input
+	 * stubs to this task have been committed.
+	 */
 	private final Property<Boolean> deleteStubsAfterTest;
 
 	private final Property<Boolean> failOnNoContracts;

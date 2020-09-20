@@ -89,7 +89,12 @@ class ContractsCopyTask extends DefaultTask {
 	// FIXME: I don't think this makes sense given the default configuration... This would only make sense if contractDir == project.projectDir
 	private final Property<Boolean> excludeBuildFolders;
 
-	// FIXME: deleting the stubs after tests breaks incremental builds
+	/**
+	 * @see ContractVerifierExtension#deleteStubsAfterTest
+	 *
+	 * This property will delete the temporary dependency or Git repository from
+	 * which stubs were copied to this task's output directory.
+	 */
 	private final Property<Boolean> deleteStubsAfterTest;
 
 	// outputs
