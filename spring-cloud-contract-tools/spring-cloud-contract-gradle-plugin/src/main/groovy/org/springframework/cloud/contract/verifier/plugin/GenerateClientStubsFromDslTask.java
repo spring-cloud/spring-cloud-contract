@@ -27,6 +27,7 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
@@ -44,6 +45,7 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
  * @author Shannon Pamperl
  * @since 2.0.0
  */
+@CacheableTask
 class GenerateClientStubsFromDslTask extends DefaultTask {
 
 	static final String TASK_NAME = "generateClientStubs";

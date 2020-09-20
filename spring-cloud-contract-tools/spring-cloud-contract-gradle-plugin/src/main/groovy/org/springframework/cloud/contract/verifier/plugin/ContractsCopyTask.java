@@ -25,12 +25,15 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
+import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Internal;
@@ -63,6 +66,7 @@ import org.springframework.util.StringUtils;
  * @author Shannon Pamperl
  * @since 1.0.2
  */
+@CacheableTask
 class ContractsCopyTask extends DefaultTask {
 
 	static final String TASK_NAME = "copyContracts";
@@ -119,27 +123,31 @@ class ContractsCopyTask extends DefaultTask {
 		backupContractsFolder = objects.directoryProperty();
 
 		this.getOutputs().upToDateWhen(task -> !(this.shouldDownloadContracts() && this.getContractDependency().toStubConfiguration().isVersionChanging()));
-		this.doFirst(inner -> {
-			String repositoryUrl = contractRepository.getRepositoryUrl().getOrNull();
-			if (repositoryUrl != null && ScmStubDownloaderBuilder.isProtocolAccepted(repositoryUrl)) {
-				String branch = StubRunnerPropertyUtils.getProperty(contractsProperties.get(), "git.branch");
-				branch = StringUtils.hasText(branch) ? branch : "master";
-				UsernamePasswordCredentialsProvider provider = null;
-				if (StringUtils.hasText(contractRepository.getUsername().get())) {
-					provider = new UsernamePasswordCredentialsProvider(contractRepository.getUsername().get(), contractRepository.getPassword().get());
-				}
-				try {
-					Collection<Ref> refs = Git.lsRemoteRepository()
-							.setRemote(repositoryUrl)
-							.setCredentialsProvider(provider)
-							.call();
-					for (Ref ref : refs) {
-						if (ref.getName().equals(branch) || ref.getName().equals("refs/heads/" + branch) || ref.getName().equals("refs/tags/" + branch)) {
-							contractsProperties.put("git.commit", ref.getObjectId().name());
-						}
+		// Lambdas break build caching support
+		this.doFirst(new Action<Task>() {
+			@Override
+			public void execute(Task inner) {
+				String repositoryUrl = contractRepository.getRepositoryUrl().getOrNull();
+				if (repositoryUrl != null && ScmStubDownloaderBuilder.isProtocolAccepted(repositoryUrl)) {
+					String branch = StubRunnerPropertyUtils.getProperty(contractsProperties.get(), "git.branch");
+					branch = StringUtils.hasText(branch) ? branch : "master";
+					UsernamePasswordCredentialsProvider provider = null;
+					if (StringUtils.hasText(contractRepository.getUsername().get())) {
+						provider = new UsernamePasswordCredentialsProvider(contractRepository.getUsername().get(), contractRepository.getPassword().get());
 					}
-				} catch (GitAPIException e) {
-					getLogger().warn("Unable to determine git repository commit id");
+					try {
+						Collection<Ref> refs = Git.lsRemoteRepository()
+								.setRemote(repositoryUrl)
+								.setCredentialsProvider(provider)
+								.call();
+						for (Ref ref : refs) {
+							if (ref.getName().equals(branch) || ref.getName().equals("refs/heads/" + branch) || ref.getName().equals("refs/tags/" + branch)) {
+								contractsProperties.put("git.commit", ref.getObjectId().name());
+							}
+						}
+					} catch (GitAPIException e) {
+						ContractsCopyTask.this.getLogger().warn("Unable to determine git repository commit id");
+					}
 				}
 			}
 		});

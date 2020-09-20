@@ -55,4 +55,21 @@ class ScenarioProjectSpec extends ContractVerifierIntegrationSpec {
 			result.task(":loanApplicationService:check").outcome == TaskOutcome.UP_TO_DATE
 	}
 
+	def "should properly work with build cache"() {
+		given:
+			def gradleUserHomeDir = new File(testProjectDir, ".gradleUserHome")
+			gradleUserHomeDir.mkdirs()
+			String[] tasks = ["-g ${gradleUserHomeDir}", "clean", "check", "publishToMavenLocal", "--info", "--stacktrace", "--build-cache"]
+			assert fileExists("build.gradle")
+
+		expect:
+			runTasksSuccessfully(tasks)
+			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+			BuildResult result = run(tasks)
+			result.task(":fraudDetectionService:copyContracts").outcome == TaskOutcome.FROM_CACHE
+			result.task(":fraudDetectionService:generateContractTests").outcome == TaskOutcome.FROM_CACHE
+			result.task(":fraudDetectionService:contractTest").outcome == TaskOutcome.FROM_CACHE
+			result.task(":fraudDetectionService:generateClientStubs").outcome == TaskOutcome.FROM_CACHE
+			result.task(":loanApplicationService:check").outcome == TaskOutcome.UP_TO_DATE
+	}
 }
