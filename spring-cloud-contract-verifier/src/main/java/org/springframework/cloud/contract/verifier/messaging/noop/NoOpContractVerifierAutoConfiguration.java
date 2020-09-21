@@ -45,7 +45,7 @@ public class NoOpContractVerifierAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(ContractVerifierMessaging.class)
-	public ContractVerifierMessaging<?> contractVerifierMessaging(MessageVerifier<Object> exchange) {
+	public ContractVerifierMessaging<?> contractVerifierMessaging(MessageVerifier<?> exchange) {
 		return new ContractVerifierMessaging<>(exchange);
 	}
 
