@@ -32,6 +32,8 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  */
 public class StubGeneratorProvider {
 
+	private final List<StubGenerator> converters = new ArrayList<StubGenerator>();
+
 	public StubGeneratorProvider() {
 		this.converters.addAll(SpringFactoriesLoader.loadFactories(StubGenerator.class, null));
 	}
@@ -48,7 +50,5 @@ public class StubGeneratorProvider {
 	public Collection<StubGenerator> allOrDefault(StubGenerator defaultStubGenerator) {
 		return this.converters.isEmpty() ? Collections.singletonList(defaultStubGenerator) : this.converters;
 	}
-
-	private final List<StubGenerator> converters = new ArrayList<StubGenerator>();
 
 }

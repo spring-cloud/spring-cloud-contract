@@ -32,12 +32,12 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 public interface StubGenerator<T> {
 
 	/**
-	 * @param fileName - file name
-	 * @return {@code true} if the converter can handle the file to convert it into a
-	 * stub.
+	 * @param fileName - file name or absolute path of a contract
+	 * @return {@code true} if the converter can handle the contract file to convert it
+	 * into a stub.
 	 */
 	default boolean canHandleFileName(String fileName) {
-		return fileName.endsWith(fileExtension());
+		return true;
 	}
 
 	/**
@@ -81,7 +81,8 @@ public interface StubGenerator<T> {
 	 * @param inputFileName - name of the input file
 	 * @return the name of the converted stub file. If you have multiple contracts in a
 	 * single file then a prefix will be added to the generated file. If you provide the
-	 * {@link Contract#name} field then that field will override the generated file name.
+	 * {@link Contract#getName()} field then that field will override the generated file
+	 * name.
 	 *
 	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be converted
 	 * by the implementation to {@code foo.json}. The recursive file converter will create
@@ -90,8 +91,8 @@ public interface StubGenerator<T> {
 	String generateOutputFileNameForInput(String inputFileName);
 
 	/**
-	 * Describes the file extension that this stub generator can handle.
-	 * @return string describing the file extension
+	 * Describes the file extension that this stub generator will generate.
+	 * @return string describing the file extension starting with a dot
 	 */
 	default String fileExtension() {
 		return ".json";

@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.wiremock;
 
+import java.io.File;
+import java.nio.file.Files;
+
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
@@ -38,6 +41,20 @@ public abstract class DslToWireMockConverter implements StubGenerator<StubMappin
 			return inputFileName.substring(i + 1);
 		}
 		return "";
+	}
+
+	@Override
+	public boolean canHandleFileName(String fileName) {
+		if (!fileName.endsWith(fileExtension())) {
+			return false;
+		}
+		try {
+			StubMapping.buildFrom(new String(Files.readAllBytes(new File(fileName).toPath())));
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 
 }

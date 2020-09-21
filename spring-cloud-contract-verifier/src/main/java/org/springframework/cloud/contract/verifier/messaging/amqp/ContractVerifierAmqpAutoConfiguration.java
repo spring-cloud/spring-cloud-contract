@@ -56,6 +56,7 @@ import static java.util.Collections.emptyList;
 @ConditionalOnProperty(name = "stubrunner.amqp.enabled", havingValue = "true")
 @AutoConfigureBefore(ContractVerifierIntegrationConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)
+@ConditionalOnMissingBean({ ContractVerifierMessaging.class, MessageVerifier.class })
 public class ContractVerifierAmqpAutoConfiguration {
 
 	@SpyBean
