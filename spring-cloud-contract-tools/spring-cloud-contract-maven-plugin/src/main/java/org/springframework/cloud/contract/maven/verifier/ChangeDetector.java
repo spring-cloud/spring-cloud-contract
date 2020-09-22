@@ -31,7 +31,9 @@ final class ChangeDetector {
 
 	static boolean inputFilesChangeDetected(File contractsDirectory, MojoExecution mojoExecution, MavenSession session)
 			throws MojoExecutionException {
-
+		if (session.getGoals().contains("clean")) {
+			return true;
+		}
 		IncrementalBuildHelper incrementalBuildHelper = new IncrementalBuildHelper(mojoExecution, session);
 
 		DirectoryScanner scanner = incrementalBuildHelper.getDirectoryScanner();
