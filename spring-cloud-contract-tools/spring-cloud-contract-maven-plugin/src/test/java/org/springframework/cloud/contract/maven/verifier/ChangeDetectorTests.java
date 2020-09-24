@@ -36,4 +36,5 @@ class ChangeDetectorTests {
 
 		then(ChangeDetector.inputFilesChangeDetected(new File("."), null, session)).isTrue();
 	}
+
 }
