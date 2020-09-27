@@ -31,7 +31,7 @@ import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath;
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.core.model.RequestResponsePact;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Body;
@@ -51,6 +51,7 @@ import static java.util.stream.Collectors.joining;
  * Creator of {@link RequestResponsePact} instances.
  *
  * @author Tim Ysewyn
+ * @author Stessy Delcroix
  * @since 2.0.0
  */
 class RequestResponsePactCreator {

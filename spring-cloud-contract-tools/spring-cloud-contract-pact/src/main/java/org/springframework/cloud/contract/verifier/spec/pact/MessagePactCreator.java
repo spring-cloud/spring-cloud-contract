@@ -39,6 +39,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils;
  * Creator of {@link MessagePact} instances.
  *
  * @author Tim Ysewyn
+ * @author Stessy Delcroix
  * @since 2.0.0
  */
 class MessagePactCreator {

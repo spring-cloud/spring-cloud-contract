@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.spec.pact;
 
 /**
  * @author Marcin Grzejszczak
+ * @author Stessy Delcroix
  * @since
  */
 class Names {

@@ -43,6 +43,7 @@ import org.springframework.cloud.contract.spec.ContractConverter;
  *
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
+ * @author Stessy Delcroix
  * @since 1.1.0
  */
 public class PactContractConverter implements ContractConverter<Collection<Pact<?>>> {

@@ -35,6 +35,7 @@ import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 
 /**
  * @author Tim Ysewyn
+ * @author Stessy Delcroix
  * @Since 2.0.0
  */
 final class MatchingRulesConverter {

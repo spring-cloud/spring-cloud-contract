@@ -47,6 +47,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils;
 
 /**
  * @author Tim Ysewyn
+ * @author Stessy Delcroix
  * @Since 2.0.0
  */
 final class BodyConverter {

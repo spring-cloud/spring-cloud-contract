@@ -20,6 +20,7 @@ import org.springframework.cloud.contract.spec.Contract;
 
 /**
  * @author Marcin Grzejszczak
+ * @author Stessy Delcroix
  * @since
  */
 final class NamingUtil {

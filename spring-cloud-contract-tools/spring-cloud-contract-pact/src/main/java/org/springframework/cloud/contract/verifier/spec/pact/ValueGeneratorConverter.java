@@ -38,7 +38,7 @@ import au.com.dius.pact.core.model.generators.RegexGenerator;
 import au.com.dius.pact.core.model.generators.TimeGenerator;
 import au.com.dius.pact.core.model.generators.UuidGenerator;
 import groovy.lang.GString;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.cloud.contract.spec.internal.Body;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
@@ -50,6 +50,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils;
  * Convert a value for a given {@link Generator}.
  *
  * @author Tim Ysewyn
+ * @author Stessy Delcroix
  * @Since 2.0.0
  */
 final class ValueGeneratorConverter {
