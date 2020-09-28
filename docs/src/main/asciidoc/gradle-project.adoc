@@ -228,22 +228,13 @@ pseudocode):
 contracts {
     testFramework ='JUNIT'
     testMode = 'MockMvc'
-    generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    generatedTestJavaSourcesDir = project.file("${project.buildDir}/generated-test-sources/contractTest/java")
+    generatedTestGroovySourcesDir = project.file("${project.buildDir}/generated-test-sources/contractTest/groovy")
     generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
-    contractsDslDir = project.file("${project.rootDir}/src/test/resources/contracts")
+    contractsDslDir = project.file("${project.projectDir}/src/test/resources/contracts")
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
     sourceSet = null
-
-    // the following properties are used when you want to provide where the JAR with contract lays
-    contractDependency {
-        stringNotation = ''
-    }
-    contractsPath = ''
-    contractsWorkOffline = false
-    contractRepository {
-        cacheDownloadedContracts(true)
-    }
 }
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
@@ -278,6 +269,35 @@ contracts {
 ----
 ====
 
+To download contracts from a remote source, you can use the following snippets as needed:
+
+====
+[source,groovy,indent=0]
+----
+contracts {
+    // If your contracts exist in a JAR archive published to a Maven repository
+    contractDependency {
+        stringNotation = ''
+        // OR
+        groupId = ''
+        artifactId = ''
+        version = ''
+        classifier = ''
+    }
+
+    // If your contracts exist in a Git SCM repository
+    contractRepository {
+        repositoryUrl = ''
+        // username = ''
+        // password = ''
+    }
+
+    // controls the nested location to find the contracts in either the JAR or Git SCM source
+    contractsPath = ''
+}
+----
+====
+
 [[gradle-configuration-options]]
 == Configuration Options
 
@@ -299,25 +319,24 @@ use Spock classes, the class is `spock.lang.Specification`.
 setting takes precedence over `baseClassForTests`.
 * `baseClassMappings`: Explicitly maps a contract package to a FQN of a base class. This
 setting takes precedence over `packageWithBaseClasses` and `baseClassForTests`.
-* `ruleClassForTests`: Specifies a rule that should be added to the generated test
-classes.
 * `ignoredFiles`: Uses an `Antmatcher` to allow defining stub files for which processing
 should be skipped. By default, it is an empty array.
 * `contractsDslDir`: Specifies the directory that contains contracts written by using the
-GroovyDSL. By default, its value is `$rootDir/src/test/resources/contracts`.
+GroovyDSL. By default, its value is `$projectDir/src/test/resources/contracts`.
 * `generatedTestSourcesDir`: Specifies the test source directory where tests generated
-from the Groovy DSL should be placed. By default, its value is
-`$buildDir/generated-test-sources/contracts`.
+from the Groovy DSL should be placed. (Deprecrated)
+* `generatedTestJavaSourcesDir`: Specifies the test source directory where Java/JUnit tests generated from the Groovy DSL should be placed. By default, it's value is `$buildDir/generated-tes-sources/contractTest/java`.
+* `generatedTestGroovySourcesDir`: Specifies the test source directory where Groovy/Spock tests generated from the Groovy DSL should be placed. By default, it's value is `$buildDir/generated-test-sources/contractTest/groovy`.
 * `generatedTestResourcesDir`: Specifies the test resource directory where resources used by the tests generated
 from the Groovy DSL should be placed. By default, its value is
-`$buildDir/generated-test-resources/contracts`.
+`$buildDir/generated-test-resources/contractTest`.
 * `stubsOutputDir`: Specifies the directory where the generated WireMock stubs from
 the Groovy DSL should be placed.
 * `testFramework`: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT`) and
 JUnit 5 are supported, with JUnit 4 being the default framework.
 * `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
-* `sourceSet`: Source set where the contracts are stored. If not provided will assume `test` (for example, `project.sourceSets.test.java` for JUnit or `project.sourceSets.test.groovy` for Spock).
+* `sourceSet`: Source set where the contracts are stored. If not provided will assume `contractTest` (for example, `project.sourceSets.contractTes.java` for JUnit or `project.sourceSets.contractTest.groovy` for Spock).
 
 You can use the following properties when you want to specify the location of the JAR
 that contains the contracts:

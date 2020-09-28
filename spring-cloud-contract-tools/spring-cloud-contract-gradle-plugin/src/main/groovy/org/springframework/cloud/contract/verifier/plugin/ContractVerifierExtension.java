@@ -71,11 +71,6 @@ public class ContractVerifierExtension implements Serializable {
 	private final Property<String> nameSuffixForTests;
 
 	/**
-	 * Rule class that should be added to generated tests
-	 */
-	private final Property<String> ruleClassForTests;
-
-	/**
 	 * Patterns that should not be taken into account for processing
 	 */
 	private final ListProperty<String> excludedFiles;
@@ -108,6 +103,7 @@ public class ContractVerifierExtension implements Serializable {
 	/**
 	 * Test source directory where tests generated from Groovy DSL should be placed
 	 */
+	@Deprecated
 	private final DirectoryProperty generatedTestSourcesDir;
 
 	/**
@@ -240,7 +236,6 @@ public class ContractVerifierExtension implements Serializable {
 		this.basePackageForTests = objects.property(String.class);
 		this.baseClassForTests = objects.property(String.class);
 		this.nameSuffixForTests = objects.property(String.class);
-		this.ruleClassForTests = objects.property(String.class);
 		this.excludedFiles = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.includedFiles = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.ignoredFiles = objects.listProperty(String.class).convention(new ArrayList<>());
@@ -317,14 +312,6 @@ public class ContractVerifierExtension implements Serializable {
 
 	public void setNameSuffixForTests(String nameSuffixForTests) {
 		this.nameSuffixForTests.set(nameSuffixForTests);
-	}
-
-	public Property<String> getRuleClassForTests() {
-		return ruleClassForTests;
-	}
-
-	public void setRuleClassForTests(String ruleClassForTests) {
-		this.ruleClassForTests.set(ruleClassForTests);
 	}
 
 	public ListProperty<String> getExcludedFiles() {

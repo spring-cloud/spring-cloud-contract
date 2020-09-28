@@ -350,6 +350,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			contractsCopyTask.getContractRepository().getProxyHost().convention(extension.getContractRepository().getProxyHost());
 			contractsCopyTask.getContractRepository().getProxyPort().convention(extension.getContractRepository().getProxyPort());
 			contractsCopyTask.getContractsMode().convention(extension.getContractsMode());
+			contractsCopyTask.getContractsProperties().convention(extension.getContractsProperties());
+			contractsCopyTask.getContractsPath().convention(extension.getContractsPath());
 			contractsCopyTask.getExcludeBuildFolders().convention(extension.getExcludeBuildFolders());
 			contractsCopyTask.getDeleteStubsAfterTest().convention(extension.getDeleteStubsAfterTest());
 
