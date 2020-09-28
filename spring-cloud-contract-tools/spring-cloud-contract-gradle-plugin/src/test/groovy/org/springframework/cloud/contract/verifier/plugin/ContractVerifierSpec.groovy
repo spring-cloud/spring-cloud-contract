@@ -171,7 +171,7 @@ class ContractVerifierSpec extends Specification {
 
 	def "should configure copyContracts task as a dependency of the verifierStubsJar task"() {
 		expect:
-			project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("copyContracts"))
+			project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("generateClientStubs"))
 	}
 
 	/**
