@@ -298,6 +298,23 @@ contracts {
 ----
 ====
 
+Since we are using Gradle's Jar packaging task, there are several options and capabilities that you may wish to utilize to further extend what is created by the `verifierStubsJar`. In order to do this, you would use the native mechanisms provided directly by Gradle for customizing an existing task like so:
+
+NOTE: for the sake of the example, we desire to add a `git.properties` file to the `verifierStubsJar`.
+
+====
+[source,groovy,inden=0]
+----
+verifierStubsJar {
+    from("${buildDir}/resources/main/") {
+        include("git.properties")
+    }
+}
+----
+====
+
+It should also be noted that as of 3.0.0, the default publication has been disabled. As a result this means, that you are able to create any named jar and publish it as you would normally have done via Gradle configuration options. This means that you can build a jar file customized just the way you would like and publish that for absolute full control over the jar's layout and contents.
+
 [[gradle-configuration-options]]
 == Configuration Options
 
@@ -336,7 +353,7 @@ the Groovy DSL should be placed.
 JUnit 5 are supported, with JUnit 4 being the default framework.
 * `contractsProperties`: A map that contains properties to be passed to Spring Cloud Contract
 components. Those properties might be used by (for example) built-in or custom Stub Downloaders.
-* `sourceSet`: Source set where the contracts are stored. If not provided will assume `contractTest` (for example, `project.sourceSets.contractTes.java` for JUnit or `project.sourceSets.contractTest.groovy` for Spock).
+* `sourceSet`: Source set where the contracts are stored. If not provided will assume `contractTest` (for example, `project.sourceSets.contractTest.java` for JUnit or `project.sourceSets.contractTest.groovy` for Spock).
 
 You can use the following properties when you want to specify the location of the JAR
 that contains the contracts:

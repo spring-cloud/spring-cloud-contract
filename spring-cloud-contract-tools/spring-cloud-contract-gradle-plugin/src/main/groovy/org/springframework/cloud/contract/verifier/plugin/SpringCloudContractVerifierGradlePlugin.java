@@ -87,7 +87,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		TaskProvider<ContractsCopyTask> copyContracts = createAndConfigureCopyContractsTask(extension);
 		TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs = createAndConfigureGenerateClientStubs(extension, copyContracts);
 
-		createAndConfigureStubsJarTasks(extension, copyContracts, generateClientStubs);
+		createAndConfigureStubsJarTasks(extension, generateClientStubs);
 		createGenerateTestsTask(extension, contractTestSourceSet, copyContracts);
 		createAndConfigurePublishStubsToScmTask(extension, generateClientStubs);
 
@@ -242,21 +242,19 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	}
 
 	private void createAndConfigureStubsJarTasks(ContractVerifierExtension extension,
-			TaskProvider<ContractsCopyTask> copyContracts,
-			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
-		TaskProvider<Jar> task = stubsTask();
-		if (task != null) {
-			// How is this possible? Where can it come from?
-			// TODO: This can only happen if one of the following is true:
-			//   1) plugin was applied twice (allprojects/subprojects/standard apply)
-			//   2) Another task with the same name exists, but was not provided by this plugin
-			project.getLogger().info("Spring Cloud Contract Verifier Plugin: Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!");
-		}
-		else {
-			task = createStubsJarTask(extension, generateClientStubs);
-		}
-		task.configure(stubsJar -> stubsJar.dependsOn(copyContracts));
-		createAndConfigureMavenPublishPlugin(task, extension);
+												 TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
+		TaskProvider<Jar> verifierStubsJar = project.getTasks().register(VERIFIER_STUBS_JAR_TASK_NAME, Jar.class);
+		verifierStubsJar.configure(stubsJar -> {
+			stubsJar.setDescription("Creates the stubs JAR task");
+			stubsJar.setGroup(GROUP_NAME);
+			stubsJar.getArchiveBaseName().convention(project.provider(project::getName));
+			stubsJar.getArchiveClassifier().convention(extension.getStubsSuffix());
+			stubsJar.from(extension.getStubsOutputDir());
+
+			stubsJar.dependsOn(generateClientStubs);
+		});
+		project.artifacts(artifactHandler -> artifactHandler.add("archives", verifierStubsJar));
+		createAndConfigureMavenPublishPlugin(verifierStubsJar, extension);
 	}
 
 	@Deprecated
@@ -313,22 +311,6 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		catch (Exception e) {
 			return false;
 		}
-	}
-
-	private TaskProvider<Jar> createStubsJarTask(ContractVerifierExtension extension,
-			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
-		TaskProvider<Jar> task = project.getTasks().register(VERIFIER_STUBS_JAR_TASK_NAME, Jar.class);
-		task.configure(stubsJar -> {
-			stubsJar.setDescription("Creates the stubs JAR task");
-			stubsJar.setGroup(GROUP_NAME);
-			stubsJar.getArchiveBaseName().convention(project.provider(project::getName));
-			stubsJar.getArchiveClassifier().convention(extension.getStubsSuffix());
-			stubsJar.from(extension.getStubsOutputDir());
-
-			stubsJar.dependsOn(generateClientStubs);
-		});
-		project.artifacts(artifactHandler -> artifactHandler.add("archives", task));
-		return task;
 	}
 
 	private TaskProvider<ContractsCopyTask> createAndConfigureCopyContractsTask(ContractVerifierExtension extension) {
