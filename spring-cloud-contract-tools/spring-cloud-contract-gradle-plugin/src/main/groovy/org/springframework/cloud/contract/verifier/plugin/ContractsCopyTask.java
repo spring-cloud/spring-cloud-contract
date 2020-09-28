@@ -90,7 +90,6 @@ class ContractsCopyTask extends DefaultTask {
 
 	private final Property<String> contractsPath;
 
-	// FIXME: I don't think this makes sense given the default configuration... This would only make sense if contractDir == project.projectDir
 	private final Property<Boolean> excludeBuildFolders;
 
 	/**
