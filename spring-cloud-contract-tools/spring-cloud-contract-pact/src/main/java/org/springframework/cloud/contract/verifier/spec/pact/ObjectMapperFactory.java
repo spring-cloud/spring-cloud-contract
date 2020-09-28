@@ -26,6 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @Since 2.0.0
  */
 public enum ObjectMapperFactory {
+	/**
+	 * Singleton instance constant.
+	 */
 	INSTANCE;
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
