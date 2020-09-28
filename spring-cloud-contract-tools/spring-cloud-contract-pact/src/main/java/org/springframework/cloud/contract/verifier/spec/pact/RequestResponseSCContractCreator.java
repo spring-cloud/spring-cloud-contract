@@ -50,7 +50,6 @@ import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
 
-
 /**
  * Creator of {@link Contract} instances.
  *
@@ -63,14 +62,11 @@ class RequestResponseSCContractCreator {
 	private static final String FULL_BODY = "$";
 
 	Collection<Contract> convertFrom(RequestResponsePact pact) {
-		return pact.getInteractions().stream().map(interaction ->
-				Contract.make(
-						contract -> {
-							mapContractDescription(interaction, contract);
-							mapContractRequest(interaction, contract);
-							mapContractResponse(interaction, contract);
-						}
-				)).collect(Collectors.toList());
+		return pact.getInteractions().stream().map(interaction -> Contract.make(contract -> {
+			mapContractDescription(interaction, contract);
+			mapContractRequest(interaction, contract);
+			mapContractResponse(interaction, contract);
+		})).collect(Collectors.toList());
 	}
 
 	private void mapContractDescription(RequestResponseInteraction interaction, Contract contract) {
@@ -121,19 +117,20 @@ class RequestResponseSCContractCreator {
 		});
 	}
 
-
-	private void mapResponseBodyRules(org.springframework.cloud.contract.spec.internal.Response contractResponse, Response pactResponse, Category bodyRules) {
+	private void mapResponseBodyRules(org.springframework.cloud.contract.spec.internal.Response contractResponse,
+			Response pactResponse, Category bodyRules) {
 		contractResponse.bodyMatchers((bodyMatchers) -> {
 			bodyRules.getMatchingRules().forEach((key, matchindRuleGroup) -> {
 				if (matchindRuleGroup.getRuleLogic() != RuleLogic.AND) {
-					throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported");
+					throw new UnsupportedOperationException(
+							"Currently only the AND combination rule logic is supported");
 				}
 				if (FULL_BODY.equals(key)) {
-					JsonPaths jsonPaths = JsonToJsonPathsConverter.
-							transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
+					JsonPaths jsonPaths = JsonToJsonPathsConverter
+							.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
 									new String(pactResponse.getBody().getValue()));
-					jsonPaths.forEach((jsonPath) -> bodyMatchers
-							.jsonPath(jsonPath.keyBeforeChecking(), bodyMatchers.byType()));
+					jsonPaths.forEach(
+							(jsonPath) -> bodyMatchers.jsonPath(jsonPath.keyBeforeChecking(), bodyMatchers.byType()));
 				}
 				else {
 					matchindRuleGroup.getRules().forEach((matchingRule) -> {
@@ -141,8 +138,7 @@ class RequestResponseSCContractCreator {
 							bodyMatchers.jsonPath(key, bodyMatchers.byNull());
 						}
 						else if (matchingRule instanceof RegexMatcher) {
-							bodyMatchers.jsonPath(key, bodyMatchers
-									.byRegex(((RegexMatcher) matchingRule).getRegex()));
+							bodyMatchers.jsonPath(key, bodyMatchers.byRegex(((RegexMatcher) matchingRule).getRegex()));
 						}
 						else if (matchingRule instanceof DateMatcher) {
 							bodyMatchers.jsonPath(key, bodyMatchers.byDate());
@@ -154,29 +150,18 @@ class RequestResponseSCContractCreator {
 							bodyMatchers.jsonPath(key, bodyMatchers.byTimestamp());
 						}
 						else if (matchingRule instanceof MinTypeMatcher) {
-							bodyMatchers
-									.jsonPath(key, bodyMatchers
-											.byType((valueHolder) -> valueHolder
-													.minOccurrence((((MinTypeMatcher) matchingRule)
-															.getMin()))));
+							bodyMatchers.jsonPath(key, bodyMatchers.byType((valueHolder) -> valueHolder
+									.minOccurrence((((MinTypeMatcher) matchingRule).getMin()))));
 						}
 						else if (matchingRule instanceof MinMaxTypeMatcher) {
-							bodyMatchers
-									.jsonPath(key, bodyMatchers.byType((valueHolder) -> {
-										valueHolder
-												.minOccurrence((((MinMaxTypeMatcher) matchingRule)
-														.getMin()));
-										valueHolder
-												.maxOccurrence((((MinMaxTypeMatcher) matchingRule)
-														.getMax()));
-									}));
+							bodyMatchers.jsonPath(key, bodyMatchers.byType((valueHolder) -> {
+								valueHolder.minOccurrence((((MinMaxTypeMatcher) matchingRule).getMin()));
+								valueHolder.maxOccurrence((((MinMaxTypeMatcher) matchingRule).getMax()));
+							}));
 						}
 						else if (matchingRule instanceof MaxTypeMatcher) {
-							bodyMatchers
-									.jsonPath(key, bodyMatchers
-											.byType((valueHolder) -> valueHolder
-													.maxOccurrence((((MaxTypeMatcher) matchingRule)
-															.getMax()))));
+							bodyMatchers.jsonPath(key, bodyMatchers.byType((valueHolder) -> valueHolder
+									.maxOccurrence((((MaxTypeMatcher) matchingRule).getMax()))));
 						}
 						else if (matchingRule instanceof TypeMatcher) {
 							bodyMatchers.jsonPath(key, bodyMatchers.byType());
@@ -184,16 +169,13 @@ class RequestResponseSCContractCreator {
 						else if (matchingRule instanceof NumberTypeMatcher) {
 							switch (((NumberTypeMatcher) matchingRule).getNumberType()) {
 							case NUMBER:
-								bodyMatchers.jsonPath(key, bodyMatchers
-										.byRegex(RegexPatterns.number()));
+								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.number()));
 								break;
 							case INTEGER:
-								bodyMatchers.jsonPath(key, bodyMatchers
-										.byRegex(RegexPatterns.anInteger()));
+								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.anInteger()));
 								break;
 							case DECIMAL:
-								bodyMatchers.jsonPath(key, bodyMatchers
-										.byRegex(RegexPatterns.aDouble()));
+								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.aDouble()));
 								break;
 							default:
 								throw new UnsupportedOperationException("Unsupported number type!");
@@ -205,7 +187,8 @@ class RequestResponseSCContractCreator {
 		});
 	}
 
-	private void mapResponseBody(org.springframework.cloud.contract.spec.internal.Response contractResponse, Response pactResponse) {
+	private void mapResponseBody(org.springframework.cloud.contract.spec.internal.Response contractResponse,
+			Response pactResponse) {
 		Object parsedBody = BodyConverter.toSCCBody(pactResponse);
 		if (parsedBody instanceof Map) {
 			contractResponse.body((Map) parsedBody);
@@ -218,17 +201,18 @@ class RequestResponseSCContractCreator {
 		}
 	}
 
-	private void mapRequestBodyRules(org.springframework.cloud.contract.spec.internal.Request contractRequest, Category bodyRules) {
+	private void mapRequestBodyRules(org.springframework.cloud.contract.spec.internal.Request contractRequest,
+			Category bodyRules) {
 		contractRequest.bodyMatchers((bodyMatchers) -> {
 			bodyRules.getMatchingRules().forEach((key, matchingRuleGroup) -> {
 				if (matchingRuleGroup.getRuleLogic() != RuleLogic.AND) {
-					throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported");
+					throw new UnsupportedOperationException(
+							"Currently only the AND combination rule logic is supported");
 				}
 
 				matchingRuleGroup.getRules().forEach((matchingRule) -> {
 					if (matchingRule instanceof RegexMatcher) {
-						bodyMatchers.jsonPath(key, bodyMatchers
-								.byRegex(((RegexMatcher) matchingRule).getRegex()));
+						bodyMatchers.jsonPath(key, bodyMatchers.byRegex(((RegexMatcher) matchingRule).getRegex()));
 					}
 					else if (matchingRule instanceof DateMatcher) {
 						bodyMatchers.jsonPath(key, bodyMatchers.byDate());
@@ -242,16 +226,13 @@ class RequestResponseSCContractCreator {
 					else if (matchingRule instanceof NumberTypeMatcher) {
 						switch (((NumberTypeMatcher) matchingRule).getNumberType()) {
 						case NUMBER:
-							bodyMatchers.jsonPath(key, bodyMatchers
-									.byRegex(RegexPatterns.number()));
+							bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.number()));
 							break;
 						case INTEGER:
-							bodyMatchers.jsonPath(key, bodyMatchers
-									.byRegex(RegexPatterns.anInteger()));
+							bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.anInteger()));
 							break;
 						case DECIMAL:
-							bodyMatchers.jsonPath(key, bodyMatchers
-									.byRegex(RegexPatterns.aDouble()));
+							bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.aDouble()));
 							break;
 						default:
 							throw new RuntimeException("Unsupported number type!");
@@ -262,7 +243,8 @@ class RequestResponseSCContractCreator {
 		});
 	}
 
-	private void mapRequestBody(org.springframework.cloud.contract.spec.internal.Request contractRequest, Request pactRequest) {
+	private void mapRequestBody(org.springframework.cloud.contract.spec.internal.Request contractRequest,
+			Request pactRequest) {
 		Object parsedBody = BodyConverter.toSCCBody(pactRequest);
 		if (parsedBody instanceof Map) {
 			contractRequest.body((Map) parsedBody);
@@ -275,30 +257,31 @@ class RequestResponseSCContractCreator {
 		}
 	}
 
-	private void mapRequestCookies(org.springframework.cloud.contract.spec.internal.Request contractRequest, Request pactRequest) {
+	private void mapRequestCookies(org.springframework.cloud.contract.spec.internal.Request contractRequest,
+			Request pactRequest) {
 		Category headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
 		String[] splitCookiesHeader = pactRequest.getHeaders().get("Cookie").get(0).split(";");
-		Map<String, String> foundCookies = Stream.of(splitCookiesHeader)
-				.map((cookieHeader) -> cookieHeader.split("="))
-				.collect(Collectors
-						.toMap(splittedCookieHeader -> splittedCookieHeader[0],
-								splittedCookieHeader -> splittedCookieHeader[1]));
+		Map<String, String> foundCookies = Stream.of(splitCookiesHeader).map((cookieHeader) -> cookieHeader.split("="))
+				.collect(Collectors.toMap(splittedCookieHeader -> splittedCookieHeader[0],
+						splittedCookieHeader -> splittedCookieHeader[1]));
 
 		contractRequest.cookies((cookies) -> foundCookies.forEach((key, value) -> {
 			if (headerRules.getMatchingRules().containsKey("Cookie")) {
 				MatchingRuleGroup matchingRuleGroup = headerRules.getMatchingRules().get("Cookie");
 				if (matchingRuleGroup.getRules().size() > 1) {
-					throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported");
+					throw new UnsupportedOperationException(
+							"Currently only 1 rule at a time for a header is supported");
 				}
 				MatchingRule matchingRule = matchingRuleGroup.getRules().get(0);
 				if (matchingRule instanceof RegexMatcher) {
 					cookies.cookie(key,
-							contractRequest.$(contractRequest
-									.c(contractRequest.regex(((RegexMatcher) matchingRule).getRegex())), contractRequest
-									.p(value)));
+							contractRequest.$(
+									contractRequest.c(contractRequest.regex(((RegexMatcher) matchingRule).getRegex())),
+									contractRequest.p(value)));
 				}
 				else {
-					throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported");
+					throw new UnsupportedOperationException(
+							"Currently only the header matcher of type regex is supported");
 				}
 			}
 			else {
@@ -307,30 +290,31 @@ class RequestResponseSCContractCreator {
 		}));
 	}
 
-	private void mapResponseCookies(org.springframework.cloud.contract.spec.internal.Response contractResponse, Response pactResponse) {
+	private void mapResponseCookies(org.springframework.cloud.contract.spec.internal.Response contractResponse,
+			Response pactResponse) {
 		Category headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
 		String[] splitCookiesHeader = pactResponse.getHeaders().get("Cookie").get(0).split(";");
-		Map<String, String> foundCookies = Stream.of(splitCookiesHeader)
-				.map((cookieHeader) -> cookieHeader.split("="))
-				.collect(Collectors
-						.toMap(splittedCookieHeader -> splittedCookieHeader[0],
-								splittedCookieHeader -> splittedCookieHeader[1]));
+		Map<String, String> foundCookies = Stream.of(splitCookiesHeader).map((cookieHeader) -> cookieHeader.split("="))
+				.collect(Collectors.toMap(splittedCookieHeader -> splittedCookieHeader[0],
+						splittedCookieHeader -> splittedCookieHeader[1]));
 
 		contractResponse.cookies((cookies) -> foundCookies.forEach((key, value) -> {
 			if (headerRules.getMatchingRules().containsKey("Cookie")) {
 				MatchingRuleGroup matchingRuleGroup = headerRules.getMatchingRules().get("Cookie");
 				if (matchingRuleGroup.getRules().size() > 1) {
-					throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported");
+					throw new UnsupportedOperationException(
+							"Currently only 1 rule at a time for a header is supported");
 				}
 				MatchingRule matchingRule = matchingRuleGroup.getRules().get(0);
 				if (matchingRule instanceof RegexMatcher) {
-					cookies.cookie(key,
-							contractResponse.$(contractResponse.p(contractResponse.regex(
-									Pattern.compile(((RegexMatcher) matchingRule).getRegex()))),
-									contractResponse.c(value)));
+					cookies.cookie(key, contractResponse.$(
+							contractResponse.p(
+									contractResponse.regex(Pattern.compile(((RegexMatcher) matchingRule).getRegex()))),
+							contractResponse.c(value)));
 				}
 				else {
-					throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported");
+					throw new UnsupportedOperationException(
+							"Currently only the header matcher of type regex is supported");
 				}
 			}
 			else {
@@ -339,46 +323,44 @@ class RequestResponseSCContractCreator {
 		}));
 	}
 
-	private void mapRequestUrl(org.springframework.cloud.contract.spec.internal.Request contractRequest, Request pactRequest) {
+	private void mapRequestUrl(org.springframework.cloud.contract.spec.internal.Request contractRequest,
+			Request pactRequest) {
 		if (MapUtils.isNotEmpty(pactRequest.getQuery())) {
 			contractRequest.url(pactRequest.getPath(),
-					(url) -> url.queryParameters((queryParameters) -> pactRequest.getQuery()
-							.forEach(
-									(key, values) -> values
-											.forEach((singleValue) -> queryParameters.parameter(key, singleValue))
-							)
-					)
-			);
+					(url) -> url.queryParameters((queryParameters) -> pactRequest.getQuery().forEach((key,
+							values) -> values.forEach((singleValue) -> queryParameters.parameter(key, singleValue)))));
 		}
 		else {
 			contractRequest.url(pactRequest.getPath());
 		}
 	}
 
-	private void mapRequestHeaders(org.springframework.cloud.contract.spec.internal.Request contractRequest, Request pactRequest) {
+	private void mapRequestHeaders(org.springframework.cloud.contract.spec.internal.Request contractRequest,
+			Request pactRequest) {
 		Category headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
 		contractRequest.headers((headers) -> pactRequest.getHeaders().forEach((key, values) -> {
 			if (key.equalsIgnoreCase("Cookie")) {
 				return;
 			}
 			if (headerRules.getMatchingRules().containsKey(key)) {
-				MatchingRuleGroup matchingRuleGroup = headerRules.getMatchingRules()
-						.get(key);
+				MatchingRuleGroup matchingRuleGroup = headerRules.getMatchingRules().get(key);
 				if (matchingRuleGroup.getRules().size() > 1) {
-					throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported");
+					throw new UnsupportedOperationException(
+							"Currently only 1 rule at a time for a header is supported");
 				}
 				MatchingRule matchingRule = matchingRuleGroup.getRules().get(0);
 				if (matchingRule instanceof RegexMatcher) {
-					values.forEach((value) ->
-					{
-						headers.header(key, contractRequest
-								.$(contractRequest.c(contractRequest.regex(
-										((RegexMatcher) matchingRule).getRegex())),
+					values.forEach((value) -> {
+						headers.header(key,
+								contractRequest.$(
+										contractRequest
+												.c(contractRequest.regex(((RegexMatcher) matchingRule).getRegex())),
 										contractRequest.p(value)));
 					});
 				}
 				else {
-					throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported");
+					throw new UnsupportedOperationException(
+							"Currently only the header matcher of type regex is supported");
 				}
 			}
 			else {
@@ -387,30 +369,32 @@ class RequestResponseSCContractCreator {
 		}));
 	}
 
-	private void mapResponseHeaders(org.springframework.cloud.contract.spec.internal.Response contractResponse, Response pactResponse) {
+	private void mapResponseHeaders(org.springframework.cloud.contract.spec.internal.Response contractResponse,
+			Response pactResponse) {
 		Category headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
 		contractResponse.headers((headers) -> pactResponse.getHeaders().forEach((key, values) -> {
 			if (key.equalsIgnoreCase("Cookie")) {
 				return;
 			}
 			if (headerRules.getMatchingRules().containsKey(key)) {
-				MatchingRuleGroup matchingRuleGroup = headerRules.getMatchingRules()
-						.get(key);
+				MatchingRuleGroup matchingRuleGroup = headerRules.getMatchingRules().get(key);
 				if (matchingRuleGroup.getRules().size() > 1) {
-					throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported");
+					throw new UnsupportedOperationException(
+							"Currently only 1 rule at a time for a header is supported");
 				}
 				MatchingRule matchingRule = matchingRuleGroup.getRules().get(0);
 				if (matchingRule instanceof RegexMatcher) {
-					values.forEach((value) ->
-					{
-						headers.header(key, contractResponse
-								.$(contractResponse.p(contractResponse.regex(
-										Pattern.compile(((RegexMatcher) matchingRule).getRegex()))),
+					values.forEach((value) -> {
+						headers.header(key,
+								contractResponse.$(
+										contractResponse.p(contractResponse
+												.regex(Pattern.compile(((RegexMatcher) matchingRule).getRegex()))),
 										contractResponse.c(value)));
 					});
 				}
 				else {
-					throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported");
+					throw new UnsupportedOperationException(
+							"Currently only the header matcher of type regex is supported");
 				}
 			}
 			else {
@@ -418,7 +402,6 @@ class RequestResponseSCContractCreator {
 			}
 		}));
 	}
-
 
 	private String buildDescription(RequestResponseInteraction interaction) {
 		StringBuilder description = new StringBuilder(interaction.getDescription());
@@ -437,4 +420,5 @@ class RequestResponseSCContractCreator {
 		}
 		return description.toString();
 	}
+
 }

@@ -36,7 +36,7 @@ import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 /**
  * @author Tim Ysewyn
  * @author Stessy Delcroix
- * @Since 2.0.0
+ * @since 2.0.0
  */
 final class MatchingRulesConverter {
 
@@ -47,8 +47,7 @@ final class MatchingRulesConverter {
 		return matchingRulesFor("body", bodyMatchers);
 	}
 
-	private static Category matchingRulesFor(String categoryName,
-			BodyMatchers bodyMatchers) {
+	private static Category matchingRulesFor(String categoryName, BodyMatchers bodyMatchers) {
 		Category category = new Category(categoryName);
 		bodyMatchers.matchers().forEach((b) -> {
 			String key = getMatcherKey(b.path());

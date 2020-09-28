@@ -48,7 +48,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils;
 /**
  * @author Tim Ysewyn
  * @author Stessy Delcroix
- * @Since 2.0.0
+ * @since 2.0.0
  */
 final class BodyConverter {
 
@@ -62,7 +62,8 @@ final class BodyConverter {
 		return traverse(dslProperty, null, dslPropertyValueExtractor);
 	}
 
-	private static DslPart traverse(Object value, DslPart parent, Function<DslProperty<?>, Object> dslPropertyValueExtractor) {
+	private static DslPart traverse(Object value, DslPart parent,
+			Function<DslProperty<?>, Object> dslPropertyValueExtractor) {
 		boolean isRoot = parent == null;
 		Object v = value;
 		if (v instanceof DslProperty) {
@@ -73,12 +74,14 @@ final class BodyConverter {
 		}
 		if (v instanceof String) {
 			String stringValue = ((String) v).trim();
-			if (StringUtils.startsWith(stringValue, "{")
-					&& StringUtils.endsWith(stringValue, "}")) {
+			if (StringUtils.startsWith(stringValue, "{") && StringUtils.endsWith(stringValue, "}")) {
 				try {
 					v = OBJECT_MAPPER.readValue(stringValue, Object.class);
 				}
-				catch (JsonProcessingException ex) { /* it wasn't a JSON string after all...*/
+				catch (JsonProcessingException ex) { /*
+														 * it wasn't a JSON string after
+														 * all...
+														 */
 				}
 			}
 		}
@@ -161,25 +164,22 @@ final class BodyConverter {
 
 	static Object toSCCBody(Request request) {
 		Object body = parseBody(request.getBody());
-		if (request.getGenerators().isNotEmpty()
-				&& request.getGenerators().getCategories().
-				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
-			applyGenerators(body, request.getGenerators().getCategories()
-							.get(au.com.dius.pact.core.model.generators.Category.BODY),
-					currentValue -> pattern -> generatedValue ->
-							new DslProperty<>(new ClientDslProperty(pattern, generatedValue),
-									currentValue));
+		if (request.getGenerators().isNotEmpty() && request.getGenerators().getCategories()
+				.containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
+			applyGenerators(body,
+					request.getGenerators().getCategories().get(au.com.dius.pact.core.model.generators.Category.BODY),
+					currentValue -> pattern -> generatedValue -> new DslProperty<>(
+							new ClientDslProperty(pattern, generatedValue), currentValue));
 		}
 		return body;
 	}
 
 	static Object toSCCBody(Response response) {
 		Object body = parseBody(response.getBody());
-		if (response.getGenerators().isNotEmpty()
-				&& response.getGenerators().getCategories().
-				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
-			applyGenerators(body, response.getGenerators().getCategories().
-							get(au.com.dius.pact.core.model.generators.Category.BODY),
+		if (response.getGenerators().isNotEmpty() && response.getGenerators().getCategories()
+				.containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
+			applyGenerators(body,
+					response.getGenerators().getCategories().get(au.com.dius.pact.core.model.generators.Category.BODY),
 					currentValue -> pattern -> generatedValue -> new DslProperty<>(currentValue,
 							new ServerDslProperty(pattern, generatedValue)));
 		}
@@ -188,13 +188,12 @@ final class BodyConverter {
 
 	static Object toSCCBody(Message message) {
 		Object body = parseBody(message.getContents());
-		if (message.getGenerators().isNotEmpty()
-				&& message.getGenerators().getCategories().
-				containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
-			applyGenerators(body, message.getGenerators().getCategories().
-							get(au.com.dius.pact.core.model.generators.Category.BODY),
-					currentValue -> pattern -> generatedValue -> new DslProperty<>(new
-							ClientDslProperty(pattern, generatedValue), currentValue));
+		if (message.getGenerators().isNotEmpty() && message.getGenerators().getCategories()
+				.containsKey(au.com.dius.pact.core.model.generators.Category.BODY)) {
+			applyGenerators(body,
+					message.getGenerators().getCategories().get(au.com.dius.pact.core.model.generators.Category.BODY),
+					currentValue -> pattern -> generatedValue -> new DslProperty<>(
+							new ClientDslProperty(pattern, generatedValue), currentValue));
 		}
 		return body;
 	}
@@ -213,19 +212,18 @@ final class BodyConverter {
 		}
 	}
 
-	private static void applyGenerators(Object body,
-			Map<String, Generator> generatorsPerPath,
+	private static void applyGenerators(Object body, Map<String, Generator> generatorsPerPath,
 			Function<Pattern, Function<Object, Function<Object, DslProperty<Object>>>> dslPropertyProvider) {
-		Configuration configuration = Configuration.builder()
-				.jsonProvider(new JacksonJsonProvider(OBJECT_MAPPER)).build();
+		Configuration configuration = Configuration.builder().jsonProvider(new JacksonJsonProvider(OBJECT_MAPPER))
+				.build();
 		generatorsPerPath.forEach((path, generator) -> {
 			Path compiledPath = PathCompiler.compile(path);
 			EvaluationContext evaluationContext = compiledPath.evaluate(body, body, configuration, true);
 			evaluationContext.updateOperations().forEach(pathRef -> {
-				pathRef.convert(((currentValue, config) ->
-						ValueGeneratorConverter
-								.convert(generator, (pattern, generatedValue) -> dslPropertyProvider.apply(pattern)
-										.apply(generatedValue).apply(currentValue))), configuration);
+				pathRef.convert(((currentValue, config) -> ValueGeneratorConverter.convert(generator,
+						(pattern, generatedValue) -> dslPropertyProvider.apply(pattern).apply(generatedValue)
+								.apply(currentValue))),
+						configuration);
 			});
 		});
 	}

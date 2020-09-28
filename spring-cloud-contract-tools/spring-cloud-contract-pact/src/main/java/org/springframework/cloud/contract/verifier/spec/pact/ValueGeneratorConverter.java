@@ -51,7 +51,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils;
  *
  * @author Tim Ysewyn
  * @author Stessy Delcroix
- * @Since 2.0.0
+ * @since 2.0.0
  */
 final class ValueGeneratorConverter {
 
@@ -117,24 +117,20 @@ final class ValueGeneratorConverter {
 			pattern = UUID;
 		}
 		else if (generator instanceof DateGenerator) {
-			pattern = getDateTimePattern(((DateGenerator) generator).getFormat(),
-					ANY_DATE);
+			pattern = getDateTimePattern(((DateGenerator) generator).getFormat(), ANY_DATE);
 		}
 		else if (generator instanceof TimeGenerator) {
-			pattern = getDateTimePattern(((TimeGenerator) generator).getFormat(),
-					ANY_TIME);
+			pattern = getDateTimePattern(((TimeGenerator) generator).getFormat(), ANY_TIME);
 		}
 		else if (generator instanceof DateTimeGenerator) {
-			pattern = getDateTimePattern(((DateTimeGenerator) generator).getFormat(),
-					ANY_DATE_TIME);
+			pattern = getDateTimePattern(((DateTimeGenerator) generator).getFormat(), ANY_DATE_TIME);
 		}
 		else if (generator instanceof RandomBooleanGenerator) {
 			pattern = TRUE_OR_FALSE;
 		}
 		if (pattern == null) {
 			throw new UnsupportedOperationException(
-					"We currently don't support a generator of type "
-							+ generator.getClass().getSimpleName());
+					"We currently don't support a generator of type " + generator.getClass().getSimpleName());
 		}
 		else {
 			Object generatedValue = generator.generate(new HashMap<>());
@@ -146,23 +142,19 @@ final class ValueGeneratorConverter {
 		return StringUtils.isNotBlank(format) ? Pattern.compile(format) : defaultPattern;
 	}
 
-	static Generators extract(Body body,
-			Function<DslProperty<?>, Object> dslPropertyValueProvider) {
+	static Generators extract(Body body, Function<DslProperty<?>, Object> dslPropertyValueProvider) {
 		Generators generators = new Generators();
 		traverse(body, dslPropertyValueProvider, "", generators, Category.BODY);
 		return generators;
 	}
 
-	static Generators extract(OutputMessage message,
-			Function<DslProperty<?>, Object> dslPropertyValueProvider) {
+	static Generators extract(OutputMessage message, Function<DslProperty<?>, Object> dslPropertyValueProvider) {
 		Generators generators = new Generators();
-		traverse(message.getBody(), dslPropertyValueProvider, "", generators,
-				Category.BODY);
+		traverse(message.getBody(), dslPropertyValueProvider, "", generators, Category.BODY);
 		return generators;
 	}
 
-	private static void traverse(Object value,
-			Function<DslProperty<?>, Object> dslPropertyValueProvider, String path,
+	private static void traverse(Object value, Function<DslProperty<?>, Object> dslPropertyValueProvider, String path,
 			Generators generators, Category category) {
 		Object v = value;
 		if (v instanceof DslProperty) {
@@ -172,8 +164,8 @@ final class ValueGeneratorConverter {
 			v = ContentUtils.extractValue((GString) v, dslPropertyValueProvider);
 		}
 		if (v instanceof Map) {
-			((Map) v).forEach((key, val) -> traverse(val, dslPropertyValueProvider,
-					path + "." + key, generators, category));
+			((Map) v).forEach(
+					(key, val) -> traverse(val, dslPropertyValueProvider, path + "." + key, generators, category));
 		}
 		else if (v instanceof Collection) {
 			AtomicInteger index = new AtomicInteger();
@@ -187,15 +179,13 @@ final class ValueGeneratorConverter {
 			RegexProperty regexProperty = new RegexProperty(v);
 			switch (regexProperty.pattern()) {
 			case INTEGER_PATTERN:
-				generators.addGenerator(category, path,
-						new RandomIntGenerator(0, Integer.MAX_VALUE));
+				generators.addGenerator(category, path, new RandomIntGenerator(0, Integer.MAX_VALUE));
 				break;
 			case DECIMAL_PATTERN:
 				generators.addGenerator(category, path, new RandomDecimalGenerator(10));
 				break;
 			case HEX_PATTERN:
-				generators.addGenerator(category, path,
-						new RandomHexadecimalGenerator(10));
+				generators.addGenerator(category, path, new RandomHexadecimalGenerator(10));
 				break;
 			case ALPHA_NUMERIC_PATTERN:
 				generators.addGenerator(category, path, new RandomStringGenerator(10));
@@ -216,8 +206,7 @@ final class ValueGeneratorConverter {
 				generators.addGenerator(category, path, RandomBooleanGenerator.INSTANCE);
 				break;
 			default:
-				generators.addGenerator(category, path,
-						new RegexGenerator(regexProperty.pattern()));
+				generators.addGenerator(category, path, new RegexGenerator(regexProperty.pattern()));
 				break;
 			}
 		}

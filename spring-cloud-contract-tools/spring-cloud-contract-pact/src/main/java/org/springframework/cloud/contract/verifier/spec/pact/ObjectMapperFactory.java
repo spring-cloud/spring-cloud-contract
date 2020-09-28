@@ -23,9 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * {@link ObjectMapper} singleton instance creation.
  * @author Stessy Delcroix
- * @Since 2.0.0
+ * @since 2.0.0
  */
 public enum ObjectMapperFactory {
+
 	/**
 	 * Singleton instance constant.
 	 */
@@ -46,4 +47,3 @@ public enum ObjectMapperFactory {
 	}
 
 }
-

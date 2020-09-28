@@ -51,8 +51,11 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 	private static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.INSTANCE.getMapper();
 
 	private final RequestResponseSCContractCreator requestResponseSCContractCreator = new RequestResponseSCContractCreator();
+
 	private final MessagingSCContractCreator messagingSCContractCreator = new MessagingSCContractCreator();
+
 	private final RequestResponsePactCreator requestResponsePactCreator = new RequestResponsePactCreator();
+
 	private final MessagePactCreator messagePactCreator = new MessagePactCreator();
 
 	@Override
@@ -76,8 +79,7 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 			return messagingSCContractCreator.convertFrom((MessagePact) pact);
 		}
 		throw new UnsupportedOperationException(
-				"We currently don't support pact contracts of type"
-						+ pact.getClass().getSimpleName());
+				"We currently don't support pact contracts of type" + pact.getClass().getSimpleName());
 	}
 
 	@Override
@@ -102,31 +104,27 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 
 	@Override
 	public Map<String, byte[]> store(Collection<Pact<?>> contracts) {
-		return contracts.stream().collect(Collectors
-				.toMap(this::name, c -> {
-					try {
-						return this.buildPrettyPrint(
-								OBJECT_MAPPER.writeValueAsString(c.toMap(PactSpecVersion.V3))).getBytes();
-					}
-					catch (JsonProcessingException e) {
-						throw new IllegalArgumentException("The pact contract is not a valid map", e);
-					}
-				}));
+		return contracts.stream().collect(Collectors.toMap(this::name, c -> {
+			try {
+				return this.buildPrettyPrint(OBJECT_MAPPER.writeValueAsString(c.toMap(PactSpecVersion.V3))).getBytes();
+			}
+			catch (JsonProcessingException e) {
+				throw new IllegalArgumentException("The pact contract is not a valid map", e);
+			}
+		}));
 	}
 
 	protected String name(Pact<?> contract) {
-		return contract.getConsumer().getName() + "_" + contract.getProvider().getName()
-				+ "_" + Math.abs(contract.hashCode()) + ".json";
+		return contract.getConsumer().getName() + "_" + contract.getProvider().getName() + "_"
+				+ Math.abs(contract.hashCode()) + ".json";
 	}
 
 	private String buildPrettyPrint(String contract) {
 		try {
-			Object intermediateObjectForPrettyPrinting = OBJECT_MAPPER.reader()
-					.readValue(contract, Object.class);
+			Object intermediateObjectForPrettyPrinting = OBJECT_MAPPER.reader().readValue(contract, Object.class);
 			DefaultIndenter customIndenter = new DefaultIndenter("    ", "\n");
 			return OBJECT_MAPPER
-					.writer(new CustomPrettyPrinter()
-							.withArrayIndenter(customIndenter)
+					.writer(new CustomPrettyPrinter().withArrayIndenter(customIndenter)
 							.withObjectIndenter(customIndenter))
 					.writeValueAsString(intermediateObjectForPrettyPrinting);
 		}

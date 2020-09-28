@@ -61,8 +61,8 @@ class RequestResponsePactCreator {
 			return null;
 		}
 		Names names = NamingUtil.name(contracts.get(0));
-		PactDslWithProvider pactDslWithProvider = ConsumerPactBuilder
-				.consumer(names.getConsumer()).hasPactWith(names.getProducer());
+		PactDslWithProvider pactDslWithProvider = ConsumerPactBuilder.consumer(names.getConsumer())
+				.hasPactWith(names.getProducer());
 		PactDslResponse pactDslResponse = null;
 		for (Contract contract : contracts) {
 			assertNoExecutionProperty(contract);
@@ -75,35 +75,31 @@ class RequestResponsePactCreator {
 	}
 
 	private void assertNoExecutionProperty(Contract contract) {
-		assertNoExecutionPropertyInBody(contract.getRequest().getBody(),
-				DslProperty::getServerValue);
-		assertNoExecutionPropertyInBody(contract.getResponse().getBody(),
-				DslProperty::getClientValue);
+		assertNoExecutionPropertyInBody(contract.getRequest().getBody(), DslProperty::getServerValue);
+		assertNoExecutionPropertyInBody(contract.getResponse().getBody(), DslProperty::getClientValue);
 	}
 
 	private void assertNoExecutionPropertyInBody(Body body,
 			Function<DslProperty<?>, Object> dslPropertyValueExtractor) {
 		traverseValues(body, dslPropertyValueExtractor, (Object object) -> {
 			if (object instanceof ExecutionProperty) {
-				throw new UnsupportedOperationException(
-						"We can't convert a contract that has execution property");
+				throw new UnsupportedOperationException("We can't convert a contract that has execution property");
 			}
 			return object;
 		});
 	}
 
-	private void traverseValues(Object value, Function<DslProperty<?>, Object> dslPropertyValueExtractor, Function<Object, Object> function) {
+	private void traverseValues(Object value, Function<DslProperty<?>, Object> dslPropertyValueExtractor,
+			Function<Object, Object> function) {
 		if (value instanceof DslProperty) {
-			traverseValues(dslPropertyValueExtractor.apply((DslProperty<?>) value),
-					dslPropertyValueExtractor, function);
+			traverseValues(dslPropertyValueExtractor.apply((DslProperty<?>) value), dslPropertyValueExtractor,
+					function);
 		}
 		else if (value instanceof Map) {
-			((Map) value).values()
-					.forEach(v -> traverseValues(v, dslPropertyValueExtractor, function));
+			((Map) value).values().forEach(v -> traverseValues(v, dslPropertyValueExtractor, function));
 		}
 		else if (value instanceof Collection) {
-			((Collection<?>) value)
-					.forEach(v -> traverseValues(v, dslPropertyValueExtractor, function));
+			((Collection<?>) value).forEach(v -> traverseValues(v, dslPropertyValueExtractor, function));
 		}
 		else {
 			function.apply(value);
@@ -113,10 +109,8 @@ class RequestResponsePactCreator {
 	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract, PactDslResponse pactDslResponse) {
 		Request request = contract.getRequest();
 		PactDslRequestWithPath pactDslRequest = pactDslResponse
-				.uponReceiving(StringUtils.isNotBlank(contract.getDescription())
-						? contract.getDescription() : "")
-				.path(url(request))
-				.method(request.getMethod().getServerValue().toString());
+				.uponReceiving(StringUtils.isNotBlank(contract.getDescription()) ? contract.getDescription() : "")
+				.path(url(request)).method(request.getMethod().getServerValue().toString());
 		String query = query(request);
 		if (StringUtils.isNotBlank(query)) {
 			pactDslRequest = pactDslRequest.encodedQuery(query);
@@ -131,8 +125,7 @@ class RequestResponsePactCreator {
 		if (request.getBody() != null) {
 			DslPart pactRequestBody = BodyConverter.toPactBody(request.getBody(), DslProperty::getClientValue);
 			if (request.getBodyMatchers() != null) {
-				pactRequestBody.setMatchers(MatchingRulesConverter
-						.matchingRulesForBody(request.getBodyMatchers()));
+				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.getBodyMatchers()));
 			}
 			pactRequestBody
 					.setGenerators(ValueGeneratorConverter.extract(request.getBody(), DslProperty::getClientValue));
@@ -141,13 +134,12 @@ class RequestResponsePactCreator {
 		return pactDslRequest;
 	}
 
-	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract, PactDslWithProvider pactDslWithProvider) {
+	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract,
+			PactDslWithProvider pactDslWithProvider) {
 		Request request = contract.getRequest();
 		PactDslRequestWithPath pactDslRequest = pactDslWithProvider
-				.uponReceiving(StringUtils.isNotBlank(contract.getDescription())
-						? contract.getDescription() : "")
-				.path(url(request))
-				.method(request.getMethod().getServerValue().toString());
+				.uponReceiving(StringUtils.isNotBlank(contract.getDescription()) ? contract.getDescription() : "")
+				.path(url(request)).method(request.getMethod().getServerValue().toString());
 		String query = query(request);
 		if (StringUtils.isNotBlank(query)) {
 			pactDslRequest = pactDslRequest.encodedQuery(query);
@@ -162,11 +154,10 @@ class RequestResponsePactCreator {
 		if (request.getBody() != null) {
 			DslPart pactRequestBody = BodyConverter.toPactBody(request.getBody(), DslProperty::getServerValue);
 			if (request.getBodyMatchers() != null) {
-				pactRequestBody.setMatchers(MatchingRulesConverter
-						.matchingRulesForBody(request.getBodyMatchers()));
+				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.getBodyMatchers()));
 			}
-			pactRequestBody.setGenerators(ValueGeneratorConverter
-					.extract(request.getBody(), DslProperty::getClientValue));
+			pactRequestBody
+					.setGenerators(ValueGeneratorConverter.extract(request.getBody(), DslProperty::getClientValue));
 			pactDslRequest = pactDslRequest.body(pactRequestBody);
 		}
 		return pactDslRequest;
@@ -222,8 +213,7 @@ class RequestResponsePactCreator {
 	}
 
 	private String stubSideCookieExample(Cookies cookies) {
-		return cookies.asStubSideMap().entrySet().stream().map(Object::toString)
-				.collect(joining(";"));
+		return cookies.asStubSideMap().entrySet().stream().map(Object::toString).collect(joining(";"));
 	}
 
 	private Object getDslPropertyClientValue(Object o) {
@@ -245,13 +235,11 @@ class RequestResponsePactCreator {
 	private PactDslRequestWithPath processCookies(PactDslRequestWithPath pactDslRequest, Cookies cookies) {
 		Map<String, Object> stubSideCookies = cookies.asStubSideMap();
 		Collection<RegexProperty> regexProperties = stubSideCookies.values().stream()
-				.filter(r -> r instanceof Pattern || r instanceof RegexProperty)
-				.map(RegexProperty::new).collect(Collectors.toList());
+				.filter(r -> r instanceof Pattern || r instanceof RegexProperty).map(RegexProperty::new)
+				.collect(Collectors.toList());
 		if (!regexProperties.isEmpty()) {
-			String regex = regexProperties.stream().map(RegexProperty::pattern)
-					.collect(joining("|"));
-			return pactDslRequest.matchHeader("Cookie", regex,
-					testSideCookieExample(cookies));
+			String regex = regexProperties.stream().map(RegexProperty::pattern).collect(joining("|"));
+			return pactDslRequest.matchHeader("Cookie", regex, testSideCookieExample(cookies));
 		}
 		else {
 			return pactDslRequest.headers("Cookie", testSideCookieExample(cookies));
@@ -259,8 +247,7 @@ class RequestResponsePactCreator {
 	}
 
 	private String testSideCookieExample(Cookies cookies) {
-		return cookies.asTestSideMap().entrySet().stream().map(Object::toString)
-				.collect(joining(";"));
+		return cookies.asTestSideMap().entrySet().stream().map(Object::toString).collect(joining(";"));
 	}
 
 	private PactDslResponse createPactDslResponse(Contract contract, PactDslRequestWithPath pactDslRequest) {
@@ -270,8 +257,7 @@ class RequestResponsePactCreator {
 
 		PactDslResponse finalPactDslResponse = pactDslResponse;
 		if (response.getHeaders() != null) {
-			response.getHeaders().getEntries()
-					.forEach(h -> processHeader(finalPactDslResponse, h));
+			response.getHeaders().getEntries().forEach(h -> processHeader(finalPactDslResponse, h));
 		}
 
 		if (response.getCookies() != null) {
@@ -280,11 +266,10 @@ class RequestResponsePactCreator {
 		if (response.getBody() != null) {
 			DslPart pactResponseBody = BodyConverter.toPactBody(response.getBody(), DslProperty::getClientValue);
 			if (response.getBodyMatchers() != null) {
-				pactResponseBody.setMatchers(MatchingRulesConverter
-						.matchingRulesForBody(response.getBodyMatchers()));
+				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.getBodyMatchers()));
 			}
-			pactResponseBody.setGenerators(ValueGeneratorConverter
-					.extract(response.getBody(), DslProperty::getServerValue));
+			pactResponseBody
+					.setGenerators(ValueGeneratorConverter.extract(response.getBody(), DslProperty::getServerValue));
 			pactDslResponse = pactDslResponse.body(pactResponseBody);
 		}
 		return pactDslResponse;
@@ -293,8 +278,7 @@ class RequestResponsePactCreator {
 	private PactDslResponse processHeader(PactDslResponse pactDslResponse, Header header) {
 		if (header.isSingleValue()) {
 			String value = getDslPropertyClientValue(header).toString();
-			return pactDslResponse
-					.headers(Collections.singletonMap(header.getName(), value));
+			return pactDslResponse.headers(Collections.singletonMap(header.getName(), value));
 		}
 		else {
 			String regex = getDslPropertyServerValue(header).toString();
@@ -306,17 +290,14 @@ class RequestResponsePactCreator {
 	private PactDslResponse processCookies(PactDslResponse pactDslResponse, Cookies cookies) {
 		Map<String, Object> testSideCookies = cookies.asTestSideMap();
 		Collection<RegexProperty> regexProperties = testSideCookies.values().stream()
-				.filter(p -> p instanceof Pattern || p instanceof RegexProperty)
-				.map(RegexProperty::new).collect(Collectors.toList());
+				.filter(p -> p instanceof Pattern || p instanceof RegexProperty).map(RegexProperty::new)
+				.collect(Collectors.toList());
 		if (!regexProperties.isEmpty()) {
-			String regex = regexProperties.stream().map(RegexProperty::pattern)
-					.collect(joining("|"));
-			return pactDslResponse.matchHeader("Cookie", regex,
-					stubSideCookieExample(cookies));
+			String regex = regexProperties.stream().map(RegexProperty::pattern).collect(joining("|"));
+			return pactDslResponse.matchHeader("Cookie", regex, stubSideCookieExample(cookies));
 		}
 		else {
-			return pactDslResponse.headers(
-					Collections.singletonMap("Cookie", stubSideCookieExample(cookies)));
+			return pactDslResponse.headers(Collections.singletonMap("Cookie", stubSideCookieExample(cookies)));
 		}
 	}
 

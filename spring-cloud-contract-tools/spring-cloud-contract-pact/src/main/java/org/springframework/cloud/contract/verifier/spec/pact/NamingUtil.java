@@ -34,7 +34,7 @@ final class NamingUtil {
 	static Names name(Contract contract) {
 		String contractName = contract.getName();
 		if (contractName == null || !contractName.contains(SEPARATOR)) {
-			return new Names(new String[] {"Consumer", "Provider", ""});
+			return new Names(new String[] { "Consumer", "Provider", "" });
 		}
 		return new Names(contractName.split(SEPARATOR));
 	}

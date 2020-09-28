@@ -62,8 +62,7 @@ import org.springframework.util.StringUtils;
  */
 public final class PactStubDownloaderBuilder implements StubDownloaderBuilder {
 
-	private static final List<String> ACCEPTABLE_PROTOCOLS = Collections
-			.singletonList("pact");
+	private static final List<String> ACCEPTABLE_PROTOCOLS = Collections.singletonList("pact");
 
 	/**
 	 * Does any of the accepted protocols matches the URL of the repository.
@@ -149,11 +148,9 @@ class PactStubDownloader implements StubDownloader {
 	}
 
 	@Override
-	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubConfiguration stubConfiguration) {
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration) {
 		String version = stubConfiguration.version;
-		final FromPropsThenFromSysEnv resolver = new FromPropsThenFromSysEnv(
-				this.stubRunnerOptions);
+		final FromPropsThenFromSysEnv resolver = new FromPropsThenFromSysEnv(this.stubRunnerOptions);
 		List<String> tags = tags(version, resolver);
 		try {
 			PactLoader loader = pactBrokerLoader(resolver, tags);
@@ -161,16 +158,14 @@ class PactStubDownloader implements StubDownloader {
 			List<Pact> pacts = loader.load(providerName);
 			if (pacts.isEmpty()) {
 				if (log.isWarnEnabled()) {
-					log.warn("No pact definitions found for provider [" + providerName
-							+ "]");
+					log.warn("No pact definitions found for provider [" + providerName + "]");
 				}
 				return null;
 			}
-			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage
-					.createTempDir(TEMP_DIR_PREFIX);
+			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
 			// make the groupid / artifactid folders
-			String coordinatesFolderName = stubConfiguration.getGroupId().replace(".",
-					File.separator) + File.separator + stubConfiguration.getArtifactId();
+			String coordinatesFolderName = stubConfiguration.getGroupId().replace(".", File.separator) + File.separator
+					+ stubConfiguration.getArtifactId();
 			File contractsFolder = new File(tmpDirWhereStubsWillBeUnzipped,
 					coordinatesFolderName + File.separator + "contracts");
 			File mappingsFolder = new File(tmpDirWhereStubsWillBeUnzipped,
@@ -178,25 +173,21 @@ class PactStubDownloader implements StubDownloader {
 			boolean createdContractsDirs = contractsFolder.mkdirs();
 			boolean createdMappingsDirs = mappingsFolder.mkdirs();
 			if (!createdContractsDirs || !createdMappingsDirs) {
-				throw new IllegalStateException(
-						"Failed to create mandatory [contracts] or [mappings] folders under ["
-								+ coordinatesFolderName + "]");
+				throw new IllegalStateException("Failed to create mandatory [contracts] or [mappings] folders under ["
+						+ coordinatesFolderName + "]");
 			}
 			storePacts(providerName, pacts, contractsFolder, mappingsFolder);
-			return new AbstractMap.SimpleEntry<>(stubConfiguration,
-					tmpDirWhereStubsWillBeUnzipped);
+			return new AbstractMap.SimpleEntry<>(stubConfiguration, tmpDirWhereStubsWillBeUnzipped);
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
-	private void storePacts(String providerName, List<Pact> pacts, File contractsFolder,
-			File mappingsFolder) {
+	private void storePacts(String providerName, List<Pact> pacts, File contractsFolder, File mappingsFolder) {
 		for (int i = 0; i < pacts.size(); i++) {
 			String json = toJson(pacts.get(i).toMap(PactSpecVersion.V3));
-			File file = new File(contractsFolder,
-					i + "_" + providerName.replace(":", "_") + "_pact.json");
+			File file = new File(contractsFolder, i + "_" + providerName.replace(":", "_") + "_pact.json");
 			storeFile(file.toPath(), json.getBytes());
 			try {
 				storeMapping(mappingsFolder, file);
@@ -210,8 +201,7 @@ class PactStubDownloader implements StubDownloader {
 	private void storeMapping(File mappingsFolder, File file) {
 		Collection<Contract> contracts = new PactContractConverter().convertFrom(file);
 		if (log.isDebugEnabled()) {
-			log.debug("Converted pact file [" + file + "] to [" + contracts.size()
-					+ "] contracts");
+			log.debug("Converted pact file [" + file + "] to [" + contracts.size() + "] contracts");
 		}
 		MappingGenerator.toMappings(file, contracts, mappingsFolder);
 	}
@@ -231,18 +221,15 @@ class PactStubDownloader implements StubDownloader {
 
 	private String providerName(StubConfiguration stubConfiguration) {
 		boolean providerNameWithGroupId = Boolean.parseBoolean(StubRunnerPropertyUtils
-				.getProperty(this.stubRunnerOptions.getProperties(),
-						PROVIDER_NAME_WITH_GROUP_ID));
+				.getProperty(this.stubRunnerOptions.getProperties(), PROVIDER_NAME_WITH_GROUP_ID));
 		if (providerNameWithGroupId) {
-			return stubConfiguration.getGroupId() + ":"
-					+ stubConfiguration.getArtifactId();
+			return stubConfiguration.getGroupId() + ":" + stubConfiguration.getArtifactId();
 		}
 		return stubConfiguration.getArtifactId();
 	}
 
 	@NotNull
-	PactLoader pactBrokerLoader(ValueResolver resolver, List<String> tags)
-			throws IOException {
+	PactLoader pactBrokerLoader(ValueResolver resolver, List<String> tags) throws IOException {
 		Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
 		String schemeSpecificPart = schemeSpecificPart(repo.getURI());
 		URI pactBrokerUrl = URI.create(schemeSpecificPart);
@@ -257,20 +244,17 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String host() {
-				return resolver
-						.resolveValue("pactbroker.host:" + pactBrokerUrl.getHost());
+				return resolver.resolveValue("pactbroker.host:" + pactBrokerUrl.getHost());
 			}
 
 			@Override
 			public String port() {
-				return resolver
-						.resolveValue("pactbroker.port:" + pactBrokerUrl.getPort());
+				return resolver.resolveValue("pactbroker.port:" + pactBrokerUrl.getPort());
 			}
 
 			@Override
 			public String scheme() {
-				return resolver
-						.resolveValue("pactbroker.protocol:" + pactBrokerUrl.getScheme());
+				return resolver.resolveValue("pactbroker.protocol:" + pactBrokerUrl.getScheme());
 			}
 
 			@Override
@@ -280,7 +264,7 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String[] consumers() {
-				return new String[] {resolver.resolveValue("pactbroker.consumers:")};
+				return new String[] { resolver.resolveValue("pactbroker.consumers:") };
 			}
 
 			@Override
@@ -298,14 +282,12 @@ class PactStubDownloader implements StubDownloader {
 
 					@Override
 					public String username() {
-						return resolver.resolveValue(
-								"pactbroker.auth.username:" + stubRunnerUsername);
+						return resolver.resolveValue("pactbroker.auth.username:" + stubRunnerUsername);
 					}
 
 					@Override
 					public String password() {
-						return resolver.resolveValue(
-								"pactbroker.auth.password:" + stubRunnerPassword);
+						return resolver.resolveValue("pactbroker.auth.password:" + stubRunnerPassword);
 					}
 
 					@Override
@@ -332,10 +314,9 @@ class PactStubDownloader implements StubDownloader {
 
 	@NotNull
 	private List<String> tags(String version, ValueResolver resolver) {
-		String defaultTag = StubConfiguration.DEFAULT_VERSION.equals(version) ? "latest"
-				: version;
-		return new ArrayList<>(Arrays.asList(StringUtils.commaDelimitedListToStringArray(
-				resolver.resolveValue("pactbroker.tags:" + defaultTag + ""))));
+		String defaultTag = StubConfiguration.DEFAULT_VERSION.equals(version) ? "latest" : version;
+		return new ArrayList<>(Arrays.asList(StringUtils
+				.commaDelimitedListToStringArray(resolver.resolveValue("pactbroker.tags:" + defaultTag + ""))));
 	}
 
 	private String toJson(Map map) {
@@ -348,8 +329,8 @@ class PactStubDownloader implements StubDownloader {
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> TemporaryFileStorage
-				.cleanup(PactStubDownloader.this.deleteStubsAfterTest)));
+		Runtime.getRuntime().addShutdownHook(
+				new Thread(() -> TemporaryFileStorage.cleanup(PactStubDownloader.this.deleteStubsAfterTest)));
 	}
 
 }
@@ -368,8 +349,7 @@ class FromPropsThenFromSysEnv implements ValueResolver {
 	public String resolveValue(String expression) {
 		PropertyValueTuple tuple = new PropertyValueTuple(expression).invoke();
 		String propertyName = tuple.getPropertyName();
-		String property = StubRunnerPropertyUtils
-				.getProperty(this.options.getProperties(), propertyName);
+		String property = StubRunnerPropertyUtils.getProperty(this.options.getProperties(), propertyName);
 		if (StringUtils.hasText(property)) {
 			return property;
 		}
@@ -380,8 +360,7 @@ class FromPropsThenFromSysEnv implements ValueResolver {
 	public boolean propertyDefined(String property) {
 		PropertyValueTuple tuple = new PropertyValueTuple(property).invoke();
 		String propertyName = tuple.getPropertyName();
-		boolean hasProperty = StubRunnerPropertyUtils
-				.hasProperty(this.options.getProperties(), propertyName);
+		boolean hasProperty = StubRunnerPropertyUtils.hasProperty(this.options.getProperties(), propertyName);
 		if (hasProperty) {
 			return true;
 		}
@@ -406,8 +385,7 @@ class PropertyValueTuple {
 
 	PropertyValueTuple invoke() {
 		if (this.propertyName.contains(":")) {
-			String[] kv = org.apache.commons.lang3.StringUtils
-					.splitPreserveAllTokens(this.propertyName, ':');
+			String[] kv = org.apache.commons.lang3.StringUtils.splitPreserveAllTokens(this.propertyName, ':');
 			this.propertyName = kv[0];
 		}
 		return this;

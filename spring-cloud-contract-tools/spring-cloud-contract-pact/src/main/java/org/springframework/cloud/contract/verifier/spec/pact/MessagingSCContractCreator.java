@@ -74,9 +74,8 @@ class MessagingSCContractCreator {
 					outputMessage.body(BodyConverter.toSCCBody(message));
 					Category bodyRules = message.getMatchingRules().rulesForCategory("body");
 					if (bodyRules != null && MapUtils.isNotEmpty(bodyRules.getMatchingRules())) {
-						outputMessage.bodyMatchers(
-								(responseBodyMatchers) ->
-										outputMessageBodyMatchers(message, bodyRules, responseBodyMatchers));
+						outputMessage.bodyMatchers((responseBodyMatchers) -> outputMessageBodyMatchers(message,
+								bodyRules, responseBodyMatchers));
 					}
 				}
 				if (MapUtils.isNotEmpty(message.getMetaData())) {
@@ -106,8 +105,7 @@ class MessagingSCContractCreator {
 			ResponseBodyMatchers responseBodyMatchers) {
 		bodyRules.getMatchingRules().forEach((matchingRuleKey, matchingRuleGroup) -> {
 			if (matchingRuleGroup.getRuleLogic() != RuleLogic.AND) {
-				throw new UnsupportedOperationException(
-						"Currently only the AND combination rule logic is supported");
+				throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported");
 			}
 			if (FULL_BODY.equals(matchingRuleKey)) {
 				JsonPaths jsonPaths = JsonToJsonPathsConverter
@@ -125,11 +123,8 @@ class MessagingSCContractCreator {
 	}
 
 	private String getTriggeredBy(Message message) {
-		String triggeredBy = message.getProviderStates().get(0).getName()
-				.replaceAll(":", " ")
-				.replaceAll(" ", "_")
-				.replaceAll("\\(", "")
-				.replaceAll("\\)", "");
+		String triggeredBy = message.getProviderStates().get(0).getName().replaceAll(":", " ").replaceAll(" ", "_")
+				.replaceAll("\\(", "").replaceAll("\\)", "");
 		return StringUtils.uncapitalize(triggeredBy) + "()";
 	}
 
@@ -156,8 +151,8 @@ class MessagingSCContractCreator {
 			responseBodyMatchers.jsonPath(key, responseBodyMatchers.byTimestamp());
 		}
 		else if (matchingRule instanceof MinTypeMatcher) {
-			responseBodyMatchers.jsonPath(key, responseBodyMatchers.byType(
-					(b) -> b.minOccurrence(((MinTypeMatcher) matchingRule).getMin())));
+			responseBodyMatchers.jsonPath(key,
+					responseBodyMatchers.byType((b) -> b.minOccurrence(((MinTypeMatcher) matchingRule).getMin())));
 		}
 		else if (matchingRule instanceof MinMaxTypeMatcher) {
 			responseBodyMatchers.jsonPath(key, responseBodyMatchers.byType((c) -> {

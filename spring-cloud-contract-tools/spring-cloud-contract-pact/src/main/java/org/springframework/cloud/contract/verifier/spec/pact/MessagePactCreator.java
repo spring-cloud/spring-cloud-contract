@@ -55,8 +55,7 @@ class MessagePactCreator {
 				.hasPactWith(names.getProducer());
 
 		for (Contract contract : contracts) {
-			pactBuilder = pactBuilder.given(getGiven(contract.getInput()))
-					.expectsToReceive(getOutcome(contract));
+			pactBuilder = pactBuilder.given(getGiven(contract.getInput())).expectsToReceive(getOutcome(contract));
 			if (contract.getOutputMessage() != null) {
 				OutputMessage message = contract.getOutputMessage();
 				if (message.getBody() != null) {
