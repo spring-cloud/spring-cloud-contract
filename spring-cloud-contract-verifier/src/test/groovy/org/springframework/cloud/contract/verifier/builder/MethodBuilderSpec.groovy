@@ -42,7 +42,7 @@ class MethodBuilderSpec extends Specification {
 					}
 				}
 			}
-			File stubFile = new File("invalid-method:name.groovy")
+			File stubFile = new File("invalid-method;name.groovy")
 
 			ContractMetadata metadata = new ContractMetadata(stubFile.toPath(), false, 0, null, contractDsl)
 			SingleContractMetadata singleContractMetadata = new SingleContractMetadata(contractDsl, metadata)
