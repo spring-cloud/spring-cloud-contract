@@ -53,6 +53,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerPropertyUtils;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 // TODO: Convert to incremental task: https://docs.gradle.org/current/userguide/custom_tasks.html#incremental_tasks
@@ -163,7 +164,7 @@ class ContractsCopyTask extends DefaultTask {
 			getLogger().info("Contracts got downloaded to [{}]", contractsDirectory);
 		}
 		else {
-			contractsDirectory = this.contractsDirectory.get().getAsFile();
+			contractsDirectory = this.contractsDirectory.getAsFile().getOrNull();
 			antPattern = "**/";
 		}
 		getLogger().info("For project [{}] will use contracts provided in the folder [{}]", getProject().getName(), contractsDirectory);
@@ -221,7 +222,7 @@ class ContractsCopyTask extends DefaultTask {
 		return new DownloadedData(contractsSubDirIfPresent(downloadedContracts), inclusionProperties);
 	}
 
-	private void throwExceptionWhenFailOnNoContracts(File file, String contractsRepository) {
+	private void throwExceptionWhenFailOnNoContracts(@Nullable File file, String contractsRepository) {
 		if (StringUtils.hasText(contractsRepository)) {
 			if (getLogger().isDebugEnabled()) {
 				getLogger().debug("Contracts repository is set, will not throw an exception that the contracts are not found");
