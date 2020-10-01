@@ -88,7 +88,7 @@
 					<dependency>
 						<groupId>org.codehaus.plexus</groupId>
 						<artifactId>plexus-archiver</artifactId>
-						<version>3.4</version>
+						<version>4.2.2</version>
 					</dependency>
 				</dependencies>
 			</plugin>
