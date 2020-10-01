@@ -10,8 +10,7 @@
 		<guice.version>4.2.2</guice.version>
 		<guava.version>28.1-jre</guava.version>
 		<asm.version>9.0</asm.version>
-		<checker.version>3.1.1</checker.version>
-
+		<checker.version>3.6.1</checker.version>
 		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
 	</properties>
