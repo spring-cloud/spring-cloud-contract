@@ -81,7 +81,7 @@ dependencies {
 	}
 }
 
-test {
+contractTest {
 	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
@@ -92,6 +92,25 @@ test {
 			println "Results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
 			if (result.testCount == 0) {
 				throw new IllegalStateException("No tests were found. Failing the build")
+			}
+		}
+	}
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			artifact bootJar
+			artifact verifierStubsJar
+
+			// https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/273
+			versionMapping {
+				usage("java-api") {
+					fromResolutionOf("runtimeClasspath")
+				}
+				usage("java-runtime") {
+					fromResolutionResult()
+				}
 			}
 		}
 	}

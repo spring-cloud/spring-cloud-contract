@@ -4,7 +4,6 @@ plugins {
 	id "io.spring.dependency-management"
 	id "maven-publish"
 	id "maven"
-	id "org.springframework.cloud.contract"
 }
 
 group = 'com.example'
@@ -34,10 +33,6 @@ dependencies {
 	}
 	testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
 	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
-}
-
-contracts {
-	failOnNoContracts = false
 }
 
 test {
@@ -81,6 +76,25 @@ task copyClasses(type: Copy) {
 	from "${project.buildDir}/classes/main/"
 	include '**/model/Fraud*.*'
 	into "${project.buildDir}/stubs/"
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			artifact bootJar
+			artifact stubsJar
+
+			// https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/273
+			versionMapping {
+				usage("java-api") {
+					fromResolutionOf("runtimeClasspath")
+				}
+				usage("java-runtime") {
+					fromResolutionResult()
+				}
+			}
+		}
+	}
 }
 
 clean.doFirst {
