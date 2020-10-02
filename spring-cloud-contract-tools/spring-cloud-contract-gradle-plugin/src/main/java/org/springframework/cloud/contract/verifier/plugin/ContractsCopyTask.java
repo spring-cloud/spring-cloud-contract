@@ -42,6 +42,7 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
+import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.springframework.cloud.contract.stubrunner.ContractDownloader;
 import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder;
@@ -281,6 +282,7 @@ class ContractsCopyTask extends DefaultTask {
 	}
 
 	@InputDirectory
+	@SkipWhenEmpty
 	@PathSensitive(PathSensitivity.RELATIVE)
 	DirectoryProperty getContractsDirectory() {
 		return contractsDirectory;

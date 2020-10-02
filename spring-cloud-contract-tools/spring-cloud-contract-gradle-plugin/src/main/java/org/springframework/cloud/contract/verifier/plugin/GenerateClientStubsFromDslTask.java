@@ -33,6 +33,7 @@ import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
+import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 
@@ -81,6 +82,7 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 	}
 
 	@InputDirectory
+	@SkipWhenEmpty
 	@PathSensitive(PathSensitivity.RELATIVE)
 	public Property<Directory> getContractsDslDir() {
 		return contractsDslDir;
