@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Ignore
 import spock.lang.Stepwise
 
@@ -35,6 +37,9 @@ class ScenarioProjectSpec extends ContractVerifierIntegrationSpec {
 		expect:
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+			BuildResult result = run("check", "--info", "--stacktrace")
+			result.task(":fraudDetectionService:check").outcome == TaskOutcome.UP_TO_DATE
+			result.task(":loanApplicationService:check").outcome == TaskOutcome.UP_TO_DATE
 	}
 
 	def "should pass basic flow for JUnit"() {
@@ -45,6 +50,26 @@ class ScenarioProjectSpec extends ContractVerifierIntegrationSpec {
 			emptySourceSet()
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+			BuildResult result = run("check", "--info", "--stacktrace")
+			result.task(":fraudDetectionService:check").outcome == TaskOutcome.UP_TO_DATE
+			result.task(":loanApplicationService:check").outcome == TaskOutcome.UP_TO_DATE
 	}
 
+	def "should properly work with build cache"() {
+		given:
+			def gradleUserHomeDir = new File(testProjectDir, ".gradleUserHome")
+			gradleUserHomeDir.mkdirs()
+			String[] tasks = ["-g ${gradleUserHomeDir}", "clean", "check", "publishToMavenLocal", "--info", "--stacktrace", "--build-cache"]
+			assert fileExists("build.gradle")
+
+		expect:
+			runTasksSuccessfully(tasks)
+			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+			BuildResult result = run(tasks)
+			result.task(":fraudDetectionService:copyContracts").outcome == TaskOutcome.FROM_CACHE
+			result.task(":fraudDetectionService:generateContractTests").outcome == TaskOutcome.FROM_CACHE
+			result.task(":fraudDetectionService:contractTest").outcome == TaskOutcome.FROM_CACHE
+			result.task(":fraudDetectionService:generateClientStubs").outcome == TaskOutcome.FROM_CACHE
+			result.task(":loanApplicationService:check").outcome == TaskOutcome.UP_TO_DATE
+	}
 }

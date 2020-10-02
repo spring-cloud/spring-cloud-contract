@@ -145,10 +145,16 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		rootFile.eachFileRecurse { File file ->
 			try {
 				if (file.isFile() && file.name.endsWith('jar')) {
-					new ZipFile(file).entries().each {
-						if (it.name.endsWith('.groovy')) {
-							containsGroovyFiles = true
+					ZipFile zipFile;
+					try {
+						zipFile = new ZipFile(file)
+						zipFile.entries().each {
+							if (it.name.endsWith('.groovy')) {
+								containsGroovyFiles = true
+							}
 						}
+					} finally {
+						zipFile?.close()
 					}
 				}
 			}

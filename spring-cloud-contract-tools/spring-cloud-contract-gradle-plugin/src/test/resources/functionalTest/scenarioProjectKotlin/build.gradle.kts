@@ -139,8 +139,8 @@ configure(listOf(project(":loanApplicationService"))) {
 			into("src/test/resources/mappings")
 		}
 
-		val generateContractTests by existing
-		generateContractTests {
+		val test by existing
+		test {
 			dependsOn(copyCollaboratorStubs)
 		}
 	}
