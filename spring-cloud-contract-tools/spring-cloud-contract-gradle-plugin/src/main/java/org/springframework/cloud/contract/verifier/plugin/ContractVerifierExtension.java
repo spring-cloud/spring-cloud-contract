@@ -112,8 +112,7 @@ public class ContractVerifierExtension implements Serializable {
 	private final DirectoryProperty generatedTestJavaSourcesDir;
 
 	/**
-	 * Groovy test source directory where tests generated from Contract DSL should be
-	 * placed
+	 * Groovy test source directory where tests generated from Contract DSL should be placed
 	 */
 	private final DirectoryProperty generatedTestGroovySourcesDir;
 
@@ -123,8 +122,8 @@ public class ContractVerifierExtension implements Serializable {
 	private final DirectoryProperty generatedTestResourcesDir;
 
 	/**
-	 * Dir where the generated stubs from Groovy DSL should be placed. You can then
-	 * mention them in your packaging task to create jar with stubs
+	 * Dir where the generated stubs from Groovy DSL should be placed.
+	 * You can then mention them in your packaging task to create jar with stubs
 	 */
 	private final DirectoryProperty stubsOutputDir;
 
@@ -163,10 +162,10 @@ public class ContractVerifierExtension implements Serializable {
 	private final Dependency contractDependency;
 
 	/**
-	 * The path in the JAR with all the contracts where contracts for this particular
-	 * service lay. If not provided will be resolved to {@code groupid/artifactid}.
-	 * Example: If {@code groupid} is {@code com.example} and {@code artifactid} is
-	 * {@code service} then the resolved path will be {@code /com/example/artifactid}
+	 * The path in the JAR with all the contracts where contracts for this particular service lay.
+	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
+	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
+	 * {@code /com/example/artifactid}
 	 */
 	private final Property<String> contractsPath;
 
@@ -176,36 +175,34 @@ public class ContractVerifierExtension implements Serializable {
 	private final Property<StubRunnerProperties.StubsMode> contractsMode;
 
 	/**
-	 * A package that contains all the base clases for generated tests. If your contract
-	 * resides in a location {@code src/test/resources/contracts/com/example/v1/} and you
-	 * provide the {@code packageWithBaseClasses} value to
-	 * {@code com.example.contracts.base} then we will search for a test source file that
-	 * will have the package {@code com.example.contracts.base} and name
-	 * {@code ExampleV1Base}. As you can see it will take the two last folders to and
-	 * attach {@code Base} to its name.
+	 * A package that contains all the base clases for generated tests. If your contract resides in a location
+	 * {@code src/test/resources/contracts/com/example/v1/} and you provide the {@code packageWithBaseClasses}
+	 * value to {@code com.example.contracts.base} then we will search for a test source file that will
+	 * have the package {@code com.example.contracts.base} and name {@code ExampleV1Base}. As you can see
+	 * it will take the two last folders to and attach {@code Base} to its name.
 	 */
 	private final Property<String> packageWithBaseClasses;
 
 	/**
-	 * A way to override any base class mappings. The keys are regular expressions on the
-	 * package name and the values FQN to a base class for that given expression. Example
-	 * of a mapping [.*.com.example.v1..*] to [com.example.SomeBaseClass] When a
-	 * contract's package matches the provided regular expression then extending class
-	 * will be the one provided in the map - in this case
-	 * {@code com.example.SomeBaseClass}
+	 * A way to override any base class mappings. The keys are regular expressions on the package name
+	 * and the values FQN to a base class for that given expression.
+	 * Example of a mapping
+	 * [.*.com.example.v1..*] to [com.example.SomeBaseClass]
+	 * When a contract's package matches the provided regular expression then extending class will be the one
+	 * provided in the map - in this case {@code com.example.SomeBaseClass}
 	 */
 	private final BaseClassMapping baseClassMappings;
 
 	/**
 	 * If set to true then the {@code target} or {@code build} folders are getting
-	 * excluded from any operations. This is used out of the box when working with common
-	 * repo with contracts.
+	 * excluded from any operations. This is used out of the box when working with
+	 * common repo with contracts.
 	 */
 	private final Property<Boolean> excludeBuildFolders;
 
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
-	 * tests
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
 	 */
 	private final Property<Boolean> deleteStubsAfterTest;
 
@@ -215,22 +212,20 @@ public class ContractVerifierExtension implements Serializable {
 	private final Property<Boolean> convertToYaml;
 
 	/**
-	 * Map of properties that can be passed to custom
-	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	private final MapProperty<String, String> contractsProperties;
 
 	/**
 	 * Is set to true will not provide the default publication task
-	 * @deprecated - with 3.0.0, the user should include stubs with their own
-	 * publication(s)
+	 *
+	 * @deprecated - with 3.0.0, the user should include stubs with their own publication(s)
 	 */
 	@Deprecated
 	private final Property<Boolean> disableStubPublication;
 
 	/**
-	 * Source set where the contracts are stored. If not provided will assume
-	 * {@code test}.
+	 * Source set where the contracts are stored. If not provided will assume {@code test}.
 	 */
 	private final Property<String> sourceSet;
 
@@ -246,15 +241,11 @@ public class ContractVerifierExtension implements Serializable {
 		this.ignoredFiles = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.imports = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.staticImports = objects.listProperty(String.class).convention(new ArrayList<>());
-		this.contractsDslDir = objects.directoryProperty()
-				.convention(layout.getProjectDirectory().dir("src/test/resources/contracts"));
+		this.contractsDslDir = objects.directoryProperty().convention(layout.getProjectDirectory().dir("src/test/resources/contracts"));
 		this.generatedTestSourcesDir = objects.directoryProperty();
-		this.generatedTestJavaSourcesDir = objects.directoryProperty()
-				.convention(layout.getBuildDirectory().dir("generated-test-sources/contractTest/java"));
-		this.generatedTestGroovySourcesDir = objects.directoryProperty()
-				.convention(layout.getBuildDirectory().dir("generated-test-sources/contractTest/groovy"));
-		this.generatedTestResourcesDir = objects.directoryProperty()
-				.convention(layout.getBuildDirectory().dir("generated-test-resources/contractTest"));
+		this.generatedTestJavaSourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contractTest/java"));
+		this.generatedTestGroovySourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-sources/contractTest/groovy"));
+		this.generatedTestResourcesDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("generated-test-resources/contractTest"));
 		this.stubsOutputDir = objects.directoryProperty().convention(layout.getBuildDirectory().dir("stubs"));
 		this.stubsSuffix = objects.property(String.class).convention("stubs");
 		this.assertJsonSize = objects.property(Boolean.class).convention(false);
@@ -264,8 +255,7 @@ public class ContractVerifierExtension implements Serializable {
 		this.publishStubsToScm = objects.newInstance(PublishStubsToScm.class);
 		this.contractDependency = objects.newInstance(Dependency.class);
 		this.contractsPath = objects.property(String.class);
-		this.contractsMode = objects.property(StubRunnerProperties.StubsMode.class)
-				.convention(StubRunnerProperties.StubsMode.CLASSPATH);
+		this.contractsMode = objects.property(StubRunnerProperties.StubsMode.class).convention(StubRunnerProperties.StubsMode.CLASSPATH);
 		this.packageWithBaseClasses = objects.property(String.class);
 		this.baseClassMappings = objects.newInstance(BaseClassMapping.class);
 		this.excludeBuildFolders = objects.property(Boolean.class).convention(false);
@@ -569,15 +559,10 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public static class Dependency implements Serializable {
-
 		private final Property<String> groupId;
-
 		private final Property<String> artifactId;
-
 		private final Property<String> version;
-
 		private final Property<String> classifier;
-
 		private final Property<String> stringNotation;
 
 		@Inject
@@ -631,15 +616,17 @@ public class ContractVerifierExtension implements Serializable {
 
 		@Override
 		public String toString() {
-			return "Dependency{" + "groupId=" + groupId.getOrNull() + ", artifactId=" + artifactId.getOrNull()
-					+ ", classifier=" + classifier.getOrNull() + ", version=" + version.getOrNull()
-					+ ", stringNotation=" + stringNotation.getOrNull() + '}';
+			return "Dependency{" +
+					"groupId=" + groupId.getOrNull() +
+					", artifactId=" + artifactId.getOrNull() +
+					", classifier=" + classifier.getOrNull() +
+					", version=" + version.getOrNull() +
+					", stringNotation=" + stringNotation.getOrNull() +
+					'}';
 		}
-
 	}
 
 	public static class BaseClassMapping implements Serializable {
-
 		private final MapProperty<String, String> baseClassMappings;
 
 		@Inject
@@ -658,21 +645,14 @@ public class ContractVerifierExtension implements Serializable {
 		public void baseClassMapping(Map<String, String> mapping) {
 			baseClassMappings.putAll(mapping);
 		}
-
 	}
 
-	// This class is used as an input to the tasks, so all fields are marked as `@Input`
-	// to allow incremental build
+	// This class is used as an input to the tasks, so all fields are marked as `@Input` to allow incremental build
 	public static class ContractRepository implements Serializable {
-
 		private final Property<String> repositoryUrl;
-
 		private final Property<String> username;
-
 		private final Property<String> password;
-
 		private final Property<Integer> proxyPort;
-
 		private final Property<String> proxyHost;
 
 		@Inject
@@ -727,11 +707,14 @@ public class ContractVerifierExtension implements Serializable {
 
 		@Override
 		public String toString() {
-			return "ContractRepository{" + "repositoryUrl=" + repositoryUrl.getOrNull() + ", username="
-					+ username.getOrNull() + ", password=" + password.getOrNull() + ", proxyPort="
-					+ proxyPort.getOrNull() + ", proxyHost=" + proxyHost.getOrNull() + '}';
+			return "ContractRepository{" +
+					"repositoryUrl=" + repositoryUrl.getOrNull() +
+					", username=" + username.getOrNull() +
+					", password=" + password.getOrNull() +
+					", proxyPort=" + proxyPort.getOrNull() +
+					", proxyHost=" + proxyHost.getOrNull() +
+					'}';
 		}
-
 	}
 
 	public static class PublishStubsToScm implements Serializable {
@@ -767,10 +750,10 @@ public class ContractVerifierExtension implements Serializable {
 
 		@Override
 		public String toString() {
-			return "PublishStubsToScm{" + "contractDependency=" + contractDependency + ", contractRepository="
-					+ contractRepository + '}';
+			return "PublishStubsToScm{" +
+					"contractDependency=" + contractDependency +
+					", contractRepository=" + contractRepository +
+					'}';
 		}
-
 	}
-
 }

@@ -38,13 +38,13 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.StringUtils;
 
 /**
- * For SCM based repositories will copy the generated stubs to the cloned repo with
- * contracts and stubs. Will also commit the changes and push them to origin.
+ * For SCM based repositories will copy the generated stubs
+ * to the cloned repo with contracts and stubs. Will also
+ * commit the changes and push them to origin.
  *
- * NOTE: starting with 2.3.0.RELEASE the <code>customize{}</code> closure previously used
- * for {@link PublishStubsToScmTask} customisation is no longer available. The settings
- * should be applied directly within the <code>publishStubsToScm</code> closure as in the
- * example above.
+ * NOTE: starting with 2.3.0.RELEASE the <code>customize{}</code> closure previously used for
+ * {@link PublishStubsToScmTask} customisation is no longer available. The settings should be applied directly
+ * within the <code>publishStubsToScm</code> closure as in the example above.
  *
  * @author Marcin Grzejszczak
  * @author Anatoliy Balakirev
@@ -62,8 +62,8 @@ class PublishStubsToScmTask extends DefaultTask {
 	/**
 	 * @see ContractVerifierExtension#deleteStubsAfterTest
 	 *
-	 * This property will delete the Git repository where the input stubs to this task
-	 * have been committed.
+	 * This property will delete the Git repository where the input
+	 * stubs to this task have been committed.
 	 */
 	private final Property<Boolean> deleteStubsAfterTest;
 
@@ -85,9 +85,7 @@ class PublishStubsToScmTask extends DefaultTask {
 		this.onlyIf(task -> {
 			String contractRepoUrl = contractRepository.repositoryUrl.getOrElse("");
 			if (StringUtils.isEmpty(contractRepoUrl) || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
-				getLogger().warn(
-						"Skipping pushing stubs to scm since your contracts repository URL [{}] doesn't match any of the accepted protocols for SCM stub downloader",
-						contractRepoUrl);
+				getLogger().warn("Skipping pushing stubs to scm since your contracts repository URL [{}] doesn't match any of the accepted protocols for SCM stub downloader", contractRepoUrl);
 				return false;
 			}
 			return true;
@@ -96,12 +94,10 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	@TaskAction
 	void publishStubsToScm() {
-		String projectName = getProject().getGroup().toString() + ":" + getProject().getName() + ":"
-				+ getProject().getVersion().toString();
+		String projectName = getProject().getGroup().toString() + ":" + getProject().getName() + ":" + getProject().getVersion().toString();
 		getLogger().info("Pushing Stubs to SCM for project [{}]", projectName);
 		StubRunnerOptions stubRunnerOptions = createStubRunnerOptions();
-		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectName,
-				stubsDir.get().getAsFile().toPath());
+		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectName, stubsDir.get().getAsFile().toPath());
 	}
 
 	@Nested
@@ -110,15 +106,10 @@ class PublishStubsToScmTask extends DefaultTask {
 	}
 
 	static class Repository {
-
 		private final Property<String> repositoryUrl;
-
 		private final Property<String> username;
-
 		private final Property<String> password;
-
 		private final Property<Integer> proxyPort;
-
 		private final Property<String> proxyHost;
 
 		@Inject
@@ -159,7 +150,6 @@ class PublishStubsToScmTask extends DefaultTask {
 		Property<String> getProxyHost() {
 			return proxyHost;
 		}
-
 	}
 
 	@Input
@@ -191,15 +181,16 @@ class PublishStubsToScmTask extends DefaultTask {
 	private StubRunnerOptions createStubRunnerOptions() {
 		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
-				.withStubRepositoryRoot(contractRepository.repositoryUrl.getOrNull()).withStubsMode(contractsMode.get())
+				.withStubRepositoryRoot(contractRepository.repositoryUrl.getOrNull())
+				.withStubsMode(contractsMode.get())
 				.withUsername(contractRepository.username.getOrNull())
 				.withPassword(contractRepository.password.getOrNull())
-				.withDeleteStubsAfterTest(deleteStubsAfterTest.get()).withProperties(contractsProperties.getOrNull())
+				.withDeleteStubsAfterTest(deleteStubsAfterTest.get())
+				.withProperties(contractsProperties.getOrNull())
 				.withFailOnNoStubs(failOnNoContracts.get());
 		if (contractRepository.proxyPort.isPresent()) {
 			options = options.withProxy(contractRepository.proxyHost.getOrNull(), contractRepository.proxyPort.get());
 		}
 		return options.build();
 	}
-
 }
