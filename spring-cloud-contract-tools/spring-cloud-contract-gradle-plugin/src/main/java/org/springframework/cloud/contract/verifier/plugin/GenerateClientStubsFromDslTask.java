@@ -75,8 +75,8 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 		getLogger().info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion");
 		getLogger().info("Contracts dir is [{}] output stubs dir is [{}]", contractsDslDir.get().getAsFile(), output);
 		List<String> excludedFiles = this.excludedFiles.get();
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(output,
-				contractsDslDir.get().getAsFile(), excludedFiles, ".*", excludeBuildFolders.get());
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(output, contractsDslDir.get().getAsFile(),
+				excludedFiles, ".*", excludeBuildFolders.get());
 		converter.processFiles();
 	}
 
@@ -100,4 +100,5 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 	public Property<Directory> getStubsOutputDir() {
 		return stubsOutputDir;
 	}
+
 }

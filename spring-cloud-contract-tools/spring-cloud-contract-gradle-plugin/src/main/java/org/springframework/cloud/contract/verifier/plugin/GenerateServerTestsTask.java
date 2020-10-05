@@ -51,24 +51,41 @@ import java.util.List;
  */
 @CacheableTask
 class GenerateServerTestsTask extends DefaultTask {
+
 	static final String TASK_NAME = "generateContractTests";
 
 	private final DirectoryProperty contractsDslDir;
+
 	private final Property<String> nameSuffixForTests;
+
 	private final Property<String> basePackageForTests;
+
 	private final Property<String> baseClassForTests;
+
 	private final Property<String> packageWithBaseClasses;
+
 	private final ListProperty<String> excludedFiles;
+
 	private final ListProperty<String> ignoredFiles;
+
 	private final ListProperty<String> includedFiles;
+
 	private final ListProperty<String> imports;
+
 	private final ListProperty<String> staticImports;
+
 	private final Property<TestMode> testMode;
+
 	private final Property<TestFramework> testFramework;
+
 	private final MapProperty<String, String> baseClassMappings;
+
 	private final Property<Boolean> assertJsonSize;
+
 	private final Property<Boolean> failOnInProgress;
+
 	private final DirectoryProperty generatedTestSourcesDir;
+
 	private final DirectoryProperty generatedTestResourcesDir;
 
 	@Inject
@@ -104,7 +121,8 @@ class GenerateServerTestsTask extends DefaultTask {
 		getLogger().info("Contracts are unpacked to [{}]", contractsDslDir);
 		getLogger().info("Included contracts are [{}]", includedContracts);
 		try {
-			TestGenerator generator = new TestGenerator(toConfigProperties(contractsDslDir, includedContracts, generatedTestSources, generatedTestResources));
+			TestGenerator generator = new TestGenerator(toConfigProperties(contractsDslDir, includedContracts,
+					generatedTestSources, generatedTestResources));
 			int generatedClasses = generator.generate();
 			getLogger().info("Generated {} test classes", generatedClasses);
 		}
@@ -203,9 +221,8 @@ class GenerateServerTestsTask extends DefaultTask {
 		return generatedTestResourcesDir;
 	}
 
-	private ContractVerifierConfigProperties toConfigProperties(File contractsDslDir,
-			String includedContracts, File generatedTestSources,
-			File generatedTestResources) {
+	private ContractVerifierConfigProperties toConfigProperties(File contractsDslDir, String includedContracts,
+			File generatedTestSources, File generatedTestResources) {
 		List<String> excludedFiles = this.excludedFiles.get();
 		List<String> ignoredFiles = this.ignoredFiles.get();
 		List<String> includedFiles = this.includedFiles.get();
@@ -233,4 +250,5 @@ class GenerateServerTestsTask extends DefaultTask {
 		properties.setFailOnInProgress(failOnInProgress.get());
 		return properties;
 	}
+
 }
