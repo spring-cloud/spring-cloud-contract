@@ -4,6 +4,13 @@ plugins {
 	id "io.spring.dependency-management"
 	id "maven-publish"
 	id "maven"
+	/**
+	 * While the SCC Gradle plugin is not strictly necessary for this project.
+	 * It is included to ensure that if the contractDslDir does not exist, then
+	 * the plugin reports "NO-SOURCE" for associated tasks, rather than resulting
+	 * in an error for the end user.
+	 */
+	id "org.springframework.cloud.contract"
 }
 
 group = 'com.example'
@@ -33,6 +40,10 @@ dependencies {
 	}
 	testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
 	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
+}
+
+contracts {
+	failOnNoContracts = false
 }
 
 test {

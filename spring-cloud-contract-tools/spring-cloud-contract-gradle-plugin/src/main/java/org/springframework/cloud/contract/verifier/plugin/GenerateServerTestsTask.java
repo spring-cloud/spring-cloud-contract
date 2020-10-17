@@ -30,6 +30,7 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
+import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.verifier.TestGenerator;
@@ -132,6 +133,7 @@ class GenerateServerTestsTask extends DefaultTask {
 	}
 
 	@InputDirectory
+	@SkipWhenEmpty
 	@PathSensitive(PathSensitivity.RELATIVE)
 	DirectoryProperty getContractsDslDir() {
 		return contractsDslDir;
