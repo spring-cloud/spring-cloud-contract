@@ -255,6 +255,14 @@ components. Those properties might be used by (for example) built-in or custom S
 * `incrementalContractTests`: When enabled, tests are created only when contracts have changed since last build. Defaults to `true`.
 * `incrementalContractStubs`: When enabled, stubs are created only when contracts have changed since last build. Defaults to `true`.
 * `incrementalContractStubsJar`: When enabled, stubs jar is created only when stubs have changed since last build. Defaults to `true`.
+*`httpPort` : HTTP port for the WireMock server that serves stubs. Currently `spring.cloud.contract.verifier.http.port` property works only when serving stubs from the directory. Otherwise, when providing stubs id, port have to be included in the id string.
+*`skip`: Set this to `true` to bypass the verifier execution.
+*`skipTestOnly`:  Set this to `true` to bypass verifier test generation.
+*`stubs` : List of stubs to be downloaded and ran in a colon separated Ivy notation.
+*`minPort` : Specifies the minimal port at which the stub should start.
+*`maxPort` : Specifies the maximal port at which the stub should start.
+*`waitForKeyPressed` : Specifies if the plugin should wait for the user to press the key after starting the stubs.
+*`stubsClassifier`: Specifies the classifier used by stubs artifacts.
 
 If you want to download your contract definitions from a Maven repository, you can use
 the following options:
