@@ -99,7 +99,7 @@ class StubRunnerFactory {
 	}
 
 	private Path resolvePath(File unpackedLocation) {
-		Resource resource = ResourceResolver.resource(unpackedLocation.getPath());
+		Resource resource = ResourceResolver.resource(unpackedLocation.toURI().toString());
 		Path path = unpackedLocation.toPath();
 		if (resource != null) {
 			try {
