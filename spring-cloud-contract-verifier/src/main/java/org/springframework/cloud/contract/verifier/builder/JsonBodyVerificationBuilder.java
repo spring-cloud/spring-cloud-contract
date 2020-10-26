@@ -26,7 +26,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import groovy.json.JsonOutput;
-import groovy.lang.Closure;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -86,10 +85,11 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		appendJsonPath(bb, responseString);
 		DocumentContext parsedRequestBody = null;
 		boolean dontParseStrings = convertedResponseBody instanceof Map;
-		Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE;
+		Function<String, Object> parsingFunction = dontParseStrings ? MapConverter.IDENTITY
+				: MapConverter.JSON_PARSING_FUNCTION;
 		if (hasRequestBody()) {
 			Object testSideRequestBody = MapConverter.getTestSideValues(contract.getRequest().getBody(),
-					parsingClosure);
+					parsingFunction);
 			parsedRequestBody = JsonPath.parse(testSideRequestBody);
 			if (convertedResponseBody instanceof String
 					&& !textContainsJsonPathTemplate(convertedResponseBody.toString())) {
@@ -108,9 +108,9 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		TestSideRequestTemplateModel templateModel = hasRequestBody()
 				? TestSideRequestTemplateModel.from(contract.getRequest()) : null;
 		convertedResponseBody = MapConverter.transformValues(convertedResponseBody,
-				returnReferencedEntries(templateModel), parsingClosure);
+				returnReferencedEntries(templateModel), parsingFunction);
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(assertJsonSize)
-				.transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingClosure, includeEmptyCheck);
+				.transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingFunction);
 
 		DocumentContext finalParsedRequestBody = parsedRequestBody;
 		jsonPaths.forEach(it -> {
@@ -280,9 +280,9 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		}
 	}
 
-	private Closure<Object> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
-		return MapConverter.fromFunction(entry -> {
-			if (!(entry instanceof String) || templateModel == null) {
+	private Function<Object, ?> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
+		return entry -> {
+			if (!(entry instanceof String) || templa teModel == null) {
 				return entry;
 			}
 			String entryAsString = (String) entry;
@@ -313,7 +313,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 				}
 			}
 			return entry;
-		});
+		};
 	}
 
 	private static String minus(CharSequence self, Object target) {

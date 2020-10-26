@@ -193,7 +193,7 @@ public class TestSideRequestTemplateModel {
 			bodyValue = ContentUtils.extractValue((GString) bodyValue, ContentUtils.GET_TEST_SIDE_FUNCTION);
 		}
 		else {
-			bodyValue = MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE);
+			bodyValue = MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE_FUNCTION);
 		}
 		return bodyValue;
 	}
