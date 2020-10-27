@@ -12,6 +12,7 @@ IMPORTANT: The following properties can be passed as a system property (e.g. `st
 |stubrunner.properties.git.username |  | When using the SCM based approach, you can pass the username to connect to the Git repository.
 |stubrunner.properties.git.password |  | When using the SCM based approach, you can pass the password to connect to the Git repository.
 |stubrunner.properties.git.wait-between-attempts | 1000 | When using the SCM based approach, you can customize waiting time in ms between trying to push the stubs to Git.
+|stubrunner.properties.git.ensure-git-suffix | true | When using the SCM based approach, you can prevent stubrunner from adding `.git` to the repository URL by setting this property to `false`. This adds compatibility with git repositories which do not support such URLs, for example Azure DevOps.
 
 |stubrunner.properties.stubs.find-producer | false | When using the Stubs protocol, you can toggle this flag to search for contracts via the `group id / artifact id` instead of taking the stubs directly from the provided folder.
 

@@ -77,9 +77,12 @@ class GitRepo {
 
 	private final File basedir;
 
+	private final boolean ensureGitSuffix;
+
 	GitRepo(File basedir, GitStubDownloaderProperties properties) {
 		this.basedir = basedir;
 		this.gitFactory = new JGitFactory(properties);
+		this.ensureGitSuffix = properties.ensureGitSuffix;
 	}
 
 	// for tests
@@ -87,6 +90,15 @@ class GitRepo {
 	GitRepo(File basedir) {
 		this.basedir = basedir;
 		this.gitFactory = new JGitFactory();
+		this.ensureGitSuffix = true;
+	}
+
+	// for tests
+	@Deprecated
+	GitRepo(File basedir, boolean ensureGitSuffix) {
+		this.basedir = basedir;
+		this.gitFactory = new JGitFactory();
+		this.ensureGitSuffix = ensureGitSuffix;
 	}
 
 	// for tests
@@ -94,6 +106,7 @@ class GitRepo {
 	GitRepo(File basedir, JGitFactory factory) {
 		this.basedir = basedir;
 		this.gitFactory = factory;
+		this.ensureGitSuffix = true;
 	}
 
 	/**
@@ -203,8 +216,7 @@ class GitRepo {
 	}
 
 	private Git cloneToBasedir(URI projectUrl, File destinationFolder) {
-		String url = projectUrl.toString();
-		String projectGitUrl = url.endsWith(".git") ? url : url + ".git";
+		String projectGitUrl = sanitizeGitUrl(projectUrl);
 		if (log.isDebugEnabled()) {
 			log.debug("Project git url [" + projectGitUrl + "]");
 		}
@@ -224,6 +236,12 @@ class GitRepo {
 			deleteBaseDirIfExists("Failed to initialize base directory");
 			throw new IllegalStateException(e);
 		}
+	}
+
+	protected String sanitizeGitUrl(URI uri) {
+		String urlString = uri.toString();
+		return (urlString.endsWith(".git") || !this.ensureGitSuffix) ? urlString
+				: urlString + ".git";
 	}
 
 	private Ref checkoutBranch(File projectDir, String branch) throws GitAPIException {
