@@ -282,7 +282,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 
 	private Function<Object, ?> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
 		return entry -> {
-			if (!(entry instanceof String) || templa teModel == null) {
+			if (!(entry instanceof String) || templateModel == null) {
 				return entry;
 			}
 			String entryAsString = (String) entry;
