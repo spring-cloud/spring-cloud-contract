@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.jgit.api.CloneCommand;
@@ -26,6 +27,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
@@ -163,6 +165,34 @@ public class GitRepoTests extends AbstractGitTest {
 			RevCommit revCommit = git.log().call().iterator().next();
 			then(revCommit.getShortMessage()).isEqualTo("some message");
 		}
+	}
+
+	@Test
+	public void should_add_git_suffix_to_url_if_not_present() throws Exception {
+		this.gitRepo = new GitRepo(this.tmpFolder, true);
+		String url = this.gitRepo.sanitizeGitUrl(new URI("git://example.com/repo"));
+		assertThat(url).isEqualTo("git://example.com/repo.git");
+	}
+
+	@Test
+	public void should_not_add_git_suffix_to_url_if_already_present() throws Exception {
+		this.gitRepo = new GitRepo(this.tmpFolder, true);
+		String url = this.gitRepo.sanitizeGitUrl(new URI("git://example.com/repo.git"));
+		assertThat(url).isEqualTo("git://example.com/repo.git");
+	}
+
+	@Test
+	public void should_not_add_git_suffix_to_url_if_disabled() throws Exception {
+		this.gitRepo = new GitRepo(this.tmpFolder, false);
+		String url = this.gitRepo.sanitizeGitUrl(new URI("git://example.com/repo"));
+		assertThat(url).isEqualTo("git://example.com/repo");
+	}
+
+	@Test
+	public void should_not_remove_git_suffix_from_url_if_disabled() throws Exception {
+		this.gitRepo = new GitRepo(this.tmpFolder, false);
+		String url = this.gitRepo.sanitizeGitUrl(new URI("git://example.com/repo.git"));
+		assertThat(url).isEqualTo("git://example.com/repo.git");
 	}
 
 }
