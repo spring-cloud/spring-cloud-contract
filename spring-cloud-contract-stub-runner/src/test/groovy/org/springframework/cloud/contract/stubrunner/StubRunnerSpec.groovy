@@ -61,18 +61,45 @@ class StubRunnerSpec extends Specification {
 	def 'should generate stubs at runtime'() {
 		given:
 			Arguments args = argumentsWithGenerateStubs()
-			StubDownloader downloader = new FileStubDownloader().build(args.stubRunnerOptions);
+			StubDownloader downloader = new FileStubDownloader().build(args.stubRunnerOptions)
 			StubRunner runner = new StubRunnerFactory(args.stubRunnerOptions,
 					downloader, new NoOpStubMessages()).createStubsFromServiceConfiguration().first()
 		when:
 			runner.runStubs()
 		then:
 			URL url = runner.findStubUrl("groupId2", "artifactId2")
-			new URL(url.toString() + "/goodbye").text
+			"Goodbye World!" == new URL(url.toString() + "/goodbye").text
+		cleanup:
+			runner.close()
+	}
+
+	def 'should override existing mappings when generating stubs at runtime'() {
+		given:
+			Arguments args = argumentsWithGenerateStubs()
+			StubDownloader downloader = new FileStubDownloader().build(args.stubRunnerOptions)
+			StubRunner runner = new StubRunnerFactory(args.stubRunnerOptions,
+					downloader, new NoOpStubMessages()).createStubsFromServiceConfiguration().first()
 		when:
-			new URL(url.toString() + "/hello").text
+			runner.runStubs()
 		then:
-			thrown(FileNotFoundException)
+			URL url = runner.findStubUrl("groupId2", "artifactId2")
+			// don't return the response defined in hello.json, but the one defined in the contract
+			"Hello New World!" == new URL(url.toString() + "/hello").text
+		cleanup:
+			runner.close()
+	}
+
+	def 'should handle contracts with body contents loaded from external file when generating stubs at runtime'() {
+		given:
+			Arguments args = argumentsWithGenerateStubs()
+			StubDownloader downloader = new FileStubDownloader().build(args.stubRunnerOptions)
+			StubRunner runner = new StubRunnerFactory(args.stubRunnerOptions,
+					downloader, new NoOpStubMessages()).createStubsFromServiceConfiguration().first()
+		when:
+			runner.runStubs()
+		then:
+			URL url = runner.findStubUrl("groupId2", "artifactId2")
+			"Goodbye from file!" == new URL(url.toString() + "/goodbye_from_file").text
 		cleanup:
 			runner.close()
 	}
