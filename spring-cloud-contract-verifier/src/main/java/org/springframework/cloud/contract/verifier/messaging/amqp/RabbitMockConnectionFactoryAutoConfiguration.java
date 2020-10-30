@@ -71,6 +71,9 @@ public class RabbitMockConnectionFactoryAutoConfiguration {
 				if ("queueDeclare".equals(invocationOnMock.getMethod().getName())) {
 					return mockDeclareOk;
 				}
+				if ("isOpen".equals(invocationOnMock.getMethod().getName())) {
+					return true;
+				}
 				return Mockito.RETURNS_DEFAULTS.answer(invocationOnMock);
 			});
 			when(mockConnection.isOpen()).thenReturn(true);
