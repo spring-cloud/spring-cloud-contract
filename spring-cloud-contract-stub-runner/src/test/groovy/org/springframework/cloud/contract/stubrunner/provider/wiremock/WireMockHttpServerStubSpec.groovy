@@ -23,6 +23,8 @@ import spock.lang.Specification
 
 import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 
 class WireMockHttpServerStubSpec extends Specification {
@@ -50,7 +52,9 @@ class WireMockHttpServerStubSpec extends Specification {
 		then:
 			noExceptionThrown()
 		expect:
-			"surprise!" == new RestTemplate().getForObject("http://localhost:" + mappingDescriptor.port() + "/ping", String.class)
+			URI uri = new URI("http://localhost:" + mappingDescriptor.port() + "/ping")
+			"surprise!" == new RestTemplate().exchange(uri, HttpMethod.GET, (HttpEntity)null, String.class)
+					.getHeaders().getFirst("X-My-Header")
 		cleanup:
 			mappingDescriptor?.stop()
 	}

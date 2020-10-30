@@ -18,12 +18,8 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -32,8 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
-import org.springframework.cloud.contract.verifier.converter.StubGenerator;
-import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.core.io.Resource;
 
@@ -94,12 +88,12 @@ class StubRunnerFactory {
 	}
 
 	private void generateMappingsAtRuntime(Path path) {
-		removeCurrentMappings(path);
 		generateNewMappings(path);
 	}
 
 	private Path resolvePath(File unpackedLocation) {
-		Resource resource = ResourceResolver.resource(unpackedLocation.toURI().toString());
+		Resource resource = ResourceResolver
+				.resource(unpackedLocation.toURI().toString());
 		Path path = unpackedLocation.toPath();
 		if (resource != null) {
 			try {
@@ -110,40 +104,6 @@ class StubRunnerFactory {
 			}
 		}
 		return path;
-	}
-
-	private void removeCurrentMappings(Path path) {
-		try {
-			Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-
-				private final Log log = LogFactory.getLog(StubRunnerFactory.class);
-
-				private final StubGeneratorProvider provider = new StubGeneratorProvider();
-
-				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-					Collection<StubGenerator> stubGenerators = this.provider
-							.converterForName(file.toString());
-					if (!stubGenerators.isEmpty()) {
-						if (log.isDebugEnabled()) {
-							log.debug("Deleting file [" + file.toString()
-									+ "] since at least one stub generator would run it");
-						}
-						try {
-							Files.delete(file);
-						}
-						catch (IOException ex) {
-							log.warn("Failed to delete file [" + file.toString() + "]",
-									ex);
-						}
-					}
-					return FileVisitResult.CONTINUE;
-				}
-			});
-		}
-		catch (IOException ex) {
-			log.warn("Exception occurred while trying to delete mappings", ex);
-		}
 	}
 
 	private void generateNewMappings(Path path) {
