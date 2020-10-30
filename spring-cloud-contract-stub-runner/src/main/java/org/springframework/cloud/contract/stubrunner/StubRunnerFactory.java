@@ -18,8 +18,12 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -88,6 +92,7 @@ class StubRunnerFactory {
 	}
 
 	private void generateMappingsAtRuntime(Path path) {
+		removeCurrentMappings(path);
 		generateNewMappings(path);
 	}
 
@@ -104,6 +109,39 @@ class StubRunnerFactory {
 			}
 		}
 		return path;
+	}
+
+	private void removeCurrentMappings(Path path) {
+		HttpServerStub httpServerStub = HttpServerStubFactory.createServerStub();
+		try {
+			Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+
+				private final Log log = LogFactory.getLog(StubRunnerFactory.class);
+
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+
+					if (httpServerStub.isAccepted(file.toFile())) {
+						if (log.isDebugEnabled()) {
+							log.debug("Deleting file [" + file.toString()
+									+ "] since it contains a valid mapping.");
+						}
+
+						try {
+							Files.delete(file);
+						}
+						catch (IOException ex) {
+							log.warn("Failed to delete file [" + file.toString() + "]",
+									ex);
+						}
+					}
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		}
+		catch (IOException ex) {
+			log.warn("Exception occurred while trying to delete mappings", ex);
+		}
 	}
 
 	private void generateNewMappings(Path path) {

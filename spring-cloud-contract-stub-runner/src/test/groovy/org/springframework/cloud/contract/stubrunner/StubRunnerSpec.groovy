@@ -57,7 +57,6 @@ class StubRunnerSpec extends Specification {
 			runner.close()
 	}
 
-
 	def 'should generate stubs at runtime'() {
 		given:
 			Arguments args = argumentsWithGenerateStubs()

@@ -34,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
-import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.util.ContractScanner;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
@@ -153,7 +152,7 @@ class StubRepository {
 			}
 		}
 		// the default implementation
-		return new WireMockHttpServerStub().isAccepted(file);
+		return HttpServerStubFactory.createServerStub().isAccepted(file);
 	}
 
 	private Collection<Contract> contractDescriptors() {
