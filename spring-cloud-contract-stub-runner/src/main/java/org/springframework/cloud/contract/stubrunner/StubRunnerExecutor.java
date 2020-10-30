@@ -37,6 +37,7 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
+import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
@@ -322,8 +323,9 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	private HttpServerStub httpServerStub() {
+		// the default impl is the WireMock one
 		if (this.serverStubs.isEmpty()) {
-			return HttpServerStubFactory.createServerStub();
+			return new WireMockHttpServerStub();
 		}
 		// first one wins
 		return this.serverStubs.get(0);
