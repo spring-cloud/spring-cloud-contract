@@ -30,6 +30,9 @@ import org.springframework.web.client.RestTemplate
 class WireMockHttpServerStubSpec extends Specification {
 	public static
 	final File MAPPING_DESCRIPTOR = new File('src/test/resources/transformers.json')
+	public static final File ARBITRARY_JSON = new File('src/test/resources/sample_response.json')
+	public static final File PDF = new File('src/test/resources/request.pdf')
+	public static final File BROKEN_MAPPING = new File('src/test/resources/broken.json')
 
 	@Rule
 	OutputCaptureRule capture = new OutputCaptureRule()
@@ -75,5 +78,41 @@ class WireMockHttpServerStubSpec extends Specification {
 
 		cleanup:
 			mappingDescriptor?.stop()
+	}
+
+	def 'should accept a valid mapping'() {
+		given:
+			WireMockHttpServerStub httpServerStub = new WireMockHttpServerStub()
+		when:
+			boolean accepted = httpServerStub.isAccepted(MAPPING_DESCRIPTOR)
+		then:
+			accepted
+	}
+
+	def 'should not accept an arbitrary JSON file'() {
+		given:
+			WireMockHttpServerStub httpServerStub = new WireMockHttpServerStub()
+		when:
+			boolean accepted = httpServerStub.isAccepted(ARBITRARY_JSON)
+		then:
+			!accepted
+	}
+
+	def 'should not accept a broken mapping file'() {
+		given:
+			WireMockHttpServerStub httpServerStub = new WireMockHttpServerStub()
+		when:
+			boolean accepted = httpServerStub.isAccepted(BROKEN_MAPPING)
+		then:
+			!accepted
+	}
+
+	def 'should not accept a non-JSON file'() {
+		given:
+			WireMockHttpServerStub httpServerStub = new WireMockHttpServerStub()
+		when:
+			boolean accepted = httpServerStub.isAccepted(PDF)
+		then:
+			!accepted
 	}
 }

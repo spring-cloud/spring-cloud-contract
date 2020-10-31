@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.common.JsonException;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Extension;
@@ -237,7 +238,17 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	@Override
 	public boolean isAccepted(File file) {
-		return file.getName().endsWith(".json");
+		return file.getName().endsWith(".json") && validMapping(file);
+	}
+
+	private boolean validMapping(File file) {
+		try {
+			getMapping(file);
+			return true;
+		}
+		catch (IllegalStateException e) {
+			return false;
+		}
 	}
 
 	StubMapping getMapping(File file) {
@@ -245,7 +256,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			return StubMapping.buildFrom(
 					StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
 		}
-		catch (IOException e) {
+		catch (IOException | JsonException e) {
 			throw new IllegalStateException("Cannot read file", e);
 		}
 	}
