@@ -25,7 +25,6 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
@@ -39,7 +38,6 @@ import org.springframework.test.context.ContextConfiguration
 import static org.mockito.BDDMockito.then
 import static org.mockito.Matchers.argThat
 import static org.mockito.Mockito.mock
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -100,7 +98,7 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 	}
 
 	@Configuration
-	@EnableAutoConfiguration(exclude = WebTestClientAutoConfiguration)
+	@EnableAutoConfiguration
 	@EnableDiscoveryClient
 	static class Config {
 
