@@ -25,6 +25,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
@@ -99,7 +100,7 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 	}
 
 	@Configuration
-	@EnableAutoConfiguration
+	@EnableAutoConfiguration(exclude = WebTestClientAutoConfiguration)
 	@EnableDiscoveryClient
 	static class Config {
 
