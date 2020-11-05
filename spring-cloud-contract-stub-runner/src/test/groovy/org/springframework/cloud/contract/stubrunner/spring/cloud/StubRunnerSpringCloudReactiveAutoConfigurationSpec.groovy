@@ -23,6 +23,8 @@ import spock.lang.Specification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.cloud.client.ServiceInstance
+import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.consul.ConsulAutoConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -41,24 +43,21 @@ import org.springframework.web.client.RestTemplate
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@ActiveProfiles("cloudtest-no-ribbon")
-// tag::autoconfigure[]
+@ActiveProfiles("cloudtest")
 @AutoConfigureStubRunner(
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 				"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")
-// end::autoconfigure[]
-class StubRunnerSpringCloudNoRibbonAutoConfigurationSpec extends Specification {
-
+class StubRunnerSpringCloudReactiveAutoConfigurationSpec extends Specification {
 	@Autowired
 	StubFinder stubFinder
 	@Autowired
-	@LoadBalanced
-	RestTemplate restTemplate
+	ReactiveDiscoveryClient reactiveDiscoveryClient;
 	@Autowired
 	LoadBalancerClientFactory loadBalancerClientFactory;
+	RestTemplate restTemplate = new RestTemplate()
 
 	@BeforeClass
 	@AfterClass
@@ -77,8 +76,10 @@ class StubRunnerSpringCloudNoRibbonAutoConfigurationSpec extends Specification {
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
-			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+			ServiceInstance loanIssuance = reactiveDiscoveryClient.getInstances('loanIssuance').blockFirst()
+			restTemplate.getForObject(loanIssuance.uri.toString() + '/name', String) == 'loanIssuance'
+			ServiceInstance fraudDetection = reactiveDiscoveryClient.getInstances('someNameThatShouldMapFraudDetectionServer').blockFirst()
+			restTemplate.getForObject(fraudDetection.uri.toString() + '/name', String)== 'fraudDetectionServer'
 	}
 	// end::test[]
 

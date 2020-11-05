@@ -10,3 +10,8 @@ spring.cloud:
   service-registry.enabled: false
 eureka.client.enabled: false
 ribbon.eureka.enabled: false
+spring:
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: false
