@@ -20,7 +20,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -28,6 +27,8 @@ import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 /**
@@ -49,18 +50,18 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(DiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
 	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public DiscoveryClient noOpStubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties) {
 		return new StubRunnerDiscoveryClient(stubFinder, stubMapperProperties);
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(ReactiveDiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
 	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public ReactiveDiscoveryClient noOpStubRunnerReactiveDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties) {
 		return new StubRunnerReactiveDiscoveryClient(stubFinder, stubMapperProperties);
