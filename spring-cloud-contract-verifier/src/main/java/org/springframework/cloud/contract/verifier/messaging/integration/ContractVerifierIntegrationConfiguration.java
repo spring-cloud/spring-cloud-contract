@@ -37,7 +37,6 @@ import org.springframework.messaging.Message;
 @ConditionalOnClass(Message.class)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)
-@ConditionalOnMissingBean({ ContractVerifierMessaging.class, MessageVerifier.class })
 public class ContractVerifierIntegrationConfiguration {
 
 	@Bean

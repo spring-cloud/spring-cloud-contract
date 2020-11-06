@@ -44,7 +44,6 @@ import org.springframework.messaging.Message;
 @ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class, NoOpContractVerifierAutoConfiguration.class })
 @ConditionalOnBean(EmbeddedKafkaBroker.class)
-@ConditionalOnMissingBean({ ContractVerifierMessaging.class, MessageVerifier.class })
 public class ContractVerifierKafkaConfiguration {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierKafkaConfiguration.class);
