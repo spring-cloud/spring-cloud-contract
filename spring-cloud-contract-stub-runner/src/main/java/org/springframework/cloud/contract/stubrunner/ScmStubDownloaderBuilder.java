@@ -251,15 +251,12 @@ class GitStubDownloaderProperties {
 		this.password = StringUtils.hasText(password) ? password : options.getPassword();
 		String branch = StubRunnerPropertyUtils.getProperty(args, GIT_BRANCH_PROPERTY);
 		this.branch = StringUtils.hasText(branch) ? branch : "master";
-		String ensureGitSuffix = StubRunnerPropertyUtils.getProperty(args,
-				GIT_ENSURE_GIT_SUFFIX_PROPERTY);
-		this.ensureGitSuffix = StringUtils.hasText(ensureGitSuffix)
-				? Boolean.parseBoolean(ensureGitSuffix) : true;
+		String ensureGitSuffix = StubRunnerPropertyUtils.getProperty(args, GIT_ENSURE_GIT_SUFFIX_PROPERTY);
+		this.ensureGitSuffix = StringUtils.hasText(ensureGitSuffix) ? Boolean.parseBoolean(ensureGitSuffix) : true;
 
 		if (log.isDebugEnabled()) {
-			log.debug("Repo url is [" + repoUrl + "], modified url string " + "is ["
-					+ modifiedRepo + "] URL is [" + this.url + "]  branch is ["
-					+ this.branch + "] and ensureGitSuffix is [" + this.ensureGitSuffix
+			log.debug("Repo url is [" + repoUrl + "], modified url string " + "is [" + modifiedRepo + "] URL is ["
+					+ this.url + "]  branch is [" + this.branch + "] and ensureGitSuffix is [" + this.ensureGitSuffix
 					+ "]");
 		}
 	}

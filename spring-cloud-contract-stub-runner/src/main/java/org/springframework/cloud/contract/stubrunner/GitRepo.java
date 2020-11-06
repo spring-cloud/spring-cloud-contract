@@ -240,8 +240,7 @@ class GitRepo {
 
 	protected String sanitizeGitUrl(URI uri) {
 		String urlString = uri.toString();
-		return (urlString.endsWith(".git") || !this.ensureGitSuffix) ? urlString
-				: urlString + ".git";
+		return (urlString.endsWith(".git") || !this.ensureGitSuffix) ? urlString : urlString + ".git";
 	}
 
 	private Ref checkoutBranch(File projectDir, String branch) throws GitAPIException {
