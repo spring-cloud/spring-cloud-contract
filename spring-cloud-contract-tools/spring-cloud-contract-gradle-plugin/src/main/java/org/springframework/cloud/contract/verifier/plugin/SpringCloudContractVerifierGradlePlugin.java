@@ -18,8 +18,6 @@ package org.springframework.cloud.contract.verifier.plugin;
 
 import java.io.File;
 
-import javax.annotation.Nullable;
-
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -328,15 +326,6 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		});
 	}
 
-	private @Nullable TaskProvider<Jar> stubsTask() {
-		try {
-			return project.getTasks().named(VERIFIER_STUBS_JAR_TASK_NAME, Jar.class);
-		}
-		catch (Exception e) {
-			return null;
-		}
-	}
-
 	@Deprecated
 	private boolean hasStubsPublication(PublishingExtension publishingExtension) {
 		try {
@@ -356,6 +345,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 					contractsCopyTask.getConvertToYaml().convention(extension.getConvertToYaml());
 					contractsCopyTask.getFailOnNoContracts().convention(extension.getFailOnNoContracts());
 					contractsCopyTask.getContractsDirectory().convention(extension.getContractsDslDir());
+					contractsCopyTask.getLegacyContractsDirectory()
+							.convention(project.getLayout().getProjectDirectory().dir("src/test/resources/contracts"));
 					contractsCopyTask.getContractDependency().getGroupId()
 							.convention(extension.getContractDependency().getGroupId());
 					contractsCopyTask.getContractDependency().getArtifactId()
