@@ -344,9 +344,18 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 
 					contractsCopyTask.getConvertToYaml().convention(extension.getConvertToYaml());
 					contractsCopyTask.getFailOnNoContracts().convention(extension.getFailOnNoContracts());
-					contractsCopyTask.getContractsDirectory().convention(extension.getContractsDslDir());
-					contractsCopyTask.getLegacyContractsDirectory()
-							.convention(project.getLayout().getProjectDirectory().dir("src/test/resources/contracts"));
+					contractsCopyTask.getContractsDirectory()
+							.convention(extension.getContractsDslDir().map(contractsDslDir -> {
+								if (contractsDslDir.getAsFile().exists()) {
+									return contractsDslDir;
+								}
+								else {
+									project.getLogger().warn(
+											"Spring Cloud Contract Verifier Plugin: Falling back to legacy contracts directory in 'test' source set. Please switch to 'contractTest' source set as this will be removed in a future release.");
+									return project.getLayout().getProjectDirectory()
+											.dir("src/test/resources/contracts");
+								}
+							}));
 					contractsCopyTask.getContractDependency().getGroupId()
 							.convention(extension.getContractDependency().getGroupId());
 					contractsCopyTask.getContractDependency().getArtifactId()

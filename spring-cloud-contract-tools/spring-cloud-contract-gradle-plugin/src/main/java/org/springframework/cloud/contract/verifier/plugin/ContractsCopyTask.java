@@ -81,9 +81,6 @@ class ContractsCopyTask extends DefaultTask {
 
 	private final DirectoryProperty contractsDirectory;
 
-	@Deprecated
-	private final DirectoryProperty legacyContractsDirectory;
-
 	private final Dependency contractDependency;
 
 	private final Repository contractRepository;
@@ -114,7 +111,6 @@ class ContractsCopyTask extends DefaultTask {
 		convertToYaml = objects.property(Boolean.class);
 		failOnNoContracts = objects.property(Boolean.class);
 		contractsDirectory = objects.directoryProperty();
-		legacyContractsDirectory = objects.directoryProperty();
 		contractDependency = objects.newInstance(Dependency.class);
 		contractRepository = objects.newInstance(Repository.class);
 		contractsMode = objects.property(StubRunnerProperties.StubsMode.class);
@@ -161,7 +157,7 @@ class ContractsCopyTask extends DefaultTask {
 
 	@TaskAction
 	void sync() {
-		/*final*/ File contractsDirectory;
+		final File contractsDirectory;
 		final String antPattern;
 		if (shouldDownloadContracts()) {
 			DownloadedData downloadedData = downloadContracts();
@@ -171,11 +167,6 @@ class ContractsCopyTask extends DefaultTask {
 		}
 		else {
 			contractsDirectory = this.contractsDirectory.getAsFile().getOrNull();
-			if (contractsDirectory == null || !contractsDirectory.exists()) {
-				getLogger().warn("Spring Cloud Contract Verifier Plugin: Falling back to legacy contracts directory in 'test' source set. Please switch to " +
-						"'contractTest' source set as this will be removed in a future release.");
-				contractsDirectory = this.legacyContractsDirectory.getAsFile().getOrNull();
-			}
 			antPattern = "**/";
 		}
 		getLogger().info("For project [{}] will use contracts provided in the folder [{}]", getProject().getName(),
@@ -295,14 +286,6 @@ class ContractsCopyTask extends DefaultTask {
 	@PathSensitive(PathSensitivity.RELATIVE)
 	DirectoryProperty getContractsDirectory() {
 		return contractsDirectory;
-	}
-
-	@Deprecated
-	@InputDirectory
-	@SkipWhenEmpty
-	@PathSensitive(PathSensitivity.RELATIVE)
-	DirectoryProperty getLegacyContractsDirectory() {
-		return legacyContractsDirectory;
 	}
 
 	@Nested
