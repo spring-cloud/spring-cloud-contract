@@ -51,8 +51,8 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
-		BeforeEachCallback, AfterEachCallback, StubFinder, StubRunnerExtensionOptions {
+public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback,
+		StubFinder, StubRunnerExtensionOptions {
 
 	private static final String DELIMITER = ":";
 
@@ -84,8 +84,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	public void afterAll(ExtensionContext extensionContext) {
 		try {
 			after();
-		}
-		finally {
+		} finally {
 			this.afterAllCalled.set(true);
 		}
 	}
@@ -106,8 +105,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	public void beforeAll(ExtensionContext extensionContext) {
 		try {
 			before();
-		}
-		finally {
+		} finally {
 			this.beforeAllCalled.set(true);
 		}
 	}
@@ -134,6 +132,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 			LOG.warn(exception.getMessage(), exception);
 		}
 	}
+
 
 	@Override
 	public URL findStubUrl(String groupId, String artifactId)
