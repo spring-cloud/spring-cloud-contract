@@ -52,11 +52,11 @@ dependencyManagement {
 }
 
 dependencies {
-	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	testImplementation "org.codehaus.groovy:groovy-all:${groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testCompile "org.spockframework:spock-core:${spockVersion}"
-	testCompile "org.spockframework:spock-spring:${spockVersion}"
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testImplementation "org.spockframework:spock-core:${spockVersion}"
+	testImplementation "org.spockframework:spock-spring:${spockVersion}"
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
 
@@ -93,11 +93,11 @@ dependencyManagement {
 }
 
 dependencies {
-	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	testImplementation "org.codehaus.groovy:groovy-all:${groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testCompile "org.spockframework:spock-core:${spockVersion}"
-	testCompile "org.spockframework:spock-spring:${spockVersion}"
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testImplementation "org.spockframework:spock-core:${spockVersion}"
+	testImplementation "org.spockframework:spock-spring:${spockVersion}"
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
 
@@ -118,7 +118,7 @@ buildscript {
 }
 
 apply plugin: 'groovy'
-apply plugin: 'spring-cloud-contract'
+apply plugin: 'org.springframework.cloud.contract'
 
 dependencyManagement {
 	imports {
@@ -127,11 +127,11 @@ dependencyManagement {
 }
 
 dependencies {
-	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	testImplementation "org.codehaus.groovy:groovy-all:${groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testCompile "org.spockframework:spock-core:${spockVersion}"
-	testCompile "org.spockframework:spock-spring:${spockVersion}"
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testImplementation "org.spockframework:spock-core:${spockVersion}"
+	testImplementation "org.spockframework:spock-spring:${spockVersion}"
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
 ====
@@ -187,7 +187,13 @@ include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 == Add stubs
 
 By default, Spring Cloud Contract Verifier looks for stubs in the
-`src/test/resources/contracts` directory.
+`src/contractTest/resources/contracts` directory. For transitional purposes the plugin
+will also look for contracts in `src/test/resources/contracts`, however, this directory
+is deprecated as of Spring Cloud Contract 3.0.0.
+
+It should also be noted, that with this new Gradle source set, you should also migrate
+any base classes used within your contract tests to `src/contractTest/{language}` where
+`{language}` should be replaced with Java or Groovy as needed for your purposes.
 
 The directory that contains stub definitions is treated as a class name, and each stub
 definition is treated as a single test. Spring Cloud Contract Verifier assumes that it
@@ -198,8 +204,8 @@ as the package name. Consider the following structure:
 ====
 [source,groovy,indent=0]
 ----
-src/test/resources/contracts/myservice/shouldCreateUser.groovy
-src/test/resources/contracts/myservice/shouldReturnUser.groovy
+src/contractTest/resources/contracts/myservice/shouldCreateUser.groovy
+src/contractTest/resources/contracts/myservice/shouldReturnUser.groovy
 ----
 ====
 
@@ -231,24 +237,24 @@ contracts {
     generatedTestJavaSourcesDir = project.file("${project.buildDir}/generated-test-sources/contractTest/java")
     generatedTestGroovySourcesDir = project.file("${project.buildDir}/generated-test-sources/contractTest/groovy")
     generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
-    contractsDslDir = project.file("${project.projectDir}/src/test/resources/contracts")
+    contractsDslDir = project.file("${project.projectDir}/src/contractTest/resources/contracts")
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
     sourceSet = null
 }
 
-tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
+def verifierStubsJar = tasks.register(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
     baseName = project.name
     classifier = contracts.stubsSuffix
     from contractVerifier.stubsOutputDir
 }
 
-tasks.create(type: Copy, name: 'copyContracts') {
+def copyContracts = tasks.register(type: Copy, name: 'copyContracts') {
     from contracts.contractsDslDir
     into contracts.stubsOutputDir
 }
 
-verifierStubsJar.dependsOn 'copyContracts'
+verifierStubsJar.dependsOn copyContracts
 ----
 ====
 
@@ -264,7 +270,7 @@ configuration, as the following listing shows:
 contracts {
 	testMode = 'MockMvc'
 	baseClassForTests = 'org.mycompany.tests'
-	generatedTestSourcesDir = project.file('src/generatedContract')
+	generatedTestJavaSourcesDir = project.file('src/generatedContract')
 }
 ----
 ====
@@ -339,7 +345,7 @@ setting takes precedence over `packageWithBaseClasses` and `baseClassForTests`.
 * `ignoredFiles`: Uses an `Antmatcher` to allow defining stub files for which processing
 should be skipped. By default, it is an empty array.
 * `contractsDslDir`: Specifies the directory that contains contracts written by using the
-GroovyDSL. By default, its value is `$projectDir/src/test/resources/contracts`.
+GroovyDSL. By default, its value is `$projectDir/src/contractTest/resources/contracts`.
 * `generatedTestSourcesDir`: Specifies the test source directory where tests generated
 from the Groovy DSL should be placed. (Deprecrated)
 * `generatedTestJavaSourcesDir`: Specifies the test source directory where Java/JUnit tests generated from the Groovy DSL should be placed. By default, it's value is `$buildDir/generated-tes-sources/contractTest/java`.
@@ -419,7 +425,7 @@ plugin which class should get extended by the autogenerated tests. You have two 
 === By Convention
 
 The convention is such that, if you have a contract in (for example)
-`src/test/resources/contract/foo/bar/baz/` and set the value of the
+`src/contractTest/resources/contract/foo/bar/baz/` and set the value of the
 `packageWithBaseClasses` property to `com.example.base`, then Spring Cloud Contract
 Verifier assumes that there is a `BarBazBase` class under the `com.example.base` package.
 In other words, the system takes the last two parts of the package, if they exist, and
@@ -449,12 +455,12 @@ include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/
 
 Assume that you have contracts in the following directories:
 
-- `src/test/resources/contract/com/`
-- `src/test/resources/contract/foo/`
+- `src/contractTest/resources/contract/com/`
+- `src/contractTest/resources/contract/foo/`
 
 By providing `baseClassForTests`, we have a fallback in case mapping did not succeed.
 (You could also provide the `packageWithBaseClasses` as a fallback.) That way, the tests
-generated from `src/test/resources/contract/com/` contracts extend the
+generated from `src/contractTest/resources/contract/com/` contracts extend the
 `com.example.ComBase`, whereas the rest of the tests extend `com.example.FooBase`.
 
 [[gradle-invoking-generated-tests]]
@@ -466,7 +472,7 @@ the following command:
 ====
 [source,bash,indent=0]
 ----
-./gradlew generateContractTests test
+./gradlew contractTest
 ----
 ====
 
@@ -525,7 +531,7 @@ or through a system property or an environment variable.
 
 In a consuming service, you need to configure the Spring Cloud Contract Verifier plugin
 in exactly the same way as in the case of a provider. If you do not want to use Stub Runner,
-you need to copy the contracts stored in `src/test/resources/contracts` and generate
+you need to copy the contracts stored in `src/contractTest/resources/contracts` and generate
 WireMock JSON stubs by using the following command:
 
 ====

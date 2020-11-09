@@ -62,24 +62,24 @@ configurations {
 }
 
 dependencies {
-	compile gradleApi()
-	compile "org.eclipse.aether:aether-api:${aetherVersion}"
+	compileOnly gradleApi()
+	implementation "org.eclipse.aether:aether-api:${aetherVersion}"
 
-	compile("org.springframework.cloud:spring-cloud-contract-converters:${project.version}") {
+	implementation("org.springframework.cloud:spring-cloud-contract-converters:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	compile("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
+	api("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	compile("org.springframework.cloud:spring-cloud-starter-contract-verifier:${project.version}") {
+	api("org.springframework.cloud:spring-cloud-starter-contract-verifier:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	testCompile('org.spockframework:spock-core:1.3-groovy-2.5') {
+	testImplementation('org.spockframework:spock-core:1.3-groovy-2.5') {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
-	testCompile localGroovy()
-	testCompile gradleTestKit()
+	testImplementation 'info.solidsoft.spock:spock-global-unroll:0.5.0'
+	testImplementation localGroovy()
+	testImplementation gradleTestKit()
 }
 
 task libtest() {
