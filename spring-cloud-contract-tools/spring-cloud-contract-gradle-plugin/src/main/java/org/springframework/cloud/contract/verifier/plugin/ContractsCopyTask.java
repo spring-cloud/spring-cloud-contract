@@ -132,7 +132,7 @@ class ContractsCopyTask extends DefaultTask {
 					String branch = StubRunnerPropertyUtils.getProperty(contractsProperties.get(), "git.branch");
 					branch = StringUtils.hasText(branch) ? branch : "master";
 					UsernamePasswordCredentialsProvider provider = null;
-					if (StringUtils.hasText(contractRepository.getUsername().get())) {
+					if (StringUtils.hasText(contractRepository.getUsername().getOrNull())) {
 						provider = new UsernamePasswordCredentialsProvider(contractRepository.getUsername().get(),
 								contractRepository.getPassword().get());
 					}
