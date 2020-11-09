@@ -347,7 +347,7 @@ class PactContractConverterSpec extends Specification {
   ],
   "metadata": {
     "pact-jvm": {
-      "version": "4.0.9"
+      "version": "4.0.10"
     }
   }
 }
