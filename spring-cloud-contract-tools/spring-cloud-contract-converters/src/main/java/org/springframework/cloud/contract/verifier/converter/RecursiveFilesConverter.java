@@ -120,8 +120,7 @@ public class RecursiveFilesConverter {
 				}
 				File sourceFile = contract.getPath().toFile();
 				Collection<StubGenerator> stubGenerators = contract.getConvertedContract() != null
-						? holder.allOrDefault(new DslToWireMockClientConverter())
-						: holder.converterForName(sourceFile.getAbsolutePath());
+						? holder.allOrDefault(new DslToWireMockClientConverter()) : holder.converterForName(sourceFile);
 				try {
 					String path = sourceFile.getPath();
 					if (excludeBuildFolders && (matchesPath(path, "target") || matchesPath(path, "build"))) {

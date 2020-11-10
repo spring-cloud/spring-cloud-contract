@@ -21,8 +21,10 @@ import com.github.tomakehurst.wiremock.extension.Extension
 import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer
 import com.github.tomakehurst.wiremock.http.ChunkedDribbleDelay
+import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.Response
+import wiremock.org.apache.http.HttpHeaders
 
 import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions
@@ -52,13 +54,13 @@ class CustomExtension extends ResponseTransformer {
 	}
 
 	/**
-	 * Transformer returns the "surprise!" body regardless of what you
-	 * the stub mapping returns
+	 * Transformer adds a X-My-Header with value "surprise!" to the response
 	 */
 	@Override
 	Response transform(Request request, Response response, FileSource files, Parameters parameters) {
+		def headers = response.headers + new HttpHeader("X-My-Header", "surprise!")
 		return new Response(response.status, response.statusMessage,
-				"surprise!", response.headers, response.wasConfigured(), response.fault,
+				response.body, headers, response.wasConfigured(), response.fault,
 				response.initialDelay, new ChunkedDribbleDelay(0, 0), response.fromProxy)
 	}
 

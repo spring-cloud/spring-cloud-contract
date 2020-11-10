@@ -26,16 +26,19 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
 import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
  * Factory of StubRunners. Basing on the options and passed collaborators downloads the
@@ -109,6 +112,12 @@ class StubRunnerFactory {
 	}
 
 	private void removeCurrentMappings(Path path) {
+
+		List<HttpServerStub> httpServerStubs = SpringFactoriesLoader.loadFactories(HttpServerStub.class, null);
+		if (httpServerStubs.isEmpty()) {
+			httpServerStubs.add(new WireMockHttpServerStub());
+		}
+
 		try {
 			Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
 
@@ -116,13 +125,15 @@ class StubRunnerFactory {
 
 				private final StubGeneratorProvider provider = new StubGeneratorProvider();
 
+				private final HttpServerStub wireMockHttpServerStub = new WireMockHttpServerStub();
+
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-					Collection<StubGenerator> stubGenerators = this.provider.converterForName(file.toString());
-					if (!stubGenerators.isEmpty()) {
+					File fileToConvert = file.toFile();
+					Collection<StubGenerator> stubGenerators = this.provider.converterForName(fileToConvert);
+					if (!stubGenerators.isEmpty() || this.wireMockHttpServerStub.isAccepted(fileToConvert)) {
 						if (log.isDebugEnabled()) {
-							log.debug("Deleting file [" + file.toString()
-									+ "] since at least one stub generator would run it");
+							log.debug("Deleting file [" + file.toString() + "] since it contains a valid mapping.");
 						}
 						try {
 							Files.delete(file);

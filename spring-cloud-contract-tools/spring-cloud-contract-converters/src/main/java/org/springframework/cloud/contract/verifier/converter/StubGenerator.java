@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.converter;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,12 +33,12 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 public interface StubGenerator<T> {
 
 	/**
-	 * @param fileName - file name or absolute path of a contract
-	 * @return {@code true} if the converter can handle the contract file to convert it
-	 * into a stub.
+	 * @param file - file
+	 * @return {@code true} if the converter can handle the file to convert it into a
+	 * stub.
 	 */
-	default boolean canHandleFileName(String fileName) {
-		return true;
+	default boolean canHandleFileName(File file) {
+		return file.getName().endsWith(fileExtension());
 	}
 
 	/**
@@ -81,7 +82,7 @@ public interface StubGenerator<T> {
 	 * @param inputFileName - name of the input file
 	 * @return the name of the converted stub file. If you have multiple contracts in a
 	 * single file then a prefix will be added to the generated file. If you provide the
-	 * {@link Contract#getName()} field then that field will override the generated file
+	 * {@link Contract#getName} field then that field will override the generated file
 	 * name.
 	 *
 	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be converted

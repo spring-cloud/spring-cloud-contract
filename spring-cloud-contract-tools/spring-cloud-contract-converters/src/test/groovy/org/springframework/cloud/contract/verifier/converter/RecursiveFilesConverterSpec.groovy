@@ -193,8 +193,9 @@ org.springframework.cloud.contract.spec.Contract.make {
 
 	private StubGenerator stubGenerator(String stub) {
 		return new StubGenerator() {
+
 			@Override
-			boolean canHandleFileName(String fileName) {
+			boolean canHandleFileName(File fileName) {
 				return true
 			}
 

@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.converter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +33,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  */
 public class StubGeneratorProvider {
 
-	private final List<StubGenerator> converters = new ArrayList<StubGenerator>();
+	private final List<StubGenerator> converters = new ArrayList<>();
 
 	public StubGeneratorProvider() {
 		this.converters.addAll(SpringFactoriesLoader.loadFactories(StubGenerator.class, null));
@@ -42,8 +43,8 @@ public class StubGeneratorProvider {
 		this.converters.addAll(converters);
 	}
 
-	public Collection<StubGenerator> converterForName(final String fileName) {
-		return this.converters.stream().filter(stubGenerator -> stubGenerator.canHandleFileName(fileName))
+	public Collection<StubGenerator> converterForName(final File file) {
+		return this.converters.stream().filter(stubGenerator -> stubGenerator.canHandleFileName(file))
 				.collect(Collectors.toList());
 	}
 
