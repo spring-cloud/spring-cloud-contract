@@ -16,10 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.converter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
@@ -40,6 +42,18 @@ public class StubGeneratorProvider {
 
 	public StubGeneratorProvider(List<StubGenerator> converters) {
 		this.converters.addAll(converters);
+	}
+
+	/**
+	 * @param file - stub mapping file
+	 * @return collection of stub generators matching the stub mapping
+	 * @deprecated use {@link #allOrDefault(StubGenerator)}
+	 */
+	@Deprecated
+	public Collection<StubGenerator> converterForName(final File file) {
+		return this.converters.stream()
+				.filter(stubGenerator -> stubGenerator.canReadStubMapping(file))
+				.collect(Collectors.toList());
 	}
 
 	public Collection<StubGenerator> allOrDefault(StubGenerator defaultStubGenerator) {

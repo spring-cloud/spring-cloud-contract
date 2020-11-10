@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.converter;
 
+import java.io.File;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -29,14 +30,22 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 public interface StubGenerator {
 
 	/**
-	 * @param contractFileName - file name
+	 * @param fileName - file name
 	 * @return {@code true} if the converter can handle the file to convert it into a
 	 * stub.
-	 * @deprecated all present converters will be picked
+	 * @deprecated use {@link StubGenerator#canReadStubMapping(File)}
 	 */
 	@Deprecated
-	default boolean canHandleFileName(String contractFileName) {
-		return contractFileName.endsWith(fileExtension());
+	default boolean canReadStubMapping(String fileName) {
+		return fileName.endsWith(fileExtension());
+	}
+
+	/**
+	 * @param mapping - potential stub mapping mapping
+	 * @return {@code true} if this converter could have generated this mapping stub.
+	 */
+	default boolean canReadStubMapping(File mapping) {
+		return mapping.getName().endsWith(fileExtension());
 	}
 
 	/**
@@ -61,7 +70,8 @@ public interface StubGenerator {
 	String generateOutputFileNameForInput(String inputFileName);
 
 	/**
-	 * Describes the file extension that this stub generator can handle.
+	 * Describes the file extension of the generated mapping that this stub generator can
+	 * handle.
 	 * @return string describing the file extension
 	 */
 	default String fileExtension() {
