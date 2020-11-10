@@ -42,7 +42,9 @@ public class ContractVerifierMessaging<M> {
 
 	public ContractVerifierMessaging(MessageVerifier<M> exchange) {
 		this.exchange = exchange;
-		log.info("The message verifier implementation is of type [" + exchange.getClass() + "]");
+		if (exchange != null) {
+			log.info("The message verifier implementation is of type [" + exchange.getClass() + "]");
+		}
 	}
 
 	public void send(ContractVerifierMessage message, String destination, @Nullable YamlContract contract) {
