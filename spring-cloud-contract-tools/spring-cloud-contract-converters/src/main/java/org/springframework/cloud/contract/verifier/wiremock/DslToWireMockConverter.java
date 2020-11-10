@@ -53,11 +53,11 @@ public abstract class DslToWireMockConverter implements StubGenerator<StubMappin
 	}
 
 	@Override
-	public boolean canHandleFileName(File file) {
-		if (!file.getName().endsWith(fileExtension())) {
+	public boolean canReadStubMapping(File mapping) {
+		if (!mapping.getName().endsWith(".json")) {
 			return false;
 		}
-		try (InputStream stream = Files.newInputStream(file.toPath())) {
+		try (InputStream stream = Files.newInputStream(mapping.toPath())) {
 			StubMapping.buildFrom(StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
 			return true;
 		}

@@ -110,7 +110,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	}"""
 		and:
 			StubGenerator stubGenerator = Stub(StubGenerator)
-			stubGenerator.canHandleFileName(_) >> { true }
+			stubGenerator.canReadStubMapping(_) >> { true }
 			stubGenerator.convertContents(_, _) >> {
 				throw new NullPointerException("Test conversion error")
 			}
@@ -195,7 +195,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		return new StubGenerator() {
 
 			@Override
-			boolean canHandleFileName(File fileName) {
+			boolean canReadStubMapping(File mapping) {
 				return true
 			}
 

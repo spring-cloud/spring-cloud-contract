@@ -37,6 +37,7 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
 import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
@@ -129,9 +130,10 @@ class StubRunnerFactory {
 
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-					File fileToConvert = file.toFile();
-					Collection<StubGenerator> stubGenerators = this.provider.converterForName(fileToConvert);
-					if (!stubGenerators.isEmpty() || this.wireMockHttpServerStub.isAccepted(fileToConvert)) {
+					File potentialStubMapping = file.toFile();
+					Collection<StubGenerator> stubGenerators = this.provider
+							.allOrDefault(new DslToWireMockClientConverter());
+					if (stubGenerators.stream().anyMatch(s -> s.canReadStubMapping(potentialStubMapping))) {
 						if (log.isDebugEnabled()) {
 							log.debug("Deleting file [" + file.toString() + "] since it contains a valid mapping.");
 						}

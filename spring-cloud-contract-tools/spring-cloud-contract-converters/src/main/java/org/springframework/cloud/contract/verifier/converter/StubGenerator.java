@@ -33,12 +33,11 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 public interface StubGenerator<T> {
 
 	/**
-	 * @param file - file
-	 * @return {@code true} if the converter can handle the file to convert it into a
-	 * stub.
+	 * @param mapping - potential stub mapping mapping
+	 * @return {@code true} if this converter could have generated this mapping stub.
 	 */
-	default boolean canHandleFileName(File file) {
-		return file.getName().endsWith(fileExtension());
+	default boolean canReadStubMapping(File mapping) {
+		return mapping.getName().endsWith(fileExtension());
 	}
 
 	/**
@@ -92,8 +91,9 @@ public interface StubGenerator<T> {
 	String generateOutputFileNameForInput(String inputFileName);
 
 	/**
-	 * Describes the file extension that this stub generator will generate.
-	 * @return string describing the file extension starting with a dot
+	 * Describes the file extension of the generated mapping that this stub generator can
+	 * handle.
+	 * @return string describing the file extension
 	 */
 	default String fileExtension() {
 		return ".json";

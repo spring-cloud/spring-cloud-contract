@@ -31,6 +31,7 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
 import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
+import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
 import org.springframework.util.StringUtils;
 
 final class MappingGenerator {
@@ -43,7 +44,7 @@ final class MappingGenerator {
 
 	static Collection<Path> toMappings(File contractFile, Collection<Contract> contracts, File mappingsFolder) {
 		StubGeneratorProvider provider = new StubGeneratorProvider();
-		Collection<StubGenerator> stubGenerators = provider.converterForName(contractFile);
+		Collection<StubGenerator> stubGenerators = provider.allOrDefault(new DslToWireMockClientConverter());
 		if (log.isDebugEnabled()) {
 			log.debug("Found following matching stub generators " + stubGenerators);
 		}
