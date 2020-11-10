@@ -17,7 +17,9 @@
 package org.springframework.cloud.contract.verifier.plugin;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -25,14 +27,13 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
-import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
@@ -42,7 +43,6 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
-import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.springframework.cloud.contract.stubrunner.ContractDownloader;
 import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder;
@@ -89,6 +89,8 @@ class ContractsCopyTask extends DefaultTask {
 
 	private final MapProperty<String, String> contractsProperties;
 
+	private final Provider<Map<String, String>> allContractsProperties;
+
 	private final Property<String> contractsPath;
 
 	private final Property<Boolean> excludeBuildFolders;
@@ -115,6 +117,15 @@ class ContractsCopyTask extends DefaultTask {
 		contractRepository = objects.newInstance(Repository.class);
 		contractsMode = objects.property(StubRunnerProperties.StubsMode.class);
 		contractsProperties = objects.mapProperty(String.class, String.class);
+		allContractsProperties = contractsProperties.flatMap(contractsProps -> {
+			MapProperty<String, String> allProps = objects.mapProperty(String.class, String.class);
+			allProps.putAll(contractsProps);
+			String gitCommitId = this.discoverGitCommitId(contractsProps);
+			if (StringUtils.hasText(gitCommitId)) {
+				allProps.put("git.commit", gitCommitId);
+			}
+			return allProps;
+		});
 		contractsPath = objects.property(String.class);
 		excludeBuildFolders = objects.property(Boolean.class);
 		deleteStubsAfterTest = objects.property(Boolean.class);
@@ -124,35 +135,6 @@ class ContractsCopyTask extends DefaultTask {
 
 		this.getOutputs().upToDateWhen(task -> !(this.shouldDownloadContracts()
 				&& this.getContractDependency().toStubConfiguration().isVersionChanging()));
-		// Lambdas break build caching support
-		this.doFirst(new Action<Task>() {
-			@Override
-			public void execute(Task inner) {
-				String repositoryUrl = contractRepository.getRepositoryUrl().getOrNull();
-				if (repositoryUrl != null && ScmStubDownloaderBuilder.isProtocolAccepted(repositoryUrl)) {
-					String branch = StubRunnerPropertyUtils.getProperty(contractsProperties.get(), "git.branch");
-					branch = StringUtils.hasText(branch) ? branch : "master";
-					UsernamePasswordCredentialsProvider provider = null;
-					if (StringUtils.hasText(contractRepository.getUsername().get())) {
-						provider = new UsernamePasswordCredentialsProvider(contractRepository.getUsername().get(),
-								contractRepository.getPassword().get());
-					}
-					try {
-						Collection<Ref> refs = Git.lsRemoteRepository().setRemote(repositoryUrl)
-								.setCredentialsProvider(provider).call();
-						for (Ref ref : refs) {
-							if (ref.getName().equals(branch) || ref.getName().equals("refs/heads/" + branch)
-									|| ref.getName().equals("refs/tags/" + branch)) {
-								contractsProperties.put("git.commit", ref.getObjectId().name());
-							}
-						}
-					}
-					catch (GitAPIException e) {
-						ContractsCopyTask.this.getLogger().warn("Unable to determine git repository commit id");
-					}
-				}
-			}
-		});
 	}
 
 	@TaskAction
@@ -282,7 +264,7 @@ class ContractsCopyTask extends DefaultTask {
 	}
 
 	@InputDirectory
-	@SkipWhenEmpty
+	@Optional
 	@PathSensitive(PathSensitivity.RELATIVE)
 	DirectoryProperty getContractsDirectory() {
 		return contractsDirectory;
@@ -426,9 +408,14 @@ class ContractsCopyTask extends DefaultTask {
 		return contractsMode;
 	}
 
-	@Input
+	@Internal
 	MapProperty<String, String> getContractsProperties() {
 		return contractsProperties;
+	}
+
+	@Input
+	Provider<Map<String, String>> getAllContractsProperties() {
+		return allContractsProperties;
 	}
 
 	@Input
@@ -470,12 +457,49 @@ class ContractsCopyTask extends DefaultTask {
 				.withStubRepositoryRoot(contractRepository.repositoryUrl.getOrNull()).withStubsMode(contractsMode.get())
 				.withUsername(contractRepository.username.getOrNull())
 				.withPassword(contractRepository.password.getOrNull())
-				.withDeleteStubsAfterTest(deleteStubsAfterTest.get()).withProperties(contractsProperties.getOrNull())
+				.withDeleteStubsAfterTest(deleteStubsAfterTest.get()).withProperties(allContractsProperties.getOrNull())
 				.withFailOnNoStubs(failOnNoContracts.get());
 		if (contractRepository.proxyPort.isPresent()) {
 			options = options.withProxy(contractRepository.proxyHost.getOrNull(), contractRepository.proxyPort.get());
 		}
 		return options.build();
+	}
+
+	@Nullable
+	private String discoverGitCommitId(Map<String, String> props) {
+		String repositoryUrl = contractRepository.getRepositoryUrl().getOrNull();
+		if (repositoryUrl != null && ScmStubDownloaderBuilder.isProtocolAccepted(repositoryUrl)) {
+			String branch = StubRunnerPropertyUtils.getProperty(props, "git.branch");
+			branch = StringUtils.hasText(branch) ? branch : "master";
+			UsernamePasswordCredentialsProvider provider = null;
+			if (StringUtils.hasText(contractRepository.getUsername().getOrNull())) {
+				provider = new UsernamePasswordCredentialsProvider(contractRepository.getUsername().get(),
+						contractRepository.getPassword().get());
+			}
+			try {
+				String repoUrl;
+				URI repoUri = URI.create(repositoryUrl);
+				String part = repoUri.getSchemeSpecificPart();
+				if (!StringUtils.hasLength(part)) {
+					repoUrl = part;
+				}
+				else {
+					repoUrl = part.startsWith("//") ? part.substring(2) : part;
+				}
+				Collection<Ref> refs = Git.lsRemoteRepository().setRemote(repoUrl).setCredentialsProvider(provider)
+						.call();
+				for (Ref ref : refs) {
+					if (ref.getName().equals(branch) || ref.getName().equals("refs/heads/" + branch)
+							|| ref.getName().equals("refs/tags/" + branch)) {
+						return ref.getObjectId().name();
+					}
+				}
+			}
+			catch (GitAPIException e) {
+				ContractsCopyTask.this.getLogger().warn("Unable to determine git repository commit id", e);
+			}
+		}
+		return null;
 	}
 
 }
