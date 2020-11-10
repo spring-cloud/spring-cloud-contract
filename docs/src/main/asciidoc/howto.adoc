@@ -724,7 +724,7 @@ You can also further customize the `publishStubsToScm` gradle task. In the follo
 the task is customized to pick contracts from a local git repository:
 
 ====
-[source,groovy,indent=0,role="secondary"]
+[source,groovy,indent=0]
 .gradle
 ----
 publishStubsToScm {
