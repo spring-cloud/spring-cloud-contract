@@ -16,7 +16,19 @@
 
 package org.springframework.cloud.contract.verifier.wiremock;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+
+import com.github.tomakehurst.wiremock.common.JsonException;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
+import org.springframework.util.StreamUtils;
 
 /**
  * WireMock implementation of the {@link StubGenerator}.
@@ -24,6 +36,8 @@ import org.springframework.cloud.contract.verifier.converter.StubGenerator;
  * @since 1.0.0
  */
 public abstract class DslToWireMockConverter implements StubGenerator {
+
+	private static final Log log = LogFactory.getLog(DslToWireMockConverter.class);
 
 	@Override
 	public String generateOutputFileNameForInput(String inputFileName) {
@@ -36,6 +50,21 @@ public abstract class DslToWireMockConverter implements StubGenerator {
 			return inputFileName.substring(i + 1);
 		}
 		return "";
+	}
+
+	@Override
+	public boolean canHandleFileName(File file) {
+		try (InputStream stream = Files.newInputStream(file.toPath())) {
+			StubMapping.buildFrom(
+					StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
+			return true;
+		}
+		catch (IOException | JsonException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Cannot read file", e);
+			}
+			return false;
+		}
 	}
 
 }

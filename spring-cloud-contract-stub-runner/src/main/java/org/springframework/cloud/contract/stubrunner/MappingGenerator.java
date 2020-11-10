@@ -45,7 +45,7 @@ final class MappingGenerator {
 			File mappingsFolder) {
 		StubGeneratorProvider provider = new StubGeneratorProvider();
 		Collection<StubGenerator> stubGenerators = provider
-				.converterForName(contractFile.getName());
+				.converterForName(contractFile);
 		if (log.isDebugEnabled()) {
 			log.debug("Found following matching stub generators " + stubGenerators);
 		}

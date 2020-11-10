@@ -199,6 +199,11 @@ org.springframework.cloud.contract.spec.Contract.make {
 			}
 
 			@Override
+			boolean canHandleFileName(File fileName) {
+				return true
+			}
+
+			@Override
 			Map<Contract, String> convertContents(String rootName, ContractMetadata content) {
 				return [
 						(content.convertedContract.first()): stub
