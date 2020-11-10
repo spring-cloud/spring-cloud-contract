@@ -20,6 +20,9 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
@@ -33,10 +36,13 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  */
 public class ContractVerifierMessaging<M> {
 
+	private static final Log log = LogFactory.getLog(ContractVerifierMessaging.class);
+
 	private final MessageVerifier<M> exchange;
 
 	public ContractVerifierMessaging(MessageVerifier<M> exchange) {
 		this.exchange = exchange;
+		log.info("The message verifier implementation is of type [" + exchange.getClass() + "]");
 	}
 
 	public void send(ContractVerifierMessage message, String destination, @Nullable YamlContract contract) {
