@@ -59,7 +59,7 @@ import static java.util.Collections.emptyList;
 public class ContractVerifierAmqpAutoConfiguration {
 
 	@Bean
-	@ConditionalOnBean(RabbitTemplate.class)
+	@ConditionalOnBean({ RabbitTemplate.class, MessageVerifier.class })
 	@ConditionalOnMissingBean
 	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifier<Message> exchange,
 			RabbitTemplate rabbitTemplate) {
