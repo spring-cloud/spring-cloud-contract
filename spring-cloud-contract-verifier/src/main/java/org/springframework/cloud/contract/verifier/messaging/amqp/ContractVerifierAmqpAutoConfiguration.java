@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -53,39 +54,46 @@ import static java.util.Collections.emptyList;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RabbitTemplate.class)
-@ConditionalOnProperty(name = "stubrunner.amqp.enabled", havingValue = "true")
 @AutoConfigureBefore(ContractVerifierIntegrationConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)
 public class ContractVerifierAmqpAutoConfiguration {
 
-	@SpyBean
-	private RabbitTemplate rabbitTemplate;
-
-	@Autowired(required = false)
-	private RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
-
-	@Autowired(required = false)
-	private List<SimpleMessageListenerContainer> simpleMessageListenerContainers = emptyList();
-
-	@Autowired(required = false)
-	private List<Binding> bindings = emptyList();
-
-	@Autowired
-	private RabbitProperties rabbitProperties;
-
 	@Bean
+	@ConditionalOnBean(RabbitTemplate.class)
 	@ConditionalOnMissingBean
-	public MessageVerifier<Message> contractVerifierMessageExchange() {
-		return new SpringAmqpStubMessages(this.rabbitTemplate,
-				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry, this.simpleMessageListenerContainers,
-						this.bindings),
-				this.rabbitProperties);
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifier<Message> exchange,
+			RabbitTemplate rabbitTemplate) {
+		return new ContractVerifierHelper(exchange, rabbitTemplate.getMessageConverter());
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifier<Message> exchange) {
-		return new ContractVerifierHelper(exchange, this.rabbitTemplate.getMessageConverter());
+	@Configuration
+	@ConditionalOnProperty(name = "stubrunner.amqp.enabled", havingValue = "true")
+	static class ContractVerifierAmqpSpyAutoConfiguration {
+
+		@SpyBean
+		private RabbitTemplate rabbitTemplate;
+
+		@Autowired(required = false)
+		private RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
+
+		@Autowired(required = false)
+		private List<SimpleMessageListenerContainer> simpleMessageListenerContainers = emptyList();
+
+		@Autowired(required = false)
+		private List<Binding> bindings = emptyList();
+
+		@Autowired
+		private RabbitProperties rabbitProperties;
+
+		@Bean
+		@ConditionalOnMissingBean
+		public MessageVerifier<Message> contractVerifierMessageExchange() {
+			return new SpringAmqpStubMessages(this.rabbitTemplate,
+					new MessageListenerAccessor(this.rabbitListenerEndpointRegistry,
+							this.simpleMessageListenerContainers, this.bindings),
+					this.rabbitProperties);
+		}
+
 	}
 
 }
