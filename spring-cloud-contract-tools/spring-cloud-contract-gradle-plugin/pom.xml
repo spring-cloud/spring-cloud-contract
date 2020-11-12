@@ -25,6 +25,7 @@
 	</properties>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier</artifactId>
@@ -40,6 +41,8 @@
 	</dependencies>
 
 	<build>
+		<!-- We're building the project via Gradle and if we don't put in a fake source directory then Maven will try to actually compile the Gradle code -->
+		<sourceDirectory>src/main/fake</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

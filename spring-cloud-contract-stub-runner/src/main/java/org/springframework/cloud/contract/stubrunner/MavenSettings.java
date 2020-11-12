@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
-import java.lang.reflect.Field;
 
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
@@ -58,21 +57,7 @@ public class MavenSettings {
 	}
 
 	public SettingsDecrypter createSettingsDecrypter() {
-		SettingsDecrypter settingsDecrypter = new DefaultSettingsDecrypter();
-		setField(DefaultSettingsDecrypter.class, "securityDispatcher", settingsDecrypter,
-				new MavenSettings.SpringCloudContractSecDispatcher());
-		return settingsDecrypter;
-	}
-
-	private void setField(Class<?> sourceClass, String fieldName, Object target, Object value) {
-		try {
-			Field field = sourceClass.getDeclaredField(fieldName);
-			field.setAccessible(true);
-			field.set(target, value);
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("Failed to set field '" + fieldName + "' on '" + target + "'", ex);
-		}
+		return new DefaultSettingsDecrypter(new SpringCloudContractSecDispatcher());
 	}
 
 	private class SpringCloudContractSecDispatcher extends DefaultSecDispatcher {
