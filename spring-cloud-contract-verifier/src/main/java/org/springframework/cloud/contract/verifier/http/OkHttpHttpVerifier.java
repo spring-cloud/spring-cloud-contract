@@ -30,7 +30,6 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.RequestBody;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link HttpVerifier} implementation that uses {@link OkHttpClient}. Has an inbuilt
@@ -115,7 +114,6 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 				.build();
 	}
 
-	@Nullable
 	private RequestBody requestBody(Request request, String requestContentType) {
 		if (request.body() == null) {
 			return null;

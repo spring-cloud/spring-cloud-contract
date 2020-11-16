@@ -43,7 +43,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.NotNull;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -228,7 +227,6 @@ class PactStubDownloader implements StubDownloader {
 		return stubConfiguration.getArtifactId();
 	}
 
-	@NotNull
 	PactLoader pactBrokerLoader(ValueResolver resolver, List<String> tags) throws IOException {
 		Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
 		String schemeSpecificPart = schemeSpecificPart(repo.getURI());
@@ -312,7 +310,6 @@ class PactStubDownloader implements StubDownloader {
 		return part.startsWith("//") ? part.substring(2) : part;
 	}
 
-	@NotNull
 	private List<String> tags(String version, ValueResolver resolver) {
 		String defaultTag = StubConfiguration.DEFAULT_VERSION.equals(version) ? "latest" : version;
 		return new ArrayList<>(Arrays.asList(StringUtils

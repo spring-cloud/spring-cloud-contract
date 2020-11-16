@@ -23,7 +23,6 @@ import au.com.dius.pact.core.model.PactSource
 import au.com.dius.pact.provider.junit.loader.PactLoader
 import au.com.dius.pact.core.support.expressions.ValueResolver
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import org.jetbrains.annotations.NotNull
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -61,7 +60,6 @@ class PactStubDownloaderBuilderSpec extends Specification {
 					.withProperties(props())
 					.build()
 			PactStubDownloader downloader = new PactStubDownloader(options) {
-				@NotNull
 				@Override
 				PactLoader pactBrokerLoader(ValueResolver resolver,
 						List<String> tags) {
