@@ -16,14 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.jgit.util.io.NullOutputStream;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Optional;
@@ -32,8 +36,6 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
-import org.springframework.cloud.contract.spec.ContractVerifierException;
-import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
@@ -85,6 +87,8 @@ class GenerateServerTestsTask extends DefaultTask {
 
 	private final Property<Boolean> failOnInProgress;
 
+	private final ConfigurableFileCollection classpath;
+
 	private final DirectoryProperty generatedTestSourcesDir;
 
 	private final DirectoryProperty generatedTestResourcesDir;
@@ -106,6 +110,7 @@ class GenerateServerTestsTask extends DefaultTask {
 		this.baseClassMappings = objects.mapProperty(String.class, String.class);
 		this.assertJsonSize = objects.property(Boolean.class);
 		this.failOnInProgress = objects.property(Boolean.class);
+		this.classpath = objects.fileCollection();
 		this.generatedTestSourcesDir = objects.directoryProperty();
 		this.generatedTestResourcesDir = objects.directoryProperty();
 	}
@@ -121,13 +126,18 @@ class GenerateServerTestsTask extends DefaultTask {
 		getLogger().info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation");
 		getLogger().info("Contracts are unpacked to [{}]", contractsDslDir);
 		getLogger().info("Included contracts are [{}]", includedContracts);
+		ContractVerifierConfigProperties properties = toConfigProperties(contractsDslDir, includedContracts, generatedTestSources, generatedTestResources);
 		try {
-			TestGenerator generator = new TestGenerator(toConfigProperties(contractsDslDir, includedContracts,
-					generatedTestSources, generatedTestResources));
-			int generatedClasses = generator.generate();
-			getLogger().info("Generated {} test classes", generatedClasses);
+			String propertiesJson = new ObjectMapper().writeValueAsString(properties);
+			getProject().javaexec(exec -> {
+				exec.getMainClass().convention("org.springframework.cloud.contract.verifier.TestGeneratorApplication");
+				exec.classpath(classpath);
+				exec.args(quoteAndEscape(propertiesJson));
+				exec.setStandardOutput(NullOutputStream.INSTANCE);
+				exec.setErrorOutput(NullOutputStream.INSTANCE);
+			});
 		}
-		catch (ContractVerifierException e) {
+		catch (Exception e) {
 			throw new GradleException("Spring Cloud Contract Verifier Plugin exception: " + e.getMessage(), e);
 		}
 	}
@@ -213,6 +223,11 @@ class GenerateServerTestsTask extends DefaultTask {
 		return failOnInProgress;
 	}
 
+	@Classpath
+	ConfigurableFileCollection getClasspath() {
+		return classpath;
+	}
+
 	@OutputDirectory
 	DirectoryProperty getGeneratedTestSourcesDir() {
 		return generatedTestSourcesDir;
@@ -251,6 +266,10 @@ class GenerateServerTestsTask extends DefaultTask {
 		properties.setAssertJsonSize(assertJsonSize.get());
 		properties.setFailOnInProgress(failOnInProgress.get());
 		return properties;
+	}
+
+	private String quoteAndEscape(String str) {
+		return "\"" + str.replace("\"", "\\\"") + "\"";
 	}
 
 }
