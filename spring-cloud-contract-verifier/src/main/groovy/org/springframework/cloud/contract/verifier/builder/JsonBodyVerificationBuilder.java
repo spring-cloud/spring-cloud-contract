@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -102,6 +103,12 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		Object copiedBody = cloneBody(convertedResponseBody);
 		convertedResponseBody = JsonToJsonPathsConverter
 				.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers);
+
+		// If it was a map or list where all elements covered by matchers - json paths
+		// should not include empty check
+		boolean includeEmptyCheck = !mapOrListBodyReducedToEmpty(copiedBody,
+				convertedResponseBody);
+
 		// remove quotes from fromRequest objects before picking json paths
 		TestSideRequestTemplateModel templateModel = hasRequestBody()
 				? TestSideRequestTemplateModel.from(contract.getRequest()) : null;
@@ -109,7 +116,8 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 				returnReferencedEntries(templateModel), parsingClosure);
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(assertJsonSize)
 				.transformToJsonPathWithTestsSideValues(convertedResponseBody,
-						parsingClosure);
+						parsingClosure, includeEmptyCheck);
+
 		DocumentContext finalParsedRequestBody = parsedRequestBody;
 		jsonPaths.forEach(it -> {
 			String method = it.method();
@@ -121,6 +129,20 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		});
 		doBodyMatchingIfPresent(bodyMatchers, bb, copiedBody, shouldCommentOutBDDBlocks);
 		return convertedResponseBody;
+	}
+
+	private boolean mapOrListBodyReducedToEmpty(Object originalBody,
+			Object convertedBody) {
+		int origSize = originalBody instanceof Map ? ((Map) originalBody).size() : -1;
+		int convertedSize = convertedBody instanceof Map ? ((Map) convertedBody).size()
+				: -1;
+		if (origSize > 0 && convertedSize == 0) {
+			return true;
+		}
+		origSize = originalBody instanceof List ? ((List) originalBody).size() : -1;
+		convertedSize = convertedBody instanceof List ? ((List) convertedBody).size()
+				: -1;
+		return (origSize > 0 && convertedSize == 0);
 	}
 
 	private boolean hasRequestBody() {

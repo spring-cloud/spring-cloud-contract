@@ -320,13 +320,15 @@ class JsonToJsonPathsConverter {
 	}
 
 	JsonPaths transformToJsonPathWithTestsSideValues(def json,
-			Closure parsingClosure = MapConverter.JSON_PARSING_CLOSURE) {
-		return transformToJsonPathWithValues(json, SERVER_SIDE, parsingClosure)
+			Closure parsingClosure = MapConverter.JSON_PARSING_CLOSURE,
+			boolean includeEmptyCheck = false) {
+		return transformToJsonPathWithValues(json, SERVER_SIDE, parsingClosure, includeEmptyCheck)
 	}
 
 	JsonPaths transformToJsonPathWithStubsSideValues(def json,
-			Closure parsingClosure = MapConverter.JSON_PARSING_CLOSURE) {
-		return transformToJsonPathWithValues(json, CLIENT_SIDE, parsingClosure)
+			Closure parsingClosure = MapConverter.JSON_PARSING_CLOSURE,
+			boolean includeEmptyCheck = false) {
+		return transformToJsonPathWithValues(json, CLIENT_SIDE, parsingClosure, includeEmptyCheck)
 	}
 
 	static JsonPaths transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(def json,
@@ -336,11 +338,11 @@ class JsonToJsonPathsConverter {
 	}
 
 	private JsonPaths transformToJsonPathWithValues(def json, boolean clientSide,
-			Closure parsingClosure = MapConverter.JSON_PARSING_CLOSURE) {
-		if (!json) {
+			Closure parsingClosure = MapConverter.JSON_PARSING_CLOSURE,
+			boolean includeEmptyCheck = false) {
+		if (json == null || (!json && !includeEmptyCheck)) {
 			return new JsonPaths()
 		}
-		JsonPaths pathsAndValues = [] as Set
 		Object convertedJson = MapConverter.
 				getClientOrServerSideValues(json, clientSide, parsingClosure)
 		Object jsonWithPatterns = ContentUtils.
@@ -349,6 +351,11 @@ class JsonToJsonPathsConverter {
 				new DelegatingJsonVerifiable(JsonAssertion.
 						assertThat(JsonOutput.toJson(jsonWithPatterns))
 														  .withoutThrowingException())
+		JsonPaths pathsAndValues = [] as Set
+		if (isRootElement(methodBufferingJsonPathVerifiable) && !json) {
+			pathsAndValues.add(methodBufferingJsonPathVerifiable.isEmpty())
+			return pathsAndValues
+		}
 		traverseRecursivelyForKey(jsonWithPatterns, methodBufferingJsonPathVerifiable,
 				{ MethodBufferingJsonVerifiable key, Object value ->
 					if (value instanceof ExecutionProperty || !(key instanceof FinishedDelegatingJsonVerifiable)) {
