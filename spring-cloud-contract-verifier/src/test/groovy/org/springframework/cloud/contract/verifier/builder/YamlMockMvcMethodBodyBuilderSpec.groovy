@@ -446,6 +446,68 @@ response:
 			"custom"          | { properties.testMode = TestMode.CUSTOM }
 	}
 
+	@Issue('#1423')
+	def 'should generate assertions for a response body containing an empty list with #methodBuilderName'() {
+		given:
+			String contract = """\
+---
+description: Returns an empty collection
+request:
+  method: GET
+  urlPath: /url
+response:
+  status: 200
+  body: []
+"""
+			Contract contractDsl = fromYaml(contract)
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			test.contains("""assertThatJson(parsedJson).isEmpty()""")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('#1423')
+	def 'should generate assertions for a response body containing an empty map with #methodBuilderName'() {
+		given:
+			String contract = """\
+---
+description: Returns an empty map
+request:
+  method: GET
+  urlPath: /url
+response:
+  status: 200
+  body: {}
+"""
+			Contract contractDsl = fromYaml(contract)
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			test.contains("""assertThatJson(parsedJson).isEmpty()""")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
 	def 'should generate regex assertions for map objects in response body with #methodBuilderName'() {
 		given:
 			String contract = '''\
