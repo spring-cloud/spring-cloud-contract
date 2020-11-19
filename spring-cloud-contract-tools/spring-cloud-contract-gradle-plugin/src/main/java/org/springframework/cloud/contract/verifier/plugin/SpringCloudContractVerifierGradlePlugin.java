@@ -242,9 +242,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			publishStubsToScmTask.getDeleteStubsAfterTest().convention(extension.getDeleteStubsAfterTest());
 			publishStubsToScmTask.getFailOnNoContracts().convention(extension.getFailOnNoContracts());
 			publishStubsToScmTask.getContractsProperties().convention(extension.getContractsProperties());
-			publishStubsToScmTask.getStubsDir()
-					.convention(generateClientStubs.flatMap(GenerateClientStubsFromDslTask::getStubsOutputDir));
-
+			publishStubsToScmTask.getStubsDir().convention(extension.getStubsOutputDir());
 			publishStubsToScmTask.dependsOn(generateClientStubs);
 		});
 	}
