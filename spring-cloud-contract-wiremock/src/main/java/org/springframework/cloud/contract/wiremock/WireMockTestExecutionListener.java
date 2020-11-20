@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
@@ -30,6 +31,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  * @author Marcin Grzejszczak
  * @author Matt Garner
  * @author Waldemar Panas
+ * @author Fabian Winter
  * @since 1.2.6
  */
 public final class WireMockTestExecutionListener extends AbstractTestExecutionListener {
@@ -91,7 +93,7 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	}
 
 	private boolean annotationMissing(TestContext testContext) {
-		if (testContext.getTestClass().getAnnotationsByType(AutoConfigureWireMock.class).length == 0) {
+		if (AnnotationUtils.findAnnotation(testContext.getTestClass(), AutoConfigureWireMock.class) == null) {
 			if (log.isDebugEnabled()) {
 				log.debug(
 						"No @AutoConfigureWireMock annotation found on [" + testContext.getTestClass() + "]. Skipping");
