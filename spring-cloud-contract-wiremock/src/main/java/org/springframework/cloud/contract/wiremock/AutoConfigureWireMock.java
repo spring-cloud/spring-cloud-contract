@@ -24,6 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
+import org.springframework.boot.test.autoconfigure.properties.SkipPropertyMapping;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -40,7 +41,7 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(WireMockConfiguration.class)
-@PropertyMapping("wiremock.server")
+@PropertyMapping(value = "wiremock.server", skip = SkipPropertyMapping.ON_DEFAULT_VALUE)
 @AutoConfigureHttpClient
 @Inherited
 public @interface AutoConfigureWireMock {
