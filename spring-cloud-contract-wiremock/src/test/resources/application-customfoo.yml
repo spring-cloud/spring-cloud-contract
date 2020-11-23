@@ -1,0 +1,7 @@
+wiremock:
+  server:
+    port: 0
+    stubs:
+      - "file:src/test/resources/custom-from-yml/mappings"
+    files:
+      - "file:src/test/resources/custom-from-yml"
