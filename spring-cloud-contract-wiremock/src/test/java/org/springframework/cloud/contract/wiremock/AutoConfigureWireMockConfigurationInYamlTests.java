@@ -29,8 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class,
-		properties = "app.baseUrl=http://localhost:${wiremock.server.port}",
-		webEnvironment = WebEnvironment.NONE)
+		properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock
 @ActiveProfiles("customfoo")
 public class AutoConfigureWireMockConfigurationInYamlTests {
@@ -43,8 +42,7 @@ public class AutoConfigureWireMockConfigurationInYamlTests {
 
 	@Test
 	public void contextLoadsWithWiremockConfigFromYaml() {
-		assertThat(this.service.go())
-				.isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom One\"}");
+		assertThat(this.service.go()).isEqualToIgnoringWhitespace("{\"message\":\"Hello Custom One\"}");
 		assertThat(this.wireMockProperties.getServer().isPortDynamic()).isTrue();
 	}
 
