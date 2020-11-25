@@ -16,7 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -178,13 +180,22 @@ class ContractsCopyTask extends DefaultTask {
 	private void convertContractsToYaml(File file, String antPattern, String slashSeparatedAntPattern,
 			File outputContractsFolder, boolean excludeBuildFolders) {
 		sync(file, antPattern, slashSeparatedAntPattern, excludeBuildFolders, backupContractsFolder.get().getAsFile());
+		OutputStream os;
+		if (getLogger().isDebugEnabled()) {
+			os = new ByteArrayOutputStream();
+		} else {
+			os = NullOutputStream.INSTANCE;
+		}
 		getProject().javaexec(exec -> {
 			exec.getMainClass().convention("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
 			exec.classpath(classpath);
 			exec.args(quoteAndEscape(outputContractsFolder.getAbsolutePath()));
-			exec.setStandardOutput(NullOutputStream.INSTANCE);
-			exec.setErrorOutput(NullOutputStream.INSTANCE);
+			exec.setStandardOutput(os);
+			exec.setErrorOutput(os);
 		});
+		if (getLogger().isDebugEnabled()) {
+			getLogger().debug(os.toString());
+		}
 		getLogger().info("Replaced DSL files with their YAML representation at [{}]", outputContractsFolder);
 	}
 

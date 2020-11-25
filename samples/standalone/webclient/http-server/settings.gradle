@@ -1,26 +1,22 @@
 pluginManagement {
-	plugins {
-		id 'org.springframework.boot'
-		id "org.springframework.cloud.contract" version "${verifierVersion}"
-		id "io.spring.dependency-management" version "1.0.8.RELEASE"
-	}
 	repositories {
-		// to pick from local .m2
 		mavenLocal()
-		// for snapshots
-		maven { url "https://repo.spring.io/libs-snapshot-local" }
-		// for milestones
-		maven { url "https://repo.spring.io/libs-milestone-local" }
-		// for GA versions
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
 		gradlePluginPortal()
+	}
+	plugins {
+		id 'org.springframework.boot' version "${bootVersion}"
+		id "io.spring.dependency-management" version "1.0.10.RELEASE"
 	}
 	resolutionStrategy {
 		eachPlugin {
-			if (requested.id.id == 'org.springframework.boot') {
-				useModule("org.springframework.boot:spring-boot-gradle-plugin:${bootVersion}")
+			// protects us in case the gradle-portal-plugin hasn't yet been published by Maven
+			if (requested.id.id == 'org.springframework.cloud.contract') {
+				useModule("org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}")
 			}
 		}
 	}
 }
-rootProject.name = 'http-server-webclient'
 
+rootProject.name = 'http-server-webclient-gradle'

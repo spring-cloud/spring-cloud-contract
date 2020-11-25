@@ -16,7 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 
 import javax.inject.Inject;
 
@@ -80,15 +82,23 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 		getLogger().info("Stubs output dir [{}]", output);
 		getLogger().info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion");
 		getLogger().info("Contracts dir is [{}] output stubs dir is [{}]", contractsDslDir.get().getAsFile(), output);
+		OutputStream os;
+		if (getLogger().isDebugEnabled()) {
+			os = new ByteArrayOutputStream();
+		} else {
+			os = NullOutputStream.INSTANCE;
+		}
 		getProject().javaexec(exec -> {
-			exec.getMainClass().convention(
-					"org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
+			exec.setMain("org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
 			exec.classpath(classpath);
 			exec.args(quoteAndEscape(output.getAbsolutePath()), quoteAndEscape(contractsDslDir.get().getAsFile().getAbsolutePath()),
 					quoteAndEscape(StringUtils.collectionToCommaDelimitedString(excludedFiles.get())), quoteAndEscape(".*"), excludeBuildFolders.get());
-			exec.setStandardOutput(NullOutputStream.INSTANCE);
-			exec.setErrorOutput(NullOutputStream.INSTANCE);
+			exec.setStandardOutput(os);
+			exec.setErrorOutput(os);
 		});
+		if (getLogger().isDebugEnabled()) {
+			getLogger().debug(os.toString());
+		}
 	}
 
 	@InputDirectory

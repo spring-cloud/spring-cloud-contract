@@ -1,15 +1,9 @@
-buildscript {
-	repositories {
-		mavenCentral()
-		mavenLocal()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
-		maven { url "https://repo.spring.io/release" }
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:${findProperty('bootVersion') ?: bootVersion}"
-		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${project.findProperty('verifierVersion') ?: verifierVersion}"
-	}
+plugins {
+	id "groovy"
+	id "org.springframework.boot"
+	id "io.spring.dependency-management"
+	id "org.springframework.cloud.contract"
+	id "maven-publish"
 }
 
 group = 'com.example'
@@ -23,17 +17,10 @@ repositories {
 	maven { url "https://repo.spring.io/release" }
 }
 
-apply plugin: 'groovy'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'maven-publish'
-apply plugin: 'maven'
-apply plugin: 'spring-cloud-contract'
-
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${BOM_VERSION}"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
 	}
 }
 
@@ -50,7 +37,17 @@ dependencies {
 	// end::dependencies[]
 }
 
+contracts {
+	baseClassMappings {
+		baseClassMapping('.*standalone.*', 'com.example.fraud.FraudBaseWithStandaloneSetup')
+		baseClassMapping('.*webapp.*', 'com.example.fraud.FraudBaseWithWebAppSetup')
+	}
+}
+
+generateClientStubs.enabled = false
+
 test {
+	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'
@@ -65,27 +62,10 @@ test {
 	}
 }
 
-contracts {
-	baseClassMappings {
-		baseClassMapping('.*standalone.*', 'com.example.fraud.FraudBaseWithStandaloneSetup')
-		baseClassMapping('.*webapp.*', 'com.example.fraud.FraudBaseWithWebAppSetup')
-	}
-}
-
-generateClientStubs.enabled = false
-
 task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses']) {
 	baseName = project.name
 	classifier = 'stubs'
 	from project.file("${project.buildDir}/stubs")
-}
-
-artifacts {
-	archives stubsJar
-}
-
-test {
-	useJUnitPlatform()
 }
 
 task copySnippets(type: Copy, dependsOn: test) {
@@ -103,6 +83,25 @@ task copyClasses(type: Copy) {
 	from "${project.buildDir}/classes/main/"
 	include '**/model/Fraud*.*'
 	into "${project.buildDir}/stubs/"
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			artifact bootJar
+			artifact stubsJar
+
+			// https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/273
+			versionMapping {
+				usage("java-api") {
+					fromResolutionOf("runtimeClasspath")
+				}
+				usage("java-runtime") {
+					fromResolutionResult()
+				}
+			}
+		}
+	}
 }
 
 clean.doFirst {

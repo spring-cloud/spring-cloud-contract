@@ -16,7 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.eclipse.jgit.util.io.NullOutputStream;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
@@ -40,9 +46,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-import javax.inject.Inject;
-import java.io.File;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Task used to generate server side tests
@@ -129,13 +133,22 @@ class GenerateServerTestsTask extends DefaultTask {
 		ContractVerifierConfigProperties properties = toConfigProperties(contractsDslDir, includedContracts, generatedTestSources, generatedTestResources);
 		try {
 			String propertiesJson = new ObjectMapper().writeValueAsString(properties);
+			OutputStream os;
+			if (getLogger().isDebugEnabled()) {
+				os = new ByteArrayOutputStream();
+			} else {
+				os = NullOutputStream.INSTANCE;
+			}
 			getProject().javaexec(exec -> {
-				exec.getMainClass().convention("org.springframework.cloud.contract.verifier.TestGeneratorApplication");
+				exec.setMain("org.springframework.cloud.contract.verifier.TestGeneratorApplication");
 				exec.classpath(classpath);
 				exec.args(quoteAndEscape(propertiesJson));
-				exec.setStandardOutput(NullOutputStream.INSTANCE);
-				exec.setErrorOutput(NullOutputStream.INSTANCE);
+				exec.setStandardOutput(os);
+				exec.setErrorOutput(os);
 			});
+			if (getLogger().isDebugEnabled()) {
+				getLogger().debug(os.toString());
+			}
 		}
 		catch (Exception e) {
 			throw new GradleException("Spring Cloud Contract Verifier Plugin exception: " + e.getMessage(), e);
