@@ -187,7 +187,7 @@ class ContractsCopyTask extends DefaultTask {
 			os = NullOutputStream.INSTANCE;
 		}
 		getProject().javaexec(exec -> {
-			exec.getMainClass().convention("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
+			exec.setMain("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
 			exec.classpath(classpath);
 			exec.args(quoteAndEscape(outputContractsFolder.getAbsolutePath()));
 			exec.setStandardOutput(os);
