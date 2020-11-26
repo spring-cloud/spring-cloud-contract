@@ -5,9 +5,6 @@ buildscript {
 		maven { url "https://repo.spring.io/snapshot" }
 		maven { url "https://repo.spring.io/milestone" }
 		maven { url "https://repo.spring.io/release" }
-		maven { url 'https://repo.spring.io/plugins-snapshot' }
-		maven { url "https://repo.spring.io/plugins-release-local" }
-		maven { url "https://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${findProperty('bootVersion') ?: bootVersion}"

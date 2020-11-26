@@ -16,10 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.config.framework;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Defines elements characteristic of Spock test framework to be used during test class
  * construction.
@@ -28,21 +24,6 @@ import java.util.List;
  * @since 2.1.0
  */
 public class SpockDefinition implements TestFrameworkDefinition {
-
-	@Override
-	public String getClassModifier() {
-		return "";
-	}
-
-	@Override
-	public String getMethodModifier() {
-		return "def ";
-	}
-
-	@Override
-	public String getLineSuffix() {
-		return "";
-	}
 
 	@Override
 	public String getClassExtension() {
@@ -60,28 +41,8 @@ public class SpockDefinition implements TestFrameworkDefinition {
 	}
 
 	@Override
-	public List<String> getOrderAnnotationImports() {
-		return new ArrayList<String>(Arrays.asList("spock.lang.Stepwise"));
-	}
-
-	@Override
-	public String getOrderAnnotation() {
-		return "@Stepwise";
-	}
-
-	@Override
 	public String getIgnoreAnnotation() {
 		return "@Ignore";
-	}
-
-	@Override
-	public boolean annotationLevelRules() {
-		return false;
-	}
-
-	@Override
-	public String getRuleAnnotation(String annotationValue) {
-		throw new UnsupportedOperationException("Not available in Spock.");
 	}
 
 }

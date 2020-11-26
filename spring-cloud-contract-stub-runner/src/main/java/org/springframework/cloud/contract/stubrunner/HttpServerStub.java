@@ -46,33 +46,11 @@ public interface HttpServerStub {
 	boolean isRunning();
 
 	/**
-	 * Starts the server on a random port. Should return itself to allow chaining.
-	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
-	 * @return this
-	 */
-	@Deprecated
-	HttpServerStub start();
-
-	/**
-	 * Starts the server on a given port. Should return itself to allow chaining.
-	 * @deprecated use {@link HttpServerStub#start(HttpServerStubConfiguration)}
-	 * @param port port on which the server should be ran
-	 * @return this
-	 */
-	@Deprecated
-	HttpServerStub start(int port);
-
-	/**
 	 * Starts the server. Should return itself to allow chaining.
 	 * @param configuration - setup for the given stub
 	 * @return this
 	 */
-	default HttpServerStub start(HttpServerStubConfiguration configuration) {
-		if (configuration.isRandomPort()) {
-			return start();
-		}
-		return start(configuration.port);
-	};
+	HttpServerStub start(HttpServerStubConfiguration configuration);
 
 	/**
 	 * Stops the server. Should return itself to allow chaining.

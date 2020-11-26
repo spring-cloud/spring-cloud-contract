@@ -137,7 +137,7 @@ class StubRunnerCamelPredicateSpec extends Specification {
 						header("foo", 123)
 					}
 					messageBody(foo: 123)
-					stubMatchers {
+					bodyMatchers {
 						jsonPath('$.foo', byRegex("[0-9]{3}"))
 					}
 				}

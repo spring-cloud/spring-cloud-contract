@@ -86,7 +86,6 @@ class GitRepo {
 	}
 
 	// for tests
-	@Deprecated
 	GitRepo(File basedir) {
 		this.basedir = basedir;
 		this.gitFactory = new JGitFactory();
@@ -94,7 +93,6 @@ class GitRepo {
 	}
 
 	// for tests
-	@Deprecated
 	GitRepo(File basedir, boolean ensureGitSuffix) {
 		this.basedir = basedir;
 		this.gitFactory = new JGitFactory();
@@ -102,7 +100,6 @@ class GitRepo {
 	}
 
 	// for tests
-	@Deprecated
 	GitRepo(File basedir, JGitFactory factory) {
 		this.basedir = basedir;
 		this.gitFactory = factory;

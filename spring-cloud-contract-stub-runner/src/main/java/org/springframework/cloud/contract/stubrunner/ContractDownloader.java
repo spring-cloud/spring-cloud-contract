@@ -60,33 +60,6 @@ public class ContractDownloader {
 	}
 
 	/**
-	 * Downloads JAR containing all the contracts. Plugin configuration gets updated with
-	 * the inclusion pattern for the downloaded contracts. The JAR with the contracts
-	 * contains all the contracts for all the projects. We're interested only in its
-	 * subset.
-	 * @param config - Plugin configuration that will get updated with the inclusion
-	 * pattern
-	 * @return location of the unpacked downloaded stubs
-	 */
-	// Use unpackAndDownloadContracts() and createNewInclusionProperties() instead
-	@Deprecated
-	public File unpackedDownloadedContracts(ContractVerifierConfigProperties config) {
-		File contractsDirectory = unpackAndDownloadContracts();
-		updatePropertiesWithInclusion(contractsDirectory, config);
-		return contractsDirectory;
-	}
-
-	// Use createNewInclusionProperties() instead
-	@Deprecated
-	public ContractVerifierConfigProperties updatePropertiesWithInclusion(File contractsDirectory,
-			ContractVerifierConfigProperties config) {
-		final InclusionProperties newInclusionProperties = createNewInclusionProperties(contractsDirectory);
-		config.setIncludedContracts(newInclusionProperties.getIncludedContracts());
-		config.setIncludedRootFolderAntPattern(newInclusionProperties.getIncludedRootFolderAntPattern());
-		return config;
-	}
-
-	/**
 	 * Downloads JAR containing all the contracts. The JAR with the contracts contains all
 	 * the contracts for all the projects. We're interested only in its subset.
 	 * @return location of the unpacked downloaded stubs

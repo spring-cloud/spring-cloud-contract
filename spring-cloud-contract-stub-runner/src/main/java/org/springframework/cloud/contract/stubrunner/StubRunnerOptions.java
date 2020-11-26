@@ -293,18 +293,8 @@ public class StubRunnerOptions {
 		return this.stubsPerConsumer;
 	}
 
-	@Deprecated
-	public void setStubsPerConsumer(boolean stubsPerConsumer) {
-		this.stubsPerConsumer = stubsPerConsumer;
-	}
-
 	public String getConsumerName() {
 		return this.consumerName;
-	}
-
-	@Deprecated
-	public void setConsumerName(String consumerName) {
-		this.consumerName = consumerName;
 	}
 
 	public boolean hasMappingsOutputFolder() {
@@ -315,18 +305,8 @@ public class StubRunnerOptions {
 		return this.mappingsOutputFolder;
 	}
 
-	@Deprecated
-	public void setMappingsOutputFolder(String mappingsOutputFolder) {
-		this.mappingsOutputFolder = mappingsOutputFolder;
-	}
-
 	public boolean isDeleteStubsAfterTest() {
 		return this.deleteStubsAfterTest;
-	}
-
-	@Deprecated
-	public void setDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
-		this.deleteStubsAfterTest = deleteStubsAfterTest;
 	}
 
 	public boolean isGenerateStubs() {
@@ -339,11 +319,6 @@ public class StubRunnerOptions {
 
 	public Map<String, String> getProperties() {
 		return this.properties;
-	}
-
-	@Deprecated
-	public void setProperties(Map<String, String> properties) {
-		this.properties = properties;
 	}
 
 	public String getServerId() {

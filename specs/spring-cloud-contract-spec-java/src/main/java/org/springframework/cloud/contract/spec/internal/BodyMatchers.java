@@ -52,15 +52,6 @@ public class BodyMatchers {
 		this.matchers.add(new PathBodyMatcher(xPath, matchingTypeValue));
 	}
 
-	/**
-	 * @deprecated use{@link #matchers()}
-	 * @return json path matchers
-	 */
-	@Deprecated
-	public List<BodyMatcher> jsonPathMatchers() {
-		return matchers();
-	}
-
 	public boolean hasMatchers() {
 		return !this.matchers.isEmpty();
 	}

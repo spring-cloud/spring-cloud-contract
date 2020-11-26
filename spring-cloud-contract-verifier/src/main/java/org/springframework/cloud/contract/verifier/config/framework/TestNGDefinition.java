@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.config.framework;
 
-import java.util.List;
-
 /**
  * Defines elements characteristic of TestNG test framework to be used during test class
  * construction.
@@ -26,21 +24,6 @@ import java.util.List;
  * @since 2.2.0
  */
 public class TestNGDefinition implements TestFrameworkDefinition {
-
-	@Override
-	public String getClassModifier() {
-		return "public ";
-	}
-
-	@Override
-	public String getMethodModifier() {
-		return "public void ";
-	}
-
-	@Override
-	public String getLineSuffix() {
-		return ";";
-	}
 
 	@Override
 	public String getClassExtension() {
@@ -59,29 +42,9 @@ public class TestNGDefinition implements TestFrameworkDefinition {
 	}
 
 	@Override
-	public List<String> getOrderAnnotationImports() {
-		throw new UnsupportedOperationException("Not implemented yet in TestNG");
-	}
-
-	@Override
-	public String getOrderAnnotation() {
-		throw new UnsupportedOperationException("Not implemented yet in TestNG");
-	}
-
-	@Override
 	public String getIgnoreAnnotation() {
 		throw new UnsupportedOperationException(
 				"There is no @Ignore annotation for TestNG. A test can be disabled directly in the @Test annotation");
-	}
-
-	@Override
-	public boolean annotationLevelRules() {
-		return false;
-	}
-
-	@Override
-	public String getRuleAnnotation(String annotationValue) {
-		throw new UnsupportedOperationException("Not available in TestNG.");
 	}
 
 }

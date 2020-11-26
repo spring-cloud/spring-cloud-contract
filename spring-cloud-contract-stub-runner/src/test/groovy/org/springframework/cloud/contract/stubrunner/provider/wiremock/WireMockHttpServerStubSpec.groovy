@@ -23,8 +23,11 @@ import spock.lang.Specification
 
 import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 
 class WireMockHttpServerStubSpec extends Specification {
@@ -39,7 +42,8 @@ class WireMockHttpServerStubSpec extends Specification {
 
 	def 'should describe stub mapping'() {
 		given:
-			WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start() as WireMockHttpServerStub
+			WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start(new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
+					null, SocketUtils.findAvailableTcpPort())) as WireMockHttpServerStub
 		when:
 			StubMapping mapping = mappingDescriptor.getMapping(MAPPING_DESCRIPTOR)
 		then:
@@ -64,7 +68,8 @@ class WireMockHttpServerStubSpec extends Specification {
 
 	def 'should make WireMock print out logs on INFO'() {
 		given:
-			WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start() as WireMockHttpServerStub
+			WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start(new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
+					null, SocketUtils.findAvailableTcpPort())) as WireMockHttpServerStub
 			mappingDescriptor.registerMappings([
 					new File(WireMockHttpServerStubSpec.classLoader.getResource("simple.json").toURI())
 			])

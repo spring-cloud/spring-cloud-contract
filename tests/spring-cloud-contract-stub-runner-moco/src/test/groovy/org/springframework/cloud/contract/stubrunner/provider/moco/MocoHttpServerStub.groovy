@@ -23,7 +23,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.stubrunner.HttpServerStub
-import org.springframework.util.SocketUtils
+import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration
 
 @Commons
 @CompileStatic
@@ -47,13 +47,8 @@ class MocoHttpServerStub implements HttpServerStub {
 	}
 
 	@Override
-	HttpServerStub start() {
-		return start(SocketUtils.findAvailableTcpPort())
-	}
-
-	@Override
-	HttpServerStub start(int port) {
-		this.port = port
+	HttpServerStub start(HttpServerStubConfiguration configuration) {
+		this.port = configuration.port
 		return this
 	}
 

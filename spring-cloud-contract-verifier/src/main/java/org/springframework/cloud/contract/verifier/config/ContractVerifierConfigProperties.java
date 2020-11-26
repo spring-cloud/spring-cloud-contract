@@ -36,13 +36,6 @@ public class ContractVerifierConfigProperties {
 
 	/**
 	 * For which unit test library tests should be generated.
-	 * @deprecated - use {@code testFramework}
-	 */
-	@Deprecated
-	private TestFramework targetFramework;
-
-	/**
-	 * For which unit test library tests should be generated.
 	 */
 	private TestFramework testFramework = TestFramework.JUNIT5;
 
@@ -181,17 +174,6 @@ public class ContractVerifierConfigProperties {
 	 * positive test execution results on the consumer side.
 	 */
 	private boolean failOnInProgress = true;
-
-	@Deprecated
-	public void setTargetFramework(TestFramework targetFramework) {
-		log.warn("Please use the [testFramework] field. [targetFramework] is deprecated");
-		setTestFramework(targetFramework);
-	}
-
-	@Deprecated
-	public TestFramework getTargetFramework() {
-		return getTestFramework();
-	}
 
 	public TestFramework getTestFramework() {
 		return testFramework;

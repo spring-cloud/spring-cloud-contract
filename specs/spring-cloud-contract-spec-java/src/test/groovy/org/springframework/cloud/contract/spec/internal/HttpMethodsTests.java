@@ -27,49 +27,41 @@ class HttpMethodsTests {
 	@Test
 	public void GET() {
 		BDDAssertions.then(HttpMethods.GET).isEqualTo("GET");
-		BDDAssertions.then(new HttpMethods().GET().getMethodName()).isEqualTo(HttpMethods.GET);
 	}
 
 	@Test
 	public void HEAD() {
 		BDDAssertions.then(HttpMethods.HEAD).isEqualTo("HEAD");
-		BDDAssertions.then(new HttpMethods().HEAD().getMethodName()).isEqualTo(HttpMethods.HEAD);
 	}
 
 	@Test
 	public void POST() {
 		BDDAssertions.then(HttpMethods.POST).isEqualTo("POST");
-		BDDAssertions.then(new HttpMethods().POST().getMethodName()).isEqualTo(HttpMethods.POST);
 	}
 
 	@Test
 	public void PUT() {
 		BDDAssertions.then(HttpMethods.PUT).isEqualTo("PUT");
-		BDDAssertions.then(new HttpMethods().PUT().getMethodName()).isEqualTo(HttpMethods.PUT);
 	}
 
 	@Test
 	public void PATCH() {
 		BDDAssertions.then(HttpMethods.PATCH).isEqualTo("PATCH");
-		BDDAssertions.then(new HttpMethods().PATCH().getMethodName()).isEqualTo(HttpMethods.PATCH);
 	}
 
 	@Test
 	public void DELETE() {
 		BDDAssertions.then(HttpMethods.DELETE).isEqualTo("DELETE");
-		BDDAssertions.then(new HttpMethods().DELETE().getMethodName()).isEqualTo(HttpMethods.DELETE);
 	}
 
 	@Test
 	public void OPTIONS() {
 		BDDAssertions.then(HttpMethods.OPTIONS).isEqualTo("OPTIONS");
-		BDDAssertions.then(new HttpMethods().OPTIONS().getMethodName()).isEqualTo(HttpMethods.OPTIONS);
 	}
 
 	@Test
 	public void TRACE() {
 		BDDAssertions.then(HttpMethods.TRACE).isEqualTo("TRACE");
-		BDDAssertions.then(new HttpMethods().TRACE().getMethodName()).isEqualTo(HttpMethods.TRACE);
 	}
 
 }

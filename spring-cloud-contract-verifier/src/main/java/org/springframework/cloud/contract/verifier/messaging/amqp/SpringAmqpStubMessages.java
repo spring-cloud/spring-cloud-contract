@@ -73,15 +73,6 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 
 	private RabbitProperties rabbitProperties;
 
-	@Deprecated
-	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAccessor messageListenerAccessor) {
-		Assert.notNull(rabbitTemplate, "RabbitTemplate must be set");
-		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock(),
-				"StubRunner AMQP will work only if RabbiTemplate is a spy");
-		this.rabbitTemplate = rabbitTemplate;
-		this.messageListenerAccessor = messageListenerAccessor;
-	}
-
 	@Autowired
 	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAccessor messageListenerAccessor,
 			RabbitProperties rabbitProperties) {

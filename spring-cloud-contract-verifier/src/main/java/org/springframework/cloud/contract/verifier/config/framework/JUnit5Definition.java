@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.config.framework;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Defines elements characteristic of JUnit5 test framework to be used during test class
  * construction.
@@ -27,21 +24,6 @@ import java.util.List;
  * @since 2.1.0
  */
 public class JUnit5Definition implements TestFrameworkDefinition {
-
-	@Override
-	public String getClassModifier() {
-		return "public ";
-	}
-
-	@Override
-	public String getMethodModifier() {
-		return "public void ";
-	}
-
-	@Override
-	public String getLineSuffix() {
-		return ";";
-	}
 
 	@Override
 	public String getClassExtension() {
@@ -59,28 +41,8 @@ public class JUnit5Definition implements TestFrameworkDefinition {
 	}
 
 	@Override
-	public List<String> getOrderAnnotationImports() {
-		return Arrays.asList("org.junit.jupiter.api.TestMethodOrder", "org.junit.jupiter.api.MethodOrderer");
-	}
-
-	@Override
-	public String getOrderAnnotation() {
-		return "@TestMethodOrder(MethodOrderer.Alphanumeric.class)";
-	}
-
-	@Override
 	public String getIgnoreAnnotation() {
 		return "@Disabled";
-	}
-
-	@Override
-	public boolean annotationLevelRules() {
-		return true;
-	}
-
-	@Override
-	public String getRuleAnnotation(final String annotationValue) {
-		return ("@ExtendWith(" + annotationValue + ".class)");
 	}
 
 }

@@ -78,16 +78,6 @@ public class OutputMessage extends Common implements RegexCreatingProperty<Serve
 		this.assertThat = new ExecutionProperty(assertThat);
 	}
 
-	/**
-	 * @deprecated - use the server dsl property
-	 * @param clientDslProperty client property
-	 * @return dsl property
-	 */
-	@Deprecated
-	public DslProperty value(ClientDslProperty clientDslProperty) {
-		return value(new ServerDslProperty(clientDslProperty.getServerValue(), clientDslProperty.getClientValue()));
-	}
-
 	public DslProperty value(ServerDslProperty serverDslProperty) {
 		Object concreteValue = serverDslProperty.getClientValue();
 		Object dynamicValue = serverDslProperty.getServerValue();
@@ -98,16 +88,6 @@ public class OutputMessage extends Common implements RegexCreatingProperty<Serve
 		}
 
 		return new DslProperty(concreteValue, dynamicValue);
-	}
-
-	/**
-	 * @deprecated - use the server dsl property
-	 * @param client client value
-	 * @return dsl proprty
-	 */
-	@Deprecated
-	public DslProperty $(ClientDslProperty client) {
-		return value(client);
 	}
 
 	public DslProperty $(ServerDslProperty property) {
@@ -298,18 +278,6 @@ public class OutputMessage extends Common implements RegexCreatingProperty<Serve
 	}
 
 	/**
-	 * The message headers part of the contract.
-	 * @param consumer function to manipulate the message headers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 */
-	@Deprecated
-	public void testMatchers(Consumer<ResponseBodyMatchers> consumer) {
-		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
-	}
-
-	/**
 	 * The stub matchers part of the contract.
 	 * @param consumer function to manipulate the body matchers
 	 */
@@ -326,18 +294,6 @@ public class OutputMessage extends Common implements RegexCreatingProperty<Serve
 		this.headers = new Headers();
 		consumer.setDelegate(this.headers);
 		consumer.call();
-	}
-
-	/**
-	 * The message headers part of the contract.
-	 * @param consumer function to manipulate the message headers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 */
-	@Deprecated
-	public void testMatchers(@DelegatesTo(ResponseBodyMatchers.class) Closure consumer) {
-		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
 	}
 
 	/**

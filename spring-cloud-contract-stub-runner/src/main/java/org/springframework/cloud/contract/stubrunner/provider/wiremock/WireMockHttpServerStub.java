@@ -53,7 +53,6 @@ import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensio
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
@@ -100,14 +99,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		return extensions.toArray(new Extension[extensions.size()]);
 	}
 
-	/**
-	 * Override this if you want to register your own helpers.
-	 * @deprecated - please use the {@link WireMockExtensions} mechanism and pass the
-	 * helpers in your implementation
-	 * @return a mapping of helper names to its implementations
-	 */
-	@Deprecated
-	protected Map<String, Helper> helpers() {
+	private Map<String, Helper> helpers() {
 		Map<String, Helper> helpers = new HashMap<>();
 		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
 		helpers.put(HandlebarsEscapeHelper.NAME, new HandlebarsEscapeHelper());
@@ -122,36 +114,6 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	@Override
 	public boolean isRunning() {
 		return this.wireMockServer != null && this.wireMockServer.isRunning();
-	}
-
-	@Override
-	public HttpServerStub start() {
-		if (isRunning()) {
-			if (log.isTraceEnabled()) {
-				log.trace("The server is already running at port [" + port() + "]");
-			}
-			return this;
-		}
-		HttpServerStubConfiguration configuration = defaultConfiguration();
-		HttpServerStub serverStub = start(configuration);
-		cacheStubServer(configuration.randomPort, configuration.port);
-		return serverStub;
-	}
-
-	private HttpServerStubConfiguration defaultConfiguration(int port) {
-		return new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
-				null, port);
-	}
-
-	private HttpServerStubConfiguration defaultConfiguration() {
-		int port = SocketUtils.findAvailableTcpPort();
-		return new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
-				null, port, true);
-	}
-
-	@Override
-	public HttpServerStub start(int port) {
-		return start(defaultConfiguration(port));
 	}
 
 	@Override

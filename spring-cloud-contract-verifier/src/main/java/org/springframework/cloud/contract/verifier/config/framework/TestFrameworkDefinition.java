@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.config.framework;
 
-import java.util.List;
-
 /**
  * @deprecated appropriate implementations of
  * <code>org.springframework.cloud.contract.verifier.builder.Visitor</code> should be used
@@ -30,24 +28,6 @@ import java.util.List;
  */
 @Deprecated
 public interface TestFrameworkDefinition {
-
-	/**
-	 * @return the class access level modifier. E.g. for Java tests that would mean
-	 * {@code public}
-	 */
-	String getClassModifier();
-
-	/**
-	 * @return the method access level modifier along with the return type. E.g. for Java
-	 * tests that would mean {@code public void}
-	 */
-	String getMethodModifier();
-
-	/**
-	 * @return the characters that should end each line. E.g. for Java tests that would
-	 * mean {@code ;}
-	 */
-	String getLineSuffix();
 
 	/**
 	 * @return the file extension. E.g. for Java tests that would be {@code .java}
@@ -66,35 +46,9 @@ public interface TestFrameworkDefinition {
 	String getIgnoreClass();
 
 	/**
-	 * @return the qualified names of the classes that are used for arranging tests into
-	 * scenarios. E.g. for JUnit 4 tests that would be {@code 'org.junit.FixMethodOrder'},
-	 * {@code 'org.junit.runners.MethodSorters'}
-	 */
-	List<String> getOrderAnnotationImports();
-
-	/**
-	 * @return the annotation used for arranging tests into scenarios. E.g. for JUnit test
-	 * that would be {@code @FixMethodOrder(MethodSorters.NAME_ASCENDING)}
-	 */
-	String getOrderAnnotation();
-
-	/**
 	 * @return the annotation used for ignoring or disabling tests. E.g. for JUnit tests
 	 * that would mean {@code @Ignore}
 	 */
 	String getIgnoreAnnotation();
-
-	/**
-	 * @return a boolean indicating whether an annotation-type rule or extension is being
-	 * used or not. E.g. for JUnit 5 tests that would return {@code true}
-	 */
-	boolean annotationLevelRules();
-
-	/**
-	 * @param annotationValue value of the annotation
-	 * @return the test rule or extension annotation with the annotationValue passed as an
-	 * argument. E.g. for JUnit 5 tests that could be {@code @ExtendWith(Example.class)}
-	 */
-	String getRuleAnnotation(String annotationValue);
 
 }

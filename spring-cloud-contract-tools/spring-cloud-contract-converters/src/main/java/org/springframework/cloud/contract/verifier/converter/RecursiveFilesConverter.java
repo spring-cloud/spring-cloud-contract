@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner;
 import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
@@ -64,31 +63,6 @@ public class RecursiveFilesConverter {
 	private final String includedContracts;
 
 	private final boolean excludeBuildFolders;
-
-	@Deprecated
-	public RecursiveFilesConverter(ContractVerifierConfigProperties props, StubGeneratorProvider holder) {
-		this(props.getStubsOutputDir(), props.getContractsDslDir(), props.getExcludedFiles(),
-				props.getIncludedContracts(), props.getExcludeBuildFolders(), holder);
-	}
-
-	@Deprecated
-	public RecursiveFilesConverter(ContractVerifierConfigProperties props) {
-		this(props.getStubsOutputDir(), props.getContractsDslDir(), props.getExcludedFiles(),
-				props.getIncludedContracts(), props.getExcludeBuildFolders(), null);
-	}
-
-	@Deprecated
-	public RecursiveFilesConverter(ContractVerifierConfigProperties props, File stubsOutputDir) {
-		this(stubsOutputDir, props.getContractsDslDir(), props.getExcludedFiles(), props.getIncludedContracts(),
-				props.getExcludeBuildFolders(), null);
-	}
-
-	@Deprecated
-	public RecursiveFilesConverter(ContractVerifierConfigProperties props, File stubsOutputDir,
-			StubGeneratorProvider holder) {
-		this(stubsOutputDir, props.getContractsDslDir(), props.getExcludedFiles(), props.getIncludedContracts(),
-				props.getExcludeBuildFolders(), holder);
-	}
 
 	public RecursiveFilesConverter(File stubsOutputDir, File contractsDslDir, List<String> excludedFiles,
 			String includedContracts, boolean excludeBuildFolders, StubGeneratorProvider holder) {

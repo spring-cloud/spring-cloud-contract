@@ -81,16 +81,6 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 
 	/**
 	 * Name of the HTTP method.
-	 * @param httpMethod HTTP method name
-	 * @deprecated In favor of {@code method(String method)}
-	 */
-	@Deprecated
-	public void method(HttpMethods.HttpMethod httpMethod) {
-		this.method = toDslProperty(httpMethod.getMethodName());
-	}
-
-	/**
-	 * Name of the HTTP method.
 	 * @param method HTTP method name
 	 */
 	public void method(DslProperty method) {
@@ -669,17 +659,6 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 	}
 
 	/**
-	 * @param consumer function to manipulate the body matchers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 */
-	@Deprecated
-	public void stubMatchers(Consumer<BodyMatchers> consumer) {
-		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
-	}
-
-	/**
 	 * Allows to set matchers for the body.
 	 * @param consumer function to manipulate the URL
 	 */
@@ -753,17 +732,6 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 		this.cookies = new Request.RequestCookies();
 		consumer.setDelegate(this.cookies);
 		consumer.call();
-	}
-
-	/**
-	 * @param consumer function to manipulate the body matchers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 */
-	@Deprecated
-	public void stubMatchers(@DelegatesTo(BodyMatchers.class) Closure consumer) {
-		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
 	}
 
 	/**

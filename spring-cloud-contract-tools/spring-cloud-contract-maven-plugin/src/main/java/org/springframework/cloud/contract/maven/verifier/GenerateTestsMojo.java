@@ -206,15 +206,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private Integer contractsRepositoryProxyPort;
 
 	/**
-	 * If {@code true} then will not assert whether a stub / contract JAR was downloaded
-	 * from local or remote location.
-	 * @deprecated - with 2.1.0 this option is redundant
-	 */
-	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
-	@Deprecated
-	private boolean contractsSnapshotCheckSkip;
-
-	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
 	 * tests.
 	 */

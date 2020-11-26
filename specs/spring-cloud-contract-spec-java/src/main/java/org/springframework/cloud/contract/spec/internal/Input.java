@@ -293,18 +293,6 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 
 	/**
 	 * The stub matchers part of the contract.
-	 * @param consumer function to manipulate the body headers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 */
-	@Deprecated
-	public void stubMatchers(Consumer<BodyMatchers> consumer) {
-		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
-	}
-
-	/**
-	 * The stub matchers part of the contract.
 	 * @param consumer function to manipulate the message headers
 	 * @deprecated Deprecated in favor of bodyMatchers to support other future
 	 * bodyMatchers too
@@ -322,18 +310,6 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 		this.messageHeaders = new Headers();
 		consumer.setDelegate(this.messageHeaders);
 		consumer.call();
-	}
-
-	/**
-	 * The stub matchers part of the contract.
-	 * @param consumer function to manipulate the body headers
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 */
-	@Deprecated
-	public void stubMatchers(@DelegatesTo(BodyMatchers.class) Closure consumer) {
-		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
 	}
 
 	/**

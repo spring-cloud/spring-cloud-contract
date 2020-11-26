@@ -18,9 +18,6 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 
@@ -30,14 +27,6 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata;
  * @since 1.1.0
  */
 public class JavaTestGenerator implements SingleTestGenerator {
-
-	private static final Log log = LogFactory.getLog(JavaTestGenerator.class);
-
-	@Override
-	public String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles,
-			String className, String classPackage, String includedDirectoryRelativePath) {
-		throw new UnsupportedOperationException("Deprecated method");
-	}
 
 	@Override
 	public String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles,

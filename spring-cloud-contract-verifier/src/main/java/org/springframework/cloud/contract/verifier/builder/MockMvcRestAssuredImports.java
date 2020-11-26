@@ -20,16 +20,11 @@ import java.util.Arrays;
 
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-class MockMvcRestAssuredImports implements Imports, RestAssuredVerifier {
+class MockMvcRestAssuredImports implements Imports {
 
 	private final BlockBuilder blockBuilder;
 
 	private final GeneratedClassMetaData generatedClassMetaData;
-
-	@Deprecated
-	private static final String[] REST_ASSURED_2_IMPORTS = {
-			"com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification",
-			"com.jayway.restassured.response.ResponseOptions" };
 
 	private static final String[] REST_ASSURED_3_IMPORTS = {
 			"io.restassured.module.mockmvc.specification.MockMvcRequestSpecification",
@@ -42,8 +37,7 @@ class MockMvcRestAssuredImports implements Imports, RestAssuredVerifier {
 
 	@Override
 	public Imports call() {
-		Arrays.stream(isRestAssured2Present() ? REST_ASSURED_2_IMPORTS : REST_ASSURED_3_IMPORTS)
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+		Arrays.stream(REST_ASSURED_3_IMPORTS).forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 

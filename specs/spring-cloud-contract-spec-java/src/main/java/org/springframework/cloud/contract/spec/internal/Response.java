@@ -479,22 +479,12 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 		return HttpStatus.FOUND;
 	}
 
-	@Deprecated
-	public int MOVED_TEMPORARILY() {
-		return HttpStatus.MOVED_TEMPORARILY;
-	}
-
 	public int SEE_OTHER() {
 		return HttpStatus.SEE_OTHER;
 	}
 
 	public int NOT_MODIFIED() {
 		return HttpStatus.NOT_MODIFIED;
-	}
-
-	@Deprecated
-	public int USE_PROXY() {
-		return HttpStatus.USE_PROXY;
 	}
 
 	public int TEMPORARY_REDIRECT() {
@@ -561,18 +551,8 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 		return HttpStatus.PAYLOAD_TOO_LARGE;
 	}
 
-	@Deprecated
-	public int REQUEST_ENTITY_TOO_LARGE() {
-		return HttpStatus.REQUEST_ENTITY_TOO_LARGE;
-	}
-
 	public int URI_TOO_LONG() {
 		return HttpStatus.URI_TOO_LONG;
-	}
-
-	@Deprecated
-	public int REQUEST_URI_TOO_LONG() {
-		return HttpStatus.REQUEST_URI_TOO_LONG;
 	}
 
 	public int UNSUPPORTED_MEDIA_TYPE() {
@@ -589,21 +569,6 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 	public int I_AM_A_TEAPOT() {
 		return HttpStatus.I_AM_A_TEAPOT;
-	}
-
-	@Deprecated
-	public int INSUFFICIENT_SPACE_ON_RESOURCE() {
-		return HttpStatus.INSUFFICIENT_SPACE_ON_RESOURCE;
-	}
-
-	@Deprecated
-	public int METHOD_FAILURE() {
-		return HttpStatus.METHOD_FAILURE;
-	}
-
-	@Deprecated
-	public int DESTINATION_LOCKED() {
-		return HttpStatus.DESTINATION_LOCKED;
 	}
 
 	public int UNPROCESSABLE_ENTITY() {
@@ -732,17 +697,6 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 	}
 
 	/**
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 * @param consumer function to manipulate the URL
-	 */
-	@Deprecated
-	public void testMatchers(Consumer<ResponseBodyMatchers> consumer) {
-		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
-	}
-
-	/**
 	 * Allows to set matchers for the body.
 	 * @param consumer function to manipulate the URL
 	 */
@@ -769,17 +723,6 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 		this.cookies = new Response.ResponseCookies();
 		consumer.setDelegate(this.cookies);
 		consumer.call();
-	}
-
-	/**
-	 * @deprecated Deprecated in favor of bodyMatchers to support other future
-	 * bodyMatchers too
-	 * @param consumer function to manipulate the URL
-	 */
-	@Deprecated
-	public void testMatchers(@DelegatesTo(ResponseBodyMatchers.class) Closure consumer) {
-		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead");
-		bodyMatchers(consumer);
 	}
 
 	/**

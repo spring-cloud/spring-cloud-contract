@@ -29,7 +29,7 @@ User's information should be update if has appropriate age
 				firstName: "asd",
 				lastName : "asd"
 		])
-		stubMatchers {
+		bodyMatchers {
 			jsonPath('$.userId', byRegex("[1-9]{1}([0-9]{7})"))
 			jsonPath('$.age', byRegex("(1[89]|[2-9][0-9])"))
 			jsonPath('$.firstName', byRegex("[a-zA-Z]{2,20}"))
@@ -47,7 +47,7 @@ User's information should be update if has appropriate age
 				firstName: fromRequest().body("firstName"),
 				lastName : fromRequest().body("lastName")
 		])
-		testMatchers {
+		bodyMatchers {
 			jsonPath('$.userId', byEquality())
 			jsonPath('$.age', byEquality())
 			jsonPath('$.firstName', byEquality())

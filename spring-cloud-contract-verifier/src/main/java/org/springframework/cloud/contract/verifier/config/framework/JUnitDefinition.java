@@ -16,10 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.config.framework;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Defines elements characteristic of JUnit test framework to be used during test class
  * construction.
@@ -28,21 +24,6 @@ import java.util.List;
  * @since 2.1.0
  */
 public class JUnitDefinition implements TestFrameworkDefinition {
-
-	@Override
-	public String getClassModifier() {
-		return "public ";
-	}
-
-	@Override
-	public String getMethodModifier() {
-		return "public void ";
-	}
-
-	@Override
-	public String getLineSuffix() {
-		return ";";
-	}
 
 	@Override
 	public String getClassExtension() {
@@ -60,28 +41,8 @@ public class JUnitDefinition implements TestFrameworkDefinition {
 	}
 
 	@Override
-	public List<String> getOrderAnnotationImports() {
-		return new ArrayList<String>(Arrays.asList("org.junit.FixMethodOrder", "org.junit.runners.MethodSorters"));
-	}
-
-	@Override
-	public String getOrderAnnotation() {
-		return "@FixMethodOrder(MethodSorters.NAME_ASCENDING)";
-	}
-
-	@Override
 	public String getIgnoreAnnotation() {
 		return "@Ignore";
-	}
-
-	@Override
-	public boolean annotationLevelRules() {
-		return false;
-	}
-
-	@Override
-	public String getRuleAnnotation(String annotationValue) {
-		throw new UnsupportedOperationException("Not available in JUnit.");
 	}
 
 }

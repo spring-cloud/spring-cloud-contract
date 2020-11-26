@@ -35,12 +35,7 @@ class NoOpHttpServerStub implements HttpServerStub {
 	}
 
 	@Override
-	public HttpServerStub start() {
-		return this;
-	}
-
-	@Override
-	public HttpServerStub start(int port) {
+	public HttpServerStub start(HttpServerStubConfiguration configuration) {
 		return this;
 	}
 

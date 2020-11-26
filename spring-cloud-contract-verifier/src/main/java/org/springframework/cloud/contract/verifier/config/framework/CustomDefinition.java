@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.config.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Defines elements characteristic of Custom test framework to be used during test class
  * construction.
@@ -27,21 +24,6 @@ import java.util.List;
  * @since 2.1.0
  */
 public class CustomDefinition implements TestFrameworkDefinition {
-
-	@Override
-	public String getClassModifier() {
-		return "";
-	}
-
-	@Override
-	public String getMethodModifier() {
-		return "";
-	}
-
-	@Override
-	public String getLineSuffix() {
-		return "";
-	}
 
 	@Override
 	public String getClassExtension() {
@@ -59,28 +41,8 @@ public class CustomDefinition implements TestFrameworkDefinition {
 	}
 
 	@Override
-	public List<String> getOrderAnnotationImports() {
-		return new ArrayList<String>();
-	}
-
-	@Override
-	public String getOrderAnnotation() {
-		return "";
-	}
-
-	@Override
 	public String getIgnoreAnnotation() {
 		return "@Ignore";
-	}
-
-	@Override
-	public boolean annotationLevelRules() {
-		return false;
-	}
-
-	@Override
-	public String getRuleAnnotation(String annotationValue) {
-		throw new UnsupportedOperationException("Not available in framework.");
 	}
 
 }

@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Contains most commonly used messaging headers.
  *
@@ -26,27 +23,15 @@ import org.apache.commons.logging.LogFactory;
  * @author Tim Ysewyn
  * @since 1.1.2
  */
-public class MessagingHeaders {
+public final class MessagingHeaders {
 
-	private static final Log log = LogFactory.getLog(MessagingHeaders.class);
-
-	public MessagingHeaders() {
-		log.warn("WARNING: MessagingHeaders shouldn't be instantiated. Use its static methods instead.");
+	private MessagingHeaders() {
+		throw new IllegalStateException("You can't instantiate an utility class");
 	}
 
 	/**
 	 * The Content-Type header name of a message.
 	 */
 	public static final String MESSAGING_CONTENT_TYPE = "contentType";
-
-	/**
-	 * The Content-Type header name of a message.
-	 * @return the Content-Type header name
-	 * @deprecated Replaced by {@code MessagingHeaders.MESSAGING_CONTENT_TYPE}.
-	 */
-	@Deprecated
-	public String messagingContentType() {
-		return MESSAGING_CONTENT_TYPE;
-	}
 
 }
