@@ -120,7 +120,7 @@ jacocoTestReport {
 
 jar {
 	manifest {
-		attributes 'Implementation-Version': version
+		attributes 'Implementation-Version': project.version
 	}
 }
 

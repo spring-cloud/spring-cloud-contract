@@ -225,8 +225,7 @@
 									<arguments>
 										<argument>clean</argument>
 										<argument>build</argument>
-										<!-- For some reason publishToMavenLocal doesn't work... Please don't troll Gradle ;)-->
-										<argument>install</argument>
+										<argument>publishToMavenLocal</argument>
 										<argument>
 											-PverifierVersion=${spring-cloud-contract.version}
 										</argument>
