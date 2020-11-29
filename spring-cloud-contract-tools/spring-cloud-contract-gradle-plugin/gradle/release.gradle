@@ -55,6 +55,7 @@ publishing {
 	}
 	publications {
 		pluginMaven(MavenPublication) {
+			artifact groovydocJar
 			pom {
 				name = project.name
 				packaging = 'jar'
