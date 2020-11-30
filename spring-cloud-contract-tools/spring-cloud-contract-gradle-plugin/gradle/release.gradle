@@ -13,6 +13,8 @@ task groovydocJar(type: Jar, dependsOn: groovydoc) {
 	from groovydoc.destinationDir
 }
 
+assemble.dependsOn(groovydocJar)
+
 ext {
 	resolveRepoName = { Project project ->
 		resolvedRepoName = "libs-${resolveVersion(project.version)}-local"
