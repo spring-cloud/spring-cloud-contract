@@ -16,7 +16,7 @@
 	<description>Spring Cloud Contract Dependencies</description>
 	<properties>
 		<wiremock.version>2.27.1</wiremock.version>
-		<jsonassert.version>0.4.14</jsonassert.version>
+		<jsonassert.version>0.5.0</jsonassert.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -105,9 +105,22 @@
 				<artifactId>wiremock-jre8-standalone</artifactId>
 				<version>${wiremock.version}</version>
 			</dependency>
+			<!-- Leaving this for backward compatibility -->
 			<dependency>
 				<groupId>com.toomuchcoding.jsonassert</groupId>
 				<artifactId>jsonassert</artifactId>
+				<version>${jsonassert.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.ow2.asm</groupId>
+						<artifactId>asm</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- This has shadowed deps -->
+			<dependency>
+				<groupId>com.toomuchcoding.jsonassert</groupId>
+				<artifactId>jsonassert-shade</artifactId>
 				<version>${jsonassert.version}</version>
 			</dependency>
 		</dependencies>
