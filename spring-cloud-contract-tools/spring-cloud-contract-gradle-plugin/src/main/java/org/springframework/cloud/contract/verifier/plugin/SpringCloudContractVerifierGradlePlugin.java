@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
-import java.io.File;
-
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -47,6 +45,8 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
+
+import java.io.File;
 
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
@@ -372,22 +372,24 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 					contractsCopyTask.getConvertToYaml().convention(extension.getConvertToYaml());
 					contractsCopyTask.getFailOnNoContracts().convention(extension.getFailOnNoContracts());
 					contractsCopyTask.getContractsDirectory()
-							.convention(extension.getContractsDslDir().map(contractsDslDir -> {
-								if (contractsDslDir.getAsFile().exists()) {
-									return contractsDslDir;
-								}
-								else {
-									Directory legacyContractsDslDir = project.getLayout().getProjectDirectory()
-											.dir("src/test/resources/contracts");
-									if (legacyContractsDslDir.getAsFile().exists()) {
-										project.getLogger().warn(
-												"Spring Cloud Contract Verifier Plugin: Falling back to legacy contracts directory in 'test' source set. Please switch to 'contractTest' source set as this will be removed in a future release.");
-										return legacyContractsDslDir;
+							.convention(extension.getContractsDslDir().flatMap(contractsDslDir -> {
+								return project.provider(() -> {
+									if (contractsDslDir.getAsFile().exists()) {
+										return contractsDslDir;
 									}
 									else {
-										return null;
+										Directory legacyContractsDslDir = project.getLayout().getProjectDirectory()
+												.dir("src/test/resources/contracts");
+										if (legacyContractsDslDir.getAsFile().exists()) {
+											project.getLogger().warn(
+													"Spring Cloud Contract Verifier Plugin: Falling back to legacy contracts directory in 'test' source set. Please switch to 'contractTest' source set as this will be removed in a future release.");
+											return legacyContractsDslDir;
+										}
+										else {
+											return null;
+										}
 									}
-								}
+								});
 							}));
 					contractsCopyTask.getContractDependency().getGroupId()
 							.convention(extension.getContractDependency().getGroupId());
