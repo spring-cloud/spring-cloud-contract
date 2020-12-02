@@ -281,8 +281,12 @@ class GenerateServerTestsTask extends DefaultTask {
 		return properties;
 	}
 
+	// See: https://github.com/gradle/gradle/issues/6072
 	private String quoteAndEscape(String str) {
-		return "\"" + str.replace("\"", "\\\"") + "\"";
+		if (System.getProperty("os.name").contains("Windows")) {
+			return "\"" + str.replace("\"", "\\\"") + "\"";
+		}
+		return str;
 	}
 
 }
