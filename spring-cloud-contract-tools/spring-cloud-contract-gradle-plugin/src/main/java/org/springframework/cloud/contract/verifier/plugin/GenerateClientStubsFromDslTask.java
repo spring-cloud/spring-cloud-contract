@@ -16,18 +16,22 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.List;
+import java.io.OutputStream;
 
 import javax.inject.Inject;
 
+import org.eclipse.jgit.util.io.NullOutputStream;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
@@ -35,7 +39,7 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
-import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
+import org.springframework.util.StringUtils;
 
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
@@ -52,19 +56,22 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 	static final String TASK_NAME = "generateClientStubs";
 	static final String DEFAULT_MAPPINGS_FOLDER = "mappings";
 
-	private Property<Directory> contractsDslDir;
+	private final Property<Directory> contractsDslDir;
 
-	private ListProperty<String> excludedFiles;
+	private final ListProperty<String> excludedFiles;
 
-	private Property<Boolean> excludeBuildFolders;
+	private final Property<Boolean> excludeBuildFolders;
 
-	private DirectoryProperty stubsOutputDir;
+	private final ConfigurableFileCollection classpath;
+
+	private final DirectoryProperty stubsOutputDir;
 
 	@Inject
 	public GenerateClientStubsFromDslTask(ObjectFactory objects) {
 		contractsDslDir = objects.directoryProperty();
 		excludedFiles = objects.listProperty(String.class);
 		excludeBuildFolders = objects.property(Boolean.class);
+		classpath = objects.fileCollection();
 
 		stubsOutputDir = objects.directoryProperty();
 	}
@@ -75,10 +82,23 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 		getLogger().info("Stubs output dir [{}]", output);
 		getLogger().info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion");
 		getLogger().info("Contracts dir is [{}] output stubs dir is [{}]", contractsDslDir.get().getAsFile(), output);
-		List<String> excludedFiles = this.excludedFiles.get();
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(output, contractsDslDir.get().getAsFile(),
-				excludedFiles, ".*", excludeBuildFolders.get());
-		converter.processFiles();
+		OutputStream os;
+		if (getLogger().isDebugEnabled()) {
+			os = new ByteArrayOutputStream();
+		} else {
+			os = NullOutputStream.INSTANCE;
+		}
+		getProject().javaexec(exec -> {
+			exec.setMain("org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
+			exec.classpath(classpath);
+			exec.args(quoteAndEscape(output.getAbsolutePath()), quoteAndEscape(contractsDslDir.get().getAsFile().getAbsolutePath()),
+					quoteAndEscape(StringUtils.collectionToCommaDelimitedString(excludedFiles.get())), quoteAndEscape(".*"), excludeBuildFolders.get());
+			exec.setStandardOutput(os);
+			exec.setErrorOutput(os);
+		});
+		if (getLogger().isDebugEnabled()) {
+			getLogger().debug(os.toString());
+		}
 	}
 
 	@InputDirectory
@@ -98,9 +118,22 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 		return excludeBuildFolders;
 	}
 
+	@Classpath
+	public ConfigurableFileCollection getClasspath() {
+		return classpath;
+	}
+
 	@OutputDirectory
 	public Property<Directory> getStubsOutputDir() {
 		return stubsOutputDir;
+	}
+
+	// See: https://github.com/gradle/gradle/issues/6072
+	private String quoteAndEscape(String str) {
+		if (System.getProperty("os.name").contains("Windows")) {
+			return "\"" + str.replace("\"", "\\\"") + "\"";
+		}
+		return str;
 	}
 
 }

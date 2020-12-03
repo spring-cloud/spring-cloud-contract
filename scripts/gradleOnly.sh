@@ -7,5 +7,5 @@ FOLDER=`pwd`
 set -e
 
 cd "${FOLDER}/spring-cloud-contract-tools/spring-cloud-contract-gradle-plugin"
-  ./gradlew clean build install
+  ./gradlew clean build publishToMavenLocal
 cd "${FOLDER}"

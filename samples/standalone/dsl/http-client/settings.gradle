@@ -1,1 +1,15 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/release" }
+        gradlePluginPortal()
+    }
+    plugins {
+        id "org.springframework.boot" version "${bootVersion}"
+        id "io.spring.dependency-management" version "1.0.10.RELEASE"
+    }
+}
+
 rootProject.name = 'http-client-dsl-gradle'

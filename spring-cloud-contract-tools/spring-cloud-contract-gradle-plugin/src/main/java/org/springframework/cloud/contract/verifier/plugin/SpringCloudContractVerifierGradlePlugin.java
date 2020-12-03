@@ -16,12 +16,14 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
-import java.io.File;
-
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.attributes.Bundling;
+import org.gradle.api.attributes.Category;
+import org.gradle.api.attributes.LibraryElements;
+import org.gradle.api.attributes.Usage;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
@@ -44,6 +46,8 @@ import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 
+import java.io.File;
+
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -59,6 +63,8 @@ import org.springframework.cloud.contract.verifier.config.TestFramework;
  */
 public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
+	private static final String SPRING_CLOUD_VERSION = VersionExtractor.forClass(SpringCloudContractVerifierGradlePlugin.class);
+
 	private static final String GROUP_NAME = "Verification";
 
 	private static final String EXTENSION_NAME = "contracts";
@@ -70,6 +76,10 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	private static final String CONTRACT_TEST_IMPLEMENTATION_CONFIGURATION_NAME = "contractTestImplementation";
 
 	private static final String CONTRACT_TEST_RUNTIME_ONLY_CONFIGURATION_NAME = "contractTestRuntimeOnly";
+
+	private static final String CONTRACT_TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME = "contractTestRuntimeClasspath";
+
+	private static final String CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME = "contractTestGeneratorRuntimeClasspath";
 
 	private static final String VERIFIER_STUBS_JAR_TASK_NAME = "verifierStubsJar";
 
@@ -96,6 +106,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		createAndConfigureStubsJarTasks(extension, generateClientStubs);
 		createGenerateTestsTask(extension, contractTestSourceSet, copyContracts);
 		createAndConfigurePublishStubsToScmTask(extension, generateClientStubs);
+
+		project.getDependencies().add(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME, "org.springframework.cloud:spring-cloud-contract-converters:" + SPRING_CLOUD_VERSION);
 
 		project.afterEvaluate(inner -> {
 			DirectoryProperty generatedTestSourcesDir = extension.getGeneratedTestSourcesDir();
@@ -149,6 +161,19 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		contractTestCompileOnly.extendsFrom(testCompileOnly);
 		contractTestImplementation.extendsFrom(testImplementation);
 		contractTestRuntimeOnly.extendsFrom(testRuntimeOnly);
+
+		configurations.create(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME, conf -> {
+			conf.setVisible(false);
+			conf.setCanBeResolved(true);
+			conf.setCanBeConsumed(false);
+			conf.attributes(attributes -> {
+				attributes.attribute(Usage.USAGE_ATTRIBUTE, project.getObjects().named(Usage.class, Usage.JAVA_RUNTIME));
+				attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.getObjects().named(Category.class, Category.LIBRARY));
+				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.getObjects().named(LibraryElements.class, LibraryElements.JAR));
+				attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.getObjects().named(Bundling.class, Bundling.EXTERNAL));
+			});
+			conf.extendsFrom(configurations.getByName(CONTRACT_TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME));
+		});
 	}
 
 	private void registerContractTestTask(SourceSet contractTestSourceSet) {
@@ -190,6 +215,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 					.convention(extension.getBaseClassMappings().getBaseClassMappings());
 			generateServerTestsTask.getAssertJsonSize().convention(extension.getAssertJsonSize());
 			generateServerTestsTask.getFailOnInProgress().convention(extension.getFailOnInProgress());
+			generateServerTestsTask.getClasspath()
+					.from(project.getConfigurations().getByName(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME));
 			generateServerTestsTask.getGeneratedTestSourcesDir()
 					.convention(extension.getTestFramework().flatMap(testFramework -> {
 						Property<Directory> correctSourceSetDir;
@@ -205,12 +232,20 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 
 			generateServerTestsTask.dependsOn(copyContracts);
 		});
-		project.getTasks().named(contractTestSourceSet.getCompileJavaTaskName(), compileContractTestJava -> {
-			compileContractTestJava.dependsOn(task);
-		});
+		project.getTasks().named(contractTestSourceSet.getCompileJavaTaskName(), compileContractTestJava -> compileContractTestJava.dependsOn(task));
 		project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
 			project.getTasks().named(contractTestSourceSet.getCompileTaskName("groovy"), compileContractTestGroovy -> {
 				compileContractTestGroovy.dependsOn(task);
+			});
+		});
+		project.getPlugins().withId("kotlin", kotlinPlugin -> {
+			project.getTasks().named(contractTestSourceSet.getCompileTaskName("kotlin"), compileContractTestKotlin -> {
+				compileContractTestKotlin.dependsOn(task);
+			});
+		});
+		project.getPlugins().withId("org.jetbrains.kotlin.jvm", kotlinJvmPlugin -> {
+			project.getTasks().named(contractTestSourceSet.getCompileTaskName("kotlin"), compileContractTestKotlin -> {
+				compileContractTestKotlin.dependsOn(task);
 			});
 		});
 	}
@@ -258,6 +293,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 							.convention(copyContracts.flatMap(ContractsCopyTask::getCopiedContractsFolder));
 					generateClientStubs.getExcludedFiles().convention(extension.getExcludedFiles());
 					generateClientStubs.getExcludeBuildFolders().convention(extension.getExcludeBuildFolders());
+					generateClientStubs.getClasspath()
+							.from(project.getConfigurations().getByName(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME));
 
 					generateClientStubs.getStubsOutputDir().convention(extension.getStubsOutputDir()
 							.dir(buildRootPath(GenerateClientStubsFromDslTask.DEFAULT_MAPPINGS_FOLDER)));
@@ -343,22 +380,24 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 					contractsCopyTask.getConvertToYaml().convention(extension.getConvertToYaml());
 					contractsCopyTask.getFailOnNoContracts().convention(extension.getFailOnNoContracts());
 					contractsCopyTask.getContractsDirectory()
-							.convention(extension.getContractsDslDir().map(contractsDslDir -> {
-								if (contractsDslDir.getAsFile().exists()) {
-									return contractsDslDir;
-								}
-								else {
-									Directory legacyContractsDslDir = project.getLayout().getProjectDirectory()
-											.dir("src/test/resources/contracts");
-									if (legacyContractsDslDir.getAsFile().exists()) {
-										project.getLogger().warn(
-												"Spring Cloud Contract Verifier Plugin: Falling back to legacy contracts directory in 'test' source set. Please switch to 'contractTest' source set as this will be removed in a future release.");
-										return legacyContractsDslDir;
+							.convention(extension.getContractsDslDir().flatMap(contractsDslDir -> {
+								return project.provider(() -> {
+									if (contractsDslDir.getAsFile().exists()) {
+										return contractsDslDir;
 									}
 									else {
-										return null;
+										Directory legacyContractsDslDir = project.getLayout().getProjectDirectory()
+												.dir("src/test/resources/contracts");
+										if (legacyContractsDslDir.getAsFile().exists()) {
+											project.getLogger().warn(
+													"Spring Cloud Contract Verifier Plugin: Falling back to legacy contracts directory in 'test' source set. Please switch to 'contractTest' source set as this will be removed in a future release.");
+											return legacyContractsDslDir;
+										}
+										else {
+											return null;
+										}
 									}
-								}
+								});
 							}));
 					contractsCopyTask.getContractDependency().getGroupId()
 							.convention(extension.getContractDependency().getGroupId());
@@ -385,6 +424,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 					contractsCopyTask.getContractsPath().convention(extension.getContractsPath());
 					contractsCopyTask.getExcludeBuildFolders().convention(extension.getExcludeBuildFolders());
 					contractsCopyTask.getDeleteStubsAfterTest().convention(extension.getDeleteStubsAfterTest());
+					contractsCopyTask.getClasspath()
+							.from(project.getConfigurations().getByName(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME));
 
 					contractsCopyTask.getCopiedContractsFolder()
 							.convention(extension.getStubsOutputDir().dir(buildRootPath(ContractsCopyTask.CONTRACTS)));

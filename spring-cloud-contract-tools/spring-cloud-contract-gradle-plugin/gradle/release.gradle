@@ -1,11 +1,11 @@
-apply plugin: 'maven'
-//apply plugin: 'signing'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
-uploadArchives.dependsOn { [check] }
+publish.dependsOn(check)
 
-task sourcesJar(type: Jar) {
-	classifier 'sources'
-	from sourceSets.main.allSource
+java {
+	withSourcesJar()
+	withJavadocJar()
 }
 
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
@@ -13,16 +13,7 @@ task groovydocJar(type: Jar, dependsOn: groovydoc) {
 	from groovydoc.destinationDir
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-	classifier 'javadoc'
-	from javadoc.destinationDir
-}
-
-artifacts {
-	archives sourcesJar
-	archives groovydocJar
-	archives javadocJar
-}
+assemble.dependsOn(groovydocJar)
 
 ext {
 	resolveRepoName = { Project project ->
@@ -50,12 +41,69 @@ ext {
 	repoUrl = isReleaseToCentral ?
 			"https://oss.sonatype.org/service/local/staging/deploy/maven2/" :
 			"https://repo.spring.io/${resolveRepoName(project)}"
+	repoUserName = isReleaseToCentral ? getProp("SONATYPE_USER") : repoUser
+	repoPass = isReleaseToCentral ? getProp("SONATYPE_PASSWORD") : repoPass
+}
+
+publishing {
+	repositories {
+		maven {
+			url = repoUrl
+			credentials {
+				username = repoUserName
+				password = repoPass
+			}
+		}
+	}
+	publications {
+		pluginMaven(MavenPublication) {
+			artifact groovydocJar
+			pom {
+				name = project.name
+				packaging = 'jar'
+				description = 'Spring Cloud Contract Gradle Plugin'
+				url = 'https://github.com/spring-cloud/spring-cloud-contract'
+				inceptionYear = '2014'
+
+				scm {
+					connection = 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
+					developerConnection = 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
+					url = 'https://github.com/spring-cloud/spring-cloud-contract'
+				}
+
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+
+				developers {
+					developer {
+						id = 'jkubrynski'
+						name = 'Jakub Kubrynski'
+						email = 'jk ATT codearte DOTT io'
+					}
+					developer {
+						id = 'marcingrzejszczak'
+						name = 'Marcin Grzejszczak'
+						email = 'mgrzejszczak ATT pivotal DOTT io'
+					}
+					developer {
+						id = 'dsyer'
+						name = 'Dave Syer'
+						email = 'dsyer ATT pivotal DOTT io'
+					}
+				}
+			}
+		}
+	}
 }
 
 if (isReleaseToCentral) {
-	/*signing {
-		sign configurations.archives
-	}*/
+	signing {
+		sign publishing.publications.maven
+	}
 
 	apply plugin: 'com.gradle.plugin-publish'
 
@@ -79,65 +127,6 @@ if (isReleaseToCentral) {
 	}
 }
 
-afterEvaluate {
-	uploadArchives {
-		repositories {
-			mavenDeployer {
-				// POM signature
-				if (isReleaseVersion && isReleaseToCentral) {
-					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-				}
-				// Target repository
-				String repoUserName = isReleaseToCentral ? getProp("SONATYPE_USER") : repoUser
-				String repoPass = isReleaseToCentral ? getProp("SONATYPE_PASSWORD") : repoPass
-				repository(url: repoUrl) {
-					authentication(userName: repoUserName, password: repoPass)
-				}
-				pom.project {
-					name "$project.name"
-					packaging 'jar'
-					description 'Spring Cloud Contract Gradle Plugin'
-					url 'https://github.com/spring-cloud/spring-cloud-contract'
-					inceptionYear '2014'
-
-					scm {
-						connection 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
-						developerConnection 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
-						url 'https://github.com/spring-cloud/spring-cloud-contract'
-					}
-
-					licenses {
-						license {
-							name 'The Apache License, Version 2.0'
-							url 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-						}
-					}
-
-					developers {
-						developer {
-							id 'jkubrynski'
-							name 'Jakub Kubrynski'
-							email 'jk ATT codearte DOTT io'
-						}
-						developer {
-							id 'marcingrzejszczak'
-							name 'Marcin Grzejszczak'
-							email 'mgrzejszczak ATT pivotal DOTT io'
-						}
-						developer {
-							id 'dsyer'
-							name 'Dave Syer'
-							email 'dsyer ATT pivotal DOTT io'
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
 String getProp(String propName) {
-	return hasProperty(propName) ?
-			(getProperty(propName) ?: System.properties[propName]) : System.properties[propName] ?:
-			System.getenv(propName)
+	return (findProperty(propName) ?: System.properties[propName]) ?: System.getenv(propName)
 }

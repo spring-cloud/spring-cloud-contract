@@ -40,7 +40,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest(classes = Application.class)
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 public class StubGeneratorTests {

@@ -26,8 +26,8 @@ repositories {
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${BOM_VERSION}"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
 	}
 }
 
@@ -45,6 +45,8 @@ dependencies {
 contracts {
 	failOnNoContracts = false
 }
+
+generateClientStubs.enabled = false
 
 test {
 	useJUnitPlatform()
@@ -66,10 +68,6 @@ task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses
 	baseName = project.name
 	classifier = 'stubs'
 	from project.file("${project.buildDir}/stubs")
-}
-
-artifacts {
-	archives stubsJar
 }
 
 task copySnippets(type: Copy, dependsOn: test) {
@@ -110,7 +108,7 @@ publishing {
 
 clean.doFirst {
 	delete 'target/snippets/stubs'
-	delete "~/.m2/repository/com/example/http-server-restdocs-gradle"
+	delete "~/.m2/repository/com/example/http-server-webclient-gradle"
 }
 
 task resolveDependencies {

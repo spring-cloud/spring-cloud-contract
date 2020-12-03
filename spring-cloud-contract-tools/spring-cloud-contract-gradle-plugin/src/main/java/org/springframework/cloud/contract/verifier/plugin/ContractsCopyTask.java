@@ -16,7 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -27,14 +29,17 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.util.io.NullOutputStream;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.CacheableTask;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Internal;
@@ -53,7 +58,6 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerPropertyUtils;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.verifier.converter.ToYamlConverter;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
@@ -103,6 +107,8 @@ class ContractsCopyTask extends DefaultTask {
 	 */
 	private final Property<Boolean> deleteStubsAfterTest;
 
+	private final ConfigurableFileCollection classpath;
+
 	// outputs
 	private final DirectoryProperty copiedContractsFolder;
 
@@ -129,6 +135,7 @@ class ContractsCopyTask extends DefaultTask {
 		contractsPath = objects.property(String.class);
 		excludeBuildFolders = objects.property(Boolean.class);
 		deleteStubsAfterTest = objects.property(Boolean.class);
+		classpath = objects.fileCollection();
 
 		copiedContractsFolder = objects.directoryProperty();
 		backupContractsFolder = objects.directoryProperty();
@@ -173,7 +180,22 @@ class ContractsCopyTask extends DefaultTask {
 	private void convertContractsToYaml(File file, String antPattern, String slashSeparatedAntPattern,
 			File outputContractsFolder, boolean excludeBuildFolders) {
 		sync(file, antPattern, slashSeparatedAntPattern, excludeBuildFolders, backupContractsFolder.get().getAsFile());
-		ToYamlConverter.replaceContractWithYaml(outputContractsFolder);
+		OutputStream os;
+		if (getLogger().isDebugEnabled()) {
+			os = new ByteArrayOutputStream();
+		} else {
+			os = NullOutputStream.INSTANCE;
+		}
+		getProject().javaexec(exec -> {
+			exec.setMain("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
+			exec.classpath(classpath);
+			exec.args(quoteAndEscape(outputContractsFolder.getAbsolutePath()));
+			exec.setStandardOutput(os);
+			exec.setErrorOutput(os);
+		});
+		if (getLogger().isDebugEnabled()) {
+			getLogger().debug(os.toString());
+		}
 		getLogger().info("Replaced DSL files with their YAML representation at [{}]", outputContractsFolder);
 	}
 
@@ -434,6 +456,11 @@ class ContractsCopyTask extends DefaultTask {
 		return deleteStubsAfterTest;
 	}
 
+	@Classpath
+	ConfigurableFileCollection getClasspath() {
+		return classpath;
+	}
+
 	@OutputDirectory
 	DirectoryProperty getCopiedContractsFolder() {
 		return copiedContractsFolder;
@@ -500,6 +527,14 @@ class ContractsCopyTask extends DefaultTask {
 			}
 		}
 		return null;
+	}
+
+	// See: https://github.com/gradle/gradle/issues/6072
+	private String quoteAndEscape(String str) {
+		if (System.getProperty("os.name").contains("Windows")) {
+			return "\"" + str.replace("\"", "\\\"") + "\"";
+		}
+		return str;
 	}
 
 }
