@@ -66,10 +66,13 @@ dependencies {
 	// provide version alignment with project
 	implementation(platform("org.springframework.cloud:spring-cloud-contract-tools:${project.version}"))
 
+	implementation "org.apache.maven.resolver:maven-resolver-api"
 	implementation "org.eclipse.jgit:org.eclipse.jgit"
+	implementation "com.jcraft:jsch.agentproxy.jsch"
 	implementation "com.fasterxml.jackson.core:jackson-databind"
 
 	implementation "org.springframework:spring-core"
+	implementation("org.springframework.cloud:spring-cloud-contract-shade")
 	api("org.springframework.cloud:spring-cloud-contract-stub-runner") {
 		exclude(group: '*')
 	}
