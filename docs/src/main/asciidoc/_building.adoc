@@ -1,5 +1,26 @@
 == How to Build Spring Cloud Contract
 
+=== Cloning the repository on Windows
+
+While cloning this project on *windows*, some files in the git repository may exceed the Windows maximum file path limit of 255 characters, which may
+result in improper/half checked out repository.
+
+* To resolve this the `*core.longPaths=true*` git option should be set:
+
+```
+git config --system core.longpaths true
+```
+
+*_OR_*
+
+* Clone the Spring Cloud Contract repository as below:
+
+```
+git clone -c core.longPaths=true https://github.com/spring-cloud/spring-cloud-contract.git
+```
+
+
+
 IMPORTANT: You need to have all the necessary Groovy plugins
 installed for your IDE to properly resolve the sources. For example, in
 Intellij IDEA, having both the Eclipse Groovy Compiler Plugin and the GMavenPlus Intellij
