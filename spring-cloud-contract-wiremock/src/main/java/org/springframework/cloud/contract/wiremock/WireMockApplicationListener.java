@@ -105,7 +105,11 @@ public class WireMockApplicationListener
 		addPropertySource(propertySources);
 		Map<String, Object> source = ((MapPropertySource) propertySources.get("wiremock"))
 				.getSource();
-		source.put(portProperty, SocketUtils.findAvailableTcpPort(minPort, maxPort));
+		int port = SocketUtils.findAvailableTcpPort(minPort, maxPort);
+		source.put(portProperty, port);
+		if (log.isDebugEnabled()) {
+			log.debug("Registered property source for property [" + portProperty + "] with value [" + port + "]");
+		}
 		source.put(dynamicPortProperty, true);
 	}
 
