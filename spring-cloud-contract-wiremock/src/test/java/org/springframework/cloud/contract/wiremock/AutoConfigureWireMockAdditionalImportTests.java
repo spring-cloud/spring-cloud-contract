@@ -84,7 +84,7 @@ class ExtraConfig {
 class TestConfiguration {
 
 	@Bean
-	public WebClient webClient(WebClient.Builder builder) {
+	WebClient webClient(WebClient.Builder builder) {
 		return builder.build();
 	}
 
@@ -102,7 +102,7 @@ class TestController {
 
 	private final String baseUrl;
 
-	public TestController(WebClient webClient, String baseUrl) {
+	TestController(WebClient webClient, String baseUrl) {
 		this.webClient = webClient;
 		this.baseUrl = baseUrl;
 		System.out.println("Creating with URL [" + this.baseUrl + "] HASH [" + this.hashCode() + "]");
@@ -123,9 +123,9 @@ class TestItem {
 
 	private String name;
 
-	public TestItem() { }
+	TestItem() { }
 
-	public TestItem(String name) {
+	TestItem(String name) {
 		this.name = name;
 	}
 
