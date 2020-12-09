@@ -2,10 +2,13 @@
 
 === Cloning the repository on Windows
 
-While cloning this project on *windows*, some files in the git repository may exceed the Windows maximum file path limit of 255 characters, which may
-result in improper/half checked out repository.
+While cloning this project on Windows, some files in the git repository may exceed the Windows maximum file path limit of 255 characters, which may
+result in an incorrectly (probably partially) checked out repository.
 
-* To resolve this the `*core.longPaths=true*` git option should be set:
+* To resolve this issue, you can set the `core.longPaths` attribute to `true` or clone the Spring Cloud Contract repository.
+
+
+The following example shows how to set the `core.longPaths` attribute to `true`:
 
 ```
 git config --system core.longpaths true
@@ -13,12 +16,11 @@ git config --system core.longpaths true
 
 *_OR_*
 
-* Clone the Spring Cloud Contract repository as below:
+* The following example shows how to clone Spring Cloud Contract:
 
 ```
 git clone -c core.longPaths=true https://github.com/spring-cloud/spring-cloud-contract.git
 ```
-
 
 
 IMPORTANT: You need to have all the necessary Groovy plugins
