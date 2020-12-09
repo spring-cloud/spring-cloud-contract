@@ -64,9 +64,9 @@ well as* the custom locations in the `stubs` attribute. To change this behavior,
 also specify a files root, as described in the next section of this document.
 
 NOTE: Also, the mappings in the `stubs` location are not considered part of Wiremock's "default mappings" and calls
-to `com.github.tomakehurst.wiremock.client.WireMock.resetToDefaultMappings` during a test will not result in the mappings
-in the `stubs` location to be included. However, the `org.springframework.cloud.contract.wiremock.WireMockTestExecutionListener`
-does reset the mappings (including adding the ones from the stubs location) after every test class and optionally
+to `com.github.tomakehurst.wiremock.client.WireMock.resetToDefaultMappings` during a test do not result in the mappings
+in the `stubs` location being included. However, the `org.springframework.cloud.contract.wiremock.WireMockTestExecutionListener`
+does reset the mappings (including adding the ones from the stubs location) after every test class and, optionally,
 after every test method (guarded by the `wiremock.reset-mappings-after-each-test` property).
 
 If you use Spring Cloud Contract's default stub jars, your
