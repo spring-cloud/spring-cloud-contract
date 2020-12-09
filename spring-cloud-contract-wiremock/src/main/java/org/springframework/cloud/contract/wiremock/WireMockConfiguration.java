@@ -124,7 +124,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private void reRegisterBeans() {
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Registering WireMock [" + this.server + "] instance");
+				printRegistrationLog();
 			}
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
@@ -134,10 +134,18 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 			this.beanFactory.destroySingleton(WIREMOCK_SERVER_BEAN_NAME);
 			if (log.isDebugEnabled()) {
-				log.debug("Registering WireMock [" + this.server + "] instance");
+				printRegistrationLog();
 			}
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
+	}
+
+	private void printRegistrationLog() {
+		int httpPort = this.server.isRunning() ? this.server.port() : -1;
+		int httpsPort = this.server.isRunning() && this.server.getOptions().httpsSettings().enabled()
+				? this.server.httpsPort() : -1;
+		log.debug("Registering WireMock [" + this.server + "] at http port [" + httpPort + "] and https port ["
+				+ httpsPort + "]");
 	}
 
 	private void reRegisterServer() {
@@ -154,12 +162,20 @@ public class WireMockConfiguration implements SmartLifecycle {
 		else if (this.server == null) {
 			this.server = new WireMockServer(this.options);
 			if (log.isDebugEnabled()) {
-				log.debug("Created new server [" + this.server + "] at port [" + port(this.server) + "]");
+				int httpPort = this.server.isRunning() ? this.server.port() : -1;
+				int httpsPort = this.server.isRunning() && this.server.getOptions().httpsSettings().enabled()
+						? this.server.httpsPort() : -1;
+				log.debug("Created new server [" + this.server + "] at http port [" + httpPort + "] and https port ["
+						+ httpsPort + "]");
 			}
 		}
 		start();
 		if (log.isDebugEnabled()) {
-			log.debug("Started server [" + this.server + "] at port [" + port(this.server) + "]");
+			int httpPort = this.server.isRunning() ? this.server.port() : -1;
+			int httpsPort = this.server.isRunning() && this.server.getOptions().httpsSettings().enabled()
+					? this.server.httpsPort() : -1;
+			log.debug("Started server [" + this.server + "] at http port [" + httpPort + "] and https port ["
+					+ httpsPort + "]");
 		}
 		logRegisteredMappings();
 	}
@@ -244,10 +260,14 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@Override
 	public void start() {
 		if (isRunning()) {
-			int port = port(this.server);
+			int httpPort = this.server.isRunning() ? this.server.port() : -1;
+			int httpsPort = this.server.isRunning() && this.server.getOptions().httpsSettings().enabled()
+					? this.server.httpsPort() : -1;
 			if (log.isDebugEnabled()) {
-				log.debug("Server [" + this.server + "] is already running at port [" + port + "]");
+				log.debug("Server [" + this.server + "] is already running at http port [" + httpPort
+						+ "] / https port [" + httpsPort + "]");
 			}
+			updateCurrentServer();
 			return;
 		}
 		this.server.start();
@@ -258,8 +278,11 @@ public class WireMockConfiguration implements SmartLifecycle {
 		WireMock.configureFor(new WireMock(this.server));
 		this.running = true;
 		if (log.isDebugEnabled() && this.server.isRunning()) {
-			log.debug("Started WireMock at port [" + this.server.port() + "]. It has ["
-					+ this.server.getStubMappings().size() + "] mappings registered");
+			int httpPort = this.server.isRunning() ? this.server.port() : -1;
+			int httpsPort = this.server.isRunning() && this.server.getOptions().httpsSettings().enabled()
+					? this.server.httpsPort() : -1;
+			log.debug("Server [" + this.server + "] is already running at http port [" + httpPort + "] / https port ["
+					+ httpsPort + "]. It has [" + this.server.getStubMappings().size() + "] mappings registered");
 		}
 	}
 
