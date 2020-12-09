@@ -108,7 +108,8 @@ public class WireMockApplicationListener
 		int port = SocketUtils.findAvailableTcpPort(minPort, maxPort);
 		source.put(portProperty, port);
 		if (log.isDebugEnabled()) {
-			log.debug("Registered property source for property [" + portProperty + "] with value [" + port + "]");
+			log.debug("Registered property source for property [" + portProperty
+					+ "] with value [" + port + "]");
 		}
 		source.put(dynamicPortProperty, true);
 	}

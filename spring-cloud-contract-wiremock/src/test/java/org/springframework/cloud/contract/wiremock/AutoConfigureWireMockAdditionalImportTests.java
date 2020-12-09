@@ -42,7 +42,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 // issue 1541
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class, properties = "base-url=http://localhost:${wiremock.server.port}")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		classes = TestConfiguration.class,
+		properties = "base-url=http://localhost:${wiremock.server.port}")
 @AutoConfigureWireMock(port = 0)
 @Import(ExtraConfig.class)
 public class AutoConfigureWireMockAdditionalImportTests {
@@ -53,7 +55,9 @@ public class AutoConfigureWireMockAdditionalImportTests {
 	}
 
 	@Nested
-	@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class, properties = "base-url=http://localhost:${wiremock.server.port}")
+	@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+			classes = TestConfiguration.class,
+			properties = "base-url=http://localhost:${wiremock.server.port}")
 	@AutoConfigureWireMock(port = 0)
 	class SecondControllerTest {
 
@@ -61,17 +65,21 @@ public class AutoConfigureWireMockAdditionalImportTests {
 		void test(@Autowired WebTestClient webTestClient) {
 			// arrange
 			WireMock.stubFor(WireMock.get(WireMock.urlMatching("/find-all"))
-					.willReturn(ResponseDefinitionBuilder.okForJson(Collections.singletonList(new TestItem("my-name")))));
+					.willReturn(ResponseDefinitionBuilder.okForJson(
+							Collections.singletonList(new TestItem("my-name")))));
 
 			// act
-			List<TestItem> responseBody = webTestClient.get().uri("find-all")
-					.exchange().expectStatus().is2xxSuccessful()
-					.expectBody(new ParameterizedTypeReference<List<TestItem>>() { }).returnResult().getResponseBody();
+			List<TestItem> responseBody = webTestClient.get().uri("find-all").exchange()
+					.expectStatus().is2xxSuccessful()
+					.expectBody(new ParameterizedTypeReference<List<TestItem>>() {
+					}).returnResult().getResponseBody();
 
 			// assert
 			Assertions.assertThat(responseBody.get(0).getName()).isEqualTo("my-name");
 		}
+
 	}
+
 }
 
 @Component
@@ -89,7 +97,8 @@ class TestConfiguration {
 	}
 
 	@Bean
-	TestController testController(WebClient webClient, @Value("${base-url}") String baseUrl) {
+	TestController testController(WebClient webClient,
+			@Value("${base-url}") String baseUrl) {
 		return new TestController(webClient, baseUrl);
 	}
 
@@ -105,16 +114,17 @@ class TestController {
 	TestController(WebClient webClient, String baseUrl) {
 		this.webClient = webClient;
 		this.baseUrl = baseUrl;
-		System.out.println("Creating with URL [" + this.baseUrl + "] HASH [" + this.hashCode() + "]");
+		System.out.println("Creating with URL [" + this.baseUrl + "] HASH ["
+				+ this.hashCode() + "]");
 	}
 
 	@GetMapping("find-all")
 	public Mono<List<TestItem>> findAll() {
-		System.out.println("Will send a request to [" + this.baseUrl + "] HASH [" + this.hashCode() + "]");
-		return webClient
-				.get()
-				.uri(baseUrl + "/find-all")
-				.retrieve().bodyToMono(new ParameterizedTypeReference<List<TestItem>>() {});
+		System.out.println("Will send a request to [" + this.baseUrl + "] HASH ["
+				+ this.hashCode() + "]");
+		return webClient.get().uri(baseUrl + "/find-all").retrieve()
+				.bodyToMono(new ParameterizedTypeReference<List<TestItem>>() {
+				});
 	}
 
 }
@@ -123,7 +133,8 @@ class TestItem {
 
 	private String name;
 
-	TestItem() { }
+	TestItem() {
+	}
 
 	TestItem(String name) {
 		this.name = name;
@@ -136,4 +147,5 @@ class TestItem {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 }
