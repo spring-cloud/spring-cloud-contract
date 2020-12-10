@@ -110,8 +110,8 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	private Closure parsingClosureForContentType() {
-		return contractMetadata.getDefinedOutputTestContentType().contains("/stream") ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
+	protected Closure parsingClosureForContentType() {
+		return contractMetadata.getDefinedOutputStubContentType().contains("/stream") ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
 	}
 
 	private void appendResponseDelayTime(ResponseDefinitionBuilder builder) {

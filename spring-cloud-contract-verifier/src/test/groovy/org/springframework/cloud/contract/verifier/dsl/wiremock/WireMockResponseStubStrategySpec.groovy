@@ -23,6 +23,7 @@ import spock.lang.Specification
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 class WireMockResponseStubStrategySpec extends Specification {
 
@@ -44,7 +45,12 @@ class WireMockResponseStubStrategySpec extends Specification {
 		when:
 			SingleContractMetadata metadata = Stub()
 			metadata.evaluatedOutputStubContentType >> ContentType.JSON
-			def subject = new WireMockResponseStubStrategy(contract, metadata)
+			def subject = new WireMockResponseStubStrategy(contract, metadata) {
+				@Override
+				protected Closure parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_CLOSURE
+				}
+			}
 			def content = subject.buildClientResponseContent()
 		then:
 			'{"value":1.5}' == content.body
@@ -72,7 +78,12 @@ class WireMockResponseStubStrategySpec extends Specification {
 		when:
 			SingleContractMetadata metadata = Stub()
 			metadata.evaluatedOutputStubContentType >> ContentType.JSON
-			def subject = new WireMockResponseStubStrategy(contract, metadata)
+			def subject = new WireMockResponseStubStrategy(contract, metadata) {
+				@Override
+				protected Closure parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_CLOSURE
+				}
+			}
 			def content = subject.buildClientResponseContent()
 		then:
 			Map body = new JsonSlurper().parseText(content.body) as Map
@@ -246,6 +257,11 @@ class WireMockResponseStubStrategySpec extends Specification {
 				@Override
 				protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
 					return ContentType.JSON
+				}
+
+				@Override
+				protected Closure parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_CLOSURE
 				}
 			}
 			response.buildClientResponseContent()
