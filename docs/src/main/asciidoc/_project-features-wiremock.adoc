@@ -63,6 +63,12 @@ NOTE: Actually, WireMock always loads mappings from `src/test/resources/mappings
 well as* the custom locations in the `stubs` attribute. To change this behavior, you can
 also specify a file root, as described in the <<features-wiremock-using-files,next section of this document>>.
 
+NOTE: Also, the mappings in the `stubs` location are not considered part of Wiremock's "default mappings" and calls
+to `com.github.tomakehurst.wiremock.client.WireMock.resetToDefaultMappings` during a test do not result in the mappings
+in the `stubs` location being included. However, the `org.springframework.cloud.contract.wiremock.WireMockTestExecutionListener`
+does reset the mappings (including adding the ones from the stubs location) after every test class and, optionally,
+after every test method (guarded by the `wiremock.reset-mappings-after-each-test` property).
+
 If you use Spring Cloud Contract's default stub jars, your
 stubs are stored in the `/META-INF/group-id/artifact-id/versions/mappings/` folder.
 If you want to register all stubs from that location, from all embedded JARs, you can use
