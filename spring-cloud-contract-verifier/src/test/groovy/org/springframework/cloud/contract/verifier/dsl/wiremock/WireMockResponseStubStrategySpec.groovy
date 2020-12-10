@@ -45,7 +45,12 @@ class WireMockResponseStubStrategySpec extends Specification {
 		when:
 			SingleContractMetadata metadata = Stub()
 			metadata.evaluatedOutputStubContentType >> ContentType.JSON
-			def subject = new WireMockResponseStubStrategy(contract, metadata)
+			def subject = new WireMockResponseStubStrategy(contract, metadata) {
+				@Override
+				protected Closure parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_CLOSURE
+				}
+			}
 			def content = subject.buildClientResponseContent()
 		then:
 			'{"value":1.5}' == content.body
@@ -73,7 +78,12 @@ class WireMockResponseStubStrategySpec extends Specification {
 		when:
 			SingleContractMetadata metadata = Stub()
 			metadata.evaluatedOutputStubContentType >> ContentType.JSON
-			def subject = new WireMockResponseStubStrategy(contract, metadata)
+			def subject = new WireMockResponseStubStrategy(contract, metadata) {
+				@Override
+				protected Closure parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_CLOSURE
+				}
+			}
 			def content = subject.buildClientResponseContent()
 		then:
 			Map body = new JsonSlurper().parseText(content.body) as Map
