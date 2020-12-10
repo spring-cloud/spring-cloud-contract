@@ -110,12 +110,6 @@
 				<groupId>com.toomuchcoding.jsonassert</groupId>
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>asm</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<!-- This has shadowed deps -->
 			<dependency>

@@ -113,12 +113,6 @@
 		<dependency>
 			<groupId>com.toomuchcoding.jsonassert</groupId>
 			<artifactId>jsonassert</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
