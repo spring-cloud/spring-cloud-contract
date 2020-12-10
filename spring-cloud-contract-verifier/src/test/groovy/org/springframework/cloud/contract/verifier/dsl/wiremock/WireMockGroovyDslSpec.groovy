@@ -2902,6 +2902,66 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	}
 
+	@Issue("#1535")
+	def "should work with streams"() {
+		given:
+			Contract contractDsl = Contract.make {
+				description "should return all entities"
+				request{
+					method GET()
+					url("/api/v1/entities")
+				}
+				response {
+					headers {
+						header 'Content-Type': 'application/stream+json'
+					}
+					body(
+							'''
+										{
+										"id" : "1",
+										"name" : "Entity1",
+										"nested_data" : {
+												"key1" : "value1"
+											}
+										},
+										{
+										"id" : "2",
+										"name" : "Entity2",
+										"nested_data" : {
+												"key1" : "value1"
+											}
+										}
+						   '''
+					)
+					status 200
+				}
+			}
+
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test",
+					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
+					.toWireMockClientStub()
+		then:
+			wireMockStub.contains('Entity1')
+			wireMockStub.contains('Entity2')
+			stubMappingIsValidWireMockStub(wireMockStub)
+		and:
+			int port = SocketUtils.findAvailableTcpPort()
+			WireMockServer server = new WireMockServer(config().port(port))
+			server.start()
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+			server.addStubMapping(WireMockStubMapping.buildFrom(wireMockStub))
+		when:
+			ResponseEntity<String> entity = callForStream(port)
+		then:
+			entity.statusCodeValue == 200
+			entity.body.contains("Entity1")
+			entity.body.contains("Entity2")
+		cleanup:
+			server?.shutdown()
+	}
+
 	@Issue("#1125")
 	def "should not generate assertions for [*] when all manual entries were passed"() {
 		given:
@@ -3026,6 +3086,12 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				RequestEntity.post(URI.create("http://localhost:" + port + "/api/user"))
 						.header("Content-Type", "application/json")
 						.body("{\"foo\":null,\"name\":\"\"}"), String.class)
+	}
+
+	ResponseEntity<String> callForStream(int port) {
+		return new TestRestTemplate().exchange(
+				RequestEntity.get(URI.create("http://localhost:" + port + "/api/v1/entities"))
+						.header("Content-Type", "application/stream+json").build(), String.class)
 	}
 
 	ResponseEntity<byte[]> callBytes(int port, File request) {

@@ -46,11 +46,13 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private final Response response
 	private final ContentType contentType
+	private final SingleContractMetadata contractMetadata
 
 	WireMockResponseStubStrategy(Contract groovyDsl, SingleContractMetadata singleContractMetadata) {
 		super(groovyDsl)
 		this.response = groovyDsl.response
 		this.contentType = contentType(singleContractMetadata)
+		this.contractMetadata = singleContractMetadata
 	}
 
 	protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
@@ -94,7 +96,8 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private void appendBody(ResponseDefinitionBuilder builder) {
 		if (response.body) {
-			Object body = MapConverter.getStubSideValues(response.body)
+			Closure parsingClosure = parsingClosureForContentType()
+			Object body = MapConverter.getStubSideValues(response.body, parsingClosure)
 			if (body instanceof byte[]) {
 				builder.withBody(body)
 			}
@@ -105,6 +108,10 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 				builder.withBody(parseBody(body, contentType))
 			}
 		}
+	}
+
+	private Closure parsingClosureForContentType() {
+		return contractMetadata.getDefinedOutputTestContentType().contains("/stream") ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE
 	}
 
 	private void appendResponseDelayTime(ResponseDefinitionBuilder builder) {
