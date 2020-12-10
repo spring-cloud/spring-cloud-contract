@@ -23,6 +23,7 @@ import spock.lang.Specification
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 class WireMockResponseStubStrategySpec extends Specification {
 
@@ -246,6 +247,11 @@ class WireMockResponseStubStrategySpec extends Specification {
 				@Override
 				protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
 					return ContentType.JSON
+				}
+
+				@Override
+				Closure parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_CLOSURE
 				}
 			}
 			response.buildClientResponseContent()

@@ -25,6 +25,7 @@ import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
+import groovy.lang.Closure;
 import groovy.lang.GString;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -52,10 +53,13 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private final ContentType contentType;
 
+	private final SingleContractMetadata contractMetadata;
+
 	WireMockResponseStubStrategy(Contract groovyDsl, SingleContractMetadata singleContractMetadata) {
 		super(groovyDsl);
 		this.response = groovyDsl.getResponse();
 		this.contentType = contentType(singleContractMetadata);
+		this.contractMetadata = singleContractMetadata;
 	}
 
 	protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
@@ -96,7 +100,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private void appendBody(ResponseDefinitionBuilder builder) {
 		if (response.getBody() != null) {
-			Object body = MapConverter.getStubSideValues(response.getBody());
+			Object body = MapConverter.getStubSideValues(response.getBody(), parsingClosureForContentType());
 			if (body instanceof byte[]) {
 				builder.withBody((byte[]) body);
 			}
@@ -116,6 +120,10 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 				builder.withBody(parseBody(body, contentType));
 			}
 		}
+	}
+
+	Closure parsingClosureForContentType() {
+		return contractMetadata.getDefinedOutputTestContentType().contains("/stream") ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE;
 	}
 
 	private void appendResponseDelayTime(ResponseDefinitionBuilder builder) {
