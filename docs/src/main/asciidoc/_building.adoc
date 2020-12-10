@@ -5,7 +5,7 @@
 While cloning this project on Windows, some files in the git repository may exceed the Windows maximum file path limit of 255 characters, which may
 result in an incorrectly (probably partially) checked out repository.
 
-* To resolve this issue, you can set the `core.longPaths` attribute to `true` or clone the Spring Cloud Contract repository.
+To resolve this issue, you can set the `core.longPaths` attribute to `true` or clone the Spring Cloud Contract repository.
 
 
 The following example shows how to set the `core.longPaths` attribute to `true`:
