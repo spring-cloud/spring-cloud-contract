@@ -2434,6 +2434,48 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }   | '$'
 	}
 
+	@Issue('#1410')
+	def 'should generate random boolean input in generated test'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+					body([
+						"someBooleanInputParam" : aBoolean()
+					])
+					headers {
+						contentType applicationJson()
+					}
+				}
+				response {
+					status OK()
+					body([
+							"someBooleanOutputParam" : $(aBoolean())
+					])
+					headers {
+						contentType(applicationJson())
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			// The input body string looks like one of the following:
+			// 		.body("{\"someBooleanInputParam\":true|false}");
+			// 		.body('''{"someBooleanInputParam":true|false}''')
+			test.findAll(~'\\.body\\((\'{3}|")\\{("|\\\\")someBooleanInputParam("|\\\\"):(true|false)\\}(\'{3}|")\\)').size().equals(1)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { properties.testFramework = TestFramework.SPOCK }
+			"testng"          | { properties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { properties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { properties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
 	@Issue('#162')
 	def 'should escape regex properly for content type'() {
 		given:
