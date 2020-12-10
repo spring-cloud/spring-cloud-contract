@@ -3177,12 +3177,14 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''httpContractNotInProgress''')
 			test.contains('''messagingContractNotInProgress''')
 		and:
-			!test.contains('''httpContractInProgress''')
-			!test.contains('''messagingContractInProgress''')
+			test.contains('''httpContractInProgress''')
+			test.contains('''messagingContractInProgress''')
+			test.count("@Ignore") == 2 || test.count("@Disabled") == 2 || test.count("@Test(enabled = false)") == 2
 		where:
 			methodBuilderName | methodBuilder
 			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
 			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"junit5"          | { configProperties.testFramework = TestFramework.JUNIT5 }
 			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"jaxrs-spock"     | {
 				configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT

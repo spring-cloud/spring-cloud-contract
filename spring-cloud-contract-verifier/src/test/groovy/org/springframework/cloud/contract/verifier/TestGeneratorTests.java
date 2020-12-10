@@ -101,7 +101,7 @@ public class TestGeneratorTests {
 		// and:
 		TestGenerator testGenerator = new TestGenerator(properties, singleTestGenerator, fileSaver, scanner) {
 			@Override
-			void processAllNotInProgress(MultiValueMap<Path, ContractMetadata> contracts, String basePackageName) {
+			void processAll(MultiValueMap<Path, ContractMetadata> contracts, String basePackageName) {
 			}
 		};
 

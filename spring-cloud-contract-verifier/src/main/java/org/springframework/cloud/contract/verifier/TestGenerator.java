@@ -139,7 +139,7 @@ public class TestGenerator {
 			throw new IllegalStateException("In progress contracts found in paths [" + inProgressContractsPaths
 					+ "] and the switch [failOnInProgress] is set to [true]. Either unmark those contracts as in progress, or set the switch to [false].");
 		}
-		processAllNotInProgress(contracts, basePackageName);
+		processAll(contracts, basePackageName);
 	}
 
 	private Set<Map.Entry<Path, List<ContractMetadata>>> inProgress(MultiValueMap<Path, ContractMetadata> contracts) {
@@ -148,11 +148,9 @@ public class TestGenerator {
 				.collect(Collectors.toSet());
 	}
 
-	void processAllNotInProgress(MultiValueMap<Path, ContractMetadata> contracts, final String basePackageName) {
-		contracts.entrySet().stream()
-				.filter(entry -> entry.getValue().stream().noneMatch(ContractMetadata::anyInProgress))
-				.forEach(entry -> processIncludedDirectory(relativizeContractPath(entry), entry.getValue(),
-						basePackageName));
+	void processAll(MultiValueMap<Path, ContractMetadata> contracts, final String basePackageName) {
+		contracts.entrySet().stream().forEach(
+				entry -> processIncludedDirectory(relativizeContractPath(entry), entry.getValue(), basePackageName));
 	}
 
 	private String relativizeContractPath(Map.Entry<Path, List<ContractMetadata>> entry) {
@@ -166,7 +164,7 @@ public class TestGenerator {
 				includedDirectoryRelativePath);
 		if (!contracts.isEmpty()) {
 			String className = afterLast(includedDirectoryRelativePath, File.separator) + resolveNameSuffix();
-			String convertedClassName = convertIllegalPackageChars(className);
+			String convertedClassName = ensureNameDoesNotStartWithNumber(convertIllegalPackageChars(className));
 			String packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath);
 			Path dir = saver.generateTestBaseDir(basePackageNameForClass,
 					convertIllegalPackageChars(includedDirectoryRelativePath));
@@ -178,6 +176,10 @@ public class TestGenerator {
 			saver.saveClassFile(classPath, classBytes);
 			counter.incrementAndGet();
 		}
+	}
+
+	private String ensureNameDoesNotStartWithNumber(String convertedClassName) {
+		return convertedClassName.matches("[0-9]+.*") ? ("_" + convertedClassName) : convertedClassName;
 	}
 
 	private String resolveNameSuffix() {

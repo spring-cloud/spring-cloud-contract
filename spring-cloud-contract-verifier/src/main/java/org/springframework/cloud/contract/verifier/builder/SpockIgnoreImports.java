@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 import org.springframework.cloud.contract.verifier.config.TestFramework;
-import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
 class SpockIgnoreImports implements Imports {
 
@@ -41,7 +40,7 @@ class SpockIgnoreImports implements Imports {
 		return this.generatedClassMetaData.configProperties.getTestFramework() == TestFramework.SPOCK
 				&& this.generatedClassMetaData.listOfFiles.stream()
 						.anyMatch(metadata -> metadata.isIgnored() || metadata.getConvertedContractWithMetadata()
-								.stream().anyMatch(SingleContractMetadata::isIgnored));
+								.stream().anyMatch(m -> m.isIgnored() || m.isInProgress()));
 	}
 
 }
