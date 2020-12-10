@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 import org.springframework.cloud.contract.verifier.config.TestFramework;
-import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 
 class JUnit5IgnoreImports implements Imports {
 
@@ -42,9 +41,9 @@ class JUnit5IgnoreImports implements Imports {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT5
 				&& this.generatedClassMetaData.listOfFiles.stream()
-						.anyMatch(metadata -> metadata.isIgnored()
-								|| metadata.getConvertedContractWithMetadata().stream()
-										.anyMatch(SingleContractMetadata::isIgnored));
+						.anyMatch(metadata -> metadata.isIgnored() || metadata
+								.getConvertedContractWithMetadata().stream()
+								.anyMatch(m -> m.isIgnored() || m.isInProgress()));
 	}
 
 }

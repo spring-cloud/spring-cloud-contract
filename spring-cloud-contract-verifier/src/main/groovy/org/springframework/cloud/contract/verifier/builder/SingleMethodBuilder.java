@@ -93,7 +93,6 @@ class SingleMethodBuilder {
 	SingleMethodBuilder restAssured() {
 		return given(
 				new JavaRestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
-						.methodPreProcessor(new InProgressContractMethodPreProcessor())
 						.given(new SpockRestAssuredGiven(this.blockBuilder,
 								this.generatedClassMetaData))
 						.when(new JavaRestAssuredWhen(this.blockBuilder,
@@ -109,8 +108,7 @@ class SingleMethodBuilder {
 	}
 
 	SingleMethodBuilder jaxRs() {
-		return methodPreProcessor(new InProgressContractMethodPreProcessor())
-				.given(new JaxRsGiven(this.generatedClassMetaData))
+		return given(new JaxRsGiven(this.generatedClassMetaData))
 				.when(new JavaJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
 				.when(new SpockJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
 				.then(new JavaJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
@@ -121,8 +119,7 @@ class SingleMethodBuilder {
 
 	SingleMethodBuilder messaging() {
 		// @formatter:off
-		return methodPreProcessor(new InProgressContractMethodPreProcessor())
-				.given(new JavaMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
+		return given(new JavaMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
 				.given(new SpockMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
 				.when(new MessagingWhen(this.blockBuilder, this.generatedClassMetaData))
 				.then(new JavaMessagingWithBodyThen(this.blockBuilder,

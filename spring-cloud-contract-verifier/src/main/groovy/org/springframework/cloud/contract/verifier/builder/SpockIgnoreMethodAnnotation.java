@@ -47,7 +47,8 @@ class SpockIgnoreMethodAnnotation implements MethodAnnotations {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.SPOCK
 				&& (singleContractMetadata.getContractMetadata().isIgnored()
-						|| singleContractMetadata.getContract().isIgnored());
+						|| singleContractMetadata.getContract().isIgnored()
+						|| singleContractMetadata.getContract().isInProgress());
 	}
 
 }

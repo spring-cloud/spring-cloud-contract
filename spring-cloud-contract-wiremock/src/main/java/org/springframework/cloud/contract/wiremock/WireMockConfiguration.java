@@ -289,7 +289,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	private int httpsPort() {
 		return this.server.isRunning()
 				&& this.server.getOptions().httpsSettings().enabled()
-				? this.server.httpsPort() : -1;
+						? this.server.httpsPort() : -1;
 	}
 
 	@Override

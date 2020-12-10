@@ -131,7 +131,7 @@ class TestGenerator {
 		if (!inProgress.isEmpty() && configProperties.failOnInProgress) {
 			throw new IllegalStateException("In progress contracts found in paths [" + inProgress.collect { it.key.toString() }.join(",") + "] and the switch [failOnInProgress] is set to [true]. Either unmark those contracts as in progress, or set the switch to [false].")
 		}
-		processAllNotInProgress(contracts,basePackageName)
+		processAll(contracts, basePackageName)
 	}
 
 	@CompileDynamic
@@ -142,9 +142,8 @@ class TestGenerator {
 
 	@PackageScope
 	@CompileDynamic
-	Set<Map.Entry<Path,List<ContractMetadata>>> processAllNotInProgress(MultiValueMap<Path,ContractMetadata> contracts, String basePackageName) {
+	Set<Map.Entry<Path,List<ContractMetadata>>> processAll(MultiValueMap<Path,ContractMetadata> contracts, String basePackageName) {
 		contracts.entrySet()
-		.findAll { Map.Entry<Path, List<ContractMetadata>> entry -> !entry.value.any { it.anyInProgress() }}
 		.each {
 			Map.Entry<Path, List<ContractMetadata>> entry ->
 				processIncludedDirectory(
@@ -170,6 +169,7 @@ class TestGenerator {
 		if (contracts.size()) {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
 			def convertedClassName = convertIllegalPackageChars(className)
+			convertedClassName = ensureNameDoesNotStartWithNumber(convertedClassName)
 			def packageName =
 					buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
 			Path dir = saver.generateTestBaseDir(basePackageNameForClass,
@@ -182,6 +182,10 @@ class TestGenerator {
 			saver.saveClassFile(classPath, classBytes)
 			counter.incrementAndGet()
 		}
+	}
+
+	private String ensureNameDoesNotStartWithNumber(String convertedClassName) {
+		return convertedClassName.matches("[0-9]+.*") ? ("_" + convertedClassName) : convertedClassName
 	}
 
 	private String resolveNameSuffix() {

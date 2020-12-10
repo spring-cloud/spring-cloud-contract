@@ -40,6 +40,7 @@ import org.springframework.util.Assert
  * @since 1.0.0
  */
 @CompileStatic
+@ToString(includes = ["path", "ignored", "order"])
 class ContractMetadata {
 	/**
 	 * Path to the file
@@ -183,7 +184,7 @@ class SingleContractMetadata {
 	}
 
 	boolean isIgnored() {
-		return this.contract.ignored || this.contractMetadata.ignored
+		return this.contract.ignored || this.contract.inProgress || this.contractMetadata.ignored
 	}
 
 	boolean isXml() {

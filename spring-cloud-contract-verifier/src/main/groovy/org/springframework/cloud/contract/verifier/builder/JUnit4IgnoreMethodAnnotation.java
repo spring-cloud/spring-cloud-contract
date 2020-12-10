@@ -47,7 +47,8 @@ class JUnit4IgnoreMethodAnnotation implements MethodAnnotations {
 		return this.generatedClassMetaData.configProperties
 				.getTestFramework() == TestFramework.JUNIT
 				&& (singleContractMetadata.getContractMetadata().isIgnored()
-						|| singleContractMetadata.getContract().isIgnored());
+						|| singleContractMetadata.getContract().isIgnored()
+						|| singleContractMetadata.getContract().isInProgress());
 	}
 
 }
