@@ -101,7 +101,8 @@ abstract class PatternValueDslProperty<T extends DslProperty>
 
 	@Override
 	public T aBoolean() {
-		return createAndValidateProperty(RegexPatterns.TRUE_OR_FALSE);
+		return createAndValidateProperty(RegexPatterns.TRUE_OR_FALSE,
+				this.random.nextBoolean());
 	}
 
 	@Override
