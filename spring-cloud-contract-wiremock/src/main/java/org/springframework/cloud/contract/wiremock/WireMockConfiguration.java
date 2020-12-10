@@ -141,8 +141,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 	}
 
 	private void printRegistrationLog() {
-		log.debug("Registering WireMock [" + this.server + "] at http port [" + httpPort()
-				+ "] and https port [" + httpsPort() + "]");
+		log.debug("Registering WireMock [" + this.server + "] at http port [" + httpPort() + "] and https port ["
+				+ httpsPort() + "]");
 	}
 
 	private void reRegisterServer() {
@@ -159,14 +159,14 @@ public class WireMockConfiguration implements SmartLifecycle {
 		else if (this.server == null) {
 			this.server = new WireMockServer(this.options);
 			if (log.isDebugEnabled()) {
-				log.debug("Created new server [" + this.server + "] at http port ["
-						+ httpPort() + "] and https port [" + httpsPort() + "]");
+				log.debug("Created new server [" + this.server + "] at http port [" + httpPort() + "] and https port ["
+						+ httpsPort() + "]");
 			}
 		}
 		start();
 		if (log.isDebugEnabled()) {
-			log.debug("Started server [" + this.server + "] at http port [" + httpPort()
-					+ "] and https port [" + httpsPort() + "]");
+			log.debug("Started server [" + this.server + "] at http port [" + httpPort() + "] and https port ["
+					+ httpsPort() + "]");
 		}
 		logRegisteredMappings();
 	}
@@ -252,8 +252,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 	public void start() {
 		if (isRunning()) {
 			if (log.isDebugEnabled()) {
-				log.debug("Server [" + this.server + "] is already running at http port ["
-						+ httpPort() + "] / https port [" + httpsPort() + "]");
+				log.debug("Server [" + this.server + "] is already running at http port [" + httpPort()
+						+ "] / https port [" + httpsPort() + "]");
 			}
 			updateCurrentServer();
 			return;
@@ -270,16 +270,14 @@ public class WireMockConfiguration implements SmartLifecycle {
 		WireMock.configureFor(new WireMock(this.server));
 		this.running = true;
 		if (log.isDebugEnabled() && this.server.isRunning()) {
-			log.debug("Server [" + this.server + "] is already running at http port ["
-					+ httpPort() + "] / https port [" + httpsPort() + "]. It has ["
-					+ this.server.getStubMappings().size() + "] mappings registered");
+			log.debug("Server [" + this.server + "] is already running at http port [" + httpPort() + "] / https port ["
+					+ httpsPort() + "]. It has [" + this.server.getStubMappings().size() + "] mappings registered");
 		}
 	}
 
 	private int httpsPort() {
-		return this.server.isRunning()
-				&& this.server.getOptions().httpsSettings().enabled()
-				? this.server.httpsPort() : -1;
+		return this.server.isRunning() && this.server.getOptions().httpsSettings().enabled() ? this.server.httpsPort()
+				: -1;
 	}
 
 	@Override
