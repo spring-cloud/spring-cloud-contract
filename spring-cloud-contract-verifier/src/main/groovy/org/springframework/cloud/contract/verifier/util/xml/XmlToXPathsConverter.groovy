@@ -42,7 +42,7 @@ import org.springframework.cloud.contract.spec.internal.MatchingTypeValue
 import org.springframework.cloud.contract.spec.internal.PathBodyMatcher
 
 import static java.util.stream.Collectors.toList
-import static javax.xml.xpath.XPathConstants.NODE
+import static javax.xml.xpath.XPathConstants.NODESET
 import static org.apache.commons.lang3.StringUtils.isBlank
 import static org.w3c.dom.Node.ATTRIBUTE_NODE
 import static org.w3c.dom.Node.CDATA_SECTION_NODE
@@ -52,7 +52,6 @@ import static org.w3c.dom.Node.DOCUMENT_TYPE_NODE
 import static org.w3c.dom.Node.NOTATION_NODE
 import static org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE
 import static org.w3c.dom.Node.TEXT_NODE
-
 /**
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
@@ -69,8 +68,8 @@ class XmlToXPathsConverter {
 			.parse(new InputSource(new StringReader(body as String)))
 		xPath.setNamespaceContext(new DOMNamespaceContext(parsedXml.documentElement))
 		bodyMatchers?.matchers()?.each({
-			Node node = xPath.evaluate(it.path(), parsedXml.documentElement, NODE) as Node
-			removeNode(node)
+			NodeList nodes = xPath.evaluate(it.path(), parsedXml.documentElement, NODESET) as NodeList
+			nodes.each {removeNode(it)}
 		})
 		parsedXml.normalizeDocument()
 		return xmlToString(parsedXml)

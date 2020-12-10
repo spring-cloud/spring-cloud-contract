@@ -1,11 +1,13 @@
 package org.springframework.cloud.contract.verifier.util.xml
 
-import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import javax.xml.xpath.XPathExpressionException
+
+import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import javax.xml.xpath.XPathExpressionException
+import org.springframework.cloud.contract.spec.internal.BodyMatchers
 
 class XmlToXPathsConverterSpec extends Specification {
 	@Shared
@@ -28,46 +30,65 @@ class XmlToXPathsConverterSpec extends Specification {
 	@Unroll
 	def "should generate [#expectedValue] for xPath [#value]"() {
 		expect:
-		value == expectedValue
+			value == expectedValue
 		where:
-		value                                                                              || expectedValue
-		XmlToXPathsConverter.retrieveValueFromBody("/ns1:customer/email/text()", namedXml) || '''customer@test.com'''
-		XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", namedXml)     || ''''''
-		XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", unnamedXml)   || '''customer@test.com'''
+			value                                                                              || expectedValue
+			XmlToXPathsConverter.retrieveValueFromBody("/ns1:customer/email/text()", namedXml) || '''customer@test.com'''
+			XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", namedXml)     || ''''''
+			XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", unnamedXml)   || '''customer@test.com'''
 	}
 
 	@Unroll
 	def "should throw exception when searching for in existent name space"() {
 		when:
-		XmlToXPathsConverter.retrieveValueFromBody("/ns1:customer/email/text()", unnamedXml)
+			XmlToXPathsConverter.retrieveValueFromBody("/ns1:customer/email/text()", unnamedXml)
 		then:
-		def e = thrown(XPathExpressionException)
-		e.message.contains('Prefix must resolve to a namespace: ns1')
+			def e = thrown(XPathExpressionException)
+			e.message.contains('Prefix must resolve to a namespace: ns1')
 	}
 
 	@Unroll
 	def "should generate matched path [#expectedValue] for xPath [#value]"() {
 		expect:
-		value == expectedValue
+			value == expectedValue
 		where:
-		value || expectedValue
-		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(0).path() || '''/customer/email/text()'''
-		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(1).path() || '''/customer/@first_custom_attribute'''
-		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(2).path() || '''/customer/email/@second_custom_attribute'''
-		XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(3).path() || '''/customer/address/@third_custom_attribute'''
+			value                                                                  || expectedValue
+			XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(0).path() || '''/customer/email/text()'''
+			XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(1).path() || '''/customer/@first_custom_attribute'''
+			XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(2).path() || '''/customer/email/@second_custom_attribute'''
+			XmlToXPathsConverter.mapToMatchers(attributesInChildXml).get(3).path() || '''/customer/address/@third_custom_attribute'''
 	}
 
 	@Unroll
 	def "should remove elements to [#expectedValue] for xPath [#value]"() {
 		given:
-		BodyMatchers m = new BodyMatchers()
-		m.xPath(xpath, m.byEquality());
+			BodyMatchers m = new BodyMatchers()
+			m.xPath(xpath, m.byEquality());
 		expect:
-		result == XmlToXPathsConverter.removeMatchingXPaths(xml, m)
+			result == XmlToXPathsConverter.removeMatchingXPaths(xml, m)
 		where:
-		xpath                        || xml        || result
-		"/ns1:customer/email/text()" || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email/>\n    </ns1:customer>'''
-		"/customer/email/text()"     || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email>customer@test.com</email>\n    </ns1:customer>'''
-		"/customer/email/text()"     || unnamedXml || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><customer>\n      <email/>\n    </customer>'''
+			xpath                        || xml        || result
+			"/ns1:customer/email/text()" || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email/>\n    </ns1:customer>'''
+			"/customer/email/text()"     || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email>customer@test.com</email>\n    </ns1:customer>'''
+			"/customer/email/text()"     || unnamedXml || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><customer>\n      <email/>\n    </customer>'''
+	}
+
+	@Issue("#1546")
+	def "should remove multiple elements when xpath matches them"() {
+		given:
+			String test = '''\
+<root>
+    <childOne>
+        <id>123</id>
+    </childOne>
+    <childTwo>
+        <id>234</id>
+    </childTwo>
+</root>
+'''
+			BodyMatchers m = new BodyMatchers()
+			m.xPath("/root/*/id/text()", m.byEquality());
+		expect:
+			XmlToXPathsConverter.removeMatchingXPaths(test, m) == '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><root>\n    <childOne>\n        <id/>\n    </childOne>\n    <childTwo>\n        <id/>\n    </childTwo>\n</root>'''
 	}
 }
