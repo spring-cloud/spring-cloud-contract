@@ -102,6 +102,10 @@
 				<version>${spring-cloud-functiondonotreplace.version}</version>
 				<exclusions>
 					<exclusion>
+						<groupId>org.springframework.cloud</groupId>
+						<artifactId>spring-cloud-function-core</artifactId>
+					</exclusion>
+					<exclusion>
 						<groupId>org.apache.maven</groupId>
 						<artifactId>*</artifactId>
 					</exclusion>
