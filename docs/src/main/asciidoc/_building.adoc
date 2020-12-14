@@ -7,17 +7,26 @@ result in an incorrectly (probably partially) checked out repository.
 
 To resolve this issue, you can set the `core.longPaths` attribute to `true` or clone the Spring Cloud Contract repository.
 
+To set the `core.longPaths` attribute to `true`, you have three options:
 
-The following example shows how to set the `core.longPaths` attribute to `true`:
-
-```
-git config --system core.longpaths true
-```
-
-The following example shows how to clone Spring Cloud Contract:
+- Change it for all users of the machine (doing so requires administrator privileges):
 
 ```
-git clone -c core.longPaths=true https://github.com/spring-cloud/spring-cloud-contract.git
+git config --system core.longPaths true
+git clone https://github.com/spring-cloud/spring-cloud-contract.git
+```
+
+- Change it for the current user (no administrative privileges required):
+
+```
+git config --global core.longPaths true
+git clone https://github.com/spring-cloud/spring-cloud-contract.git
+```
+
+- Change for just this repository (administrative privileges depend on where the repository is being cloned to):
+
+```
+git clone -c core.longPaths true https://github.com/spring-cloud/spring-cloud-contract.git
 ```
 
 
