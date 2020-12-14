@@ -11,24 +11,27 @@ To set the `core.longPaths` attribute to `true`, you have three options:
 
 - Change it for all users of the machine (doing so requires administrator privileges):
 
-```
+
+[source,bash]
+----
 git config --system core.longPaths true
 git clone https://github.com/spring-cloud/spring-cloud-contract.git
-```
+----
 
 - Change it for the current user (no administrative privileges required):
 
-```
+[source,bash]
+----
 git config --global core.longPaths true
 git clone https://github.com/spring-cloud/spring-cloud-contract.git
-```
+----
 
 - Change for just this repository (administrative privileges depend on where the repository is being cloned to):
 
-```
+[source,bash]
+----
 git clone -c core.longPaths true https://github.com/spring-cloud/spring-cloud-contract.git
-```
-
+----
 
 IMPORTANT: You need to have all the necessary Groovy plugins
 installed for your IDE to properly resolve the sources. For example, in
