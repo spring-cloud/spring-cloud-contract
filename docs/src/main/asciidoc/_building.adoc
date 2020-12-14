@@ -110,7 +110,7 @@ run the following command:
 ./scripts/parallelBuild.sh
 ```
 
-To use eight 8 cores, run thke following command:
+To use eight 8 cores, run the following command:
 
 ```
 CORES=8 ./scripts/parallelBuild.sh
