@@ -548,7 +548,7 @@ For real life examples, see:
 The most important feature of `Stub Runner Spring Cloud` is the fact that it stubs:
 
 - `DiscoveryClient`
-- `Ribbon` `ServerList`
+- `ReactorServiceInstanceLoadBalancer`
 
 That means that, regardless of whether you use Zookeeper, Consul, Eureka, or anything
 else, you do not need that in your tests. We are starting WireMock instances of your
@@ -600,8 +600,6 @@ in a static block such as the following example (for Eureka):
 ==== Additional Configuration
 
 You can match the `artifactId` of the stub with the name of your application by using the `stubrunner.idsToServiceIds:` map.
-You can disable Stub Runner Ribbon support by setting `stubrunner.cloud.ribbon.enabled` to `false`
-You can disable Stub Runner support by setting `stubrunner.cloud.enabled` to `false`
 
 TIP: By default, all service discovery is stubbed. This means that, regardless of whether you have
 an existing `DiscoveryClient`, its results are ignored. However, if you want to reuse it, you can set
