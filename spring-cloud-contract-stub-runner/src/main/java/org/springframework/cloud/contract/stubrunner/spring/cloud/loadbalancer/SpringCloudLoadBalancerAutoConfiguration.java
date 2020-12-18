@@ -211,6 +211,11 @@ class ContractReactorServiceInstanceLoadBalancer implements ReactorServiceInstan
 	}
 
 	@Override
+	public void onStartRequest(Request request, Response lbResponse) {
+
+	}
+
+	@Override
 	public void onComplete(CompletionContext completionContext) {
 
 	}
