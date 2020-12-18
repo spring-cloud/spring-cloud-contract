@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 class Issue178ListenerConfiguration {
 
 	@Bean
