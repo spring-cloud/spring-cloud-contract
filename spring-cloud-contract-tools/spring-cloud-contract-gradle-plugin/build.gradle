@@ -66,12 +66,13 @@ dependencies {
 	// provide version alignment with project
 	implementation(platform("org.springframework.cloud:spring-cloud-contract-tools:${project.version}"))
 
-	implementation "org.apache.maven.resolver:maven-resolver-api"
-	implementation "org.eclipse.jgit:org.eclipse.jgit"
-	implementation "com.jcraft:jsch.agentproxy.jsch"
-	implementation "com.fasterxml.jackson.core:jackson-databind"
+	// Need to set the versions manually cause otherwise Gradle will not publish a proper pom
+	implementation "org.apache.maven.resolver:maven-resolver-api:1.4.1"
+	implementation "org.eclipse.jgit:org.eclipse.jgit:5.5.1.201910021850-r"
+	implementation "com.jcraft:jsch.agentproxy.jsch:0.0.9"
+	implementation "com.fasterxml.jackson.core:jackson-databind:2.11.3"
 
-	implementation "org.springframework:spring-core"
+	implementation "org.springframework:spring-core:5.3.2"
 	implementation("org.springframework.cloud:spring-cloud-contract-shade:${project.version}")
 	api("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: '*')
