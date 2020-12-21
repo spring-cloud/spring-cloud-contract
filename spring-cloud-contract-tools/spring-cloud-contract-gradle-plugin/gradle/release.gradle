@@ -102,7 +102,10 @@ publishing {
 
 if (isReleaseToCentral) {
 	signing {
-		sign publishing.publications.maven
+		publishing.publications.each {
+			sign it
+		}
+		sign configurations.archives
 	}
 
 	apply plugin: 'com.gradle.plugin-publish'
