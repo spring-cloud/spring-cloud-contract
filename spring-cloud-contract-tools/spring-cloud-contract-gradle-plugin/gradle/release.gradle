@@ -1,5 +1,6 @@
 apply plugin: 'maven-publish'
-apply plugin: 'signing'
+// We'll sign with Maven
+//apply plugin: 'signing'
 
 publish.dependsOn(check)
 
@@ -101,12 +102,13 @@ publishing {
 }
 
 if (isReleaseToCentral) {
-	signing {
+	// We'll sign with Maven
+	/*signing {
 		publishing.publications.each {
 			sign it
 		}
 		sign configurations.archives
-	}
+	}*/
 
 	apply plugin: 'com.gradle.plugin-publish'
 
