@@ -1,6 +1,7 @@
 // This setup seems to work. Let's not touch it.
 
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 //apply plugin: 'signing'
 
 uploadArchives.dependsOn { [check] }
