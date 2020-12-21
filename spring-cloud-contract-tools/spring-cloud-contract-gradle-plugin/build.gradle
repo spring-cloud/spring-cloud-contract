@@ -72,11 +72,11 @@ dependencies {
 	implementation "com.fasterxml.jackson.core:jackson-databind"
 
 	implementation "org.springframework:spring-core"
-	implementation("org.springframework.cloud:spring-cloud-contract-shade")
-	api("org.springframework.cloud:spring-cloud-contract-stub-runner") {
+	implementation("org.springframework.cloud:spring-cloud-contract-shade:${project.version}")
+	api("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: '*')
 	}
-	api("org.springframework.cloud:spring-cloud-contract-verifier") {
+	api("org.springframework.cloud:spring-cloud-contract-verifier:${project.version}") {
 		exclude(group: '*')
 	}
 
