@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>wiremock-undertow</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>wiremock-undertow</name>
@@ -21,7 +21,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>3.0.0-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>3.0.0</spring-cloud-contract.version>
 	</properties>
 
 	<dependencies>
