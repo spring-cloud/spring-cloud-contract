@@ -18,6 +18,51 @@
 	<description>Spring Cloud Contract Stub Runner Docker</description>
 
 	<dependencies>
+		<!-- Required, otherwise the docker image generation fails for GA -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-parent</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-commons-dependencies</artifactId>
+			<version>${spring-cloud-commons.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-netflix-dependencies</artifactId>
+			<version>${spring-cloud-netflix.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-zookeeper-dependencies</artifactId>
+			<version>${spring-cloud-zookeeper.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-consul-dependencies</artifactId>
+			<version>${spring-cloud-consul.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-stub-runner-boot</artifactId>
@@ -34,11 +79,30 @@
 					<failIfNoTests>false</failIfNoTests>
 				</configuration>
 			</plugin>
+			<!-- Required, otherwise the docker image generation fails for GA -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>3.1.2</version>
 				<executions>
+					<execution>
+						<id>copy-all-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/maven_dependencies
+							</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<useRepositoryLayout>true</useRepositoryLayout>
+							<copyPom>true</copyPom>
+							<excludeTransitive>false</excludeTransitive>
+						</configuration>
+					</execution>
 					<execution>
 						<id>copy-dependencies</id>
 						<phase>package</phase>

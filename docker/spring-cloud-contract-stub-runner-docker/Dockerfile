@@ -22,6 +22,7 @@ ENV PATH "${PATH}:${JAVA_HOME}/bin"
 # Spring Cloud Contract
 ENV SERVER_PORT 8750
 VOLUME /tmp
+COPY target/maven_dependencies /root/.m2/repository/
 ADD target/libs/stub-runner-boot.jar stub-runner-boot.jar
 RUN echo "Fetching dependencies, please wait..."
 RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar
