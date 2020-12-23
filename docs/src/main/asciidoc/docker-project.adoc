@@ -307,7 +307,7 @@ set -x
 
 CURRENT_DIR="$( pwd )"
 
-export SC_CONTRACT_DOCKER_VERSION="${SC_CONTRACT_DOCKER_VERSION:-3.0.0-SNAPSHOT}"
+export SC_CONTRACT_DOCKER_VERSION="${SC_CONTRACT_DOCKER_VERSION:-3.0.1-SNAPSHOT}"
 export APP_IP="$( ./whats_my_ip.sh )"
 export APP_PORT="${APP_PORT:-8000}"
 export APPLICATION_BASE_URL="http://${APP_IP}:${APP_PORT}"
@@ -578,7 +578,7 @@ $ docker run \
     -e "STUBRUNNER_STUBS_MODE=REMOTE" \ <5>
     -v "${HOME}/.m2/:/root/.m2:ro" \ <6>
     -p 8750:8750 \ <7>
-    springcloud/spring-cloud-contract-stub-runner:3.0.0-SNAPSHOT <8>
+    springcloud/spring-cloud-contract-stub-runner:3.0.1-SNAPSHOT <8>
 ```
 <1> We're injecting the address of RabbitMQ via https://camel.apache.org/components/latest/rabbitmq-component.html#_spring_boot_auto_configuration[Apache Camel's Spring Boot Auto-Configuration]
 <2> We're telling Stub Runner which stubs to download
