@@ -54,7 +54,7 @@ import org.springframework.test.context.ContextConfiguration
 @SpringBootTest(properties = ["debug=true"])
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
-@EmbeddedKafka(topics = ["input", "output", "delete"])
+@EmbeddedKafka(topics = ["input", "input2", "output", "delete"])
 @Commons
 class KafkaStubRunnerSpec extends Specification {
 
@@ -100,6 +100,30 @@ class KafkaStubRunnerSpec extends Specification {
 				assert receivedMessage != null
 				assert assertThatBodyContainsBookNameFoo(receivedMessage.getPayload())
 				assert receivedMessage.getHeaders().get('BOOK-NAME') == 'foo'
+				// end::client_receive_message[]
+			}
+	}
+
+	def 'should propagate the Kafka record key via message headers'() {
+		expect:
+			await.eventually {
+				log.info("Sending the message")
+				// tag::client_send[]
+				Message message = MessageBuilder.createMessage(new BookReturned('bar'), new MessageHeaders([kafka_messageKey: "bar5150",]))
+				kafkaTemplate.setDefaultTopic('input2')
+				kafkaTemplate.send(message)
+				// end::client_send[]
+				log.info("Message sent")
+				log.info("Receiving the message")
+				// tag::client_receive[]
+				Message receivedMessage = receiveFromOutput()
+				// end::client_receive[]
+				log.info("Message received [" + receivedMessage + "]")
+				// tag::client_receive_message[]
+				assert receivedMessage != null
+				assert assertThatBodyContainsBookName(receivedMessage.getPayload(), 'bar')
+				assert receivedMessage.getHeaders().get('BOOK-NAME') == 'bar'
+				assert receivedMessage.getHeaders().get("kafka_receivedMessageKey") == 'bar5150'
 				// end::client_receive_message[]
 			}
 	}
@@ -198,11 +222,15 @@ class KafkaStubRunnerSpec extends Specification {
 	}
 
 	private boolean assertThatBodyContainsBookNameFoo(Object payload) {
+		return assertThatBodyContainsBookName(payload, 'foo')
+	}
+
+	private boolean assertThatBodyContainsBookName(Object payload, String expectedValue) {
 		log.info("Got payload [" + payload + "]")
 		String objectAsString = payload instanceof String ? payload :
 				JsonOutput.toJson(payload)
 		def json = new JsonSlurper().parseText(objectAsString)
-		return json.bookName == 'foo'
+		return json.bookName == expectedValue
 	}
 
 	@Configuration
@@ -243,63 +271,4 @@ class KafkaStubRunnerSpec extends Specification {
 			return this.output
 		}
 	}
-
-	Contract dsl =
-			// tag::sample_dsl[]
-			Contract.make {
-				label 'return_book_1'
-				input {
-					triggeredBy('bookReturnedTriggered()')
-				}
-				outputMessage {
-					sentTo('output')
-					body('''{ "bookName" : "foo" }''')
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-	// end::sample_dsl[]
-
-	Contract dsl2 =
-			// tag::sample_dsl_2[]
-			Contract.make {
-				label 'return_book_2'
-				input {
-					messageFrom('input')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-	// end::sample_dsl_2[]
-
-	Contract dsl3 =
-			// tag::sample_dsl_3[]
-			Contract.make {
-				label 'delete_book'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-	// end::sample_dsl_3[]
 }
