@@ -54,6 +54,7 @@ import static org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE
 import static org.w3c.dom.Node.TEXT_NODE
 /**
  * @author Olga Maciaszek-Sharma
+ * @author Chris Bono
  * @since 2.1.0
  */
 class XmlToXPathsConverter {
@@ -131,21 +132,24 @@ class XmlToXPathsConverter {
 	}
 
 	static List<BodyMatcher> mapToMatchers(Object xml) {
-		DocumentBuilder documentBuilder = DocumentBuilderFactory
-			.newInstance()
-			.newDocumentBuilder()
-		Document parsedXml = documentBuilder
-			.parse(new InputSource(new StringReader(xml as String)))
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance()
+		builderFactory.setNamespaceAware(true)
+		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder()
+		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(xml as String)))
 		List<List<Node>> valueNodes = getValueNodesWithParents(parsedXml)
 		List<BodyMatcher> matchers = []
 		List<NodePath> valueNodePaths = transformListEntries(valueNodes)
-		valueNodePaths.each {
+		valueNodePaths.findAll{ !isPathToDefaultXmlnsAttributeNode(it) }.each {
 			matchers << new PathBodyMatcher(
 					buildXPath(it.fromChildToParents(), it.index),
-					new MatchingTypeValue(MatchingType.EQUALITY,
-							it.path.get(0).nodeValue))
+					new MatchingTypeValue(MatchingType.EQUALITY, it.path.get(0).nodeValue))
 		}
 		return matchers
+	}
+
+	static boolean isPathToDefaultXmlnsAttributeNode(NodePath nodePath) {
+		Node node = nodePath?.path?.first()
+		return node && isAttributeNode(node) && node.getNodeName() == 'xmlns'
 	}
 
 	static List<NodePath> transformListEntries(List<List<Node>> nodeLists) {
@@ -189,7 +193,38 @@ class XmlToXPathsConverter {
 	}
 
 	private static XmlVerifiable processNode(XmlVerifiable xmlVerifiable, Node node) {
+		// If node has explicit namespace (eg '<prefix:name>') no special processing needed
+		if (nodeUsesExplicitNamespace(node)) {
+			return xmlVerifiable.node(node.nodeName)
+		}
+		// If node directly declares default ns (eg. 'xmlns=<namespace_uri>') then use local name and namespace uri syntax
+		String defaultXmlns = getDefaultXmlnsDeclarationOnNodeIfExists(node)
+		if (defaultXmlns != null) {
+			return xmlVerifiable.nodeWithDefaultNamespace(node.nodeName, defaultXmlns)
+		}
+		// If node indirectly declares (via ancestor) default ns then use local name syntax
+		if (getDefaultXmlnsDeclarationOnAncestorsIfExists(node) != null) {
+			return xmlVerifiable.nodeWithDefaultNamespace(node.nodeName, null)
+		}
 		return xmlVerifiable.node(node.nodeName)
+	}
+
+	private static boolean nodeUsesExplicitNamespace(Node node) {
+		return node?.getNodeName()?.contains(":")
+	}
+
+	private static String getDefaultXmlnsDeclarationOnNodeIfExists(Node node) {
+		return node?.getAttributes()?.getNamedItem("xmlns")?.getTextContent()
+	}
+
+	private static String getDefaultXmlnsDeclarationOnAncestorsIfExists(Node node) {
+		while ((node = node?.getParentNode()) != null) {
+			String defaultXmlns = getDefaultXmlnsDeclarationOnNodeIfExists(node)
+			if (defaultXmlns != null) {
+				return defaultXmlns
+			}
+		}
+		return null
 	}
 
 	private static XmlVerifiable processNode(XmlVerifiable xmlVerifiable, Attr attribute) {

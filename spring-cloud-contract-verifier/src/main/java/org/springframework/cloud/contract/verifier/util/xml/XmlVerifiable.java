@@ -21,6 +21,7 @@ package org.springframework.cloud.contract.verifier.util.xml;
  *
  * @author Marcin Grzejszczak
  * @author Olga Maciaszek-Sharma
+ * @author Chris Bono
  * @since 2.1.0
  */
 public interface XmlVerifiable extends IteratingOverArray, XmlReader {
@@ -31,6 +32,16 @@ public interface XmlVerifiable extends IteratingOverArray, XmlReader {
 	 * @return new {@code XmlVerifiable}
 	 */
 	XmlVerifiable node(String nodeName);
+
+	/**
+	 * Field assertion. Adds a XPath entry for a single node that uses a default
+	 * namespace.
+	 * @param nodeName local name of the node
+	 * @param namespace the default namespace uri or null if one of the node ancestor
+	 * declares the namespace
+	 * @return new {@code XmlVerifiable}
+	 */
+	XmlVerifiable nodeWithDefaultNamespace(String nodeName, String namespace);
 
 	/**
 	 * Field assertion. Adds a attribute to the currently checked node. NOTE: If you want

@@ -31,21 +31,23 @@ import org.xml.sax.SAXException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @author Chris Bono
+ * @since 2.1.0
+ */
 public class ContractVerifierUtilTest {
 
-	private final String unnamedXml = "<customer>\r\n" + "      <email>customer@test.com</email>\r\n"
-			+ "    </customer>";
+	private final String unnamedXml = "<customer>\n" + "<email>customer@test.com</email>\n" + "</customer>";
 
-	private final String namedXml = "<ns1:customer xmlns:ns1=\"http://demo.com/testns\">\r\n"
-			+ "      <email>customer@test.com</email>\r\n" + "    </ns1:customer>";
+	private final String namedComplexXml = "<ns1:customer xmlns:ns1=\"http://demo.com/customer\" xmlns:addr=\"http://demo.com/address\">\n"
+			+ "<email>customer@test.com</email>\n" + "<contact-info xmlns=\"http://demo.com/contact-info\">\n"
+			+ "<name>Krombopulous</name>" + "<address>" + "<addr:gps>" + "<lat>51</lat>" + "<addr:lon>50</addr:lon>"
+			+ "</addr:gps>" + "</address>" + "</contact-info>\n" + "</ns1:customer>";
 
 	@Test
-	public void shouldGetValueFromXPath() throws ParserConfigurationException, IOException, SAXException {
+	public void shouldGetValueFromXPath() {
 		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(unnamedXml)));
+		Document parsedXml = parsedXml(unnamedXml);
 		// When
 		String value = ContractVerifierUtil.valueFromXPath(parsedXml, "/customer/email/text()");
 		// Then
@@ -53,38 +55,17 @@ public class ContractVerifierUtilTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void shouldThrowExceptionOnIllegalValueFromXPath()
-			throws ParserConfigurationException, IOException, SAXException {
+	public void shouldThrowExceptionOnIllegalValueFromXPath() {
 		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(unnamedXml)));
+		Document parsedXml = parsedXml(unnamedXml);
 		// When
 		ContractVerifierUtil.valueFromXPath(parsedXml, "/ns1:customer/email/text()");
 	}
 
 	@Test
-	public void shouldGetValueFromXPathWithNamespace() throws ParserConfigurationException, IOException, SAXException {
+	public void shouldGetEmptyValueFromXPathWithNamespace() {
 		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(namedXml)));
-		// When
-		String value = ContractVerifierUtil.valueFromXPath(parsedXml, "/ns1:customer/email/text()");
-		// Then
-		assertThat(value).isEqualTo("customer@test.com");
-	}
-
-	@Test
-	public void shouldGetEmptyValueFromXPathWithNamespace()
-			throws ParserConfigurationException, IOException, SAXException {
-		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(namedXml)));
+		Document parsedXml = parsedXml(namedComplexXml);
 		// When
 		String value = ContractVerifierUtil.valueFromXPath(parsedXml, "/customer/email/text()");
 		// Then
@@ -92,12 +73,83 @@ public class ContractVerifierUtilTest {
 	}
 
 	@Test
-	public void shouldGetNodeFromXPath() throws ParserConfigurationException, IOException, SAXException {
+	public void shouldGetValueFromXPathWithNamespace() {
 		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(unnamedXml)));
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		String value = ContractVerifierUtil.valueFromXPath(parsedXml, "/ns1:customer/email/text()");
+		// Then
+		assertThat(value).isEqualTo("customer@test.com");
+	}
+
+	@Test
+	public void shouldGetNamespaceValueFromXPathWithNamespace() {
+		// Given
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		String value = ContractVerifierUtil.valueFromXPath(parsedXml, "/ns1:customer/namespace::ns1");
+		// Then
+		assertThat(value).isEqualTo("http://demo.com/customer");
+	}
+
+	@Test
+	public void shouldGetValueFromXPathWithDefaultNamespace() {
+		// Given
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		String value = ContractVerifierUtil.valueFromXPath(parsedXml,
+				"/ns1:customer/*[local-name()='contact-info' and namespace-uri()='http://demo.com/contact-info']/*[local-name()='name']/text()");
+		// Then
+		assertThat(value).isEqualTo("Krombopulous");
+	}
+
+	@Test
+	public void shouldGetValueFromXPathWithNestedNamespaces1() {
+		// Given
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		String value = ContractVerifierUtil.valueFromXPath(parsedXml,
+				"/ns1:customer/*[local-name()='contact-info' and namespace-uri()='http://demo.com/contact-info']/*[local-name()='address']/addr:gps/*[local-name()='lat']/text()");
+		// Then
+		assertThat(value).isEqualTo("51");
+	}
+
+	@Test
+	public void shouldGetValueFromXPathWithNestedNamespaces2() {
+		// Given
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		String value = ContractVerifierUtil.valueFromXPath(parsedXml,
+				"/ns1:customer/*[local-name()='contact-info' and namespace-uri()='http://demo.com/contact-info']/*[local-name()='address']/addr:gps/addr:lon/text()");
+		// Then
+		assertThat(value).isEqualTo("50");
+	}
+
+	@Test
+	public void shouldGetEmptyValueFromXPathWithDefaultNamespace() {
+		// Given
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		String value = ContractVerifierUtil.valueFromXPath(parsedXml, "/ns1:customer/contact-info/name/text()");
+		// Then
+		assertThat(value).isEqualTo("");
+	}
+
+	@Test
+	public void shouldGetEmptyValueFromXPathWithNestedDefaultNamespace() {
+		// Given
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		String value = ContractVerifierUtil.valueFromXPath(parsedXml,
+				"/ns1:customer/*[local-name()='contact-info' and namespace-uri()='http://demo.com/contact-info']/name/text()");
+		// Then
+		assertThat(value).isEqualTo("");
+	}
+
+	@Test
+	public void shouldGetNodeFromXPath() {
+		// Given
+		Document parsedXml = parsedXml(unnamedXml);
 		// When
 		Node node = ContractVerifierUtil.nodeFromXPath(parsedXml, "/customer/email/text()");
 		// Then
@@ -105,24 +157,17 @@ public class ContractVerifierUtilTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void shouldThrowExceptionOnIllegalNodeFromXPath()
-			throws ParserConfigurationException, IOException, SAXException {
+	public void shouldThrowExceptionOnIllegalNodeFromXPath() {
 		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(unnamedXml)));
+		Document parsedXml = parsedXml(unnamedXml);
 		// When
 		ContractVerifierUtil.nodeFromXPath(parsedXml, "/ns1:customer/email/text()");
 	}
 
 	@Test
-	public void shouldGetNodeFromXPathWithNamespace() throws ParserConfigurationException, IOException, SAXException {
+	public void shouldGetNodeFromXPathWithNamespace() {
 		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(namedXml)));
+		Document parsedXml = parsedXml(namedComplexXml);
 		// When
 		Node node = ContractVerifierUtil.nodeFromXPath(parsedXml, "/ns1:customer/email/text()");
 		// Then
@@ -130,13 +175,19 @@ public class ContractVerifierUtilTest {
 	}
 
 	@Test
-	public void shouldGetEmptyNodeFromXPathWithNamespace()
-			throws ParserConfigurationException, IOException, SAXException {
+	public void shouldGetNamespaceNodeFromXPathWithNamespace() {
 		// Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builderFactory.setNamespaceAware(true);
-		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(namedXml)));
+		Document parsedXml = parsedXml(namedComplexXml);
+		// When
+		Node node = ContractVerifierUtil.nodeFromXPath(parsedXml, "/ns1:customer/namespace::ns1");
+		// Then
+		assertThat(node.getTextContent()).isEqualTo("http://demo.com/customer");
+	}
+
+	@Test
+	public void shouldGetEmptyNodeFromXPathWithNamespace() {
+		// Given
+		Document parsedXml = parsedXml(namedComplexXml);
 		// When
 		Node node = ContractVerifierUtil.nodeFromXPath(parsedXml, "/customer/email/text()");
 		// Then
@@ -144,11 +195,23 @@ public class ContractVerifierUtilTest {
 	}
 
 	@Test
-	public void should_set_path_without_prefix_and_with_suffix() {
+	public void shouldSetPathWithoutPrefixAndWithSuffix() {
 		assertThat(ContractVerifierUtil.fromRelativePath("validate_foo()")).isEqualTo("foo.yml");
 		assertThat(ContractVerifierUtil.fromRelativePath("validate_foo")).isEqualTo("foo.yml");
 		assertThat(ContractVerifierUtil.fromRelativePath("foo")).isEqualTo("foo.yml");
 		assertThat(ContractVerifierUtil.fromRelativePath("foo.yml")).isEqualTo("foo.yml");
+	}
+
+	private Document parsedXml(String inputXml) {
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		builderFactory.setNamespaceAware(true);
+		try {
+			DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
+			return documentBuilder.parse(new InputSource(new StringReader(inputXml)));
+		}
+		catch (ParserConfigurationException | IOException | SAXException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

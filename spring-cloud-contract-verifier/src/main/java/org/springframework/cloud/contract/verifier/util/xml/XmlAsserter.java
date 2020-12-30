@@ -28,6 +28,8 @@ import org.eclipse.wst.xml.xpath2.processor.Engine;
 import org.eclipse.wst.xml.xpath2.processor.internal.types.ElementType;
 import org.eclipse.wst.xml.xpath2.processor.util.DynamicContextBuilder;
 
+import org.springframework.util.StringUtils;
+
 class XmlAsserter implements XmlVerifiable {
 
 	private static final Log log = LogFactory.getLog(XmlAsserter.class);
@@ -118,6 +120,20 @@ class XmlAsserter implements XmlVerifiable {
 	}
 
 	@Override
+	public FieldAssertion nodeWithDefaultNamespace(final String value, String defaultNamespace) {
+		FieldAssertion asserter = new FieldAssertion(this.cachedObjects, this.xPathBuffer, this.specialCaseXPathBuffer,
+				value, this.xmlAsserterConfiguration);
+		String path = String.format("*[local-name()='%s'", value);
+		if (StringUtils.hasText(defaultNamespace)) {
+			path += String.format(" and namespace-uri()='%s'", defaultNamespace);
+		}
+		path += "]";
+		asserter.xPathBuffer.offer(path);
+		asserter.xPathBuffer.offer("/");
+		return asserter;
+	}
+
+	@Override
 	public XmlVerifiable withAttribute(String attribute, String attributeValue) {
 		FieldAssertion asserter = new FieldAssertion(this.cachedObjects, this.xPathBuffer, this.specialCaseXPathBuffer,
 				this.fieldName, this.xmlAsserterConfiguration);
@@ -137,7 +153,11 @@ class XmlAsserter implements XmlVerifiable {
 	public XmlVerifiable withAttribute(String attribute) {
 		FieldAssertion asserter = new FieldAssertion(this.cachedObjects, this.xPathBuffer, this.specialCaseXPathBuffer,
 				this.fieldName, this.xmlAsserterConfiguration);
-		asserter.xPathBuffer.offer("@" + String.valueOf(attribute));
+		String path = "@" + attribute;
+		if (attribute.startsWith("xmlns:")) {
+			path = "namespace::" + attribute.substring("xmlns:".length());
+		}
+		asserter.xPathBuffer.offer(path);
 		updateCurrentBuffer(asserter);
 		asserter.checkBufferedXPathString();
 		return asserter;

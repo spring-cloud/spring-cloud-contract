@@ -79,6 +79,12 @@ class ArrayValueAssertion extends FieldAssertion implements XmlArrayVerifiable {
 	}
 
 	@Override
+	public FieldAssertion nodeWithDefaultNamespace(String value, String defaultNamespace) {
+		FieldAssertion assertion = super.nodeWithDefaultNamespace(value, defaultNamespace);
+		return new ArrayValueAssertion(assertion, false);
+	}
+
+	@Override
 	public FieldAssertion node(String... nodeNames) {
 		FieldAssertion assertion = super.node(nodeNames);
 		return new ArrayValueAssertion(assertion, false);

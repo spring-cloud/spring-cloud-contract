@@ -9,11 +9,20 @@ import spock.lang.Unroll
 
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 
+/**
+ * @author Chris Bono
+ * @since 2.1.0
+ */
 class XmlToXPathsConverterSpec extends Specification {
 	@Shared
 	String namedXml = '''<ns1:customer xmlns:ns1="http://demo.com/testns">
       <email>customer@test.com</email>
     </ns1:customer>
+    '''
+	@Shared
+	String namedDefaultNamespaceXml = '''<customer xmlns="http://demo.com/testns">
+      <email>customer@test.com</email>
+    </customer>
     '''
 	@Shared
 	String unnamedXml = '''<customer>
@@ -32,10 +41,16 @@ class XmlToXPathsConverterSpec extends Specification {
 		expect:
 			value == expectedValue
 		where:
-			value                                                                              || expectedValue
-			XmlToXPathsConverter.retrieveValueFromBody("/ns1:customer/email/text()", namedXml) || '''customer@test.com'''
-			XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", namedXml)     || ''''''
-			XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", unnamedXml)   || '''customer@test.com'''
+			value                                                                                                                                                                           || expectedValue
+			XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", unnamedXml)                                                                                                || '''customer@test.com'''
+			XmlToXPathsConverter.retrieveValueFromBody("/ns1:customer/email/text()", namedXml)                                                                                              || '''customer@test.com'''
+			XmlToXPathsConverter.retrieveValueFromBody("//email/text()", namedXml)                                                                                                          || '''customer@test.com'''
+			XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", namedXml)                                                                                                  || ''''''
+			XmlToXPathsConverter.retrieveValueFromBody("/*[local-name()='customer' and namespace-uri()='http://demo.com/testns']/*[local-name()='email']/text()", namedDefaultNamespaceXml) || '''customer@test.com'''
+			XmlToXPathsConverter.retrieveValueFromBody("//*[local-name()='email']/text()", namedDefaultNamespaceXml)                                                                        || '''customer@test.com'''
+			XmlToXPathsConverter.retrieveValueFromBody("/*[local-name()='customer']/*[local-name()='email']/text()", namedDefaultNamespaceXml)                                              || '''customer@test.com'''
+			XmlToXPathsConverter.retrieveValueFromBody("/*[local-name()='customer' and namespace-uri()='http://demo.com/testns']/email/text()", namedDefaultNamespaceXml)                   || ''''''
+			XmlToXPathsConverter.retrieveValueFromBody("/customer/email/text()", namedDefaultNamespaceXml)                                                                                  || ''''''
 	}
 
 	@Unroll
@@ -63,14 +78,15 @@ class XmlToXPathsConverterSpec extends Specification {
 	def "should remove elements to [#expectedValue] for xPath [#value]"() {
 		given:
 			BodyMatchers m = new BodyMatchers()
-			m.xPath(xpath, m.byEquality());
+			m.xPath(xpath, m.byEquality())
 		expect:
 			result == XmlToXPathsConverter.removeMatchingXPaths(xml, m)
 		where:
 			xpath                        || xml        || result
-			"/ns1:customer/email/text()" || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email/>\n    </ns1:customer>'''
-			"/customer/email/text()"     || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email>customer@test.com</email>\n    </ns1:customer>'''
 			"/customer/email/text()"     || unnamedXml || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><customer>\n      <email/>\n    </customer>'''
+			"/customer/email/text()"     || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email>customer@test.com</email>\n    </ns1:customer>'''
+			"/ns1:customer/email/text()" || namedXml   || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns1:customer xmlns:ns1="http://demo.com/testns">\n      <email/>\n    </ns1:customer>'''
+			"/*[local-name()='customer' and namespace-uri()='http://demo.com/testns']/*[local-name()='email']/text()" || namedDefaultNamespaceXml  || '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><customer xmlns="http://demo.com/testns">\n      <email/>\n    </customer>'''
 	}
 
 	@Issue("#1546")
@@ -87,7 +103,7 @@ class XmlToXPathsConverterSpec extends Specification {
 </root>
 '''
 			BodyMatchers m = new BodyMatchers()
-			m.xPath("/root/*/id/text()", m.byEquality());
+			m.xPath("/root/*/id/text()", m.byEquality())
 		expect:
 			XmlToXPathsConverter.removeMatchingXPaths(test, m) == '''<?xml version="1.0" encoding="UTF-8" standalone="no"?><root>\n    <childOne>\n        <id/>\n    </childOne>\n    <childTwo>\n        <id/>\n    </childTwo>\n</root>'''
 	}
