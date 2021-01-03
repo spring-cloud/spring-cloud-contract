@@ -65,6 +65,10 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		return this;
 	}
 
+	private void someFakeMethodAddedToCauseAChange() {
+		System.out.println("***** here");
+	}
+
 	private void failWithMessageRelatedToRegex(String regex, Object value) {
 		failWithMessage("The value <%s> doesn't match the regex <%s>", value, regex);
 	}
