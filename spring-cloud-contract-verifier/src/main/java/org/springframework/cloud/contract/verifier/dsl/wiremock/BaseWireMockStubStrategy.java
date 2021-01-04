@@ -43,7 +43,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getC
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues;
 
 /**
- * Common abstraction over WireMock Request / Response conversion implementations
+ * Common abstraction over WireMock Request / Response conversion implementations.
  *
  * @since 1.0.0
  */

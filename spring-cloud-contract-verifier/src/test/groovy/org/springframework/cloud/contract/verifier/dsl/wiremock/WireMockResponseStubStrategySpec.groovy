@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
+import java.util.function.Function
+
 import groovy.json.JsonSlurper
 import spock.lang.Issue
 import spock.lang.Specification
@@ -47,8 +49,8 @@ class WireMockResponseStubStrategySpec extends Specification {
 			metadata.evaluatedOutputStubContentType >> ContentType.JSON
 			def subject = new WireMockResponseStubStrategy(contract, metadata) {
 				@Override
-				protected Closure parsingClosureForContentType() {
-					return MapConverter.JSON_PARSING_CLOSURE
+				Function parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_FUNCTION
 				}
 			}
 			def content = subject.buildClientResponseContent()
@@ -80,8 +82,8 @@ class WireMockResponseStubStrategySpec extends Specification {
 			metadata.evaluatedOutputStubContentType >> ContentType.JSON
 			def subject = new WireMockResponseStubStrategy(contract, metadata) {
 				@Override
-				protected Closure parsingClosureForContentType() {
-					return MapConverter.JSON_PARSING_CLOSURE
+				Function parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_FUNCTION
 				}
 			}
 			def content = subject.buildClientResponseContent()
@@ -260,8 +262,8 @@ class WireMockResponseStubStrategySpec extends Specification {
 				}
 
 				@Override
-				Closure parsingClosureForContentType() {
-					return MapConverter.JSON_PARSING_CLOSURE
+				Function parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_FUNCTION
 				}
 			}
 			response.buildClientResponseContent()

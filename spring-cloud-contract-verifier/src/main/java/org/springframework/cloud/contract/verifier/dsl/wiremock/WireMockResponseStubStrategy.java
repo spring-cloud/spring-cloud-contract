@@ -19,13 +19,13 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
-import groovy.lang.Closure;
 import groovy.lang.GString;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -122,9 +122,9 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	Closure parsingClosureForContentType() {
-		return contractMetadata.getDefinedOutputStubContentType().contains("/stream") ? Closure.IDENTITY
-				: MapConverter.JSON_PARSING_CLOSURE;
+	Function<String, Object> parsingClosureForContentType() {
+		return contractMetadata.getDefinedOutputStubContentType().contains("/stream") ? MapConverter.IDENTITY
+				: MapConverter.JSON_PARSING_FUNCTION;
 	}
 
 	private void appendResponseDelayTime(ResponseDefinitionBuilder builder) {

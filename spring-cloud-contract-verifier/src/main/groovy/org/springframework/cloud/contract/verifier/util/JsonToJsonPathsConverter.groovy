@@ -197,7 +197,9 @@ class JsonToJsonPathsConverter {
 		while ({
 			matches << matcher.group()
 			matcher.find()
-		}()) continue
+		}()) {
+			continue
+		}
 		return matches[matches.size() - 1]
 	}
 
@@ -320,8 +322,8 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
-	JsonPaths transformToJsonPathWithTestsSideValues(def json, Function parsingClosure) {
-		return transformToJsonPathWithValues(json, SERVER_SIDE, { parsingClosure.apply(it) })
+	JsonPaths transformToJsonPathWithTestsSideValues(def json, Function parsingClosure, boolean includeEmptyCheck) {
+		return transformToJsonPathWithValues(json, SERVER_SIDE, { parsingClosure.apply(it) }, includeEmptyCheck)
 	}
 
 	JsonPaths transformToJsonPathWithTestsSideValues(def json,
