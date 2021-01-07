@@ -37,4 +37,4 @@ If you want to learn more about any of the classes discussed in this section, yo
 
 If you are comfortable with {project-full-name}'s core features, you can continue on and read
 about
-<<documentation-overview.adoc#advanced-topics, {project-full-name}'s advanced features>>.
+<<advanced.adoc, {project-full-name}'s advanced features>>.
