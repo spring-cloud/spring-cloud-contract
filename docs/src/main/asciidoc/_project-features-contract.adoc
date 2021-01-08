@@ -1854,8 +1854,9 @@ Consider the following explicitly namespaced XML document:
     <email>customer@test.com</email>
 </ns1:customer>
 ----
-The XPath expression to select the email address is: `/ns1:customer/email/text()`. Beware as the unqualified expression
-(`/customer/email/text()`) results in `""`.
+The XPath expression to select the email address is: `/ns1:customer/email/text()`.
+
+WARNING: Beware as the unqualified expression (`/customer/email/text()`) results in `""`.
 
 For content that uses an unqualified namespace, the expression is more verbose. Consider the following XML document that
 uses an unqualified namespace:
@@ -1870,7 +1871,7 @@ The XPath expression to select the email address is
 ```
 */[local-name()='customer' and namespace-uri()='http://demo.com/customer']/*[local-name()='email']/text()
 ```
-Beware, as the unqualified expressions (`/customer/email/text()` or `*/[local-name()='customer' and namespace-uri()='http://demo.com/customer']/email/text()`)
+WARNING: Beware, as the unqualified expressions (`/customer/email/text()` or `*/[local-name()='customer' and namespace-uri()='http://demo.com/customer']/email/text()`)
 result in `""`. Even the child elements have to be referenced with the `local-name` syntax.
 
 ====== General Namespaced Node Expression Syntax
