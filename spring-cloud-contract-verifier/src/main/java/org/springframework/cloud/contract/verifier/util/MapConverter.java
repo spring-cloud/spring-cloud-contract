@@ -122,7 +122,7 @@ public class MapConverter {
 	}
 
 	/**
-	 * Transforms a value with the given closure. Needs to be protected, otherwise method
+	 * Transforms a value with the given function. Needs to be protected, otherwise method
 	 * access exception will occur at runtime.
 	 */
 	protected static Object transformValue(Function<Object, ?> function, Object value,
