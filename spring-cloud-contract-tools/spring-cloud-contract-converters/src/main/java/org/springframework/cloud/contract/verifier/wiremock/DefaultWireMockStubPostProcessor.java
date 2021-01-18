@@ -60,7 +60,7 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 	public void setMetadata(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		Metadata metadata = stubMapping.getMetadata();
 		metadata = metadata != null ? metadata : new Metadata();
-		metadata.putAll(stubMappingFromMetadata.getPostServeActions());
+		metadata.putAll(stubMappingFromMetadata.getMetadata());
 		stubMapping.setMetadata(metadata);
 	}
 
