@@ -207,6 +207,39 @@ IMPORTANT: Remember to set the `Scan Scope` to `All sources` since we apply chec
 
 == How to Build Spring Cloud Contract
 
+=== Cloning the repository on Windows
+
+While cloning this project on Windows, some files in the git repository may exceed the Windows maximum file path limit of 255 characters, which may
+result in an incorrectly (probably partially) checked out repository.
+
+To resolve this issue, you can set the `core.longPaths` attribute to `true` or clone the Spring Cloud Contract repository.
+
+To set the `core.longPaths` attribute to `true`, you have three options:
+
+- Change it for all users of the machine (doing so requires administrator privileges):
+
+
+[source,bash]
+----
+git config --system core.longPaths true
+git clone https://github.com/spring-cloud/spring-cloud-contract.git
+----
+
+- Change it for the current user (no administrative privileges required):
+
+[source,bash]
+----
+git config --global core.longPaths true
+git clone https://github.com/spring-cloud/spring-cloud-contract.git
+----
+
+- Change for just this repository (administrative privileges depend on where the repository is being cloned to):
+
+[source,bash]
+----
+git clone -c core.longPaths true https://github.com/spring-cloud/spring-cloud-contract.git
+----
+
 IMPORTANT: You need to have all the necessary Groovy plugins
 installed for your IDE to properly resolve the sources. For example, in
 Intellij IDEA, having both the Eclipse Groovy Compiler Plugin and the GMavenPlus Intellij
@@ -287,7 +320,7 @@ run the following command:
 ./scripts/parallelBuild.sh
 ```
 
-To use eight 8 cores, run thke following command:
+To use eight 8 cores, run the following command:
 
 ```
 CORES=8 ./scripts/parallelBuild.sh
