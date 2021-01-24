@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import groovy.json.JsonSlurper;
 import groovy.lang.Closure;
 import groovy.lang.GString;
@@ -50,7 +52,14 @@ public class MapConverter {
 	/**
 	 * Generic {@link Function} used to deserialize a json file.
 	 */
-	public static final Function<String, Object> JSON_PARSING_FUNCTION = (value) -> new JsonSlurper().parseText(value);
+	public static final Function<String, Object> JSON_PARSING_FUNCTION = (value) -> {
+		try {
+			return new ObjectMapper().readValue(value, Object.class);
+		}
+		catch (JsonProcessingException e) {
+			throw new IllegalArgumentException("The current json [" + value + "] could not be deserialized");
+		}
+	};
 
 	/**
 	 * Generic {@link Closure} used to deserialize a json file.

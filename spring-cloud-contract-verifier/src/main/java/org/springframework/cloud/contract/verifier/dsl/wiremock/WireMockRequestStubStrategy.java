@@ -175,9 +175,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 						|| onlySizeAssertionsArePresent(values)) {
 					try {
 						requestPattern.withRequestBody(WireMock.equalToJson(
-								new ObjectMapper()
-										.writeValueAsString(getMatchingStrategy(request.getBody().getClientValue())
-												.getClientValue()),
+								new ObjectMapper().writeValueAsString(
+										getMatchingStrategy(request.getBody().getClientValue()).getClientValue()),
 								false, false));
 					}
 					catch (JsonProcessingException e) {
@@ -277,17 +276,17 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (request.getMultipart().getClientValue() instanceof Map) {
 			List<StringValuePattern> multipartPattern = ((Map<?, ?>) request.getMultipart()
 					.getClientValue())
-					.entrySet().stream().map(
-							it -> it.getValue() instanceof NamedProperty
-									? WireMock.matching(RegexPatterns.multipartFile(it.getKey(),
-									((NamedProperty) it.getValue()).getName().getClientValue(),
-									((NamedProperty) it.getValue()).getValue().getClientValue(),
-									Optional.ofNullable(
-											((NamedProperty) it.getValue()).getContentType())
-											.map(DslProperty::getClientValue).orElse(null)))
-									: WireMock.matching(RegexPatterns.multipartParam(it.getKey(),
-									MapConverter.getStubSideValuesForNonBody(it.getValue()))))
-					.collect(Collectors.toList());
+							.entrySet().stream().map(
+									it -> it.getValue() instanceof NamedProperty
+											? WireMock.matching(RegexPatterns.multipartFile(it.getKey(),
+													((NamedProperty) it.getValue()).getName().getClientValue(),
+													((NamedProperty) it.getValue()).getValue().getClientValue(),
+													Optional.ofNullable(
+															((NamedProperty) it.getValue()).getContentType())
+															.map(DslProperty::getClientValue).orElse(null)))
+											: WireMock.matching(RegexPatterns.multipartParam(it.getKey(),
+													MapConverter.getStubSideValuesForNonBody(it.getValue()))))
+							.collect(Collectors.toList());
 			multipartPattern.forEach(requestPattern::withRequestBody);
 
 		}
