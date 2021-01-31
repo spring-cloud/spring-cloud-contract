@@ -394,4 +394,49 @@ public class ContractFileScanner {
 		return osName.startsWith(osNamePrefix);
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static class Builder {
+		private File baseDir;
+		private Set<String> excluded;
+		private Set<String> ignored;
+		private Set<String> included = Collections.emptySet();
+		private String includeMatcher = "";
+
+		public Builder baseDir(File baseDir) {
+			this.baseDir = baseDir;
+			return this;
+		}
+
+		public Builder excluded(Set<String> excluded) {
+			this.excluded = excluded;
+			return this;
+		}
+
+		public Builder ignored(Set<String> ignored) {
+			this.ignored = ignored;
+			return this;
+		}
+
+		public Builder included(Set<String> included) {
+			this.included = included;
+			return this;
+		}
+
+		public Builder includeMatcher(String includeMatcher) {
+			this.includeMatcher = includeMatcher;
+			return this;
+		}
+
+		public ContractFileScanner build() {
+			return new ContractFileScanner(this.baseDir,
+					this.excluded,
+					this.ignored,
+					this.included,
+					this.includeMatcher);
+		}
+	}
+
 }

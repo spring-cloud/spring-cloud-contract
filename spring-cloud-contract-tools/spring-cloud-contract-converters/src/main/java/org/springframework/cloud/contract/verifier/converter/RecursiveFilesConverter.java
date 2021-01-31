@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner;
-import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder;
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
@@ -80,7 +79,7 @@ public class RecursiveFilesConverter {
 	}
 
 	public void processFiles() {
-		ContractFileScanner scanner = new ContractFileScannerBuilder().baseDir(contractsDslDir)
+		ContractFileScanner scanner = ContractFileScanner.builder().baseDir(contractsDslDir)
 				.excluded(new HashSet<>(excludedFiles)).ignored(new HashSet<>()).included(new HashSet<>())
 				.includeMatcher(includedContracts).build();
 		MultiValueMap<Path, ContractMetadata> contracts = scanner.findContractsRecursively();
