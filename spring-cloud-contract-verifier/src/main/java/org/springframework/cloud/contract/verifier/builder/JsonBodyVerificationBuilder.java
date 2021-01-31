@@ -110,7 +110,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		convertedResponseBody = MapConverter.transformValues(convertedResponseBody,
 				returnReferencedEntries(templateModel), parsingFunction);
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(assertJsonSize)
-				.transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingFunction);
+				.transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingFunction, includeEmptyCheck);
 
 		DocumentContext finalParsedRequestBody = parsedRequestBody;
 		jsonPaths.forEach(it -> {
