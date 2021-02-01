@@ -168,7 +168,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 
 	@Override
 	public T anyOf(String... values) {
-		return createAndValidateProperty(RegexPatterns.anyOf(values), values[0]);
+		return createAndValidateProperty(RegexPatterns.anyOf(values), values[this.random.nextInt(values.length)]);
 	}
 
 }
