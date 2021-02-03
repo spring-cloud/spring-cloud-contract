@@ -131,14 +131,14 @@ class GenerateServerTestsTask extends DefaultTask {
 		getLogger().info("Contracts are unpacked to [{}]", contractsDslDir);
 		getLogger().info("Included contracts are [{}]", includedContracts);
 		ContractVerifierConfigProperties properties = toConfigProperties(contractsDslDir, includedContracts, generatedTestSources, generatedTestResources);
+		OutputStream os;
+		if (getLogger().isDebugEnabled()) {
+			os = new ByteArrayOutputStream();
+		} else {
+			os = NullOutputStream.INSTANCE;
+		}
 		try {
 			String propertiesJson = new ObjectMapper().writeValueAsString(properties);
-			OutputStream os;
-			if (getLogger().isDebugEnabled()) {
-				os = new ByteArrayOutputStream();
-			} else {
-				os = NullOutputStream.INSTANCE;
-			}
 			getProject().javaexec(exec -> {
 				exec.setMain("org.springframework.cloud.contract.verifier.TestGeneratorApplication");
 				exec.classpath(classpath);
@@ -146,12 +146,13 @@ class GenerateServerTestsTask extends DefaultTask {
 				exec.setStandardOutput(os);
 				exec.setErrorOutput(os);
 			});
-			if (getLogger().isDebugEnabled()) {
-				getLogger().debug(os.toString());
-			}
 		}
 		catch (Exception e) {
 			throw new GradleException("Spring Cloud Contract Verifier Plugin exception: " + e.getMessage(), e);
+		} finally {
+			if (getLogger().isDebugEnabled()) {
+				getLogger().debug(os.toString());
+			}
 		}
 	}
 

@@ -186,15 +186,20 @@ class ContractsCopyTask extends DefaultTask {
 		} else {
 			os = NullOutputStream.INSTANCE;
 		}
-		getProject().javaexec(exec -> {
-			exec.setMain("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
-			exec.classpath(classpath);
-			exec.args(quoteAndEscape(outputContractsFolder.getAbsolutePath()));
-			exec.setStandardOutput(os);
-			exec.setErrorOutput(os);
-		});
-		if (getLogger().isDebugEnabled()) {
-			getLogger().debug(os.toString());
+		try {
+			getProject().javaexec(exec -> {
+				exec.setMain("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
+				exec.classpath(classpath);
+				exec.args(quoteAndEscape(outputContractsFolder.getAbsolutePath()));
+				exec.setStandardOutput(os);
+				exec.setErrorOutput(os);
+			});
+		} catch (Exception e) {
+			throw new GradleException("Spring Cloud Contract Verifier Plugin exception: " + e.getMessage(), e);
+		} finally {
+			if (getLogger().isDebugEnabled()) {
+				getLogger().debug(os.toString());
+			}
 		}
 		getLogger().info("Replaced DSL files with their YAML representation at [{}]", outputContractsFolder);
 	}
