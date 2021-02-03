@@ -1301,6 +1301,3 @@ Since the route is set for you, you can send a message to the `{output_name}` de
 include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
 ----
 ====
-
-===== Kafka Record Key
-To
