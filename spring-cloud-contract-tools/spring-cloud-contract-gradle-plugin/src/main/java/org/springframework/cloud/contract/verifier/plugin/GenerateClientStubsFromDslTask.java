@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.eclipse.jgit.util.io.NullOutputStream;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
@@ -88,16 +89,21 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 		} else {
 			os = NullOutputStream.INSTANCE;
 		}
-		getProject().javaexec(exec -> {
-			exec.setMain("org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
-			exec.classpath(classpath);
-			exec.args(quoteAndEscape(output.getAbsolutePath()), quoteAndEscape(contractsDslDir.get().getAsFile().getAbsolutePath()),
-					quoteAndEscape(StringUtils.collectionToCommaDelimitedString(excludedFiles.get())), quoteAndEscape(".*"), excludeBuildFolders.get());
-			exec.setStandardOutput(os);
-			exec.setErrorOutput(os);
-		});
-		if (getLogger().isDebugEnabled()) {
-			getLogger().debug(os.toString());
+		try {
+			getProject().javaexec(exec -> {
+				exec.setMain("org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
+				exec.classpath(classpath);
+				exec.args(quoteAndEscape(output.getAbsolutePath()), quoteAndEscape(contractsDslDir.get().getAsFile().getAbsolutePath()),
+						quoteAndEscape(StringUtils.collectionToCommaDelimitedString(excludedFiles.get())), quoteAndEscape(".*"), excludeBuildFolders.get());
+				exec.setStandardOutput(os);
+				exec.setErrorOutput(os);
+			});
+		} catch (Exception e) {
+			throw new GradleException("Spring Cloud Contract Verifier Plugin exception: " + e.getMessage(), e);
+		} finally {
+			if (getLogger().isDebugEnabled()) {
+				getLogger().debug(os.toString());
+			}
 		}
 	}
 
