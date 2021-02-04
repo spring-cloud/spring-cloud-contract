@@ -16,25 +16,20 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.kafka;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.converter.MessagingMessageConverter;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.support.MessageBuilder;
 
 /**
  * @author Marcin Grzejszczak
@@ -42,6 +37,8 @@ import org.springframework.messaging.support.MessageBuilder;
 class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 
 	private static final Log log = LogFactory.getLog(StubRunnerKafkaRouter.class);
+
+	private final MessagingMessageConverter messageConverter = new MessagingMessageConverter();
 
 	private final StubRunnerKafkaMessageSelector selector;
 
@@ -69,19 +66,15 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 		if (log.isDebugEnabled()) {
 			log.debug("Received message [" + data + "]");
 		}
-		Message<?> message = MessageBuilder.createMessage(data.value(),
-				headers(data.headers()));
+		Message<?> message = messageConverter.toMessage(data, null, null, null);
 		Contract dsl = this.selector.matchingContract(message);
-		if (dsl != null && dsl.getOutputMessage() != null
-				&& dsl.getOutputMessage().getSentTo() != null) {
+		if (dsl != null && dsl.getOutputMessage() != null && dsl.getOutputMessage().getSentTo() != null) {
 			String destination = dsl.getOutputMessage().getSentTo().getClientValue();
 			if (log.isDebugEnabled()) {
-				log.debug(
-						"Found a matching contract with an output message. Will send it to the ["
-								+ destination + "] destination");
+				log.debug("Found a matching contract with an output message. Will send it to the [" + destination
+						+ "] destination");
 			}
-			Message<?> transform = new StubRunnerKafkaTransformer(this.contracts)
-					.transform(dsl);
+			Message<?> transform = new StubRunnerKafkaTransformer(this.contracts).transform(dsl);
 			String defaultTopic = kafkaTemplate().getDefaultTopic();
 			try {
 				kafkaTemplate().setDefaultTopic(destination);
@@ -93,17 +86,8 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 		}
 	}
 
-	private MessageHeaders headers(Headers headers) {
-		Map<String, Object> map = new HashMap<>();
-		for (Header header : headers) {
-			map.put(header.key(), header.value());
-		}
-		return new MessageHeaders(map);
-	}
-
 	@Override
-	public void onMessage(ConsumerRecord<Object, Object> data,
-			Acknowledgment acknowledgment) {
+	public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment) {
 		onMessage(data);
 	}
 
@@ -113,8 +97,7 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 	}
 
 	@Override
-	public void onMessage(ConsumerRecord<Object, Object> data,
-			Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+	public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
 		onMessage(data);
 	}
 
