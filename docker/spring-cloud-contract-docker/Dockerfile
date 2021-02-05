@@ -2,7 +2,7 @@ FROM ubuntu:21.04
 
 ARG SDKMAN_JAVA_INSTALLATION=8.0.275.hs-adpt
 
-MAINTAINER Marcin Grzejszczak <mgrzejszczak@pivotal.io>
+LABEL Author Marcin Grzejszczak <mgrzejszczak@pivotal.io>
 
 RUN apt-get update && apt-get install -y curl \
     unzip \

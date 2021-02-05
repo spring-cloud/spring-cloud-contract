@@ -113,7 +113,7 @@ dependencies {
 	}
 }
 
-test {
+contractTest {
 	useJUnitPlatform()
 	if (getProp(envVars, "MESSAGING_TYPE") != "") {
 		systemProperty("spring.profiles.active", "messagingtype")
