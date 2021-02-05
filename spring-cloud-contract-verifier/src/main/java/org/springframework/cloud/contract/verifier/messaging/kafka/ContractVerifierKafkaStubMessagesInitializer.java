@@ -45,7 +45,15 @@ class ContractVerifierKafkaStubMessagesInitializer implements KafkaStubMessagesI
 	private Consumer prepareListener(EmbeddedKafkaBroker broker, String destination, KafkaProperties kafkaProperties) {
 		Map<String, Object> consumerProperties = KafkaTestUtils
 				.consumerProps(kafkaProperties.getConsumer().getGroupId(), "false", broker);
-		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+		// Respect custom key/value deserializers and any additional props under
+		// 'spring.kafka.consumer.properties'
+		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+				kafkaProperties.getConsumer().getKeyDeserializer());
+		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+				kafkaProperties.getConsumer().getValueDeserializer());
+		consumerProperties.putAll(kafkaProperties.getConsumer().getProperties());
+
 		DefaultKafkaConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory<>(
 				consumerProperties);
 		Consumer<String, String> consumer = consumerFactory.createConsumer();

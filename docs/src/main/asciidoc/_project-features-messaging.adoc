@@ -1222,17 +1222,20 @@ spring:
   kafka:
     bootstrap-servers: ${spring.embedded.kafka.brokers}
     producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
         "spring.json.trusted.packages": "*"
     consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        "value.deserializer": "org.springframework.kafka.support.serializer.JsonDeserializer"
-        "value.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"
         "spring.json.trusted.packages": "*"
       group-id: groupId
 ----
 ====
+
+NOTE: If your application uses non-integer record keys you will need to set the `spring.kafka.producer.key-serializer`
+and `spring.kafka.consumer.key-deserializer` properties accordingly because the Kafka de/serialization expects non-null
+record keys to be of integer type.
 
 Now consider the following contracts (we number them 1 and 2):
 

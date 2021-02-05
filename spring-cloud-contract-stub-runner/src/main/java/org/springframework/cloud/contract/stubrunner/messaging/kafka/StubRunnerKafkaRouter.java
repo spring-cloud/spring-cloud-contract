@@ -16,25 +16,20 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.kafka;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.converter.MessagingMessageConverter;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.support.MessageBuilder;
 
 /**
  * @author Marcin Grzejszczak
@@ -42,6 +37,8 @@ import org.springframework.messaging.support.MessageBuilder;
 class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 
 	private static final Log log = LogFactory.getLog(StubRunnerKafkaRouter.class);
+
+	private final MessagingMessageConverter messageConverter = new MessagingMessageConverter();
 
 	private final StubRunnerKafkaMessageSelector selector;
 
@@ -69,7 +66,7 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 		if (log.isDebugEnabled()) {
 			log.debug("Received message [" + data + "]");
 		}
-		Message<?> message = MessageBuilder.createMessage(data.value(), headers(data.headers()));
+		Message<?> message = messageConverter.toMessage(data, null, null, null);
 		Contract dsl = this.selector.matchingContract(message);
 		if (dsl != null && dsl.getOutputMessage() != null && dsl.getOutputMessage().getSentTo() != null) {
 			String destination = dsl.getOutputMessage().getSentTo().getClientValue();
@@ -87,14 +84,6 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 				kafkaTemplate().setDefaultTopic(defaultTopic);
 			}
 		}
-	}
-
-	private MessageHeaders headers(Headers headers) {
-		Map<String, Object> map = new HashMap<>();
-		for (Header header : headers) {
-			map.put(header.key(), header.value());
-		}
-		return new MessageHeaders(map);
 	}
 
 	@Override

@@ -34,6 +34,8 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.kafka.support.converter.MessagingMessageConverter;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.messaging.Message;
@@ -94,9 +96,11 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 class Receiver {
 
-	private final Map<String, Consumer> consumers;
-
 	private static final Log log = LogFactory.getLog(Receiver.class);
+
+	private final MessagingMessageConverter messagingMessageConverter = new MessagingMessageConverter();
+
+	private final Map<String, Consumer> consumers;
 
 	Receiver(Map<String, Consumer> consumers) {
 		this.consumers = consumers;
@@ -107,22 +111,44 @@ class Receiver {
 		if (consumer == null) {
 			throw new IllegalStateException("No consumer set up for topic [" + topic + "]");
 		}
-		ConsumerRecord<String, String> record = KafkaTestUtils.getSingleRecord(consumer, topic,
-				timeUnit.toMillis(timeout));
+		ConsumerRecord<?, ?> record = KafkaTestUtils.getSingleRecord(consumer, topic, timeUnit.toMillis(timeout));
 		if (log.isDebugEnabled()) {
 			log.debug("Got a single record for destination [" + topic + "]");
 		}
-		return new Record(record).toMessage();
+		return toMessage(consumer, record);
 	}
 
-}
+	Message toMessage(Consumer consumer, ConsumerRecord<?, ?> record) {
+		Map<String, Object> headersMap = toMap(record.headers());
 
-class Record {
+		// Leverage spring-kafka to add the headers
+		messagingMessageConverter.commonHeaders(null, consumer, headersMap, record.key(), record.topic(),
+				record.partition(), record.offset(),
+				record.timestampType() != null ? record.timestampType().name() : null, record.timestamp());
+		// commonHeaders() maps the record key under 'kafka_receivedMessageKey' - put
+		// under 'kafka_messageKey' as well to satisfy both client/server usages as there
+		// is not currently a way to set a header name based on client/server
+		headersMap.put(KafkaHeaders.MESSAGE_KEY, record.key());
 
-	private final ConsumerRecord record;
-
-	Record(ConsumerRecord record) {
-		this.record = record;
+		// TODO explore using MessagingMessageConverter to do all of the conversion
+		// (ideally delete this entire method)
+		Object textPayload = record.value();
+		// sometimes it's a message sometimes just payload
+		if (textPayload instanceof String && ((String) textPayload).contains("payload")
+				&& ((String) textPayload).contains("headers")) {
+			try {
+				Object object = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE).parse((String) textPayload);
+				JSONObject jo = (JSONObject) object;
+				String payload = (String) jo.get("payload");
+				JSONObject headersInJson = (JSONObject) jo.get("headers");
+				headersMap.putAll(headersInJson);
+				return MessageBuilder.createMessage(unquoted(payload), new MessageHeaders(headersMap));
+			}
+			catch (ParseException ex) {
+				throw new IllegalStateException(ex);
+			}
+		}
+		return MessageBuilder.createMessage(unquoted(textPayload), new MessageHeaders(headersMap));
 	}
 
 	private Map<String, Object> toMap(Headers headers) {
@@ -131,28 +157,6 @@ class Record {
 			map.put(header.key(), header.value());
 		}
 		return map;
-	}
-
-	Message toMessage() {
-		Object textPayload = record.value();
-		// sometimes it's a message sometimes just payload
-		MessageHeaders headers = new MessageHeaders(toMap(record.headers()));
-		if (textPayload instanceof String && ((String) textPayload).contains("payload")
-				&& ((String) textPayload).contains("headers")) {
-			try {
-				Object object = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE).parse((String) textPayload);
-				JSONObject jo = (JSONObject) object;
-				String payload = (String) jo.get("payload");
-				JSONObject headersInJson = (JSONObject) jo.get("headers");
-				Map newHeaders = new HashMap(headers);
-				newHeaders.putAll(headersInJson);
-				return MessageBuilder.createMessage(unquoted(payload), new MessageHeaders(newHeaders));
-			}
-			catch (ParseException ex) {
-				throw new IllegalStateException(ex);
-			}
-		}
-		return MessageBuilder.createMessage(unquoted(textPayload), headers);
 	}
 
 	private Object unquoted(Object value) {
