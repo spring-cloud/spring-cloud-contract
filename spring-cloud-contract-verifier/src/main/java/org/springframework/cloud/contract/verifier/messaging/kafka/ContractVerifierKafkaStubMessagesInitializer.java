@@ -29,15 +29,12 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
-class ContractVerifierKafkaStubMessagesInitializer
-		implements KafkaStubMessagesInitializer {
+class ContractVerifierKafkaStubMessagesInitializer implements KafkaStubMessagesInitializer {
 
-	private static final Log log = LogFactory
-			.getLog(ContractVerifierKafkaStubMessagesInitializer.class);
+	private static final Log log = LogFactory.getLog(ContractVerifierKafkaStubMessagesInitializer.class);
 
 	@Override
-	public Map<String, Consumer> initialize(EmbeddedKafkaBroker broker,
-			KafkaProperties kafkaProperties) {
+	public Map<String, Consumer> initialize(EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties) {
 		Map<String, Consumer> map = new HashMap<>();
 		for (String topic : broker.getTopics()) {
 			map.put(topic, prepareListener(broker, topic, kafkaProperties));
@@ -45,10 +42,9 @@ class ContractVerifierKafkaStubMessagesInitializer
 		return map;
 	}
 
-	private Consumer prepareListener(EmbeddedKafkaBroker broker, String destination,
-			KafkaProperties kafkaProperties) {
-		Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(
-				kafkaProperties.getConsumer().getGroupId(), "false", broker);
+	private Consumer prepareListener(EmbeddedKafkaBroker broker, String destination, KafkaProperties kafkaProperties) {
+		Map<String, Object> consumerProperties = KafkaTestUtils
+				.consumerProps(kafkaProperties.getConsumer().getGroupId(), "false", broker);
 
 		// Respect custom key/value deserializers and any additional props under
 		// 'spring.kafka.consumer.properties'

@@ -60,29 +60,25 @@ public class RabbitManager {
 		this.rabbitTemplate = rabbitTemplate;
 	}
 
-	@RabbitListener(
-			bindings = @QueueBinding(
-					value = @Queue, exchange = @Exchange(value = "input",
-							durable = "true", autoDelete = "false", type = "topic"),
-					key = "event"))
+	@RabbitListener(bindings = @QueueBinding(value = @Queue,
+			exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"),
+			key = "event"))
 	// Workaround for https://github.com/spring-projects/spring-amqp/issues/1285
 	// public void newBook(Book book, @Headers Map<String, String> headers) {
 	public void newBook(Book book, @Header("amqp_replyTo") String replyTo) {
 		LOG.info("Received new book with bookname = " + book.getName());
-		// LOG.info("Headers = " + headers);
+//		LOG.info("Headers = " + headers);
 		this.service.sendBook(book, replyTo);
 	}
 
-	@RabbitListener(
-			bindings = @QueueBinding(
-					value = @Queue, exchange = @Exchange(value = "input",
-							durable = "true", autoDelete = "false", type = "topic"),
-					key = "event2"))
+	@RabbitListener(bindings = @QueueBinding(value = @Queue,
+			exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"),
+			key = "event2"))
 	// Workaround for https://github.com/spring-projects/spring-amqp/issues/1285
 	// public void newBook2(Book book, @Headers Map<String, String> headers) {
 	public void newBook2(Book book, @Header("amqp_replyTo") String replyTo) {
 		LOG.info("newBook2 Received new book with bookname = " + book.getName());
-		// LOG.info("newBook2 Headers = " + headers);
+//		LOG.info("newBook2 Headers = " + headers);
 		this.service.sendBook(book, replyTo);
 	}
 

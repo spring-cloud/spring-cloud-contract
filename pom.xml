@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.3.2.RELEASE</version>
+		<version>2.3.1.RELEASE</version>
 		<relativePath/>
 	</parent>
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2.6.RELEASE</version>
+	<version>2.2.6.BUILD-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -28,15 +28,15 @@
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>3.6.14</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
-		<spring-cloud-build.version>2.3.2.RELEASE</spring-cloud-build.version>
-		<spring-cloud-zookeeper.version>2.2.4.RELEASE</spring-cloud-zookeeper.version>
-		<spring-cloud-stream.version>Horsham.SR11</spring-cloud-stream.version>
+		<spring-cloud-build.version>2.3.1.RELEASE</spring-cloud-build.version>
+		<spring-cloud-zookeeper.version>2.2.5.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
+		<spring-cloud-stream.version>Horsham.SR9</spring-cloud-stream.version>
 		<!-- Needs to come from a sc-stream-bom -->
 		<spring-cloud-stream-test-binder.version>3.0.4.RELEASE</spring-cloud-stream-test-binder.version>
-		<spring-cloud-netflix.version>2.2.7.RELEASE</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>2.2.6.RELEASE</spring-cloud-consul.version>
-		<spring-cloud-commons.version>2.2.7.RELEASE</spring-cloud-commons.version>
-		<spring-cloud-function.version>3.0.13.RELEASE</spring-cloud-function.version>
+		<spring-cloud-netflix.version>2.2.7.BUILD-SNAPSHOT</spring-cloud-netflix.version>
+		<spring-cloud-consul.version>2.2.6.BUILD-SNAPSHOT</spring-cloud-consul.version>
+		<spring-cloud-commons.version>2.2.7.BUILD-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-function.version>3.0.11.RELEASE</spring-cloud-function.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.2.9</cglib.version>
 		<spock-spring.version>1.3-groovy-2.5</spock-spring.version>

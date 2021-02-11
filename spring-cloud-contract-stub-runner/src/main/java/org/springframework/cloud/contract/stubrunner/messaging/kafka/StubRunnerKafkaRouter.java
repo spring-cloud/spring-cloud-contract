@@ -68,16 +68,13 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 		}
 		Message<?> message = messageConverter.toMessage(data, null, null, null);
 		Contract dsl = this.selector.matchingContract(message);
-		if (dsl != null && dsl.getOutputMessage() != null
-				&& dsl.getOutputMessage().getSentTo() != null) {
+		if (dsl != null && dsl.getOutputMessage() != null && dsl.getOutputMessage().getSentTo() != null) {
 			String destination = dsl.getOutputMessage().getSentTo().getClientValue();
 			if (log.isDebugEnabled()) {
-				log.debug(
-						"Found a matching contract with an output message. Will send it to the ["
-								+ destination + "] destination");
+				log.debug("Found a matching contract with an output message. Will send it to the [" + destination
+						+ "] destination");
 			}
-			Message<?> transform = new StubRunnerKafkaTransformer(this.contracts)
-					.transform(dsl);
+			Message<?> transform = new StubRunnerKafkaTransformer(this.contracts).transform(dsl);
 			String defaultTopic = kafkaTemplate().getDefaultTopic();
 			try {
 				kafkaTemplate().setDefaultTopic(destination);
@@ -90,8 +87,7 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 	}
 
 	@Override
-	public void onMessage(ConsumerRecord<Object, Object> data,
-			Acknowledgment acknowledgment) {
+	public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment) {
 		onMessage(data);
 	}
 
@@ -101,8 +97,7 @@ class StubRunnerKafkaRouter implements MessageListener<Object, Object> {
 	}
 
 	@Override
-	public void onMessage(ConsumerRecord<Object, Object> data,
-			Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+	public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
 		onMessage(data);
 	}
 

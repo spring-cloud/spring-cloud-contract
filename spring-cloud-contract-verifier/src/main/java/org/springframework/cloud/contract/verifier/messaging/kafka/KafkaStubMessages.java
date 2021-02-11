@@ -49,11 +49,10 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	private final Receiver receiver;
 
-	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker,
-			KafkaProperties kafkaProperties, KafkaStubMessagesInitializer initializer) {
+	KafkaStubMessages(KafkaTemplate kafkaTemplate, EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties,
+			KafkaStubMessagesInitializer initializer) {
 		this.kafkaTemplate = kafkaTemplate;
-		Map<String, Consumer> topicToConsumer = initializer.initialize(broker,
-				kafkaProperties);
+		Map<String, Consumer> topicToConsumer = initializer.initialize(broker, kafkaProperties);
 		this.receiver = new Receiver(topicToConsumer);
 	}
 
@@ -63,8 +62,7 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 		try {
 			this.kafkaTemplate.setDefaultTopic(destination);
 			if (log.isDebugEnabled()) {
-				log.debug("Will send a message [" + message + "] to destination ["
-						+ destination + "]");
+				log.debug("Will send a message [" + message + "] to destination [" + destination + "]");
 			}
 			this.kafkaTemplate.send(message).get(5, TimeUnit.SECONDS);
 			this.kafkaTemplate.flush();
@@ -89,8 +87,7 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	@Override
 	public void send(Object payload, Map headers, String destination) {
-		Message<?> message = MessageBuilder.createMessage(payload,
-				new MessageHeaders(headers));
+		Message<?> message = MessageBuilder.createMessage(payload, new MessageHeaders(headers));
 		send(message, destination);
 	}
 
@@ -111,11 +108,9 @@ class Receiver {
 	Message receive(String topic, long timeout, TimeUnit timeUnit) {
 		Consumer consumer = this.consumers.get(topic);
 		if (consumer == null) {
-			throw new IllegalStateException(
-					"No consumer set up for topic [" + topic + "]");
+			throw new IllegalStateException("No consumer set up for topic [" + topic + "]");
 		}
-		ConsumerRecord<?, ?> record = KafkaTestUtils.getSingleRecord(consumer, topic,
-				timeUnit.toMillis(timeout));
+		ConsumerRecord<?, ?> record = KafkaTestUtils.getSingleRecord(consumer, topic, timeUnit.toMillis(timeout));
 		if (log.isDebugEnabled()) {
 			log.debug("Got a single record for destination [" + topic + "]");
 		}
@@ -126,10 +121,9 @@ class Receiver {
 		Map<String, Object> headersMap = toMap(record.headers());
 
 		// Leverage spring-kafka to add the headers
-		messagingMessageConverter.commonHeaders(null, consumer, headersMap, record.key(),
-				record.topic(), record.partition(), record.offset(),
-				record.timestampType() != null ? record.timestampType().name() : null,
-				record.timestamp());
+		messagingMessageConverter.commonHeaders(null, consumer, headersMap, record.key(), record.topic(),
+				record.partition(), record.offset(),
+				record.timestampType() != null ? record.timestampType().name() : null, record.timestamp());
 		// commonHeaders() maps the record key under 'kafka_receivedMessageKey' - put
 		// under 'kafka_messageKey' as well to satisfy both client/server usages as there
 		// is not currently a way to set a header name based on client/server
@@ -142,21 +136,18 @@ class Receiver {
 		if (textPayload instanceof String && ((String) textPayload).contains("payload")
 				&& ((String) textPayload).contains("headers")) {
 			try {
-				Object object = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE)
-						.parse((String) textPayload);
+				Object object = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE).parse((String) textPayload);
 				JSONObject jo = (JSONObject) object;
 				String payload = (String) jo.get("payload");
 				JSONObject headersInJson = (JSONObject) jo.get("headers");
 				headersMap.putAll(headersInJson);
-				return MessageBuilder.createMessage(unquoted(payload),
-						new MessageHeaders(headersMap));
+				return MessageBuilder.createMessage(unquoted(payload), new MessageHeaders(headersMap));
 			}
 			catch (ParseException ex) {
 				throw new IllegalStateException(ex);
 			}
 		}
-		return MessageBuilder.createMessage(unquoted(textPayload),
-				new MessageHeaders(headersMap));
+		return MessageBuilder.createMessage(unquoted(textPayload), new MessageHeaders(headersMap));
 	}
 
 	private Map<String, Object> toMap(Headers headers) {
@@ -168,11 +159,9 @@ class Receiver {
 	}
 
 	private Object unquoted(Object value) {
-		String textPayload = value instanceof byte[] ? new String((byte[]) value)
-				: value.toString();
+		String textPayload = value instanceof byte[] ? new String((byte[]) value) : value.toString();
 		if (textPayload.startsWith("\"") && textPayload.endsWith("\"")) {
-			return textPayload.substring(1, textPayload.length() - 1).replace("\\\"",
-					"\"");
+			return textPayload.substring(1, textPayload.length() - 1).replace("\\\"", "\"");
 		}
 		return textPayload;
 	}
