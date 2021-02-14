@@ -16,11 +16,15 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.MergedAnnotation;
+import org.springframework.core.annotation.MergedAnnotations;
+import org.springframework.core.annotation.RepeatableContainers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
@@ -93,7 +97,12 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	}
 
 	private boolean annotationMissing(TestContext testContext) {
-		if (AnnotationUtils.findAnnotation(testContext.getTestClass(), AutoConfigureWireMock.class) == null) {
+		Annotation annotation = MergedAnnotations
+				.from(testContext.getTestClass(), MergedAnnotations.SearchStrategy.TYPE_HIERARCHY_AND_ENCLOSING_CLASSES,
+						RepeatableContainers.none())
+				.get(AutoConfigureWireMock.class).withNonMergedAttributes().synthesize(MergedAnnotation::isPresent)
+				.orElse(null);
+		if (annotation == null) {
 			if (log.isDebugEnabled()) {
 				log.debug(
 						"No @AutoConfigureWireMock annotation found on [" + testContext.getTestClass() + "]. Skipping");
