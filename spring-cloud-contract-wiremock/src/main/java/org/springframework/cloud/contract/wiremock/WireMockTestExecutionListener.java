@@ -93,7 +93,7 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	}
 
 	private boolean annotationMissing(TestContext testContext) {
-		if (TestContextAnnotationUtils.hasAnnotation(testContext.getTestClass(), AutoConfigureWireMock.class)) {
+		if (!TestContextAnnotationUtils.hasAnnotation(testContext.getTestClass(), AutoConfigureWireMock.class)) {
 			if (log.isDebugEnabled()) {
 				log.debug(
 						"No @AutoConfigureWireMock annotation found on [" + testContext.getTestClass() + "]. Skipping");
