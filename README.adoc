@@ -19,7 +19,6 @@ If you prefer to learn about the project by doing some tutorials, you can check 
 workshops under
 https://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this link].
 
-
 == Project page
 
 You can read more about Spring Cloud Contract by going to https://spring.io/projects/spring-cloud-contract[the project page]

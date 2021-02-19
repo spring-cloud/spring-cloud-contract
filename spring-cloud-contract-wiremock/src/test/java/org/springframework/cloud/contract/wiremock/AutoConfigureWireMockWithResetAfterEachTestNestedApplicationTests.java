@@ -47,7 +47,7 @@ class AutoConfigureWireMockWithResetAfterEachTestNestedApplicationTests {
 
 	@Test
 	@Order(1)
-	void outerTest()  {
+	void outerTest() {
 		this.wireMockServer
 				.givenThat(WireMock.get("/should_register_mapping").willReturn(WireMock.aResponse().withBody("bar")));
 
@@ -73,12 +73,15 @@ class AutoConfigureWireMockWithResetAfterEachTestNestedApplicationTests {
 		@Test
 		@Order(3)
 		void innerTwo() {
-			WireMock.givenThat(WireMock.get("/should_register_mapping").willReturn(WireMock.aResponse().withBody("bar")));
+			WireMock.givenThat(
+					WireMock.get("/should_register_mapping").willReturn(WireMock.aResponse().withBody("bar")));
 
 			String result = new RestTemplate().getForObject("http://" + hostname + "/should_register_mapping",
 					String.class);
 
 			then(result).isEqualTo("bar");
 		}
+
 	}
+
 }
