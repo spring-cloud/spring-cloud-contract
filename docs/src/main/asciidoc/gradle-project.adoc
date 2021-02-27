@@ -140,7 +140,7 @@ dependencies {
 == Gradle and Rest Assured 2.0
 
 By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x,
-you can add it to the plugins classpath, as the following listing shows:
+you can add it instead, as the following listing shows:
 
 ====
 [source,groovy,indent=0]
@@ -152,8 +152,6 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
-		classpath "com.jayway.restassured:rest-assured:2.5.0"
-		classpath "com.jayway.restassured:spring-mock-mvc:2.5.0"
 	}
 }
 
@@ -172,13 +170,13 @@ and modifies the imports accordingly.
 [[gradle-snapshot-versions]]
 == Snapshot Versions for Gradle
 
-You can add the additional snapshot repository to your `build.gradle` to use snapshot versions,
+You can add the additional snapshot repository to your `settings.gradle` to use snapshot versions,
 which are automatically uploaded after every successful build, as the following listing shows:
 
 ====
 [source,groovy,indent=0]
 ----
-include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
+include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent=0]
 }
 ----
 ====
