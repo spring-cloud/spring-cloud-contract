@@ -153,8 +153,6 @@ buildscript {
     }
 	dependencies {
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${scContractVersion}"
-        // remember to add this:
-		classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${scContractVersion}"
 	}
 }
 
@@ -163,6 +161,8 @@ dependencies {
 
     // Remember to add this for the DSL support in the IDE and on the consumer side
     testImplementation "org.springframework.cloud:spring-cloud-contract-spec-kotlin"
+    // Kotlin versions are very particular down to the patch version. The <kotlin_version> needs to be the same as you have imported for your project.
+    testImplementation "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:<kotlin_version>"
 }
 ----
 ====
