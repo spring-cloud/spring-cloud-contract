@@ -39,6 +39,7 @@ import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
+import org.springframework.util.StringUtils
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
@@ -108,7 +109,7 @@ class ContentUtils {
 	 * @return JSON structure with replaced client / server side parts
 	 */
 	static Object extractValue(GString bodyAsValue, ContentType contentType, Closure valueProvider) {
-		if (bodyAsValue.isEmpty()) {
+		if (!StringUtils.hasText(bodyAsValue.toString())) {
 			return bodyAsValue
 		}
 		if (contentType == ContentType.TEXT || contentType == ContentType.FORM) {

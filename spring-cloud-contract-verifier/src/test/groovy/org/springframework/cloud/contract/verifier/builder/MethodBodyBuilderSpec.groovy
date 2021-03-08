@@ -1755,6 +1755,65 @@ response:
 			}
 	}
 
+	@Issue("#1414")
+	def "should work with empty arrays after doing array matching [#methodBuilderName]"() {
+		given:
+			String yaml = '''\
+name: GET sample
+description: sample
+request:
+  method: GET
+  urlPath: /sample
+response:
+  status: 200
+  body:
+    - foo: "sample1"
+      bar: true
+    - foo: "sample2"
+      bar: false
+  headers:
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $..foo
+        type: by_regex
+        value: .*
+      - path: $..bar
+        type: by_regex
+        predefined: any_boolean
+'''
+			File tmpFile = File.createTempFile("foo", ".yml")
+			tmpFile.createNewFile()
+			tmpFile.text = yaml
+			Contract contractDsl = new YamlContractConverter().convertFrom(tmpFile).
+					first()
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains('''assertThatJson(parsedJson).array().isEmpty()''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
 	@Issue("#1262")
 	def "should work with the timeout flag for groovy [#methodBuilderName]"() {
 		given:
