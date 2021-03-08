@@ -140,7 +140,7 @@ class JsonToJsonPathsConverter {
 	}
 
 	/**
-	 * Related to #391 and #1091. The converted body looks different when done via the String notation than
+	 * Related to #391 and #1091 and #1414. The converted body looks different when done via the String notation than
 	 * it does when done via a map notation. When working with String body and when matchers
 	 * are provided, even when all entries of a map / list got removed, the map / list itself
 	 * remains. That leads to unnecessary creation of checks for empty collection. With this method
@@ -163,8 +163,16 @@ class JsonToJsonPathsConverter {
 					&& isNotRootArray(matcherPath)) {
 				String pathToDelete = pathToDelete(pathWithoutAnyArray)
 				context.delete(pathToDelete)
-				return pathToDelete.contains(DESCENDANT_OPERATOR) ? false :
-						removeTrailingContainers(pathToDelete, context)
+				if (pathToDelete.contains(DESCENDANT_OPERATOR)) {
+					Object root = context.read('$')
+					if (rootContainsEmptyContainers(root)) {
+						// now root contains only empty elements, we should remove the trailing containers
+						context.delete('$[*]')
+						return false
+					}
+					return false
+				}
+				return removeTrailingContainers(pathToDelete, context)
 			}
 			else {
 				int lastIndexOfDot = matcherPath.lastIndexOf(".")
@@ -191,6 +199,10 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
+	private static boolean rootContainsEmptyContainers(root) {
+		root instanceof Iterable && root.every { containsOnlyEmptyElements(it) }
+	}
+
 	private static String lastMatch(Matcher matcher) {
 		List<String> matches = []
 		while ({
@@ -202,6 +214,10 @@ class JsonToJsonPathsConverter {
 
 	private static boolean isIterable(Object object) {
 		return object instanceof Iterable || object instanceof Map
+	}
+
+	private static boolean isEmpty(Object object) {
+		return isIterable(object) && object instanceof Iterable ? object.isEmpty() : ((Map) object).isEmpty()
 	}
 
 	private static String pathToDelete(String pathWithoutAnyArray) {
