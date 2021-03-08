@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.spec.internal;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +34,8 @@ import repackaged.nl.flotsam.xeger.Xeger;
 public class RegexProperty extends DslProperty implements CanBeDynamic {
 
 	final Pattern pattern;
+
+	String charset = StandardCharsets.UTF_8.name();
 
 	private final Class clazz;
 
@@ -109,6 +114,18 @@ public class RegexProperty extends DslProperty implements CanBeDynamic {
 				String.class);
 	}
 
+	public RegexProperty asString(Charset charset) {
+		RegexProperty regexProperty = asString();
+		regexProperty.charset = charset.name();
+		return regexProperty;
+	}
+
+	public RegexProperty asString(String charset) {
+		RegexProperty regexProperty = asString();
+		regexProperty.charset = charset;
+		return regexProperty;
+	}
+
 	public RegexProperty asBooleanType() {
 		return new RegexProperty(this.getClientValue(), this.getServerValue(),
 				Boolean.class);
@@ -139,7 +156,8 @@ public class RegexProperty extends DslProperty implements CanBeDynamic {
 			else if (Boolean.class.equals(this.clazz)) {
 				return Boolean.parseBoolean(generatedValue);
 			}
-			return generatedValue;
+			return new String(generatedValue.getBytes(Charset.forName(this.charset)),
+					this.charset);
 		}
 		catch (NumberFormatException ex) {
 			if (retries > 0) {
@@ -147,6 +165,9 @@ public class RegexProperty extends DslProperty implements CanBeDynamic {
 				return doGenerate(retries);
 			}
 			throw ex;
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
