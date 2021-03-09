@@ -78,7 +78,15 @@ interface GroovyBodyParser extends BodyParser {
 
 	@Override
 	default String quotedLongText(Object text) {
-		return "'''" + groovyEscapedString(text) + "'''";
+		String escapedString = groovyEscapedString(text);
+		if (escapedString.startsWith("'")) {
+			escapedString = "\\'" + escapedString.substring(1);
+		}
+		if (escapedString.endsWith("'")) {
+			escapedString = escapedString.substring(0, escapedString.length() - 1)
+					+ "\\'";
+		}
+		return "'''" + escapedString + "'''";
 	}
 
 	default String groovyEscapedString(Object text) {

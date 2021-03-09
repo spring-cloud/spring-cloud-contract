@@ -33,9 +33,13 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	JaxRsUrlPathWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData) {
+	private final BodyParser bodyParser;
+
+	JaxRsUrlPathWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
+			BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = metaData;
+		this.bodyParser = bodyParser;
 	}
 
 	@Override
@@ -73,8 +77,8 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 				.filter(this::allowedQueryParameter).iterator();
 		while (iterator.hasNext()) {
 			QueryParameter param = iterator.next();
-			String text = ".queryParam(\"" + param.getName() + "\", \""
-					+ resolveParamValue(param) + "\")";
+			String text = ".queryParam(\"" + param.getName() + "\", "
+					+ this.bodyParser.quotedShortText(resolveParamValue(param)) + ")";
 			if (iterator.hasNext()) {
 				this.blockBuilder.addLine(text);
 			}

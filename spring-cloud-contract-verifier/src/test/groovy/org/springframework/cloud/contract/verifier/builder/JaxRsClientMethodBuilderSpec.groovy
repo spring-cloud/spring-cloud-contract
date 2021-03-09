@@ -632,7 +632,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			}                                 | ['entity("\\"\\"", "text/plain")', 'header("Timer", "123")']
 	}
 
-	def "should generate a call with an url path and query parameters with #methodBuilderName"() {
+	def "should generate a call with an url path and query parameters with jaxrs"() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -646,6 +646,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 							parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("55"))
 							parameter 'age': $(consumer(notMatching("^\\w*\$")), producer("99"))
 							parameter 'name': $(consumer(matching("Denis.*")), producer("Denis.Stepanov"))
+							parameter 'nameWithDoubleQuote': '"quote"'
+							parameter 'nameWithQuote': "'quote'"
 							parameter 'email': "bob@email.com"
 							parameter 'hello': $(consumer(matching("Denis.*")), producer(absent()))
 							parameter 'hello': absent()
@@ -666,14 +668,16 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains(modifyStringIfRequired.call('''queryParam("limit", "10"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("offset", "20"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("filter", "email"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("sort", "name"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("search", "55"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("age", "99"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("name", "Denis.Stepanov"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("email", "bob@email.com"'''))
+			test.contains('''queryParam("limit", "10"''')
+			test.contains('''queryParam("offset", "20"''')
+			test.contains('''queryParam("filter", "email"''')
+			test.contains('''queryParam("sort", "name"''')
+			test.contains('''queryParam("search", "55"''')
+			test.contains('''queryParam("age", "99"''')
+			test.contains('''queryParam("name", "Denis.Stepanov"''')
+			test.contains('''queryParam("nameWithDoubleQuote", "\\"quote\\""''')
+			test.contains('''queryParam("nameWithQuote", "'quote'"''')
+			test.contains('''queryParam("email", "bob@email.com"''')
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 			test.contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:
@@ -681,13 +685,69 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
-			methodBuilderName | methodBuilder | modifyStringIfRequired
-			"jaxrs-spock"     | {
-				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String paramString -> paramString }
+			methodBuilderName | methodBuilder
 			"jaxrs"           | {
 				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
-			}                                 | { String paramString -> paramString.replace("'", "\"") }
+			}
+	}
+
+	def "should generate a call with an url path and query parameters with jaxrs-spock"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath('/users') {
+						queryParameters {
+							parameter 'limit': $(consumer(equalTo("20")), producer(equalTo("10")))
+							parameter 'offset': $(consumer(containing("20")), producer(equalTo("20")))
+							parameter 'filter': "email"
+							parameter 'sort': equalTo("name")
+							parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("55"))
+							parameter 'age': $(consumer(notMatching("^\\w*\$")), producer("99"))
+							parameter 'name': $(consumer(matching("Denis.*")), producer("Denis.Stepanov"))
+							parameter 'nameWithDoubleQuote': '"quote"'
+							parameter 'nameWithQuote': "'quote'"
+							parameter 'email': "bob@email.com"
+							parameter 'hello': $(consumer(matching("Denis.*")), producer(absent()))
+							parameter 'hello': absent()
+						}
+					}
+				}
+				response {
+					status OK()
+					body """
+					{
+						"property1": "a",
+						"property2": "b"
+					}
+					"""
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			test.contains('''queryParam("limit", '10\'''')
+			test.contains('''queryParam("offset", '20\'''')
+			test.contains('''queryParam("filter", 'email\'''')
+			test.contains('''queryParam("sort", 'name\'''')
+			test.contains('''queryParam("search", '55\'''')
+			test.contains('''queryParam("age", '99\'''')
+			test.contains('''queryParam("name", 'Denis.Stepanov\'''')
+			test.contains("""queryParam("nameWithDoubleQuote", '''"quote"'''""")
+			test.contains("""queryParam("nameWithQuote", '''\\'quote\\''''""")
+			test.contains('''queryParam("email", 'bob@email.com\'''')
+			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+			test.contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
 	}
 
 	@Issue('#169')
@@ -725,14 +785,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains(modifyStringIfRequired.call('''queryParam("limit", "10"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("offset", "20"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("filter", "email"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("sort", "name"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("search", "55"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("age", "99"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("name", "Denis.Stepanov"'''))
-			test.contains(modifyStringIfRequired.call('''queryParam("email", "bob@email.com"'''))
+			test.contains(modifyStringIfRequired.call('''queryParam("limit", '10\''''))
+			test.contains(modifyStringIfRequired.call('''queryParam("offset", '20\''''))
+			test.contains(modifyStringIfRequired.call('''queryParam("filter", 'email\''''))
+			test.contains(modifyStringIfRequired.call('''queryParam("sort", 'name\''''))
+			test.contains(modifyStringIfRequired.call('''queryParam("search", '55\''''))
+			test.contains(modifyStringIfRequired.call('''queryParam("age", '99\''''))
+			test.contains(modifyStringIfRequired.call('''queryParam("name", 'Denis.Stepanov\''''))
+			test.contains(modifyStringIfRequired.call('''queryParam("email", 'bob@email.com\''''))
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 			test.contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:

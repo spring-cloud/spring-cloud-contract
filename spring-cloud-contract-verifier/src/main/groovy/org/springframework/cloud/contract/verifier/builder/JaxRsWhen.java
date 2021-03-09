@@ -38,7 +38,8 @@ class JaxRsWhen implements When, BodyMethodVisitor, JaxRsAcceptor {
 		this.generatedClassMetaData = generatedClassMetaData;
 		this.bodyParser = bodyParser;
 		this.whens.addAll(Arrays.asList(
-				new JaxRsUrlPathWhen(this.blockBuilder, this.generatedClassMetaData),
+				new JaxRsUrlPathWhen(this.blockBuilder, this.generatedClassMetaData,
+						bodyParser),
 				new JaxRsRequestWhen(this.blockBuilder, this.generatedClassMetaData),
 				new JaxRsRequestHeadersWhen(this.blockBuilder, bodyParser),
 				new JaxRsRequestCookiesWhen(this.blockBuilder, bodyParser),
