@@ -83,8 +83,7 @@ interface GroovyBodyParser extends BodyParser {
 			escapedString = "\\'" + escapedString.substring(1);
 		}
 		if (escapedString.endsWith("'")) {
-			escapedString = escapedString.substring(0, escapedString.length() - 1)
-					+ "\\'";
+			escapedString = escapedString.substring(0, escapedString.length() - 1) + "\\'";
 		}
 		return "'''" + escapedString + "'''";
 	}

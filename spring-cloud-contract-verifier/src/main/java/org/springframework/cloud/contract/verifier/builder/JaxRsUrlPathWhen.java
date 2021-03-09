@@ -35,8 +35,7 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 
 	private final BodyParser bodyParser;
 
-	JaxRsUrlPathWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData,
-			BodyParser bodyParser) {
+	JaxRsUrlPathWhen(BlockBuilder blockBuilder, GeneratedClassMetaData metaData, BodyParser bodyParser) {
 		this.blockBuilder = blockBuilder;
 		this.generatedClassMetaData = metaData;
 		this.bodyParser = bodyParser;
