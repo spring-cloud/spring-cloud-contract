@@ -89,8 +89,6 @@
 			<type>test-jar</type>
 			<classifier>test-binder</classifier>
 			<optional>true</optional>
-			<!-- TODO: Has to come from a BOM-->
-			<version>${spring-cloud-stream-test-binder.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
