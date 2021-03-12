@@ -16,6 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,6 +39,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 
 /**
  * @author Marcin Grzejszczak
@@ -80,7 +85,19 @@ class ContractVerifierKafkaHelper extends ContractVerifierMessaging<Message<?>> 
 
 	@Override
 	protected ContractVerifierMessage convert(Message<?> message) {
-		return new ContractVerifierMessage(message.getPayload(), message.getHeaders());
+		return new ContractVerifierMessage(message.getPayload(), convertHeaders(message.getHeaders()));
+	}
+
+	private MessageHeaders convertHeaders(Map<String, Object> headers) {
+		return new MessageHeaders(headers.entrySet().stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, e -> maybeConvertValue(e.getValue()))));
+	}
+
+	private Object maybeConvertValue(Object value) {
+		if (!(value instanceof byte[])) {
+			return value;
+		}
+		return new String((byte[]) value, StandardCharsets.UTF_8);
 	}
 
 }
