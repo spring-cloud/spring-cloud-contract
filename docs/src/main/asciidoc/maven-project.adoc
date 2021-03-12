@@ -520,8 +520,52 @@ goal. The following example shows how to do so:
 
 Under <<scm-stub-downloader>>, you can find all possible
 configuration options that you can pass through
-the `<configuration><contractProperties>` map, a system property,
-or an environment variable.
+the `<configuration><contractsProperties>` map, a system property,
+or an environment variable. For instance, you could specify a concrete branch to checkout, instead of the default one
+
+====
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <!-- Base class mappings etc. -->
+
+        <!-- We want to pick contracts from a Git repository -->
+        <contractsRepositoryUrl>git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git</contractsRepositoryUrl>
+	<contractsProperties> 
+            <git.branch>another_branch</git.branch>
+        </contractsProperties>
+
+        <!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts -->
+        <contractDependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+        </contractDependency>
+
+        <!-- The contracts mode can't be classpath -->
+        <contractsMode>REMOTE</contractsMode>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal -->
+                <goal>pushStubsToScm</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+====
+
 
 [[maven-sts]]
 == Maven Plugin and STS
