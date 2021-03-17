@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<spring-cloud.version>2020.0.2-SNAPSHOT</spring-cloud.version>
-		<spring-cloud-contract.version>3.0.2-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>3.0.3-SNAPSHOT</spring-cloud-contract.version>
 	</properties>
 
 	<dependencies>
