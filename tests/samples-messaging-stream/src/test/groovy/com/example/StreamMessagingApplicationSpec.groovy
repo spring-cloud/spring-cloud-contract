@@ -52,6 +52,7 @@ class StreamMessagingApplicationSpec extends Specification {
 	MessageVerifier<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
+	@Ignore
 	def "should work for triggered based messaging"() {
 		given:
 			def dsl = Contract.make {
@@ -79,6 +80,7 @@ class StreamMessagingApplicationSpec extends Specification {
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
+	@Ignore
 	def "should generate tests triggered by a message"() {
 		given:
 			def dsl = Contract.make {
