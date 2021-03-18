@@ -1,1 +1,18 @@
-index.htmladoc
+[[spring-cloud-contract-reference-documentation]]
+= Spring Cloud Contract Reference Documentation
+Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant
+
+:docinfo: shared
+include::_attributes.adoc[]
+
+The reference documentation consists of the following sections:
+
+[horizontal]
+<<legal.adoc#legal-information,Legal>> :: Legal information.
+<<documentation-overview.adoc#contract-documentation,Documentation Overview>> :: About the Documentation, Getting Help, First Steps, and more.
+<<getting-started.adoc#getting-started,Getting Started>> :: Introducing {project-full-name}, Developing Your First {project-full-name}-based Application
+<<using.adoc#using,Using {project-full-name}>> :: {project-full-name} usage examples and workflows.
+<<project-features.adoc#features,{project-full-name} Features>> :: Contract DSL, Messaging, Spring Cloud Contract Stub Runner, and Spring Cloud Contract WireMock.
+<<project-features.adoc#features-build-tools,Build Tools>> :: Maven Plugin, Gradle Plugin, and Docker.
+<<howto.adoc#howto,"`How-to`" Guides>> :: Stubs versioning, Pact integration, Debugging, and more.
+<<appendix.adoc#appendix,Appendices>> :: Properties, Metadata, Configuration, Dependencies, and more.
