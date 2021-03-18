@@ -17,8 +17,8 @@
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,11 +89,17 @@ class ContractVerifierKafkaHelper extends ContractVerifierMessaging<Message<?>> 
 	}
 
 	private MessageHeaders convertHeaders(Map<String, Object> headers) {
-		return new MessageHeaders(headers.entrySet().stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, e -> maybeConvertValue(e.getValue()))));
+		final Map<String, Object> headersMap = new HashMap<>();
+		if (headers != null) {
+			headers.forEach((k, v) -> headersMap.put(k, maybeConvertValue(v)));
+		}
+		return new MessageHeaders(headersMap);
 	}
 
 	private Object maybeConvertValue(Object value) {
+		if (value == null) {
+			return value;
+		}
 		if (!(value instanceof byte[])) {
 			return value;
 		}
