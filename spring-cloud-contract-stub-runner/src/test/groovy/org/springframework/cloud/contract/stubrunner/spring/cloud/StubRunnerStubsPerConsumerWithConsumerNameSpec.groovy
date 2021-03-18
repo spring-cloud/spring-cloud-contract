@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 
 import java.util.function.Function
 
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,7 +75,6 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 			entity.statusCode.value() == 404
 	}
 
-	@Ignore
 	def 'should trigger a message by label from proper consumer'() {
 		when:
 			stubFinder.trigger('return_book_for_foo')
