@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.wiremock;
 
 import org.assertj.core.api.BDDAssertions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,7 +40,6 @@ public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 	int wiremockPort;
 
 	@Test
-	@Ignore
 	public void should_work_for_analytics() throws Exception {
 		String count = new RestTemplate().getForObject("http://localhost:" + this.wiremockPort + "/issues/count",
 				String.class);
@@ -50,7 +48,6 @@ public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 	}
 
 	@Test
-	@Ignore
 	public void should_work_for_webhook() throws Exception {
 		String response = new RestTemplate().getForObject("http://localhost:" + this.wiremockPort + "/", String.class);
 
