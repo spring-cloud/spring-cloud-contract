@@ -21,7 +21,6 @@ import javax.inject.Inject
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -118,7 +117,6 @@ class StreamMessagingApplicationSpec extends Specification {
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
-	@Ignore
 	def "should generate tests without destination, triggered by a message"() {
 		given:
 			def dsl = Contract.make {
