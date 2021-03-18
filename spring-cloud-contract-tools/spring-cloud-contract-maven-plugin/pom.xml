@@ -28,7 +28,7 @@
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
 
-		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
+		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version><!-- @releaser:version-check-off -->
 		<asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
 		<maven-filtering.version>3.1.1</maven-filtering.version>
 		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
