@@ -29,7 +29,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
-			<version>${spring-cloud-stream.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -38,7 +37,6 @@
 			<type>test-jar</type>
 			<optional>true</optional>
 			<classifier>test-binder</classifier>
-			<version>${spring-cloud-stream.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
