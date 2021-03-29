@@ -21,7 +21,7 @@ Before becoming Spring Cloud Contract, this project was called https://github.co
 It was created by https://twitter.com/mgrzejszczak[Marcin Grzejszczak] and https://twitter.com/jkubrynski[Jakub Kubrynski]
 from (https://github.com/Codearte[Codearte]).
 
-The `0.1.0` release took place on 26 Jan 2015 and it became stable with `1.0.0` release on 29 Feb 2016.
+The `0.1.0` release took place on 26 Jan 2015, and it became stable with `1.0.0` release on 29 Feb 2016.
 
 [[getting-started-introducing-spring-cloud-contract-why]]
 ==== Why Do You Need It?
@@ -43,7 +43,7 @@ two things:
 
 Both have their advantages but also a lot of disadvantages.
 
-*Deploy all microservices and perform end to end tests*
+*Deploy all microservices and perform end-to-end tests*
 
 Advantages:
 
@@ -92,7 +92,7 @@ The main purposes of Spring Cloud Contract are:
 
 - To ensure that HTTP and messaging stubs (used when developing the client) do exactly
 what the actual server-side implementation does.
-- To promote the ATDD (acceptance test-driven developement) method and the microservices architectural style.
+- To promote the ATDD (acceptance test-driven development) method, and the microservices architectural style.
 - To provide a way to publish changes in contracts that are immediately visible on both sides.
 - To generate boilerplate test code to be used on the server side.
 
@@ -456,7 +456,7 @@ Running `./mvnw clean install` automatically generates tests that verify the app
 compliance with the added contracts. By default, the generated tests are under
 `org.springframework.cloud.contract.verifier.tests.`.
 
-The generated tests may differ, depending on which framework and test type you have setup
+The generated tests may differ, depending on which framework and test type you have set up
 in your plugin.
 
 In the next listing, you can find:
@@ -842,7 +842,7 @@ discuss changes while going through the process.
 The {samples_code}/{standalone_samples_path}/http-server[server-side
 code is available here], and {samples_code}/{standalone_samples_path}/http-client[the client code  is available here].
 
-TIP: In this case, the producer owns the contracts. Physically, all of the contracts are
+TIP: In this case, the producer owns the contracts. Physically, all the contracts are
 in the producer's repository.
 
 [[getting-started-cdc-technical-note]]
@@ -1266,7 +1266,7 @@ Tests in error:
 ----
 ====
 
-This error occurs because you have a new contract from which a test was generated and it
+This error occurs because you have a new contract from which a test was generated, and it
 failed since you have not implemented the feature. The auto-generated test would look
 like the following test method:
 
@@ -1295,7 +1295,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 ----
 ====
 
-If you used the Groovy DSL, you can see that all of the `producer()` parts of the Contract that were present in the
+If you used the Groovy DSL, you can see that all the `producer()` parts of the Contract that were present in the
 `value(consumer(...), producer(...))` blocks got injected into the test.
 If you use YAML, the same applies for the `matchers` sections of the `response`.
 
@@ -1405,7 +1405,7 @@ That's it. You have finished the tutorial.
 
 Hopefully, this section provided some of the {project-full-name} basics and got you on your way
 to writing your own applications. If you are a task-oriented type of developer, you might
-want to jump over to https://spring.io and check out some of the
+want to jump over to https://spring.io and check out some
 https://spring.io/guides/[getting started] guides that solve specific "`How do I do that
 with Spring?`" problems. We also have {project-full-name}-specific
 "`<<howto.adoc#howto, how-to>>`" reference documentation.
