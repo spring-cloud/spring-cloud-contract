@@ -237,7 +237,7 @@ git clone https://github.com/spring-cloud/spring-cloud-contract.git
 
 [source,bash]
 ----
-git clone -c core.longPaths true https://github.com/spring-cloud/spring-cloud-contract.git
+git clone -c core.longPaths=true https://github.com/spring-cloud/spring-cloud-contract.git
 ----
 
 IMPORTANT: You need to have all the necessary Groovy plugins
