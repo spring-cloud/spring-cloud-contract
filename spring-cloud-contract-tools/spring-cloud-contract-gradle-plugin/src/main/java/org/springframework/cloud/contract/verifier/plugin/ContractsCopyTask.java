@@ -355,7 +355,6 @@ class ContractsCopyTask extends DefaultTask {
 			return stringNotation;
 		}
 
-		@Internal
 		StubConfiguration toStubConfiguration() {
 			String stringNotation = this.stringNotation.getOrNull();
 			if (StringUtils.hasText(stringNotation)) {
