@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.function.Function
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -208,7 +209,9 @@ class JsonToJsonPathsConverter {
 		while ({
 			matches << matcher.group()
 			matcher.find()
-		}()) continue
+		}()) {
+			continue
+		}
 		return matches[matches.size() - 1]
 	}
 
@@ -333,6 +336,10 @@ class JsonToJsonPathsConverter {
 			String convertedValue = value.toString().replace('/', '\\\\/')
 			return "${propertyName} =~ /(${convertedValue})/"
 		}
+	}
+
+	JsonPaths transformToJsonPathWithTestsSideValues(def json, Function parsingClosure, boolean includeEmptyCheck) {
+		return transformToJsonPathWithValues(json, SERVER_SIDE, { parsingClosure.apply(it) }, includeEmptyCheck)
 	}
 
 	JsonPaths transformToJsonPathWithTestsSideValues(def json,

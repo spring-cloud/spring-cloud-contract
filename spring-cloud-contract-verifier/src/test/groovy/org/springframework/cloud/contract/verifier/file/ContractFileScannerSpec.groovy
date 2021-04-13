@@ -50,7 +50,7 @@ class ContractFileScannerSpec extends Specification {
 			File baseDir = tmpFolder
 			Set<String> excluded = ["package/**"] as Set
 			Set<String> ignored = ["other/different/**"] as Set
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set, "")
 		when:
 			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
 		then:
@@ -68,7 +68,7 @@ class ContractFileScannerSpec extends Specification {
 			File baseDir = new File(this.getClass().getResource("/strange_[3.3.3]_directory").toURI())
 			Set<String> excluded = ["foo/**"] as Set
 			Set<String> ignored = ["bar/**"] as Set
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set, "")
 		when:
 			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
 		then:
@@ -82,7 +82,7 @@ class ContractFileScannerSpec extends Specification {
 	def "should find contracts group in scenario"() {
 		given:
 			File baseDir = new File(this.getClass().getResource("/directory/with/scenario").toURI())
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, [] as Set)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, [] as Set, "")
 		when:
 			ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		then:
@@ -104,7 +104,7 @@ class ContractFileScannerSpec extends Specification {
 	def "should find contract files with converters"() {
 		given:
 			File baseDir = new File(this.getClass().getResource("/directory/with/mixed").toURI())
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null, null) {
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null, null, null) {
 				@Override
 				protected List<ContractConverter> converters() {
 					return [new ContractConverter() {
@@ -136,7 +136,7 @@ class ContractFileScannerSpec extends Specification {
 	def "should prefer custom yaml converter over standard yaml converter"() {
 		given:
 			File baseDir = new File(this.getClass().getResource("/directory/with/custom/yml").toURI())
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null) {
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null, null, null) {
 				@Override
 				protected List<ContractConverter> converters() {
 					return [new ContractConverter() {
@@ -179,7 +179,7 @@ class ContractFileScannerSpec extends Specification {
 		and:
 			File baseDir = tmpFolder
 			Set<String> included = ["social-service/**", "**/coupon-collected/**/*V1*"] as Set
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, included)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, included, null)
 		when:
 			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
 		then:

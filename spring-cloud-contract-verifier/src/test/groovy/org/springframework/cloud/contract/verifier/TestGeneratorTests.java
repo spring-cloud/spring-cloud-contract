@@ -55,7 +55,7 @@ public class TestGeneratorTests {
 				r.status(r.OK());
 			});
 		})));
-		ContractFileScanner scanner = new ContractFileScanner(null, null, null) {
+		ContractFileScanner scanner = new ContractFileScanner(null, null, null, null, null) {
 			@Override
 			public MultiValueMap<Path, ContractMetadata> findContractsRecursively() {
 				return multimap;
@@ -92,7 +92,7 @@ public class TestGeneratorTests {
 				r.status(r.OK());
 			});
 		})));
-		ContractFileScanner scanner = new ContractFileScanner(null, null, null) {
+		ContractFileScanner scanner = new ContractFileScanner(null, null, null, null, null) {
 			@Override
 			public MultiValueMap<Path, ContractMetadata> findContractsRecursively() {
 				return multimap;

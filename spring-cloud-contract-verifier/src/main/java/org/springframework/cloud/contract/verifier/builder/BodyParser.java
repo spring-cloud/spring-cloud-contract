@@ -18,10 +18,10 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import groovy.json.JsonOutput;
-import groovy.lang.Closure;
 import groovy.lang.GString;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -117,14 +117,15 @@ interface BodyParser extends BodyThen {
 	 */
 	default Object extractServerValueFromBody(ContentType contentType, Object bodyValue) {
 		if (bodyValue instanceof GString) {
-			return extractValue((GString) bodyValue, contentType, ContentUtils.GET_TEST_SIDE);
+			return extractValue((GString) bodyValue, contentType, ContentUtils.GET_TEST_SIDE_FUNCTION);
 		}
 		else if (bodyValue instanceof FromFileProperty) {
-			return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE);
+			return MapConverter.transformValues(bodyValue, ContentUtils.GET_TEST_SIDE_FUNCTION);
 		}
 		else if (TEXT != contentType && FORM != contentType && DEFINED != contentType) {
 			boolean dontParseStrings = contentType == JSON && bodyValue instanceof Map;
-			Closure parsingClosure = dontParseStrings ? Closure.IDENTITY : MapConverter.JSON_PARSING_CLOSURE;
+			Function<String, Object> parsingClosure = dontParseStrings ? MapConverter.IDENTITY
+					: MapConverter.JSON_PARSING_FUNCTION;
 			return MapConverter.getTestSideValues(bodyValue, parsingClosure);
 		}
 		return bodyValue;
