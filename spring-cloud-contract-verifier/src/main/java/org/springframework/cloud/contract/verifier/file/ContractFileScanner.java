@@ -150,9 +150,7 @@ public class ContractFileScanner {
 
 			@Override
 			public Map<Path, Collection<ContractMetadata>> asMap() {
-				return contracts.entrySet()
-						.stream()
-						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+				return contracts.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 			}
 
 			@Override
@@ -172,15 +170,12 @@ public class ContractFileScanner {
 
 			@Override
 			public boolean containsValue(Object value) {
-				return contracts.entrySet()
-						.stream()
-						.anyMatch(it -> it.getValue().contains(value));
+				return contracts.entrySet().stream().anyMatch(it -> it.getValue().contains(value));
 			}
 
 			@Override
 			public boolean containsEntry(Object key, Object value) {
-				return contracts.entrySet()
-						.stream()
+				return contracts.entrySet().stream()
 						.anyMatch(it -> it.getKey().equals(key) && it.getValue().contains(value));
 			}
 
@@ -198,8 +193,7 @@ public class ContractFileScanner {
 			@Override
 			public boolean putAll(Path key, Iterable<? extends ContractMetadata> values) {
 				return contracts.getOrDefault(key, new ArrayList<>())
-						.addAll(StreamSupport.stream(values.spliterator(), false)
-								.collect(Collectors.toList()));
+						.addAll(StreamSupport.stream(values.spliterator(), false).collect(Collectors.toList()));
 			}
 
 			@Override
@@ -231,8 +225,8 @@ public class ContractFileScanner {
 			@Override
 			public Collection<Map.Entry<Path, ContractMetadata>> entries() {
 				Collection<Map.Entry<Path, ContractMetadata>> entries = new LinkedList<>();
-				contracts.forEach((path, list) -> list
-						.forEach(c -> entries.add(new AbstractMap.SimpleEntry<>(path, c))));
+				contracts.forEach(
+						(path, list) -> list.forEach(c -> entries.add(new AbstractMap.SimpleEntry<>(path, c))));
 				return entries;
 			}
 		};
@@ -263,8 +257,8 @@ public class ContractFileScanner {
 			boolean excluded = matchesPattern(file, excludeMatchers);
 			if (!excluded) {
 				boolean contractFile = isContractFile(file);
-				boolean included = StringUtils.isEmpty(includeMatcher) || file.getAbsolutePath()
-						.matches(includeMatcher);
+				boolean included = StringUtils.isEmpty(includeMatcher)
+						|| file.getAbsolutePath().matches(includeMatcher);
 				included = !CollectionUtils.isEmpty(includeMatchers) ? matchesPattern(file, includeMatchers) : included;
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, i,
@@ -399,10 +393,15 @@ public class ContractFileScanner {
 	}
 
 	public static class Builder {
+
 		private File baseDir;
+
 		private Set<String> excluded;
+
 		private Set<String> ignored;
+
 		private Set<String> included = Collections.emptySet();
+
 		private String includeMatcher = "";
 
 		public Builder baseDir(File baseDir) {
@@ -431,12 +430,10 @@ public class ContractFileScanner {
 		}
 
 		public ContractFileScanner build() {
-			return new ContractFileScanner(this.baseDir,
-					this.excluded,
-					this.ignored,
-					this.included,
+			return new ContractFileScanner(this.baseDir, this.excluded, this.ignored, this.included,
 					this.includeMatcher);
 		}
+
 	}
 
 }
