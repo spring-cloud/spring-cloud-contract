@@ -323,9 +323,9 @@ public final class WireMockRestServiceServer {
 				.contentType(contentType(response)).headers(responseHeaders(response));
 	}
 
-	private String body(ResponseDefinition response) {
-		if (response.getBody() != null) {
-			return response.getBody();
+	private byte[] body(ResponseDefinition response) {
+		if (response.getByteBody() != null) {
+			return response.getByteBody();
 		}
 		String file = response.getBodyFileName();
 		if (file != null) {
@@ -340,8 +340,7 @@ public final class WireMockRestServiceServer {
 							try {
 								Resource resource = files.createRelative(file);
 								if (resource.exists()) {
-									return StreamUtils.copyToString(resource.getInputStream(),
-											Charset.forName("UTF-8"));
+									return StreamUtils.copyToByteArray(resource.getInputStream());
 								}
 							}
 							catch (IOException e) {
@@ -355,7 +354,7 @@ public final class WireMockRestServiceServer {
 				}
 			}
 		}
-		return "";
+		return new byte[0];
 	}
 
 	private void requestHeaders(ResponseActions expect, RequestPattern request) {
