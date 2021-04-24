@@ -77,8 +77,7 @@ public class WiremockMockServerApplicationTests {
 
 	@Test
 	public void simpleGetWithJsonBody() throws Exception {
-		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("https://example.org")
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate).baseUrl("https://example.org")
 				.stubs("classpath:/mappings/resource-with-json-body.json").build();
 
 		String response = this.restTemplate.getForObject("https://example.org/resource", String.class);
@@ -89,8 +88,7 @@ public class WiremockMockServerApplicationTests {
 
 	@Test
 	public void simpleGetWithBase64Body() throws Exception {
-		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("https://example.org")
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate).baseUrl("https://example.org")
 				.stubs("classpath:/mappings/resource-with-base64-body.json").build();
 
 		String response = this.restTemplate.getForObject("https://example.org/resource", String.class);
