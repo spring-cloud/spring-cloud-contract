@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.QueryParameter;
 import org.springframework.cloud.contract.spec.internal.Request;
@@ -85,10 +86,17 @@ class MockMvcQueryParamsWhen implements When, MockMvcAcceptor, QueryParamsResolv
 	}
 
 	private String addQueryParameter(QueryParameter queryParam) {
+		String queryParamValue = getQueryParamValue(queryParam);
 		return "." + QUERY_PARAM_METHOD + "(" + this.bodyParser.quotedLongText(queryParam.getName()) + ","
-				+ this.bodyParser
-						.quotedLongText(resolveParamValue(MapConverter.getTestSideValuesForNonBody(queryParam)))
-				+ ")";
+				+ queryParamValue + ")";
+	}
+
+	private String getQueryParamValue(QueryParameter queryParam) {
+		Object serverValue = queryParam.getServerValue();
+		if (serverValue instanceof ExecutionProperty) {
+			return ((ExecutionProperty) serverValue).getExecutionCommand();
+		}
+		return this.bodyParser.quotedLongText(resolveParamValue(MapConverter.getTestSideValuesForNonBody(queryParam)));
 	}
 
 	@Override

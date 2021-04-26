@@ -1857,6 +1857,55 @@ response:
 			}
 	}
 
+	@Issue("#854")
+	def "should call execute in queryParameters [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'POST'
+					urlPath("/rest/something") {
+						queryParameters {
+							    parameter('someHashCode': $(
+                                	consumer(regex(anInteger())),
+                                	producer(execute("hashCode()")))
+                        		)
+						}
+					}
+				}
+				response {
+					status OK()
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains('''.queryParam("someHashCode",hashCode())''') | test.contains('''.queryParam("someHashCode", hashCode())''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
 	@Issue("#1262")
 	def "should work with the timeout flag for groovy [#methodBuilderName]"() {
 		given:
