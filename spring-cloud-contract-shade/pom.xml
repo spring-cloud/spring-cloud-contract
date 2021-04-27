@@ -7,12 +7,14 @@
 		<org.eclipse.sisu.inject.version>0.3.4</org.eclipse.sisu.inject.version>
 		<org.eclipse.sisu.plexus.version>0.3.4</org.eclipse.sisu.plexus.version>
 		<sisu-guice.version>4.2.0</sisu-guice.version>
-		<guice.version>4.2.2</guice.version>
-		<guava.version>28.1-jre</guava.version>
+		<guice.version>5.0.0</guice.version>
+		<guava.version>30.0-jre</guava.version>
 		<asm.version>9.0</asm.version>
 		<checker.version>3.6.1</checker.version>
 		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+		<!-- We need to set this cause resolvers are taking in an older version -->
+		<plexus-utils.version>3.3.0</plexus-utils.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -89,6 +91,13 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-settings-builder</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- Otherwise there are method not found issues -->
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>${plexus-utils.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

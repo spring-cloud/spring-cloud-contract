@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.maven.verifier;
 import java.io.File;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.util.StringUtils;
@@ -28,6 +29,8 @@ import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.apache.maven.plugin.testing.MojoParameters.newParameter;
 import static org.assertj.core.api.BDDAssertions.then;
 
+// TODO: Move this to integration tests
+@Ignore("Testing harness uses an old version of maven")
 public class PluginUnitTest extends AbstractMojoTest {
 
 	@Test

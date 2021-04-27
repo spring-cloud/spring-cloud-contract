@@ -21,7 +21,7 @@
 		<configprops.inclusionPattern>stubrunner.*|wiremock.*|</configprops.inclusionPattern>
 		<upload-docs-zip.phase>deploy</upload-docs-zip.phase>
 		<!-- Aligned with Groovy in SC-Build -->
-		<groovy.version>2.5.10</groovy.version>
+		<groovy.version>2.5.14</groovy.version>
 	</properties>
 	<build>
 		<plugins>
