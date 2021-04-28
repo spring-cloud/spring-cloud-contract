@@ -54,10 +54,7 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 		Integer httpPortProperty = environment.getProperty("wiremock.server.port", Integer.class);
 		// If the httpPortProperty is not found it means the AutoConfigureWireMock hasn't
 		// been initialised.
-		if (httpPortProperty == null) {
-			return;
-		}
-		if (isHttpDynamic(httpPortProperty)) {
+		if (httpPortProperty != null && isHttpDynamic(httpPortProperty)) {
 			registerPropertySourceForDynamicEntries(environment, "wiremock.server.port", 10000, 12500,
 					"wiremock.server.port-dynamic");
 			if (log.isDebugEnabled()) {
