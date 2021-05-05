@@ -72,11 +72,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>info.solidsoft.spock</groupId>
-			<artifactId>spock-global-unroll</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 			<scope>test</scope>

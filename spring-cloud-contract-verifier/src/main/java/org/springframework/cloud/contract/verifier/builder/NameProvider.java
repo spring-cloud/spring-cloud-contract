@@ -51,14 +51,14 @@ class NameProvider {
 		else if (contractMetadata.getConvertedContract().size() > 1) {
 			int index = findIndexOf(contractMetadata.getConvertedContract(), stubContent);
 			String name = camelCasedMethodFromFileName(stubsFile) + "_" + index;
-			if (log.isDebugEnabled()) {
-				log.debug("Scenario found. The method name will be [" + name + "]");
+			if (log.isTraceEnabled()) {
+				log.trace("Scenario found. The method name will be [" + name + "]");
 			}
 			return name;
 		}
 		String name = camelCasedMethodFromFileName(stubsFile);
-		if (StringUtils.hasText(name) && log.isDebugEnabled()) {
-			log.debug("The method name will be [" + name + "]");
+		if (StringUtils.hasText(name) && log.isTraceEnabled()) {
+			log.trace("The method name will be [" + name + "]");
 		}
 		return name;
 	}

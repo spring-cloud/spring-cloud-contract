@@ -1,10 +1,7 @@
 // This setup seems to work. Let's not touch it.
 
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
-//apply plugin: 'signing'
-
-uploadArchives.dependsOn { [check] }
+//apply plugin: 'signing'	
 
 task sourcesJar(type: Jar) {
 	classifier 'sources'
@@ -78,63 +75,6 @@ if (isReleaseToCentral) {
 		mavenCoordinates {
 			groupId = project.group
 			artifactId = project.name
-		}
-	}
-}
-
-afterEvaluate {
-	uploadArchives {
-		repositories {
-			mavenDeployer {
-				// POM signature
-				if (isReleaseVersion && isReleaseToCentral) {
-					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-				}
-				// Target repository
-				String repoUserName = isReleaseToCentral ? getProp("SONATYPE_USER") : repoUser
-				String repoPass = isReleaseToCentral ? getProp("SONATYPE_PASSWORD") : repoPass
-				repository(url: repoUrl) {
-					authentication(userName: repoUserName, password: repoPass)
-				}
-				pom.project {
-					name "$project.name"
-					packaging 'jar'
-					description 'Spring Cloud Contract Gradle Plugin'
-					url 'https://github.com/spring-cloud/spring-cloud-contract'
-					inceptionYear '2014'
-
-					scm {
-						connection 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
-						developerConnection 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
-						url 'https://github.com/spring-cloud/spring-cloud-contract'
-					}
-
-					licenses {
-						license {
-							name 'The Apache License, Version 2.0'
-							url 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-						}
-					}
-
-					developers {
-						developer {
-							id 'jkubrynski'
-							name 'Jakub Kubrynski'
-							email 'jk ATT codearte DOTT io'
-						}
-						developer {
-							id 'marcingrzejszczak'
-							name 'Marcin Grzejszczak'
-							email 'mgrzejszczak ATT pivotal DOTT io'
-						}
-						developer {
-							id 'dsyer'
-							name 'Dave Syer'
-							email 'dsyer ATT pivotal DOTT io'
-						}
-					}
-				}
-			}
 		}
 	}
 }

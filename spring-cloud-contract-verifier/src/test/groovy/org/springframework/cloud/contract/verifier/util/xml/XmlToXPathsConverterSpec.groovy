@@ -75,7 +75,7 @@ class XmlToXPathsConverterSpec extends Specification {
 	}
 
 	@Unroll
-	def "should remove elements to [#expectedValue] for xPath [#value]"() {
+	def "should remove elements to [#result] for xPath [#xpath]"() {
 		given:
 			BodyMatchers m = new BodyMatchers()
 			m.xPath(xpath, m.byEquality())
