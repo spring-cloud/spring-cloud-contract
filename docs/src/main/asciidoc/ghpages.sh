@@ -134,8 +134,8 @@ function add_docs_from_target() {
 
 # Copies the docs by using the retrieved properties from Maven build
 function copy_docs_for_current_version() {
-    if [[ "${CURRENT_BRANCH}" == "master" ]] ; then
-        echo -e "Current branch is master - will copy the current docs only to the root folder"
+    if [[ "${CURRENT_BRANCH}" == "main" ]] ; then
+        echo -e "Current branch is main - will copy the current docs only to the root folder"
         for f in docs/target/generated-docs/*; do
             file=${f#docs/target/generated-docs/*}
             if ! git ls-files -i -o --exclude-standard --directory | grep -q ^$file$; then

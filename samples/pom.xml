@@ -21,16 +21,6 @@
 		<main.basedir>${basedir}/..</main.basedir>
 	</properties>
 
-	<modules>
-		<module>wiremock</module>
-		<module>wiremock-native</module>
-		<module>wiremock-jetty</module>
-		<module>wiremock-tomcat</module>
-		<module>wiremock-undertow</module>
-		<module>wiremock-undertow-ssl</module>
-		<!-- standalone tests get executed separately by invoker plugin -->
-	</modules>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

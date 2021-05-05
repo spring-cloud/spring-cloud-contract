@@ -18,6 +18,6 @@ You can read more about Spring Cloud Contract by going to https://spring.io/proj
 
 == Contributing
 
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/main/docs/src/main/asciidoc/contributing.adoc[]
 
 include::_building.adoc[]

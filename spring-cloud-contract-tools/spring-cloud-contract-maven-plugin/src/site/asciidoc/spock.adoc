@@ -1,4 +1,4 @@
-:branch: master
+:branch: main
 
 == Groovy Project with Spock Specifications
 

@@ -25,7 +25,7 @@ You can read more about Spring Cloud Contract by going to https://spring.io/proj
 
 == Contributing
 
-:spring-cloud-build-branch: master
+:spring-cloud-build-branch: main
 
 Spring Cloud is released under the non-restrictive Apache 2.0 license,
 and follows a very standard Github development process, using Github

@@ -1,4 +1,4 @@
-:branch: master
+:branch: main
 
 == Java Project with JUnit Tests
 
