@@ -600,6 +600,19 @@
 		</plugins>
 	</reporting>
 
+
+	<repositories>
+		<repository>
+			<!-- TODO: We're adding it only because a dependency is using http instead of https -->
+			<id>maven-restlet</id>
+			<name>Maven Restlet</name>
+			<url>https://maven.restlet.org</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<profiles>
 		<profile>
 			<id>spring</id>
