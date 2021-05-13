@@ -19,9 +19,10 @@ package org.springframework.cloud.contract.stubrunner
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub
+import org.springframework.util.SocketUtils
 
 class StubServerSpec extends Specification {
-	static final int STUB_SERVER_PORT = 12180
+	static final int STUB_SERVER_PORT = SocketUtils.findAvailableTcpPort()
 	static final URL EXPECTED_URL = new URL("http://localhost:$STUB_SERVER_PORT")
 
 	File repository = new File('src/test/resources/repository/mappings/spring/cloud/bye')
@@ -36,6 +37,7 @@ class StubServerSpec extends Specification {
 			pingStubServer.start()
 		then:
 			"http://localhost:$pingStubServer.port/bye".toURL().text == 'Goodbye world!'
+		cleanup:
 			pingStubServer.stop()
 	}
 
@@ -48,6 +50,7 @@ class StubServerSpec extends Specification {
 			pingStubServer.start()
 		then:
 			pingStubServer.stubUrl == EXPECTED_URL
+		cleanup:
 			pingStubServer.stop()
 	}
 }

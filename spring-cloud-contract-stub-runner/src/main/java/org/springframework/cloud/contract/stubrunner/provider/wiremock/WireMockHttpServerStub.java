@@ -227,8 +227,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		String scheme = this.https ? "https" : "http";
 		String host = "localhost";
 		int port = port();
-		String urlPathPrefix = null;
-		String hostHeader = null;
+		String urlPathPrefix = "";
+		String hostHeader = "";
 		String proxyHost = this.wireMockConfiguration.proxyHostHeader();
 		int proxyPort = this.wireMockConfiguration.proxyVia().port();
 		ClientAuthenticator authenticator = NoClientAuthenticator.noClientAuthenticator();
