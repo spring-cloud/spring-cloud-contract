@@ -520,7 +520,7 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 	}
 
-	@Issue('#424')
+	@Issue(['#424','#1647'])
 	def 'should not put an absent header to the request [#methodBuilderName]'() {
 		given:
 			Contract contractDsl = Contract.make {
@@ -528,7 +528,9 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 					method 'GET'
 					url '/mytest'
 					headers {
+						header('header-before', anyNonBlankString())
 						header('myheader', absent())
+						header('header-after', anyNonBlankString())
 					}
 				}
 				response {
@@ -540,6 +542,8 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			String test = singleTestGenerator(contractDsl)
 		then:
 			!test.contains('myheader')
+			test.contains('header-before')
+			test.contains('header-after')
 		and:
 			SyntaxChecker.
 					tryToCompileWithoutCompileStatic(methodBuilderName, test)
