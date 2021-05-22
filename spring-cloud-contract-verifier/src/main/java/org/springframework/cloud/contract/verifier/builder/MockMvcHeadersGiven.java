@@ -44,7 +44,7 @@ class MockMvcHeadersGiven implements Given {
 		while (iterator.hasNext()) {
 			Header header = iterator.next();
 			if (ofAbsentType(header)) {
-				return;
+				continue;
 			}
 			if (iterator.hasNext()) {
 				bb.addLine(string(header));
