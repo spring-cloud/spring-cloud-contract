@@ -1794,7 +1794,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
 .YAML
 ----
-include::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml
+include::{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml[indent=0]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
