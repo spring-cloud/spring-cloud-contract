@@ -12,13 +12,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-docker-parent</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>3.0.3</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-docker</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.4-SNAPSHOT</version>
+	<version>3.0.3</version>
 	<name>Spring Cloud Contract Docker</name>
 	<description>Spring Cloud Contract Docker</description>
 
