@@ -232,6 +232,9 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 
 			generateServerTestsTask.dependsOn(copyContracts);
 		});
+		project.getTasks().named(contractTestSourceSet.getProcessResourcesTaskName(), processContractTestResourcesTask -> {
+			processContractTestResourcesTask.dependsOn(task);
+		});
 		project.getTasks().named(contractTestSourceSet.getCompileJavaTaskName(), compileContractTestJava -> compileContractTestJava.dependsOn(task));
 		project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
 			project.getTasks().named(contractTestSourceSet.getCompileTaskName("groovy"), compileContractTestGroovy -> {
