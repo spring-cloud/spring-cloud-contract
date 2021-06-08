@@ -1008,7 +1008,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 															  .header("Content-Type", "application/json")
 															  .body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
 					, String)
-			response.headers.get('Content-Type') == ['application/json;charset=utf-8']
+			response.headers.get('Content-Type') == ['application/json;charset=UTF-8']
 			response.statusCodeValue == 400
 			JSONAssert.assertEquals('''{"message":"[8.2 Profile/3.7 Bad Request]"}"''', response.body, false)
 	}
