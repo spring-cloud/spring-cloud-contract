@@ -825,4 +825,42 @@ then:
 		}
 	}
 
+	@Test
+	/**
+	 * See issue https://github.com/spring-cloud/spring-cloud-contract/issues/1668
+	 */
+	fun `should convert delay from long to int`() {
+		val contract = contract {
+			name = "Test Controller"
+			description = "Some description"
+			request {
+				method = GET
+				url = url("/credentials") withQueryParameters {
+					parameter("type", "foo")
+				}
+			}
+			response {
+				delay = fixedMilliseconds(1000L)
+				status = OK
+				body = body(
+						listOf(
+								mapOf(
+										"type" to "test1"
+								)
+						)
+				)
+			}
+		}
+
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			val response = contract.response
+			assertThat(response.delay.clientValue).isInstanceOf(java.lang.Integer::class.java)
+			assertThat(response.delay.clientValue).isEqualTo(1000)
+			assertThat(response.delay.serverValue).isInstanceOf(java.lang.Integer::class.java)
+			assertThat(response.delay.serverValue).isEqualTo(1000)
+		}
+	}
+
 }
