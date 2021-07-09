@@ -484,7 +484,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			}
 	}
 
-	def "should generate regex assertions for map objects in response body with #methodBodyName"() {
+	@Unroll
+	def "should generate regex assertions for map objects in response body with #methodBuilderName"() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {

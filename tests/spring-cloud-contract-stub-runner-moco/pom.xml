@@ -62,11 +62,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>info.solidsoft.spock</groupId>
-			<artifactId>spock-global-unroll</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

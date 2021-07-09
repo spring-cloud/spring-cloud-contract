@@ -3,7 +3,6 @@ plugins {
 	id "org.springframework.boot"
 	id "io.spring.dependency-management"
 	id "maven-publish"
-	id "maven"
 	/**
 	 * While the SCC Gradle plugin is not strictly necessary for this project.
 	 * It is included to ensure that if the contractDslDir does not exist, then

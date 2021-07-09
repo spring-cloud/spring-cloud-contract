@@ -179,11 +179,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>info.solidsoft.spock</groupId>
-			<artifactId>spock-global-unroll</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<exclusions>
@@ -280,8 +275,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-junit4</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

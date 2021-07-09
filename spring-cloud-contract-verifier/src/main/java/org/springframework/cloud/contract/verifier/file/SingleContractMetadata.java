@@ -212,17 +212,17 @@ public class SingleContractMetadata {
 	private String calculateMethodName() {
 		if (!isEmpty(contract.getName())) {
 			String name = camelCase(convertIllegalPackageChars(contract.getName()));
-			log.debug("Overriding the default test name with [{}]", name);
+			log.trace("Overriding the default test name with [{}]", name);
 			return name;
 		}
 		if (allContracts.size() > 1) {
 			int index = allContracts.indexOf(getContract());
 			String name = String.format("%s_%d", camelCasedMethodFromFileName(stubsPath), index);
-			log.debug("Scenario found. The method name will be [{}]", name);
+			log.trace("Scenario found. The method name will be [{}]", name);
 			return name;
 		}
 		String name = camelCasedMethodFromFileName(stubsPath);
-		log.debug("The method name will be [{}]", name);
+		log.trace("The method name will be [{}]", name);
 		return name;
 	}
 
