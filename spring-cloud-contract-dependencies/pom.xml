@@ -111,7 +111,6 @@
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
 			</dependency>
-			<!-- This has shadowed deps -->
 			<dependency>
 				<groupId>com.toomuchcoding.jsonassert</groupId>
 				<artifactId>jsonassert-shade</artifactId>
