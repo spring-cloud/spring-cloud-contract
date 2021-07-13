@@ -25,7 +25,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 class AmqpMetadataTests {
 
 	YAMLMapper mapper = new YAMLMapper();
-
+	
 	@Test
 	void should_parse_the_metadata_entry() throws JsonProcessingException {
 		// @formatter:off

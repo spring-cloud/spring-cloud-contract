@@ -225,7 +225,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 	}
 
 	private String singleTestGenerator(Contract contractDsl) {
-		return singleTestGenerator([contractDsl])
+		return singleTestGenerator(Collections.singletonList(contractDsl))
 	}
 
 	private String singleTestGenerator(Collection<Contract> contractDsls) {
@@ -245,7 +245,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 					}
 				})
 			}
-		}.buildClass(configProperties, [contractMetadata(contractDsls)], "foo", generatedClassData)
+		}.buildClass(configProperties, Collections.singletonList(contractMetadata(contractDsls)), "foo", generatedClassData)
 	}
 
 	ContractMetadata contractMetadata(Collection<Contract> contractDsls) {

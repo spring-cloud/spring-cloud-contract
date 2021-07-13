@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class XegerTest {
 
@@ -35,7 +35,7 @@ public class XegerTest {
 		Xeger generator = new Xeger(regex);
 		for (int i = 0; i < 100; i++) {
 			String text = generator.generate();
-			assertTrue(text.matches(regex));
+			assertThat(text.matches(regex)).isTrue();
 		}
 	}
 
@@ -46,7 +46,7 @@ public class XegerTest {
 		Xeger generator = new Xeger(regex);
 		for (int i = 0; i < 100; i++) {
 			String text = generator.generate();
-			assertTrue(text.length() == 1);
+			assertThat(text.length() == 1).isTrue();
 		}
 	}
 
@@ -56,7 +56,7 @@ public class XegerTest {
 		Xeger generator = new Xeger(regex);
 		for (int i = 0; i < 100; i++) {
 			String text = generator.generate();
-			assertTrue(text.matches(regex));
+			assertThat(text.matches(regex)).isTrue();
 		}
 	}
 
@@ -66,7 +66,7 @@ public class XegerTest {
 		Xeger generator = new Xeger(regex);
 		for (int i = 0; i < 100; i++) {
 			String text = generator.generate();
-			assertTrue(text.matches(regex));
+			assertThat(text.matches(regex)).isTrue();
 		}
 	}
 
@@ -76,7 +76,7 @@ public class XegerTest {
 		Xeger generator = new Xeger(regex);
 		for (int i = 0; i < 100; i++) {
 			String text = generator.generate();
-			assertTrue(text.matches(regex));
+			assertThat(text.matches(regex)).isTrue();
 		}
 	}
 
@@ -90,7 +90,7 @@ public class XegerTest {
 			List<String> secondRegexList = generateRegex(generator2, 100);
 
 			for (int i = 0; i < firstRegexList.size(); i++) {
-				assertEquals("Index mismatch: " + i, firstRegexList.get(i), secondRegexList.get(i));
+				assertThat(firstRegexList.get(i)).isEqualTo(secondRegexList.get(i));
 			}
 		}
 	}

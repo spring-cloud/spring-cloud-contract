@@ -136,22 +136,22 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.url.clientValue == "/foo"
 			contract.request.cookies.entries.find { it.key == "foo" && it.serverValue == "bar" }
 			contract.request.cookies.entries.find {
-				it.key == "fooRegex" && ((Pattern) it.clientValue).pattern == "reg" && it.serverValue == "reg"
+				it.key == "fooRegex" && ((Pattern) it.clientValue).pattern() == "reg" && it.serverValue == "reg"
 			}
 			contract.request.cookies.entries.find {
-				it.key == "fooPredefinedRegex" && ((Pattern) it.clientValue).pattern == "(true|false)" && it.serverValue == true
+				it.key == "fooPredefinedRegex" && ((Pattern) it.clientValue).pattern() == "(true|false)" && it.serverValue == true
 			}
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.cookies.entries.find { it.key == "foo" && it.clientValue == "baz" }
 			contract.response.cookies.entries.find {
-				it.key == "fooRegex" && ((Pattern) it.serverValue).pattern == "[0-9]+" && it.clientValue == 123
+				it.key == "fooRegex" && ((Pattern) it.serverValue).pattern() == "[0-9]+" && it.clientValue == 123
 			}
 			contract.response.cookies.entries.find {
-				it.key == "source" && ((Pattern) it.serverValue).pattern == "ip_address" && it.clientValue == "ip_address"
+				it.key == "source" && ((Pattern) it.serverValue).pattern() == "ip_address" && it.clientValue == "ip_address"
 			}
 			contract.response.cookies.entries.find {
-				it.key == "fooPredefinedRegex" && ((Pattern) it.serverValue).pattern == "(true|false)" && it.clientValue == true
+				it.key == "fooPredefinedRegex" && ((Pattern) it.serverValue).pattern() == "(true|false)" && it.clientValue == true
 			}
 			MapConverter.getStubSideValues(contract.response.body) == ["status": "OK"]
 	}
@@ -178,7 +178,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.method.clientValue == "PUT"
 			contract.request.headers.entries.find {
 				it.name == "foo" &&
-						((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar"
+						((Pattern) it.clientValue).pattern() == "bar" && it.serverValue == "bar"
 			}
 			contract.request.headers.entries.find {
 				it.name == "fooReq" &&
@@ -198,7 +198,7 @@ class YamlContractConverterSpec extends Specification {
 			}
 			contract.response.headers.entries.find {
 				it.name == "foo2" &&
-						((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar"
+						((Pattern) it.serverValue).pattern() == "bar" && it.clientValue == "bar"
 			}
 			contract.response.headers.entries.find {
 				it.name == "foo3" &&
@@ -269,7 +269,7 @@ class YamlContractConverterSpec extends Specification {
 			Contract contract = contracts.first()
 			contract.request.headers.entries.find {
 				it.name == "Content-Type" &&
-						((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json"
+						((Pattern) it.clientValue).pattern() == "application/json.*" && it.serverValue == "application/json"
 			}
 			((Pattern) contract.request.urlPath.clientValue).pattern() == "/get/[0-9]"
 			contract.request.urlPath.serverValue == "/get/1"
@@ -404,7 +404,7 @@ class YamlContractConverterSpec extends Specification {
 			Contract contract = contracts.first()
 			contract.input.messageHeaders.entries.find {
 				it.name == "contentType" &&
-						((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json"
+						((Pattern) it.clientValue).pattern() == "application/json.*" && it.serverValue == "application/json"
 			}
 			contract.input.bodyMatchers.matchers[0].path() == '$.duck'
 			contract.input.bodyMatchers.matchers[0].matchingType() == REGEX
@@ -539,7 +539,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.input.triggeredBy.toString() == "foo()"
 			contract.input.messageHeaders.entries.find {
 				it.name == "foo" &&
-						((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar"
+						((Pattern) it.clientValue).pattern() == "bar" && it.serverValue == "bar"
 			}
 			contract.input.messageBody.clientValue == [foo: "bar"]
 			contract.input.bodyMatchers.matchers[0].path() == '$.bar'
@@ -549,7 +549,7 @@ class YamlContractConverterSpec extends Specification {
 			contract.outputMessage.assertThat.toString() == "baz()"
 			contract.outputMessage.headers.entries.find {
 				it.name == "foo2" &&
-						((Pattern) it.serverValue).pattern == "bar" && it.clientValue == "bar"
+						((Pattern) it.serverValue).pattern() == "bar" && it.clientValue == "bar"
 			}
 			contract.outputMessage.headers.entries.find {
 				it.name == "foo3" &&

@@ -22,8 +22,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,6 +38,11 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -80,11 +87,29 @@ public final class MetadataUtil {
 		if (patch == null) {
 			return objectToMerge;
 		}
+		byte[] bytes = new byte[0];
 		try {
-			byte[] bytes = MAPPER.writer().writeValueAsBytes(patch);
+			bytes = MAPPER.writer().writeValueAsBytes(patch);
 			return MAPPER.readerForUpdating(objectToMerge).readValue(bytes);
 		}
 		catch (Exception e) {
+			if (e.getClass().toString().contains("InaccessibleObjectException") && patch instanceof Map) {
+				try {
+					YamlPropertiesFactoryBean yamlProcessor = new YamlPropertiesFactoryBean();
+					yamlProcessor.setResources(new ByteArrayResource(bytes));
+					Properties properties = yamlProcessor.getObject();
+					T props = (T) new Binder(
+							new MapConfigurationPropertySource(properties.entrySet().stream()
+									.collect(Collectors.toMap(entry -> entry.getKey().toString(),
+											entry -> entry.getValue().toString())))).bind("", objectToMerge.getClass())
+													.get();
+					BeanUtils.copyProperties(props, objectToMerge);
+					return objectToMerge;
+				}
+				catch (Exception ex) {
+					throw new IllegalStateException(ex);
+				}
+			}
 			throw new IllegalStateException(e);
 		}
 	}
@@ -207,23 +232,27 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 			writer.serializeAsField(pojo, jgen, provider);
 			return;
 		}
-		Object defaultInstance = CACHE.computeIfAbsent(pojo.getClass(), this::defaultInstance);
+		Object defaultInstance = defaultInstance(pojo);
 		if (defaultInstance instanceof CantInstantiateThisClass
 				|| !valueSameAsDefault(pojo, defaultInstance, writer.getName())) {
 			writer.serializeAsField(pojo, jgen, provider);
 		}
 	}
 
+	Object defaultInstance(Object pojo) {
+		return CACHE.computeIfAbsent(pojo.getClass(), this::defaultInstance);
+	}
+
 	private Object defaultInstance(Class aClass) {
 		try {
-			return aClass.newInstance();
+			return aClass.getDeclaredConstructor().newInstance();
 		}
 		catch (Exception e) {
 			return new CantInstantiateThisClass();
 		}
 	}
 
-	private boolean valueSameAsDefault(Object pojo, Object defaultInstance, String fieldName) {
+	boolean valueSameAsDefault(Object pojo, Object defaultInstance, String fieldName) {
 		Field field = ReflectionUtils.findField(pojo.getClass(), fieldName);
 		if (field == null) {
 			return false;

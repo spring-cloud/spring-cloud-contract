@@ -20,10 +20,9 @@ package repackaged.nl.flotsam.xeger;
 
 import java.util.Random;
 
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class XegerUtilsTest {
 
@@ -32,8 +31,7 @@ public class XegerUtilsTest {
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {
 			int number = Xeger.getRandomInt(3, 7, random);
-			assertThat(number, Matchers.greaterThanOrEqualTo(3));
-			assertThat(number, Matchers.lessThanOrEqualTo(7));
+			assertThat(number).isGreaterThanOrEqualTo(3).isLessThanOrEqualTo(7);
 		}
 	}
 
