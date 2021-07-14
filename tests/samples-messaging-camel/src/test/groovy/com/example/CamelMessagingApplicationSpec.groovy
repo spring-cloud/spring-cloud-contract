@@ -23,12 +23,12 @@ import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import org.apache.camel.Message
 import org.apache.camel.model.ModelCamelContext
-import org.junit.BeforeClass
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
@@ -39,8 +39,8 @@ import org.springframework.test.context.ContextConfiguration
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
 // Context configuration would end up in base class
-@ContextConfiguration(classes = [CamelMessagingApplication], loader = SpringBootContextLoader)
 @AutoConfigureMessageVerifier
+@SpringBootTest(classes = CamelMessagingApplication)
 class CamelMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
@@ -53,8 +53,7 @@ class CamelMessagingApplicationSpec extends Specification {
 
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
-	@BeforeClass
-	static void init() {
+	void setupSpec() {
 		System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES", "*")
 	}
 

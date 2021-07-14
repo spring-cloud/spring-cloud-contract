@@ -55,20 +55,19 @@ import org.springframework.web.client.RestTemplate
  * @author Marcin Grzejszczak
  */
 //TODO: Speed up this test somehow (move it out of Spring Cloud Contract core to samples)
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.cloud.eureka.enabled=true",
-				"stubrunner.cloud.stubbed.discovery.enabled=false",
-				"stubrunner.cloud.ribbon.enabled=false",
-				"eureka.client.enabled=true",
-				"eureka.instance.leaseRenewalIntervalInSeconds=1",
-				"ribbon.ServerListRefreshInterval=100"])
+@SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = ["stubrunner.cloud.eureka.enabled=true",
+                "stubrunner.cloud.stubbed.discovery.enabled=false",
+                "stubrunner.cloud.ribbon.enabled=false",
+                "eureka.client.enabled=true",
+                "eureka.instance.leaseRenewalIntervalInSeconds=1",
+                "ribbon.ServerListRefreshInterval=100"])
 @AutoConfigureStubRunner(ids =
-		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-				"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		repositoryRoot = "classpath:m2repo/repository/",
-		stubsMode = StubRunnerProperties.StubsMode.REMOTE)
+["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+ "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+ "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
+repositoryRoot = "classpath:m2repo/repository/" ,
+stubsMode = StubRunnerProperties.StubsMode.REMOTE )
 class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 
 	@Autowired

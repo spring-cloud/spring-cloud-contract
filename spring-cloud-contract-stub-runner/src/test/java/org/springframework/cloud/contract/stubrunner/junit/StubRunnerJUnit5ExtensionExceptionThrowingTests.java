@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import org.springframework.cloud.contract.stubrunner.junit4.StubRunnerRuleCustomPortJUnitTest;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

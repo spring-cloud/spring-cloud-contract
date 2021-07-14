@@ -17,14 +17,11 @@
 package org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper
 
 import org.apache.curator.test.TestingServer
-import org.junit.AfterClass
-import org.junit.BeforeClass
 import spock.lang.Ignore
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
@@ -35,23 +32,21 @@ import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 
 /**
  * @author Marcin Grzejszczak
  */
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.cloud.stubbed.discovery.enabled=false",
-				"debug=true"])
+@SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = ["stubrunner.cloud.stubbed.discovery.enabled=false",
+                "debug=true"])
 @AutoConfigureStubRunner(ids =
-		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-				"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		repositoryRoot = "classpath:m2repo/repository/",
-		stubsMode = StubRunnerProperties.StubsMode.REMOTE)
+["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+ "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+ "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
+repositoryRoot = "classpath:m2repo/repository/" ,
+stubsMode = StubRunnerProperties.StubsMode.REMOTE )
 class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification {
 
 	@Autowired
@@ -62,11 +57,13 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 	@Autowired
 	ZookeeperDiscoveryClient zookeeperServiceDiscovery
 
-	@BeforeClass
-	@AfterClass
-	static void setupProps() {
+	void setupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
+	}
+
+	void cleanupSpec() {
+		setupSpec()
 	}
 
 	@Ignore

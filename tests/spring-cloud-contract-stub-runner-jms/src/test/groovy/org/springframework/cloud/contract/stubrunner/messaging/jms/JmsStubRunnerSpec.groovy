@@ -29,7 +29,6 @@ import spock.lang.Specification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -40,13 +39,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jms.annotation.EnableJms
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.jms.core.MessagePostProcessor
-import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = ["debug=true"])
+@SpringBootTest(classes = Config, properties = ["debug=true"])
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
 class JmsStubRunnerSpec extends Specification {

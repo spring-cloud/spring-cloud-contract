@@ -26,23 +26,20 @@ import spock.lang.Issue
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
-import org.springframework.test.context.ContextConfiguration
 
 import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
 import static org.assertj.core.api.Assertions.assertThat
 import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
 
 // Context configuration would end up in base class
-@ContextConfiguration(classes = [AmqpMessagingApplication], loader = SpringBootContextLoader)
 @AutoConfigureMessageVerifier
-@SpringBootTest(properties = "stubrunner.amqp.enabled=true")
+@SpringBootTest(classes = AmqpMessagingApplication, properties = "stubrunner.amqp.enabled=true")
 class AmqpMessagingApplicationSpec extends Specification {
 
 	// ALL CASES

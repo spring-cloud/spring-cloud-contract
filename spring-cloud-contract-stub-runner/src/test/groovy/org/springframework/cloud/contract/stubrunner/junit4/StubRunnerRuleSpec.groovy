@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.junit
+package org.springframework.cloud.contract.stubrunner.junit4
 
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -22,6 +22,7 @@ import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
 
+import org.springframework.cloud.contract.stubrunner.junit.StubRunnerRule
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 
 /**

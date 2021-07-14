@@ -18,8 +18,7 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.consul
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.agent.model.NewService
-import org.junit.AfterClass
-import org.junit.BeforeClass
+import groovy.transform.CompileStatic
 import org.mockito.ArgumentMatcher
 import spock.lang.Specification
 
@@ -41,8 +40,7 @@ import static org.mockito.Mockito.mock
 /**
  * @author Marcin Grzejszczak
  */
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+@SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["eureka.client.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
@@ -51,22 +49,23 @@ import static org.mockito.Mockito.mock
 				"stubrunner.cloud.consul.enabled=true",
 				"stubrunner.cloud.zookeeper.enabled=false",
 				"debug=true"])
-@AutoConfigureStubRunner(ids =
-		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-				"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-		repositoryRoot = "classpath:m2repo/repository/")
+@AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+ "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+ "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
+stubsMode = StubRunnerProperties.StubsMode.REMOTE ,
+repositoryRoot = "classpath:m2repo/repository/" )
 class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 
 	@Autowired
 	ConsulClient client
 
-	@BeforeClass
-	@AfterClass
-	static void setupProps() {
+	void setupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
+	}
+
+	void cleanupSpec() {
+		setupSpec()
 	}
 
 	def 'should make service discovery work for #serviceName'() {
@@ -97,6 +96,7 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 		}
 	}
 
+	@CompileStatic
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableDiscoveryClient

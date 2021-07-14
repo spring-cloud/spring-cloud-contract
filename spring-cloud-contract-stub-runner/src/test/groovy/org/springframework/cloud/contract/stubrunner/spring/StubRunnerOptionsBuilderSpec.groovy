@@ -16,22 +16,18 @@
 
 package org.springframework.cloud.contract.stubrunner.spring
 
-
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
 /**
  * @author Marcin Grzejszczak
  */
 
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = ['some.property1=org.springframework.cloud.contract.verifier.stubs:loanIssuance'])
+@SpringBootTest(classes = Config, properties = ['some.property1=org.springframework.cloud.contract.verifier.stubs:loanIssuance'])
 @AutoConfigureStubRunner
 @ActiveProfiles("test-with-placeholders")
 class StubRunnerOptionsBuilderSpec extends Specification {

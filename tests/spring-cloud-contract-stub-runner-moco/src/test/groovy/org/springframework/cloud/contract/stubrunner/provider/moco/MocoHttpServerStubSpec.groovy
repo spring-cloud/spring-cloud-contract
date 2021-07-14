@@ -20,22 +20,19 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
 /**
  * @author Marcin Grzejszczak
  */
-@ContextConfiguration(classes = MocoConfig, loader = SpringBootContextLoader)
 // tag::[classpath_stub_runner]
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = MocoConfig, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = ["com.example:fraudDetectionServerMoco"],
-		stubsMode = StubRunnerProperties.StubsMode.CLASSPATH)
+        stubsMode = StubRunnerProperties.StubsMode.CLASSPATH)
 // end::[classpath_stub_runner]
 @ActiveProfiles("test")
 class MocoHttpServerStubSpec extends Specification {

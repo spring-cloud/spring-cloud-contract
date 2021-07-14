@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.junit
+package org.springframework.cloud.contract.stubrunner.junit4
 
 import java.util.concurrent.TimeUnit
 
@@ -24,6 +24,7 @@ import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
 
+import org.springframework.cloud.contract.stubrunner.junit.StubRunnerRule
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.converter.YamlContract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier

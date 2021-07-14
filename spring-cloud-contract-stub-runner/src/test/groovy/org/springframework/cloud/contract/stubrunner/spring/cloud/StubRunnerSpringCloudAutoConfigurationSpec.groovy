@@ -16,13 +16,11 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.consul.ConsulAutoConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -35,62 +33,64 @@ import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
+
 /**
  * @author Marcin Grzejszczak
  */
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@SpringBootTest(classes = Config)
 @ActiveProfiles("cloudtest")
 // tag::autoconfigure[]
 @AutoConfigureStubRunner(
-		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-				"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-		repositoryRoot = "classpath:m2repo/repository/")
+        ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+                "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+                "org.springframework.cloud.contract.verifier.stubs:bootService"],
+        stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+        repositoryRoot = "classpath:m2repo/repository/")
 // end::autoconfigure[]
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
-	@Autowired
-	StubFinder stubFinder
-	@Autowired
-	@LoadBalanced
-	RestTemplate restTemplate
-	@Autowired
-	LoadBalancerClientFactory loadBalancerClientFactory;
+    @Autowired
+    StubFinder stubFinder
+    @Autowired
+    @LoadBalanced
+    RestTemplate restTemplate
+    @Autowired
+    LoadBalancerClientFactory loadBalancerClientFactory;
 
-	@BeforeClass
-	@AfterClass
-	static void setupProps() {
-		System.clearProperty("stubrunner.repository.root")
-		System.clearProperty("stubrunner.classifier")
-	}
+   void setupSpec() {
+        System.clearProperty("stubrunner.repository.root")
+        System.clearProperty("stubrunner.classifier")
+    }
 
-	def setup() {
-		assert loadBalancerClientFactory instanceof StubRunnerLoadBalancerClientFactory
-	}
+    void cleanupSpec() {
+        setupSpec()
+    }
 
-	// tag::test[]
-	def 'should make service discovery work'() {
-		expect: 'WireMocks are running'
-			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
-		and: 'Stubs can be reached via load service discovery'
-			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
-	}
-	// end::test[]
+    def setup() {
+        assert loadBalancerClientFactory instanceof StubRunnerLoadBalancerClientFactory
+    }
 
-	@Configuration
-	@EnableAutoConfiguration(exclude = [EurekaClientAutoConfiguration,
-			ConsulAutoConfiguration, ZookeeperAutoConfiguration])
-	static class Config {
+    // tag::test[]
+    def 'should make service discovery work'() {
+        expect: 'WireMocks are running'
+        "${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+        "${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+        and: 'Stubs can be reached via load service discovery'
+        restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+        restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+    }
+    // end::test[]
 
-		@Bean
-		@LoadBalanced
-		RestTemplate restTemplate() {
-			return new RestTemplate()
-		}
-	}
+    @Configuration
+    @EnableAutoConfiguration(exclude = [EurekaClientAutoConfiguration,
+            ConsulAutoConfiguration, ZookeeperAutoConfiguration])
+    static class Config {
+
+        @Bean
+        @LoadBalanced
+        RestTemplate restTemplate() {
+            return new RestTemplate()
+        }
+    }
 }

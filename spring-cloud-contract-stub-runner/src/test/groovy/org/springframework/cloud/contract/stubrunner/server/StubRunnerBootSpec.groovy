@@ -31,8 +31,7 @@ import org.springframework.test.context.ContextConfiguration
  * @author Marcin Grzejszczak
  */
 // tag::boot_usage[]
-@ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)
-@SpringBootTest(properties = "spring.cloud.zookeeper.enabled=false")
+@SpringBootTest(classes = StubRunnerBoot, properties = "spring.cloud.zookeeper.enabled=false")
 @ActiveProfiles("test")
 class StubRunnerBootSpec extends Specification {
 

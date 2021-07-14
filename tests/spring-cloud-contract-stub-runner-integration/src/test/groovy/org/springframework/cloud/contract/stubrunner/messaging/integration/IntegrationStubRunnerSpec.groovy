@@ -25,7 +25,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
@@ -34,14 +34,12 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
 import org.springframework.messaging.Message
-import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @ImportResource("classpath*:integration-context.xml")
 @AutoConfigureStubRunner
+@SpringBootTest(classes = Config)
 @IgnoreIf({ os.windows })
 class IntegrationStubRunnerSpec extends Specification {
 

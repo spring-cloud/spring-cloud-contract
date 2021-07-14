@@ -42,12 +42,11 @@ import org.springframework.test.context.ContextConfiguration
  * @author Marcin Grzejszczak
  */
 // tag::test[]
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = ["spring.application.name=bar-consumer"])
+@SpringBootTest(classes = Config, properties = ["spring.application.name=bar-consumer"])
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
-		repositoryRoot = "classpath:m2repo/repository/",
-		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-		stubsPerConsumer = true)
+        repositoryRoot = "classpath:m2repo/repository/",
+        stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+        stubsPerConsumer = true)
 @ActiveProfiles("streamconsumer")
 class StubRunnerStubsPerConsumerSpec extends Specification {
 // end::test[]

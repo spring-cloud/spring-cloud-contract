@@ -22,6 +22,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubTrigger
@@ -30,8 +31,8 @@ import org.springframework.test.context.ContextConfiguration
 
 import static org.mockito.BDDMockito.then
 
-@ContextConfiguration(classes = [AmqpMessagingApplication], loader = SpringBootContextLoader)
 @AutoConfigureStubRunner
+@SpringBootTest(classes = AmqpMessagingApplication)
 class AmqpStubRunnerSpec extends Specification {
 
 	@Autowired

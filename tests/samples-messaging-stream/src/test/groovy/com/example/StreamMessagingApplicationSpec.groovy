@@ -26,7 +26,6 @@ import spock.lang.Specification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
@@ -35,134 +34,132 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
-import org.springframework.test.context.ContextConfiguration
 
 /**
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
 // Context configuration would end up in base class
-@ContextConfiguration(classes = [Config, StreamMessagingApplication], loader = SpringBootContextLoader)
-@SpringBootTest(properties = "debug=true")
+@SpringBootTest(classes = [Config, StreamMessagingApplication], properties = "debug=true")
 @AutoConfigureMessageVerifier
 class StreamMessagingApplicationSpec extends Specification {
 
-	// ALL CASES
-	@Inject
-	MessageVerifier<Message<?>> contractVerifierMessaging
-	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
+    // ALL CASES
+    @Inject
+    MessageVerifier<Message<?>> contractVerifierMessaging
+    ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
-	def "should work for triggered based messaging"() {
-		given:
-			def dsl = Contract.make {
-				label 'some_label'
-				input {
-					triggeredBy('bookReturnedTriggered()')
-				}
-				outputMessage {
-					sentTo('bookReturned')
-					body('''{ "bookName" : "foo" }''')
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-			// generated test should look like this:
-		when:
-			bookReturnedTriggered()
-		then:
-			def response = contractVerifierMessaging.receive('bookReturned')
-			response.headers.get('BOOK-NAME') == 'foo'
-		and:
-			DocumentContext parsedJson = JsonPath.
-					parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
+    def "should work for triggered based messaging"() {
+        given:
+        def dsl = Contract.make {
+            label 'some_label'
+            input {
+                triggeredBy('bookReturnedTriggered()')
+            }
+            outputMessage {
+                sentTo('bookReturned')
+                body('''{ "bookName" : "foo" }''')
+                headers {
+                    header('BOOK-NAME', 'foo')
+                }
+            }
+        }
+        // generated test should look like this:
+        when:
+        bookReturnedTriggered()
+        then:
+        def response = contractVerifierMessaging.receive('bookReturned')
+        response.headers.get('BOOK-NAME') == 'foo'
+        and:
+        DocumentContext parsedJson = JsonPath.
+                parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+        JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
+    }
 
-	def "should generate tests triggered by a message"() {
-		given:
-			def dsl = Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('inputDestination')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-				}
-				outputMessage {
-					sentTo('bookReturned')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
+    def "should generate tests triggered by a message"() {
+        given:
+        def dsl = Contract.make {
+            label 'some_label'
+            input {
+                messageFrom('inputDestination')
+                messageBody([
+                        bookName: 'foo'
+                ])
+                messageHeaders {
+                    header('sample', 'header')
+                }
+            }
+            outputMessage {
+                sentTo('bookReturned')
+                body([
+                        bookName: 'foo'
+                ])
+                headers {
+                    header('BOOK-NAME', 'foo')
+                }
+            }
+        }
 
-			// generated test should look like this:
+        // generated test should look like this:
 
-		when:
-			contractVerifierMessaging.send(
-					contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-					[sample: 'header'], 'inputDestination')
-		then:
-			def response = contractVerifierMessaging.receive('bookReturned')
-			response.headers.get('BOOK-NAME') == 'foo'
-		and:
-			DocumentContext parsedJson = JsonPath.
-					parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
+        when:
+        contractVerifierMessaging.send(
+                contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+                [sample: 'header'], 'inputDestination')
+        then:
+        def response = contractVerifierMessaging.receive('bookReturned')
+        response.headers.get('BOOK-NAME') == 'foo'
+        and:
+        DocumentContext parsedJson = JsonPath.
+                parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+        JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
+    }
 
-	def "should generate tests without destination, triggered by a message"() {
-		given:
-			def dsl = Contract.make {
-				label 'some_label'
-				input {
-					messageFrom("bookDeleted")
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
+    def "should generate tests without destination, triggered by a message"() {
+        given:
+        def dsl = Contract.make {
+            label 'some_label'
+            input {
+                messageFrom("bookDeleted")
+                messageBody([
+                        bookName: 'foo'
+                ])
+                messageHeaders {
+                    header('sample', 'header')
+                }
+                assertThat('bookWasDeleted()')
+            }
+        }
 
-			// generated test should look like this:
+        // generated test should look like this:
 
-		when:
-			contractVerifierMessaging.
-					send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-							[sample: 'header'], "bookDeleted")
-		then:
-			noExceptionThrown()
-			bookWasDeleted()
-	}
+        when:
+        contractVerifierMessaging.
+                send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+                        [sample: 'header'], "bookDeleted")
+        then:
+        noExceptionThrown()
+        bookWasDeleted()
+    }
 
-	// BASE CLASS WOULD HAVE THIS:
+    // BASE CLASS WOULD HAVE THIS:
 
-	@Autowired
-	BookService bookService
-	@Autowired
-	BookDeletedListener bookDeletedListener
+    @Autowired
+    BookService bookService
+    @Autowired
+    BookDeletedListener bookDeletedListener
 
-	void bookReturnedTriggered() {
-		bookService.returnBook(new BookReturned("foo"))
-	}
+    void bookReturnedTriggered() {
+        bookService.returnBook(new BookReturned("foo"))
+    }
 
-	void bookWasDeleted() {
-		assert bookDeletedListener.bookSuccessfulyDeleted.get()
-	}
+    void bookWasDeleted() {
+        assert bookDeletedListener.bookSuccessfulyDeleted.get()
+    }
 
-	@Configuration
-	@EnableAutoConfiguration
-	@ImportAutoConfiguration(TestChannelBinderConfiguration)
-	static class Config {
+    @Configuration
+    @EnableAutoConfiguration
+    @ImportAutoConfiguration(TestChannelBinderConfiguration)
+    static class Config {
 
-	}
+    }
 }

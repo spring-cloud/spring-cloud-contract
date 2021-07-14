@@ -23,7 +23,6 @@ import spock.lang.Specification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -37,18 +36,16 @@ import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
 /**
  * @author Marcin Grzejszczak
  */
 // tag::test[]
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest
+@SpringBootTest(classes = Config)
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
-		repositoryRoot = "classpath:m2repo/repository/",
-		consumerName = "foo-consumer",
-		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-		stubsPerConsumer = true)
+        repositoryRoot = "classpath:m2repo/repository/",
+        consumerName = "foo-consumer",
+        stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+        stubsPerConsumer = true)
 @ActiveProfiles("streamconsumer")
 class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 // end::test[]
