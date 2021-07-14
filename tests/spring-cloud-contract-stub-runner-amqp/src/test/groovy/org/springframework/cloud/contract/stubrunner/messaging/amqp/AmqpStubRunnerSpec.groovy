@@ -17,17 +17,14 @@
 package org.springframework.cloud.contract.stubrunner.messaging.amqp
 
 import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubTrigger
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.test.context.ContextConfiguration
 
 import static org.mockito.BDDMockito.then
 
@@ -41,8 +38,7 @@ class AmqpStubRunnerSpec extends Specification {
 	@SpyBean
 	MessageSubscriber messageSubscriber
 
-	@Captor
-	ArgumentCaptor<Person> personArgumentCaptor
+	ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person)
 
 	def "should trigger stub amqp message"() {
 		given:

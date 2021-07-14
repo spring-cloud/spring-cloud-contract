@@ -16,8 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.amqp
 
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
+
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,9 +35,6 @@ class AmqpStubRunnerRabbitListenerSpec extends Specification {
 
 	@Autowired
 	MessageSubscriberRabbitListener messageSubscriber
-
-	@Captor
-	ArgumentCaptor<Person> personArgumentCaptor
 
 	def "should trigger stub amqp message consumed by annotated listener"() {
 		when:
