@@ -75,6 +75,7 @@ class SpringAmqpStubMessagesSpec extends Specification {
 			})
 	}
 
+	// for JDK 16 the merge option won't work and the metadata needs to be FULLY applied
 	def "should send amqp message with metadata id"() {
 		given:
 			listenerContainer.setMessageListener(messageListenerAdapter)
@@ -93,7 +94,9 @@ class SpringAmqpStubMessagesSpec extends Specification {
 						"amqp": [
 							"input": ["messageProperties": [
 								correlationId: "correlationIdValue",
-								consumerQueue: "queue"]]
+								consumerQueue: "queue",
+								contentType: CONTENT_TYPE_JSON,
+								receivedRoutingKey: routingKey]]
 						],
 						"verifierMessage" : [messageType: "INPUT"]
 					]))
