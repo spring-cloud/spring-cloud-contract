@@ -73,7 +73,7 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 					}
 				})
 			}
-		}.buildClass(properties, [contractMetadata(contractDsl)], "foo", generatedClassData)
+		}.buildClass(properties, Collections.singletonList(contractMetadata(contractDsl)), "foo", generatedClassData)
 	}
 
 	private ContractMetadata contractMetadata(Contract contractDsl) {

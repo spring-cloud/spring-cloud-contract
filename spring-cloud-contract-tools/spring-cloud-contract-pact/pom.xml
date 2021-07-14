@@ -39,11 +39,11 @@
 			<artifactId>groovy-nio</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>au.com.dius.consumer</groupId>
+			<groupId>au.com.dius</groupId>
 			<artifactId>pact-jvm-consumer</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>au.com.dius.provider</groupId>
+			<groupId>au.com.dius</groupId>
 			<artifactId>pact-jvm-provider-junit</artifactId>
 		</dependency>
 		<dependency>
