@@ -93,7 +93,11 @@ public final class MetadataUtil {
 			return MAPPER.readerForUpdating(objectToMerge).readValue(bytes);
 		}
 		catch (Exception e) {
-			if (e.getClass().toString().contains("InaccessibleObjectException") && patch instanceof Map) {
+			if (e.getClass().toString().contains("InaccessibleObjectException")) {
+				// JDK 16 workaround - ObjectMapper seems not be JDK16 compatible
+				// with the setup present in Spring Cloud Contract. So we will not
+				// allow patching but we will just copy values from the patch to
+				// to the object to merge
 				try {
 					YamlPropertiesFactoryBean yamlProcessor = new YamlPropertiesFactoryBean();
 					yamlProcessor.setResources(new ByteArrayResource(bytes));

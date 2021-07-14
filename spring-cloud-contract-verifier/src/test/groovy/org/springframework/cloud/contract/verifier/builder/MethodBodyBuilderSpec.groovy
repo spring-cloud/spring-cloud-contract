@@ -18,6 +18,8 @@
 package org.springframework.cloud.contract.verifier.builder
 
 import org.junit.Rule
+import org.spockframework.runtime.extension.builtin.PreconditionContext
+import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -572,6 +574,7 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 	}
 
 	@Issue('#458')
+	@IgnoreIf({ PreconditionContext it -> it.jvm.java16Compatible })
 	def 'should reference request from body when body is a string [#methodBuilderName]'() {
 		given:
 			Contract contractDsl = Contract.make {
@@ -681,6 +684,7 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 	}
 
 	@Issue('#702')
+	@IgnoreIf({ PreconditionContext it -> it.jvm.java16Compatible })
 	def 'should generate proper type for large numbers [#methodBuilderName]'() {
 		given:
 			Contract contractDsl = Contract.make {
@@ -2029,6 +2033,7 @@ response:
 			}
 	}
 
+	@IgnoreIf({ PreconditionContext it -> it.jvm.java16Compatible })
 	def 'should resolve headers from request correctly'() {
 		given:
 			Contract contractDsl = Contract.make {

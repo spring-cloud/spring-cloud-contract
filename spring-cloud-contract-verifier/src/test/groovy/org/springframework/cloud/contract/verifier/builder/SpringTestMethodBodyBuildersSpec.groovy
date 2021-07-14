@@ -19,6 +19,8 @@ package org.springframework.cloud.contract.verifier.builder
 import java.util.regex.Pattern
 
 import org.junit.Rule
+import org.spockframework.runtime.extension.builtin.PreconditionContext
+import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -2788,6 +2790,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 	}
 
 	@Issue('#230')
+	@IgnoreIf({ PreconditionContext it -> it.jvm.java16Compatible })
 	def 'should manage to reference request in response [#methodBuilderName]'() {
 		given:
 			//tag::template_contract[]
@@ -2889,6 +2892,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 	}
 
 	@Issue('#230')
+	@IgnoreIf({ PreconditionContext it -> it.jvm.java16Compatible })
 	def 'should manage to reference request in response via WireMock native entries [#methodBuilderName]'() {
 		given:
 			//tag::template_contract[]
