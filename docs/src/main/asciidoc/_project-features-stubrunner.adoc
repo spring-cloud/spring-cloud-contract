@@ -374,7 +374,7 @@ group and artifact ID, as the following example shows:
 ====
 [source,java,indent=0]
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleJUnitTest.java[tags=classrule]
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleJUnitTest.java[tags=classrule]
 ----
 ====
 
@@ -410,13 +410,13 @@ The following examples provide more detail about using Stub Runner:
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .Spock
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleSpec.groovy[tags=classrule]
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleSpec.groovy[tags=classrule]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
 .Junit 4
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleJUnitTest.java[tags=test]
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleJUnitTest.java[tags=test]
 ----
 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
@@ -456,7 +456,7 @@ and then pass the port for the last downloaded stub. The following example shows
 ====
 [source,java,indent=0]
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleCustomPortJUnitTest.java[tags=classrule_with_port]
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleCustomPortJUnitTest.java[tags=classrule_with_port]
 ----
 ====
 
@@ -465,7 +465,7 @@ For the preceding example, the following test is valid:
 ====
 [source,java,indent=0]
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleCustomPortJUnitTest.java[tags=test_with_port]
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleCustomPortJUnitTest.java[tags=test_with_port]
 ----
 ====
 
