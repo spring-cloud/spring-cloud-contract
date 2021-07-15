@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.template;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -64,8 +64,8 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 	@Override
 	public String transform(Request request, String testContents) {
 		TestSideRequestTemplateModel templateModel = TestSideRequestTemplateModel.from(request);
-		Map<String, TestSideRequestTemplateModel> model = Collections
-				.singletonMap(HandlebarsJsonPathHelper.REQUEST_MODEL_NAME, templateModel);
+		Map<String, TestSideRequestTemplateModel> model = new HashMap<>();
+		model.put(HandlebarsJsonPathHelper.REQUEST_MODEL_NAME, templateModel);
 		Template bodyTemplate = uncheckedCompileTemplate(testContents);
 		return templatedResponseBody(model, bodyTemplate);
 	}

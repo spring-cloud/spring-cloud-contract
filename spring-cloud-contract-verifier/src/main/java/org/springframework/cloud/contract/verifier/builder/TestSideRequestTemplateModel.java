@@ -133,10 +133,10 @@ public class TestSideRequestTemplateModel {
 		if (!headersEntriesPresent) {
 			return new HashMap<>();
 		}
-		return request.getHeaders().getEntries().stream()
+		return new HashMap<>(request.getHeaders().getEntries().stream()
 				.collect(Collectors.groupingBy(Header::getName,
 						Collectors.mapping((Function<Object, String>) o -> MapConverter.getTestSideValues(o).toString(),
-								Collectors.toList())));
+								Collectors.toList()))));
 	}
 
 	private static String fullUrl(String url, Map<String, List<Object>> query, boolean queryParamsPresent) {
@@ -153,8 +153,8 @@ public class TestSideRequestTemplateModel {
 		if (queryParameters == null) {
 			return new HashMap<>();
 		}
-		return queryParameters.getParameters().stream().collect(Collectors.groupingBy(QueryParameter::getName,
-				Collectors.mapping(MapConverter::getTestSideValues, Collectors.toList())));
+		return new HashMap<>(queryParameters.getParameters().stream().collect(Collectors.groupingBy(
+				QueryParameter::getName, Collectors.mapping(MapConverter::getTestSideValues, Collectors.toList()))));
 	}
 
 	private static List<String> buildPathsFromUrl(String url) {
