@@ -16,9 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.spec.pact;
 
+import au.com.dius.pact.core.model.matchingrules.Category;
 import au.com.dius.pact.core.model.matchingrules.DateMatcher;
 import au.com.dius.pact.core.model.matchingrules.EqualsMatcher;
-import au.com.dius.pact.core.model.matchingrules.MatchingRuleCategory;
 import au.com.dius.pact.core.model.matchingrules.MaxTypeMatcher;
 import au.com.dius.pact.core.model.matchingrules.MinMaxTypeMatcher;
 import au.com.dius.pact.core.model.matchingrules.MinTypeMatcher;
@@ -43,12 +43,12 @@ final class MatchingRulesConverter {
 	private MatchingRulesConverter() {
 	}
 
-	static MatchingRuleCategory matchingRulesForBody(BodyMatchers bodyMatchers) {
+	static Category matchingRulesForBody(BodyMatchers bodyMatchers) {
 		return matchingRulesFor("body", bodyMatchers);
 	}
 
-	private static MatchingRuleCategory matchingRulesFor(String categoryName, BodyMatchers bodyMatchers) {
-		MatchingRuleCategory category = new MatchingRuleCategory(categoryName);
+	private static Category matchingRulesFor(String categoryName, BodyMatchers bodyMatchers) {
+		Category category = new Category(categoryName);
 		bodyMatchers.matchers().forEach((b) -> {
 			String key = getMatcherKey(b.path());
 			MatchingType matchingType = b.matchingType();

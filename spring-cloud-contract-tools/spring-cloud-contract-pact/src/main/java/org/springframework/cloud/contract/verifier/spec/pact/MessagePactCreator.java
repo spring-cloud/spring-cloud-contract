@@ -51,7 +51,7 @@ class MessagePactCreator {
 			return null;
 		}
 		Names names = NamingUtil.name(contracts.get(0));
-		MessagePactBuilder pactBuilder = new MessagePactBuilder().consumer(names.getConsumer())
+		MessagePactBuilder pactBuilder = MessagePactBuilder.consumer(names.getConsumer())
 				.hasPactWith(names.getProducer());
 
 		for (Contract contract : contracts) {

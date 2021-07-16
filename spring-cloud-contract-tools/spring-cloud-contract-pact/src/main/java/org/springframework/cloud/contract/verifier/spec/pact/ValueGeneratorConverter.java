@@ -133,7 +133,7 @@ final class ValueGeneratorConverter {
 					"We currently don't support a generator of type " + generator.getClass().getSimpleName());
 		}
 		else {
-			Object generatedValue = generator.generate(new HashMap<>(), null);
+			Object generatedValue = generator.generate(new HashMap<>());
 			return dslPropertyProvider.apply(pattern, generatedValue);
 		}
 	}

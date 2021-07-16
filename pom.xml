@@ -25,7 +25,7 @@
 	<properties>
 		<!-- Align it also in Docker image under [docker/spring-cloud-contract-docker/project/gradle.properties] -->
 		<camel.version>3.11.0</camel.version>
-		<pact.version>4.2.7</pact.version>
+		<pact.version>4.1.23</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>3.1.0-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>3.1.0-SNAPSHOT</spring-cloud-zookeeper.version>

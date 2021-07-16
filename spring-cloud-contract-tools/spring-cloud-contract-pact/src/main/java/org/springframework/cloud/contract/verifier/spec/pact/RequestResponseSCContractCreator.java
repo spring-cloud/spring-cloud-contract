@@ -30,9 +30,9 @@ import au.com.dius.pact.core.model.Request;
 import au.com.dius.pact.core.model.RequestResponseInteraction;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.Response;
+import au.com.dius.pact.core.model.matchingrules.Category;
 import au.com.dius.pact.core.model.matchingrules.DateMatcher;
 import au.com.dius.pact.core.model.matchingrules.MatchingRule;
-import au.com.dius.pact.core.model.matchingrules.MatchingRuleCategory;
 import au.com.dius.pact.core.model.matchingrules.MatchingRuleGroup;
 import au.com.dius.pact.core.model.matchingrules.MaxTypeMatcher;
 import au.com.dius.pact.core.model.matchingrules.MinMaxTypeMatcher;
@@ -92,7 +92,7 @@ class RequestResponseSCContractCreator {
 			if (pactRequest.getBody().getState() == OptionalBody.State.PRESENT) {
 				mapRequestBody(contractRequest, pactRequest);
 			}
-			MatchingRuleCategory bodyRules = pactRequest.getMatchingRules().rulesForCategory("body");
+			Category bodyRules = pactRequest.getMatchingRules().rulesForCategory("body");
 			if (!bodyRules.getMatchingRules().isEmpty()) {
 				mapRequestBodyRules(contractRequest, bodyRules);
 			}
@@ -111,7 +111,7 @@ class RequestResponseSCContractCreator {
 				mapResponseBody(contractResponse, pactResponse);
 			}
 
-			MatchingRuleCategory bodyRules = pactResponse.getMatchingRules().rulesForCategory("body");
+			Category bodyRules = pactResponse.getMatchingRules().rulesForCategory("body");
 			if (!bodyRules.getMatchingRules().isEmpty()) {
 				mapResponseBodyRules(contractResponse, pactResponse, bodyRules);
 			}
@@ -126,7 +126,7 @@ class RequestResponseSCContractCreator {
 	}
 
 	private void mapResponseBodyRules(org.springframework.cloud.contract.spec.internal.Response contractResponse,
-			Response pactResponse, MatchingRuleCategory bodyRules) {
+			Response pactResponse, Category bodyRules) {
 		contractResponse.bodyMatchers((bodyMatchers) -> {
 			bodyRules.getMatchingRules().forEach((key, matchindRuleGroup) -> {
 				if (matchindRuleGroup.getRuleLogic() != RuleLogic.AND) {
@@ -210,7 +210,7 @@ class RequestResponseSCContractCreator {
 	}
 
 	private void mapRequestBodyRules(org.springframework.cloud.contract.spec.internal.Request contractRequest,
-			MatchingRuleCategory bodyRules) {
+			Category bodyRules) {
 		contractRequest.bodyMatchers((bodyMatchers) -> {
 			bodyRules.getMatchingRules().forEach((key, matchingRuleGroup) -> {
 				if (matchingRuleGroup.getRuleLogic() != RuleLogic.AND) {
@@ -267,7 +267,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapRequestCookies(org.springframework.cloud.contract.spec.internal.Request contractRequest,
 			Request pactRequest) {
-		MatchingRuleCategory headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
+		Category headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
 		String[] splitCookiesHeader = pactRequest.getHeaders().get("Cookie").get(0).split(";");
 		Map<String, String> foundCookies = Stream.of(splitCookiesHeader).map((cookieHeader) -> cookieHeader.split("="))
 				.collect(Collectors.toMap(splittedCookieHeader -> splittedCookieHeader[0],
@@ -300,7 +300,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapResponseCookies(org.springframework.cloud.contract.spec.internal.Response contractResponse,
 			Response pactResponse) {
-		MatchingRuleCategory headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
+		Category headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
 		String[] splitCookiesHeader = pactResponse.getHeaders().get("Cookie").get(0).split(";");
 		Map<String, String> foundCookies = Stream.of(splitCookiesHeader).map((cookieHeader) -> cookieHeader.split("="))
 				.collect(Collectors.toMap(splittedCookieHeader -> splittedCookieHeader[0],
@@ -345,7 +345,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapRequestHeaders(org.springframework.cloud.contract.spec.internal.Request contractRequest,
 			Request pactRequest) {
-		MatchingRuleCategory headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
+		Category headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
 		contractRequest.headers((headers) -> pactRequest.getHeaders().forEach((key, values) -> {
 			if (key.equalsIgnoreCase("Cookie")) {
 				return;
@@ -379,7 +379,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapResponseHeaders(org.springframework.cloud.contract.spec.internal.Response contractResponse,
 			Response pactResponse) {
-		MatchingRuleCategory headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
+		Category headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
 		contractResponse.headers((headers) -> pactResponse.getHeaders().forEach((key, values) -> {
 			if (key.equalsIgnoreCase("Cookie")) {
 				return;
