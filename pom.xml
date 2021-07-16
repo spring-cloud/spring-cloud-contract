@@ -25,7 +25,7 @@
 	<properties>
 		<!-- Align it also in Docker image under [docker/spring-cloud-contract-docker/project/gradle.properties] -->
 		<camel.version>3.11.0</camel.version>
-		<pact.version>4.0.10</pact.version>
+		<pact.version>4.2.7</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>3.1.0-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>3.1.0-SNAPSHOT</spring-cloud-zookeeper.version>
@@ -207,8 +207,8 @@
 				<version>${commons-text.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>au.com.dius</groupId>
-				<artifactId>pact-jvm-consumer</artifactId>
+				<groupId>au.com.dius.pact.consumer</groupId>
+				<artifactId>junit5</artifactId>
 				<version>${pact.version}</version>
 				<exclusions>
 					<exclusion>
@@ -222,8 +222,8 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>au.com.dius</groupId>
-				<artifactId>pact-jvm-provider-junit</artifactId>
+				<groupId>au.com.dius.pact.provider</groupId>
+				<artifactId>junit5</artifactId>
 				<version>${pact.version}</version>
 				<exclusions>
 					<exclusion>

@@ -138,10 +138,10 @@ class PactContractConverterSpec extends Specification {
 					headers {
 						header(contentType(), applicationJsonUtf8())
 					}
-					body(id: 42, firstName: "Arthur", lastName: "Dent")
+					body(firstName: "Arthur", id: 42, lastName: "Dent")
 					bodyMatchers {
-						jsonPath('''$.['id']''', byType())
 						jsonPath('''$.['firstName']''', byType())
+						jsonPath('''$.['id']''', byType())
 						jsonPath('''$.['lastName']''', byType())
 					}
 				}
@@ -347,7 +347,7 @@ class PactContractConverterSpec extends Specification {
   ],
   "metadata": {
     "pact-jvm": {
-      "version": "4.0.10"
+      "version": "4.2.7"
     }
   }
 }

@@ -39,12 +39,12 @@
 			<artifactId>groovy-nio</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>au.com.dius</groupId>
-			<artifactId>pact-jvm-consumer</artifactId>
+			<groupId>au.com.dius.pact.consumer</groupId>
+			<artifactId>junit5</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>au.com.dius</groupId>
-			<artifactId>pact-jvm-provider-junit</artifactId>
+			<groupId>au.com.dius.pact.provider</groupId>
+			<artifactId>junit5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

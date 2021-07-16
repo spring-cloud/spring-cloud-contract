@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import au.com.dius.pact.core.model.matchingrules.Category;
 import au.com.dius.pact.core.model.matchingrules.DateMatcher;
 import au.com.dius.pact.core.model.matchingrules.MatchingRule;
+import au.com.dius.pact.core.model.matchingrules.MatchingRuleCategory;
 import au.com.dius.pact.core.model.matchingrules.MaxTypeMatcher;
 import au.com.dius.pact.core.model.matchingrules.MinMaxTypeMatcher;
 import au.com.dius.pact.core.model.matchingrules.MinTypeMatcher;
@@ -36,8 +36,6 @@ import au.com.dius.pact.core.model.matchingrules.TimestampMatcher;
 import au.com.dius.pact.core.model.matchingrules.TypeMatcher;
 import au.com.dius.pact.core.model.messaging.Message;
 import au.com.dius.pact.core.model.messaging.MessagePact;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -65,20 +63,20 @@ class MessagingSCContractCreator {
 	Collection<Contract> convertFrom(MessagePact pact) {
 		return pact.getMessages().stream().map(message -> Contract.make(contract -> {
 			contract.label(message.getDescription());
-			if (CollectionUtils.isNotEmpty(message.getProviderStates())) {
+			if (!message.getProviderStates().isEmpty()) {
 				contract.input(i -> i.triggeredBy(this.getTriggeredBy(message)));
 			}
 
 			contract.outputMessage((outputMessage) -> {
 				if (message.getContents().isPresent()) {
 					outputMessage.body(BodyConverter.toSCCBody(message));
-					Category bodyRules = message.getMatchingRules().rulesForCategory("body");
-					if (bodyRules != null && MapUtils.isNotEmpty(bodyRules.getMatchingRules())) {
+					MatchingRuleCategory bodyRules = message.getMatchingRules().rulesForCategory("body");
+					if (bodyRules != null && !bodyRules.getMatchingRules().isEmpty()) {
 						outputMessage.bodyMatchers((responseBodyMatchers) -> outputMessageBodyMatchers(message,
 								bodyRules, responseBodyMatchers));
 					}
 				}
-				if (MapUtils.isNotEmpty(message.getMetaData())) {
+				if (!message.getMetadata().isEmpty()) {
 					outputMessage.headers((headers) -> outputMessageHeaders(message, headers));
 				}
 				String dest = findDestination(message);
@@ -90,7 +88,7 @@ class MessagingSCContractCreator {
 	}
 
 	private void outputMessageHeaders(Message message, Headers headers) {
-		message.getMetaData().forEach((key, value) -> {
+		message.getMetadata().forEach((key, value) -> {
 			String matchingRuleGroup = value.toString();
 			if (key.equalsIgnoreCase("contentType")) {
 				headers.messagingContentType(matchingRuleGroup);
@@ -101,7 +99,7 @@ class MessagingSCContractCreator {
 		});
 	}
 
-	private void outputMessageBodyMatchers(Message message, Category bodyRules,
+	private void outputMessageBodyMatchers(Message message, MatchingRuleCategory bodyRules,
 			ResponseBodyMatchers responseBodyMatchers) {
 		bodyRules.getMatchingRules().forEach((matchingRuleKey, matchingRuleGroup) -> {
 			if (matchingRuleGroup.getRuleLogic() != RuleLogic.AND) {
@@ -129,8 +127,8 @@ class MessagingSCContractCreator {
 	}
 
 	private String findDestination(Message message) {
-		return message.getMetaData().get(DESTINATION_KEY) != null
-				? message.getMetaData().get(DESTINATION_KEY).toString() : "";
+		return message.getMetadata().get(DESTINATION_KEY) != null
+				? message.getMetadata().get(DESTINATION_KEY).toString() : "";
 	}
 
 	void applyJsonPathToResponseBodyMatchers(MatchingRule matchingRule, String key,

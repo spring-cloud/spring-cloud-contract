@@ -23,15 +23,16 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import au.com.dius.pact.core.model.Interaction;
 import au.com.dius.pact.core.model.OptionalBody;
 import au.com.dius.pact.core.model.ProviderState;
 import au.com.dius.pact.core.model.Request;
 import au.com.dius.pact.core.model.RequestResponseInteraction;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.Response;
-import au.com.dius.pact.core.model.matchingrules.Category;
 import au.com.dius.pact.core.model.matchingrules.DateMatcher;
 import au.com.dius.pact.core.model.matchingrules.MatchingRule;
+import au.com.dius.pact.core.model.matchingrules.MatchingRuleCategory;
 import au.com.dius.pact.core.model.matchingrules.MatchingRuleGroup;
 import au.com.dius.pact.core.model.matchingrules.MaxTypeMatcher;
 import au.com.dius.pact.core.model.matchingrules.MinMaxTypeMatcher;
@@ -43,7 +44,6 @@ import au.com.dius.pact.core.model.matchingrules.RuleLogic;
 import au.com.dius.pact.core.model.matchingrules.TimeMatcher;
 import au.com.dius.pact.core.model.matchingrules.TimestampMatcher;
 import au.com.dius.pact.core.model.matchingrules.TypeMatcher;
-import org.apache.commons.collections4.MapUtils;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.RegexPatterns;
@@ -69,17 +69,21 @@ class RequestResponseSCContractCreator {
 		})).collect(Collectors.toList());
 	}
 
-	private void mapContractDescription(RequestResponseInteraction interaction, Contract contract) {
+	private void mapContractDescription(Interaction interaction, Contract contract) {
 		contract.description(buildDescription(interaction));
 	}
 
-	private void mapContractRequest(RequestResponseInteraction interaction, Contract contract) {
+	private void mapContractRequest(Interaction inter, Contract contract) {
 		contract.request((contractRequest) -> {
+			if (!(inter instanceof RequestResponseInteraction)) {
+				return;
+			}
+			RequestResponseInteraction interaction = (RequestResponseInteraction) inter;
 			Request pactRequest = interaction.getRequest();
 			contractRequest.method(pactRequest.getMethod());
 			mapRequestUrl(contractRequest, pactRequest);
 
-			if (MapUtils.isNotEmpty(pactRequest.getHeaders())) {
+			if (!pactRequest.getHeaders().isEmpty()) {
 				mapRequestHeaders(contractRequest, pactRequest);
 			}
 			if (pactRequest.getHeaders().containsKey("Cookie")) {
@@ -88,26 +92,30 @@ class RequestResponseSCContractCreator {
 			if (pactRequest.getBody().getState() == OptionalBody.State.PRESENT) {
 				mapRequestBody(contractRequest, pactRequest);
 			}
-			Category bodyRules = pactRequest.getMatchingRules().rulesForCategory("body");
-			if (MapUtils.isNotEmpty(bodyRules.getMatchingRules())) {
+			MatchingRuleCategory bodyRules = pactRequest.getMatchingRules().rulesForCategory("body");
+			if (!bodyRules.getMatchingRules().isEmpty()) {
 				mapRequestBodyRules(contractRequest, bodyRules);
 			}
 		});
 	}
 
-	private void mapContractResponse(RequestResponseInteraction interaction, Contract contract) {
+	private void mapContractResponse(Interaction inter, Contract contract) {
 		contract.response((contractResponse) -> {
+			if (!(inter instanceof RequestResponseInteraction)) {
+				return;
+			}
+			RequestResponseInteraction interaction = (RequestResponseInteraction) inter;
 			Response pactResponse = interaction.getResponse();
 			contractResponse.status(pactResponse.getStatus());
 			if (pactResponse.getBody().isPresent()) {
 				mapResponseBody(contractResponse, pactResponse);
 			}
 
-			Category bodyRules = pactResponse.getMatchingRules().rulesForCategory("body");
-			if (MapUtils.isNotEmpty(bodyRules.getMatchingRules())) {
+			MatchingRuleCategory bodyRules = pactResponse.getMatchingRules().rulesForCategory("body");
+			if (!bodyRules.getMatchingRules().isEmpty()) {
 				mapResponseBodyRules(contractResponse, pactResponse, bodyRules);
 			}
-			if (MapUtils.isNotEmpty(pactResponse.getHeaders())) {
+			if (!pactResponse.getHeaders().isEmpty()) {
 				mapResponseHeaders(contractResponse, pactResponse);
 			}
 
@@ -118,7 +126,7 @@ class RequestResponseSCContractCreator {
 	}
 
 	private void mapResponseBodyRules(org.springframework.cloud.contract.spec.internal.Response contractResponse,
-			Response pactResponse, Category bodyRules) {
+			Response pactResponse, MatchingRuleCategory bodyRules) {
 		contractResponse.bodyMatchers((bodyMatchers) -> {
 			bodyRules.getMatchingRules().forEach((key, matchindRuleGroup) -> {
 				if (matchindRuleGroup.getRuleLogic() != RuleLogic.AND) {
@@ -202,7 +210,7 @@ class RequestResponseSCContractCreator {
 	}
 
 	private void mapRequestBodyRules(org.springframework.cloud.contract.spec.internal.Request contractRequest,
-			Category bodyRules) {
+			MatchingRuleCategory bodyRules) {
 		contractRequest.bodyMatchers((bodyMatchers) -> {
 			bodyRules.getMatchingRules().forEach((key, matchingRuleGroup) -> {
 				if (matchingRuleGroup.getRuleLogic() != RuleLogic.AND) {
@@ -259,7 +267,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapRequestCookies(org.springframework.cloud.contract.spec.internal.Request contractRequest,
 			Request pactRequest) {
-		Category headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
+		MatchingRuleCategory headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
 		String[] splitCookiesHeader = pactRequest.getHeaders().get("Cookie").get(0).split(";");
 		Map<String, String> foundCookies = Stream.of(splitCookiesHeader).map((cookieHeader) -> cookieHeader.split("="))
 				.collect(Collectors.toMap(splittedCookieHeader -> splittedCookieHeader[0],
@@ -292,7 +300,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapResponseCookies(org.springframework.cloud.contract.spec.internal.Response contractResponse,
 			Response pactResponse) {
-		Category headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
+		MatchingRuleCategory headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
 		String[] splitCookiesHeader = pactResponse.getHeaders().get("Cookie").get(0).split(";");
 		Map<String, String> foundCookies = Stream.of(splitCookiesHeader).map((cookieHeader) -> cookieHeader.split("="))
 				.collect(Collectors.toMap(splittedCookieHeader -> splittedCookieHeader[0],
@@ -325,7 +333,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapRequestUrl(org.springframework.cloud.contract.spec.internal.Request contractRequest,
 			Request pactRequest) {
-		if (MapUtils.isNotEmpty(pactRequest.getQuery())) {
+		if (!pactRequest.getQuery().isEmpty()) {
 			contractRequest.url(pactRequest.getPath(),
 					(url) -> url.queryParameters((queryParameters) -> pactRequest.getQuery().forEach((key,
 							values) -> values.forEach((singleValue) -> queryParameters.parameter(key, singleValue)))));
@@ -337,7 +345,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapRequestHeaders(org.springframework.cloud.contract.spec.internal.Request contractRequest,
 			Request pactRequest) {
-		Category headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
+		MatchingRuleCategory headerRules = pactRequest.getMatchingRules().rulesForCategory("header");
 		contractRequest.headers((headers) -> pactRequest.getHeaders().forEach((key, values) -> {
 			if (key.equalsIgnoreCase("Cookie")) {
 				return;
@@ -371,7 +379,7 @@ class RequestResponseSCContractCreator {
 
 	private void mapResponseHeaders(org.springframework.cloud.contract.spec.internal.Response contractResponse,
 			Response pactResponse) {
-		Category headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
+		MatchingRuleCategory headerRules = pactResponse.getMatchingRules().rulesForCategory("header");
 		contractResponse.headers((headers) -> pactResponse.getHeaders().forEach((key, values) -> {
 			if (key.equalsIgnoreCase("Cookie")) {
 				return;
@@ -403,13 +411,13 @@ class RequestResponseSCContractCreator {
 		}));
 	}
 
-	private String buildDescription(RequestResponseInteraction interaction) {
+	private String buildDescription(Interaction interaction) {
 		StringBuilder description = new StringBuilder(interaction.getDescription());
 		List<ProviderState> providerStates = interaction.getProviderStates();
 		for (ProviderState providerState : providerStates) {
 			description.append(" ").append(providerState.getName());
 			Map<String, Object> params = providerState.getParams();
-			if (MapUtils.isNotEmpty(params)) {
+			if (!params.isEmpty()) {
 				description.append("(");
 				params.forEach((k, v) -> {
 					description.append(k).append(": ").append(v.toString()).append(", ");

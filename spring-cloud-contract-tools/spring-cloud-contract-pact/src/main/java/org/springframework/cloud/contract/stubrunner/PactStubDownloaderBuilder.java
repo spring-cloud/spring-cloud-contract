@@ -35,14 +35,16 @@ import au.com.dius.pact.core.model.Pact;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.support.expressions.SystemPropertyResolver;
 import au.com.dius.pact.core.support.expressions.ValueResolver;
-import au.com.dius.pact.provider.junit.loader.PactBroker;
-import au.com.dius.pact.provider.junit.loader.PactBrokerAuth;
-import au.com.dius.pact.provider.junit.loader.PactBrokerLoader;
-import au.com.dius.pact.provider.junit.loader.PactLoader;
+import au.com.dius.pact.provider.junitsupport.loader.PactBroker;
+import au.com.dius.pact.provider.junitsupport.loader.PactBrokerAuth;
+import au.com.dius.pact.provider.junitsupport.loader.PactBrokerLoader;
+import au.com.dius.pact.provider.junitsupport.loader.PactLoader;
+import au.com.dius.pact.provider.junitsupport.loader.VersionSelector;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.Nullable;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -241,23 +243,64 @@ class PactStubDownloader implements StubDownloader {
 			}
 
 			@Override
+			public String url() {
+				return resolver.resolveValue("pactbroker.url:" + pactBrokerUrl.getScheme() + "://"
+						+ pactBrokerUrl.getHost() + ":" + pactBrokerUrl.getPort());
+			}
+
+			@Override
+			@Deprecated
 			public String host() {
 				return resolver.resolveValue("pactbroker.host:" + pactBrokerUrl.getHost());
 			}
 
 			@Override
+			@Deprecated
 			public String port() {
 				return resolver.resolveValue("pactbroker.port:" + pactBrokerUrl.getPort());
 			}
 
 			@Override
+			@Deprecated
 			public String scheme() {
 				return resolver.resolveValue("pactbroker.protocol:" + pactBrokerUrl.getScheme());
 			}
 
 			@Override
+			@Deprecated
 			public String[] tags() {
 				return tags.toArray(new String[0]);
+			}
+
+			@Override
+			public VersionSelector[] consumerVersionSelectors() {
+				return new VersionSelector[] { new VersionSelector() {
+
+					@Override
+					public Class<? extends Annotation> annotationType() {
+						return VersionSelector.class;
+					}
+
+					@Override
+					public String tag() {
+						return resolver.resolveValue("pactbroker.consumerversionselectors.tags:");
+					}
+
+					@Override
+					public String latest() {
+						return resolver.resolveValue("pactbroker.consumerversionselectors.latest:");
+					}
+
+					@Override
+					public String consumer() {
+						return resolver.resolveValue("pactbroker.consumers:");
+					}
+
+					@Override
+					public String fallbackTag() {
+						return null;
+					}
+				} };
 			}
 
 			@Override
@@ -271,11 +314,6 @@ class PactStubDownloader implements StubDownloader {
 					@Override
 					public Class<? extends Annotation> annotationType() {
 						return PactBrokerAuth.class;
-					}
-
-					@Override
-					public String scheme() {
-						return resolver.resolveValue("pactbroker.auth.scheme:Basic");
 					}
 
 					@Override
@@ -298,6 +336,21 @@ class PactStubDownloader implements StubDownloader {
 			@Override
 			public Class<? extends ValueResolver> valueResolver() {
 				return SystemPropertyResolver.class;
+			}
+
+			@Override
+			public String enablePendingPacts() {
+				return null;
+			}
+
+			@Override
+			public String[] providerTags() {
+				return new String[0];
+			}
+
+			@Override
+			public String includeWipPactsSince() {
+				return null;
 			}
 		});
 	}
@@ -334,7 +387,7 @@ class PactStubDownloader implements StubDownloader {
 
 class FromPropsThenFromSysEnv implements ValueResolver {
 
-	final SystemPropertyResolver resolver = new SystemPropertyResolver();
+	final SystemPropertyResolver resolver = SystemPropertyResolver.INSTANCE;
 
 	StubRunnerOptions options;
 
@@ -362,6 +415,12 @@ class FromPropsThenFromSysEnv implements ValueResolver {
 			return true;
 		}
 		return this.resolver.propertyDefined(property);
+	}
+
+	@Nullable
+	@Override
+	public String resolveValue(String expression, String defaultValue) {
+		return resolveValue(expression);
 	}
 
 }

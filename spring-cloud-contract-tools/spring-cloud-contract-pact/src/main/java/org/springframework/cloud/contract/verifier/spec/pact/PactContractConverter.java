@@ -46,7 +46,7 @@ import org.springframework.cloud.contract.spec.ContractConverter;
  * @author Stessy Delcroix
  * @since 1.1.0
  */
-public class PactContractConverter implements ContractConverter<Collection<Pact<?>>> {
+public class PactContractConverter implements ContractConverter<Collection<Pact>> {
 
 	private static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.INSTANCE.getMapper();
 
@@ -61,8 +61,8 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 	@Override
 	public boolean isAccepted(File file) {
 		try {
-			DefaultPactReader.INSTANCE.loadPact(file);
-			return true;
+			Pact pact = DefaultPactReader.INSTANCE.loadPact(file);
+			return !pact.getInteractions().isEmpty();
 		}
 		catch (Exception e) {
 			return false;
@@ -71,7 +71,7 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 
 	@Override
 	public Collection<Contract> convertFrom(File file) {
-		Pact<?> pact = DefaultPactReader.INSTANCE.loadPact(file);
+		Pact pact = DefaultPactReader.INSTANCE.loadPact(file);
 		if (pact instanceof RequestResponsePact) {
 			return requestResponseSCContractCreator.convertFrom((RequestResponsePact) pact);
 		}
@@ -83,8 +83,8 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 	}
 
 	@Override
-	public Collection<Pact<?>> convertTo(Collection<Contract> contracts) {
-		List<Pact<?>> pactContracts = new ArrayList<>();
+	public Collection<Pact> convertTo(Collection<Contract> contracts) {
+		List<Pact> pactContracts = new ArrayList<>();
 		Map<String, List<Contract>> groupedContracts = contracts.stream()
 				.collect(Collectors.groupingBy(c -> NamingUtil.name(c).toString()));
 		for (List<Contract> list : groupedContracts.values()) {
@@ -103,7 +103,7 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 	}
 
 	@Override
-	public Map<String, byte[]> store(Collection<Pact<?>> contracts) {
+	public Map<String, byte[]> store(Collection<Pact> contracts) {
 		return contracts.stream().collect(Collectors.toMap(this::name, c -> {
 			try {
 				return this.buildPrettyPrint(OBJECT_MAPPER.writeValueAsString(c.toMap(PactSpecVersion.V3))).getBytes();
@@ -114,7 +114,7 @@ public class PactContractConverter implements ContractConverter<Collection<Pact<
 		}));
 	}
 
-	protected String name(Pact<?> contract) {
+	protected String name(Pact contract) {
 		return contract.getConsumer().getName() + "_" + contract.getProvider().getName() + "_"
 				+ Math.abs(contract.hashCode()) + ".json";
 	}
