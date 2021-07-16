@@ -133,7 +133,7 @@ final class ValueGeneratorConverter {
 					"We currently don't support a generator of type " + generator.getClass().getSimpleName());
 		}
 		else {
-			Object generatedValue = generator.generate(new HashMap<>());
+			Object generatedValue = generator.generate(new HashMap<>(), null);
 			return dslPropertyProvider.apply(pattern, generatedValue);
 		}
 	}
@@ -191,7 +191,7 @@ final class ValueGeneratorConverter {
 				generators.addGenerator(category, path, new RandomStringGenerator(10));
 				break;
 			case UUID_PATTERN:
-				generators.addGenerator(category, path, UuidGenerator.INSTANCE);
+				generators.addGenerator(category, path, new UuidGenerator());
 				break;
 			case ANY_DATE_PATTERN:
 				generators.addGenerator(category, path, new DateGenerator());
