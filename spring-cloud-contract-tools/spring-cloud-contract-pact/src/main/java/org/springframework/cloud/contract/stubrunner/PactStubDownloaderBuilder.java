@@ -233,8 +233,10 @@ class PactStubDownloader implements StubDownloader {
 		Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
 		String schemeSpecificPart = schemeSpecificPart(repo.getURI());
 		URI pactBrokerUrl = URI.create(schemeSpecificPart);
-		String stubRunnerUsername = this.stubRunnerOptions.getUsername();
-		String stubRunnerPassword = this.stubRunnerOptions.getPassword();
+		String stubRunnerUsername = this.stubRunnerOptions.getUsername() != null ? this.stubRunnerOptions.getUsername()
+				: "";
+		String stubRunnerPassword = this.stubRunnerOptions.getPassword() != null ? this.stubRunnerOptions.getPassword()
+				: "";
 		return new PactBrokerLoader(new PactBroker() {
 
 			@Override
@@ -244,8 +246,8 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String url() {
-				return resolver.resolveValue("pactbroker.url", pactBrokerUrl.getScheme() + "://"
-						+ pactBrokerUrl.getHost() + ":" + pactBrokerUrl.getPort());
+				return resolver.resolveValue("pactbroker.url",
+						pactBrokerUrl.getScheme() + "://" + pactBrokerUrl.getHost() + ":" + pactBrokerUrl.getPort());
 			}
 
 			@Override
@@ -288,7 +290,7 @@ class PactStubDownloader implements StubDownloader {
 
 					@Override
 					public String latest() {
-						return resolver.resolveValue("pactbroker.consumerversionselectors.latest", "");
+						return resolver.resolveValue("pactbroker.consumerversionselectors.latest", "true");
 					}
 
 					@Override
@@ -345,7 +347,7 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String[] providerTags() {
-				return resolver.resolveValue("pactbroker.providerTags", "").split(",");
+				return resolver.resolveValue("pactbroker.providerTags", String.join(",", tags)).split(",");
 			}
 
 			@Override
@@ -365,8 +367,8 @@ class PactStubDownloader implements StubDownloader {
 
 	private List<String> tags(String version, ValueResolver resolver) {
 		String defaultTag = StubConfiguration.DEFAULT_VERSION.equals(version) ? "latest" : version;
-		return new ArrayList<>(Arrays.asList(StringUtils
-				.commaDelimitedListToStringArray(resolver.resolveValue("pactbroker.tags", defaultTag))));
+		return new ArrayList<>(Arrays.asList(
+				StringUtils.commaDelimitedListToStringArray(resolver.resolveValue("pactbroker.tags", defaultTag))));
 	}
 
 	private String toJson(Map map) {
