@@ -211,7 +211,7 @@ class PactStubDownloader implements StubDownloader {
 		try {
 			Path storedPath = Files.write(path, contents);
 			if (log.isDebugEnabled()) {
-				log.debug("Stored file [" + path.toString() + "]");
+				log.debug("Stored file [" + path + "]");
 			}
 			return storedPath;
 		}
@@ -244,26 +244,26 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String url() {
-				return resolver.resolveValue("pactbroker.url:" + pactBrokerUrl.getScheme() + "://"
+				return resolver.resolveValue("pactbroker.url", pactBrokerUrl.getScheme() + "://"
 						+ pactBrokerUrl.getHost() + ":" + pactBrokerUrl.getPort());
 			}
 
 			@Override
 			@Deprecated
 			public String host() {
-				return resolver.resolveValue("pactbroker.host:" + pactBrokerUrl.getHost());
+				return resolver.resolveValue("pactbroker.host", pactBrokerUrl.getHost());
 			}
 
 			@Override
 			@Deprecated
 			public String port() {
-				return resolver.resolveValue("pactbroker.port:" + pactBrokerUrl.getPort());
+				return resolver.resolveValue("pactbroker.port", String.valueOf(pactBrokerUrl.getPort()));
 			}
 
 			@Override
 			@Deprecated
 			public String scheme() {
-				return resolver.resolveValue("pactbroker.protocol:" + pactBrokerUrl.getScheme());
+				return resolver.resolveValue("pactbroker.protocol", pactBrokerUrl.getScheme());
 			}
 
 			@Override
@@ -283,29 +283,29 @@ class PactStubDownloader implements StubDownloader {
 
 					@Override
 					public String tag() {
-						return resolver.resolveValue("pactbroker.consumerversionselectors.tags:");
+						return resolver.resolveValue("pactbroker.consumerversionselectors.tags", "");
 					}
 
 					@Override
 					public String latest() {
-						return resolver.resolveValue("pactbroker.consumerversionselectors.latest:");
+						return resolver.resolveValue("pactbroker.consumerversionselectors.latest", "");
 					}
 
 					@Override
 					public String consumer() {
-						return resolver.resolveValue("pactbroker.consumers:");
+						return resolver.resolveValue("pactbroker.consumers", "");
 					}
 
 					@Override
 					public String fallbackTag() {
-						return null;
+						return resolver.resolveValue("pactbroker.fallbacktag", "");
 					}
 				} };
 			}
 
 			@Override
 			public String[] consumers() {
-				return new String[] { resolver.resolveValue("pactbroker.consumers:") };
+				return new String[] { resolver.resolveValue("pactbroker.consumers", "") };
 			}
 
 			@Override
@@ -318,17 +318,17 @@ class PactStubDownloader implements StubDownloader {
 
 					@Override
 					public String username() {
-						return resolver.resolveValue("pactbroker.auth.username:" + stubRunnerUsername);
+						return resolver.resolveValue("pactbroker.auth.username", stubRunnerUsername);
 					}
 
 					@Override
 					public String password() {
-						return resolver.resolveValue("pactbroker.auth.password:" + stubRunnerPassword);
+						return resolver.resolveValue("pactbroker.auth.password", stubRunnerPassword);
 					}
 
 					@Override
 					public String token() {
-						return resolver.resolveValue("pactbroker.auth.token:");
+						return resolver.resolveValue("pactbroker.auth.token", "");
 					}
 				};
 			}
@@ -340,24 +340,24 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String enablePendingPacts() {
-				return null;
+				return resolver.resolveValue("pactbroker.enablePending", "false");
 			}
 
 			@Override
 			public String[] providerTags() {
-				return new String[0];
+				return resolver.resolveValue("pactbroker.providerTags", "").split(",");
 			}
 
 			@Override
 			public String includeWipPactsSince() {
-				return null;
+				return resolver.resolveValue("pactbroker.includeWipPactsSince", "");
 			}
 		});
 	}
 
 	private String schemeSpecificPart(URI uri) {
 		String part = uri.getSchemeSpecificPart();
-		if (StringUtils.isEmpty(part)) {
+		if (!StringUtils.hasText(part)) {
 			return part;
 		}
 		return part.startsWith("//") ? part.substring(2) : part;
@@ -366,7 +366,7 @@ class PactStubDownloader implements StubDownloader {
 	private List<String> tags(String version, ValueResolver resolver) {
 		String defaultTag = StubConfiguration.DEFAULT_VERSION.equals(version) ? "latest" : version;
 		return new ArrayList<>(Arrays.asList(StringUtils
-				.commaDelimitedListToStringArray(resolver.resolveValue("pactbroker.tags:" + defaultTag + ""))));
+				.commaDelimitedListToStringArray(resolver.resolveValue("pactbroker.tags", defaultTag))));
 	}
 
 	private String toJson(Map map) {
