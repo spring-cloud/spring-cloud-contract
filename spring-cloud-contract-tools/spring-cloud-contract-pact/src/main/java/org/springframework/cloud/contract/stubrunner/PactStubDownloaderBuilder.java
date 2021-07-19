@@ -44,7 +44,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.Nullable;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -52,6 +51,7 @@ import org.springframework.cloud.contract.verifier.spec.pact.PactContractConvert
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
@@ -397,13 +397,18 @@ class FromPropsThenFromSysEnv implements ValueResolver {
 
 	@Override
 	public String resolveValue(String expression) {
+		return doResolve(expression, null);
+	}
+
+	@Nullable
+	private String doResolve(String expression, @Nullable String defaultValue) {
 		PropertyValueTuple tuple = new PropertyValueTuple(expression).invoke();
 		String propertyName = tuple.getPropertyName();
 		String property = StubRunnerPropertyUtils.getProperty(this.options.getProperties(), propertyName);
 		if (StringUtils.hasText(property)) {
 			return property;
 		}
-		return this.resolver.resolveValue(expression);
+		return this.resolver.resolveValue(expression, defaultValue);
 	}
 
 	@Override
@@ -420,7 +425,7 @@ class FromPropsThenFromSysEnv implements ValueResolver {
 	@Nullable
 	@Override
 	public String resolveValue(String expression, String defaultValue) {
-		return resolveValue(expression);
+		return doResolve(expression, defaultValue);
 	}
 
 }
