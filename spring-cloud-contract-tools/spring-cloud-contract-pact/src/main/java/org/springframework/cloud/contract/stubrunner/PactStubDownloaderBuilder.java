@@ -271,7 +271,7 @@ class PactStubDownloader implements StubDownloader {
 			@Override
 			@Deprecated
 			public String[] tags() {
-				return tags.toArray(new String[0]);
+				return new String[0];
 			}
 
 			@Override
@@ -347,7 +347,7 @@ class PactStubDownloader implements StubDownloader {
 
 			@Override
 			public String[] providerTags() {
-				return resolver.resolveValue("pactbroker.providerTags", String.join(",", tags)).split(",");
+				return resolver.resolveValue("pactbroker.providerTags", "").split(",");
 			}
 
 			@Override
