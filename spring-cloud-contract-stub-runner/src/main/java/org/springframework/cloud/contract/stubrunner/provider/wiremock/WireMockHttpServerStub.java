@@ -125,7 +125,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			return this;
 		}
 		int port = configuration.port;
-		WireMockConfiguration wireMockConfiguration = config().port(port).notifier(new Slf4jNotifier(true));
+		boolean stubCorsEnabled = Boolean.parseBoolean(System.getenv("STUB_CORS_ENABLED"));
+		WireMockConfiguration wireMockConfiguration = config().port(port).stubCorsEnabled(stubCorsEnabled).notifier(new Slf4jNotifier(true));
 		if (configuration.configurer.isAccepted(wireMockConfiguration)) {
 			@SuppressWarnings("unchecked")
 			HttpServerStubConfigurer<WireMockConfiguration> configurer = configuration.configurer;
