@@ -242,6 +242,7 @@ class RegexPatternsSpec extends Specification {
 		textToMatch                           || shouldMatch
 		UUID.randomUUID().toString()          || true
 		UUID.randomUUID().toString()          || true
+		UUID.randomUUID().toString().toUpperCase() || true
 		UUID.randomUUID().toString() + "!"    || false
 		'23e4567-z89b-12z3-j456-426655440000' || false
 		'dog'                                 || false
@@ -255,6 +256,7 @@ class RegexPatternsSpec extends Specification {
 			textToMatch                           || shouldMatch
 			UUID.randomUUID().toString()          || true
 			UUID.randomUUID().toString()          || true
+			UUID.randomUUID().toString().toUpperCase() || true
 			'123e4567-e89b-42d3-a456-556642440000' || true
 			'00000000-0000-4000-8000-000000000000' || true
 			'00000000-0000-4000-9000-000000000000' || true

@@ -66,10 +66,10 @@ public final class RegexPatterns {
 	protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL;
 
 	protected static final Pattern UUID = Pattern
-			.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+			.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", Pattern.CASE_INSENSITIVE);
 
 	protected static final Pattern UUID4 = Pattern
-			.compile("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}");
+			.compile("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}", Pattern.CASE_INSENSITIVE);
 
 	protected static final Pattern ANY_DATE = Pattern
 			.compile("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
