@@ -237,13 +237,32 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for a uuid [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == RegexPatterns.uuid().matcher(textToMatch).matches()
+		shouldMatch == RegexPatterns.uuid().matcher(textToMatch).matches()
+		where:
+		textToMatch                           || shouldMatch
+		UUID.randomUUID().toString()          || true
+		UUID.randomUUID().toString()          || true
+		UUID.randomUUID().toString() + "!"    || false
+		'23e4567-z89b-12z3-j456-426655440000' || false
+		'dog'                                 || false
+		'5'                                   || false
+	}
+
+	def "should generate a regex for a uuidv4 [#textToMatch] that is a match [#shouldMatch]"() {
+		expect:
+			shouldMatch == RegexPatterns.uuid4().matcher(textToMatch).matches()
 		where:
 			textToMatch                           || shouldMatch
 			UUID.randomUUID().toString()          || true
 			UUID.randomUUID().toString()          || true
+			'123e4567-e89b-42d3-a456-556642440000' || true
+			'00000000-0000-4000-8000-000000000000' || true
+			'00000000-0000-4000-9000-000000000000' || true
+			'00000000-0000-4000-a000-000000000000' || true
+			'00000000-0000-4000-b000-000000000000' || true
+			'00000000-0000-4000-1000-000000000000' || false
 			UUID.randomUUID().toString() + "!"    || false
-			'23e4567-z89b-12z3-j456-426655440000' || false
+			'00000000-0000-0000-0000-000000000000' || false
 			'dog'                                 || false
 			'5'                                   || false
 	}
