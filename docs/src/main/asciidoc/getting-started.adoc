@@ -1430,5 +1430,3 @@ video::TvpkZu1e2Dc[youtube,start=6262,width=640,height=480]
 
 You can find the default project samples at
 https://github.com/spring-cloud-samples/spring-cloud-contract-samples[samples].
-
-You can find the Spring Cloud Contract workshops https://cloud-samples.spring.io/spring-cloud-contract-samples/[here].
