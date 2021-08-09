@@ -15,8 +15,6 @@ section.
 
 You can check the <<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract based application>> link to see the provider contract testing with stubs in the Nexus or Artifactory flow.
 
-You can also check the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/contracts_on_the_producer_side.html[workshop page] for a step-by-step instruction on how to do this flow.
-
 [[flows-provider-git]]
 == Provider Contract Testing with Stubs in Git
 
@@ -190,9 +188,6 @@ with contracts on the producer side flow.
 
 In this flow, we perform Consumer Driven Contract testing. The contract definitions are
 stored in a separate repository.
-
-See the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/contracts_on_the_producer_side.html[workshop section]
-for step-by-step instructions on how to do this flow.
 
 === Prerequisites
 
@@ -720,8 +715,6 @@ The following UML diagram shows the consumer flow:
 == Provider Contract Testing with REST Docs and Stubs in Nexus or Artifactory
 
 In this flow, we do not use a Spring Cloud Contract plugin to generate tests and stubs. We write https://spring.io/projects/spring-restdocs[Spring RESTDocs], and, from them, we automatically generate stubs. Finally, we set up our builds to package the stubs and upload them to the stub storage site -- in our case, Nexus or Artifactory.
-
-See the https://cloud-samples.spring.io/spring-cloud-contract-samples/tutorials/rest_docs.html[workshop page] for a step-by-step instruction on how to use this flow.
 
 [[flows-provider-rest-docs-producer]]
 === Producer Flow
