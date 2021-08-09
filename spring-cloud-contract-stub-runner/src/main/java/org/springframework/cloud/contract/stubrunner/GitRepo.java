@@ -51,6 +51,7 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig;
+import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -326,7 +327,7 @@ class GitRepo {
 
 		final CredentialsProvider provider;
 
-		private final JschConfigSessionFactory factory = new JschConfigSessionFactory() {
+		private final SshSessionFactory factory = new JschConfigSessionFactory() {
 
 			@Override
 			protected void configure(OpenSshConfig.Host host, Session session) {
