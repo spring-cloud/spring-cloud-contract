@@ -155,7 +155,7 @@ buildscript {
 	}
 }
 
-depenendencies {
+dependencies {
     // all dependencies
     // you can exclude rest-assured from spring-cloud-contract-verifier
     testCompile "com.jayway.restassured:rest-assured:2.5.0"
