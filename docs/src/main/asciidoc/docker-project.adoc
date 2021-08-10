@@ -82,6 +82,17 @@ The following environment variables are used when tests are run:
 
 include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/appProps.adoc[indent=0]
 
+### Customizing the gradle build
+
+You can provide a customized `gradle.build` to be run in the container by mounting your customized build file as a volume when running the container:
+
+====
+[source,bash]
+----
+$ docker run -v <absolute-path-of-your-custom-file>:/spring-cloud-contract/build.gradle springcloud/spring-cloud-contract:<version>
+----
+====
+
 [[docker-example-of-usage]]
 === Example of Usage via HTTP
 
@@ -458,7 +469,7 @@ $ curl -X GET http://localhost:9876/api/books
 
 IMPORTANT: If you want use the stubs that you have built locally, on your host,
 you should set the `-e STUBRUNNER_STUBS_MODE=LOCAL` environment variable and mount
-the volume of your local m2 (`-v "${HOME}/.m2/:/root/.m2:ro"`).
+the volume of your local m2 (`-v "${HOME}/.m2/:/home/scc/.m2:ro"`).
 
 [[docker-stubrunner-example-messaging]]
 === Example of Usage with Messaging
@@ -576,9 +587,9 @@ $ docker run \
     -e "STUBRUNNER_REPOSITORY_ROOT=git://https://github.com/marcingrzejszczak/cdct_python_contracts.git" \ <3>
     -e ADDITIONAL_OPTS="--thin.properties.dependencies.rabbitmq=org.apache.camel.springboot:camel-rabbitmq-starter:3.4.0" \ <4>
     -e "STUBRUNNER_STUBS_MODE=REMOTE" \ <5>
-    -v "${HOME}/.m2/:/root/.m2:ro" \ <6>
+    -v "${HOME}/.m2/:/home/scc/.m2:ro" \ <6>
     -p 8750:8750 \ <7>
-    springcloud/spring-cloud-contract-stub-runner:3.0.1-SNAPSHOT <8>
+    springcloud/spring-cloud-contract-stub-runner:3.0.4-SNAPSHOT <8>
 ```
 <1> We're injecting the address of RabbitMQ via https://camel.apache.org/components/latest/rabbitmq-component.html#_spring_boot_auto_configuration[Apache Camel's Spring Boot Auto-Configuration]
 <2> We're telling Stub Runner which stubs to download
