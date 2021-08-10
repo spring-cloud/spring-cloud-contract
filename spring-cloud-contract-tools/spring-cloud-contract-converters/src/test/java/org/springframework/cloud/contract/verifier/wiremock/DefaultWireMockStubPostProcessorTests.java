@@ -21,7 +21,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.PostServeActionDefinition;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.junit.jupiter.api.Test;
 
@@ -151,9 +151,9 @@ class DefaultWireMockStubPostProcessorTests {
 		then(result.getRequest().getMethod().getName()).isEqualTo("GET");
 		then(result.getResponse().getStatus()).isEqualTo(200);
 		then(result.getResponse().getBody()).isEqualTo("pong");
-		then(result.getPostServeActions()).containsKey("webhook");
-		Parameters webhook = result.getPostServeActions().get("webhook");
-		then(webhook.getString("method")).isEqualTo("POST");
+		then(result.getPostServeActions()).extracting("name").contains("webhook");
+		PostServeActionDefinition webhook = result.getPostServeActions().stream().filter(def -> "webhook".equals(def.getName())).findFirst().get();
+		then(webhook.getParameters().get("method")).isEqualTo("POST");
 	}
 
 }
