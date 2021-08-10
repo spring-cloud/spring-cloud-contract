@@ -15,4 +15,4 @@ if [[ "${MESSAGING_TYPE}" != "" ]]; then
 fi
 
 echo "Please wait for the dependencies to be downloaded..."
-java -Djava.security.egd=file:/dev/./urandom -jar /stub-runner-boot.jar ${ADDITIONAL_OPTS}
+java -Djava.security.egd=file:/dev/./urandom -jar /home/scc/stub-runner-boot.jar ${ADDITIONAL_OPTS}
