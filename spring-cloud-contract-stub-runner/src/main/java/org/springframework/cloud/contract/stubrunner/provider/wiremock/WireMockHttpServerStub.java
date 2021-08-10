@@ -99,8 +99,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		return extensions.toArray(new Extension[extensions.size()]);
 	}
 
-	private Map<String, Helper> helpers() {
-		Map<String, Helper> helpers = new HashMap<>();
+	private Map<String, Helper<?>> helpers() {
+		Map<String, Helper<?>> helpers = new HashMap<>();
 		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
 		helpers.put(HandlebarsEscapeHelper.NAME, new HandlebarsEscapeHelper());
 		return helpers;
