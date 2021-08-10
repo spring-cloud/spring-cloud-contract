@@ -46,12 +46,12 @@ public class DefaultResponseTransformer extends ResponseTemplateTransformer {
 		super(global, helperName, helper);
 	}
 
-	public DefaultResponseTransformer(boolean global, Map<String, Helper> helpers) {
+	public DefaultResponseTransformer(boolean global, Map<String, Helper<?>> helpers) {
 		super(global, helpers);
 	}
 
-	private static Map<String, Helper> defaultHelpers() {
-		Map<String, Helper> helpers = new HashMap<>();
+	private static Map<String, Helper<?>> defaultHelpers() {
+		Map<String, Helper<?>> helpers = new HashMap<>();
 		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
 		helpers.put(HandlebarsEscapeHelper.NAME, new HandlebarsEscapeHelper());
 		return helpers;
