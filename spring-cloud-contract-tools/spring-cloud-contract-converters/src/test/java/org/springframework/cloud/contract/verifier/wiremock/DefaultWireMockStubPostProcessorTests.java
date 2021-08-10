@@ -152,7 +152,8 @@ class DefaultWireMockStubPostProcessorTests {
 		then(result.getResponse().getStatus()).isEqualTo(200);
 		then(result.getResponse().getBody()).isEqualTo("pong");
 		then(result.getPostServeActions()).extracting("name").contains("webhook");
-		PostServeActionDefinition webhook = result.getPostServeActions().stream().filter(def -> "webhook".equals(def.getName())).findFirst().get();
+		PostServeActionDefinition webhook = result.getPostServeActions().stream()
+				.filter(def -> "webhook".equals(def.getName())).findFirst().get();
 		then(webhook.getParameters().get("method")).isEqualTo("POST");
 	}
 
