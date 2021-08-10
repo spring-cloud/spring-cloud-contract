@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.wiremock;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.common.Metadata;
 import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.PostServeActionDefinition;
 import com.github.tomakehurst.wiremock.http.ChunkedDribbleDelay;
 import com.github.tomakehurst.wiremock.http.DelayDistribution;
 import com.github.tomakehurst.wiremock.http.Fault;
@@ -51,9 +52,9 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 	}
 
 	public void setPostServeActions(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
-		Map<String, Parameters> postServeActions = stubMapping.getPostServeActions();
-		postServeActions = postServeActions != null ? postServeActions : new HashMap<>();
-		postServeActions.putAll(stubMappingFromMetadata.getPostServeActions());
+		List<PostServeActionDefinition> postServeActions = stubMapping.getPostServeActions();
+		postServeActions = postServeActions != null ? postServeActions : new ArrayList<>();
+		postServeActions.addAll(stubMappingFromMetadata.getPostServeActions());
 		stubMapping.setPostServeActions(postServeActions);
 	}
 
