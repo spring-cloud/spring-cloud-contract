@@ -29,11 +29,11 @@ ENV PATH "${PATH}:${JAVA_HOME}/bin"
 # Spring Cloud Contract
 ENV SERVER_PORT 8750
 VOLUME /tmp
-COPY --chown=scc target/maven_dependencies /home/scc/.m2/repository/
-COPY --chown=scc target/libs/stub-runner-boot.jar stub-runner-boot.jar
+COPY --chown=scc:scc target/maven_dependencies /home/scc/.m2/repository/
+COPY --chown=scc:scc target/libs/stub-runner-boot.jar stub-runner-boot.jar
 RUN echo "Fetching dependencies, please wait..."
 RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar
 RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=rabbit
 RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=kafka
-COPY --chown=scc run.sh run.sh
+COPY --chown=scc:scc run.sh run.sh
 ENTRYPOINT ["./run.sh"]
