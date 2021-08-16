@@ -15,7 +15,7 @@
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
 	<properties>
-		<wiremock.version>2.30.0</wiremock.version>
+		<wiremock.version>2.30.1</wiremock.version>
 		<jsonassert.version>0.6.1</jsonassert.version>
 	</properties>
 	<dependencyManagement>

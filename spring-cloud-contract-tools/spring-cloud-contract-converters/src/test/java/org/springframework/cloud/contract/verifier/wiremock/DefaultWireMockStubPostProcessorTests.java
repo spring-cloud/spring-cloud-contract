@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.wiremock;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -151,10 +152,12 @@ class DefaultWireMockStubPostProcessorTests {
 		then(result.getRequest().getMethod().getName()).isEqualTo("GET");
 		then(result.getResponse().getStatus()).isEqualTo(200);
 		then(result.getResponse().getBody()).isEqualTo("pong");
-		then(result.getPostServeActions()).extracting("name").contains("webhook");
-		PostServeActionDefinition webhook = result.getPostServeActions().stream()
-				.filter(def -> "webhook".equals(def.getName())).findFirst().get();
-		then(webhook.getParameters().get("method")).isEqualTo("POST");
+		then(result.getPostServeActions().stream().map(a -> a.getName()).collect(Collectors.toList()))
+				.contains("webhook");
+		PostServeActionDefinition definition = result.getPostServeActions().stream()
+				.filter(a -> a.getName().equals("webhook")).findFirst()
+				.orElseThrow(() -> new AssertionError("No webhook action found"));
+		then(definition.getParameters().getString("method")).isEqualTo("POST");
 	}
 
 }

@@ -62,6 +62,7 @@
 
 		<contract.kotlin.version>1.5.20</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
+		<sisu-inject-plexus.version>2.6.0</sisu-inject-plexus.version>
 
 		<javadoc.failOnError>true</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
@@ -421,6 +422,11 @@
 				<artifactId>maven-settings-builder</artifactId>
 				<version>${maven.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.sonatype.sisu</groupId>
+				 <artifactId>sisu-inject-plexus</artifactId>
+				<version>${sisu-inject-plexus.version}</version>
+			 </dependency>
 			<dependency>
 				<groupId>org.apache.maven.resolver</groupId>
 				<artifactId>maven-resolver</artifactId>

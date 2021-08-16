@@ -42,7 +42,7 @@ public class DefaultResponseTransformer extends ResponseTemplateTransformer {
 		super(global);
 	}
 
-	public DefaultResponseTransformer(boolean global, String helperName, Helper helper) {
+	public DefaultResponseTransformer(boolean global, String helperName, Helper<?> helper) {
 		super(global, helperName, helper);
 	}
 
