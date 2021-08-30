@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.amqp;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client.Channel;
