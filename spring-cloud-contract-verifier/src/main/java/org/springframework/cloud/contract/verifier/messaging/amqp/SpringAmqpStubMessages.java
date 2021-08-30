@@ -86,18 +86,36 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
+		headers = (headers == null) ? Collections.emptyMap() : headers;
+
 		Message message = org.springframework.amqp.core.MessageBuilder.withBody(((String) payload).getBytes())
 				.andProperties(MessagePropertiesBuilder.newInstance().setContentType(header(headers, "contentType"))
 						.copyHeaders(headers).build())
 				.build();
-		if (headers != null && headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
+		if (headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
 			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME,
 					headers.get(DEFAULT_CLASSID_FIELD_NAME));
 		}
-		if (headers != null && headers.containsKey(AmqpHeaders.RECEIVED_ROUTING_KEY)) {
+		if (headers.containsKey(AmqpHeaders.RECEIVED_ROUTING_KEY)) {
 			message.getMessageProperties().setReceivedRoutingKey(header(headers, AmqpHeaders.RECEIVED_ROUTING_KEY));
 		}
 		send(message, destination, contract);
+	}
+	
+	private String header(Map<String, Object> headers, String headerName) {
+		Object value = headers.get(headerName);
+
+		if (value == null) {
+			return "";
+		} 
+		else if (value instanceof String) {
+			return (String) value;
+		}
+		else if (value instanceof Iterable) {
+			Iterable values = ((Iterable) value);
+			return values.iterator().hasNext() ? (String) values.iterator().next() : "";
+		}
+		return value.toString();
 	}
 
 	public void mergeMessagePropertiesFromMetadata(YamlContract contract, Message message) {
@@ -114,21 +132,6 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 
 	public boolean isInputMessage(ContractVerifierMessageMetadata messageMetadata) {
 		return messageMetadata.getMessageType() == ContractVerifierMessageMetadata.MessageType.INPUT;
-	}
-
-	private String header(Map<String, Object> headers, String headerName) {
-		if (headers == null) {
-			return "";
-		}
-		Object value = headers.get(headerName);
-		if (value instanceof String) {
-			return (String) value;
-		}
-		else if (value instanceof Iterable) {
-			Iterable values = ((Iterable) value);
-			return values.iterator().hasNext() ? (String) values.iterator().next() : "";
-		}
-		return value.toString();
 	}
 
 	@Override
