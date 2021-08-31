@@ -86,9 +86,8 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
-		headers = (headers == null) ? Collections.emptyMap() : headers;
-
+	public <T> void send(T payload, Map<String, Object> messageHeaders, String destination, YamlContract contract) {
+		Map<String, Object> headers = (messageHeaders == null) ? Collections.emptyMap() : messageHeaders;
 		Message message = org.springframework.amqp.core.MessageBuilder.withBody(((String) payload).getBytes())
 				.andProperties(MessagePropertiesBuilder.newInstance().setContentType(header(headers, "contentType"))
 						.copyHeaders(headers).build())
