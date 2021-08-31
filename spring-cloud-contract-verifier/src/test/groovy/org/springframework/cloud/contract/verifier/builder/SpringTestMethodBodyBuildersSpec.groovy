@@ -16,7 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern
+import java.util.Set;
+import java.util.function.Supplier;
 
 import org.junit.Rule
 import spock.lang.Issue
@@ -1924,6 +1929,41 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Java").value()')
 			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Spring").value()')
 			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Boot").value()')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
+	}
+
+	@Issue('1630')
+	def 'should generate proper test code with top level map of sets using #methodBuilderName'() {
+		given:
+		Contract contractDsl = Contract.make {
+			description('get map')
+			name('assert map response')
+			request {
+				method 'GET'
+				urlPath '/some-path'
+			}
+			response {
+				status OK()
+				body(Map.of("key", Set.of("value1", "value2")))
+				headers {
+					header('Content-Type': 'application/json;charset=UTF-8')
+				}
+			}
+		}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			test.contains("""assertThatJson(parsedJson).array("['key']").hasSize(2)""")
+			test.contains("""assertThatJson(parsedJson).array("['key']").arrayField().isEqualTo("value1").value()""")
+			test.contains("""assertThatJson(parsedJson).array("['key']").arrayField().isEqualTo("value2").value()""")
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
