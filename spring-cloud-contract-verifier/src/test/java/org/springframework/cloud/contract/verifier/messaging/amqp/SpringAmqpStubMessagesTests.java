@@ -16,29 +16,28 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 
-import java.util.Collections;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SpringAmqpStubMessagesTests {
-
 	@Test
 	void should_send_message_without_headers_and_contract() {
-		final RabbitTemplate rabbitTemplate = Mockito.mock(RabbitTemplate.class);
-		final MessageListenerAccessor messageListenerAccessor = Mockito.mock(MessageListenerAccessor.class);
-		final RabbitProperties rabbitProperties = Mockito.mock(RabbitProperties.class);
-		final SimpleMessageListenerContainer messageListenerContainer = Mockito
-				.mock(SimpleMessageListenerContainer.class);
-		final MessageListener messageListener = Mockito.mock(MessageListener.class);
+		final RabbitTemplate rabbitTemplate = mock(RabbitTemplate.class);
+		final MessageListenerAccessor messageListenerAccessor = mock(MessageListenerAccessor.class);
+		final RabbitProperties rabbitProperties = mock(RabbitProperties.class);
+		final SimpleMessageListenerContainer messageListenerContainer = mock(SimpleMessageListenerContainer.class);
+		final MessageListener messageListener = mock(MessageListener.class);
 
 		when(messageListenerContainer.getMessageListener()).thenReturn(messageListener);
 		when(messageListenerAccessor.getListenerContainersForDestination(any(), any()))
@@ -49,5 +48,4 @@ public class SpringAmqpStubMessagesTests {
 
 		springAmqpStubMessages.send(anyString(), null, anyString(), null);
 	}
-
 }
