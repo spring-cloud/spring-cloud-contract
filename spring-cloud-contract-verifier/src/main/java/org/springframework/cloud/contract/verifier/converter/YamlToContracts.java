@@ -245,7 +245,7 @@ class YamlToContracts {
 								serverValue(value, matcher)));
 					}
 				});
-				if (matchers != null) {
+				if (matchers.isEmpty()) {
 					headers.header(key, value);
 				}
 			}));
