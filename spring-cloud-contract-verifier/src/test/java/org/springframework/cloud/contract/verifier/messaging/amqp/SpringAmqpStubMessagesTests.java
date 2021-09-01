@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.amqp;
 
 import java.util.Collections;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.amqp.core.MessageListener;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SpringAmqpStubMessagesTests {
+
 	@Test
 	void should_send_message_without_headers_and_contract() {
 		final RabbitTemplate rabbitTemplate = mock(RabbitTemplate.class);
@@ -46,6 +48,8 @@ public class SpringAmqpStubMessagesTests {
 		final SpringAmqpStubMessages springAmqpStubMessages = new SpringAmqpStubMessages(rabbitTemplate,
 				messageListenerAccessor, rabbitProperties);
 
-		springAmqpStubMessages.send(anyString(), null, anyString(), null);
+		Assertions.assertThatCode(() -> springAmqpStubMessages.send(anyString(), null, anyString(), null))
+				.doesNotThrowAnyException();
 	}
+
 }
