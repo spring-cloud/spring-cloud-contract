@@ -16,16 +16,16 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
-import java.util.function.Function
-
 import groovy.json.JsonSlurper
-import spock.lang.Issue
-import spock.lang.Specification
-
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.MapConverter
+import spock.lang.Issue
+import spock.lang.Specification
+
+import java.util.function.Function
 
 class WireMockResponseStubStrategySpec extends Specification {
 
