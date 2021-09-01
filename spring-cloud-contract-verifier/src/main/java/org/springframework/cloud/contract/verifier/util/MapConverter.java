@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -126,7 +125,7 @@ public class MapConverter {
 		else if (value instanceof Map) {
 			return convert((Map) value, function, parsingFunction);
 		}
-		else if (value instanceof List || value instanceof Set) {
+		else if (value instanceof Collection) {
 			return ((Collection) value).stream().map((v) -> transformValues(v, function, parsingFunction))
 					.collect(Collectors.toList());
 		}

@@ -16,12 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern
-import java.util.Set;
-import java.util.function.Supplier;
 
 import org.junit.Rule
 import spock.lang.Issue
@@ -1951,7 +1946,7 @@ World.'''"""
 			}
 			response {
 				status OK()
-				body(Map.of("key", Set.of("value1", "value2")))
+				body(["key": ["value1", "value2"] as Set])
 				headers {
 					header('Content-Type': 'application/json;charset=UTF-8')
 				}
