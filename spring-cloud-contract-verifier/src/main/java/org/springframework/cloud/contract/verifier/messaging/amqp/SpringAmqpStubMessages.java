@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +41,7 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.util.Assert;
 
 import static org.mockito.Matchers.eq;
@@ -87,10 +87,10 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> messageHeaders, String destination, YamlContract contract) {
-		Map<String, Object> headers = (messageHeaders == null) ? Collections.emptyMap() : messageHeaders;
+		final MessageHeaders headers = new MessageHeaders(messageHeaders);
 		Message message = org.springframework.amqp.core.MessageBuilder.withBody(((String) payload).getBytes())
-				.andProperties(MessagePropertiesBuilder.newInstance().setContentType(header(headers, "contentType"))
-						.copyHeaders(headers).build())
+				.andProperties(MessagePropertiesBuilder.newInstance()
+						.setContentType(header(headers, MessageHeaders.CONTENT_TYPE)).copyHeaders(headers).build())
 				.build();
 		if (headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
 			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME,
@@ -101,13 +101,13 @@ public class SpringAmqpStubMessages implements MessageVerifier<Message> {
 		}
 		send(message, destination, contract);
 	}
-	
-	private String header(Map<String, Object> headers, String headerName) {
+
+	private String header(MessageHeaders headers, String headerName) {
 		Object value = headers.get(headerName);
 
 		if (value == null) {
 			return "";
-		} 
+		}
 		else if (value instanceof String) {
 			return (String) value;
 		}
