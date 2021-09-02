@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.util;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ import org.springframework.cloud.contract.verifier.template.TemplateProcessor;
  *
  * @author Marcin Grzejszczak
  * @author Stessy Delcroix
+ * @author Ravil Galeyev
  * @since 1.1.0
  */
 public class MapConverter {
@@ -123,8 +125,8 @@ public class MapConverter {
 		else if (value instanceof Map) {
 			return convert((Map) value, function, parsingFunction);
 		}
-		else if (value instanceof List) {
-			return ((List) value).stream().map((v) -> transformValues(v, function, parsingFunction))
+		else if (value instanceof Collection) {
+			return ((Collection) value).stream().map((v) -> transformValues(v, function, parsingFunction))
 					.collect(Collectors.toList());
 		}
 		return transformValue(function, value, parsingFunction);
