@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.messaging.jms;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -58,7 +59,7 @@ class JmsStubMessages implements MessageVerifier<Message> {
 	public void send(Object payload, Map headers, String destination, YamlContract contract) {
 		jmsTemplate.send(destination, session -> {
 			Message message = createMessage(session, payload);
-			setHeaders(message, headers);
+			setHeaders(message, headers == null ? Collections.emptyMap() : headers);
 			return message;
 		});
 	}
