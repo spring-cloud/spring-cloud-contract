@@ -3062,6 +3062,74 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server?.shutdown()
 	}
 
+	def "should work with client DSL properties"() {
+		given:
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
+					make {
+						request {
+							method('GET')
+							url("/api/foo")
+							headers {
+								header("foo", $(client(anyAlphaNumeric()), server("123")))
+							}
+							cookies {
+								cookie("cookie1", $(client("foo"), server("bar")))
+								cookie("cookie2", $(client(~/[a-z]+/), server("bar")))
+								cookie("cookie3", $(client(anyAlphaNumeric()), server("bar")))
+								cookie("cookie4", $(anyAlphaNumeric()))
+							}
+						}
+						response {
+							status OK()
+							body("ok")
+							headers {
+								header 'Content-Type': 'text/plain'
+							}
+						}
+					}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+					toWireMockClientStub()
+		then:
+			AssertionUtil.assertThatJsonsAreEqual('''
+			{
+			  "request" : {
+				"url" : "/api/foo",
+				"method" : "GET",
+				"headers" : {
+					"foo" : {
+						"matches" : "[a-zA-Z0-9]+"
+					}
+				},
+				"cookies" : {
+					"cookie1" : {
+						"equalTo" : "foo"
+					},
+					"cookie2" : {
+						"matches" : "[a-z]+"
+					},
+					"cookie3" : {
+						"matches" : "[a-zA-Z0-9]+"
+					},
+					"cookie4" : {
+						"matches" : "[a-zA-Z0-9]+"
+					}
+				}
+			  },
+			  "response" : {
+				"status" : 200,
+				"body" : "ok",
+				"headers" : {
+				  "Content-Type" : "text/plain"
+				},
+				"transformers" : [ "response-template", "foo-transformer" ]
+			  }
+			}
+			''', wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
