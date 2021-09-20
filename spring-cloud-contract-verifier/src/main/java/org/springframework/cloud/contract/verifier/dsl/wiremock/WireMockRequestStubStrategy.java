@@ -46,6 +46,7 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Body;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
+import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
@@ -369,6 +370,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	protected ContentPattern<?> convertToValuePattern(Object object) {
+		if (object instanceof ClientDslProperty) {
+			object = ((ClientDslProperty) object).getClientValue();
+		}
+
 		if (object instanceof Pattern || object instanceof RegexProperty) {
 			return WireMock.matching(new RegexProperty(object).pattern());
 		}
