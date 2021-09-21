@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.4-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.4</version>
+	<version>3.0.4-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -28,12 +28,12 @@
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>4.0.10</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
-		<spring-cloud-build.version>3.0.4</spring-cloud-build.version>
-		<spring-cloud-zookeeper.version>3.0.4</spring-cloud-zookeeper.version>
-		<spring-cloud-stream.version>3.1.4</spring-cloud-stream.version>
-		<spring-cloud-netflix.version>3.0.4</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>3.0.4</spring-cloud-consul.version>
-		<spring-cloud-commons.version>3.0.4</spring-cloud-commons.version>
+		<spring-cloud-build.version>3.0.4-SNAPSHOT</spring-cloud-build.version>
+		<spring-cloud-zookeeper.version>3.0.4-SNAPSHOT</spring-cloud-zookeeper.version>
+		<spring-cloud-stream.version>3.1.4-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-netflix.version>3.0.4-SNAPSHOT</spring-cloud-netflix.version>
+		<spring-cloud-consul.version>3.0.4-SNAPSHOT</spring-cloud-consul.version>
+		<spring-cloud-commons.version>3.0.4-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-functiondonotreplace.version>3.0.6.RELEASE</spring-cloud-functiondonotreplace.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.2.11</cglib.version>
