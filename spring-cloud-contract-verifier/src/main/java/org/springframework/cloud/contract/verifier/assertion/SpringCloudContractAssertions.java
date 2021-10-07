@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.assertion;
 
+import java.util.Collection;
+
 import org.assertj.core.api.Assertions;
 
 public class SpringCloudContractAssertions extends Assertions {
@@ -26,8 +28,18 @@ public class SpringCloudContractAssertions extends Assertions {
 	 * @param actual the actual value.
 	 * @return the created assertion object.
 	 */
-	public static <ELEMENT> CollectionAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
+	public static <ELEMENT> CollectionAssert<ELEMENT> assertThat(Collection<? extends ELEMENT> actual) {
 		return new CollectionAssert<>(actual);
+	}
+	
+	/**
+	 * Creates a new instance of <code>{@link CollectionAssert}</code>.
+	 * @param <ELEMENT> type to assert
+	 * @param actual the actual value.
+	 * @return the created assertion object.
+	 */
+	public static <ELEMENT> ContractIterableAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
+		return new ContractIterableAssert<>(actual);
 	}
 
 }

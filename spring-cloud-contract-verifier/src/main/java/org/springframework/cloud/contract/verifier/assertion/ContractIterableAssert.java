@@ -16,11 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.assertion;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.assertj.core.api.CollectionAssert;
 import org.assertj.core.api.IterableAssert;
 import org.assertj.core.util.Streams;
 
@@ -31,12 +29,20 @@ import static java.util.stream.Collectors.toList;
  *
  * @param <ELEMENT> type to assert
  * @author Marcin Grzejszczak
- * @since 1.1.0
+ * @since 3.1.0
  */
-public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAssert<ELEMENT> {
+public class ContractIterableAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 
-	public CollectionAssert(Collection<? extends ELEMENT> actual) {
+	public ContractIterableAssert(Iterable<? extends ELEMENT> actual) {
 		super(actual);
+	}
+
+	public ContractIterableAssert(Iterator<? extends ELEMENT> actual) {
+		super(toIterable(actual));
+	}
+
+	private static <T> Iterable<T> toIterable(Iterator<T> iterator) {
+		return Streams.stream(iterator).collect(toList());
 	}
 
 	/**
@@ -44,7 +50,7 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	 * @param regex - regular expression to check against
 	 * @return this
 	 */
-	public CollectionAssert<ELEMENT> allElementsMatch(String regex) {
+	public ContractIterableAssert<ELEMENT> allElementsMatch(String regex) {
 		isNotNull();
 		isNotEmpty();
 		for (Object anActual : this.actual) {
@@ -70,7 +76,7 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	 * this value
 	 * @return this
 	 */
-	public CollectionAssert<ELEMENT> hasFlattenedSizeGreaterThanOrEqualTo(int size) {
+	public ContractIterableAssert<ELEMENT> hasFlattenedSizeGreaterThanOrEqualTo(int size) {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize >= size)) {
@@ -86,7 +92,7 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	 * value
 	 * @return this
 	 */
-	public CollectionAssert<ELEMENT> hasFlattenedSizeLessThanOrEqualTo(int size) {
+	public ContractIterableAssert<ELEMENT> hasFlattenedSizeLessThanOrEqualTo(int size) {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize <= size)) {
@@ -103,7 +109,7 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	 * to this value
 	 * @return this
 	 */
-	public CollectionAssert<ELEMENT> hasFlattenedSizeBetween(int lowerBound, int higherBound) {
+	public ContractIterableAssert<ELEMENT> hasFlattenedSizeBetween(int lowerBound, int higherBound) {
 		isNotNull();
 		int flattenedSize = flattenedSize(0, this.actual);
 		if (!(flattenedSize >= lowerBound && flattenedSize <= higherBound)) {
@@ -118,7 +124,7 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	 * @param size - the collection should have size greater than or equal to this value
 	 * @return this
 	 */
-	public CollectionAssert<ELEMENT> hasSizeGreaterThanOrEqualTo(int size) {
+	public ContractIterableAssert<ELEMENT> hasSizeGreaterThanOrEqualTo(int size) {
 		isNotNull();
 		int actualSize = size(this.actual);
 		if (!(actualSize >= size)) {
@@ -132,7 +138,7 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	 * @param size - the collection should have size less than or equal to this value
 	 * @return this
 	 */
-	public CollectionAssert<ELEMENT> hasSizeLessThanOrEqualTo(int size) {
+	public ContractIterableAssert<ELEMENT> hasSizeLessThanOrEqualTo(int size) {
 		isNotNull();
 		int actualSize = size(this.actual);
 		if (!(actualSize <= size)) {
@@ -149,7 +155,7 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	 * value
 	 * @return this
 	 */
-	public CollectionAssert<ELEMENT> hasSizeBetween(int lowerBound, int higherBound) {
+	public ContractIterableAssert<ELEMENT> hasSizeBetween(int lowerBound, int higherBound) {
 		isNotNull();
 		int size = size(this.actual);
 		if (!(size >= lowerBound && size <= higherBound)) {
@@ -159,8 +165,8 @@ public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAs
 	}
 
 	@Override
-	public CollectionAssert<ELEMENT> as(String description, Object... args) {
-		return (CollectionAssert<ELEMENT>) super.as(description, args);
+	public ContractIterableAssert<ELEMENT> as(String description, Object... args) {
+		return (ContractIterableAssert<ELEMENT>) super.as(description, args);
 	}
 
 	private int flattenedSize(int counter, Object object) {
