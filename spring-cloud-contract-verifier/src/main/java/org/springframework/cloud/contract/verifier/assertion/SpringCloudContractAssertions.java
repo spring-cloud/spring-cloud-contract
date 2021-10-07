@@ -28,18 +28,18 @@ public class SpringCloudContractAssertions extends Assertions {
 	 * @param actual the actual value.
 	 * @return the created assertion object.
 	 */
-	public static <ELEMENT> CollectionAssert<ELEMENT> assertThat(Collection<? extends ELEMENT> actual) {
+	public static <ELEMENT> CollectionAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
 		return new CollectionAssert<>(actual);
 	}
 	
 	/**
-	 * Creates a new instance of <code>{@link CollectionAssert}</code>.
+	 * Creates a new instance of <code>{@link ContractCollectionAssert}</code>.
 	 * @param <ELEMENT> type to assert
 	 * @param actual the actual value.
 	 * @return the created assertion object.
 	 */
-	public static <ELEMENT> ContractIterableAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
-		return new ContractIterableAssert<>(actual);
+	public static <ELEMENT> ContractCollectionAssert<ELEMENT> assertThat(Collection<? extends ELEMENT> actual) {
+		return new ContractCollectionAssert<>(actual);
 	}
 
 }

@@ -16,9 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.assertion;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.assertj.core.api.IterableAssert;
+import org.assertj.core.util.Streams;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Extension to {@link Iterable} assertions.
@@ -27,10 +31,18 @@ import java.util.Map;
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-public class CollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAssert<ELEMENT> {
+public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 
-	public CollectionAssert(Collection<? extends ELEMENT> actual) {
+	public CollectionAssert(Iterable<? extends ELEMENT> actual) {
 		super(actual);
+	}
+
+	public CollectionAssert(Iterator<? extends ELEMENT> actual) {
+		super(toIterable(actual));
+	}
+
+	private static <T> Iterable<T> toIterable(Iterator<T> iterator) {
+		return Streams.stream(iterator).collect(toList());
 	}
 
 	/**
