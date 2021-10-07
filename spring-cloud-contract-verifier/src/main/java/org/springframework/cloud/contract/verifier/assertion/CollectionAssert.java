@@ -20,12 +20,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.assertj.core.api.CollectionAssert;
-import org.assertj.core.api.IterableAssert;
-import org.assertj.core.util.Streams;
-
-import static java.util.stream.Collectors.toList;
-
 /**
  * Extension to {@link Iterable} assertions.
  *
