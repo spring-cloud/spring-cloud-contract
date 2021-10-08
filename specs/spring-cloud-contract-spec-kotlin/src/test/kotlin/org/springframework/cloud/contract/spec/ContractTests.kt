@@ -826,6 +826,31 @@ then:
 	}
 
 	@Test
+	fun `should use filename as fallback for single unnamed contract`() {
+		val contract = KotlinContractConverter()
+				.convertFrom(File(javaClass.classLoader.getResource("contracts/unnamed_single.kts")!!.toURI()))
+				.single()
+		assertDoesNotThrow {
+			Contract.assertContract(contract)
+		}.also {
+			assertThat(contract.name).isEqualTo("unnamed_single")
+		}
+	}
+
+	@Test
+	fun `should use filename with index as fallback for multiple unnamed contracts`() {
+		val contracts = KotlinContractConverter()
+				.convertFrom(File(javaClass.classLoader.getResource("contracts/unnamed_multiple.kts")!!.toURI()))
+				.toList()
+		assertDoesNotThrow {
+			contracts.forEach(Contract::assertContract)
+		}.also {
+			assertThat(contracts[0].name).isEqualTo("unnamed_multiple_0")
+			assertThat(contracts[1].name).isEqualTo("unnamed_multiple_1")
+		}
+	}
+
+	@Test
 	/**
 	 * See issue https://github.com/spring-cloud/spring-cloud-contract/issues/1668
 	 */
