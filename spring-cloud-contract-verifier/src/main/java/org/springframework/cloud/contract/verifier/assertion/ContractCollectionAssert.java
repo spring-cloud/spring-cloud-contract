@@ -28,7 +28,7 @@ import java.util.Collection;
 public class ContractCollectionAssert<ELEMENT> extends org.assertj.core.api.CollectionAssert<ELEMENT> {
 
 	private final CollectionAssert<ELEMENT> collectionAssert;
-	
+
 	public ContractCollectionAssert(Collection<? extends ELEMENT> actual) {
 		super(actual);
 		this.collectionAssert = new CollectionAssert<>(actual);
