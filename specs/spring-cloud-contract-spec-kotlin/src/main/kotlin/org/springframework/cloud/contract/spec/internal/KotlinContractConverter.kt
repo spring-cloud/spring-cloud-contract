@@ -16,10 +16,12 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import org.apache.commons.lang3.ObjectUtils
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import java.io.File
 import java.net.URLClassLoader.newInstance
+import java.util.concurrent.atomic.AtomicInteger
 import javax.script.ScriptEngineManager
 
 /**
@@ -50,12 +52,30 @@ class KotlinContractConverter : ContractConverter<List<Contract>> {
                 ScriptEngineManager().getEngineByExtension(ext).eval(it)
             }
         }
-        return when (eval) {
+        val contracts = when (eval) {
             is Contract -> listOf(eval)
             is Iterable<*> -> eval.filterIsInstance(Contract::class.java)
             is Array<*> -> eval.filterIsInstance(Contract::class.java)
             else -> emptyList()
         }
+
+        return withName(file, contracts)
+    }
+
+    private fun withName(file: File, contracts: Collection<Contract>): Collection<Contract> {
+        val counter = AtomicInteger(0)
+        return contracts.onEach { contract ->
+            if (ObjectUtils.isEmpty(contract.name)) {
+                contract.name = defaultContractName(file, contracts, counter.get())
+            }
+            counter.incrementAndGet()
+        }
+    }
+
+    private fun defaultContractName(file: File, contracts: Collection<*>, counter: Int): String {
+        val lastIndexOfDot = file.name.lastIndexOf(".")
+        val tillExtension = file.name.substring(0, lastIndexOfDot)
+        return tillExtension + if (counter > 0 || contracts.size > 1) "_$counter" else ""
     }
 
     override fun convertTo(contract: Collection<Contract>) = contract.toList()
