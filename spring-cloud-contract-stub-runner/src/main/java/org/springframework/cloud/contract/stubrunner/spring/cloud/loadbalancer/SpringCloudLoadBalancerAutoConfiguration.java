@@ -30,10 +30,12 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.CompletionContext;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClientsProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerLifecycle;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.Response;
@@ -67,12 +69,14 @@ import org.springframework.util.StringUtils;
 @AutoConfigureBefore(LoadBalancerAutoConfiguration.class)
 @AutoConfigureAfter({ LoadBalancerClientConfiguration.class, StubRunnerSpringCloudAutoConfiguration.class })
 @ConditionalOnStubbedDiscoveryEnabled
+@EnableConfigurationProperties(LoadBalancerClientsProperties.class)
 public class SpringCloudLoadBalancerAutoConfiguration {
 
 	@Bean
 	@Primary
-	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(BeanFactory beanFactory) {
-		return new StubRunnerLoadBalancerClientFactory(beanFactory);
+	LoadBalancerClientFactory stubRunnerLoadBalancerClientFactory(BeanFactory beanFactory,
+			LoadBalancerClientsProperties properties) {
+		return new StubRunnerLoadBalancerClientFactory(beanFactory, properties);
 	}
 
 }
@@ -81,7 +85,17 @@ class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory impl
 
 	private final BeanFactory beanFactory;
 
+	/**
+	 * @deprecated in favour of
+	 * {@link StubRunnerLoadBalancerClientFactory#StubRunnerLoadBalancerClientFactory(BeanFactory, LoadBalancerClientsProperties)}
+	 */
+	@Deprecated
 	StubRunnerLoadBalancerClientFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+
+	StubRunnerLoadBalancerClientFactory(BeanFactory beanFactory, LoadBalancerClientsProperties properties) {
+		super(properties);
 		this.beanFactory = beanFactory;
 	}
 
