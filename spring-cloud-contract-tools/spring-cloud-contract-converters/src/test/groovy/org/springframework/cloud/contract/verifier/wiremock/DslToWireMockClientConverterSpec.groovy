@@ -1074,6 +1074,57 @@ class DslToWireMockClientConverterSpec extends Specification {
 			response.statusCodeValue == 204
 	}
 
+
+	@Issue("1727")
+	def "should create WireMock JSON() with no duplicate metadata fields"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("stub_mapping_duplicate.groovy")
+			file.write("org.springframework.cloud.contract.spec.Contract.make {\n" +
+					"    request {\n" +
+					"        method 'POST'\n" +
+					"        url ('/ping')\n" +
+					"    }\n" +
+					"\n" +
+					"    response {\n" +
+					"        status 200\n" +
+					"    }\n" +
+					"\n" +
+					"    metadata([wiremock: [\n" +
+					"            stubMapping: '''\\\n" +
+					"{\n" +
+					"\"postServeActions\" : {\n" +
+					"    \"webhook\" : {\n" +
+					"      \"url\" : \"/pong\",\n" +
+					"      \"method\" : \"PATCH\"\n" +
+					"    }\n" +
+					"  }\n" +
+					"}\n" +
+					"''']])\n" +
+					"}")
+		when:
+			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
+					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+		then:
+			JSONAssert.assertEquals("{\n" +
+					"  \"request\" : {\n" +
+					"    \"url\" : \"/ping\",\n" +
+					"    \"method\" : \"POST\"\n" +
+					"  },\n" +
+					"  \"response\" : {\n" +
+					"    \"status\" : 200\n" +
+					"  },\n" +
+					"  \"postServeActions\" : [ {\n" +
+					"    \"name\" : \"webhook\",\n" +
+					"    \"parameters\" : {\n" +
+					"      \"url\" : \"/pong\",\n" +
+					"      \"method\" : \"PATCH\"\n" +
+					"    }\n" +
+					"  } ]\n" +
+					"}", json, false)
+	}
+
 	StubMapping stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping stubMapping = WireMockStubMapping.buildFrom(mappingDefinition)
 		stubMapping.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
