@@ -1081,48 +1081,48 @@ class DslToWireMockClientConverterSpec extends Specification {
 			def converter = new DslToWireMockClientConverter()
 		and:
 			File file = tmpFolder.newFile("stub_mapping_duplicate.groovy")
-			file.write("org.springframework.cloud.contract.spec.Contract.make {\n" +
-					"    request {\n" +
-					"        method 'POST'\n" +
-					"        url ('/ping')\n" +
-					"    }\n" +
-					"\n" +
-					"    response {\n" +
-					"        status 200\n" +
-					"    }\n" +
-					"\n" +
-					"    metadata([wiremock: [\n" +
-					"            stubMapping: '''\\\n" +
-					"{\n" +
-					"\"postServeActions\" : {\n" +
-					"    \"webhook\" : {\n" +
-					"      \"url\" : \"/pong\",\n" +
-					"      \"method\" : \"PATCH\"\n" +
-					"    }\n" +
-					"  }\n" +
-					"}\n" +
-					"''']])\n" +
-					"}")
+			file.write("""
+				org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method 'POST'
+					url ('/ping')
+				}
+				response {
+					status 200
+				}
+				
+				metadata([wiremock: [
+				stubMapping: '''  {
+				    "postServeActions" :{
+					    "webhook" : {
+						    "url" : "/pong",
+						    "method" : "PATCH"
+					    }
+				    }
+	            }''']])
+        }
+""")
 		when:
 			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
 					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
 		then:
-			JSONAssert.assertEquals("{\n" +
-					"  \"request\" : {\n" +
-					"    \"url\" : \"/ping\",\n" +
-					"    \"method\" : \"POST\"\n" +
-					"  },\n" +
-					"  \"response\" : {\n" +
-					"    \"status\" : 200\n" +
-					"  },\n" +
-					"  \"postServeActions\" : [ {\n" +
-					"    \"name\" : \"webhook\",\n" +
-					"    \"parameters\" : {\n" +
-					"      \"url\" : \"/pong\",\n" +
-					"      \"method\" : \"PATCH\"\n" +
-					"    }\n" +
-					"  } ]\n" +
-					"}", json, false)
+			JSONAssert.assertEquals("""
+					 {
+					  "request" : {
+						"url" : "/ping",
+						"method" : "POST"
+					  },
+					  "response" : {
+						"status" : 200
+					  },
+					  "postServeActions" : [ {
+						"name" : "webhook",
+						"parameters" : {
+						  "url" : "/pong",
+						  "method" : "PATCH"
+						}
+					  } ]
+					}""", json, false)
 	}
 
 	StubMapping stubMappingIsValidWireMockStub(String mappingDefinition) {

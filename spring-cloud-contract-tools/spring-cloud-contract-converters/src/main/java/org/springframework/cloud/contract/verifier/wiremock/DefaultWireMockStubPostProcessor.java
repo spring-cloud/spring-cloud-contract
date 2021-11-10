@@ -43,10 +43,7 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 		StubMapping stubMappingFromMetadata = stubMappingFromMetadata(wireMockMetaData.getStubMapping());
 		stubMapping.setResponse(mergedResponse(stubMapping, stubMappingFromMetadata));
 		if (stubMappingFromMetadata.getPostServeActions() != null) {
-			//FIXES ISSUE-1727
-			if(stubMapping.getPostServeActions() == null) {
-				setPostServeActions(stubMapping, stubMappingFromMetadata);
-			}
+			setPostServeActions(stubMapping, stubMappingFromMetadata);
 		}
 		if (stubMappingFromMetadata.getMetadata() != null) {
 			setMetadata(stubMapping, stubMappingFromMetadata);

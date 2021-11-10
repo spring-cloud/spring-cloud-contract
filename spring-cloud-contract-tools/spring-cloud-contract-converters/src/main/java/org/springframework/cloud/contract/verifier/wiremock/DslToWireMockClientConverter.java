@@ -50,9 +50,8 @@ public class DslToWireMockClientConverter extends DslToWireMockConverter {
 
 	@Override
 	public StubMapping postProcessStubMapping(StubMapping stubMapping, Contract contract) {
-		StubMapping mapping = super.postProcessStubMapping(stubMapping, contract);
 		// apply the default WireMock processor as the last one
-		return defaultStubMappingPostProcessing(mapping, contract);
+		return super.postProcessStubMapping(stubMapping, contract);
 	}
 
 	@Override
