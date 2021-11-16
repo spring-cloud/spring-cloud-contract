@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,7 +53,7 @@ public class StubRunnerCamelConfiguration {
 
 	@Bean
 	public RoutesBuilder myRouter(final BatchStubRunner batchStubRunner) {
-		return new SpringRouteBuilder() {
+		return new RouteBuilder() {
 			@Override
 			public void configure() throws Exception {
 				Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner.getContracts();

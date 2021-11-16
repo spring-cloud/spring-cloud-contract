@@ -1,5 +1,0 @@
-spring.cloud.function.definition: bookReturned;bookSender;bookDeleted
-spring.cloud.stream.bindings.bookSender-out-0.destination: inputDestination
-spring.cloud.stream.bindings.bookReturned-in-0.destination: inputDestination
-spring.cloud.stream.bindings.bookReturned-out-0.destination: bookReturned
-spring.cloud.stream.bindings.bookDeleted-in-0.destination: bookDeleted

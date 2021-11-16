@@ -133,7 +133,7 @@ public class RunMojo extends AbstractMojo {
 		BatchStubRunner batchStubRunner = null;
 		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()
 				.withStubsClassifier(this.stubsClassifier);
-		if (StringUtils.isEmpty(this.stubs)) {
+		if (!StringUtils.hasText(this.stubs)) {
 			StubRunnerOptions options = optionsBuilder.withMinMaxPort(this.httpPort, this.httpPort).build();
 			StubRunner stubRunner = this.localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
 			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));

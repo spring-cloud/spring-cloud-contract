@@ -31,7 +31,7 @@ public class FraudDetectionXmlController {
 	@RequestMapping(value = "/xmlfraud", method = POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
 	@ResponseBody
 	public XmlResponseBody xmlResponseBody(@RequestBody XmlRequestBody xmlRequestBody) {
-		if (StringUtils.isEmpty(xmlRequestBody.name)) {
+		if (!StringUtils.hasText(xmlRequestBody.name)) {
 			return new XmlResponseBody("EMPTY");
 		}
 		return new XmlResponseBody("FULL");

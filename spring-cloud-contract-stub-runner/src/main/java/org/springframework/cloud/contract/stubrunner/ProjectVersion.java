@@ -312,12 +312,12 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 		}
 
 		private boolean noSuffix() {
-			return StringUtils.isEmpty(suffix);
+			return !StringUtils.hasText(suffix);
 		}
 
 		private String gav() {
 			// Finchley
-			if (StringUtils.isEmpty(minor)) {
+			if (!StringUtils.hasText(minor)) {
 				return String.format("%s", major);
 			}
 			// 1.0.1
@@ -338,13 +338,13 @@ class ProjectVersion implements Comparable<ProjectVersion>, Serializable {
 			// must have
 			// either major and suffix (release train)
 			// major, minor, patch and suffix
-			return isNumeric(major) && (StringUtils.isEmpty(minor) || StringUtils.isEmpty(patch)
-					|| StringUtils.isEmpty(suffix) || StringUtils.isEmpty(delimiter));
+			return isNumeric(major) && (!StringUtils.hasText(minor) || !StringUtils.hasText(patch)
+					|| !StringUtils.hasText(suffix) || !StringUtils.hasText(delimiter));
 		}
 
 		private boolean wrongReleaseTrainVersion() {
 			// BAD: 1.EXAMPLE, GOOD: Hoxton.RELEASE
-			return isNumeric(major) && StringUtils.isEmpty(suffix);
+			return isNumeric(major) && !StringUtils.hasText(suffix);
 		}
 
 	}

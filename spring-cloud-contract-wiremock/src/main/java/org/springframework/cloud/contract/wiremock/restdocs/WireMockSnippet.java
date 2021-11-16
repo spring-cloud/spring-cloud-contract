@@ -153,7 +153,7 @@ public class WireMockSnippet implements Snippet {
 
 	private MappingBuilder queryParams(MappingBuilder request, Operation operation) {
 		String rawQuery = operation.getRequest().getUri().getRawQuery();
-		if (StringUtils.isEmpty(rawQuery)) {
+		if (!StringUtils.hasText(rawQuery)) {
 			return request;
 		}
 		for (String queryPair : rawQuery.split("&")) {
@@ -210,7 +210,7 @@ public class WireMockSnippet implements Snippet {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
 		}
-		else if (!StringUtils.isEmpty(content)) {
+		else if (!!StringUtils.hasText(content)) {
 			if (this.hasJsonBodyRequestToMatch) {
 				builder.withRequestBody(equalToJson(content));
 			}

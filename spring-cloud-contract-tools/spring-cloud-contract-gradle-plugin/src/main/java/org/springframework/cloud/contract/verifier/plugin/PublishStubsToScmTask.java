@@ -84,7 +84,7 @@ class PublishStubsToScmTask extends DefaultTask {
 
 		this.onlyIf(task -> {
 			String contractRepoUrl = contractRepository.repositoryUrl.getOrElse("");
-			if (StringUtils.isEmpty(contractRepoUrl) || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
+			if (!StringUtils.hasText(contractRepoUrl) || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
 				getLogger().warn(
 						"Skipping pushing stubs to scm since your contracts repository URL [{}] doesn't match any of the accepted protocols for SCM stub downloader",
 						contractRepoUrl);

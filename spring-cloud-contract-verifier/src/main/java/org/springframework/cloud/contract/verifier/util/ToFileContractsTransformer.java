@@ -82,7 +82,8 @@ public final class ToFileContractsTransformer {
 			Collection<Contract> contracts = collectContractDescriptors(new File(path));
 			log.info("Found [{}] contract definition", contracts.size());
 			Class<?> name = Class.forName(fqn);
-			ContractConverter<Collection> contractConverter = (ContractConverter) name.newInstance();
+			ContractConverter<Collection> contractConverter = (ContractConverter) name.getDeclaredConstructors()[0]
+					.newInstance();
 			Collection converted = contractConverter.convertTo(contracts);
 			log.info("Successfully converted contracts definitions");
 			Map<String, byte[]> stored = contractConverter.store(converted);

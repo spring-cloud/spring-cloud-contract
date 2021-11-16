@@ -190,7 +190,7 @@ public class AetherStubDownloader implements StubDownloader {
 	private File unpackedJar(String resolvedVersion, String stubsGroup, String stubsModule, String classifier) {
 		try {
 			log.info("Resolved version is [" + resolvedVersion + "]");
-			if (StringUtils.isEmpty(resolvedVersion)) {
+			if (!StringUtils.hasText(resolvedVersion)) {
 				log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule + "] and classifier ["
 						+ classifier + "] not found in " + this.remoteRepos);
 				return null;
@@ -219,7 +219,7 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private String getVersion(String stubsGroup, String stubsModule, String version, String classifier) {
-		if (StringUtils.isEmpty(version) || LATEST_VERSION_IN_IVY.equals(version)) {
+		if (!StringUtils.hasText(version) || LATEST_VERSION_IN_IVY.equals(version)) {
 			log.info("Desired version is [" + version + "] - will try to resolve the latest version");
 			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier, LATEST_ARTIFACT_VERSION);
 		}

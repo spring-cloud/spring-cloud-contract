@@ -44,7 +44,7 @@ import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.util.Assert;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.verify;

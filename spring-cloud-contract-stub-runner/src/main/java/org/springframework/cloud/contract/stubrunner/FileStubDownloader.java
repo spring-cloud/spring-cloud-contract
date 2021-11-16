@@ -71,7 +71,7 @@ public class FileStubDownloader implements StubDownloaderBuilder {
 
 	@Override
 	public Resource resolve(String location, ResourceLoader resourceLoader) {
-		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
+		if (!StringUtils.hasText(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
 		// Can be resolving a resource for Classpath as fallback
@@ -227,7 +227,7 @@ class StubsStubDownloader implements StubDownloader {
 	private String schemeSpecificPart() {
 		try {
 			String part = this.stubRunnerOptions.getStubRepositoryRoot().getURI().getSchemeSpecificPart();
-			if (StringUtils.isEmpty(part)) {
+			if (!StringUtils.hasText(part)) {
 				return part;
 			}
 			return part.startsWith("//") ? part.substring(2) : part;

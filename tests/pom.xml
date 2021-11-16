@@ -46,7 +46,6 @@
 			</activation>
 			<modules>
 				<module>samples-messaging-camel</module>
-				<module>samples-messaging-stream</module>
 				<module>samples-messaging-integration</module>
 				<module>samples-messaging-amqp</module>
 				<module>samples-messaging-jms</module>
@@ -70,7 +69,6 @@
 			</activation>
 			<modules>
 				<module>samples-messaging-camel</module>
-				<module>samples-messaging-stream</module>
 				<module>samples-messaging-integration</module>
 				<module>samples-messaging-amqp</module>
 				<module>samples-messaging-jms</module>

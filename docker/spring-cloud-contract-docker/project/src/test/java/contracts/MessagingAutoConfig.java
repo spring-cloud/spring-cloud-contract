@@ -142,7 +142,7 @@ public class MessagingAutoConfig {
 			}
 
 			private String getRequiredProperty(String name, String value) {
-				if (StringUtils.isEmpty(value)) {
+				if (!StringUtils.hasText(value)) {
 					throw new IllegalStateException("The property [" + name + "] must not be empty!");
 				}
 				return value;

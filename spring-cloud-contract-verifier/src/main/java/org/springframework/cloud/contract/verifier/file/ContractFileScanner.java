@@ -37,7 +37,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wiremock.com.google.common.collect.HashMultiset;
@@ -52,6 +51,7 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConve
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide inclusion
@@ -257,7 +257,7 @@ public class ContractFileScanner {
 			boolean excluded = matchesPattern(file, excludeMatchers);
 			if (!excluded) {
 				boolean contractFile = isContractFile(file);
-				boolean included = StringUtils.isEmpty(includeMatcher)
+				boolean included = !StringUtils.hasText(includeMatcher)
 						|| file.getAbsolutePath().matches(includeMatcher);
 				included = !CollectionUtils.isEmpty(includeMatchers) ? matchesPattern(file, includeMatchers) : included;
 				if (contractFile && included) {

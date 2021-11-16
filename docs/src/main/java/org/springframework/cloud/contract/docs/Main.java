@@ -93,7 +93,8 @@ public class Main {
 		mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
 		StringBuilder sb = new StringBuilder();
 		for (Class metadatum : metadata) {
-			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) metadatum.newInstance();
+			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) metadatum
+					.getDeclaredConstructors()[0].newInstance();
 			String description = newInstance.description();
 			String key = newInstance.key();
 			List<Class> additionalClasses = classesToLookAt(metadatum, newInstance);

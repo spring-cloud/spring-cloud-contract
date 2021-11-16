@@ -108,7 +108,7 @@ public class PushStubsToScmMojo extends AbstractMojo {
 					+ this.skip + ", spring.cloud.contract.verifier.publish-stubs-to-scm.skip=" + this.taskSkip);
 			return;
 		}
-		if (StringUtils.isEmpty(this.contractsRepositoryUrl)
+		if (!StringUtils.hasText(this.contractsRepositoryUrl)
 				|| !ScmStubDownloaderBuilder.isProtocolAccepted(this.contractsRepositoryUrl)) {
 			getLog().info("Skipping pushing stubs to scm since your "
 					+ "[contractsRepositoryUrl] property doesn't match any of the accepted protocols");

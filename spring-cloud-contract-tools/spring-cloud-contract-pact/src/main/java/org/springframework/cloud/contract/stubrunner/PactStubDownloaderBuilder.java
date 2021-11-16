@@ -89,7 +89,7 @@ public final class PactStubDownloaderBuilder implements StubDownloaderBuilder {
 
 	@Override
 	public Resource resolve(String location, ResourceLoader resourceLoader) {
-		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
+		if (!StringUtils.hasText(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
 		return new PactResource(location);

@@ -43,6 +43,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.RemoteSetUrlCommand;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.EmptyCommitException;
@@ -224,9 +225,9 @@ class GitRepo {
 			Git git = command.call();
 			if (git.getRepository().getRemoteNames().isEmpty()) {
 				log.info("No remote added. Will add remote of the cloned project");
-				git.remoteSetUrl().setUri(new URIish(projectGitUrl));
-				git.remoteSetUrl().setName("origin");
-				git.remoteSetUrl().setPush(true);
+				git.remoteSetUrl().setRemoteUri(new URIish(projectGitUrl));
+				git.remoteSetUrl().setRemoteName("origin");
+				git.remoteSetUrl().setUriType(RemoteSetUrlCommand.UriType.PUSH);
 			}
 			return git;
 		}

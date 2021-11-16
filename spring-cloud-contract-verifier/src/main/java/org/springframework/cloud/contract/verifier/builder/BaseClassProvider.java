@@ -49,7 +49,7 @@ class BaseClassProvider {
 				return mapping.get().getValue();
 			}
 		}
-		if (StringUtils.isEmpty(packageWithBaseClasses)) {
+		if (!StringUtils.hasText(packageWithBaseClasses)) {
 			return baseClassForTests;
 		}
 		String generatedClassName = generateDefaultBaseClassName(contractPackage, packageWithBaseClasses);

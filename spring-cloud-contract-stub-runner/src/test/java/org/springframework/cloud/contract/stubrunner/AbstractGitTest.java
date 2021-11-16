@@ -65,12 +65,12 @@ public abstract class AbstractGitTest {
 			throws GitAPIException, IOException, URISyntaxException {
 		try (Git git = openGitProject(project)) {
 			RemoteRemoveCommand remove = git.remoteRemove();
-			remove.setName("origin");
+			remove.setRemoteName("origin");
 			remove.call();
 			RemoteSetUrlCommand command = git.remoteSetUrl();
-			command.setUri(new URIish(origin.toURI().toURL()));
-			command.setName("origin");
-			command.setPush(push);
+			command.setRemoteUri(new URIish(origin.toURI().toURL()));
+			command.setRemoteName("origin");
+			command.setUriType(RemoteSetUrlCommand.UriType.PUSH);
 			command.call();
 			StoredConfig config = git.getRepository().getConfig();
 			RemoteConfig originConfig = new RemoteConfig(config, "origin");

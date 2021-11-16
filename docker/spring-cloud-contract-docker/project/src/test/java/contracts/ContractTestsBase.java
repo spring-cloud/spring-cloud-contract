@@ -145,7 +145,7 @@ public abstract class ContractTestsBase {
 	}
 
 	private void setupConnection(String destination, YamlContract contract) {
-		if (StringUtils.isEmpty(destination)) {
+		if (!StringUtils.hasText(destination)) {
 			return;
 		}
 		log.info("Setting up destination [{}]", destination);
