@@ -70,6 +70,8 @@ dependencies {
 	implementation "org.apache.maven.resolver:maven-resolver-api:1.4.1"
 	implementation "org.eclipse.jgit:org.eclipse.jgit:5.5.1.201910021850-r"
 	implementation "com.jcraft:jsch.agentproxy.jsch:0.0.9"
+	implementation "com.jcraft:jsch.agentproxy.sshagent:0.0.9"
+	implementation "com.jcraft:jsch.agentproxy.usocket-jna:0.0.9"
 	implementation "com.fasterxml.jackson.core:jackson-databind:2.11.3"
 
 	implementation "org.springframework:spring-core:5.3.2"
