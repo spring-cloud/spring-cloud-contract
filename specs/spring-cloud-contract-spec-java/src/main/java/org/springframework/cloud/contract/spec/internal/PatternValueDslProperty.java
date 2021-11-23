@@ -36,7 +36,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> implements RegexCr
 			boolean matches = pattern.matcher(generatedValue).matches();
 			if (!matches) {
 				throw new IllegalStateException("The generated value [" + generatedValue
-						+ "] doesn\'t match the pattern [" + pattern.pattern() + "]");
+						+ "] doesn't match the pattern [" + pattern.pattern() + "]");
 			}
 
 			return createProperty(pattern, object);

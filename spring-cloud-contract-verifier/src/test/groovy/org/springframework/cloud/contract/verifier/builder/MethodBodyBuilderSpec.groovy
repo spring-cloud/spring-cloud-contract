@@ -21,6 +21,7 @@ import org.junit.Rule
 import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.IgnoreIf
 import spock.lang.Issue
+import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -2094,6 +2095,50 @@ response:
 							$(c(anyUuid()), p("00000000-0000-0000-0000-000000000002")),
 							$(c(anyUuid()), p("00000000-0000-0000-0000-000000000001"))
 					])
+				}
+				response {
+					status OK()
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		and:
+			!test.contains('singleValue')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
+	@Issue("1635")
+	def 'should work with anyOf that contains special chars'() {
+		given:
+			Contract contractDsl = Contract.make {
+				name 'anyOf test'
+				request {
+					method 'POST'
+					url ("hello")
+					body(
+							type: anyOf("VAL", "VAL+VAL")
+					)
 				}
 				response {
 					status OK()
