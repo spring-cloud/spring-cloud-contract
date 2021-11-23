@@ -22,11 +22,14 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import groovy.lang.GString;
+import wiremock.com.fasterxml.jackson.databind.JsonNode;
+import wiremock.com.jayway.jsonpath.internal.filter.ValueNodes;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
@@ -108,16 +111,36 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 				builder.withBody(((FromFileProperty) body).asBytes());
 			}
 			else if (body instanceof Map) {
-				builder.withBody(parseBody((Map<?, ?>) body, contentType));
+				Object parseBody = parseBody((Map<?, ?>) body, contentType);
+				if (contentType == ContentType.JSON) {
+					builder.withJsonBody(Json.read(finalParseBody(parseBody, contentType), JsonNode.class));
+				} else {
+					builder.withBody(finalParseBody(parseBody, contentType));
+				}
 			}
 			else if (body instanceof List) {
-				builder.withBody(parseBody((List<?>) body, contentType));
+				Object parseBody = parseBody((List<?>) body, contentType);
+				if (contentType == ContentType.JSON) {
+					builder.withJsonBody(Json.read(finalParseBody(parseBody, contentType), JsonNode.class));
+				} else {
+					builder.withBody(finalParseBody(parseBody, contentType));
+				}
 			}
 			else if (body instanceof GString) {
-				builder.withBody(parseBody((GString) body, contentType));
+				Object parseBody = parseBody((GString) body, contentType);
+				if (contentType == ContentType.JSON) {
+					builder.withJsonBody(Json.read(finalParseBody(parseBody, contentType), JsonNode.class));
+				} else {
+					builder.withBody(finalParseBody(parseBody, contentType));
+				}
 			}
 			else {
-				builder.withBody(parseBody(body, contentType));
+				Object parseBody = parseBody(body, contentType);
+				if (contentType == ContentType.JSON) {
+					builder.withJsonBody(Json.read(finalParseBody(parseBody, contentType), JsonNode.class));
+				} else {
+					builder.withBody(finalParseBody(parseBody, contentType));
+				}
 			}
 		}
 	}

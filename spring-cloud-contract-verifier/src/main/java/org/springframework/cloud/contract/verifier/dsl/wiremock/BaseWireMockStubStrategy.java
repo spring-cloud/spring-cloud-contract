@@ -81,28 +81,35 @@ abstract class BaseWireMockStubStrategy {
 	/**
 	 * For the given {@link ContentType} returns the String version of the body.
 	 */
-	String parseBody(Object value, ContentType contentType) {
+	Object parseBody(Object value, ContentType contentType) {
+		if (value instanceof Number) {
+			return value;
+		} else if (value instanceof FromFileProperty) {
+			return parseBody((FromFileProperty) value, contentType);
+		} else if (value instanceof Boolean) {
+			return parseBody((Boolean) value, contentType);
+		}
 		return parseBody(value.toString(), contentType);
 	}
 
 	/**
 	 * Return body as String from file.
 	 */
-	String parseBody(FromFileProperty value, ContentType contentType) {
+	Object parseBody(FromFileProperty value, ContentType contentType) {
 		return value.asString();
 	}
 
 	/**
 	 * For the given {@link ContentType} returns the Boolean version of the body.
 	 */
-	String parseBody(Boolean value, ContentType contentType) {
-		return value.toString();
+	Object parseBody(Boolean value, ContentType contentType) {
+		return value;
 	}
 
 	/**
 	 * For the given {@link ContentType} returns the String version of the body.
 	 */
-	String parseBody(Map<?, ?> map, ContentType contentType) {
+	Object parseBody(Map<?, ?> map, ContentType contentType) {
 		Object transformedMap = MapConverter.getStubSideValues(map);
 		transformedMap = transformMapIfRequestPresent(transformedMap);
 		String json = toJson(transformedMap);
@@ -147,7 +154,7 @@ abstract class BaseWireMockStubStrategy {
 	/**
 	 * For the given {@link ContentType} returns the String version of the body.
 	 */
-	String parseBody(List<?> list, ContentType contentType) {
+	Object parseBody(List<?> list, ContentType contentType) {
 		final List<Object> result = new ArrayList<>();
 		list.forEach(l -> {
 			if (l instanceof Map) {
@@ -160,13 +167,20 @@ abstract class BaseWireMockStubStrategy {
 				result.add(parseBody(l, contentType));
 			}
 		});
-		return parseBody(toJson(result), contentType);
+		return result;
+	}
+
+	String finalParseBody(Object object, ContentType contentType) {
+		if (contentType == ContentType.JSON) {
+			return toJson(object);
+		}
+		return object.toString();
 	}
 
 	/**
 	 * For the given {@link ContentType} returns the String version of the body.
 	 */
-	String parseBody(GString value, ContentType contentType) {
+	Object parseBody(GString value, ContentType contentType) {
 		Object processedValue = extractValue(value, contentType,
 				(o) -> o instanceof DslProperty ? ((DslProperty<?>) o).getClientValue() : o);
 		if (processedValue instanceof GString) {
@@ -178,7 +192,7 @@ abstract class BaseWireMockStubStrategy {
 	/**
 	 * For the given {@link ContentType} returns the String version of the body.
 	 */
-	String parseBody(String value, ContentType contentType) {
+	Object parseBody(String value, ContentType contentType) {
 		return value;
 	}
 

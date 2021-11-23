@@ -56,7 +56,7 @@ class WireMockResponseStubStrategySpec extends Specification {
 			}
 			def content = subject.buildClientResponseContent()
 		then:
-			'{"value":1.5}' == content.body
+			'{"value":1.5}' == content.jsonBody
 	}
 
 	@Issue("#468")
@@ -89,7 +89,7 @@ class WireMockResponseStubStrategySpec extends Specification {
 			}
 			def content = subject.buildClientResponseContent()
 		then:
-			Map body = new JsonSlurper().parseText(content.body) as Map
+			Map body = new JsonSlurper().parseText(content.jsonBody) as Map
 			assert body.get("number") instanceof Number
 			assert body.get("integer") instanceof Integer
 			assert body.get("positiveInt") instanceof Integer
