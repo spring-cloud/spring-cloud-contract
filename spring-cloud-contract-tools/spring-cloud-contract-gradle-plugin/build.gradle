@@ -65,6 +65,8 @@ dependencies {
 	implementation "org.eclipse.jgit:org.eclipse.jgit:${jgitVersion}"
 	implementation "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:${jgitVersion}"
 	implementation "com.jcraft:jsch.agentproxy.jsch:${jschVersion}"
+	implementation "com.jcraft:jsch.agentproxy.sshagent:${jschVersion}"
+	implementation "com.jcraft:jsch.agentproxy.usocket-jna:${jschVersion}"
 	implementation "com.fasterxml.jackson.core:jackson-databind:2.11.4"
 
 	implementation "org.springframework:spring-core:5.3.9"
