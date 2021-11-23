@@ -46,7 +46,7 @@ class KafkaStubMessages implements MessageVerifier<Message<?>> {
 
 	private static final Log log = LogFactory.getLog(KafkaStubMessages.class);
 
-	private final KafkaTemplate kafkaTemplate;
+	final KafkaTemplate kafkaTemplate;
 
 	private final Receiver receiver;
 

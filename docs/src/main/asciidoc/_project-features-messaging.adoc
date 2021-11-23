@@ -1190,6 +1190,8 @@ with `@AutoConfigureStubRunner`.
 
 With Kafka integration, in order to poll for a single message, we need to register a consumer upon Spring context startup. That may lead to a situation that, when you are on the consumer side, Stub Runner can register an additional consumer for the same group ID and topic. That could lead to a situation that only one of the components would actually poll for the message. Since, on the consumer side, you have both the Spring Cloud Contract Stub Runner and Spring Cloud Contract Verifier classpath, we need to be able to switch off such behavior. That is done automatically through the `stubrunner.kafka.initializer.enabled` flag, which disables the Contact Verifier consumer registration. If your application is both the consumer and the producer of a Kafka message, you might need to manually toggle that property to `false` in the base class of your generated tests.
 
+If you have multiple `KafkaTemplate` beans, you can provide your own bean of `Supplier<KafkaTemplate>` type that returns the `KafkaTemplate` of your chosing.
+
 :input_name: input
 :output_name: output
 

@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.kafka;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,9 +56,15 @@ public class ContractVerifierKafkaConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	MessageVerifier<Message<?>> contractVerifierKafkaMessageExchange(KafkaTemplate kafkaTemplate,
+	MessageVerifier<Message<?>> contractVerifierKafkaMessageExchange(Supplier<KafkaTemplate> kafkaTemplate,
 			EmbeddedKafkaBroker broker, KafkaProperties kafkaProperties, KafkaStubMessagesInitializer initializer) {
-		return new KafkaStubMessages(kafkaTemplate, broker, kafkaProperties, initializer);
+		return new KafkaStubMessages(kafkaTemplate.get(), broker, kafkaProperties, initializer);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	Supplier<KafkaTemplate> contractVerifierKafkaTemplateSupplier(KafkaTemplate kafkaTemplate) {
+		return () -> kafkaTemplate;
 	}
 
 	@Bean

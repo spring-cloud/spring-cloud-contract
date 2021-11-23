@@ -16,12 +16,16 @@
 
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
+import java.util.function.Supplier;
+
 import org.junit.Test;
+import org.mockito.BDDMockito;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +45,14 @@ public class ContractVerifierKafkaConfigurationTests {
 		this.contextRunner.run((context) -> {
 			assertThat(context.getBeansOfType(KafkaStubMessages.class)).hasSize(1);
 			assertThat(context.getBeansOfType(ContractVerifierKafkaHelper.class)).hasSize(1);
+		});
+	}
+
+	@Test
+	public void shouldPickCustomKafkaTemplate() {
+		this.contextRunner.withUserConfiguration(CustomKafkaTemplateConfiguration.class).run((context) -> {
+			assertThat(context.getBeansOfType(KafkaStubMessages.class)).hasSize(1);
+			assertThat(context.getBean(KafkaStubMessages.class).kafkaTemplate).isSameAs(context.getBean(CustomKafkaTemplateConfiguration.class).myKafkaTemplate);
 		});
 	}
 
@@ -65,6 +77,17 @@ public class ContractVerifierKafkaConfigurationTests {
 		@Bean
 		public EmbeddedKafkaBroker embeddedKafkaBroker() {
 			return new EmbeddedKafkaBroker(1);
+		}
+
+	}
+
+	static class CustomKafkaTemplateConfiguration {
+
+		KafkaTemplate myKafkaTemplate = BDDMockito.mock(KafkaTemplate.class);
+
+		@Bean
+		Supplier<KafkaTemplate> myKafkaTemplate() {
+			return () -> myKafkaTemplate;
 		}
 
 	}
