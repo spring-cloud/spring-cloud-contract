@@ -52,7 +52,8 @@ public class ContractVerifierKafkaConfigurationTests {
 	public void shouldPickCustomKafkaTemplate() {
 		this.contextRunner.withUserConfiguration(CustomKafkaTemplateConfiguration.class).run((context) -> {
 			assertThat(context.getBeansOfType(KafkaStubMessages.class)).hasSize(1);
-			assertThat(context.getBean(KafkaStubMessages.class).kafkaTemplate).isSameAs(context.getBean(CustomKafkaTemplateConfiguration.class).myKafkaTemplate);
+			assertThat(context.getBean(KafkaStubMessages.class).kafkaTemplate)
+					.isSameAs(context.getBean(CustomKafkaTemplateConfiguration.class).myKafkaTemplate);
 		});
 	}
 

@@ -89,7 +89,9 @@ public final class RegexPatterns {
 			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.\\d+)?(Z|[+-][01]\\d:[0-5]\\d)");
 
 	protected static Pattern anyOf(String... values) {
-		return Pattern.compile(Arrays.stream(values).map(it -> '^' + RegexpUtils.escapeSpecialRegexWithSingleEscape(it) + '$').collect(Collectors.joining("|")));
+		return Pattern
+				.compile(Arrays.stream(values).map(it -> '^' + RegexpUtils.escapeSpecialRegexWithSingleEscape(it) + '$')
+						.collect(Collectors.joining("|")));
 	}
 
 	public static String multipartParam(Object name, Object value) {
