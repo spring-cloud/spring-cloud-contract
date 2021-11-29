@@ -19,6 +19,8 @@ package org.springframework.cloud.contract.verifier.messaging.amqp;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
@@ -26,6 +28,7 @@ class AmqpMetadataTests {
 
 	YAMLMapper mapper = new YAMLMapper();
 
+	@DisabledOnJre(JRE.JAVA_17)
 	@Test
 	void should_parse_the_metadata_entry() throws JsonProcessingException {
 		// @formatter:off

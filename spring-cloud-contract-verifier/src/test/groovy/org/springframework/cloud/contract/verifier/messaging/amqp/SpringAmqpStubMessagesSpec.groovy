@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.amqp
 
 import com.rabbitmq.client.Channel
 import org.mockito.exceptions.verification.WantedButNotInvoked
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import org.springframework.amqp.core.Binding
@@ -40,6 +41,7 @@ import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFA
 /**
  * @author Mathias Düsterhöft
  */
+@IgnoreIf({ jvm.isJava17Compatible() })
 class SpringAmqpStubMessagesSpec extends Specification {
 
 	RabbitTemplate rabbitTemplate = mock(RabbitTemplate.class)
