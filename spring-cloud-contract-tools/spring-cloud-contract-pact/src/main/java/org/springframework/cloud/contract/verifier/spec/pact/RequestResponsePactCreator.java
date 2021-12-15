@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath;
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.dsl.PactDslWithState;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import org.apache.commons.lang3.StringUtils;
 
@@ -107,14 +109,10 @@ class RequestResponsePactCreator {
 	}
 
 	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract, PactDslResponse pactDslResponse) {
+		PactDslRequestWithPath pactDslRequest = getPactDslRequest(contract,
+				getPactDslWithStateFunction(pactDslResponse),
+				getPactDslRequestWithPathBiFunction(pactDslResponse));
 		Request request = contract.getRequest();
-		PactDslRequestWithPath pactDslRequest = pactDslResponse
-				.uponReceiving(StringUtils.isNotBlank(contract.getDescription()) ? contract.getDescription() : "")
-				.path(url(request)).method(request.getMethod().getServerValue().toString());
-		String query = query(request);
-		if (StringUtils.isNotBlank(query)) {
-			pactDslRequest = pactDslRequest.encodedQuery(query);
-		}
 		final PactDslRequestWithPath finalPactDslRequest = pactDslRequest;
 		if (request.getHeaders() != null) {
 			request.getHeaders().getEntries().forEach(h -> processHeader(finalPactDslRequest, h));
@@ -134,23 +132,27 @@ class RequestResponsePactCreator {
 		return pactDslRequest;
 	}
 
+	private Function<PactMetaData.ProviderStateMetadata, PactDslWithState> getPactDslWithStateFunction(
+			PactDslResponse pactDslResponse) {
+		return stateMetadata -> pactDslResponse.given(stateMetadata.getName(), stateMetadata.getParams());
+	}
+
+	private BiFunction<String, Request, PactDslRequestWithPath> getPactDslRequestWithPathBiFunction(
+			PactDslResponse pactDslResponse) {
+		return (description, request) -> pactDslResponse.uponReceiving(description).path(url(request))
+				.method(request.getMethod().getServerValue().toString());
+	}
+
 	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract,
 			PactDslWithProvider pactDslWithProvider) {
+		PactDslRequestWithPath pactDslRequest = getPactDslRequest(contract,
+				getPactDslWithStateFunction(pactDslWithProvider),
+				getPactDslRequestWithPathBiFunction(pactDslWithProvider));
 		Request request = contract.getRequest();
-		PactDslRequestWithPath pactDslRequest = pactDslWithProvider
-				.uponReceiving(StringUtils.isNotBlank(contract.getDescription()) ? contract.getDescription() : "")
-				.path(url(request)).method(request.getMethod().getServerValue().toString());
-		String query = query(request);
-		if (StringUtils.isNotBlank(query)) {
-			pactDslRequest = pactDslRequest.encodedQuery(query);
-		}
 		final PactDslRequestWithPath finalPactDslRequest = pactDslRequest;
 		if (request.getHeaders() != null) {
-			request.getHeaders().getEntries().forEach(h -> {
-				processHeader(finalPactDslRequest, h);
-			});
+			request.getHeaders().getEntries().forEach(h -> processHeader(finalPactDslRequest, h));
 		}
-
 		if (request.getBody() != null) {
 			DslPart pactRequestBody = BodyConverter.toPactBody(request.getBody(), DslProperty::getServerValue);
 			if (request.getBodyMatchers() != null) {
@@ -161,6 +163,57 @@ class RequestResponsePactCreator {
 			pactDslRequest = pactDslRequest.body(pactRequestBody);
 		}
 		return pactDslRequest;
+	}
+
+	private Function<PactMetaData.ProviderStateMetadata, PactDslWithState> getPactDslWithStateFunction(
+			PactDslWithProvider pactDslWithProvider) {
+		return stateMetadata -> pactDslWithProvider.given(stateMetadata.getName(), stateMetadata.getParams());
+	}
+
+	private BiFunction<String, Request, PactDslRequestWithPath> getPactDslRequestWithPathBiFunction(
+			PactDslWithProvider pactDslWithProvider) {
+		return (description, request) -> pactDslWithProvider.uponReceiving(description).path(url(request))
+				.method(request.getMethod().getServerValue().toString());
+	}
+
+	private PactDslRequestWithPath getPactDslRequest(Contract contract,
+			Function<PactMetaData.ProviderStateMetadata, PactDslWithState> pactDslWithStateFunction,
+			BiFunction<String, Request, PactDslRequestWithPath> pactDslRequestWithPathBiFunction) {
+		PactDslWithState pactDslWithState = getPactDslWithState(contract, pactDslWithStateFunction);
+		String description = StringUtils.isNotBlank(contract.getDescription()) ? contract.getDescription() : "";
+		Request request = contract.getRequest();
+		PactDslRequestWithPath pactDslRequest;
+		if (pactDslWithState != null) {
+			pactDslRequest = pactDslWithState.uponReceiving(description).path(url(request))
+					.method(request.getMethod().getServerValue().toString());
+		}
+		else {
+			pactDslRequest = pactDslRequestWithPathBiFunction.apply(description, request);
+		}
+		String query = query(request);
+		if (StringUtils.isNotBlank(query)) {
+			pactDslRequest = pactDslRequest.encodedQuery(query);
+		}
+		return pactDslRequest;
+	}
+
+	private PactDslWithState getPactDslWithState(Contract contract,
+			Function<PactMetaData.ProviderStateMetadata, PactDslWithState> pactDslWithStateFunction) {
+		PactDslWithState pactDslWithState = null;
+		if (contract.getMetadata().containsKey(PactMetaData.METADATA_KEY)) {
+			PactMetaData metadata = PactMetaData.fromMetadata(contract.getMetadata());
+			if (!metadata.getProviderStates().isEmpty()) {
+				for (PactMetaData.ProviderStateMetadata stateMetadata : metadata.getProviderStates()) {
+					if (pactDslWithState == null) {
+						pactDslWithState = pactDslWithStateFunction.apply(stateMetadata);
+					}
+					else {
+						pactDslWithState = pactDslWithState.given(stateMetadata.getName(), stateMetadata.getParams());
+					}
+				}
+			}
+		}
+		return pactDslWithState;
 	}
 
 	private String url(Request request) {

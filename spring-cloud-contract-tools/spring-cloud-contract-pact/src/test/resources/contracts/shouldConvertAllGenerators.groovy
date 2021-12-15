@@ -56,4 +56,25 @@ org.springframework.cloud.contract.spec.Contract.make {
 			contentType('application/json')
 		}
 	}
+	metadata([
+			pact: [
+					providerStates:
+					[
+						[
+							name: "someState1",
+							params: [
+								id: 1,
+								value: "someValue1"
+							]
+						],
+						[
+								name: "someState2",
+								params: [
+										id: 2,
+										value: "someValue2"
+								]
+						]
+					]
+			]
+	])
 }
