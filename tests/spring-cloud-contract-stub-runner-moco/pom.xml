@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tests</artifactId>
-		<version>3.1.1-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-stub-runner-moco</artifactId>
@@ -14,7 +14,7 @@
 	<name>Spring Cloud Contract Stub Runner Moco</name>
 	<description>Spring Cloud Contract Stub Runner Moco</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<moco-runner.version>1.2.0</moco-runner.version>
 	</properties>
 	<dependencies>
