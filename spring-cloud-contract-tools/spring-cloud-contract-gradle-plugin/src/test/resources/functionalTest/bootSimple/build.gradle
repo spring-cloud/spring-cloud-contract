@@ -12,8 +12,8 @@ apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
 group = 'org.springframework.cloud.testprojects'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 ext {
 	restAssuredVersion = '3.0.7'
