@@ -20,9 +20,6 @@ ext {
 	JavaVersion javaVer = JavaVersion.current()
 	println "Current Java version equal to [${javaVer}]"
 	javaVersionNumber = javaVer.toString()
-	
-	jgitVersion = "5.12.0.202106070339-r"
-	jschVersion = "0.0.9"
 }
 
 project.version = findProperty('verifierVersion')
@@ -33,8 +30,8 @@ apply from: "$rootDir/gradle/release.gradle"
 
 group = 'org.springframework.cloud'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
 	mavenLocal()
@@ -61,15 +58,15 @@ dependencies {
 	implementation(platform("org.springframework.cloud:spring-cloud-contract-tools:${project.version}"))
 
 	// Need to set the versions manually cause otherwise Gradle will not publish a proper pom
-	implementation "org.apache.maven.resolver:maven-resolver-api:1.4.1"
+	implementation "org.apache.maven.resolver:maven-resolver-api:${mavenResolverVersion}"
 	implementation "org.eclipse.jgit:org.eclipse.jgit:${jgitVersion}"
 	implementation "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:${jgitVersion}"
 	implementation "com.jcraft:jsch.agentproxy.jsch:${jschVersion}"
 	implementation "com.jcraft:jsch.agentproxy.sshagent:${jschVersion}"
 	implementation "com.jcraft:jsch.agentproxy.usocket-jna:${jschVersion}"
-	implementation "com.fasterxml.jackson.core:jackson-databind:2.11.4"
+	implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
 
-	implementation "org.springframework:spring-core:5.3.9"
+	implementation "org.springframework:spring-core:${springVersion}"
 	implementation("org.springframework.cloud:spring-cloud-contract-shade:${project.version}")
 	api("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: '*')

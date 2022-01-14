@@ -29,7 +29,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.1</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -75,7 +75,7 @@
 	</dependencies>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<spring-cloud-verifier-plugin.version>${it-plugin.version}
 		</spring-cloud-verifier-plugin.version>
 	</properties>
