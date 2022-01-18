@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.assertj.core.api.BDDAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -32,25 +32,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.WiremockServerRestDocsHypermediaApplicationTests.TestConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class, properties = "wiremock.placeholders.enabled=false")
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
+@Disabled("jakarta")
 public class WiremockServerRestDocsHypermediaApplicationTests {
 
 	@Autowired
@@ -75,9 +71,11 @@ public class WiremockServerRestDocsHypermediaApplicationTests {
 		@ResponseBody
 		@RequestMapping("/link")
 		public String resource(HttpServletRequest request) {
-			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request))
-					.build();
-			return "link: " + uriComponents.toUriString();
+			// UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new
+			// ServletServerHttpRequest(request))
+			// .build();
+			// return "link: " + uriComponents.toUriString();
+			return "";
 		}
 
 	}

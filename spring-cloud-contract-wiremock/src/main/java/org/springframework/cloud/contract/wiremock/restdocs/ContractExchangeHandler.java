@@ -268,7 +268,7 @@ class WireMockHttpRequestAdapter implements Request {
 		}
 	}
 
-	private Part partFromServletPart(javax.servlet.http.Part part) {
+	private Part partFromServletPart(jakarta.servlet.http.Part part) {
 		return new Part() {
 
 			@Override

@@ -23,8 +23,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
-import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.context.ApplicationContext;
+import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 
@@ -39,7 +39,7 @@ class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 
 	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
 
-	private BinderAwareChannelResolver resolver;
+	private BeanFactoryChannelResolver resolver;
 
 	StreamStubMessageSender(ApplicationContext context) {
 		this.context = context;
@@ -63,9 +63,9 @@ class StreamStubMessageSender implements MessageVerifierSender<Message<?>> {
 		}
 	}
 
-	private BinderAwareChannelResolver resolver() {
+	private BeanFactoryChannelResolver resolver() {
 		if (this.resolver == null) {
-			this.resolver = context.getBean(BinderAwareChannelResolver.class);
+			this.resolver = context.getBean(BeanFactoryChannelResolver.class);
 		}
 		return this.resolver;
 	}

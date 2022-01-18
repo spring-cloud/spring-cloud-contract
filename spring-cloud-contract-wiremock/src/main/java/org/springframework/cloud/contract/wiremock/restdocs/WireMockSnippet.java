@@ -33,6 +33,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
@@ -182,26 +183,32 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private MappingBuilder requestBuilder(Operation operation) {
-		switch (operation.getRequest().getMethod()) {
-		case DELETE:
+		HttpMethod method = operation.getRequest().getMethod();
+		if (method.equals(HttpMethod.DELETE)) {
 			return delete(requestPattern(operation));
-		case POST:
-			return bodyPattern(post(requestPattern(operation)), operation.getRequest().getContentAsString());
-		case PUT:
-			return bodyPattern(put(requestPattern(operation)), operation.getRequest().getContentAsString());
-		case PATCH:
-			return bodyPattern(patch(requestPattern(operation)), operation.getRequest().getContentAsString());
-		case GET:
-			return get(requestPattern(operation));
-		case HEAD:
-			return head(requestPattern(operation));
-		case OPTIONS:
-			return options(requestPattern(operation));
-		case TRACE:
-			return trace(requestPattern(operation));
-		default:
-			throw new UnsupportedOperationException("Unsupported method type: " + operation.getRequest().getMethod());
 		}
+		else if (method.equals(HttpMethod.POST)) {
+			return bodyPattern(post(requestPattern(operation)), operation.getRequest().getContentAsString());
+		}
+		else if (method.equals(HttpMethod.PUT)) {
+			return bodyPattern(put(requestPattern(operation)), operation.getRequest().getContentAsString());
+		}
+		else if (method.equals(HttpMethod.PATCH)) {
+			return bodyPattern(patch(requestPattern(operation)), operation.getRequest().getContentAsString());
+		}
+		else if (method.equals(HttpMethod.GET)) {
+			return get(requestPattern(operation));
+		}
+		else if (method.equals(HttpMethod.HEAD)) {
+			return head(requestPattern(operation));
+		}
+		else if (method.equals(HttpMethod.OPTIONS)) {
+			return options(requestPattern(operation));
+		}
+		else if (method.equals(HttpMethod.TRACE)) {
+			return trace(requestPattern(operation));
+		}
+		throw new UnsupportedOperationException("Unsupported method type: " + method);
 	}
 
 	private MappingBuilder bodyPattern(MappingBuilder builder, String content) {

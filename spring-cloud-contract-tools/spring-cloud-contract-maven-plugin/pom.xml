@@ -12,7 +12,7 @@
 	</parent>
 
 	<prerequisites>
-		<maven>3.2.5</maven>
+		<maven>3.8.4</maven>
 	</prerequisites>
 
 	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
@@ -38,7 +38,6 @@
 		<plexus-archiver.version>4.2.5</plexus-archiver.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-		<plexus-component-metadata.version>2.0.0</plexus-component-metadata.version>
 		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
 		<maven-shared-incremental.version>1.1</maven-shared-incremental.version>
 	</properties>
@@ -47,19 +46,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.plexus</groupId>
-				<artifactId>plexus-component-metadata</artifactId>
-				<version>${plexus-component-metadata.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate-metadata</goal>
-							<goal>generate-test-metadata</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>

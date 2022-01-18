@@ -18,9 +18,9 @@ package org.springframework.cloud.contract.stubrunner.messaging.jms;
 
 import java.util.List;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.cloud.contract.spec.Contract;
@@ -47,7 +47,7 @@ class StubRunnerJmsRouter implements MessageListener {
 	}
 
 	@Override
-	public void onMessage(javax.jms.Message message) {
+	public void onMessage(jakarta.jms.Message message) {
 		Contract dsl = this.selector.matchingContract(message);
 		if (dsl != null && dsl.getOutputMessage() != null && dsl.getOutputMessage().getSentTo() != null) {
 			String destination = dsl.getOutputMessage().getSentTo().getClientValue();
@@ -68,7 +68,7 @@ class StubRunnerJmsRouter implements MessageListener {
 class ReplyToProcessor implements MessagePostProcessor {
 
 	@Override
-	public javax.jms.Message postProcessMessage(Message message) throws JMSException {
+	public jakarta.jms.Message postProcessMessage(Message message) throws JMSException {
 		message.setStringProperty("requiresReply", "no");
 		return message;
 	}

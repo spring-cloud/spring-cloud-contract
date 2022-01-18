@@ -182,7 +182,7 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 				if (result.getRequest().getCookies() == null) {
 					return nameToCookie;
 				}
-				for (javax.servlet.http.Cookie cookie : result.getRequest().getCookies()) {
+				for (jakarta.servlet.http.Cookie cookie : result.getRequest().getCookies()) {
 					nameToCookie.put(cookie.getName(), new Cookie(cookie.getValue()));
 				}
 				return nameToCookie;
