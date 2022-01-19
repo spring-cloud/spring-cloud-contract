@@ -143,6 +143,9 @@ final class BodyConverter {
 			if (v == null) {
 				jsonObject.nullValue(k);
 			}
+			else if (v instanceof Boolean) {
+				jsonObject.booleanValue(k, (Boolean) v);
+			}
 			else if (v instanceof String) {
 				jsonObject.stringType(k, (String) v);
 			}
