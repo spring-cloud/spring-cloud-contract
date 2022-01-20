@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
-import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 
@@ -41,7 +41,7 @@ public class AutoConfigureMessageVerifierTests {
 	public void shouldConfigureForNoOpWhenMissingImplementation() {
 		this.contextRunner.withClassLoader(
 				new FilteredClassLoader(org.apache.camel.Message.class, org.springframework.messaging.Message.class,
-						JmsTemplate.class, KafkaTemplate.class, RabbitTemplate.class, EnableBinding.class))
+						JmsTemplate.class, KafkaTemplate.class, RabbitTemplate.class, Binder.class))
 				.run((context) -> {
 					assertThat(context.getBeansOfType(MessageVerifierSender.class)).hasSize(1);
 					assertThat(context.getBeansOfType(NoOpStubMessages.class)).hasSize(1);
