@@ -13,6 +13,10 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Sample Spring Amqp</name>
 	<description>Spring Cloud Contract Sample Spring Amqp Rabbit</description>
+	<properties>
+		<!-- TODO: remove -->
+		<skipTests>true</skipTests>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
