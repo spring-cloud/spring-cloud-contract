@@ -35,8 +35,8 @@ import org.springframework.core.env.Environment;
  * Wraps {@link DiscoveryClient} in a Stub Runner implementation that tries to find a
  * corresponding WireMock server for a searched dependency.
  *
- * @since 1.0.0
  * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(StubMapperProperties.class)

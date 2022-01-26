@@ -25,10 +25,10 @@ import org.springframework.context.annotation.Configuration;
  * in your test case and this class is available. JSON stubs are generated and added to
  * the restdocs path under "stubs".
  *
- * @see WireMockRestDocs for a convenient entry point for customizing and asserting the
- * stub behaviour
  * @author Eddú Meléndez
  * @author Olga Maciaszek-Sharma
+ * @see WireMockRestDocs for a convenient entry point for customizing and asserting the
+ * stub behaviour
  */
 @Configuration(proxyBeanMethods = false)
 // @ConditionalOnClass(RestAssuredRestDocumentationConfigurer.class)

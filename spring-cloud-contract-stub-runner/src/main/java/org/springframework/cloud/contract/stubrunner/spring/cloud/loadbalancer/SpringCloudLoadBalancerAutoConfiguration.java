@@ -59,8 +59,8 @@ import org.springframework.util.StringUtils;
 /**
  * Provides autoconfiguraion for the Spring Cloud Load Balancer module.
  *
- * @since 2.2.3
  * @author Marcin Grzejszczak
+ * @since 2.2.3
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ LoadBalancerClient.class, LoadBalancerClientFactory.class })

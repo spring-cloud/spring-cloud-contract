@@ -47,6 +47,9 @@ public interface HttpServerStubConfigurer<T> {
 	 */
 	class NoOpHttpServerStubConfigurer implements HttpServerStubConfigurer {
 
+		/**
+		 * Singleton instance.
+		 */
 		public static HttpServerStubConfigurer INSTANCE = new NoOpHttpServerStubConfigurer();
 
 		@Override
