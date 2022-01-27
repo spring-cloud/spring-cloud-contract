@@ -149,10 +149,11 @@
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
 					</plugin>
-					<plugin>
+					<!-- TODO: Remove me -->
+					<!--<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
-					</plugin>
+					</plugin>-->
 					<plugin>
 						<artifactId>maven-deploy-plugin</artifactId>
 					</plugin>
