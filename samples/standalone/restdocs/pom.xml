@@ -20,6 +20,7 @@
 
 	<properties>
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<modules>

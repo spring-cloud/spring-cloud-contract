@@ -12,7 +12,7 @@
 	</parent>
 
 	<prerequisites>
-		<maven>3.8.4</maven>
+		<maven>3.8</maven>
 	</prerequisites>
 
 	<artifactId>spring-cloud-contract-maven-plugin</artifactId>

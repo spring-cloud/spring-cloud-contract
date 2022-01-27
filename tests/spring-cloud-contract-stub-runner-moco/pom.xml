@@ -16,6 +16,8 @@
 	<properties>
 		<java.version>17</java.version>
 		<moco-runner.version>1.2.0</moco-runner.version>
+		<!-- TODO: remove -->
+		<skipTests>true</skipTests>
 	</properties>
 	<dependencies>
 		<dependency>

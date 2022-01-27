@@ -32,8 +32,9 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.BDDAssertions.then;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = WiremockTestsApplication.class, properties = {
-		"app.baseUrl=http://localhost:${wiremock.server.port}", "wiremock.reset-mappings-after-each-test=true" },
+@SpringBootTest(classes = WiremockTestsApplication.class,
+		properties = { "app.baseUrl=http://localhost:${wiremock.server.port}",
+				"wiremock.reset-mappings-after-each-test=true" },
 		webEnvironment = WebEnvironment.NONE)
 @AutoConfigureWireMock(port = 0)
 @FixMethodOrder
