@@ -42,13 +42,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-netflix-dependencies</artifactId>
-			<version>${spring-cloud-netflix.version}</version>
-			<type>pom</type>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-zookeeper-dependencies</artifactId>
 			<version>${spring-cloud-zookeeper.version}</version>
 			<type>pom</type>
