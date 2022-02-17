@@ -90,5 +90,4 @@ public class PactMetaData implements SpringCloudContractMetadata {
 		}
 
 	}
-
 }
