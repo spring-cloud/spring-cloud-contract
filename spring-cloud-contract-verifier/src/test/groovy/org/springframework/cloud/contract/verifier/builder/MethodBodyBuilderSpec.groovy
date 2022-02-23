@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 
 import org.junit.Rule
 import org.spockframework.runtime.extension.builtin.PreconditionContext
+import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Retry
@@ -1762,6 +1763,7 @@ response:
 			}
 	}
 
+	@Ignore
 	@Issue("#1414")
 	def "should work with empty arrays after doing array matching [#methodBuilderName]"() {
 		given:
