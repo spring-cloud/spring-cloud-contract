@@ -110,8 +110,7 @@ class RequestResponsePactCreator {
 
 	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract, PactDslResponse pactDslResponse) {
 		PactDslRequestWithPath pactDslRequest = getPactDslRequest(contract,
-				getPactDslWithStateFunction(pactDslResponse),
-				getPactDslRequestWithPathBiFunction(pactDslResponse));
+				getPactDslWithStateFunction(pactDslResponse), getPactDslRequestWithPathBiFunction(pactDslResponse));
 		Request request = contract.getRequest();
 		final PactDslRequestWithPath finalPactDslRequest = pactDslRequest;
 		if (request.getHeaders() != null) {
