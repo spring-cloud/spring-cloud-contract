@@ -9,7 +9,7 @@ Spring Cloud Contract supports DSLs written in the following languages:
 * Java
 * Kotlin
 
-TIP: Spring Cloud Contract supports defining multiple contracts in a single file. (In Groovy return a list instead of a single contract)
+TIP: Spring Cloud Contract supports defining multiple contracts in a single file (In Groovy return a list instead of a single contract).
 
 The following example shows a contract definition:
 
