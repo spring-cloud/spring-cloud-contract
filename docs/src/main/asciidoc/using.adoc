@@ -488,7 +488,7 @@ For the consumer side, you can use a JUnit rule. That way, you need not start a 
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
 .JUnit 5 Extension
 ----
-@Rule
+@RegisterExtension
 	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
 			.downloadStub("com.example","artifact-id", "0.0.1")
 			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
