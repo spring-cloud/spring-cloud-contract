@@ -65,7 +65,7 @@
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<sisu-inject-plexus.version>2.6.0</sisu-inject-plexus.version>
 
-		<javadoc.failOnError>true</javadoc.failOnError>
+		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
 	</properties>
 
