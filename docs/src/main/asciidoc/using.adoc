@@ -577,7 +577,7 @@ import io.javalin.Javalin;
 import io.restassured.RestAssured;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.util.SocketUtils;
+import org.springframework.cloud.test.TestSocketUtils;
 
 public class BaseClass {
 
@@ -586,7 +586,7 @@ public class BaseClass {
 	@Before
 	public void setup() {
 		// pick a random port
-		int port = SocketUtils.findAvailableTcpPort();
+		int port = TestSocketUtils.findAvailableTcpPort();
 		// start the application at a random port
 		this.app = start(port);
 		// tell Rest Assured where the started application is

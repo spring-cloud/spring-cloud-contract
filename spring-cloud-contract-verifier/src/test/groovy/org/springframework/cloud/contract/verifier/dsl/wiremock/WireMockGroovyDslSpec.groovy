@@ -36,7 +36,7 @@ import org.springframework.cloud.contract.verifier.util.AssertionUtil
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
-import org.springframework.util.SocketUtils
+import org.springframework.cloud.test.TestSocketUtils
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
@@ -2075,7 +2075,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 					'''
 		and:
-			int port = SocketUtils.findAvailableTcpPort()
+			int port = TestSocketUtils.findAvailableTcpPort()
 			WireMockServer server = new WireMockServer(config().port(port))
 			server.start()
 		and:
@@ -2118,7 +2118,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		and:
 			def json = toWireMockClientJsonStub(contract)
 		and:
-			int port = SocketUtils.findAvailableTcpPort()
+			int port = TestSocketUtils.findAvailableTcpPort()
 			WireMockServer server = new WireMockServer(config().port(port))
 			server.start()
 		and:
@@ -2229,7 +2229,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		and:
 			stubMappingIsValidWireMockStub(json)
 		and:
-			int port = SocketUtils.findAvailableTcpPort()
+			int port = TestSocketUtils.findAvailableTcpPort()
 			WireMockServer server = new WireMockServer(config().port(port))
 			server.start()
 			server.addStubMapping(WireMockStubMapping.buildFrom(json))
@@ -2397,7 +2397,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		and:
 			stubMappingIsValidWireMockStub(json)
 		and:
-			int port = SocketUtils.findAvailableTcpPort()
+			int port = TestSocketUtils.findAvailableTcpPort()
 			WireMockServer server = new WireMockServer(config().port(port))
 			server.start()
 			server.addStubMapping(WireMockStubMapping.buildFrom(json))
@@ -2947,7 +2947,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			wireMockStub.contains('Entity2')
 			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
-			int port = SocketUtils.findAvailableTcpPort()
+			int port = TestSocketUtils.findAvailableTcpPort()
 			WireMockServer server = new WireMockServer(config().port(port))
 			server.start()
 		and:
@@ -3048,7 +3048,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					.toWireMockClientStub()
 
 		and:
-			int port = SocketUtils.findAvailableTcpPort()
+			int port = TestSocketUtils.findAvailableTcpPort()
 			WireMockServer server = new WireMockServer(config().port(port))
 			server.start()
 		and:

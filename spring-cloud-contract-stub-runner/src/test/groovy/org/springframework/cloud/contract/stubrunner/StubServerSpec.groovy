@@ -19,10 +19,10 @@ package org.springframework.cloud.contract.stubrunner
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub
-import org.springframework.util.SocketUtils
+import org.springframework.cloud.test.TestSocketUtils
 
 class StubServerSpec extends Specification {
-	static final int STUB_SERVER_PORT = SocketUtils.findAvailableTcpPort()
+	static final int STUB_SERVER_PORT = TestSocketUtils.findAvailableTcpPort()
 	static final URL EXPECTED_URL = new URL("http://localhost:$STUB_SERVER_PORT")
 
 	File repository = new File('src/test/resources/repository/mappings/spring/cloud/bye')

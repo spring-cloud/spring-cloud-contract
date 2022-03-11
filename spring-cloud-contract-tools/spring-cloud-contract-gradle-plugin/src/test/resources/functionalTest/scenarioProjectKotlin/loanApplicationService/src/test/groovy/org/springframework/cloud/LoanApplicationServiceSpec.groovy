@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration
 @Stepwise
 class LoanApplicationServiceSpec extends Specification {
 
-	public static int port = org.springframework.util.SocketUtils.findAvailableTcpPort()
+	public static int port = org.springframework.cloud.test.TestSocketUtils.findAvailableTcpPort()
 
 	@ClassRule
 	@Shared

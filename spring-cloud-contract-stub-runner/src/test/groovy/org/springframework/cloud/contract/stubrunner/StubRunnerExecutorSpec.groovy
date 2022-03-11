@@ -24,7 +24,7 @@ import spock.lang.Specification
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
 import org.springframework.cloud.contract.verifier.converter.YamlContract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
-import org.springframework.util.SocketUtils
+import org.springframework.cloud.test.TestSocketUtils
 
 class StubRunnerExecutorSpec extends Specification {
 
@@ -74,7 +74,7 @@ class StubRunnerExecutorSpec extends Specification {
 
 	def 'should start a stub on a given port'() {
 		given:
-			int port = SocketUtils.findAvailableTcpPort()
+			int port = TestSocketUtils.findAvailableTcpPort()
 			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 			stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping:
 					stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${SocketUtils.findAvailableTcpPort()}"))

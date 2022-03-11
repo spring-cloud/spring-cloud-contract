@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -30,7 +31,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
-import org.springframework.util.SocketUtils;
 
 /**
  * Listener that prepares the environment so that WireMock will work when it is
@@ -94,7 +94,7 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 		MutablePropertySources propertySources = environment.getPropertySources();
 		addPropertySource(propertySources);
 		Map<String, Object> source = ((MapPropertySource) propertySources.get("wiremock")).getSource();
-		int port = SocketUtils.findAvailableTcpPort(minPort, maxPort);
+		int port = TestSocketUtils.findAvailableTcpPort(minPort, maxPort);
 		source.put(portProperty, port);
 		if (log.isDebugEnabled()) {
 			log.debug("Registered property source for property [" + portProperty + "] with value [" + port + "]");

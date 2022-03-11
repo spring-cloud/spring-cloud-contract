@@ -32,7 +32,7 @@ import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.util.SocketUtils
+import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.web.client.RestTemplate
 
 /**

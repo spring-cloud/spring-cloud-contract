@@ -21,11 +21,11 @@ import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages
-import org.springframework.util.SocketUtils
+import org.springframework.cloud.test.TestSocketUtils
 
 class StubRunnerSpec extends Specification {
 
-	private static final int MIN_PORT = SocketUtils.findAvailableTcpPort()
+	private static final int MIN_PORT = TestSocketUtils.findAvailableTcpPort()
 	private static final int MAX_PORT = MIN_PORT
 	private static final URL EXPECTED_STUB_URL = new URL("http://localhost:$MIN_PORT")
 

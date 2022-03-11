@@ -32,10 +32,10 @@ import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.StubNotFoundException
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubAccessor
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStubConfigurer
+import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.util.SocketUtils
 
 /**
  * @author Marcin Grzejszczak
@@ -161,7 +161,7 @@ class StubRunnerConfigurationSpec extends Specification {
         @Override
         WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
             if (httpServerStubConfiguration.stubConfiguration.artifactId == "fraudDetectionServer") {
-                int httpsPort = SocketUtils.findAvailableTcpPort()
+                int httpsPort = TestSocketUtils.findAvailableTcpPort()
                 log.info("Will set HTTPs port [" + httpsPort + "] for fraud detection server")
                 return httpStubConfiguration
                         .httpsPort(httpsPort)

@@ -117,6 +117,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testImplementation "org.mockito:mockito-core"
 		testImplementation "org.springframework:spring-test"
 		testImplementation "org.springframework.boot:spring-boot-test"
+		testImplementation "org.springframework.cloud:spring-cloud-test-support"
 		testImplementation "io.rest-assured:rest-assured:$restAssuredVersion"
 		testImplementation "io.rest-assured:spring-mock-mvc:$restAssuredVersion"
 	}

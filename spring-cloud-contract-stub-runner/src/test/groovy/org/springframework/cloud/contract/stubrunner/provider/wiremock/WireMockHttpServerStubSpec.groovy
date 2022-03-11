@@ -25,9 +25,9 @@ import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer
+import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 
 class WireMockHttpServerStubSpec extends Specification {
@@ -43,7 +43,7 @@ class WireMockHttpServerStubSpec extends Specification {
 	def 'should describe stub mapping'() {
 		given:
 			WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start(new HttpServerStubConfiguration(HttpServerStubConfigurer.NoOpHttpServerStubConfigurer.INSTANCE, null,
-					null, SocketUtils.findAvailableTcpPort())) as WireMockHttpServerStub
+					null, TestSocketUtils.findAvailableTcpPort())) as WireMockHttpServerStub
 		when:
 			StubMapping mapping = mappingDescriptor.getMapping(MAPPING_DESCRIPTOR)
 		then:
