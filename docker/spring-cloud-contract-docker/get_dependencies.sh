@@ -2,7 +2,7 @@
 
 set -e
 
-WRAPPER_VERSION="7.3.3"
+WRAPPER_VERSION="7.4.1"
 GRADLE_BIN_DIR="gradle-${WRAPPER_VERSION}-bin"
 GRADLE_WRAPPER_DIR="${HOME}/.gradle/wrapper/dists/${GRADLE_BIN_DIR}"
 CURRENT_DIR="$( pwd )"
