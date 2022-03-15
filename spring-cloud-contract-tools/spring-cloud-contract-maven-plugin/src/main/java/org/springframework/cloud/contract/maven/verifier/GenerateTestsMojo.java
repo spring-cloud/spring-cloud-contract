@@ -129,9 +129,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "maven.test.skip", defaultValue = "false")
 	private boolean mavenTestSkip;
 
-	@Parameter(property = "skipTests", defaultValue = "false")
-	private boolean skipTests;
-
 	/**
 	 * The URL from which a contracts should get downloaded. If not provided but
 	 * artifactid / coordinates notation was provided then the current Maven's build
@@ -250,7 +247,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (this.skip || this.mavenTestSkip || this.skipTests) {
+		if (this.skip || this.mavenTestSkip) {
 			if (this.skip) {
 				getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
 						+ this.skip);
@@ -258,9 +255,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 			if (this.mavenTestSkip) {
 				getLog().info(
 						"Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + this.mavenTestSkip);
-			}
-			if (this.skipTests) {
-				getLog().info("Skipping Spring Cloud Contract Verifier execution: skipTests" + this.skipTests);
 			}
 			return;
 		}
