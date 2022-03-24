@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import groovy.json.JsonSlurper
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.MapConverter
@@ -93,6 +92,47 @@ class WireMockResponseStubStrategySpec extends Specification {
 			assert body.get("integer") instanceof Integer
 			assert body.get("positiveInt") instanceof Integer
 			assert body.get("double") instanceof BigDecimal
+	}
+
+	@Issue("#1656")
+	def "should not quote numbers, booleans, and null inside arrays"() {
+		given:
+			def irrelevantStatus = 200
+			def contract = Contract.make {
+				request {
+					method GET()
+					url "/foo"
+				}
+				response {
+					status irrelevantStatus
+					body([
+							anyPositiveInt(),
+							anyInteger(),
+							true,
+							anyNumber(),
+							null,
+							"value"
+					])
+				}
+			}
+		when:
+			SingleContractMetadata metadata = Stub()
+			metadata.evaluatedOutputStubContentType >> ContentType.JSON
+			def subject = new WireMockResponseStubStrategy(contract, metadata) {
+				@Override
+				Function parsingClosureForContentType() {
+					return MapConverter.JSON_PARSING_FUNCTION
+				}
+			}
+			def content = subject.buildClientResponseContent()
+		then:
+			List body = new JsonSlurper().parseText(content.body) as List
+			assert body.getAt(0) instanceof Integer
+			assert body.getAt(1) instanceof Integer
+			assert body.getAt(2) instanceof Boolean
+			assert body.getAt(3) instanceof Number
+			assert body.getAt(4) == null
+			assert body.getAt(5) instanceof String
 	}
 
 	def "should convert patterns to proper value"() {
