@@ -1134,4 +1134,64 @@ class DslToWireMockClientConverterSpec extends Specification {
 		return stubMapping
 	}
 
+	@Issue("1656")
+	def "should convert DSL file to WireMock JSON with array"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl1656.groovy")
+			file.write('''
+				org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method "GET"
+					url "/api/foo/61923376"
+					headers {
+						accept 'application/json'
+					}
+				}
+				response {
+					status OK()
+					headers {
+						contentType(applicationJson())
+					}
+					//language=JSON
+					body(
+						"""
+						[
+						813146,
+						814952,
+						813102,
+						813282
+						]
+						"""
+					)
+				}
+				}
+			''')
+		when:
+			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
+					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+		then:
+			JSONAssert.assertEquals('''
+					{
+						"request" : {
+							"url" : "/api/foo/61923376",
+							"method" : "GET",
+							"headers" : {
+								"Accept" : {
+									"matches" : "application/json.*"
+								}
+							}
+						},
+						"response" : {
+							"status" : 200,
+							"body" : "[813146,814952,813102,813282]",
+							"headers" : {
+								"Content-Type" : "application/json"
+							},
+							"transformers" : [ "response-template", "spring-cloud-contract" ]
+						}
+					}''', json, false)
+	}
+
 }
