@@ -36,7 +36,6 @@ targetCompatibility = 17
 repositories {
 	mavenLocal()
 	mavenCentral()
-	jcenter()
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
 	maven { url "https://repo.spring.io/release" }
@@ -75,9 +74,7 @@ dependencies {
 		exclude(group: '*')
 	}
 
-	testImplementation('org.spockframework:spock-core:2.0-M5-groovy-3.0') { // @releaser:version-check-off
-		exclude(group: 'org.codehaus.groovy')
-	}
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation localGroovy()
 	testImplementation gradleTestKit()
 }
@@ -89,6 +86,7 @@ task libtest() {
 }
 
 test {
+	useJUnitPlatform()
 	testLogging {
 		exceptionFormat = 'full'
 	}

@@ -22,7 +22,7 @@
 		<!-- TODO: Remove me -->
 		<!--<upload-docs-zip.phase>deploy</upload-docs-zip.phase>-->
 		<!-- Aligned with Groovy in SC-Build -->
-		<groovy.version>2.5.14</groovy.version>
+		<groovy.version>4.0.0</groovy.version>
 	</properties>
 	<build>
 		<plugins>

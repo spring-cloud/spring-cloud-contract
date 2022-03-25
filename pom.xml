@@ -35,20 +35,21 @@
 		<spring-cloud-functiondonotreplace.version>3.0.6.RELEASE</spring-cloud-functiondonotreplace.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.2.11</cglib.version>
-		<spock-spring.version>2.0-M5-groovy-3.0</spock-spring.version> <!-- @releaser:version-check-off -->
+		<spock-spring.version>2.2-M1-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.9</commons-text.version>
 		<handlebars.version>4.2.0</handlebars.version>
 		<jgit.version>5.12.0.202106070339-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.27.0</json-unit-assertj.version>
+		<rest-assured.version>5.0.0</rest-assured.version>
 
 		<junit-vintage.version>5.7.2</junit-vintage.version>
 		<junit-jupiter.version>5.7.2</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>3.0.9</groovy.version>
+		<groovy.version>4.0.0</groovy.version>
 		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.6.3</maven.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
@@ -168,11 +169,11 @@
 				<version>${spock-spring.version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy-all</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy</artifactId>
 					</exclusion>
 				</exclusions>
@@ -183,11 +184,11 @@
 				<version>${spock-spring.version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy-all</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy</artifactId>
 					</exclusion>
 				</exclusions>
@@ -213,11 +214,11 @@
 				<version>${pact.version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy-all</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy</artifactId>
 					</exclusion>
 				</exclusions>
@@ -228,11 +229,11 @@
 				<version>${pact.version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy-all</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.codehaus.groovy</groupId>
+						<groupId>org.apache.groovy</groupId>
 						<artifactId>groovy</artifactId>
 					</exclusion>
 				</exclusions>
@@ -306,92 +307,92 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-ant</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-bsf</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-console</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-docgenerator</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-groovydoc</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-groovysh</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-jmx</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-json</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-jsr223</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-nio</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-servlet</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-sql</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-swing</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-templates</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-test</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-testng</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
+				<groupId>org.apache.groovy</groupId>
 				<artifactId>groovy-xml</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
@@ -459,6 +460,16 @@
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-compiler-embeddable</artifactId>
 				<version>${contract.kotlin.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>rest-assured</artifactId>
+				<version>${rest-assured.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>spring-mock-mvc</artifactId>
+				<version>${rest-assured.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

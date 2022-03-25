@@ -25,6 +25,7 @@ import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
+import groovy.xml.XmlSlurper
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.runtime.GStringImpl

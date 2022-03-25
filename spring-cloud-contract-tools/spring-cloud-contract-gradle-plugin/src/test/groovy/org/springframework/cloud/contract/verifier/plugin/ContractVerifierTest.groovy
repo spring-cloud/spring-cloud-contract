@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.DefaultProject
@@ -28,13 +27,16 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.testfixtures.ProjectBuilder
-import org.springframework.cloud.contract.verifier.config.TestFramework
-import spock.lang.Specification
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class ContractVerifierSpec extends Specification {
+import org.springframework.cloud.contract.verifier.config.TestFramework
+
+class ContractVerifierTest {
 	DefaultProject project
 
-	def setup() {
+	@BeforeEach
+	void setup() {
 		String dateString = new Date().format("yyyy-MM-dd_HH-mm-ss")
 		File testFolder = new File("build/generated-tests/${getClass().simpleName}/${dateString}")
 		testFolder.mkdirs()
@@ -42,31 +44,35 @@ class ContractVerifierSpec extends Specification {
 		project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 	}
 
-	def "should apply java plugin"() {
+	@Test
+	void "should apply java plugin"() {
 		expect:
 			project.plugins.hasPlugin(JavaPlugin)
 	}
 
-	def "should create contracts extension"() {
+	@Test
+	void "should create contracts extension"() {
 		expect:
-			project.extensions.findByType(ContractVerifierExtension) != null
+			assert project.extensions.findByType(ContractVerifierExtension) != null
 	}
 
-	def "should create a test sourceset with java sources"() {
+	@Test
+	void "should create a test sourceset with java sources"() {
 		given:
 			ContractVerifierExtension extension = project.extensions.getByType(ContractVerifierExtension)
 			Directory projectDir = project.layout.projectDirectory
 			SourceSet contractTest = project.convention.getPlugin(JavaPluginConvention).getSourceSets().getByName("contractTest")
 
 		expect:
-			contractTest != null
-			contractTest.java.srcDirs.contains(projectDir.dir("src/contractTest/java").asFile)
-			contractTest.java.srcDirs.contains(extension.generatedTestJavaSourcesDir.get().asFile)
-			contractTest.resources.srcDirs.contains(projectDir.dir("src/contractTest/resources").asFile)
-			contractTest.resources.srcDirs.contains(extension.generatedTestResourcesDir.get().asFile)
+			assert contractTest != null
+			assert contractTest.java.srcDirs.contains(projectDir.dir("src/contractTest/java").asFile)
+			assert contractTest.java.srcDirs.contains(extension.generatedTestJavaSourcesDir.get().asFile)
+			assert contractTest.resources.srcDirs.contains(projectDir.dir("src/contractTest/resources").asFile)
+			assert contractTest.resources.srcDirs.contains(extension.generatedTestResourcesDir.get().asFile)
 	}
 
-	def "should create a test sourceset with groovy sources, if the groovy plugin is present"() {
+	@Test
+	void "should create a test sourceset with groovy sources, if the groovy plugin is present"() {
 		given:
 			project.plugins.apply(GroovyPlugin)
 			ContractVerifierExtension extension = project.extensions.getByType(ContractVerifierExtension)
@@ -74,104 +80,116 @@ class ContractVerifierSpec extends Specification {
 			SourceSet contractTest = project.convention.getPlugin(JavaPluginConvention).getSourceSets().getByName("contractTest")
 
 		expect:
-			contractTest != null
-			contractTest.java.srcDirs.contains(projectDir.dir("src/contractTest/java").asFile)
-			contractTest.java.srcDirs.contains(extension.generatedTestJavaSourcesDir.get().asFile)
-			contractTest.groovy.srcDirs.contains(projectDir.dir('src/contractTest/groovy').asFile)
-			contractTest.groovy.srcDirs.contains(extension.generatedTestGroovySourcesDir.get().asFile)
-			contractTest.resources.srcDirs.contains(projectDir.dir("src/contractTest/resources").asFile)
-			contractTest.resources.srcDirs.contains(extension.generatedTestResourcesDir.get().asFile)
+			assert contractTest != null
+			assert contractTest.java.srcDirs.contains(projectDir.dir("src/contractTest/java").asFile)
+			assert contractTest.java.srcDirs.contains(extension.generatedTestJavaSourcesDir.get().asFile)
+			assert contractTest.groovy.srcDirs.contains(projectDir.dir('src/contractTest/groovy').asFile)
+			assert contractTest.groovy.srcDirs.contains(extension.generatedTestGroovySourcesDir.get().asFile)
+			assert contractTest.resources.srcDirs.contains(projectDir.dir("src/contractTest/resources").asFile)
+			assert contractTest.resources.srcDirs.contains(extension.generatedTestResourcesDir.get().asFile)
 	}
 
-	def "should setup dependency configurations"() {
+	@Test
+	void "should setup dependency configurations"() {
 		given:
 			Configuration contractTestCompileOnly = project.configurations.contractTestCompileOnly
 			Configuration contractTestImplementation = project.configurations.contractTestImplementation
 			Configuration contractTestRuntimeOnly = project.configurations.contractTestRuntimeOnly
 
 		expect:
-			contractTestCompileOnly != null
-			contractTestCompileOnly.extendsFrom.contains(project.configurations.testCompileOnly)
-			contractTestImplementation != null
-			contractTestImplementation.extendsFrom.contains(project.configurations.testImplementation)
-			contractTestRuntimeOnly != null
-			contractTestRuntimeOnly.extendsFrom.contains(project.configurations.testRuntimeOnly)
+			assert contractTestCompileOnly != null
+			assert contractTestCompileOnly.extendsFrom.contains(project.configurations.testCompileOnly)
+			assert contractTestImplementation != null
+			assert contractTestImplementation.extendsFrom.contains(project.configurations.testImplementation)
+			assert contractTestRuntimeOnly != null
+			assert contractTestRuntimeOnly.extendsFrom.contains(project.configurations.testRuntimeOnly)
 	}
 
-	def "should create contract test task"() {
+	@Test
+	void "should create contract test task"() {
 		expect:
-			project.tasks.named("contractTest").get() != null
+			assert project.tasks.named("contractTest").get() != null
 	}
 
-	def "should create generateContractTests task"() {
+	@Test
+	void "should create generateContractTests task"() {
 		expect:
-			project.tasks.named("generateContractTests").get() != null
+			assert project.tasks.named("generateContractTests").get() != null
 	}
 
-	def "should configure generateContractTests task as a dependency of the compileContractTestJava task"() {
+	@Test
+	void "should configure generateContractTests task as a dependency of the compileContractTestJava task"() {
 		expect:
-			project.tasks.compileContractTestJava.getDependsOn().contains(project.tasks.named("generateContractTests"))
-			project.tasks.findByName("compileContractTestGroovy") == null
+			assert project.tasks.compileContractTestJava.getDependsOn().contains(project.tasks.named("generateContractTests"))
+			assert project.tasks.findByName("compileContractTestGroovy") == null
 	}
 
-	def "should configure generateContractTests task as a dependency of the compileContractTestGroovy task"() {
+	@Test
+	void "should configure generateContractTests task as a dependency of the compileContractTestGroovy task"() {
 		given:
 			project.plugins.apply(GroovyPlugin)
 
 		expect:
-			project.tasks.compileContractTestJava.getDependsOn().contains(project.tasks.named("generateContractTests"))
-			project.tasks.compileContractTestGroovy.getDependsOn().contains(project.tasks.named("generateContractTests"))
+			assert project.tasks.compileContractTestJava.getDependsOn().contains(project.tasks.named("generateContractTests"))
+			assert project.tasks.compileContractTestGroovy.getDependsOn().contains(project.tasks.named("generateContractTests"))
 	}
 
-	def "should configure generatedTestSourcesDir with the appropriate directories"() {
+	@Test
+	void "should configure generatedTestSourcesDir with the appropriate directories"() {
 		when:
 			ContractVerifierExtension extension = project.extensions.findByType(ContractVerifierExtension)
 			GenerateServerTestsTask generateServerTestsTask = project.tasks.getByName("generateContractTests") as GenerateServerTestsTask
 
 		then:
-			generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestJavaSourcesDir.get().asFile
+			assert generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestJavaSourcesDir.get().asFile
 
 		and:
 			extension.testFramework.set(TestFramework.SPOCK)
 
 		then:
-			generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestGroovySourcesDir.get().asFile
+			assert generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestGroovySourcesDir.get().asFile
 
 		and:
 			extension.generatedTestSourcesDir.set(project.file("src/random"))
 
 		then:
-			generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestSourcesDir.get().asFile
+			assert generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestSourcesDir.get().asFile
 	}
 
-	def "should create generateClientStubs task"() {
+	@Test
+	void "should create generateClientStubs task"() {
 		expect:
-			project.tasks.named("generateClientStubs").get() != null
+			assert project.tasks.named("generateClientStubs").get() != null
 	}
 
-	def "should create verifierStubsJar task"() {
+	@Test
+	void "should create verifierStubsJar task"() {
 		expect:
-			project.tasks.named("verifierStubsJar").get() != null
+			assert project.tasks.named("verifierStubsJar").get() != null
 	}
 
-	def "should configure generateClientStubs task as a dependency of the verifierStubsJar task"() {
-		expect:
-			project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("generateClientStubs"))
-	}
-
-	def "should configure generateClientStubs task as a dependency of the publishStubsToScm task"() {
-		expect:
-			project.tasks.publishStubsToScm.getDependsOn().contains(project.tasks.named("generateClientStubs"))
-	}
-
-	def "should create copyContracts task"() {
-		expect:
-			project.tasks.named("copyContracts").get() != null
-	}
-
-	def "should configure copyContracts task as a dependency of the verifierStubsJar task"() {
+	@Test
+	void "should configure generateClientStubs task as a dependency of the verifierStubsJar task"() {
 		expect:
 			project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("generateClientStubs"))
+	}
+
+	@Test
+	void "should configure generateClientStubs task as a dependency of the publishStubsToScm task"() {
+		expect:
+			assert project.tasks.publishStubsToScm.getDependsOn().contains(project.tasks.named("generateClientStubs"))
+	}
+
+	@Test
+	void "should create copyContracts task"() {
+		expect:
+			assert project.tasks.named("copyContracts").get() != null
+	}
+
+	@Test
+	void "should configure copyContracts task as a dependency of the verifierStubsJar task"() {
+		expect:
+			assert project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("generateClientStubs"))
 	}
 
 	/**
@@ -183,7 +201,8 @@ class ContractVerifierSpec extends Specification {
 	 * responsibility.
 	 */
 	@Deprecated
-	def "should configure maven-publish plugin, if enabled"() {
+	@Test
+	void "should configure maven-publish plugin, if enabled"() {
 		given:
 			project.plugins.apply(MavenPublishPlugin)
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
@@ -195,11 +214,12 @@ class ContractVerifierSpec extends Specification {
 
 		expect:
 			PublicationContainer publications = project.extensions.getByType(PublishingExtension).publications
-			publications.size() > 0
-			publications.named("stubs") != null
+			assert publications.size() > 0
+			assert publications.named("stubs") != null
 	}
 
-	def "should compile"() {
+	@Test
+	void "should compile"() {
 		given:
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 			ContractVerifierExtension extension = project.getExtensions().findByType(ContractVerifierExtension)
@@ -218,10 +238,11 @@ class ContractVerifierSpec extends Specification {
 				// end::base_class_mappings[]
 			}
 		expect:
-			extension
+			assert extension
 	}
 
-	def "should property merge scm repository settings for publishing stubs to scm"() {
+	@Test
+	void "should property merge scm repository settings for publishing stubs to scm"() {
 		given:
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 			ContractVerifierExtension extension = project.extensions.findByType(ContractVerifierExtension)
@@ -237,11 +258,11 @@ class ContractVerifierSpec extends Specification {
 			}
 
 		then:
-			task.contractRepository.repositoryUrl.get() == "https://git.example.com"
-			task.contractRepository.username.get() == "username"
-			task.contractRepository.password.get() == "password"
-			task.contractRepository.proxyHost.get() == "host"
-			task.contractRepository.proxyPort.get() == 8080
+			assert task.contractRepository.repositoryUrl.get() == "https://git.example.com"
+			assert task.contractRepository.username.get() == "username"
+			assert task.contractRepository.password.get() == "password"
+			assert task.contractRepository.proxyHost.get() == "host"
+			assert task.contractRepository.proxyPort.get() == 8080
 
 		and:
 			extension.publishStubsToScm.contractRepository.with {
@@ -253,10 +274,10 @@ class ContractVerifierSpec extends Specification {
 			}
 
 		then:
-			task.contractRepository.repositoryUrl.get() == "https://git2.example.com"
-			task.contractRepository.username.get() == "username2"
-			task.contractRepository.password.get() == "password2"
-			task.contractRepository.proxyHost.get() == "host2"
-			task.contractRepository.proxyPort.get() == 8081
+			assert task.contractRepository.repositoryUrl.get() == "https://git2.example.com"
+			assert task.contractRepository.username.get() == "username2"
+			assert task.contractRepository.password.get() == "password2"
+			assert task.contractRepository.proxyHost.get() == "host2"
+			assert task.contractRepository.proxyPort.get() == 8081
 	}
 }

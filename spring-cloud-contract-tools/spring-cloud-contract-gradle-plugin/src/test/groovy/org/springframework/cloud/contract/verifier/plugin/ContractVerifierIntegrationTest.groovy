@@ -28,11 +28,11 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.BuildTask
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import spock.lang.Specification
+import org.junit.jupiter.api.BeforeEach
 
 import static java.nio.charset.StandardCharsets.UTF_8
 
-abstract class ContractVerifierIntegrationSpec extends Specification {
+abstract class ContractVerifierIntegrationTest {
 
 	public static final String SPOCK = "testFramework = 'Spock'"
 	public static final String JUNIT = "testFramework = 'JUnit'"
@@ -42,7 +42,8 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	File testProjectDir
 
-	def setup() {
+	@BeforeEach
+	void setup() {
 		def dateString = new Date().format("yyyy-MM-dd_HH-mm-ss")
 		def testFolder = new File("build/generated-tests/${getClass().simpleName}/${dateString}")
 		testFolder.mkdirs()

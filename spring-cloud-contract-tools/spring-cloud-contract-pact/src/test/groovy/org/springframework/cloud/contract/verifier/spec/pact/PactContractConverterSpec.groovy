@@ -415,10 +415,10 @@ class PactContractConverterSpec extends Specification {
 			Map<String, Collection<Contract>> contracts = contractResources.
 				collectEntries {
 					[(it.filename): ContractVerifierDslConverter.
-						convertAsCollection(new File("/"), it.file)]
+						convertAsCollection(new File("/"), it.getFile())]
 				}
 			Map<String, String> jsonPacts = pactResources.
-				collectEntries { [(it.filename): it.file.text] }
+				collectEntries { [(it.filename): it.getFile().text] }
 		when:
 			Map<String, Collection<Pact>> pacts = contracts.entrySet().
 				collectEntries { [(it.key): converter.convertTo(it.value)] }
