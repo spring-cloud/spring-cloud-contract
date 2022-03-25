@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -93,7 +94,9 @@ public final class MetadataUtil {
 			return MAPPER.readerForUpdating(objectToMerge).readValue(bytes);
 		}
 		catch (Exception e) {
-			if (e.getClass().toString().contains("InaccessibleObjectException")) {
+			if (e.getClass().toString().contains("InaccessibleObjectException")
+					|| (e instanceof InvalidDefinitionException
+							&& e.getMessage().contains("InaccessibleObjectException"))) {
 				// JDK 16 workaround - ObjectMapper seems not be JDK16 compatible
 				// with the setup present in Spring Cloud Contract. So we will not
 				// allow patching but we will just copy values from the patch to
