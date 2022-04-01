@@ -174,11 +174,13 @@ You can add the additional snapshot repository to your `settings.gradle` to use 
 which are automatically uploaded after every successful build, as the following listing shows:
 
 ====
+////
 [source,groovy,indent=0]
 ----
 include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent=0]
 }
 ----
+////
 ====
 
 [[gradle-add-stubs]]
@@ -400,10 +402,12 @@ specification for all generated acceptance tests. In this class, you need to poi
 endpoint, which should be verified. The following example shows how to do so:
 
 ====
+////
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
+////
 ====
 
 If you use `Explicit` mode, you can use a base class to initialize the whole tested application,
@@ -431,10 +435,12 @@ forms a class with a `Base` suffix. This rule takes precedence over `baseClassFo
 The following example shows how it works in the `contracts` closure:
 
 ====
+////
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/springframework/cloud/contract/verifier/plugin/ContractVerifierSpec.groovy[tags=package_with_base_classes,indent=0]
 ----
+////
 ====
 
 === By Mapping
@@ -445,10 +451,12 @@ name of the base class for the matched contract. You have to provide a list call
 `contractPackageRegex` to `baseClassFQN` mapping. Consider the following example:
 
 ====
+////
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/springframework/cloud/contract/verifier/plugin/ContractVerifierSpec.groovy[tags=base_class_mappings,indent=0]
 ----
+////
 ====
 
 Assume that you have contracts in the following directories:

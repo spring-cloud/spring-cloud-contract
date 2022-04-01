@@ -25,19 +25,23 @@ You can also check the plugin's documentation link:../../spring-cloud-contract-m
 To add the Spring Cloud Contract BOM, include the following section in your `pom.xml` file:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{standalone_samples_path}/http-server/pom.xml[tags=contract_bom,indent=0]
 ----
+////
 ====
 
 Next, add the `Spring Cloud Contract Verifier` Maven plugin, as follows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{standalone_samples_path}/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
+////
 ====
 
 You can read more in the
@@ -137,10 +141,12 @@ To use Snapshot and Milestone versions, you have to add the following section to
 `pom.xml`:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 ----
+////
 ====
 
 [[maven-add-stubs]]
@@ -394,10 +400,12 @@ forms a class with a `Base` suffix. This rule takes precedence over `baseClassFo
 The following example shows how it works in the `contracts` closure:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/basic-generated-baseclass/pom.xml[tags=convention,indent=0]
 ----
+////
 ====
 
 === By Mapping
@@ -408,10 +416,12 @@ name of the base class for the matched contract. You have to provide a list call
 `contractPackageRegex` to `baseClassFQN` mapping. Consider the following example:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/basic-baseclass-from-mappings/pom.xml[tags=mapping,indent=0]
 ----
+////
 ====
 
 Assume that you have contracts under these two locations:
@@ -641,10 +651,12 @@ path where your base test classes are defined and the path were the generated co
 The following example shows how to do so:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{samples_url}/producer_with_spock/pom.xml[tags=gmavenplus-setup,indent=0]
 ----
+////
 ====
 
 If you uphold the Spock convention of ending the test class names with `Spec`, you also need to adjust your Maven

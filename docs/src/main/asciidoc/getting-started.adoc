@@ -117,17 +117,21 @@ the `PUT` method. The following listing shows a contract to check whether a clie
 be marked as a fraud in both Groovy and YAML:
 
 ====
+////
 [source,groovy,indent=0,role="primary"]
 .groovy
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 ----
+////
 
+////
 [source,yaml,indent=0,role="secondary"]
 .yaml
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[]
 ----
+////
 ====
 
 [[getting-started-three-second-tour]]
@@ -173,10 +177,12 @@ Then you can add the Spring Cloud Contract Verifier dependency and plugin to you
 the following example shows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
+////
 ====
 
 The following listing shows how to add the plugin, which should go in the build/plugins
@@ -249,10 +255,12 @@ To do so, add the dependency to `Spring Cloud Contract Stub Runner`, as the
 following example shows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
+////
 ====
 
 You can get the Producer-side stubs installed in your Maven repository in either of two
@@ -277,10 +285,12 @@ pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract
 Stub Runner` properties, as the following example shows:
 +
 ====
+////
 [source,yaml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
+////
 ====
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -330,10 +340,12 @@ To start working with `Spring Cloud Contract`, you can add the Spring Cloud Cont
 dependency and plugin to your build file, as the following example shows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
+////
 ====
 
 The following listing shows how to add the plugin, which should go in the build/plugins
@@ -745,10 +757,12 @@ WireMock instance or messaging route that simulates the actual service.
 To get started, add the dependency to `Spring Cloud Contract Stub Runner`, as follows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
+////
 ====
 
 You can get the Producer-side stubs installed in your Maven repository in either of two
@@ -772,10 +786,12 @@ pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract
 Runner` properties, as the following example shows:
 +
 ====
+////
 [source,yaml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
+////
 ====
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
@@ -852,17 +868,21 @@ If you use the SNAPSHOT, Milestone, or Release Candidate versions, you need to a
 following section to your build:
 
 ====
+////
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
 ----
+////
 
+////
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
 ----
+////
 ====
 
 For simplicity, we use the following acronyms:
@@ -926,10 +946,12 @@ The following listing shows a test that we might use to check whether a loan amo
 large:
 
 ====
+////
 [source,groovy,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
 ----
+////
 ====
 
 Assume that you have written a test of your new feature. If a loan application for a big
@@ -944,10 +966,12 @@ client wants to borrow. You want to send it to the `/fraudcheck` URL by using th
 To do so, you might use code similar to the following:
 
 ====
+////
 [source,groovy,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
 ----
+////
 ====
 
 For simplicity, the port of the Fraud Detection service is set to `8080`, and the
@@ -981,17 +1005,21 @@ is important because the producer's test base class name references that folder.
 The following example shows our contract, in both Groovy and YAML:
 
 ====
+////
 [source,groovy,indent=0,role="primary"]
 .groovy
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 ----
+////
 
+////
 [source,yaml,indent=0,role="secondary"]
 .yaml
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[]
 ----
+////
 ====
 
 The YML contract is quite straightforward. However, when you take a look at the contract
@@ -1029,19 +1057,23 @@ We can add either a Maven or a Gradle plugin. In this example, we show how to ad
 First, we add the `Spring Cloud Contract` BOM, as the following example shows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_bom,indent=0]
 ----
+////
 ====
 
 Next, add the `Spring Cloud Contract Verifier` Maven plugin, as the following example shows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
+////
 ====
 
 Since the plugin was added, you get the `Spring Cloud Contract Verifier` features, which,
@@ -1103,19 +1135,23 @@ Application service`):
 . Add the `Spring Cloud Contract` BOM, as follows:
 +
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=contract_bom,indent=0]
 ----
+////
 ====
 
 . Add the dependency to `Spring Cloud Contract Stub Runner`, as follows:
 +
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
+////
 ====
 
 . Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
@@ -1123,10 +1159,12 @@ include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub
 collaborators.
 +
 ====
+////
 [source,groovy,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
 ----
+////
 ====
 
 .  (Optional) Because you are playing with the collaborators offline, you
@@ -1199,12 +1237,14 @@ The following UML diagram shows the fraud detection flow:
 As a reminder, the following listing shows the initial implementation:
 
 ====
+////
 [source,java,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
 include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
+////
 ====
 
 Then you can run the following commands:
@@ -1220,19 +1260,23 @@ $ git pull https://your-git-server.com/server-side-fork.git contract-change-pr
 You must add the dependencies needed by the autogenerated tests, as follows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
+////
 ====
 
 In the configuration of the Maven plugin, you must pass the `packageWithBaseClasses` property, as follows:
 
 ====
+////
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
+////
 ====
 
 IMPORTANT: This example uses "`convention-based`" naming by setting the
@@ -1248,10 +1292,12 @@ start the server side `FraudDetectionController`. The following listing shows th
 `FraudBase` class:
 
 ====
+////
 [source,java,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBase.java[]
 ----
+////
 ====
 
 Now, if you run the `./mvnw clean install`, you get something like the following output:
@@ -1312,6 +1358,7 @@ Because you know the expected input and expected output, you can write the missi
 implementation as follows:
 
 ====
+////
 [source,java,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
@@ -1319,6 +1366,7 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com
 include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
+////
 ====
 
 When you run `./mvnw clean install` again, the tests pass. Since the Spring Cloud
@@ -1392,10 +1440,12 @@ side are automatically downloaded from Nexus/Artifactory. You can set the value 
 achieving the same thing by changing the properties:
 
 ====
+////
 [source,yaml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
+////
 ====
 
 That's it. You have finished the tutorial.

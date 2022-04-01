@@ -5,8 +5,10 @@ include::_attributes.adoc[]
 Below you can find a JSON schema definition of a YAML contract.
 
 ====
+////
 [source,json,indent=0]
 ----
 include::{project-root}/docs/target/contract_schema.json[indent=0]
 ----
+////
 ====
