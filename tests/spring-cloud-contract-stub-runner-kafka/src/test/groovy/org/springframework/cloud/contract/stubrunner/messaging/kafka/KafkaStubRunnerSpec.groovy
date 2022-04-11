@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Commons
+import org.apache.kafka.clients.consumer.MockConsumer
+import org.apache.kafka.clients.consumer.OffsetResetStrategy
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -38,6 +40,7 @@ import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.DefaultKafkaHeaderMapper
+import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
@@ -190,8 +193,8 @@ class KafkaStubRunnerSpec extends Specification {
             // end::trigger_all[]
             Message receivedMessage = receiveFromOutput()
             assert receivedMessage != null
-            assert assertThatBodyContainsBookNameFoo(receivedMessage.getPayload())
-            assert receivedMessage.getHeaders().get('BOOK-NAME') == 'foo'
+            assert assertThatBodyContainsBookName(receivedMessage.getPayload())
+            assert receivedMessage.getHeaders().get('BOOK-NAME') != null
         }
     }
 
@@ -227,6 +230,14 @@ class KafkaStubRunnerSpec extends Specification {
                 JsonOutput.toJson(payload)
         def json = new JsonSlurper().parseText(objectAsString)
         return json.bookName == expectedValue
+    }
+
+    private boolean assertThatBodyContainsBookName(Object payload) {
+        log.info("Got payload [" + payload + "]")
+        String objectAsString = payload instanceof String ? payload :
+                JsonOutput.toJson(payload)
+        def json = new JsonSlurper().parseText(objectAsString)
+        return json.bookName != null
     }
 
     @Configuration
