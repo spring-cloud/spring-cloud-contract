@@ -24,7 +24,6 @@ import com.github.tomakehurst.wiremock.http.ChunkedDribbleDelay
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.Response
-import wiremock.org.apache.http.HttpHeaders
 
 import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions

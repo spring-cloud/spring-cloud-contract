@@ -66,7 +66,7 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 	}
 
 	public ResponseDefinition mergedResponse(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
-		ResponseDefinition responseDefinition = new ResponseDefinition(stubMapping.getResponse().getStatus(),
+		return new ResponseDefinition(stubMapping.getResponse().getStatus(),
 				stubMapping.getResponse().getStatusMessage(), stubMapping.getResponse().getBody(),
 				stubMapping.getResponse().getJsonBody(), stubMapping.getResponse().getBase64Body(),
 				stubMapping.getResponse().getBodyFileName(), stubMapping.getResponse().getHeaders(),
@@ -74,11 +74,11 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 				fixedDelayMilliseconds(stubMapping, stubMappingFromMetadata),
 				delayDistribution(stubMapping, stubMappingFromMetadata),
 				chunkedDribbleDelay(stubMapping, stubMappingFromMetadata),
-				proxyBaseUrl(stubMapping, stubMappingFromMetadata), fault(stubMapping, stubMappingFromMetadata),
-				transformers(stubMapping, stubMappingFromMetadata),
+				proxyBaseUrl(stubMapping, stubMappingFromMetadata),
+				proxyUrlPrefixToRemove(stubMapping, stubMappingFromMetadata),
+				fault(stubMapping, stubMappingFromMetadata), transformers(stubMapping, stubMappingFromMetadata),
 				transformerParameters(stubMapping, stubMappingFromMetadata),
 				wasConfigured(stubMapping, stubMappingFromMetadata));
-		return responseDefinition;
 	}
 
 	public Boolean wasConfigured(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
@@ -106,6 +106,12 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 	public String proxyBaseUrl(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getProxyBaseUrl() != null
 				? stubMappingFromMetadata.getResponse().getProxyBaseUrl() : stubMapping.getResponse().getProxyBaseUrl();
+	}
+
+	public String proxyUrlPrefixToRemove(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
+		return stubMappingFromMetadata.getResponse().getProxyUrlPrefixToRemove() != null
+				? stubMappingFromMetadata.getResponse().getProxyUrlPrefixToRemove()
+				: stubMapping.getResponse().getProxyUrlPrefixToRemove();
 	}
 
 	public ChunkedDribbleDelay chunkedDribbleDelay(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
