@@ -67,9 +67,9 @@ dependencies {
 	implementation "com.jcraft:jsch.agentproxy.jsch:${jschVersion}"
 	implementation "com.jcraft:jsch.agentproxy.sshagent:${jschVersion}"
 	implementation "com.jcraft:jsch.agentproxy.usocket-jna:${jschVersion}"
-	implementation "com.fasterxml.jackson.core:jackson-databind:2.11.4"
+	implementation "com.fasterxml.jackson.core:jackson-databind:2.13.2.2"
 
-	implementation "org.springframework:spring-core:5.3.9"
+	implementation "org.springframework:spring-core:5.3.18"
 	implementation("org.springframework.cloud:spring-cloud-contract-shade:${project.version}")
 	api("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: '*')
