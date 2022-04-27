@@ -91,7 +91,7 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 		}
 		try {
 			getProject().javaexec(exec -> {
-				exec.setMain("org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
+				exec.getMainClass().set("org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
 				exec.classpath(classpath);
 				exec.args(quoteAndEscape(output.getAbsolutePath()), quoteAndEscape(contractsDslDir.get().getAsFile().getAbsolutePath()),
 						quoteAndEscape(StringUtils.collectionToCommaDelimitedString(excludedFiles.get())), quoteAndEscape(".*"), excludeBuildFolders.get());
