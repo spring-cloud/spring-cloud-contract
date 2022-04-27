@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-samples-standalone</artifactId>
-		<version>3.1.2-SNAPSHOT</version>
+		<version>3.1.3-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -19,7 +19,7 @@
 	</description>
 
 	<properties>
-		<spring-cloud-contract.version>3.1.2-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>3.1.3-SNAPSHOT</spring-cloud-contract.version>
 	</properties>
 
 	<modules>
