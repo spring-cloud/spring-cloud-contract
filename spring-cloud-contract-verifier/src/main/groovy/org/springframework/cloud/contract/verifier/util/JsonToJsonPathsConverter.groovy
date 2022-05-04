@@ -62,12 +62,6 @@ class JsonToJsonPathsConverter {
 
 	private final boolean assertJsonSize
 
-	// Use constructor with dedicated input param instead
-	@Deprecated
-	JsonToJsonPathsConverter(ContractVerifierConfigProperties configProperties) {
-		assertJsonSize = configProperties.assertJsonSize
-	}
-
 	JsonToJsonPathsConverter(boolean assertJsonSize) {
 		this.assertJsonSize = assertJsonSize
 	}

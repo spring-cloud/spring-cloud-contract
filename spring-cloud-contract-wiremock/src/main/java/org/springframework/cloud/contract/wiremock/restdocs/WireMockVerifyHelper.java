@@ -44,17 +44,6 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 
 	private MappingBuilder builder;
 
-	/**
-	 * @param name the stub name (ignored)
-	 * @return this
-	 * @deprecated in favour of explicitly calling <code>andDo(document(name))</code>
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public S stub(String name) {
-		return (S) this;
-	}
-
 	public void configure(T result) {
 		Map<String, Object> configuration = getConfiguration(result);
 		byte[] requestBodyContent = getRequestBodyContent(result);

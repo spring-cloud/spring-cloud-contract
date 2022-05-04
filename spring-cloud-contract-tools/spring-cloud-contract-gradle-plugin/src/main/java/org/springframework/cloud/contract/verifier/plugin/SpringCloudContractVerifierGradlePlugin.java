@@ -110,16 +110,18 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		project.getDependencies().add(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME, "org.springframework.cloud:spring-cloud-contract-converters:" + SPRING_CLOUD_VERSION);
 
 		project.afterEvaluate(inner -> {
-			DirectoryProperty generatedTestSourcesDir = extension.getGeneratedTestSourcesDir();
-			if (generatedTestSourcesDir.isPresent()) {
-				if (extension.getTestFramework().get() == TestFramework.SPOCK) {
+			if (extension.getTestFramework().get() == TestFramework.SPOCK) {
+				DirectoryProperty generatedTestSourcesDir = extension.getGeneratedTestGroovySourcesDir();
+				if (generatedTestSourcesDir.isPresent()) {
 					project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
 						GroovySourceSet groovy = ((HasConvention) contractTestSourceSet).getConvention()
 								.getPlugin(GroovySourceSet.class);
 						groovy.getGroovy().srcDirs(generatedTestSourcesDir);
 					});
 				}
-				else {
+			} else {
+				DirectoryProperty generatedTestSourcesDir = extension.getGeneratedTestJavaSourcesDir();
+				if (generatedTestSourcesDir.isPresent()) {
 					contractTestSourceSet.getJava().srcDirs(generatedTestSourcesDir);
 				}
 			}
@@ -222,11 +224,12 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 						Property<Directory> correctSourceSetDir;
 						if (testFramework == TestFramework.SPOCK) {
 							correctSourceSetDir = extension.getGeneratedTestGroovySourcesDir();
+							return extension.getGeneratedTestGroovySourcesDir().orElse(correctSourceSetDir);
 						}
 						else {
 							correctSourceSetDir = extension.getGeneratedTestJavaSourcesDir();
+							return extension.getGeneratedTestJavaSourcesDir().orElse(correctSourceSetDir);
 						}
-						return extension.getGeneratedTestSourcesDir().orElse(correctSourceSetDir);
 					}));
 			generateServerTestsTask.getGeneratedTestResourcesDir().convention(extension.getGeneratedTestResourcesDir());
 
@@ -320,58 +323,6 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			stubsJar.dependsOn(generateClientStubs);
 		});
 		project.artifacts(artifactHandler -> artifactHandler.add("archives", verifierStubsJar));
-		createAndConfigureMavenPublishPlugin(verifierStubsJar, extension);
-	}
-
-	@Deprecated
-	private void createAndConfigureMavenPublishPlugin(TaskProvider<Jar> stubsTask,
-			ContractVerifierExtension extension) {
-		if (!classIsOnClasspath("org.gradle.api.publish.maven.plugins.MavenPublishPlugin")) {
-			project.getLogger().debug("Maven Publish Plugin is not present - won't add default publication");
-			return;
-		}
-		// This must be called within afterEvaluate due to getting data from extension,
-		// which must be initialised first:
-		project.afterEvaluate(inner -> {
-			project.getLogger().debug("Spring Cloud Contract Verifier Plugin: Generating default publication");
-			if (extension.getDisableStubPublication().get()) {
-				project.getLogger().info("You've switched off the stub publication - won't add default publication");
-				return;
-			}
-			project.getPlugins().withType(MavenPublishPlugin.class, publishingPlugin -> {
-				PublishingExtension publishingExtension = project.getExtensions().findByType(PublishingExtension.class);
-				if (hasStubsPublication(publishingExtension)) {
-					project.getLogger().info(
-							"Spring Cloud Contract Verifier Plugin: Stubs publication was present - won't create a new one. Remember about passing stubs as artifact");
-				}
-				else {
-					project.getLogger().debug(
-							"Spring Cloud Contract Verifier Plugin: Stubs publication is not present - will create one");
-					setPublications(publishingExtension, stubsTask);
-				}
-			});
-		});
-	}
-
-	@Deprecated
-	private void setPublications(PublishingExtension publishingExtension, TaskProvider<Jar> stubsTask) {
-		project.getLogger().warn("Spring Cloud Contract Verifier Plugin: Creating stubs publication is deprecated");
-		publishingExtension.publications(publicationsContainer -> {
-			publicationsContainer.create("stubs", MavenPublication.class, stubsPublication -> {
-				stubsPublication.setArtifactId(project.getName());
-				stubsPublication.artifact(stubsTask.get());
-			});
-		});
-	}
-
-	@Deprecated
-	private boolean hasStubsPublication(PublishingExtension publishingExtension) {
-		try {
-			return publishingExtension.getPublications().getByName("stubs") != null;
-		}
-		catch (Exception e) {
-			return false;
-		}
 	}
 
 	private TaskProvider<ContractsCopyTask> createAndConfigureCopyContractsTask(ContractVerifierExtension extension) {
@@ -436,18 +387,6 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 							.convention(extension.getStubsOutputDir().dir(buildRootPath(ContractsCopyTask.BACKUP)));
 				});
 		return task;
-	}
-
-	@Deprecated
-	private boolean classIsOnClasspath(String className) {
-		try {
-			Class.forName(className);
-			return true;
-		}
-		catch (Exception e) {
-			project.getLogger().debug("Maven Publish Plugin is not available");
-		}
-		return false;
 	}
 
 	private Provider<String> buildRootPath(String path) {

@@ -67,25 +67,6 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 
 	private static final RuntimeJavaCompiler COMPILER = new RuntimeJavaCompiler();
 
-	/**
-	 * @deprecated - use
-	 * {@link ContractVerifierDslConverter#convertAsCollection(java.io.File, java.lang.String)}
-	 */
-	@Deprecated
-	public static Collection<Contract> convertAsCollection(String dsl) {
-		try {
-			Object object = groovyShell().evaluate(dsl);
-			return listOfContracts(object);
-		}
-		catch (DslParseException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			LOG.error("Exception occurred while trying to evaluate the contract", e);
-			throw new DslParseException(e);
-		}
-	}
-
 	public static Collection<Contract> convertAsCollection(File rootFolder, String dsl) {
 		ClassLoader classLoader = ContractVerifierDslConverter.class.getClassLoader();
 		try {

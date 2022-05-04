@@ -24,8 +24,7 @@
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
 		<spring.cloud.contract.verifier.jar.skip>true
 		</spring.cloud.contract.verifier.jar.skip>
-		<!-- TODO: Remove -->
-		<skipTests>true</skipTests>
+		<rest-assured.version>6.0.0-SNAPSHOT</rest-assured.version>
 	</properties>
 
 	<dependencies>
@@ -210,7 +209,8 @@
 	</pluginRepositories>
 
 	<profiles>
-		<profile>
+		<!-- TODO: Fix me - Gradle problem with packaging of stubs -->
+		<!--<profile>
 			<id>integration</id>
 			<build>
 				<plugins>
@@ -228,10 +228,10 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
-										<!-- TODO: Remove -->
+										&lt;!&ndash; TODO: Remove &ndash;&gt;
 										<argument>-x</argument>
 										<argument>test</argument>
-										<!-- TODO: Remove -->
+										&lt;!&ndash; TODO: Remove &ndash;&gt;
 										<argument>-x</argument>
 										<argument>contractTest</argument>
 										<argument>
@@ -247,7 +247,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
+		</profile>-->
 		<profile>
 			<id>windows</id>
 			<build>

@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureStubRunner(ids = "com.example:http-server-restdocs")
-public class LoanApplicationServiceusingStubRunnerTests {
+class LoanApplicationServiceusingStubRunnerTests {
 
 	@Autowired
 	LoanApplicationService service;
@@ -49,7 +49,7 @@ public class LoanApplicationServiceusingStubRunnerTests {
 	}
 
 	@Test
-	public void shouldSuccessfullyApplyForLoan() throws Exception {
+	void shouldSuccessfullyApplyForLoan() throws Exception {
 		// given
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				123.123);
@@ -62,7 +62,7 @@ public class LoanApplicationServiceusingStubRunnerTests {
 	}
 
 	@Test
-	public void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
+	void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
 		// given:
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				99999);

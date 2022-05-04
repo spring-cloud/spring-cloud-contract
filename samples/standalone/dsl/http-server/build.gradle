@@ -19,6 +19,8 @@ repositories {
 }
 // end::deps_repos[]
 
+ext['rest-assured.version'] = "${restAssuredVersion}"
+
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"

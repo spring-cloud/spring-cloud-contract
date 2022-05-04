@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = "service.port=${wiremock.server.port}")
 @AutoConfigureWireMock(port = 0)
-public class LoanApplicationServiceTests {
+class LoanApplicationServiceTests {
 
 	@Autowired
 	private LoanApplicationService service;
@@ -55,7 +55,7 @@ public class LoanApplicationServiceTests {
 	private WireMockServer server;
 
 	@Test
-	public void shouldSuccessfullyApplyForLoan() throws Exception {
+	void shouldSuccessfullyApplyForLoan() throws Exception {
 		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
 				markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:
@@ -70,7 +70,7 @@ public class LoanApplicationServiceTests {
 	}
 
 	@Test
-	public void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
+	void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
 		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
 				markClientAsFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:

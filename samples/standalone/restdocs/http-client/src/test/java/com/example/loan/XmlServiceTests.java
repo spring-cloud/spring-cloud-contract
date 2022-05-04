@@ -40,7 +40,7 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest(properties = "service.port=${wiremock.server.port}")
 @AutoConfigureWireMock(port = 0)
-public class XmlServiceTests {
+class XmlServiceTests {
 
 	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1/mappings/should_return_empty_content.json")
 	private Resource empty;
@@ -52,7 +52,7 @@ public class XmlServiceTests {
 	private WireMockServer server;
 
 	@Test
-	public void shouldSuccessfullyReturnFullResponse() throws Exception {
+	void shouldSuccessfullyReturnFullResponse() throws Exception {
 		server.addStubMapping(StubMapping.buildFrom(StreamUtils
 				.copyToString(full.getInputStream(), Charset.forName("UTF-8"))));
 
@@ -68,7 +68,7 @@ public class XmlServiceTests {
 	}
 
 	@Test
-	public void shouldSuccessfullyReturnEmptyResponse() throws Exception {
+	void shouldSuccessfullyReturnEmptyResponse() throws Exception {
 		server.addStubMapping(StubMapping.buildFrom(StreamUtils
 				.copyToString(empty.getInputStream(), Charset.forName("UTF-8"))));
 

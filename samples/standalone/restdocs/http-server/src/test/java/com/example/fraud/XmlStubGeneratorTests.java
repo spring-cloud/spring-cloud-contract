@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,13 +34,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = Application.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
-public class XmlStubGeneratorTests {
+class XmlStubGeneratorTests {
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Test
-	public void should_return_full_content() throws Exception {
+	void should_return_full_content() throws Exception {
 		mockMvc.perform(post("/xmlfraud").contentType(MediaType.APPLICATION_XML)
 				.content("<XmlRequestBody><name>foo</name></XmlRequestBody>"))
 				.andExpect(status().is2xxSuccessful())
@@ -51,7 +50,7 @@ public class XmlStubGeneratorTests {
 	}
 
 	@Test
-	public void should_return_empty_content() throws Exception {
+	void should_return_empty_content() throws Exception {
 		mockMvc.perform(post("/xmlfraud").contentType(MediaType.APPLICATION_XML)
 				.content("<XmlRequestBody><name></name></XmlRequestBody>"))
 				.andExpect(status().is2xxSuccessful())

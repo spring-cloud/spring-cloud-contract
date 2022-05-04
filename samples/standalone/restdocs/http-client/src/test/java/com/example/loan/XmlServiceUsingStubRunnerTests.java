@@ -34,13 +34,13 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
 @AutoConfigureStubRunner(ids = "com.example:http-server-restdocs")
-public class XmlServiceUsingStubRunnerTests {
+class XmlServiceUsingStubRunnerTests {
 
 	@Value("${stubrunner.runningstubs.http-server-restdocs.port}")
 	int port;
 
 	@Test
-	public void shouldSuccessfullyReturnFullResponse() throws Exception {
+	void shouldSuccessfullyReturnFullResponse() throws Exception {
 		ResponseEntity<XmlResponseBody> responseEntity = new RestTemplate()
 				.exchange(RequestEntity
 						.post(URI.create("http://localhost:" + this.port + "/xmlfraud"))
@@ -52,7 +52,7 @@ public class XmlServiceUsingStubRunnerTests {
 	}
 
 	@Test
-	public void shouldSuccessfullyReturnEmptyResponse() throws Exception {
+	void shouldSuccessfullyReturnEmptyResponse() throws Exception {
 		ResponseEntity<XmlResponseBody> responseEntity = new RestTemplate()
 				.exchange(RequestEntity
 						.post(URI.create("http://localhost:" + this.port + "/xmlfraud"))

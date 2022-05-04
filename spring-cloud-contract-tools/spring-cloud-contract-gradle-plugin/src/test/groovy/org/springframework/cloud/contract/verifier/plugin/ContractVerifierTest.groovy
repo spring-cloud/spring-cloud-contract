@@ -135,28 +135,6 @@ class ContractVerifierTest {
 	}
 
 	@Test
-	void "should configure generatedTestSourcesDir with the appropriate directories"() {
-		when:
-			ContractVerifierExtension extension = project.extensions.findByType(ContractVerifierExtension)
-			GenerateServerTestsTask generateServerTestsTask = project.tasks.getByName("generateContractTests") as GenerateServerTestsTask
-
-		then:
-			assert generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestJavaSourcesDir.get().asFile
-
-		and:
-			extension.testFramework.set(TestFramework.SPOCK)
-
-		then:
-			assert generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestGroovySourcesDir.get().asFile
-
-		and:
-			extension.generatedTestSourcesDir.set(project.file("src/random"))
-
-		then:
-			assert generateServerTestsTask.generatedTestSourcesDir.get().asFile == extension.generatedTestSourcesDir.get().asFile
-	}
-
-	@Test
 	void "should create generateClientStubs task"() {
 		expect:
 			assert project.tasks.named("generateClientStubs").get() != null
@@ -190,32 +168,6 @@ class ContractVerifierTest {
 	void "should configure copyContracts task as a dependency of the verifierStubsJar task"() {
 		expect:
 			assert project.tasks.verifierStubsJar.getDependsOn().contains(project.tasks.named("generateClientStubs"))
-	}
-
-	/**
-	 * project.evaluate() is used here in order to trigger the evaluation lifecycle of a project.
-	 * This method is currently exposed via the internal API and is subject to change, however, Gradle
-	 * does not yet expose a way to test this portion of the lifecycle.
-	 *
-	 * In the next version, this test will be completely removed as publication will be fully a user
-	 * responsibility.
-	 */
-	@Deprecated
-	@Test
-	void "should configure maven-publish plugin, if enabled"() {
-		given:
-			project.plugins.apply(MavenPublishPlugin)
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-			ContractVerifierExtension extension = project.getExtensions().findByType(ContractVerifierExtension)
-			extension.with {
-				disableStubPublication = false
-			}
-			project.evaluate() // Currently internal method to trigger afterEvaluate blocks.
-
-		expect:
-			PublicationContainer publications = project.extensions.getByType(PublishingExtension).publications
-			assert publications.size() > 0
-			assert publications.named("stubs") != null
 	}
 
 	@Test

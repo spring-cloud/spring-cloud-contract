@@ -27,15 +27,10 @@ import org.springframework.cloud.contract.spec.ContractTemplate;
  */
 public class CompositeContractTemplate implements ContractTemplate {
 
-	private final CustomHandlebarsContractTemplate custom = new CustomHandlebarsContractTemplate();
-
 	private final HandlebarsContractTemplate template = new HandlebarsContractTemplate();
 
 	@Override
 	public boolean startsWithTemplate(String text) {
-		if (this.custom.startsWithTemplate(text)) {
-			return true;
-		}
 		return template.startsWithTemplate(text);
 	}
 
@@ -113,7 +108,7 @@ public class CompositeContractTemplate implements ContractTemplate {
 	public String escapedBody() {
 		// WireMock doesn't support proper escaping of JSON body
 		// that's why we need to use our custom handlebars extension
-		return this.custom.escapedBody();
+		return this.template.escapedBody();
 	}
 
 	@Override

@@ -101,12 +101,6 @@ public class ContractVerifierExtension implements Serializable {
 	private final DirectoryProperty contractsDslDir;
 
 	/**
-	 * Test source directory where tests generated from Groovy DSL should be placed
-	 */
-	@Deprecated
-	private final DirectoryProperty generatedTestSourcesDir;
-
-	/**
 	 * Java test source directory where tests generated from Contract DSL should be placed
 	 */
 	private final DirectoryProperty generatedTestJavaSourcesDir;
@@ -221,14 +215,6 @@ public class ContractVerifierExtension implements Serializable {
 	private final MapProperty<String, String> contractsProperties;
 
 	/**
-	 * Is set to true will not provide the default publication task
-	 * @deprecated - with 3.0.0, the user should include stubs with their own
-	 * publication(s)
-	 */
-	@Deprecated
-	private final Property<Boolean> disableStubPublication;
-
-	/**
 	 * Source set where the contracts are stored. If not provided will assume
 	 * {@code test}.
 	 */
@@ -248,7 +234,6 @@ public class ContractVerifierExtension implements Serializable {
 		this.staticImports = objects.listProperty(String.class).convention(new ArrayList<>());
 		this.contractsDslDir = objects.directoryProperty()
 				.convention(layout.getProjectDirectory().dir("src/contractTest/resources/contracts"));
-		this.generatedTestSourcesDir = objects.directoryProperty();
 		this.generatedTestJavaSourcesDir = objects.directoryProperty()
 				.convention(layout.getBuildDirectory().dir("generated-test-sources/contractTest/java"));
 		this.generatedTestGroovySourcesDir = objects.directoryProperty()
@@ -272,7 +257,6 @@ public class ContractVerifierExtension implements Serializable {
 		this.deleteStubsAfterTest = objects.property(Boolean.class).convention(true);
 		this.convertToYaml = objects.property(Boolean.class).convention(false);
 		this.contractsProperties = objects.mapProperty(String.class, String.class).convention(new HashMap<>());
-		this.disableStubPublication = objects.property(Boolean.class).convention(true);
 		this.sourceSet = objects.property(String.class);
 	}
 
@@ -378,16 +362,6 @@ public class ContractVerifierExtension implements Serializable {
 
 	public void setContractsDslDir(File contractsDslDir) {
 		this.contractsDslDir.set(contractsDslDir);
-	}
-
-	@Deprecated
-	public DirectoryProperty getGeneratedTestSourcesDir() {
-		return generatedTestSourcesDir;
-	}
-
-	@Deprecated
-	public void setGeneratedTestSourcesDir(File generatedTestSourcesDir) {
-		this.generatedTestSourcesDir.set(generatedTestSourcesDir);
 	}
 
 	public DirectoryProperty getGeneratedTestJavaSourcesDir() {
@@ -548,16 +522,6 @@ public class ContractVerifierExtension implements Serializable {
 
 	public void setContractsProperties(Map<String, String> contractsProperties) {
 		this.contractsProperties.set(contractsProperties);
-	}
-
-	@Deprecated
-	public Property<Boolean> getDisableStubPublication() {
-		return disableStubPublication;
-	}
-
-	@Deprecated
-	public void setDisableStubPublication(boolean disableStubPublication) {
-		this.disableStubPublication.set(disableStubPublication);
 	}
 
 	public Property<String> getSourceSet() {

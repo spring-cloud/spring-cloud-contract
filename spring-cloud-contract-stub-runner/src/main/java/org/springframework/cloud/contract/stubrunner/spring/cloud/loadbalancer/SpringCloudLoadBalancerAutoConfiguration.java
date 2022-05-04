@@ -85,15 +85,6 @@ class StubRunnerLoadBalancerClientFactory extends LoadBalancerClientFactory impl
 
 	private final BeanFactory beanFactory;
 
-	/**
-	 * @deprecated in favour of
-	 * {@link StubRunnerLoadBalancerClientFactory#StubRunnerLoadBalancerClientFactory(BeanFactory, LoadBalancerClientsProperties)}
-	 */
-	@Deprecated
-	StubRunnerLoadBalancerClientFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
-
 	StubRunnerLoadBalancerClientFactory(BeanFactory beanFactory, LoadBalancerClientsProperties properties) {
 		super(properties);
 		this.beanFactory = beanFactory;

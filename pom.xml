@@ -42,7 +42,7 @@
 		<jgit.version>6.1.0.202203080745-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.32.0</json-unit-assertj.version>
-		<rest-assured.version>5.0.0</rest-assured.version>
+		<rest-assured.version>6.0.0-SNAPSHOT</rest-assured.version>
 
 		<junit-vintage.version>5.8.2</junit-vintage.version>
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>
@@ -91,6 +91,13 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-commons-dependencies</artifactId>
 				<version>${spring-cloud-commons.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>rest-assured-bom</artifactId>
+				<version>${rest-assured.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -461,16 +468,6 @@
 				<artifactId>kotlin-compiler-embeddable</artifactId>
 				<version>${contract.kotlin.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>rest-assured</artifactId>
-				<version>${rest-assured.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>spring-mock-mvc</artifactId>
-				<version>${rest-assured.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -602,6 +599,14 @@
 			<url>https://maven.restlet.org</url>
 			<snapshots>
 				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- Rest Assured -->
+		<repository>
+			<id>sonatype-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
