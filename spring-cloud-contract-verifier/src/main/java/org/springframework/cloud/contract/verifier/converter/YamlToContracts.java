@@ -54,6 +54,7 @@ import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Response;
+import org.springframework.cloud.contract.spec.internal.Url;
 import org.springframework.cloud.contract.verifier.util.ContentType;
 import org.springframework.cloud.contract.verifier.util.NamesUtil;
 import org.springframework.util.StringUtils;
@@ -169,7 +170,7 @@ class YamlToContracts {
 		if (yamlContractRequest != null) {
 			dslContract.request((dslContractRequest) -> {
 				mapRequestMethod(yamlContractRequest, dslContractRequest);
-				mapRequestUrl(yamlContractRequest, dslContractRequest);
+				mapRequestUrl(yamlContract, dslContractRequest);
 				mapRequestUrlPath(yamlContract, dslContractRequest);
 				mapRequestHeaders(yamlContractRequest, dslContractRequest);
 				mapRequestCookies(yamlContractRequest, dslContractRequest);
@@ -186,24 +187,13 @@ class YamlToContracts {
 		}
 	}
 
-	private void mapRequestUrl(YamlContract.Request yamlContractRequest, Request dslContractRequest) {
-		String yamlContractRequestUrl = yamlContractRequest.url;
+	private void mapRequestUrl(YamlContract yamlContract, Request dslContractRequest) {
+		String yamlContractRequestUrl = yamlContract.request.url;
 		if (yamlContractRequestUrl != null) {
 			YamlContract.KeyValueMatcher yamlContractRequestMatchersUrl = Optional
-					.ofNullable(yamlContractRequest.matchers).map(matchers -> matchers.url).orElse(null);
-			dslContractRequest.url(urlValue(yamlContractRequestUrl, yamlContractRequestMatchersUrl), (url) -> {
-				if (yamlContractRequest.queryParameters != null) {
-					url.queryParameters(
-							(queryParameters -> yamlContractRequest.queryParameters.forEach((key, value) -> {
-								if (value instanceof List) {
-									((List<?>) value).forEach(v -> queryParameters.parameter(key, v));
-								}
-								else {
-									queryParameters.parameter(key, value);
-								}
-							})));
-				}
-			});
+					.ofNullable(yamlContract.request.matchers).map(matchers -> matchers.url).orElse(null);
+			dslContractRequest.url(urlValue(yamlContractRequestUrl, yamlContractRequestMatchersUrl),
+					url -> handleQueryParameters(yamlContract, url));
 		}
 	}
 
@@ -212,20 +202,23 @@ class YamlToContracts {
 		if (yamlContractRequestUrlPath != null) {
 			YamlContract.KeyValueMatcher yamlContractRequestMatchersUrl = Optional
 					.ofNullable(yamlContract.request.matchers).map(matchers -> matchers.url).orElse(null);
-			dslContractRequest.urlPath(urlValue(yamlContractRequestUrlPath, yamlContractRequestMatchersUrl), (url) -> {
-				if (yamlContract.request.queryParameters != null) {
-					url.queryParameters(
-							(queryParameters -> yamlContract.request.queryParameters.forEach((key, value) -> {
-								if (value instanceof List) {
-									((List<?>) value).forEach(
-											v -> queryParameters.parameter(key, queryParamValue(yamlContract, key, v)));
-								}
-								else {
-									queryParameters.parameter(key, queryParamValue(yamlContract, key, value));
-								}
-							})));
-				}
-			});
+			dslContractRequest.urlPath(urlValue(yamlContractRequestUrlPath, yamlContractRequestMatchersUrl),
+					urlPath -> handleQueryParameters(yamlContract, urlPath));
+		}
+	}
+
+	private void handleQueryParameters(YamlContract yamlContract, Url url) {
+		if (yamlContract.request.queryParameters != null) {
+			url.queryParameters(
+					(queryParameters -> yamlContract.request.queryParameters.forEach((key, value) -> {
+						if (value instanceof List) {
+							((List<?>) value).forEach(
+									v -> queryParameters.parameter(key, queryParamValue(yamlContract, key, v)));
+						}
+						else {
+							queryParameters.parameter(key, queryParamValue(yamlContract, key, value));
+						}
+					})));
 		}
 	}
 
