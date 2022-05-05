@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -32,7 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation;
-
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
@@ -69,8 +67,7 @@ public class StubGeneratorTests {
 				.jsonPath("$.rejectionReason").isEqualTo("Amount too high")
 				.consumeWith(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount > 1000)]")
-						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsFraud"))
+						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json")))
 				.consumeWith(
 						WebTestClientRestDocumentation.document("markClientAsFraud"));
 	}
@@ -87,8 +84,7 @@ public class StubGeneratorTests {
 				.jsonPath("$.rejectionReason").doesNotExist()
 				.consumeWith(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount <= 1000)]")
-						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsNotFraud"))
+						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json")))
 				.consumeWith(
 						WebTestClientRestDocumentation.document("markClientAsNotFraud"));
 	}
