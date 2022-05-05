@@ -22,6 +22,7 @@ import groovy.json.JsonSlurper
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -72,8 +73,6 @@ class YamlContractConverterSpec extends Specification {
 	File ymlBody = new File(ymlBodyFile.toURI())
 	URL ymlReferenceFile = YamlContractConverterSpec.getResource("/yml/contract_reference_request.yml")
 	File ymlReference = new File(ymlReferenceFile.toURI())
-	URL ymlMatchersFile = YamlContractConverterSpec.getResource("/yml/contract_matchers.yml")
-	File ymlMatchers = new File(ymlMatchersFile.toURI())
 	URL ymlMultipleFile = YamlContractConverterSpec.getResource("/yml/multiple_contracts.yml")
 	File ymlMultiple = new File(ymlMultipleFile.toURI())
 	URL ymlMessagingMatchersFile = YamlContractConverterSpec.getResource("/yml/contract_message_matchers.yml")
@@ -259,9 +258,18 @@ class YamlContractConverterSpec extends Specification {
 			}
 	}
 
-	def "should convert YAML with REST matchers to DSL"() {
+	@Issue('#1778')
+	@Unroll
+	def 'should convert YAML with REST matchers and path property #urlPropertyName to DSL'() {
 		given:
-			assert converter.isAccepted(ymlMatchers)
+		File ymlMatchers = File.createTempFile('contract_matchers', '.yml').with {
+			write YamlContractConverterSpec.getResource('/yml/contract_matchers.yml')
+					.text
+					.replace('\n  urlPath:', "\n  $urlPropertyName:")
+			it
+		}
+		expect:
+			converter.isAccepted(ymlMatchers)
 		when:
 			Collection<Contract> contracts = converter.convertFrom(ymlMatchers)
 		then:
@@ -271,10 +279,11 @@ class YamlContractConverterSpec extends Specification {
 				it.name == "Content-Type" &&
 						((Pattern) it.clientValue).pattern() == "application/json.*" && it.serverValue == "application/json"
 			}
-			((Pattern) contract.request.urlPath.clientValue).pattern() == "/get/[0-9]"
-			contract.request.urlPath.serverValue == "/get/1"
-			contract.request.urlPath.queryParameters.parameters.size() == 8
-			QueryParameters queryParameters = contract.request.urlPath.queryParameters
+			def url = contract.request."$urlPropertyName"
+			((Pattern) url.clientValue).pattern() == "/get/[0-9]"
+			url.serverValue == "/get/1"
+			url.queryParameters.parameters.size() == 8
+			QueryParameters queryParameters = url.queryParameters
 			assertQueryParam(queryParameters, "limit", 10,
 					MatchingStrategy.Type.EQUAL_TO, 20)
 			assertQueryParam(queryParameters, "offset", 20,
@@ -378,6 +387,9 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.bodyMatchers.matchers[15].path() == '$.duck'
 			contract.response.bodyMatchers.matchers[15].matchingType() == COMMAND
 			contract.response.bodyMatchers.matchers[15].value() == new ExecutionProperty('assertThatValueIsANumber($it)')
+
+		where:
+		urlPropertyName << ['url', 'urlPath']
 	}
 
 	protected Object assertQueryParam(QueryParameters queryParameters, String queryParamName, Object serverValue,
