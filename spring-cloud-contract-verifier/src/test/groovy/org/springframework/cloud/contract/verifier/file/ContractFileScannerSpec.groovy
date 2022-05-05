@@ -22,11 +22,11 @@ import java.nio.file.Path
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
-import wiremock.com.google.common.collect.ListMultimap
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.util.FileSystemUtils
+import org.springframework.util.MultiValueMap
 
 /**
  * @author Jakub Kubrynski, codearte.io
@@ -52,7 +52,7 @@ class ContractFileScannerSpec extends Specification {
 			Set<String> ignored = ["other/different/**"] as Set
 			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set, "")
 		when:
-			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+			MultiValueMap<Path, ContractMetadata> result = scanner.findContractsRecursively()
 		then:
 			result.keySet().size() == 3
 			result.get(baseDir.toPath().resolve("different")).size() == 1
@@ -70,9 +70,9 @@ class ContractFileScannerSpec extends Specification {
 			Set<String> ignored = ["bar/**"] as Set
 			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set, "")
 		when:
-			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+			MultiValueMap<Path, ContractMetadata> result = scanner.findContractsRecursively()
 		then:
-			result.entries().size() == 2
+			result.entrySet().size() == 2
 		and:
 			Collection<ContractMetadata> ignoredSet = result.get(baseDir.toPath().resolve("bar"))
 			ignoredSet.size() == 1
@@ -84,19 +84,19 @@ class ContractFileScannerSpec extends Specification {
 			File baseDir = new File(this.getClass().getResource("/directory/with/scenario").toURI())
 			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, [] as Set, "")
 		when:
-			ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
+			MultiValueMap<Path, ContractMetadata> contracts = scanner.findContractsRecursively()
 		then:
-			contracts.values().size() == 3
-			contracts.values().find {
+			contracts.values()[0].size() == 3
+			contracts.values()[0].find {
 				it.path.fileName.toString().startsWith('01')
 			}.groupSize == 3
-			contracts.values().find {
+			contracts.values()[0].find {
 				it.path.fileName.toString().startsWith('01')
 			}.order == 0
-			contracts.values().find {
+			contracts.values()[0].find {
 				it.path.fileName.toString().startsWith('02')
 			}.order == 1
-			contracts.values().find {
+			contracts.values()[0].find {
 				it.path.fileName.toString().startsWith('03')
 			}.order == 2
 	}
@@ -126,7 +126,7 @@ class ContractFileScannerSpec extends Specification {
 				}
 			}
 		when:
-			scanner.findContracts()
+			scanner.findContractsRecursively()
 		then:
 			IllegalStateException e = thrown(IllegalStateException)
 			e.cause.message == "boom"
@@ -165,10 +165,10 @@ class ContractFileScannerSpec extends Specification {
 				}
 			}
 		when:
-			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+			MultiValueMap<Path, ContractMetadata> result = scanner.findContractsRecursively()
 		then:
 			result.keySet().size() == 1
-			result.entries().every { it.value.convertedContract }
+			result.entrySet().every { it.value.convertedContract }
 	}
 
 	def "should find contracts for include pattern"() {
@@ -181,24 +181,24 @@ class ContractFileScannerSpec extends Specification {
 			Set<String> included = ["social-service/**", "**/coupon-collected/**/*V1*"] as Set
 			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, included, null)
 		when:
-			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+			MultiValueMap<Path, ContractMetadata> result = scanner.findContractsRecursively()
 		then:
 			result.keySet().size() == 3
-			result.values().find {
+			result.values()[0].find {
 				(it.path.fileName.toString() == 'couponCollectedEventV1.groovy')
 			}.groupSize == 2
-			result.values().find {
+			result.values()[0].find {
 				(it.convertedContract.first().label == 'couponCollectedV1')
 			}
-			result.values().findAll {
+			result.values()[0].findAll {
 				(it.path.fileName.toString() == 'couponCollectedEventV2.groovy')
 			}.isEmpty()
-			result.values().find {
-				(it.path.fileName.toString() == 'shouldUpdateUserInfo.groovy')
-			}.groupSize == 1
-			result.values().find {
-				(it.path.fileName.toString() == 'shouldReturnEmptyFriendsWhenGetFriends.groovy')
-			}.groupSize == 1
+			result.values().find { list ->
+				list.find { it.path.fileName.toString() == 'shouldUpdateUserInfo.groovy' }
+			}[0].groupSize == 1
+			result.values().find { list ->
+				list.find { it.path.fileName.toString() == 'shouldReturnEmptyFriendsWhenGetFriends.groovy' }
+			}[0].groupSize == 1
 			result.get(baseDir.toPath().resolve("coupon-sent")) == null
 			result.get(baseDir.toPath().resolve("reward-rules")) == null
 	}

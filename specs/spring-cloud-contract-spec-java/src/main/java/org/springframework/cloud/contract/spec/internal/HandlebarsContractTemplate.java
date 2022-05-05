@@ -59,7 +59,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String query(String key, int index) {
-		return wrapped("request.query." + key + ".[" + String.valueOf(index) + "]");
+		return wrapped("request.query." + key + ".[" + index + "]");
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String path(int index) {
-		return wrapped("request.path.[" + String.valueOf(index) + "]");
+		return wrapped("request.path.[" + index + "]");
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String header(String key, int index) {
-		return wrapped("request.headers." + key + ".[" + String.valueOf(index) + "]");
+		return wrapped("request.headers." + key + ".[" + index + "]");
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String escapedBody() {
-		return escapedWrapped("request.body");
+		return escapedWrapped("escapejsonbody");
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String escapedQuery(String key, int index) {
-		return escapedWrapped("request.query." + key + ".[" + String.valueOf(index) + "]");
+		return escapedWrapped("request.query." + key + ".[" + index + "]");
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String escapedPath(int index) {
-		return escapedWrapped("request.path.[" + String.valueOf(index) + "]");
+		return escapedWrapped("request.path.[" + index + "]");
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	public String escapedHeader(String key, int index) {
-		return escapedWrapped("request.headers." + key + ".[" + String.valueOf(index) + "]");
+		return escapedWrapped("request.headers." + key + ".[" + index + "]");
 	}
 
 	@Override

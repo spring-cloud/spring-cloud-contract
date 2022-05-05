@@ -110,7 +110,7 @@ public class ContractFileScanner {
 	private void appendRecursively(File baseDir, MultiValueMap<Path, ContractMetadata> result) {
 		List<ContractConverter> converters = convertersWithYml();
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("Found the following contract converters ${converters}");
+			LOG.trace("Found the following contract converters " + converters);
 		}
 		File[] files = baseDir.listFiles();
 		if (files == null) {
@@ -135,14 +135,14 @@ public class ContractFileScanner {
 				else {
 					appendRecursively(file, result);
 					if (LOG.isDebugEnabled()) {
-						LOG.debug(
-								"File [$file] is ignored. Is a contract file? [$contractFile]. Should be included by pattern? [$included]");
+						LOG.debug("File [" + file + "] is ignored. Is a contract file? [" + contractFile
+								+ "]. Should be included by pattern? [" + included + "]");
 					}
 				}
 			}
 			else {
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("File [$file] is ignored. Should be excluded? [$excluded]");
+					LOG.debug("File [" + file + "] is ignored. Should be excluded? [" + excluded + "]");
 				}
 			}
 		}
@@ -176,7 +176,8 @@ public class ContractFileScanner {
 			appendRecursively(file, result);
 			if (LOG.isDebugEnabled()) {
 				LOG.debug(
-						"File [$file] wasn't ignored but no converter was applicable. The file is a directory [${file.isDirectory()}]");
+						"File [" + file + "] wasn't ignored but no converter was applicable. The file is a directory ["
+								+ file.isDirectory() + "]");
 			}
 		}
 	}
@@ -219,7 +220,6 @@ public class ContractFileScanner {
 			if (matcher.matches(file.toPath())) {
 				return true;
 			}
-			LOG.debug("Path [{}] doesn't match the pattern [{}]", file.toPath(), matcher);
 		}
 		return false;
 	}

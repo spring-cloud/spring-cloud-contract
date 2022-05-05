@@ -117,4 +117,10 @@ public class ContractMetadata {
 		return convertedContractWithMetadata;
 	}
 
+	@Override
+	public String toString() {
+		return "ContractMetadata{" + "path=" + path + ", ignored=" + ignored + ", groupSize=" + groupSize + ", order="
+				+ order + '}';
+	}
+
 }
