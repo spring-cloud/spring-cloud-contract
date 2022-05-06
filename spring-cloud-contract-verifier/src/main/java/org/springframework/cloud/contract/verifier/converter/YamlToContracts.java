@@ -209,16 +209,15 @@ class YamlToContracts {
 
 	private void handleQueryParameters(YamlContract yamlContract, Url url) {
 		if (yamlContract.request.queryParameters != null) {
-			url.queryParameters(
-					(queryParameters -> yamlContract.request.queryParameters.forEach((key, value) -> {
-						if (value instanceof List) {
-							((List<?>) value).forEach(
-									v -> queryParameters.parameter(key, queryParamValue(yamlContract, key, v)));
-						}
-						else {
-							queryParameters.parameter(key, queryParamValue(yamlContract, key, value));
-						}
-					})));
+			url.queryParameters((queryParameters -> yamlContract.request.queryParameters.forEach((key, value) -> {
+				if (value instanceof List) {
+					((List<?>) value)
+							.forEach(v -> queryParameters.parameter(key, queryParamValue(yamlContract, key, v)));
+				}
+				else {
+					queryParameters.parameter(key, queryParamValue(yamlContract, key, value));
+				}
+			})));
 		}
 	}
 
