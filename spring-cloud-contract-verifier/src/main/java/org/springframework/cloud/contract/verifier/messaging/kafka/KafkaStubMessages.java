@@ -128,7 +128,7 @@ class Receiver {
 		// commonHeaders() maps the record key under 'kafka_receivedMessageKey' - put
 		// under 'kafka_messageKey' as well to satisfy both client/server usages as there
 		// is not currently a way to set a header name based on client/server
-		headersMap.put(KafkaHeaders.MESSAGE_KEY, record.key());
+		headersMap.put(KafkaHeaders.KEY, record.key());
 
 		// TODO explore using MessagingMessageConverter to do all of the conversion
 		// (ideally delete this entire method)
