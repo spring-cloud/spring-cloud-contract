@@ -412,6 +412,24 @@ public class WiremockMockServerApplicationTests {
 	}
 
 	@Test
+	public void getWithSimpleUrlPathMatchingWithTrailingSlashInBaseUrl() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate).baseUrl("https://example.org/")
+				.stubs("classpath:/mappings/url-simple-path-pattern-without-leading-slash.json").build();
+		assertThat(this.restTemplate.getForObject("https://example.org/my/api", String.class))
+				.isEqualTo("Hello Url Path Matcher");
+		server.verify();
+	}
+
+	@Test
+	public void getWithSimpleUrlPathMatchingWithLeadingSlashInPattern() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate).baseUrl("https://example.org")
+				.stubs("classpath:/mappings/url-simple-path-pattern-with-leading-slash.json").build();
+		assertThat(this.restTemplate.getForObject("https://example.org/my/api", String.class))
+				.isEqualTo("Hello Url Path Matcher");
+		server.verify();
+	}
+
+	@Test
 	public void getWithUrlMatching() throws Exception {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("https://example.org") //
