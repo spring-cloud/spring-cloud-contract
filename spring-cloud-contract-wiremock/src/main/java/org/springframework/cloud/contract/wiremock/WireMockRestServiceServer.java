@@ -277,7 +277,7 @@ public final class WireMockRestServiceServer {
 		if (indexOfBaseUrl == -1) {
 			return url;
 		}
-		return url.substring(indexOfBaseUrl + this.baseUrl.length() + 1);
+		return url.substring(indexOfBaseUrl + this.baseUrl.length());
 	}
 
 	private Matcher<String> requestMatcher(RequestPattern request) {
