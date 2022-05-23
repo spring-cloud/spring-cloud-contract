@@ -42,7 +42,7 @@
 		<jgit.version>6.1.0.202203080745-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.32.0</json-unit-assertj.version>
-		<rest-assured.version>6.0.0-SNAPSHOT</rest-assured.version>
+		<rest-assured.version>5.0.2-SNAPSHOT</rest-assured.version>
 
 		<junit-vintage.version>5.8.2</junit-vintage.version>
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>

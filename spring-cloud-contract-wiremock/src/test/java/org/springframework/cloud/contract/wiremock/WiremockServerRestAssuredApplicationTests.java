@@ -22,13 +22,13 @@ import org.junit.jupiter.api.Test;
 import wiremock.org.eclipse.jetty.http.HttpStatus;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +46,7 @@ public class WiremockServerRestAssuredApplicationTests {
 	@Autowired
 	private RequestSpecification documentationSpec;
 
-	@LocalServerPort
+	@Value("${local.server.port}")
 	private int port;
 
 	/*

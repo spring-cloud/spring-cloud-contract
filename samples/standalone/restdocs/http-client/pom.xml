@@ -39,7 +39,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
-		<rest-assured.version>6.0.0-SNAPSHOT</rest-assured.version>
+		<rest-assured.version>5.0.2-SNAPSHOT</rest-assured.version>
 	</properties>
 
 	<dependencies>
