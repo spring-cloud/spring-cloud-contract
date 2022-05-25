@@ -250,10 +250,6 @@
 			<scope>test</scope>
 		</dependency>-->
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-function-compiler</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.mdkt.compiler</groupId>
 			<artifactId>InMemoryJavaCompiler</artifactId>
 			<version>${InMemoryJavaCompiler.version}</version>

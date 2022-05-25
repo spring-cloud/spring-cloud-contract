@@ -45,7 +45,6 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil
-import org.springframework.cloud.function.compiler.java.RuntimeJavaCompiler
 import org.springframework.util.ReflectionUtils
 /**
  * checking the syntax of produced scripts
@@ -53,8 +52,6 @@ import org.springframework.util.ReflectionUtils
 @CompileStatic
 @Commons
 class SyntaxChecker {
-
-	public static final RuntimeJavaCompiler COMPILER = new RuntimeJavaCompiler()
 
 	private static final String[] DEFAULT_IMPORTS = [
 			Contract.name,

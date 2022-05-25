@@ -24,14 +24,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -40,8 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
-import org.springframework.cloud.function.compiler.java.CompilationResult;
-import org.springframework.cloud.function.compiler.java.RuntimeJavaCompiler;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -65,7 +74,7 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 
 	private static final Pattern CLASS_PATTERN = Pattern.compile(".+?class (.+?)( |\\{).+?", Pattern.DOTALL);
 
-	private static final RuntimeJavaCompiler COMPILER = new RuntimeJavaCompiler();
+	private static final JavaCompiler COMPILER = ToolProvider.getSystemJavaCompiler();
 
 	public static Collection<Contract> convertAsCollection(File rootFolder, String dsl) {
 		ClassLoader classLoader = ContractVerifierDslConverter.class.getClassLoader();
@@ -128,12 +137,6 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 		Thread.currentThread().setContextClassLoader(urlCl);
 	}
 
-	private static GroovyShell groovyShell() {
-		CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
-		compilerConfiguration.setSourceEncoding("UTF-8");
-		return new GroovyShell(ContractVerifierDslConverter.class.getClassLoader(), compilerConfiguration);
-	}
-
 	private static Object toObject(ClassLoader cl, File rootFolder, File dsl) throws IOException {
 		if (isJava(dsl)) {
 			try {
@@ -166,18 +169,35 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 
 	private static Constructor<?> classConstructor(File dsl)
 			throws IllegalAccessException, IOException, NoSuchMethodException {
-		String classText = Files.lines(Paths.get(dsl.getAbsolutePath())).collect(Collectors.joining("\n"));
-		String fqn = fqn(classText);
-		CompilationResult compilationResult = COMPILER.compile(fqn, classText);
-		if (!compilationResult.wasSuccessful()) {
-			throw new IllegalStateException("Exceptions occurred while trying to compile the file "
-					+ compilationResult.getCompilationMessages());
+		try (StandardJavaFileManager fileManager = COMPILER.getStandardFileManager(null, null, null)) {
+			try (Stream<String> lines = Files.lines(Paths.get(dsl.getAbsolutePath()))) {
+				String classText = lines.collect(Collectors.joining("\n"));
+				String fqn = fqn(classText);
+				Path directory = Files.createTempDirectory(fqn);
+				fileManager.setLocation(StandardLocation.CLASS_OUTPUT, List.of(directory.toFile()));
+				// Compile the file
+				DiagnosticCollector<Object> diagnostics = new DiagnosticCollector<>();
+				JavaCompiler.CompilationTask task = COMPILER.getTask(null, fileManager, diagnostics, null, null,
+						fileManager.getJavaFileObjectsFromFiles(List.of(dsl)));
+				boolean success = task.call();
+				if (!success) {
+					throw new IllegalStateException("Exceptions occurred while trying to compile the file \n"
+							+ diagnostics.getDiagnostics().stream()
+									.map(d -> "Error " + d.getMessage(Locale.getDefault()) + "on line "
+											+ d.getLineNumber() + " in " + d.getSource())
+									.collect(Collectors.joining("\n")));
+				}
+				try {
+					Class<?> clazz = ClassUtils.forName(fqn, null);
+					Constructor<?> constructor = clazz.getDeclaredConstructor();
+					constructor.setAccessible(true);
+					return constructor;
+				}
+				catch (ClassNotFoundException e) {
+					throw new IllegalStateException("Class with name [" + fqn + "] not found");
+				}
+			}
 		}
-		Class<?> clazz = compilationResult.getCompiledClasses().stream().filter(it -> it.getName().equals(fqn))
-				.findFirst().orElseThrow(() -> new IllegalStateException("Class with name [" + fqn + "] not found"));
-		Constructor<?> constructor = clazz.getDeclaredConstructor();
-		constructor.setAccessible(true);
-		return constructor;
 	}
 
 	private static boolean isJava(File dsl) {

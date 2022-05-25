@@ -32,7 +32,6 @@
 		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
 		<spring-cloud-consul.version>4.0.0-SNAPSHOT</spring-cloud-consul.version>
 		<spring-cloud-commons.version>4.0.0-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-functiondonotreplace.version>3.0.6.RELEASE</spring-cloud-functiondonotreplace.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.2.11</cglib.version>
 		<spock-spring.version>2.2-M1-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
@@ -100,25 +99,6 @@
 				<version>${rest-assured.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-function-compiler</artifactId>
-				<version>${spring-cloud-functiondonotreplace.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-function-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.maven</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.eclipse.aether</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel.springboot</groupId>
