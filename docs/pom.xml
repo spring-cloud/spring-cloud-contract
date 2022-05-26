@@ -20,6 +20,8 @@
 		<maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
 		<configprops.inclusionPattern>stubrunner.*|wiremock.*|</configprops.inclusionPattern>
 		<upload-docs-zip.phase>deploy</upload-docs-zip.phase>
+		<!-- Don't upload docs jar to central / repo.spring.io -->
+		<maven-deploy-plugin-default.phase>none</maven-deploy-plugin-default.phase>
 		<!-- Aligned with Groovy in SC-Build -->
 		<groovy.version>2.5.14</groovy.version>
 	</properties>
