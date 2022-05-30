@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin' # See 'Supported distributions' for available options
-        java-version: 1.8
+        java-version: 8
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
