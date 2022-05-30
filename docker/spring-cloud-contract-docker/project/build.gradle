@@ -27,6 +27,7 @@ Map<String, EnvVar> envVars = [
 		REPO_WITH_BINARIES_URL: new EnvVar("URL of your Artifact Manager (defaults to the default URL of https://jfrog.com/artifactory/[Artifactory] when running locally)", "http://localhost:8081/artifactory/libs-release-local"),
 		REPO_WITH_BINARIES_USERNAME: new EnvVar("(optional) Username when the Artifact Manager is secured", "admin"),
 		REPO_WITH_BINARIES_PASSWORD: new EnvVar("(optional) Password when the Artifact Manager is secured", "password"),
+		REPO_ALLOW_INSECURE_PROTOCOL: new EnvVar("(optional) If <true> allows to publish artifacts to Artifact Manager over insecure HTTP", "false"),
 		PUBLISH_ARTIFACTS: new EnvVar("If set to `true`, publishes the artifact to binary storage", "true"),
 		PUBLISH_ARTIFACTS_OFFLINE: new EnvVar("If set to `true`, publishes the artifacts to local m2", "false"),
 		EXTERNAL_CONTRACTS_GROUP_ID: new EnvVar("Group ID of the project with contracts", "com.example"),
@@ -41,6 +42,8 @@ Map<String, EnvVar> envVars = [
 		EXTERNAL_CONTRACTS_WORK_OFFLINE: new EnvVar("If set to `true`, retrieves the artifact with contracts from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path", "false"),
 		PUBLISH_STUBS_TO_SCM: new EnvVar("If set to `true` will run the task to publish stubs to scm", false),
 		MESSAGING_TYPE: new EnvVar("Type of messaging. Can be either [rabbit] or [kafka].", ""),
+		DEBUG: new EnvVar("(Docker Image only) Applicable for Docker Image - turns on debug mode for the Gradle build", "false"),
+		ADDITIONAL_FLAGS: new EnvVar("(Docker Image only) Additional flags to be passed to the Gradle build", ""),
 ]
 
 group = getProp(envVars, "PROJECT_GROUP") ?: 'com.example'
@@ -137,7 +140,7 @@ contracts {
 	baseClassForTests = "contracts.ContractTestsBase"
 	testMode = "EXPLICIT"
 	stubsSuffix = getProp(envVars, "PRODUCER_STUBS_CLASSIFIER") ?: "stubs"
-	failOnNoContracts = getProp(envVars, "FAIL_ON_NO_CONTRACTS") ?: false
+	failOnNoContracts = Boolean.parseBoolean(getProp(envVars, "FAIL_ON_NO_CONTRACTS") ?: "false")
 	if (getProp(envVars, "EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
 		logger.
 				lifecycle("Will use an artifact with contracts [${getProp(envVars, "EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp(envVars, "EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
@@ -160,7 +163,7 @@ contracts {
 			delegate.version = getProp(envVars, "EXTERNAL_CONTRACTS_VERSION") ?: "+"
 		}
 		contractsMode = Boolean.
-				parseBoolean(getProp(envVars, "EXTERNAL_CONTRACTS_WORK_OFFLINE").toString()) ? "LOCAL" : "REMOTE"
+				parseBoolean(getProp(envVars, "EXTERNAL_CONTRACTS_WORK_OFFLINE")) ? "LOCAL" : "REMOTE"
 	}
 	else {
 		logger.lifecycle("Will use contracts from the mounted [/contracts] folder")
@@ -187,22 +190,26 @@ test {
 }
 
 publishing {
-	repositories {
-		maven {
-			url getProp(envVars, 'REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
-			credentials {
-				username getProp(envVars, 'REPO_WITH_BINARIES_USERNAME').toString() ?: 'admin'
-				password getProp(envVars, 'REPO_WITH_BINARIES_PASSWORD').toString() ?: 'password'
-			}
+	publications {
+		maven(MavenPublication) {
+			artifact verifierStubsJar
 		}
 	}
-	publications {
+	repositories {
+		maven {
+			allowInsecureProtocol Boolean.parseBoolean(getProp(envVars, 'REPO_ALLOW_INSECURE_PROTOCOL') ?: "false")
+			url getProp(envVars, 'REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+			credentials {
+				username getProp(envVars, 'REPO_WITH_BINARIES_USERNAME') ?: 'admin'
+				password getProp(envVars, 'REPO_WITH_BINARIES_PASSWORD') ?: 'password'
+			}
+		}
 	}
 }
 
 // explicitly disable artifacts publication
-boolean publishEnabled = Boolean.parseBoolean(getProp(envVars, "PUBLISH_ARTIFACTS").toString() ?: "true")
-boolean publishOffline = Boolean.parseBoolean(getProp(envVars, "PUBLISH_ARTIFACTS_OFFLINE").toString() ?: "false")
+boolean publishEnabled = Boolean.parseBoolean(getProp(envVars, "PUBLISH_ARTIFACTS") ?: "true")
+boolean publishOffline = Boolean.parseBoolean(getProp(envVars, "PUBLISH_ARTIFACTS_OFFLINE") ?: "false")
 publish.setEnabled(publishEnabled)
 publishToMavenLocal.setEnabled(publishOffline)
 
@@ -214,11 +221,11 @@ gradle.taskGraph.whenReady { graph ->
 			findAll { it.name.startsWith("publish") && it.name.endsWith("ToMavenLocal") }*.setEnabled(publishOffline)
 }
 
-if (Boolean.parseBoolean(getProp(envVars, "PUBLISH_STUBS_TO_SCM").toString())) {
+if (Boolean.parseBoolean(getProp(envVars, "PUBLISH_STUBS_TO_SCM") ?: "false")) {
 	publish.dependsOn("publishStubsToScm")
 }
 
-Object getProp(Map<String, EnvVar> envVars, String propName) {
+String getProp(Map<String, EnvVar> envVars, String propName) {
 	if (!envVars.containsKey(propName)) {
 		throw new IllegalStateException("You've referenced a property with name [${propName}] but it's not in the list of accepatble props ${envVars.keySet()}")
 	}
