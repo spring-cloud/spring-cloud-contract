@@ -43,7 +43,7 @@ jobs:
       #    project uses a compiled language
 
       - run: |
-           ./mvnw clean install -B -U -Pspring
+           ./mvnw clean install -B -U -Pspring -DskipTests
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
