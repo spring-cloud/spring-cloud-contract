@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ARG SDKMAN_JAVA_INSTALLATION=8.0.292.hs-adpt
+ARG SDKMAN_JAVA_INSTALLATION=17.0.1-tem
 
 LABEL Author="Marcin Grzejszczak <mgrzejszczak@pivotal.io>"
 LABEL Author="Bastian Doetsch <bdoetsch@vmware.com>"
