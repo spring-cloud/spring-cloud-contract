@@ -33,6 +33,6 @@
 :samples_branch: 3.1.x
 :samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/{samples_branch}
 :samples_code: https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/
-:doc_samples: {samples_code}/wiremock-jetty
+:doc_samples: {samples_code}/wiremock-for-contract-docs
 :wiremock_tests: {core_path}/spring-cloud-contract-wiremock
 :introduction_url: {core_path}
