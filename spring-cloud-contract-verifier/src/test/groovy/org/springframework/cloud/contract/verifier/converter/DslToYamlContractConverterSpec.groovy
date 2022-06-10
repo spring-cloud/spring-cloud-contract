@@ -595,4 +595,77 @@ class DslToYamlContractConverterSpec extends Specification {
 							type: YamlContract.TestMatcherType.by_null)
 			]
 	}
+
+	def "should convert rest DSL to YAML with save priority property"() {
+		given:
+			List<Contract> contracts = [Contract.make {
+				priority (1)
+				name "Account creating without sign"
+				request {
+					method POST()
+					urlPath("/account")
+					headers {
+						contentType(applicationJson())
+						header("userId", anyNonBlankString())
+						header("sign", "")
+					}
+					body(
+							"number": anyNonBlankString(),
+							"currency": "USD",
+							"owner": "owner"
+					)
+				}
+				response {
+					status CREATED()
+					headers {
+						contentType(applicationJson())
+					}
+					body(
+							"id": anyNonBlankString(),
+							"number": "number",
+							"currency": "USD",
+							"owner": "owner",
+							"balance": 0
+					)
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.request.method == 'POST'
+			yamlContract.request.urlPath == '/account'
+			yamlContract.request.matchers.headers == [
+					new YamlContract.KeyValueMatcher(
+							key: "Content-Type", regex: "application/json.*", regexType: YamlContract.RegexType.as_string),
+					new YamlContract.KeyValueMatcher(
+							key: "userId", regex: "^\\s*\\S[\\S\\s]*", regexType: YamlContract.RegexType.as_string)
+			]
+			yamlContract.request.matchers.body == [
+			        new YamlContract.BodyStubMatcher(
+							path: "\$.['number']",
+							type: "by_regex",
+							value: "^\\s*\\S[\\S\\s]*",
+							regexType: 'as_string'
+					)
+			]
+			yamlContract.response.status == 201
+			yamlContract.response.headers == [
+			        "Content-Type": "application/json"
+			]
+			yamlContract.response.matchers.headers == [
+			        new YamlContract.TestHeaderMatcher(
+							key: "Content-Type", regex: "application/json.*", regexType: YamlContract.RegexType.as_string)
+			]
+			yamlContract.response.matchers.body == [
+			        new YamlContract.BodyTestMatcher(
+							path: "\$.['id']",
+							type: "by_regex",
+							value: "^\\s*\\S[\\S\\s]*",
+							regexType: "as_string"
+					)
+			]
+			yamlContract.priority == 1
+	}
 }

@@ -101,6 +101,7 @@ class ContractsToYaml {
 			yamlContract.description = contract.getDescription();
 			yamlContract.label = contract.getLabel();
 			yamlContract.metadata = contract.getMetadata();
+			yamlContract.priority = contract.getPriority();
 			request(contract, yamlContract);
 			response(yamlContract, contract);
 			input(contract, yamlContract);
