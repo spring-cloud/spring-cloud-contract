@@ -37,14 +37,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<<<<<<< HEAD
 		<java.version>17</java.version>
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
 		<rest-assured.version>5.0.2-SNAPSHOT</rest-assured.version>
-=======
-		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>3.1.4-SNAPSHOT</spring-cloud-contract.version>
->>>>>>> 3.1.x
 	</properties>
 
 	<dependencies>
