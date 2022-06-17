@@ -16,24 +16,22 @@
 
 package org.springframework.cloud.contract.wiremock.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import static java.util.Arrays.asList;
 
 import com.github.tomakehurst.wiremock.common.BinaryFile;
 import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
 import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.common.TextFile;
-
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-
-import static java.util.Arrays.asList;
 
 /**
  * @author Dave Syer
@@ -111,10 +109,12 @@ public class ResourcesFileSource implements FileSource {
 			try {
 				UrlResource uri = new UrlResource(resource.getUri());
 				if (uri.exists()) {
-					return resource.getBinaryFileNamed(name);
+					Resource relativeResource = uri.createRelative(name);
+					if (relativeResource.exists()) {
+						return resource.getBinaryFileNamed(name);
+					}
 				}
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				// Ignore
 			}
 		}
@@ -147,8 +147,9 @@ public class ResourcesFileSource implements FileSource {
 		for (FileSource resource : this.sources) {
 			try {
 				UrlResource uri = new UrlResource(resource.child(subDirectoryName).getUri());
-				if (uri.createRelative(subDirectoryName).exists()) {
-					childSources.add(resource.child(subDirectoryName));
+				if (uri.exists()) {
+					FileSource child = resource.child(subDirectoryName);
+					childSources.add(child);
 				}
 			}
 			catch (IOException e) {
