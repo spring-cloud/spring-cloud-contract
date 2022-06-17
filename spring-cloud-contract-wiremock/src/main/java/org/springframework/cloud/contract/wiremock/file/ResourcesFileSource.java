@@ -111,10 +111,12 @@ public class ResourcesFileSource implements FileSource {
 			try {
 				UrlResource uri = new UrlResource(resource.getUri());
 				if (uri.exists()) {
-					return resource.getBinaryFileNamed(name);
+					Resource relativeResource = uri.createRelative(name);
+					if (relativeResource.exists()) {
+						return resource.getBinaryFileNamed(name);
+					}
 				}
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				// Ignore
 			}
 		}
@@ -147,8 +149,9 @@ public class ResourcesFileSource implements FileSource {
 		for (FileSource resource : this.sources) {
 			try {
 				UrlResource uri = new UrlResource(resource.child(subDirectoryName).getUri());
-				if (uri.createRelative(subDirectoryName).exists()) {
-					childSources.add(resource.child(subDirectoryName));
+				if (uri.exists()) {
+					FileSource child = resource.child(subDirectoryName);
+					childSources.add(child);
 				}
 			}
 			catch (IOException e) {
