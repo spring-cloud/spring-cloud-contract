@@ -38,6 +38,7 @@ import static java.util.Arrays.asList;
 /**
  * @author Dave Syer
  * @author Pei-Tang Huang
+ * @author Hunhee Jung
  */
 public class ResourcesFileSource implements FileSource {
 
@@ -116,7 +117,8 @@ public class ResourcesFileSource implements FileSource {
 						return resource.getBinaryFileNamed(name);
 					}
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				// Ignore
 			}
 		}
