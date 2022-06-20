@@ -43,7 +43,9 @@ class RestAssuredGiven implements Given, BodyMethodVisitor, RestAssuredAcceptor 
 				.addAll(Arrays.asList(new MockMvcHeadersGiven(blockBuilder), new MockMvcCookiesGiven(blockBuilder),
 						new MockMvcBodyGiven(blockBuilder, generatedClassMetaData, bodyParser),
 						new JavaMultipartGiven(blockBuilder, generatedClassMetaData, bodyParser),
-						new SpockMockMvcMultipartGiven(blockBuilder, generatedClassMetaData, bodyParser)));
+						new SpockMockMvcMultipartGiven(blockBuilder, generatedClassMetaData, bodyParser),
+						new SpockExplicitMultipartGiven(blockBuilder, generatedClassMetaData, bodyParser),
+						new SpockWebTestClientMultipartGiven(blockBuilder, generatedClassMetaData, bodyParser)));
 	}
 
 	@Override

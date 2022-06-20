@@ -95,8 +95,15 @@ abstract class BaseWireMockStubStrategy {
 	/**
 	 * For the given {@link ContentType} returns the Boolean version of the body.
 	 */
-	String parseBody(Boolean value, ContentType contentType) {
-		return value.toString();
+	Boolean parseBody(Boolean value, ContentType contentType) {
+		return value;
+	}
+
+	/**
+	 * For the given {@link ContentType} returns the Number version of the body.
+	 */
+	Number parseBody(Number value, ContentType contentType) {
+		return value;
 	}
 
 	/**
@@ -155,6 +162,15 @@ abstract class BaseWireMockStubStrategy {
 			}
 			else if (l instanceof List) {
 				result.add(parseBody((List<?>) l, contentType));
+			}
+			else if (l instanceof Boolean) {
+				result.add(parseBody((Boolean) l, contentType));
+			}
+			else if (l instanceof Number) {
+				result.add(parseBody((Number) l, contentType));
+			}
+			else if (l == null) {
+				result.add(null);
 			}
 			else {
 				result.add(parseBody(l, contentType));
