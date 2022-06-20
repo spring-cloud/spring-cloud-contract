@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "seq": 1,
+      "title": "[AAA] BBBBBBBBBBBBBBB",
+      "content": "CCCCCCCCCCCCCCCCCCCCCCCCC",
+      "regDate": "2022/06/17"
+    },
+    {
+      "seq": 2,
+      "title": "[BBB] CCCCCCCCCCCCCCCCCCCCCCC",
+      "content": "DDDDDDDDDDDDDDDDDDD",
+      "regDate": "2022/06/18"
+    }
+  ]
+}
+
