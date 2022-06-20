@@ -1659,7 +1659,7 @@ World.'''"""
 
 	}
 
-	@Issue('180')
+	@Issue(['180', '1667'])
 	def 'should generate proper test code when having multipart parameters with named as map with #methodBuilderName'() {
 		given:
 			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
@@ -1699,6 +1699,15 @@ World.'''"""
 			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }
 			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }
 			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
+            "spock-mockmvc"   | {
+                configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.MOCKMVC
+            }
+            "spock-explicit"  | {
+                configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.EXPLICIT
+            }
+            "spock-webclient" | {
+                configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.WEBTESTCLIENT
+            }
 	}
 
 	@Issue('#216')

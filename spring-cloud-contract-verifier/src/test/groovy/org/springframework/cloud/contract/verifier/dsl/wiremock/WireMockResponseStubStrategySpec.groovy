@@ -32,68 +32,109 @@ class WireMockResponseStubStrategySpec extends Specification {
 
 	def "should not quote floating point numbers"() {
 		given:
-			def irrelevantStatus = 200
-			def contract = Contract.make {
-				request {
-					method GET()
-					url "/foo"
-				}
-				response {
-					status irrelevantStatus
-					body([
-							value: 1.5
-					])
-				}
+		def irrelevantStatus = 200
+		def contract = Contract.make {
+			request {
+				method GET()
+				url "/foo"
 			}
+			response {
+				status irrelevantStatus
+				body([
+						value: 1.5
+				])
+			}
+		}
 		when:
-			SingleContractMetadata metadata = Stub()
-			metadata.evaluatedOutputStubContentType >> ContentType.JSON
-			def subject = new WireMockResponseStubStrategy(contract, metadata) {
-				@Override
-				Function parsingClosureForContentType() {
-					return MapConverter.JSON_PARSING_FUNCTION
-				}
+		SingleContractMetadata metadata = Stub()
+		metadata.evaluatedOutputStubContentType >> ContentType.JSON
+		def subject = new WireMockResponseStubStrategy(contract, metadata) {
+			@Override
+			Function parsingClosureForContentType() {
+				return MapConverter.JSON_PARSING_FUNCTION
 			}
-			def content = subject.buildClientResponseContent()
+		}
+		def content = subject.buildClientResponseContent()
 		then:
-			'{"value":1.5}' == content.body
+		'{"value":1.5}' == content.body
 	}
 
 	@Issue("#468")
 	def "should not quote generated numbers"() {
 		given:
-			def irrelevantStatus = 200
-			def contract = Contract.make {
-				request {
-					method GET()
-					url "/foo"
-				}
-				response {
-					status irrelevantStatus
-					body([
-							number     : anyNumber(),
-							integer    : anyInteger(),
-							positiveInt: anyPositiveInt(),
-							double     : anyDouble(),
-					])
-				}
+		def irrelevantStatus = 200
+		def contract = Contract.make {
+			request {
+				method GET()
+				url "/foo"
 			}
+			response {
+				status irrelevantStatus
+				body([
+						number     : anyNumber(),
+						integer    : anyInteger(),
+						positiveInt: anyPositiveInt(),
+						double     : anyDouble(),
+				])
+			}
+		}
 		when:
-			SingleContractMetadata metadata = Stub()
-			metadata.evaluatedOutputStubContentType >> ContentType.JSON
-			def subject = new WireMockResponseStubStrategy(contract, metadata) {
-				@Override
-				Function parsingClosureForContentType() {
-					return MapConverter.JSON_PARSING_FUNCTION
-				}
+		SingleContractMetadata metadata = Stub()
+		metadata.evaluatedOutputStubContentType >> ContentType.JSON
+		def subject = new WireMockResponseStubStrategy(contract, metadata) {
+			@Override
+			Function parsingClosureForContentType() {
+				return MapConverter.JSON_PARSING_FUNCTION
 			}
-			def content = subject.buildClientResponseContent()
+		}
+		def content = subject.buildClientResponseContent()
 		then:
-			Map body = new JsonSlurper().parseText(content.body) as Map
-			assert body.get("number") instanceof Number
-			assert body.get("integer") instanceof Integer
-			assert body.get("positiveInt") instanceof Integer
-			assert body.get("double") instanceof BigDecimal
+		Map body = new JsonSlurper().parseText(content.body) as Map
+		assert body.get("number") instanceof Number
+		assert body.get("integer") instanceof Integer
+		assert body.get("positiveInt") instanceof Integer
+		assert body.get("double") instanceof BigDecimal
+	}
+
+	@Issue("#1656")
+	def "should not quote numbers, booleans, and null inside arrays"() {
+		given:
+		def irrelevantStatus = 200
+		def contract = Contract.make {
+			request {
+				method GET()
+				url "/foo"
+			}
+			response {
+				status irrelevantStatus
+				body([
+						anyPositiveInt(),
+						anyInteger(),
+						true,
+						anyNumber(),
+						null,
+						"value"
+				])
+			}
+		}
+		when:
+		SingleContractMetadata metadata = Stub()
+		metadata.evaluatedOutputStubContentType >> ContentType.JSON
+		def subject = new WireMockResponseStubStrategy(contract, metadata) {
+			@Override
+			Function parsingClosureForContentType() {
+				return MapConverter.JSON_PARSING_FUNCTION
+			}
+		}
+		def content = subject.buildClientResponseContent()
+		then:
+		List body = new JsonSlurper().parseText(content.body) as List
+		assert body.getAt(0) instanceof Integer
+		assert body.getAt(1) instanceof Integer
+		assert body.getAt(2) instanceof Boolean
+		assert body.getAt(3) instanceof Number
+		assert body.getAt(4) == null
+		assert body.getAt(5) instanceof String
 	}
 
 	@Shared def patternsContract = Contract.make {
@@ -246,29 +287,29 @@ class WireMockResponseStubStrategySpec extends Specification {
 
 	def "should convert patterns to proper value"() {
 		when:
-			def subject = new WireMockRequestStubStrategy(patternsContract, null) {
-				@Override
-				protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
-					return ContentType.JSON
-				}
+		def subject = new WireMockRequestStubStrategy(patternsContract, null) {
+			@Override
+			protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
+				return ContentType.JSON
 			}
-			subject.buildClientRequestContent()
+		}
+		subject.buildClientRequestContent()
 		then:
-			noExceptionThrown()
+		noExceptionThrown()
 		when:
-			def response = new WireMockResponseStubStrategy(patternsContract, null) {
-				@Override
-				protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
-					return ContentType.JSON
-				}
-
-				@Override
-				Function parsingClosureForContentType() {
-					return MapConverter.JSON_PARSING_FUNCTION
-				}
+		def response = new WireMockResponseStubStrategy(patternsContract, null) {
+			@Override
+			protected ContentType contentType(SingleContractMetadata singleContractMetadata) {
+				return ContentType.JSON
 			}
-			response.buildClientResponseContent()
+
+			@Override
+			Function parsingClosureForContentType() {
+				return MapConverter.JSON_PARSING_FUNCTION
+			}
+		}
+		response.buildClientResponseContent()
 		then:
-			noExceptionThrown()
+		noExceptionThrown()
 	}
 }
