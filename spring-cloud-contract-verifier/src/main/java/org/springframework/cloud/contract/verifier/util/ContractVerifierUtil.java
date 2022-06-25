@@ -18,10 +18,8 @@ package org.springframework.cloud.contract.verifier.util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +33,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StreamUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,9 +76,14 @@ public final class ContractVerifierUtil {
 			if (url == null) {
 				throw new FileNotFoundException(relativePath);
 			}
-			return Files.readAllBytes(Paths.get(url.toURI()));
+			try (InputStream inputStream = url.openStream()) {
+				if (inputStream == null) {
+					throw new FileNotFoundException(relativePath);
+				}
+				return StreamUtils.copyToByteArray(inputStream);
+			}
 		}
-		catch (IOException | URISyntaxException ex) {
+		catch (IOException ex) {
 			throw new IllegalStateException(ex);
 		}
 	}
