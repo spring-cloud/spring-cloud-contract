@@ -112,7 +112,7 @@ public class ResourcesFileSource implements FileSource {
 			try {
 				UrlResource uri = new UrlResource(resource.getUri());
 				if (uri.exists()) {
-					Resource relativeResource = uri.createRelative(name);
+					Resource relativeResource = new UrlResource(uri.getURI() + "/" + name);
 					if (relativeResource.exists()) {
 						return resource.getBinaryFileNamed(name);
 					}
