@@ -1,4 +1,4 @@
-// tag:repos[]
+// tag::repos[]
 pluginManagement {
     repositories {
         mavenLocal()
@@ -7,7 +7,7 @@ pluginManagement {
         maven { url "https://repo.spring.io/release" }
         gradlePluginPortal()
     }
-// end:repos[]
+// end::repos[]
     plugins {
         id "org.springframework.boot" version "${bootVersion}"
         id "io.spring.dependency-management" version "1.0.10.RELEASE"

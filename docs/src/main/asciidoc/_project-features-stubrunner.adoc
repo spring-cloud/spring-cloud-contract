@@ -23,9 +23,9 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Gradle
+.Gradle (`settings.xml`)
 ----
-include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
+include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent=0]
 ----
 ====
 

@@ -872,14 +872,7 @@ set a `metaData` entry in the Pact file with the `sentTo` key equal to the desti
 === Pact Contract
 
 Spring Cloud Contract can read the Pact JSON definition. You can place the file in the
-`src/test/resources/contracts` folder. Remember to put the `spring-cloud-contract-pact` dependency to your classpath. The following example shows such a Pact contract:
-
-====
-[source,javascript,indent=0]
-----
-include::{standalone_pact_path}/http-server/src/test/resources/contracts/pact/shouldMarkClientAsFraud.json[indent=0]
-----
-====
+`src/test/resources/contracts` folder. Remember to put the `spring-cloud-contract-pact` dependency to your classpath.
 
 [[how-to-use-pact-broker-pact-for-producers]]
 === Pact for Producers
@@ -893,13 +886,13 @@ Maven and Gradle:
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-include::{standalone_pact_path}/http-server/pom.xml[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/producer_pact/pom.xml[tags=pact_dependency,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-include::{standalone_pact_path}/http-server/build.gradle[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/producer_pact/build.gradle[tags=pact_dependency,indent=0]
 ----
 ====
 
@@ -976,13 +969,13 @@ Maven and Gradle:
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-include::{standalone_pact_path}/http-client/pom.xml[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/consumer_pact_stubrunner/pom.xml[tags=pact_dependency,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-include::{standalone_pact_path}/http-client/build.gradle[tags=pact_dependency,indent=0]
+include::{standalone_pact_path}/consumer_pact_stubrunner/build.gradle[tags=pact_dependency,indent=0]
 ----
 ====
 
