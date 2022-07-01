@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2013-2020 the original author or authors.
  *
@@ -27,7 +26,6 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierUtil;
 
-// tag::class[]
 class contract_multipart implements Supplier<Collection<Contract>> {
 
 	private static Map<String, DslProperty> namedProps(Request r) {

@@ -1876,7 +1876,7 @@ The XPath expression to select the email address is
 WARNING: Beware, as the unqualified expressions (`/customer/email/text()` or `*/[local-name()='customer' and namespace-uri()='http://demo.com/customer']/email/text()`)
 result in `""`. Even the child elements have to be referenced with the `local-name` syntax.
 
-====== General Namespaced Node Expression Syntax
+===== General Namespaced Node Expression Syntax
 - Node using qualified namespace:
 ```
 /<node-name>

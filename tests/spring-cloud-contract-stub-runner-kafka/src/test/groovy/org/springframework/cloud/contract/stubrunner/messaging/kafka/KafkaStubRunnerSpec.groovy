@@ -31,6 +31,7 @@ import spock.util.concurrent.PollingConditions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.context.annotation.Bean
@@ -278,4 +279,63 @@ class KafkaStubRunnerSpec extends Specification {
             return this.output
         }
     }
+
+	Contract dsl =
+			// tag::sample_dsl[]
+			Contract.make {
+				label 'return_book_1'
+				input {
+					triggeredBy('bookReturnedTriggered()')
+				}
+				outputMessage {
+					sentTo('output')
+					body('''{ "bookName" : "foo" }''')
+					headers {
+						header('BOOK-NAME', 'foo')
+					}
+				}
+			}
+	// end::sample_dsl[]
+
+	Contract dsl2 =
+			// tag::sample_dsl_2[]
+			Contract.make {
+				label 'return_book_2'
+				input {
+					messageFrom('input')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+				}
+				outputMessage {
+					sentTo('output')
+					body([
+							bookName: 'foo'
+					])
+					headers {
+						header('BOOK-NAME', 'foo')
+					}
+				}
+			}
+	// end::sample_dsl_2[]
+
+	Contract dsl3 =
+			// tag::sample_dsl_3[]
+			Contract.make {
+				label 'delete_book'
+				input {
+					messageFrom('delete')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+					assertThat('bookWasDeleted()')
+				}
+			}
+	// end::sample_dsl_3[]
 }

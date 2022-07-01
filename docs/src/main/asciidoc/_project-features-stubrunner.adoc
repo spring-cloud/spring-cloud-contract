@@ -16,7 +16,6 @@ You can add the additional snapshot repository to your build file to use snapsho
 versions, which are automatically uploaded after every successful build, as follows:
 
 ====
-////
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
@@ -24,11 +23,10 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Gradle
+.Gradle (`settings.xml`)
 ----
-include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
+include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent=0]
 ----
-////
 ====
 
 [[features-stub-runner-publishing-stubs-as-jars]]
@@ -43,7 +41,6 @@ it if you want to.
 The following example shows how to publish stubs as jars:
 
 ====
-////
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
@@ -56,15 +53,12 @@ include::{samples_url}/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
 <!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml -->
 include::{samples_url}/producer_with_restdocs/src/assembly/stub.xml[indent=0]
 ----
-////
 
-////
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
 ----
-////
 ====
 
 [[features-stub-runner-core]]
@@ -250,23 +244,19 @@ example shows how to do so:
 
 .WireMockHttpServerStubConfigurer implementation
 ====
-////
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=wireMockHttpServerStubConfigurer]
 ----
-////
 ====
 
 You can then reuse it with the `@AutoConfigureStubRunner` annotation, as follows:
 
 ====
-////
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=annotation]
 ----
-////
 ====
 
 Whenever an HTTPS port is found, it takes precedence over the HTTP port.
@@ -382,12 +372,10 @@ Stub Runner comes with a JUnit rule that lets you can download and run stubs for
 group and artifact ID, as the following example shows:
 
 ====
-////
 [source,java,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleJUnitTest.java[tags=classrule]
 ----
-////
 ====
 
 A `StubRunnerExtension` is also available for JUnit 5. `StubRunnerRule` and
@@ -410,18 +398,15 @@ Since the `StubRunnerRule` and `StubRunnerExtension` implement the `StubFinder`,
 you find the started stubs, as the following example shows:
 
 ====
-////
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/main/java/org/springframework/cloud/contract/stubrunner/StubFinder.java[lines=16..-1]
 ----
-////
 ====
 
 The following examples provide more detail about using Stub Runner:
 
 ====
-////
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .Spock
 ----
@@ -439,7 +424,6 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 ----
 include::{stubrunner_core_path}/src/test/java/org/springframework/cloud/contract/stubrunner/junit/StubRunnerJUnit5ExtensionTests.java[tags=extension]
 ----
-////
 ====
 
 See the <<features-stub-runner-common-properties-junit-spring>> for more information on
@@ -470,23 +454,19 @@ When using the `StubRunnerRule` or `StubRunnerExtension`, you can add a stub to 
 and then pass the port for the last downloaded stub. The following example shows how to do so:
 
 ====
-////
 [source,java,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleCustomPortJUnitTest.java[tags=classrule_with_port]
 ----
-////
 ====
 
 For the preceding example, the following test is valid:
 
 ====
-////
 [source,java,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/junit4/StubRunnerRuleCustomPortJUnitTest.java[tags=test_with_port]
 ----
-////
 ====
 
 [[features-stub-runner-rule-spring]]
@@ -501,35 +481,29 @@ If you want to find the URL of your stubbed dependency, you can autowire the `St
 its methods, as follows:
 
 ====
-////
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=test]
 ----
-////
 ====
 
 Doing so depends on the following configuration file:
 
 ====
-////
 [source,yml,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/resources/application-test.yml[tags=test]
 ----
-////
 ====
 
 Instead of using the properties, you can also use the properties inside the `@AutoConfigureStubRunner`.
 The following example achieves the same result by setting values on the annotation:
 
 ====
-////
 [source,groovy,indent=0]
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerSpringCloudAutoConfigurationSpec.groovy[tags=autoconfigure]
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/consul/StubRunnerSpringCloudConsulAutoConfigurationSpec.groovy[tags=autoconfigure]
 ----
-////
 ====
 
 Stub Runner Spring registers environment variables in the following manner
@@ -582,28 +556,6 @@ dependencies and we are telling your application, whenever you use `Feign`, to l
 balanced `RestTemplate` or `DiscoveryClient` directly, to call those stubbed servers
 instead of calling the real Service Discovery tool.
 
-For example, the following test passes:
-
-====
-////
-[source,groovy,indent=0]
-----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerSpringCloudAutoConfigurationSpec.groovy[tags=test]
-----
-////
-====
-
-Note that the preceding example requires the following configuration file:
-
-====
-////
-[source,yml,indent=0]
-----
-include::{stubrunner_core_path}/src/test/resources/application.yml[tags=ids]
-----
-////
-====
-
 [[features-stub-runner-cloud-stubbing-profiles]]
 ===== Test Profiles and Service Discovery
 
@@ -649,9 +601,15 @@ by setting the following system properties or by setting the corresponding envir
 Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
 trigger the messaging labels and to access WireMock servers.
 
-One of the use cases is to run some smoke (end-to-end) tests on a deployed application.
-You can check out the https://github.com/spring-cloud/spring-cloud-pipelines[Spring Cloud Pipelines]
-project for more information.
+[[features-stub-runner-boot-security]]
+==== Stub Runner Boot Security
+
+The Stub Runner Boot application is not secured by design - securing it would require to add security to all
+stubs even if they don't actually require it. Since this is a testing utility - the server is **not intended**
+to be used in production environments.
+
+IMPORTANT: It is expected that **only a trusted client** has access to the Stub Runner Boot server. You should not
+run this application as a Fat Jar or a link:docker-project.html#docker-stubrunner[Docker Image] in untrusted locations.
 
 [[features-stub-runner-boot-server]]
 ==== Stub Runner Server
@@ -739,12 +697,10 @@ For Messaging, Stub Runner Boot makes the following endpoints available:
 
 The following example shows typical usage of Stub Runner Boot:
 
-////
 [source,groovy,indent=0]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/server/StubRunnerBootSpec.groovy[tags=boot_usage]
 ----
-////
 
 [[features-stub-runner-boot-service-discovery]]
 ==== Stub Runner Boot with Service Discovery
@@ -759,33 +715,11 @@ of testing scenarios.
 
 The problem with this approach is that, if you use microservices, you most likely also
 use a service discovery tool. Stub Runner Boot lets you solve this issue by starting the
-required stubs and registering them in a service discovery tool. Consider the following example of
-such a setup with Eureka (assume that Eureka is already running):
-
-====
-////
-[source,java,indent=0]
-----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka]
-----
-////
-====
-
-We want to start a Stub Runner Boot server (`@EnableStubRunnerServer`), enable the Eureka client (`@EnableEurekaClient`),
-and have the stub runner feature turned on (`@AutoConfigureStubRunner`).
+required stubs and registering them in a service discovery tool.
 
 Now assume that we want to start this application so that the stubs get automatically registered.
 We can do so by running the application with `java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar`, where
-`${SYSTEM_PROPS}` contains the following list of properties:
-
-====
-////
-[source,bash,indent=0]
-----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka_args]
-----
-////
-====
+`${SYSTEM_PROPS}`.
 
 That way, your deployed application can send requests to started WireMock servers through service
 discovery. Most likely, points 1 through 3 could be set by default in `application.yml`, because they are not
@@ -862,14 +796,12 @@ The `bar-consumer` consumer can either set the `spring.application.name` or the 
 Alternatively, you can set the test as follows:
 
 ====
-////
 [source,groovy]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerStubsPerConsumerSpec.groovy[tags=test]
 ...
 }
 ----
-////
 ====
 
 Then only the stubs registered under a path that contains `bar-consumer` in its name (that is, those from the
@@ -878,14 +810,12 @@ Then only the stubs registered under a path that contains `bar-consumer` in its 
 You can also set the consumer name explicitly, as follows:
 
 ====
-////
 [source,groovy]
 ----
 include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerStubsPerConsumerWithConsumerNameSpec.groovy[tags=test]
 ...
 }
 ----
-////
 ====
 
 Then only the stubs registered under a path that contains the `foo-consumer` in its name (that is, those from the

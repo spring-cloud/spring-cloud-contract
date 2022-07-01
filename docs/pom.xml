@@ -130,8 +130,7 @@
 									<executable>./build_adocs.sh</executable>
 								</configuration>
 							</execution>
-							<!-- TODO: Remove me -->
-							<!--<execution>
+							<execution>
 								<id>generate-adoc-resources</id>
 								<phase>process-classes</phase>
 								<goals>
@@ -143,7 +142,7 @@
 										<argument>${maven.multiModuleProjectDirectory}/docs</argument>
 									</arguments>
 								</configuration>
-							</execution>-->
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>

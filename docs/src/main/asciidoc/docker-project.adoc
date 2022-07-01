@@ -389,6 +389,11 @@ This section describes how to use Docker on the consumer side to fetch and run s
 We publish a `spring-cloud/spring-cloud-contract-stub-runner` Docker image
 that starts the standalone version of Stub Runner.
 
+[[docker-stubrunner-security]]
+=== Security
+
+Since the Spring Cloud Contract Stub Runner Docker Image uses the standalone version of Stub Runner the same security considerations need to be taken. You can read more about those link:project-features.html#features-stub-runner-boot-security[in this section of the documentation].
+
 [[docker-stubrunner-env-vars]]
 === Environment Variables
 

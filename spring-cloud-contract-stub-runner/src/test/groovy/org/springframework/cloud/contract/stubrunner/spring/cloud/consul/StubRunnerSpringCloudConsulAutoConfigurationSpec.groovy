@@ -49,11 +49,13 @@ import static org.mockito.Mockito.mock
 				"stubrunner.cloud.consul.enabled=true",
 				"stubrunner.cloud.zookeeper.enabled=false",
 				"debug=true"])
+// tag::autoconfigure[]
 @AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
  "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
  "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
 stubsMode = StubRunnerProperties.StubsMode.REMOTE ,
 repositoryRoot = "classpath:m2repo/repository/" )
+// end::autoconfigure[]
 class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 
 	@Autowired
