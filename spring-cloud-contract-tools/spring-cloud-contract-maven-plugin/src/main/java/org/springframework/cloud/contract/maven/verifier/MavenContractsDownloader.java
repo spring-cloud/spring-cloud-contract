@@ -94,7 +94,7 @@ class MavenContractsDownloader {
 	}
 
 	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config, File defaultContractsDir) {
-		String contractsDirFromProp = this.project.getProperties().getProperty(CONTRACTS_DIRECTORY_PROP);
+		String contractsDirFromProp = this.project.getProperties().getProperty(directoryProperty());
 		File downloadedContractsDir = StringUtils.hasText(contractsDirFromProp) ? new File(contractsDirFromProp) : null;
 		// reuse downloaded contracts from another mojo
 		if (downloadedContractsDir != null && downloadedContractsDir.exists()) {
@@ -114,11 +114,20 @@ class MavenContractsDownloader {
 					.createNewInclusionProperties(downloadedContracts);
 			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
 			config.setIncludedRootFolderAntPattern(inclusionProperties.getIncludedRootFolderAntPattern());
-			this.project.getProperties().setProperty(CONTRACTS_DIRECTORY_PROP, downloadedContracts.getAbsolutePath());
+			this.project.getProperties().setProperty(directoryProperty(), downloadedContracts.getAbsolutePath());
 			return downloadedContracts;
 		}
 		this.log.info("Will use contracts provided in the folder [" + defaultContractsDir + "]");
 		return defaultContractsDir;
+	}
+
+	private String directoryProperty() {
+		if (this.contractDependency == null) {
+			return CONTRACTS_DIRECTORY_PROP;
+		}
+		return CONTRACTS_DIRECTORY_PROP + "_" + this.contractDependency.getGroupId() + ":"
+				+ this.contractDependency.getArtifactId() + ":" + this.contractDependency.getVersion() + ":"
+				+ this.contractDependency.getClassifier();
 	}
 
 	private boolean shouldDownloadContracts() {
@@ -126,7 +135,7 @@ class MavenContractsDownloader {
 				|| StringUtils.hasText(this.contractsRepositoryUrl);
 	}
 
-	private ContractDownloader contractDownloader() {
+	ContractDownloader contractDownloader() {
 		return new ContractDownloader(stubDownloader(), stubConfiguration(), this.contractsPath,
 				this.project.getGroupId(), this.project.getArtifactId(), this.project.getVersion());
 	}
