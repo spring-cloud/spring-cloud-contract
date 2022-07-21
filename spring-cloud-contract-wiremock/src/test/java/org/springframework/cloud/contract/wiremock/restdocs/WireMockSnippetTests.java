@@ -41,6 +41,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.restdocs.ManualRestDocumentation;
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
@@ -227,6 +228,11 @@ public class WireMockSnippetTests {
 			@Override
 			public String getContentAsString() {
 				return null;
+			}
+
+			@Override
+			public Collection<ResponseCookie> getCookies() {
+				return Collections.emptySet();
 			}
 		};
 	}
