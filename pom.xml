@@ -46,6 +46,7 @@
 		<junit-vintage.version>5.8.2</junit-vintage.version>
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>4.0.0</groovy.version>
