@@ -2174,4 +2174,68 @@ response:
 			}
 	}
 
+	@Issue("1808")
+	def "should correctly process optional of DslProperty parameters"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method('GET')
+					url("/api/foo")
+					headers {
+						header 'Content-Type': 'application/json'
+						header 'Accept': 'application/json'
+					}
+					body([
+							key1: $(client(optional(anyOf("foo", "bar"))), server("bar")),
+							key2: $(client(optional(anyNonBlankString())), server("bar")),
+							key3: $(client(optional(anyEmail())), server("foo@bar.com")),
+							key4: $(optional(anyNumber()))
+					])
+				}
+				response {
+					status OK()
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body([
+							key1: $(client("bar"), server(optional(anyOf("foo", "bar")))),
+							key2: $(client("bar"), server(optional(anyNonBlankString()))),
+							key3: $(client("foo@bar.com"), server(optional(anyEmail()))),
+							key4: $(optional(anyNumber()))
+					])
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			test.contains('assertThatJson(parsedJson).field("[\'key1\']").matches("(^foo' + endOfLineRegexSymbol + '|^bar' + endOfLineRegexSymbol + ')?")')
+			test.contains('assertThatJson(parsedJson).field("[\'key2\']").matches("(^\\\\s*\\\\S[\\\\S\\\\s]*)?")')
+			test.contains('assertThatJson(parsedJson).field("[\'key3\']").matches("([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6})?")')
+			test.contains('assertThatJson(parsedJson).field("[\'key4\']").matches("(-?(\\\\d*\\\\.\\\\d+|\\\\d+))?")')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder | endOfLineRegexSymbol
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}                                 | '\\$'
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}                                 | '\$'
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                 | '\\$'
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                 | '\$'
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                 | '\$'
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}                                 | '\$'
+	}
 }
