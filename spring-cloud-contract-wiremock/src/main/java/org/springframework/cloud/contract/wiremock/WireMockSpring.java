@@ -32,7 +32,7 @@ import org.springframework.util.ClassUtils;
  * <pre>
  * &#64;ClassRule
  * public static WireMockClassRule wiremock = new WireMockClassRule(
- * 		WireMockSpring.config());
+ * 		WireMockSpring.options());
  * </pre>
  *
  * and then use {@link com.github.tomakehurst.wiremock.client.WireMock} as normal in your
