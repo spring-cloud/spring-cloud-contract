@@ -36,4 +36,17 @@ class ZipCategorySpec extends Specification {
 			}?.text?.trim() == 'test'
 	}
 
+	def 'should not allow malicious traversal'() throws Exception {
+		given:
+			File zipFile = new File(ZipCategorySpec.classLoader.getResource('zip/zip-malicious-traversal.zip').toURI())
+			File tempDir = File.createTempDir()
+			tempDir.deleteOnExit()
+		when:
+			use(ZipCategory) {
+				zipFile.unzipTo(tempDir)
+			}
+		then:
+			Exception e = thrown()
+			e.getCause().getMessage().contains("is trying to leave the target output directory")
+	}
 }
