@@ -130,6 +130,8 @@ include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resource
 ----
 ====
 
+IMPORTANT: It is expected that contracts are coming from a **trusted source**. You should never download nor interact with contracts coming from untrusted locations.
+
 [[getting-started-three-second-tour]]
 == A Three-second Tour
 
