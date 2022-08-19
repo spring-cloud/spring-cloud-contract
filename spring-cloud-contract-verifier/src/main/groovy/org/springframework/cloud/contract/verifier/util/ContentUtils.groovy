@@ -322,7 +322,7 @@ class ContentUtils {
 	}
 
 	protected static Object transformJSONStringValue(OptionalProperty optional, Closure valueProvider) {
-		return String.format(JSON_VALUE_PATTERN_FOR_OPTIONAL, optional.value)
+		return String.format(JSON_VALUE_PATTERN_FOR_OPTIONAL, optional.value())
 	}
 
 	protected static Object transformJSONStringValue(ExecutionProperty property, Closure valueProvider) {

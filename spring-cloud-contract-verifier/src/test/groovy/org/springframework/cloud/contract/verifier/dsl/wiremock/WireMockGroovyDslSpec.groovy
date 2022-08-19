@@ -3130,6 +3130,74 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
+	@Issue("1808")
+	def "should correctly process optional of DslProperty parameters"() {
+		given:
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
+					make {
+						request {
+							method('GET')
+							url("/api/foo")
+							headers {
+								header("Content-Type", "application/json")
+								header("Accept", "application/json")
+							}
+							body(
+								key1: $(client(optional(anyOf("foo", "bar"))), server("bar")),
+								key2: $(client(optional(anyNonBlankString())), server("bar")),
+								key3: $(client(optional(anyEmail())), server("foo@bar.com")),
+								key4: $(optional(anyNumber())),
+							)
+						}
+						response {
+							status OK()
+							body("ok")
+							headers {
+								header 'Content-Type': 'text/plain'
+							}
+						}
+					}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+					toWireMockClientStub()
+		then:
+			AssertionUtil.assertThatJsonsAreEqual('''
+			{
+			  "request" : {
+				"url" : "/api/foo",
+				"method" : "GET",
+				"headers" : {
+					"Content-Type" : {
+						"equalTo" : "application/json"
+					},
+					"Accept" : {
+						"equalTo" : "application/json"
+					}
+				},
+				"bodyPatterns" : [ {
+					"matchesJsonPath" : "$[?(@.['key1'] =~ /(^foo$|^bar$)?/)]"
+				}, {
+					"matchesJsonPath" : "$[?(@.['key2'] =~ /(^\\\\s*\\\\S[\\\\S\\\\s]*)?/)]"
+				}, {
+					"matchesJsonPath" : "$[?(@.['key3'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6})?/)]"
+				}, {
+					"matchesJsonPath" : "$[?(@.['key4'] =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))?/)]"
+				} ]
+			  },
+			  "response" : {
+				"status" : 200,
+				"body" : "ok",
+				"headers" : {
+				  "Content-Type" : "text/plain"
+				},
+				"transformers" : [ "response-template", "foo-transformer" ]
+			  }
+			}
+			''', wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
