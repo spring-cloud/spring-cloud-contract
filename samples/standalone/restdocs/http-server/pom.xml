@@ -24,7 +24,6 @@
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
 		<spring.cloud.contract.verifier.jar.skip>true
 		</spring.cloud.contract.verifier.jar.skip>
-		<rest-assured.version>5.0.2-SNAPSHOT</rest-assured.version>
 	</properties>
 
 	<dependencies>
