@@ -1,15 +1,3 @@
-# Auto Configuration
-org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner=\
-org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration,\
-org.springframework.cloud.contract.stubrunner.spring.cloud.StubRunnerSpringCloudAutoConfiguration,\
-org.springframework.cloud.contract.stubrunner.spring.cloud.loadbalancer.SpringCloudLoadBalancerAutoConfiguration,\
-org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration,\
-org.springframework.cloud.contract.stubrunner.messaging.jms.StubRunnerJmsConfiguration,\
-org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamConfiguration,\
-org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfiguration,\
-org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfiguration,\
-org.springframework.cloud.contract.stubrunner.messaging.StubRunnerStreamsIntegrationAutoConfiguration,\
-org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelConfiguration
 # Test Execution Listeners
 org.springframework.test.context.TestExecutionListener=\
 org.springframework.cloud.contract.stubrunner.provider.wiremock.StubRunnerWireMockTestExecutionListener
