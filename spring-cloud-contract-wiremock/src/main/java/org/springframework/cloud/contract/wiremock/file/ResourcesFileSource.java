@@ -110,6 +110,12 @@ public class ResourcesFileSource implements FileSource {
 	public BinaryFile getBinaryFileNamed(String name) {
 		for (FileSource resource : this.sources) {
 			try {
+				if (resource instanceof ClasspathFileSource) {
+					ClasspathFileSource classpathFileSource = (ClasspathFileSource) resource;
+					if (classpathFileSource.exists() && compressedResource(classpathFileSource.getUri())) {
+						return classpathFileSource.getBinaryFileNamed(name);
+					}
+				}
 				UrlResource uri = new UrlResource(resource.getUri());
 				if (uri.exists()) {
 					Resource relativeResource = new UrlResource(uri.getURI() + "/" + name);
@@ -117,9 +123,10 @@ public class ResourcesFileSource implements FileSource {
 						return resource.getBinaryFileNamed(name);
 					}
 				}
-			}
-			catch (IOException e) {
-				// Ignore
+			} catch (RuntimeException e) {
+				// Ignore - find next stub file
+			} catch (IOException e) {
+				// Ignore - find next stub file
 			}
 		}
 		throw new IllegalStateException("Cannot create file for " + name);
