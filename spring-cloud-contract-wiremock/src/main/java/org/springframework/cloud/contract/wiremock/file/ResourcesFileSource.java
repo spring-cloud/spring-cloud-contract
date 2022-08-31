@@ -48,7 +48,7 @@ public class ResourcesFileSource implements FileSource {
 		this(toSources(resources));
 	}
 
-	private ResourcesFileSource(FileSource... sources) {
+	protected ResourcesFileSource(FileSource... sources) {
 		this.sources = sources;
 	}
 
