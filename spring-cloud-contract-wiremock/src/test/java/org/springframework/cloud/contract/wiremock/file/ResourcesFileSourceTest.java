@@ -16,25 +16,23 @@
 
 package org.springframework.cloud.contract.wiremock.file;
 
-import com.github.tomakehurst.wiremock.common.BinaryFile;
-import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
-import com.github.tomakehurst.wiremock.common.FileSource;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import com.github.tomakehurst.wiremock.common.BinaryFile;
+import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
+import com.github.tomakehurst.wiremock.common.FileSource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@ExtendWith(MockitoExtension.class)
 class ResourcesFileSourceTest {
 
 	@DisplayName("find all files in the multiple files directories.")
@@ -80,7 +78,8 @@ class ResourcesFileSourceTest {
 		ClasspathFileSource classpathFileSource1 = mock(ClasspathFileSource.class);
 		when(classpathFileSource1.getUri()).thenReturn(new URI(bannerStubPathInJar));
 		when(classpathFileSource1.exists()).thenReturn(true);
-		when(classpathFileSource1.getBinaryFileNamed(bannerStubFilename)).thenReturn(new BinaryFile(new URI(bannerStubPathInJar + "/response-bannerList-success.json")));
+		when(classpathFileSource1.getBinaryFileNamed(bannerStubFilename))
+				.thenReturn(new BinaryFile(new URI(bannerStubPathInJar + "/response-bannerList-success.json")));
 		ResourcesFileSource resourcesFileSource = new ResourcesFileSource(classpathFileSource1);
 
 		// when & then

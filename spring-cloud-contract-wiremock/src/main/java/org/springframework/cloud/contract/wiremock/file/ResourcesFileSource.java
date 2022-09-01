@@ -123,9 +123,11 @@ public class ResourcesFileSource implements FileSource {
 						return resource.getBinaryFileNamed(name);
 					}
 				}
-			} catch (RuntimeException e) {
+			}
+			catch (RuntimeException e) {
 				// Ignore - find next stub file
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				// Ignore - find next stub file
 			}
 		}
