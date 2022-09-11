@@ -178,36 +178,36 @@ final class ValueGeneratorConverter {
 		else if (v instanceof RegexProperty || v instanceof Pattern) {
 			RegexProperty regexProperty = new RegexProperty(v);
 			switch (regexProperty.pattern()) {
-			case INTEGER_PATTERN:
-				generators.addGenerator(category, path, new RandomIntGenerator(0, Integer.MAX_VALUE));
-				break;
-			case DECIMAL_PATTERN:
-				generators.addGenerator(category, path, new RandomDecimalGenerator(10));
-				break;
-			case HEX_PATTERN:
-				generators.addGenerator(category, path, new RandomHexadecimalGenerator(10));
-				break;
-			case ALPHA_NUMERIC_PATTERN:
-				generators.addGenerator(category, path, new RandomStringGenerator(10));
-				break;
-			case UUID_PATTERN:
-				generators.addGenerator(category, path, new UuidGenerator());
-				break;
-			case ANY_DATE_PATTERN:
-				generators.addGenerator(category, path, new DateGenerator());
-				break;
-			case ANY_TIME_PATTERN:
-				generators.addGenerator(category, path, new TimeGenerator());
-				break;
-			case ANY_DATE_TIME_PATTERN:
-				generators.addGenerator(category, path, new DateTimeGenerator());
-				break;
-			case TRUE_OR_FALSE_PATTERN:
-				generators.addGenerator(category, path, RandomBooleanGenerator.INSTANCE);
-				break;
-			default:
-				generators.addGenerator(category, path, new RegexGenerator(regexProperty.pattern()));
-				break;
+				case INTEGER_PATTERN:
+					generators.addGenerator(category, path, new RandomIntGenerator(0, Integer.MAX_VALUE));
+					break;
+				case DECIMAL_PATTERN:
+					generators.addGenerator(category, path, new RandomDecimalGenerator(10));
+					break;
+				case HEX_PATTERN:
+					generators.addGenerator(category, path, new RandomHexadecimalGenerator(10));
+					break;
+				case ALPHA_NUMERIC_PATTERN:
+					generators.addGenerator(category, path, new RandomStringGenerator(10));
+					break;
+				case UUID_PATTERN:
+					generators.addGenerator(category, path, new UuidGenerator());
+					break;
+				case ANY_DATE_PATTERN:
+					generators.addGenerator(category, path, new DateGenerator());
+					break;
+				case ANY_TIME_PATTERN:
+					generators.addGenerator(category, path, new TimeGenerator());
+					break;
+				case ANY_DATE_TIME_PATTERN:
+					generators.addGenerator(category, path, new DateTimeGenerator());
+					break;
+				case TRUE_OR_FALSE_PATTERN:
+					generators.addGenerator(category, path, RandomBooleanGenerator.INSTANCE);
+					break;
+				default:
+					generators.addGenerator(category, path, new RegexGenerator(regexProperty.pattern()));
+					break;
 			}
 		}
 	}

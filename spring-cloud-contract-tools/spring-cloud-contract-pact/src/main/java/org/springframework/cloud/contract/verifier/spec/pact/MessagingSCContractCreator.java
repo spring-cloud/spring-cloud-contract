@@ -168,17 +168,17 @@ class MessagingSCContractCreator {
 		}
 		else if (matchingRule instanceof NumberTypeMatcher) {
 			switch (((NumberTypeMatcher) matchingRule).getNumberType()) {
-			case NUMBER:
-				responseBodyMatchers.jsonPath(key, responseBodyMatchers.byRegex(RegexPatterns.number()));
-				break;
-			case INTEGER:
-				responseBodyMatchers.jsonPath(key, responseBodyMatchers.byRegex(RegexPatterns.anInteger()));
-				break;
-			case DECIMAL:
-				responseBodyMatchers.jsonPath(key, responseBodyMatchers.byRegex(RegexPatterns.aDouble()));
-				break;
-			default:
-				throw new RuntimeException("Unsupported number type!");
+				case NUMBER:
+					responseBodyMatchers.jsonPath(key, responseBodyMatchers.byRegex(RegexPatterns.number()));
+					break;
+				case INTEGER:
+					responseBodyMatchers.jsonPath(key, responseBodyMatchers.byRegex(RegexPatterns.anInteger()));
+					break;
+				case DECIMAL:
+					responseBodyMatchers.jsonPath(key, responseBodyMatchers.byRegex(RegexPatterns.aDouble()));
+					break;
+				default:
+					throw new RuntimeException("Unsupported number type!");
 			}
 		}
 	}

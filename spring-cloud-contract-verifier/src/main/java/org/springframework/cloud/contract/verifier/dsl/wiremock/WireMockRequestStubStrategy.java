@@ -383,24 +383,24 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		else if (object instanceof MatchingStrategy) {
 			MatchingStrategy value = (MatchingStrategy) object;
 			switch (value.getType()) {
-			case NOT_MATCHING:
-				return WireMock.notMatching(value.getClientValue().toString());
-			case ABSENT:
-				return WireMock.absent();
-			case EQUAL_TO:
-				return WireMock.equalTo(clientBody(value.getClientValue(), contentType).toString());
-			case CONTAINS:
-				return WireMock.containing(clientBody(value.getClientValue(), contentType).toString());
-			case MATCHING:
-				return WireMock.matching(clientBody(value.getClientValue(), contentType).toString());
-			case EQUAL_TO_JSON:
-				return WireMock.equalToJson(clientBody(value.getClientValue(), contentType).toString());
-			case EQUAL_TO_XML:
-				return WireMock.equalToXml(clientBody(value.getClientValue(), contentType).toString());
-			case BINARY_EQUAL_TO:
-				return WireMock.binaryEqualTo((byte[]) clientBody(value.getClientValue(), contentType));
-			default:
-				throw new UnsupportedOperationException("Unknown matching strategy " + value.getType());
+				case NOT_MATCHING:
+					return WireMock.notMatching(value.getClientValue().toString());
+				case ABSENT:
+					return WireMock.absent();
+				case EQUAL_TO:
+					return WireMock.equalTo(clientBody(value.getClientValue(), contentType).toString());
+				case CONTAINS:
+					return WireMock.containing(clientBody(value.getClientValue(), contentType).toString());
+				case MATCHING:
+					return WireMock.matching(clientBody(value.getClientValue(), contentType).toString());
+				case EQUAL_TO_JSON:
+					return WireMock.equalToJson(clientBody(value.getClientValue(), contentType).toString());
+				case EQUAL_TO_XML:
+					return WireMock.equalToXml(clientBody(value.getClientValue(), contentType).toString());
+				case BINARY_EQUAL_TO:
+					return WireMock.binaryEqualTo((byte[]) clientBody(value.getClientValue(), contentType));
+				default:
+					throw new UnsupportedOperationException("Unknown matching strategy " + value.getType());
 			}
 		}
 		else {
@@ -509,12 +509,12 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private MatchingStrategy appendBodyRegexpMatchPattern(Object value, ContentType contentType) {
 		Object clientValue = MapConverter.transformToClientValues(value);
 		switch (contentType) {
-		case JSON:
-			return new MatchingStrategy(buildJSONRegexpMatch(clientValue), MatchingStrategy.Type.MATCHING);
-		case UNKNOWN:
-			return new MatchingStrategy(buildGStringRegexpForStubSide(clientValue), MatchingStrategy.Type.MATCHING);
-		default:
-			throw new IllegalStateException(contentType.name() + " pattern matching is not implemented yet");
+			case JSON:
+				return new MatchingStrategy(buildJSONRegexpMatch(clientValue), MatchingStrategy.Type.MATCHING);
+			case UNKNOWN:
+				return new MatchingStrategy(buildGStringRegexpForStubSide(clientValue), MatchingStrategy.Type.MATCHING);
+			default:
+				throw new IllegalStateException(contentType.name() + " pattern matching is not implemented yet");
 		}
 	}
 

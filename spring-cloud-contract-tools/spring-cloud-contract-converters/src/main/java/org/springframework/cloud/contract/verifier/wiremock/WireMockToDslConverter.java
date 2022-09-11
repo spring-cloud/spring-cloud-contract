@@ -184,13 +184,13 @@ public class WireMockToDslConverter {
 
 	private String buildHeader(String method, String value) {
 		switch (method) {
-		case "equalTo":
-			return "'" + value + "'";
-		case "contains":
-			String regex = "^.*" + value + ".*$";
-			return "c(regex('" + escapeJava(regex) + "'))";
-		default:
-			return "c(regex('" + escapeJava(value) + "'))";
+			case "equalTo":
+				return "'" + value + "'";
+			case "contains":
+				String regex = "^.*" + value + ".*$";
+				return "c(regex('" + escapeJava(regex) + "'))";
+			default:
+				return "c(regex('" + escapeJava(value) + "'))";
 		}
 	}
 

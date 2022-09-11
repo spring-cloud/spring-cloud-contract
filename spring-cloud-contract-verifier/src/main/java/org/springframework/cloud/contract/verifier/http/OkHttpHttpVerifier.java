@@ -86,14 +86,14 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 		try {
 			Protocol protocol = Protocol.get(string);
 			switch (protocol) {
-			case HTTP_1_0:
-			case HTTP_2:
-			case QUIC:
-				return Arrays.asList(protocol, Protocol.HTTP_1_1);
-			case HTTP_1_1:
-				return Collections.singletonList(Protocol.HTTP_1_1);
-			case H2_PRIOR_KNOWLEDGE:
-				return Collections.singletonList(Protocol.H2_PRIOR_KNOWLEDGE);
+				case HTTP_1_0:
+				case HTTP_2:
+				case QUIC:
+					return Arrays.asList(protocol, Protocol.HTTP_1_1);
+				case HTTP_1_1:
+					return Collections.singletonList(Protocol.HTTP_1_1);
+				case H2_PRIOR_KNOWLEDGE:
+					return Collections.singletonList(Protocol.H2_PRIOR_KNOWLEDGE);
 			}
 			return Collections.emptyList();
 		}

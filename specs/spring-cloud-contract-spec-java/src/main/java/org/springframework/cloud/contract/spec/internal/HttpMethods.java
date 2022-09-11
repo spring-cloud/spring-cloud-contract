@@ -76,8 +76,8 @@ public final class HttpMethods {
 
 	public enum HttpMethod {
 
-		GET(HttpMethods.GET), HEAD(HttpMethods.HEAD), POST(HttpMethods.POST), PUT(HttpMethods.PUT), PATCH(
-				HttpMethods.PATCH), DELETE(HttpMethods.DELETE), OPTIONS(HttpMethods.OPTIONS), TRACE(HttpMethods.TRACE),;
+		GET(HttpMethods.GET), HEAD(HttpMethods.HEAD), POST(HttpMethods.POST), PUT(HttpMethods.PUT),
+		PATCH(HttpMethods.PATCH), DELETE(HttpMethods.DELETE), OPTIONS(HttpMethods.OPTIONS), TRACE(HttpMethods.TRACE),;
 
 		private final String methodName;
 

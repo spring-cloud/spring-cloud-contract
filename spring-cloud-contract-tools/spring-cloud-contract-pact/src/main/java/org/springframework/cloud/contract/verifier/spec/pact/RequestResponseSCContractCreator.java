@@ -176,17 +176,17 @@ class RequestResponseSCContractCreator {
 						}
 						else if (matchingRule instanceof NumberTypeMatcher) {
 							switch (((NumberTypeMatcher) matchingRule).getNumberType()) {
-							case NUMBER:
-								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.number()));
-								break;
-							case INTEGER:
-								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.anInteger()));
-								break;
-							case DECIMAL:
-								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.aDouble()));
-								break;
-							default:
-								throw new UnsupportedOperationException("Unsupported number type!");
+								case NUMBER:
+									bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.number()));
+									break;
+								case INTEGER:
+									bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.anInteger()));
+									break;
+								case DECIMAL:
+									bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.aDouble()));
+									break;
+								default:
+									throw new UnsupportedOperationException("Unsupported number type!");
 							}
 						}
 					});
@@ -233,17 +233,17 @@ class RequestResponseSCContractCreator {
 					}
 					else if (matchingRule instanceof NumberTypeMatcher) {
 						switch (((NumberTypeMatcher) matchingRule).getNumberType()) {
-						case NUMBER:
-							bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.number()));
-							break;
-						case INTEGER:
-							bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.anInteger()));
-							break;
-						case DECIMAL:
-							bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.aDouble()));
-							break;
-						default:
-							throw new RuntimeException("Unsupported number type!");
+							case NUMBER:
+								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.number()));
+								break;
+							case INTEGER:
+								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.anInteger()));
+								break;
+							case DECIMAL:
+								bodyMatchers.jsonPath(key, bodyMatchers.byRegex(RegexPatterns.aDouble()));
+								break;
+							default:
+								throw new RuntimeException("Unsupported number type!");
 						}
 					}
 				});

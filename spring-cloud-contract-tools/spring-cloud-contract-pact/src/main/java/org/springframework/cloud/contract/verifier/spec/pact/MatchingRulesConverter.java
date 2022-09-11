@@ -53,52 +53,52 @@ final class MatchingRulesConverter {
 			String key = getMatcherKey(b.path());
 			MatchingType matchingType = b.matchingType();
 			switch (matchingType) {
-			case NULL:
-				category.addRule(key, NullMatcher.INSTANCE);
-				break;
-			case EQUALITY:
-				category.addRule(key, EqualsMatcher.INSTANCE);
-				break;
-			case TYPE:
-				if (b.minTypeOccurrence() != null && b.maxTypeOccurrence() != null) {
-					category.addRule(key, new MinMaxTypeMatcher(b.minTypeOccurrence(), b.maxTypeOccurrence()));
-				}
-				else if (b.minTypeOccurrence() != null) {
-					category.addRule(key, new MinTypeMatcher(b.minTypeOccurrence()));
-				}
-				else if (b.maxTypeOccurrence() != null) {
-					category.addRule(key, new MaxTypeMatcher(b.maxTypeOccurrence()));
-				}
-				else {
-					category.addRule(key, TypeMatcher.INSTANCE);
-				}
-				break;
-			case DATE:
-				category.addRule(key, new DateMatcher());
-				break;
-			case TIME:
-				category.addRule(key, new TimeMatcher());
-				break;
-			case TIMESTAMP:
-				category.addRule(key, new TimestampMatcher());
-				break;
-			case REGEX:
-				String pattern = b.value().toString();
-				if (pattern.equals(RegexPatterns.number().pattern())) {
-					category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER));
-				}
-				else if (pattern.equals(RegexPatterns.anInteger().pattern())) {
-					category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER));
-				}
-				else if (pattern.equals(RegexPatterns.aDouble().pattern())) {
-					category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL));
-				}
-				else {
-					category.addRule(key, new RegexMatcher(pattern));
-				}
-				break;
-			default:
-				break;
+				case NULL:
+					category.addRule(key, NullMatcher.INSTANCE);
+					break;
+				case EQUALITY:
+					category.addRule(key, EqualsMatcher.INSTANCE);
+					break;
+				case TYPE:
+					if (b.minTypeOccurrence() != null && b.maxTypeOccurrence() != null) {
+						category.addRule(key, new MinMaxTypeMatcher(b.minTypeOccurrence(), b.maxTypeOccurrence()));
+					}
+					else if (b.minTypeOccurrence() != null) {
+						category.addRule(key, new MinTypeMatcher(b.minTypeOccurrence()));
+					}
+					else if (b.maxTypeOccurrence() != null) {
+						category.addRule(key, new MaxTypeMatcher(b.maxTypeOccurrence()));
+					}
+					else {
+						category.addRule(key, TypeMatcher.INSTANCE);
+					}
+					break;
+				case DATE:
+					category.addRule(key, new DateMatcher());
+					break;
+				case TIME:
+					category.addRule(key, new TimeMatcher());
+					break;
+				case TIMESTAMP:
+					category.addRule(key, new TimestampMatcher());
+					break;
+				case REGEX:
+					String pattern = b.value().toString();
+					if (pattern.equals(RegexPatterns.number().pattern())) {
+						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER));
+					}
+					else if (pattern.equals(RegexPatterns.anInteger().pattern())) {
+						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER));
+					}
+					else if (pattern.equals(RegexPatterns.aDouble().pattern())) {
+						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL));
+					}
+					else {
+						category.addRule(key, new RegexMatcher(pattern));
+					}
+					break;
+				default:
+					break;
 			}
 		});
 		return category;

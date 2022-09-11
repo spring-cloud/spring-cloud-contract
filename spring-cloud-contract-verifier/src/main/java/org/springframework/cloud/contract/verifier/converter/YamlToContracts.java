@@ -330,41 +330,41 @@ class YamlToContracts {
 							Optional.ofNullable(yamlContractRequest.body).orElse(null));
 					MatchingTypeValue value = null;
 					switch (stubMatcher.type) {
-					case by_date:
-						value = bodyMatchers.byDate();
-						break;
-					case by_time:
-						value = bodyMatchers.byTime();
-						break;
-					case by_timestamp:
-						value = bodyMatchers.byTimestamp();
-						break;
-					case by_regex:
-						String regex = stubMatcher.value;
-						if (stubMatcher.predefined != null) {
-							regex = predefinedToPattern(stubMatcher.predefined).pattern();
-						}
-						value = bodyMatchers.byRegex(regex);
-						break;
-					case by_equality:
-						value = bodyMatchers.byEquality();
-						break;
-					case by_type:
-						value = bodyMatchers.byType(matchingTypeValueHolder -> {
-							if (stubMatcher.minOccurrence != null) {
-								matchingTypeValueHolder.minOccurrence(stubMatcher.minOccurrence);
+						case by_date:
+							value = bodyMatchers.byDate();
+							break;
+						case by_time:
+							value = bodyMatchers.byTime();
+							break;
+						case by_timestamp:
+							value = bodyMatchers.byTimestamp();
+							break;
+						case by_regex:
+							String regex = stubMatcher.value;
+							if (stubMatcher.predefined != null) {
+								regex = predefinedToPattern(stubMatcher.predefined).pattern();
 							}
-							if (stubMatcher.maxOccurrence != null) {
-								matchingTypeValueHolder.maxOccurrence(stubMatcher.maxOccurrence);
-							}
-						});
-						break;
-					case by_null:
-						// do nothing
-						break;
-					default:
-						throw new UnsupportedOperationException("The type [" + stubMatcher.type + "] is"
-								+ " unsupported.Hint:If you 're using <predefined> remember to pass <type:by_regex > ");
+							value = bodyMatchers.byRegex(regex);
+							break;
+						case by_equality:
+							value = bodyMatchers.byEquality();
+							break;
+						case by_type:
+							value = bodyMatchers.byType(matchingTypeValueHolder -> {
+								if (stubMatcher.minOccurrence != null) {
+									matchingTypeValueHolder.minOccurrence(stubMatcher.minOccurrence);
+								}
+								if (stubMatcher.maxOccurrence != null) {
+									matchingTypeValueHolder.maxOccurrence(stubMatcher.maxOccurrence);
+								}
+							});
+							break;
+						case by_null:
+							// do nothing
+							break;
+						default:
+							throw new UnsupportedOperationException("The type [" + stubMatcher.type + "] is"
+									+ " unsupported.Hint:If you 're using <predefined> remember to pass <type:by_regex > ");
 					}
 					if (value != null) {
 						if (XML == contentType) {
@@ -479,45 +479,45 @@ class YamlToContracts {
 									yamlContractResponse.body);
 							MatchingTypeValue value;
 							switch (yamlContractBodyTestMatcher.type) {
-							case by_date:
-								value = bodyMatchers.byDate();
-								break;
-							case by_time:
-								value = bodyMatchers.byTime();
-								break;
-							case by_timestamp:
-								value = bodyMatchers.byTimestamp();
-								break;
-							case by_regex:
-								String regex = yamlContractBodyTestMatcher.value;
-								if (yamlContractBodyTestMatcher.predefined != null) {
-									regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined).pattern();
-								}
-								value = bodyMatchers.byRegex(regex);
-								break;
-							case by_equality:
-								value = bodyMatchers.byEquality();
-								break;
-							case by_type:
-								value = bodyMatchers.byType(v -> {
-									if (yamlContractBodyTestMatcher.minOccurrence != null) {
-										v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
+								case by_date:
+									value = bodyMatchers.byDate();
+									break;
+								case by_time:
+									value = bodyMatchers.byTime();
+									break;
+								case by_timestamp:
+									value = bodyMatchers.byTimestamp();
+									break;
+								case by_regex:
+									String regex = yamlContractBodyTestMatcher.value;
+									if (yamlContractBodyTestMatcher.predefined != null) {
+										regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined).pattern();
 									}
-									if (yamlContractBodyTestMatcher.maxOccurrence != null) {
-										v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
-									}
-								});
-								break;
-							case by_command:
-								value = bodyMatchers.byCommand(yamlContractBodyTestMatcher.value);
-								break;
-							case by_null:
-								value = bodyMatchers.byNull();
-								break;
-							default:
-								throw new UnsupportedOperationException("The type [" + yamlContractBodyTestMatcher.type
-										+ "] is unsupported. "
-										+ "Hint: If you're using <predefined> remember to pass < type:by_regex > ");
+									value = bodyMatchers.byRegex(regex);
+									break;
+								case by_equality:
+									value = bodyMatchers.byEquality();
+									break;
+								case by_type:
+									value = bodyMatchers.byType(v -> {
+										if (yamlContractBodyTestMatcher.minOccurrence != null) {
+											v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
+										}
+										if (yamlContractBodyTestMatcher.maxOccurrence != null) {
+											v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
+										}
+									});
+									break;
+								case by_command:
+									value = bodyMatchers.byCommand(yamlContractBodyTestMatcher.value);
+									break;
+								case by_null:
+									value = bodyMatchers.byNull();
+									break;
+								default:
+									throw new UnsupportedOperationException("The type ["
+											+ yamlContractBodyTestMatcher.type + "] is unsupported. "
+											+ "Hint: If you're using <predefined> remember to pass < type:by_regex > ");
 							}
 							if (yamlContractBodyTestMatcher.path != null) {
 								if (XML == contentType) {
@@ -555,47 +555,48 @@ class YamlToContracts {
 												yamlContractOutputMessage.body);
 										MatchingTypeValue value;
 										switch (yamlContractBodyTestMatcher.type) {
-										case by_date:
-											value = dslContractOutputMessageBodyMatchers.byDate();
-											break;
-										case by_time:
-											value = dslContractOutputMessageBodyMatchers.byTime();
-											break;
-										case by_timestamp:
-											value = dslContractOutputMessageBodyMatchers.byTimestamp();
-											break;
-										case by_regex:
-											String regex = yamlContractBodyTestMatcher.value;
-											if (yamlContractBodyTestMatcher.predefined != null) {
-												regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined)
-														.pattern();
-											}
-											value = dslContractOutputMessageBodyMatchers.byRegex(regex);
-											break;
-										case by_equality:
-											value = dslContractOutputMessageBodyMatchers.byEquality();
-											break;
-										case by_type:
-											value = dslContractOutputMessageBodyMatchers.byType(v -> {
-												if (yamlContractBodyTestMatcher.minOccurrence != null) {
-													v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
+											case by_date:
+												value = dslContractOutputMessageBodyMatchers.byDate();
+												break;
+											case by_time:
+												value = dslContractOutputMessageBodyMatchers.byTime();
+												break;
+											case by_timestamp:
+												value = dslContractOutputMessageBodyMatchers.byTimestamp();
+												break;
+											case by_regex:
+												String regex = yamlContractBodyTestMatcher.value;
+												if (yamlContractBodyTestMatcher.predefined != null) {
+													regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined)
+															.pattern();
 												}
-												if (yamlContractBodyTestMatcher.maxOccurrence != null) {
-													v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
-												}
-											});
-											break;
-										case by_command:
-											value = dslContractOutputMessageBodyMatchers
-													.byCommand(yamlContractBodyTestMatcher.value);
-											break;
-										case by_null:
-											value = dslContractOutputMessageBodyMatchers.byNull();
-											break;
-										default:
-											throw new UnsupportedOperationException("The type " + "["
-													+ yamlContractBodyTestMatcher.type + "] is unsupported. Hint: If "
-													+ "you're using <predefined> remember to pass < type:by_regex > ");
+												value = dslContractOutputMessageBodyMatchers.byRegex(regex);
+												break;
+											case by_equality:
+												value = dslContractOutputMessageBodyMatchers.byEquality();
+												break;
+											case by_type:
+												value = dslContractOutputMessageBodyMatchers.byType(v -> {
+													if (yamlContractBodyTestMatcher.minOccurrence != null) {
+														v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
+													}
+													if (yamlContractBodyTestMatcher.maxOccurrence != null) {
+														v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
+													}
+												});
+												break;
+											case by_command:
+												value = dslContractOutputMessageBodyMatchers
+														.byCommand(yamlContractBodyTestMatcher.value);
+												break;
+											case by_null:
+												value = dslContractOutputMessageBodyMatchers.byNull();
+												break;
+											default:
+												throw new UnsupportedOperationException("The type " + "["
+														+ yamlContractBodyTestMatcher.type
+														+ "] is unsupported. Hint: If "
+														+ "you're using <predefined> remember to pass < type:by_regex > ");
 										}
 										if (XML == contentType) {
 											dslContractOutputMessageBodyMatchers.xPath(yamlContractBodyTestMatcher.path,
@@ -729,30 +730,30 @@ class YamlToContracts {
 											Optional.ofNullable(yamlContractInput.messageBody).orElse(null));
 									MatchingTypeValue value;
 									switch (yamlContractBodyStubMatcher.type) {
-									case by_date:
-										value = dslContractInputBodyMatchers.byDate();
-										break;
-									case by_time:
-										value = dslContractInputBodyMatchers.byTime();
-										break;
-									case by_timestamp:
-										value = dslContractInputBodyMatchers.byTimestamp();
-										break;
-									case by_regex:
-										String regex = yamlContractBodyStubMatcher.value;
-										if (yamlContractBodyStubMatcher.predefined != null) {
-											regex = predefinedToPattern(yamlContractBodyStubMatcher.predefined)
-													.pattern();
-										}
-										value = dslContractInputBodyMatchers.byRegex(regex);
-										break;
-									case by_equality:
-										value = dslContractInputBodyMatchers.byEquality();
-										break;
-									default:
-										throw new UnsupportedOperationException("The type " + "["
-												+ yamlContractBodyStubMatcher.type + "] is unsupported. "
-												+ "Hint: If you're using <predefined> remember to pass < type:by_regex > ");
+										case by_date:
+											value = dslContractInputBodyMatchers.byDate();
+											break;
+										case by_time:
+											value = dslContractInputBodyMatchers.byTime();
+											break;
+										case by_timestamp:
+											value = dslContractInputBodyMatchers.byTimestamp();
+											break;
+										case by_regex:
+											String regex = yamlContractBodyStubMatcher.value;
+											if (yamlContractBodyStubMatcher.predefined != null) {
+												regex = predefinedToPattern(yamlContractBodyStubMatcher.predefined)
+														.pattern();
+											}
+											value = dslContractInputBodyMatchers.byRegex(regex);
+											break;
+										case by_equality:
+											value = dslContractInputBodyMatchers.byEquality();
+											break;
+										default:
+											throw new UnsupportedOperationException("The type " + "["
+													+ yamlContractBodyStubMatcher.type + "] is unsupported. "
+													+ "Hint: If you're using <predefined> remember to pass < type:by_regex > ");
 									}
 									if (XML == contentType) {
 										dslContractInputBodyMatchers.xPath(yamlContractBodyStubMatcher.path, value);
@@ -853,23 +854,23 @@ class YamlToContracts {
 			return value;
 		}
 		switch (matcher.type) {
-		case equal_to:
-			return new DslProperty<>(request.equalTo(matcher.value), value);
-		case containing:
-			return new DslProperty<>(request.containing(matcher.value), value);
-		case matching:
-			return new DslProperty<>(request.matching(matcher.value), value);
-		case not_matching:
-			return new DslProperty<>(request.notMatching(matcher.value), value);
-		case equal_to_json:
-			return new DslProperty<>(request.equalToJson(matcher.value), value);
-		case equal_to_xml:
-			return new DslProperty<>(request.equalToXml(matcher.value), value);
-		case absent:
-			return new DslProperty<Object>(request.absent(), null);
-		default:
-			throw new UnsupportedOperationException("The provided matching type [" + matcher
-					+ "] is unsupported. Use on of " + Arrays.toString(YamlContract.MatchingType.values()));
+			case equal_to:
+				return new DslProperty<>(request.equalTo(matcher.value), value);
+			case containing:
+				return new DslProperty<>(request.containing(matcher.value), value);
+			case matching:
+				return new DslProperty<>(request.matching(matcher.value), value);
+			case not_matching:
+				return new DslProperty<>(request.notMatching(matcher.value), value);
+			case equal_to_json:
+				return new DslProperty<>(request.equalToJson(matcher.value), value);
+			case equal_to_xml:
+				return new DslProperty<>(request.equalToXml(matcher.value), value);
+			case absent:
+				return new DslProperty<Object>(request.absent(), null);
+			default:
+				throw new UnsupportedOperationException("The provided matching type [" + matcher
+						+ "] is unsupported. Use on of " + Arrays.toString(YamlContract.MatchingType.values()));
 		}
 	}
 
@@ -890,39 +891,39 @@ class YamlToContracts {
 
 	protected Pattern predefinedToPattern(YamlContract.PredefinedRegex predefinedRegex) {
 		switch (predefinedRegex) {
-		case only_alpha_unicode:
-			return RegexPatterns.onlyAlphaUnicode().getPattern();
-		case number:
-			return RegexPatterns.number().getPattern();
-		case any_double:
-			return RegexPatterns.aDouble().getPattern();
-		case any_boolean:
-			return RegexPatterns.anyBoolean().getPattern();
-		case ip_address:
-			return RegexPatterns.ipAddress().getPattern();
-		case hostname:
-			return RegexPatterns.hostname().getPattern();
-		case email:
-			return RegexPatterns.email().getPattern();
-		case url:
-			return RegexPatterns.url().getPattern();
-		case uuid:
-			return RegexPatterns.uuid().getPattern();
-		case iso_date:
-			return RegexPatterns.isoDate().getPattern();
-		case iso_date_time:
-			return RegexPatterns.isoDateTime().getPattern();
-		case iso_time:
-			return RegexPatterns.isoTime().getPattern();
-		case iso_8601_with_offset:
-			return RegexPatterns.iso8601WithOffset().getPattern();
-		case non_empty:
-			return RegexPatterns.nonEmpty().getPattern();
-		case non_blank:
-			return RegexPatterns.nonBlank().getPattern();
-		default:
-			throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex
-					+ "] is unsupported. Use one of " + Arrays.toString(YamlContract.PredefinedRegex.values()));
+			case only_alpha_unicode:
+				return RegexPatterns.onlyAlphaUnicode().getPattern();
+			case number:
+				return RegexPatterns.number().getPattern();
+			case any_double:
+				return RegexPatterns.aDouble().getPattern();
+			case any_boolean:
+				return RegexPatterns.anyBoolean().getPattern();
+			case ip_address:
+				return RegexPatterns.ipAddress().getPattern();
+			case hostname:
+				return RegexPatterns.hostname().getPattern();
+			case email:
+				return RegexPatterns.email().getPattern();
+			case url:
+				return RegexPatterns.url().getPattern();
+			case uuid:
+				return RegexPatterns.uuid().getPattern();
+			case iso_date:
+				return RegexPatterns.isoDate().getPattern();
+			case iso_date_time:
+				return RegexPatterns.isoDateTime().getPattern();
+			case iso_time:
+				return RegexPatterns.isoTime().getPattern();
+			case iso_8601_with_offset:
+				return RegexPatterns.iso8601WithOffset().getPattern();
+			case non_empty:
+				return RegexPatterns.nonEmpty().getPattern();
+			case non_blank:
+				return RegexPatterns.nonBlank().getPattern();
+			default:
+				throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex
+						+ "] is unsupported. Use one of " + Arrays.toString(YamlContract.PredefinedRegex.values()));
 		}
 	}
 

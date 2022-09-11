@@ -92,19 +92,19 @@ public class AetherStubDownloader implements StubDownloader {
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
 		boolean remoteReposMissing = remoteReposMissing();
 		switch (stubRunnerOptions.stubsMode) {
-		case LOCAL:
-			log.info("Remote repos not passed but the switch to work offline was set. "
-					+ "Stubs will be used from your local Maven repository.");
-			break;
-		case REMOTE:
-			if (remoteReposMissing) {
-				throw new IllegalStateException(
-						"Remote repositories for stubs are not specified and work offline flag wasn't passed");
-			}
-			break;
-		case CLASSPATH:
-			throw new UnsupportedOperationException(
-					"You can't use Aether downloader when you use classpath to find stubs");
+			case LOCAL:
+				log.info("Remote repos not passed but the switch to work offline was set. "
+						+ "Stubs will be used from your local Maven repository.");
+				break;
+			case REMOTE:
+				if (remoteReposMissing) {
+					throw new IllegalStateException(
+							"Remote repositories for stubs are not specified and work offline flag wasn't passed");
+				}
+				break;
+			case CLASSPATH:
+				throw new UnsupportedOperationException(
+						"You can't use Aether downloader when you use classpath to find stubs");
 		}
 		this.repositorySystem = newRepositorySystem();
 		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
