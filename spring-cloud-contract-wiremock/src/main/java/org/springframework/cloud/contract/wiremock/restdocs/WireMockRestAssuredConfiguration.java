@@ -16,7 +16,10 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.test.autoconfigure.restdocs.RestDocsRestAssuredConfigurationCustomizer;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.restdocs.restassured.RestAssuredRestDocumentationConfigurer;
 
 /**
  * Custom configuration for Spring RestDocs that adds a WireMock snippet (for generating
@@ -31,14 +34,12 @@ import org.springframework.context.annotation.Configuration;
  * stub behaviour
  */
 @Configuration(proxyBeanMethods = false)
-// @ConditionalOnClass(RestAssuredRestDocumentationConfigurer.class)
-// public class WireMockRestAssuredConfiguration implements
-// RestDocsRestAssuredConfigurationCustomizer {
-public class WireMockRestAssuredConfiguration {
+@ConditionalOnClass(RestAssuredRestDocumentationConfigurer.class)
+public class WireMockRestAssuredConfiguration implements RestDocsRestAssuredConfigurationCustomizer {
 
-	// @Override
-	// public void customize(RestAssuredRestDocumentationConfigurer configurer) {
-	// configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
-	// }
+	@Override
+	public void customize(RestAssuredRestDocumentationConfigurer configurer) {
+		configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
+	}
 
 }
