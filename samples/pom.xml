@@ -71,7 +71,11 @@
 								<profile>integration</profile>
 							</profiles>
 							<pomIncludes>
-								<pomInclude>*/pom.xml</pomInclude>
+								<!-- FIXME: 4.0 -->
+								<!--<pomInclude>*/pom.xml</pomInclude>-->
+								<pomInclude>contracts/pom.xml</pomInclude>
+								<pomInclude>dsl/pom.xml</pomInclude>
+								<pomInclude>webclient/pom.xml</pomInclude>
 							</pomIncludes>
 							<goals>
 								<goal>clean</goal>
