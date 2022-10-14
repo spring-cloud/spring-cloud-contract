@@ -109,7 +109,7 @@ class PublishStubsToScmTask extends DefaultTask {
 	@TaskAction
 	void publishStubsToScm() {
 		String projectGroupNameVersion = projectGroup.get() + ":" + projectName.get() + ":" + projectVersion.get();
-		getLogger().info("Pushing Stubs to SCM for project [{}]", projectName);
+		getLogger().info("Pushing Stubs to SCM for project [{}]", projectGroupNameVersion);
 		StubRunnerOptions stubRunnerOptions = createStubRunnerOptions();
 		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectGroupNameVersion,
 				stubsDir.get().getAsFile().toPath());
