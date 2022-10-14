@@ -407,13 +407,17 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	}
 
 	private Provider<String> buildRootPath(String path) {
-		return project.provider(() -> {
-			StringBuilder builder = new StringBuilder();
-			builder.append("META-INF").append(File.separator).append(project.getGroup()).append(File.separator)
-					.append(project.getName()).append(File.separator).append(project.getVersion())
-					.append(File.separator).append(path);
-			return builder.toString();
-		});
+		return providers.provider(() ->
+				"META-INF"
+					+ File.separator
+					+ project.getGroup()
+					+ File.separator
+					+ project.getName()
+					+ File.separator
+					+ project.getVersion()
+					+ File.separator
+					+ path
+		);
 	}
 
 }
