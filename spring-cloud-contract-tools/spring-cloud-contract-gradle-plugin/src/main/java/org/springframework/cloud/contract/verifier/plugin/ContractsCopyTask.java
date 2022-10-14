@@ -34,10 +34,12 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
@@ -49,6 +51,7 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecOperations;
 import org.springframework.cloud.contract.stubrunner.ContractDownloader;
 import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
@@ -114,8 +117,23 @@ class ContractsCopyTask extends DefaultTask {
 
 	private final DirectoryProperty backupContractsFolder;
 
+	private final Property<String> projectGroup;
+	private final Property<String> projectName;
+	private final Property<String> projectVersion;
+
+	private final ExecOperations executors;
+	private final FileSystemOperations files;
+
 	@Inject
-	public ContractsCopyTask(ObjectFactory objects) {
+	public ContractsCopyTask(
+			final ObjectFactory objects,
+			final ProviderFactory providers,
+			final ExecOperations executors,
+			final FileSystemOperations files
+	) {
+		this.executors = executors;
+		this.files = files;
+
 		convertToYaml = objects.property(Boolean.class);
 		failOnNoContracts = objects.property(Boolean.class);
 		contractsDirectory = objects.directoryProperty();
@@ -140,6 +158,10 @@ class ContractsCopyTask extends DefaultTask {
 		copiedContractsFolder = objects.directoryProperty();
 		backupContractsFolder = objects.directoryProperty();
 
+		projectGroup = objects.property(String.class).convention(providers.provider(() -> getProject().getGroup().toString()));
+		projectName = objects.property(String.class).convention(providers.provider(() -> getProject().getName()));
+		projectVersion = objects.property(String.class).convention(providers.provider(() -> getProject().getVersion().toString()));
+
 		this.getOutputs().upToDateWhen(task -> !(this.shouldDownloadContracts()
 				&& this.getContractDependency().toStubConfiguration().isVersionChanging()));
 	}
@@ -158,14 +180,13 @@ class ContractsCopyTask extends DefaultTask {
 			contractsDirectory = this.contractsDirectory.getAsFile().getOrNull();
 			antPattern = "**/";
 		}
-		getLogger().info("For project [{}] will use contracts provided in the folder [{}]", getProject().getName(),
+		getLogger().info("For project [{}] will use contracts provided in the folder [{}]", projectName.get(),
 				contractsDirectory);
 		final String contractsRepository = this.contractRepository.getRepositoryUrl().getOrElse("");
 		throwExceptionWhenFailOnNoContracts(contractsDirectory, contractsRepository);
 
-		final String slashSeparatedGroupId = getProject().getGroup().toString().replace(".", File.separator);
-		final String dotSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId,
-				getProject().getGroup().toString());
+		final String slashSeparatedGroupId = projectGroup.get().replace(".", File.separator);
+		final String dotSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, projectGroup.get());
 		File output = copiedContractsFolder.get().getAsFile();
 		getLogger().info(
 				"Downloading and unpacking files from [{}] to [{}]. The inclusion ant patterns are [{}] and [{}]",
@@ -187,8 +208,8 @@ class ContractsCopyTask extends DefaultTask {
 			os = NullOutputStream.INSTANCE;
 		}
 		try {
-			getProject().javaexec(exec -> {
-				exec.setMain("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
+			executors.javaexec(exec -> {
+				exec.getMainClass().set("org.springframework.cloud.contract.verifier.converter.ToYamlConverterApplication");
 				exec.classpath(classpath);
 				exec.args(quoteAndEscape(outputContractsFolder.getAbsolutePath()));
 				exec.setStandardOutput(os);
@@ -206,7 +227,7 @@ class ContractsCopyTask extends DefaultTask {
 
 	private void sync(File file, String antPattern, String dotSeparatedAntPattern, boolean excludeBuildFolders,
 			File outputContractsFolder) {
-		getProject().sync(spec -> {
+		files.sync(spec -> {
 			spec.from(file);
 			// by default group id is slash separated...
 			spec.include(antPattern);
@@ -220,8 +241,8 @@ class ContractsCopyTask extends DefaultTask {
 	}
 
 	private DownloadedData downloadContracts() {
-		String groupId = getProject().getGroup().toString();
-		String artifactId = getProject().getName();
+		String groupId = projectGroup.get();
+		String artifactId = projectName.get();
 		getLogger().info("Project has group id [{}], artifact id [{}]", groupId, artifactId);
 		getLogger().info("For project [{}] Download dependency is provided - will download contract jars", artifactId);
 		getLogger().info("Contract dependency [{}]", contractDependency);
@@ -231,7 +252,7 @@ class ContractsCopyTask extends DefaultTask {
 
 		final StubDownloader downloader = new StubDownloaderBuilderProvider().get(createStubRunnerOptions());
 		final ContractDownloader contractDownloader = new ContractDownloader(downloader, configuration,
-				contractsPath.getOrNull(), groupId, artifactId, getProject().getVersion().toString());
+				contractsPath.getOrNull(), groupId, artifactId, projectVersion.get());
 		final File downloadedContracts = contractDownloader.unpackAndDownloadContracts();
 		final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader
 				.createNewInclusionProperties(downloadedContracts);
@@ -279,6 +300,10 @@ class ContractsCopyTask extends DefaultTask {
 		}
 
 	}
+
+	@Input protected Property<String> getProjectGroup() { return projectGroup; }
+	@Input protected Property<String> getProjectName() { return projectName; }
+	@Input protected Property<String> getProjectVersion() { return projectVersion; }
 
 	@Input
 	Property<Boolean> getConvertToYaml() {

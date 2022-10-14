@@ -23,6 +23,7 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Nested;
@@ -73,14 +74,25 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	private final DirectoryProperty stubsDir;
 
+	private final Property<String> projectGroup;
+	private final Property<String> projectName;
+	private final Property<String> projectVersion;
+
 	@Inject
-	public PublishStubsToScmTask(ObjectFactory objects) {
+	public PublishStubsToScmTask(
+			final ObjectFactory objects,
+			final ProviderFactory providers
+	) {
 		this.contractRepository = objects.newInstance(Repository.class);
 		this.contractsMode = objects.property(StubRunnerProperties.StubsMode.class);
 		this.deleteStubsAfterTest = objects.property(Boolean.class);
 		this.failOnNoContracts = objects.property(Boolean.class);
 		this.contractsProperties = objects.mapProperty(String.class, String.class);
 		this.stubsDir = objects.directoryProperty();
+
+		projectGroup = objects.property(String.class).convention(providers.provider(() -> getProject().getGroup().toString()));
+		projectName = objects.property(String.class).convention(providers.provider(() -> getProject().getName()));
+		projectVersion = objects.property(String.class).convention(providers.provider(() -> getProject().getVersion().toString()));
 
 		this.onlyIf(task -> {
 			String contractRepoUrl = contractRepository.repositoryUrl.getOrElse("");
@@ -96,11 +108,10 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	@TaskAction
 	void publishStubsToScm() {
-		String projectName = getProject().getGroup().toString() + ":" + getProject().getName() + ":"
-				+ getProject().getVersion().toString();
+		String projectGroupNameVersion = projectGroup.get() + ":" + projectName.get() + ":" + projectVersion.get();
 		getLogger().info("Pushing Stubs to SCM for project [{}]", projectName);
 		StubRunnerOptions stubRunnerOptions = createStubRunnerOptions();
-		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectName,
+		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectGroupNameVersion,
 				stubsDir.get().getAsFile().toPath());
 	}
 
@@ -202,4 +213,7 @@ class PublishStubsToScmTask extends DefaultTask {
 		return options.build();
 	}
 
+	@Input protected Property<String> getProjectGroup() { return projectGroup; }
+	@Input protected Property<String> getProjectName() { return projectName; }
+	@Input protected Property<String> getProjectVersion() { return projectVersion; }
 }
