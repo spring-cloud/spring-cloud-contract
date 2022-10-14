@@ -40,7 +40,7 @@ import org.springframework.util.StringUtils;
 /**
  * For SCM based repositories will copy the generated stubs to the cloned repo with
  * contracts and stubs. Will also commit the changes and push them to origin.
- *
+ * <p>
  * NOTE: starting with 2.3.0.RELEASE the <code>customize{}</code> closure previously used
  * for {@link PublishStubsToScmTask} customisation is no longer available. The settings
  * should be applied directly within the <code>publishStubsToScm</code> closure as in the
@@ -60,7 +60,7 @@ class PublishStubsToScmTask extends DefaultTask {
 	private final Property<StubRunnerProperties.StubsMode> contractsMode;
 
 	/**
-	 * @see ContractVerifierExtension#deleteStubsAfterTest
+	 * @see ContractVerifierExtension#getDeleteStubsAfterTest()
 	 *
 	 * This property will delete the Git repository where the input stubs to this task
 	 * have been committed.

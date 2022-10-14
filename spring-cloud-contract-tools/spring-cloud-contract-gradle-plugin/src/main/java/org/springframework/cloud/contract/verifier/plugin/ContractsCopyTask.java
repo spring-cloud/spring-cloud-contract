@@ -100,7 +100,7 @@ class ContractsCopyTask extends DefaultTask {
 	private final Property<Boolean> excludeBuildFolders;
 
 	/**
-	 * @see ContractVerifierExtension#deleteStubsAfterTest
+	 * @see ContractVerifierExtension#getDeleteStubsAfterTest()
 	 *
 	 * This property will delete the temporary dependency or Git repository from which
 	 * stubs were copied to this task's output directory.
