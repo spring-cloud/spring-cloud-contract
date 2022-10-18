@@ -24,8 +24,8 @@
 
 	<properties>
 		<!-- Align it also in Docker image under [docker/spring-cloud-contract-docker/project/gradle.properties] -->
-		<camel.version>3.15.0</camel.version>
-		<pact.version>4.3.6</pact.version>
+		<camel.version>3.19.0</camel.version>
+		<pact.version>4.3.15</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>4.0.0-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>4.0.0-SNAPSHOT</spring-cloud-zookeeper.version>
@@ -36,15 +36,15 @@
 		<cglib.version>3.2.11</cglib.version>
 		<spock-spring.version>2.2-M1-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
-		<commons-text.version>1.9</commons-text.version>
-		<handlebars.version>4.2.0</handlebars.version>
+		<commons-text.version>1.10.0</commons-text.version>
+		<handlebars.version>4.3.0</handlebars.version>
 		<jgit.version>6.1.0.202203080745-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.32.0</json-unit-assertj.version>
 		<rest-assured.version>5.1.0</rest-assured.version>
 
-		<junit-vintage.version>5.8.2</junit-vintage.version>
-		<junit-jupiter.version>5.8.2</junit-jupiter.version>
+		<junit-vintage.version>5.9.1</junit-vintage.version>
+		<junit-jupiter.version>5.9.1</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
 
