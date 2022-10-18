@@ -319,4 +319,9 @@ class WireMockHttpRequestAdapter implements Request {
 		return Optional.absent();
 	}
 
+	@Override
+	public String getProtocol() {
+		return this.result.getUrl().getScheme();
+	}
+
 }

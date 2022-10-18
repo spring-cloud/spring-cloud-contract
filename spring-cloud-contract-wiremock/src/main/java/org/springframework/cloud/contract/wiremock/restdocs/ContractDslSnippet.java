@@ -33,6 +33,7 @@ import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
 import org.springframework.restdocs.operation.OperationRequest;
 import org.springframework.restdocs.operation.OperationResponse;
+import org.springframework.restdocs.operation.QueryParameters;
 import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderResolver;
 import org.springframework.restdocs.snippet.TemplatedSnippet;
 import org.springframework.restdocs.templates.TemplateEngine;
@@ -121,7 +122,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("request_urlpath_present", urlPathPresent);
 		if (urlPathPresent) {
 			// TODO: Add support for multiple values
-			model.put("request_queryparams", request.getParameters().toSingleValueMap().entrySet());
+			model.put("request_queryparams", QueryParameters.from(request).toSingleValueMap().entrySet());
 		}
 		model.put("request_body_present", request.getContent().length > 0);
 		model.put("request_body", request.getContentAsString());

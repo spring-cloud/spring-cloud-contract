@@ -24,8 +24,7 @@
 
 	<modules>
 		<module>contracts</module>
-		<!-- FIXME: 4.0 -->
-		<!--<module>restdocs</module>-->
+		<module>restdocs</module>
 		<module>dsl</module>
 		<module>webclient</module>
 	</modules>
