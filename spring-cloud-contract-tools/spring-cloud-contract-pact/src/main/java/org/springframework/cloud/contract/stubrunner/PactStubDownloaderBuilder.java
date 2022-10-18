@@ -351,8 +351,18 @@ class PactStubDownloader implements StubDownloader {
 			}
 
 			@Override
+			public String providerBranch() {
+				return resolver.resolveValue("pactbroker.providerBranch", "");
+			}
+
+			@Override
 			public String includeWipPactsSince() {
 				return resolver.resolveValue("pactbroker.includeWipPactsSince", "");
+			}
+
+			@Override
+			public String enableInsecureTls() {
+				return resolver.resolveValue("pactbroker.enableInsecureTls", "false");
 			}
 		});
 	}
