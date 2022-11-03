@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -111,7 +112,7 @@ class Receiver {
 		if (consumer == null) {
 			throw new IllegalStateException("No consumer set up for topic [" + topic + "]");
 		}
-		ConsumerRecord<?, ?> record = KafkaTestUtils.getSingleRecord(consumer, topic, timeUnit.toMillis(timeout));
+		ConsumerRecord<?, ?> record = KafkaTestUtils.getSingleRecord(consumer, topic, Duration.ofMillis(timeout));
 		if (log.isDebugEnabled()) {
 			log.debug("Got a single record for destination [" + topic + "]");
 		}
