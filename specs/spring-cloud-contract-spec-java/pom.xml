@@ -4,9 +4,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<!-- TODO: Bump-->
-		<!-- <automaton.version>1.12-1</automaton.version>-->
-		<automaton.version>1.11-8</automaton.version>
+		<automaton.version>1.12-4</automaton.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -29,7 +27,7 @@
 			<artifactId>spring-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>dk.brics.automaton</groupId>
+			<groupId>dk.brics</groupId>
 			<artifactId>automaton</artifactId>
 			<version>${automaton.version}</version>
 		</dependency>
