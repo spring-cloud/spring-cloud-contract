@@ -42,6 +42,7 @@
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.32.0</json-unit-assertj.version>
 		<rest-assured.version>5.1.0</rest-assured.version>
+		<slf4j.version>[2.0.0,)</slf4j.version>
 
 		<junit-vintage.version>5.9.1</junit-vintage.version>
 		<junit-jupiter.version>5.9.1</junit-jupiter.version>
@@ -448,6 +449,20 @@
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-compiler-embeddable</artifactId>
 				<version>${contract.kotlin.version}</version>
+			</dependency>
+
+			<!-- Ensure that we don't have 2 sets of slf4j on the classpath -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
