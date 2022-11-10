@@ -33,7 +33,7 @@
 		<spring-cloud-consul.version>4.0.0-SNAPSHOT</spring-cloud-consul.version>
 		<spring-cloud-commons.version>4.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
-		<cglib.version>3.2.11</cglib.version>
+		<cglib.version>3.3.0</cglib.version>
 		<spock-spring.version>2.3-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.10.0</commons-text.version>
