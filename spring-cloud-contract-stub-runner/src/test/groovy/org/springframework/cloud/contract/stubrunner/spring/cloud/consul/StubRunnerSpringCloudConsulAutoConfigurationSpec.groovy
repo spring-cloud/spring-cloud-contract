@@ -19,12 +19,13 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.consul
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.agent.model.NewService
 import groovy.transform.CompileStatic
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatcher
-import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
@@ -32,7 +33,6 @@ import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRun
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.context.ContextConfiguration
 
 import static org.mockito.BDDMockito.then
 import static org.mockito.Matchers.argThat
@@ -56,30 +56,35 @@ import static org.mockito.Mockito.mock
 stubsMode = StubRunnerProperties.StubsMode.REMOTE ,
 repositoryRoot = "classpath:m2repo/repository/" )
 // end::autoconfigure[]
-class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
+class StubRunnerSpringCloudConsulAutoConfigurationSpec {
 
 	@Autowired
 	ConsulClient client
 
-	void setupSpec() {
+	@BeforeAll
+	static void setupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
 	}
 
-	void cleanupSpec() {
+	@AfterAll
+	static void cleanupSpec() {
 		setupSpec()
 	}
 
-	def 'should make service discovery work for #serviceName'() {
+	@Test
+	void 'should make service discovery work for #serviceName'() {
+
 		given:
-			final String expectedId = serviceName.split(':')[0]
-			final String expectedName = serviceName.split(':')[1]
-		when: 'Consul registration took place for 3 stubs'
-			then(client).should().agentServiceRegister(argThat(new NewServiceMatcher(expectedId, expectedName)))
-		then:
-			noExceptionThrown()
-		where:
-			serviceName << ['loanIssuance:loanIssuance', 'bootService:bootService', 'fraudDetectionServer:someNameThatShouldMapFraudDetectionServer']
+			def serviceName = ['loanIssuance:loanIssuance', 'bootService:bootService', 'fraudDetectionServer:someNameThatShouldMapFraudDetectionServer']
+		when:
+			serviceName.each {
+				and:
+					final String expectedId = it.split(':')[0]
+					final String expectedName = it.split(':')[1]
+				then: 'Consul registration took place for 3 stubs'
+					then(client).should().agentServiceRegister(argThat(new NewServiceMatcher(expectedId, expectedName)))
+			}
 	}
 
 	private static class NewServiceMatcher implements ArgumentMatcher<NewService> {

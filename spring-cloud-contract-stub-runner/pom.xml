@@ -13,10 +13,6 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Stub Runner</name>
 	<description>Spring Cloud Contract Stub Runner</description>
-	<properties>
-		<!-- TODO: remove -->
-		<skipTests>true</skipTests>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

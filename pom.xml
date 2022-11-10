@@ -34,7 +34,7 @@
 		<spring-cloud-commons.version>4.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.2.11</cglib.version>
-		<spock-spring.version>2.2-M1-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
+		<spock-spring.version>2.3-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<handlebars.version>4.3.0</handlebars.version>
@@ -48,6 +48,7 @@
 		<junit-jupiter.version>5.9.1</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+		<awaitility.version>4.2.0</awaitility.version>
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>4.0.0</groovy.version>
@@ -463,6 +464,12 @@
 				<artifactId>slf4j-simple</artifactId>
 				<version>${slf4j.version}</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitility.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -21,6 +21,7 @@ import javax.inject.Inject
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
+import org.junit.jupiter.api.Test
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,14 +35,15 @@ import org.springframework.messaging.Message
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
 @SpringBootTest(classes = IntegrationMessagingApplication)
-class IntegrationMessagingApplicationSpec extends Specification {
+class IntegrationMessagingApplicationSpec {
 
 	// ALL CASES
 	@Inject
 	MessageVerifier<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
-	def "should work for triggered based messaging"() {
+	@Test
+	void "should work for triggered based messaging"() {
 		given:
 			// tag::method_trigger[]
 			def dsl = Contract.make {
@@ -79,7 +81,7 @@ class IntegrationMessagingApplicationSpec extends Specification {
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
-	def "should generate tests triggered by a message"() {
+	void "should generate tests triggered by a message"() {
 		given:
 			// tag::message_trigger[]
 			def dsl = Contract.make {
@@ -125,7 +127,8 @@ class IntegrationMessagingApplicationSpec extends Specification {
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
-	def "should generate tests without destination, triggered by a message"() {
+	@Test
+	void "should generate tests without destination, triggered by a message"() {
 		given:
 			def dsl = Contract.make {
 				label 'some_label'
@@ -148,7 +151,6 @@ class IntegrationMessagingApplicationSpec extends Specification {
 					send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
 							[sample: 'header'], 'delete')
 		then:
-			noExceptionThrown()
 			bookWasDeleted()
 	}
 

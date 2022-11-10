@@ -22,8 +22,7 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
-import spock.lang.Issue
-import spock.lang.Specification
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -40,7 +39,7 @@ import static org.springframework.cloud.contract.verifier.messaging.util.Contrac
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
 @SpringBootTest(classes = AmqpMessagingApplication, properties = "stubrunner.amqp.enabled=true")
-class AmqpMessagingApplicationSpec extends Specification {
+class AmqpMessagingApplicationSpec {
 
 	// ALL CASES
 	@Inject
@@ -48,8 +47,9 @@ class AmqpMessagingApplicationSpec extends Specification {
 	@Inject
 	ContractVerifierObjectMapper contractVerifierObjectMapper
 
-	def "should work for triggered based messaging"() {
-		given:
+	@Test
+	void should_work_for_triggered_based_messaging() {
+		// given:
 			def dsl = Contract.make {
 				// Human readable description
 				description 'Some description'
@@ -74,20 +74,21 @@ class AmqpMessagingApplicationSpec extends Specification {
 				}
 			}
 			// generated test should look like this:
-		when:
+		// when:
 			publishBook()
-		then:
+		// then:
 			def response = contractVerifierMessaging.receive('test-exchange')
 			response.headers.get('contentType') == 'application/json'
-		and:
+		// and:
 			DocumentContext parsedJson = JsonPath.
 					parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
 			JsonAssertion.assertThat(parsedJson).field('name').isEqualTo('some')
 	}
 
-	@Issue("332")
-	def "should work for second scenario"() {
-		given:
+//	@Issue("332")
+	@Test
+	void should_work_for_second_scenario() {
+		// given:
 			def dsl =
 					Contract.make {
 						description("""
@@ -97,11 +98,11 @@ https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publis
 "The input message triggers an output message."
 
 ```
-given:
+// given:
 	rabbit service is running
-when:
+// when:
 	input message is received
-then:
+// then:
 	message is send
 ```
 
@@ -128,7 +129,7 @@ then:
 						}
 					}
 			// generated test should look like this:
-		and:
+		// and:
 			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 					"{\"name\":\"foo2\"}"
 					, headers()
@@ -136,23 +137,24 @@ then:
 					.header("amqp_replyTo", "amq.rabbitmq.reply-to")
 					.header("bill", "bill")
 			)
-		when:
+		// when:
 			contractVerifierMessaging.send(inputMessage, "input")
-		then:
+		// then:
 			ContractVerifierMessage response = contractVerifierMessaging.receive("")
 			assertThat(response).isNotNull()
 			assertThat(response.getHeader("contentType")).isNotNull()
 			assertThat(response.getHeader("contentType").toString()).
 					isEqualTo("application/json")
-		and:
+		// and:
 			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.
 					writeValueAsString(response.getPayload()))
 			assertThatJson(parsedJson).field("['name']").isEqualTo("foo2")
 	}
 
-	@Issue("178")
-	def "should work for input/output when bytes are used"() {
-		given:
+//	@Issue("178")
+	@Test
+	void should_work_for_input_output_when_bytes_are_used() {
+		// given:
 			def inputBody = [
 					ratedItemId: "992e46d8-ab05-4a26-a740-6ef7b0daeab3",
 					eventType  : "CREATED"
@@ -175,16 +177,16 @@ then:
 					)
 				}
 			}
-		when:
+		// when:
 			contractVerifierMessaging.send(contractVerifierMessaging.
 					create(new JsonOutput().toJson(inputBody), [
 							"X-tenant"   : "1234",
 							"contentType": "application/json"
 					]), "rated-item-service.rated-item-event.exchange")
-		then:
+		// then:
 			def response = contractVerifierMessaging.
 					receive('bill-service.rated-item-event.retry-exchange')
-		and:
+		// and:
 			DocumentContext parsedJson = JsonPath.
 					parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
 			JsonAssertion.assertThat(parsedJson).field('ratedItemId').

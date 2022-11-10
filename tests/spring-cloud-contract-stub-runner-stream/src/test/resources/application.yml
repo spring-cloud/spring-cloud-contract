@@ -5,10 +5,16 @@ spring:
   cloud:
     stream:
       bindings:
-        output:
+        test1-out-0:
           destination: returnBook
-        input:
+        test1-in-0:
           destination: bookStorage
+        test2-in-0:
+          destination: delete
+        test3-in-0:
+          destination: returnBook
+    function:
+      definition: test1;test2;test3
 
 server:
   port: 0

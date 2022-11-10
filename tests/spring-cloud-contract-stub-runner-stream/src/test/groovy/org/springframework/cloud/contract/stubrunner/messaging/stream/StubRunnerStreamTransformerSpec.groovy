@@ -16,13 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream
 
-import spock.lang.Specification
+import org.junit.jupiter.api.Test
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.messaging.Message
 import org.springframework.messaging.support.MessageBuilder
 
-class StubRunnerStreamTransformerSpec extends Specification {
+class StubRunnerStreamTransformerSpec {
 
 	Message message = MessageBuilder.withPayload("hello").build()
 
@@ -39,13 +39,14 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		}
 	}
 
-	def 'should not transform the message if there is no output message'() {
+	@Test
+	void 'should not transform the message if there is no output message'() {
 		given:
 			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(noOutputMessageContract)
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.is(message)
+			assert result.is(message)
 	}
 
 	def dsl = Contract.make {
@@ -70,7 +71,8 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		}
 	}
 
-	def 'should convert dsl into message'() {
+	@Test
+	void 'should convert dsl into message'() {
 		given:
 			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(dsl) {
 				@Override
@@ -81,7 +83,7 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.payload == '{"responseId":"123"}'.bytes
+			assert result.payload == '{"responseId":"123"}'.bytes
 	}
 
 	def dslWithRegexInGString = Contract.make {
@@ -106,7 +108,8 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		}
 	}
 
-	def 'should convert dsl into message with regex in GString'() {
+	@Test
+	void 'should convert dsl into message with regex in GString'() {
 		given:
 			StubRunnerStreamTransformer streamTransformer = new StubRunnerStreamTransformer(dslWithRegexInGString) {
 				@Override
@@ -117,10 +120,11 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.payload == '''{"id":"99","temperature":"123.45"}'''.bytes
+			assert result.payload == '''{"id":"99","temperature":"123.45"}'''.bytes
 	}
 
-	def 'should parse dsl without DslProperty'() {
+	@Test
+	void 'should parse dsl without DslProperty'() {
 		given:
 			Contract contract = Contract.make {
 				// Human readable description
@@ -158,10 +162,11 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.payload == '''{"orderId":"40058c70-891c-4176-a033-f70bad0c5f77","description":"This is the order description"}'''.bytes
+			assert result.payload == '''{"orderId":"40058c70-891c-4176-a033-f70bad0c5f77","description":"This is the order description"}'''.bytes
 	}
 
-	def 'should work for binary payloads from file'() {
+	@Test
+	void 'should work for binary payloads from file'() {
 		given:
 			Contract contract = Contract.make {
 				label 'send_order'
@@ -185,7 +190,7 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.payload == StubRunnerStreamTransformerSpec.getResource("/response.pdf").bytes
+			assert result.payload == StubRunnerStreamTransformerSpec.getResource("/response.pdf").bytes
 	}
 
 }

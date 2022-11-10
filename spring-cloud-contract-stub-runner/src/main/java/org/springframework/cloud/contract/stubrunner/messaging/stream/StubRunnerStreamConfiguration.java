@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,9 +41,8 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.dsl.FilterEndpointSpec;
+import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -56,7 +54,7 @@ import org.springframework.util.StringUtils;
  * @author Marcin Grzejszczak
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass({ IntegrationFlows.class, InputDestination.class })
+@ConditionalOnClass({ IntegrationFlow.class, InputDestination.class })
 @ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
@@ -106,14 +104,9 @@ public class StubRunnerStreamConfiguration {
 			}
 			for (Entry<String, List<Contract>> entries : map.entrySet()) {
 				final String flowName = name + "_" + entries.getKey() + "_" + entries.getValue().hashCode();
-				IntegrationFlowBuilder builder = IntegrationFlows.from(entries.getKey())
+				IntegrationFlowBuilder builder = IntegrationFlow.from(entries.getKey())
 						.filter(new StubRunnerStreamMessageSelector(entries.getValue()),
-								new Consumer<FilterEndpointSpec>() {
-									@Override
-									public void accept(FilterEndpointSpec e) {
-										e.id(flowName + ".filter");
-									}
-								})
+								e -> e.id(flowName + ".filter"))
 						.transform(new StubRunnerStreamTransformer(entries.getValue()))
 						.route(new StubRunnerMessageRouter(entries.getValue(), beanFactory));
 				beanFactory.initializeBean(builder.get(), flowName);
