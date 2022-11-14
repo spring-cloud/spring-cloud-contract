@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.amqp
 
+import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
-import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,7 +30,7 @@ import static org.mockito.BDDMockito.then
 
 @AutoConfigureStubRunner
 @SpringBootTest(classes = AmqpMessagingApplication)
-class AmqpStubRunnerSpec extends Specification {
+class AmqpStubRunnerSpec {
 
 	@Autowired
 	StubTrigger stubTrigger
@@ -40,7 +40,8 @@ class AmqpStubRunnerSpec extends Specification {
 
 	ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person)
 
-	def "should trigger stub amqp message"() {
+	@Test
+	void "should trigger stub amqp message"() {
 		given:
 			// tag::amqp_contract[]
 
@@ -76,6 +77,6 @@ class AmqpStubRunnerSpec extends Specification {
 			// end::client_trigger[]
 		then:
 			then(messageSubscriber).should().handleMessage(personArgumentCaptor.capture())
-			personArgumentCaptor.value.name != null
+			assert personArgumentCaptor.value.name != null
 	}
 }

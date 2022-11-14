@@ -19,9 +19,8 @@ package org.springframework.cloud.contract.wiremock;
 import java.io.File;
 import java.nio.file.Files;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.WiremockServerRestDocsHypermediaApplicationTests.TestConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -71,11 +73,9 @@ public class WiremockServerRestDocsHypermediaApplicationTests {
 		@ResponseBody
 		@RequestMapping("/link")
 		public String resource(HttpServletRequest request) {
-			// UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new
-			// ServletServerHttpRequest(request))
-			// .build();
-			// return "link: " + uriComponents.toUriString();
-			return "";
+			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request))
+					.build();
+			return "link: " + uriComponents.toUriString();
 		}
 
 	}

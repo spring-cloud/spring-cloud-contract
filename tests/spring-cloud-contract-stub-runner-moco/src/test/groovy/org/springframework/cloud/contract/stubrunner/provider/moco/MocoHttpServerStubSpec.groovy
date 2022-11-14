@@ -16,7 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.provider.moco
 
-import spock.lang.Specification
+import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -35,21 +36,21 @@ import org.springframework.test.context.ActiveProfiles
         stubsMode = StubRunnerProperties.StubsMode.CLASSPATH)
 // end::[classpath_stub_runner]
 @ActiveProfiles("test")
-class MocoHttpServerStubSpec extends Specification {
+class MocoHttpServerStubSpec {
 
 	@Autowired
 	StubFinder stubFinder
-	def 'should successfully receive a response from a stub'() {
+
+	@Test
+	void 'should successfully receive a response from a stub'() {
 		given:
 			String url = stubFinder.findStubUrl('fraudDetectionServerMoco').toString()
 		expect:
-			"${url.toString()}/name".toURL().text == 'fraudDetectionServerMoco'
-			"${url.toString()}/bye".toURL().text == 'bye'
-			"${url.toString()}/bye2".toURL().text == 'bye'
-		when:
-			"${url.toString()}/name2".toURL().text
-		then:
-			thrown(IOException)
+			assert "${url.toString()}/name".toURL().text == 'fraudDetectionServerMoco'
+			assert "${url.toString()}/bye".toURL().text == 'bye'
+			assert "${url.toString()}/bye2".toURL().text == 'bye'
+		and:
+			BDDAssertions.thenThrownBy(() -> "${url.toString()}/name2".toURL().text).isInstanceOf(IOException)
 	}
 
 	@Configuration

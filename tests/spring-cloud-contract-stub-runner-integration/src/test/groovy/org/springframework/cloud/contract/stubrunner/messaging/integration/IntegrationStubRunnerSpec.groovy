@@ -20,8 +20,11 @@ import java.util.concurrent.TimeUnit
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import spock.lang.IgnoreIf
-import spock.lang.Specification
+import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -40,20 +43,22 @@ import org.springframework.messaging.Message
 @ImportResource("classpath*:integration-context.xml")
 @AutoConfigureStubRunner
 @SpringBootTest(classes = Config)
-@IgnoreIf({ os.windows })
-class IntegrationStubRunnerSpec extends Specification {
+@DisabledOnOs(OS.WINDOWS)
+class IntegrationStubRunnerSpec {
 
 	@Autowired
 	StubFinder stubFinder
 	@Autowired
 	SpringIntegrationStubMessages messaging
 
-	def setup() {
+	@BeforeEach
+	void setup() {
 		// ensure that message were taken from the queue
 		messaging.receive('outputTest', 100, TimeUnit.MILLISECONDS)
 	}
 
-	def 'should download the stub and register a route for it'() {
+	@Test
+	void 'should download the stub and register a route for it'() {
 		when:
 			// tag::client_send[]
 			messaging.send(new BookReturned('foo'), [sample: 'header'], 'input')
@@ -64,13 +69,14 @@ class IntegrationStubRunnerSpec extends Specification {
 			// end::client_receive[]
 		and:
 			// tag::client_receive_message[]
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertJsons(receivedMessage.payload)
+			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
 			// end::client_receive_message[]
 	}
 
-	def 'should trigger a message by label'() {
+	@Test
+	void 'should trigger a message by label'() {
 		when:
 			// tag::client_trigger[]
 			stubFinder.trigger('return_book_1')
@@ -81,13 +87,14 @@ class IntegrationStubRunnerSpec extends Specification {
 			// end::client_trigger_receive[]
 		and:
 			// tag::client_trigger_message[]
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertJsons(receivedMessage.payload)
+			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
 			// end::client_trigger_message[]
 	}
 
-	def 'should trigger a label for the existing groupId:artifactId'() {
+	@Test
+	void 'should trigger a label for the existing groupId and artifactId'() {
 		when:
 			// tag::trigger_group_artifact[]
 			stubFinder.
@@ -96,12 +103,13 @@ class IntegrationStubRunnerSpec extends Specification {
 		then:
 			Message<?> receivedMessage = messaging.receive('outputTest')
 		and:
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertJsons(receivedMessage.payload)
+			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	def 'should trigger a label for the existing artifactId'() {
+	@Test
+	void 'should trigger a label for the existing artifactId'() {
 		when:
 			// tag::trigger_artifact[]
 			stubFinder.trigger('integrationService', 'return_book_1')
@@ -109,26 +117,25 @@ class IntegrationStubRunnerSpec extends Specification {
 		then:
 			Message<?> receivedMessage = messaging.receive('outputTest')
 		and:
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertJsons(receivedMessage.payload)
+			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	def 'should throw exception when missing label is passed'() {
+	@Test
+	void 'should throw exception when missing label is passed'() {
 		when:
-			stubFinder.trigger('missing label')
-		then:
-			thrown(IllegalArgumentException)
+			BDDAssertions.thenThrownBy(() -> stubFinder.trigger('missing label')).isInstanceOf(IllegalArgumentException)
 	}
 
-	def 'should throw exception when missing label and artifactid is passed'() {
+	@Test
+	void 'should throw exception when missing label and artifactid is passed'() {
 		when:
-			stubFinder.trigger('some:service', 'return_book_1')
-		then:
-			thrown(IllegalArgumentException)
+			BDDAssertions.thenThrownBy(() -> stubFinder.trigger('some:service', 'return_book_1')).isInstanceOf(IllegalArgumentException)
 	}
 
-	def 'should trigger messages by running all triggers'() {
+	@Test
+	void 'should trigger messages by running all triggers'() {
 		when:
 			// tag::trigger_all[]
 			stubFinder.trigger()
@@ -136,21 +143,21 @@ class IntegrationStubRunnerSpec extends Specification {
 		then:
 			Message<?> receivedMessage = messaging.receive('outputTest')
 		and:
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertJsons(receivedMessage.payload)
+			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	def 'should trigger a label with no output message'() {
+	@Test
+	void 'should trigger a label with no output message'() {
 		when:
 			// tag::trigger_no_output[]
 			messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
 			// end::trigger_no_output[]
-		then:
-			noExceptionThrown()
 	}
 
-	def 'should not trigger a message that does not match input'() {
+	@Test
+	void 'should not trigger a message that does not match input'() {
 		when:
 			messaging.
 					send(new BookReturned('not_matching'), [wrong: 'header_value'], 'input')
@@ -158,7 +165,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			Message<?> receivedMessage = messaging.
 					receive('outputTest', 100, TimeUnit.MILLISECONDS)
 		and:
-			receivedMessage == null
+			assert receivedMessage == null
 	}
 
 	private boolean assertJsons(Object payload) {
