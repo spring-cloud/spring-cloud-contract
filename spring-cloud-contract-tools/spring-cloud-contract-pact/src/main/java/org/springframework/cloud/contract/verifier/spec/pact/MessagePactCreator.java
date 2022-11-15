@@ -80,9 +80,6 @@ class MessagePactCreator {
 		if (input.getTriggeredBy() != null) {
 			return input.getTriggeredBy().getExecutionCommand();
 		}
-		else if (input.getMessageFrom() != null) {
-			return "received message from " + clientValueExtractor.apply(input.getMessageFrom());
-		}
 		else {
 			return "";
 		}

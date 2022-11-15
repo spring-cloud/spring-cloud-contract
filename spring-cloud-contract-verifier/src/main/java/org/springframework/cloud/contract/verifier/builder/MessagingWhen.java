@@ -28,10 +28,9 @@ class MessagingWhen implements When, BodyMethodVisitor {
 
 	private final List<When> whens = new LinkedList<>();
 
-	MessagingWhen(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
+	MessagingWhen(BlockBuilder blockBuilder) {
 		this.blockBuilder = blockBuilder;
 		this.whens.addAll(Arrays.asList(new MessagingTriggeredByWhen(this.blockBuilder),
-				new MessagingBodyWhen(this.blockBuilder, generatedClassMetaData),
 				new MessagingAssertThatWhen(this.blockBuilder)));
 	}
 

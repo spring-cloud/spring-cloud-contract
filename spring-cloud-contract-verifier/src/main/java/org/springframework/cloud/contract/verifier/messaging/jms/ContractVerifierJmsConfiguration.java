@@ -62,7 +62,8 @@ public class ContractVerifierJmsConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(MessageVerifierSender<Message> sender, MessageVerifierReceiver<Message> receiver) {
+	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(MessageVerifierSender<Message> sender,
+			MessageVerifierReceiver<Message> receiver) {
 		return new ContractVerifierJmsHelper(sender, receiver);
 	}
 

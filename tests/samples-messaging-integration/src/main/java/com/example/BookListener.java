@@ -16,8 +16,6 @@
 
 package com.example;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +25,6 @@ import org.springframework.messaging.support.MessageBuilder;
 public class BookListener {
 
 	private static final Logger log = LoggerFactory.getLogger(BookListener.class);
-
-	public AtomicBoolean bookSuccessfullyDeleted = new AtomicBoolean(false);
 
 	/**
 	 * Scenario for "should generate tests triggered by a message": client side: if sends
@@ -41,18 +37,6 @@ public class BookListener {
 	public Message<BookReturned> returnBook(BookReturned bookReturned) {
 		log.info("Returning book [" + bookReturned + "]");
 		return MessageBuilder.withPayload(bookReturned).setHeader("BOOK-NAME", bookReturned.bookName).build();
-	}
-
-	/**
-	 * Scenario for "should generate tests triggered by a message": client side: if sends
-	 * a message to input.messageFrom then message will be sent to output.messageFrom
-	 * server side: will send a message to input, verify the message contents and await
-	 * upon receiving message on the output messageFrom.
-	 * @param bookDeleted - payload
-	 */
-	public void bookDeleted(BookDeleted bookDeleted) {
-		log.info("Deleting book [ " + bookDeleted + "]");
-		this.bookSuccessfullyDeleted.set(true);
 	}
 
 }

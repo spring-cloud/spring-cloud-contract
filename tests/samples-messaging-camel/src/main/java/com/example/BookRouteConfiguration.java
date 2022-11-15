@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 public class BookRouteConfiguration {
 
 	@Bean
-	RoutesBuilder myRouter(final BookService bookService, final BookDeleter bookDeleter, CamelContext context,
+	RoutesBuilder myRouter(final BookService bookService, CamelContext context,
 			@Value("${spring.rabbitmq.port}") int port) {
 		return new RouteBuilder() {
 
@@ -45,13 +45,6 @@ public class BookRouteConfiguration {
 				// scenario 1 - from bean to output
 				from("direct:start").unmarshal().json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
 						.marshal().json(JsonLibrary.Jackson, BookReturned.class).to("rabbitmq:output?queue=output");
-				// scenario 2 - from input to output
-				from("rabbitmq:input?queue=input").unmarshal().json(JsonLibrary.Jackson, BookReturned.class)
-						.bean(bookService).marshal().json(JsonLibrary.Jackson, BookReturned.class)
-						.to("rabbitmq:output");
-				// scenario 3 - from input to no output
-				from("rabbitmq:delete?queue=delete").unmarshal().json(JsonLibrary.Jackson, BookDeleted.class)
-						.bean(bookDeleter);
 			}
 
 		};

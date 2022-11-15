@@ -23,7 +23,6 @@ import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import org.apache.camel.Message
 import org.apache.camel.model.ModelCamelContext
-import org.awaitility.Awaitility
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.RabbitMQContainer
 import org.testcontainers.junit.jupiter.Container
@@ -49,8 +48,6 @@ class CamelMessagingApplicationSpec {
 	// ALL CASES
 	@Autowired
 	ModelCamelContext camelContext
-	@Autowired
-	BookDeleter bookDeleter
 	@Inject
 	MessageVerifier<Message> contractVerifierMessaging
 
@@ -67,93 +64,31 @@ class CamelMessagingApplicationSpec {
 	@Test
 	void "should work for triggered based messaging"() {
 		given:
+			// tag::sample_dsl[]
 			Contract.make {
-				label 'some_label'
+				label 'return_book_1'
 				input {
 					triggeredBy('bookReturnedTriggered()')
 				}
 				outputMessage {
-					sentTo('rabbitmq:output')
+					sentTo('rabbitmq:output?queue=output')
 					body('''{ "bookName" : "foo" }''')
 					headers {
 						header('BOOK-NAME', 'foo')
 					}
 				}
 			}
+			// end::sample_dsl[]
 			// generated test should look like this:
 		when:
 			bookReturnedTriggered()
 		then:
-			def response = contractVerifierMessaging.receive('rabbitmq:output')
+			def response = contractVerifierMessaging.receive('rabbitmq:output?queue=output')
 			assert response.headers.get('BOOK-NAME') == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.
 					parse(contractVerifierObjectMapper.writeValueAsString(response.body))
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
-
-	@Test
-	void "should generate tests triggered by a message"() {
-		given:
-			Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('rabbitmq:input')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-
-					}
-				}
-				outputMessage {
-					sentTo('rabbitmq:output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-			// generated test should look like this:
-		when:
-			contractVerifierMessaging.send(
-					contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-					[sample: 'header'], 'rabbitmq:input')
-		then:
-			def response = contractVerifierMessaging.receive('rabbitmq:output')
-			assert response.headers.get('BOOK-NAME') == 'foo'
-		and:
-			DocumentContext parsedJson = JsonPath.
-					parse(contractVerifierObjectMapper.writeValueAsString(response.body))
-			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
-
-	@Test
-	void "should generate tests without destination, triggered by a message"() {
-		given:
-			Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('rabbitmq:delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-			// generated test should look like this:
-		when:
-			contractVerifierMessaging.
-					send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-							[sample: 'header'], 'rabbitmq:delete')
-		then:
-			bookWasDeleted()
 	}
 
 	void bookReturnedTriggered() {
@@ -161,9 +96,4 @@ class CamelMessagingApplicationSpec {
 				sendBody('direct:start', '''{"bookName" : "foo" }''')
 	}
 
-	void bookWasDeleted() {
-		Awaitility.await().untilAsserted(() -> {
-			assert bookDeleter.bookSuccessfulyDeleted.get()
-		})
-	}
 }

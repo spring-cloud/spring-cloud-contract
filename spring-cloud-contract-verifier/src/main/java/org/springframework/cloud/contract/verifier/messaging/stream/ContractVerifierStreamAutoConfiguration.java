@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
@@ -46,7 +45,8 @@ public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(MessageVerifierSender<Message<?>> sender, MessageVerifierReceiver<Message<?>> receiver) {
+	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(MessageVerifierSender<Message<?>> sender,
+			MessageVerifierReceiver<Message<?>> receiver) {
 		return new ContractVerifierHelper(sender, receiver);
 	}
 
@@ -59,20 +59,6 @@ public class ContractVerifierStreamAutoConfiguration {
 		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithDestinations(ApplicationContext context) {
 			return new StreamStubMessages(new StreamInputDestinationMessageSender(context),
 					new StreamOutputDestinationMessageReceiver(context));
-		}
-
-	}
-
-	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnMissingClass({ "org.springframework.cloud.stream.binder.test.InputDestination" })
-	static class NoOpStreamClassConfiguration {
-
-		@Bean
-		@ConditionalOnMissingBean
-		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithNoMessageCollector(
-				ApplicationContext applicationContext) {
-			return new StreamStubMessages(new StreamStubMessageSender(applicationContext),
-					new StreamPollableChannelMessageReceiver(applicationContext));
 		}
 
 	}

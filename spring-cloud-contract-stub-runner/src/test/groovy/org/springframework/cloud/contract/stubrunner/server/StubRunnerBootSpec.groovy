@@ -85,7 +85,7 @@ class StubRunnerBootSpec {
 			String response = RestAssuredMockMvc.get('/triggers').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			assert root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book", "return_book_1", "return_book_2"])
+			assert root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["return_book_1"])
 	}
 
 	@Test

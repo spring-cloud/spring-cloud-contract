@@ -50,8 +50,6 @@ class JmsMessagingApplicationSpec {
 	// ALL CASES
 	@Autowired
 	JmsTemplate jmsTemplate
-	@Autowired
-	BookDeleter bookDeleter
 	@Inject
 	MessageVerifier<Message> messageVerifier
 	@Inject
@@ -92,70 +90,6 @@ class JmsMessagingApplicationSpec {
 		JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
-	@DirtiesContext
-	@Test
-	void "should generate tests triggered by a message"() {
-		given:
-		Contract.make {
-			label 'some_label'
-			input {
-				messageFrom('input2')
-				messageBody([
-						bookName: 'foo'
-				])
-				messageHeaders {
-					header('sample', 'header')
-				}
-			}
-			outputMessage {
-				sentTo('output2')
-				body([
-						bookName: 'foo'
-				])
-				headers {
-					header('BOOKNAME', 'foo')
-				}
-			}
-		}
-		// generated test should look like this:
-		when:
-		messageVerifier.send(
-				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-				[sample: 'header'], 'input2')
-		then:
-		ContractVerifierMessage response = contractVerifierMessaging.receive('output2')
-		assert response.getHeader('BOOKNAME') == 'foo'
-		and:
-		DocumentContext parsedJson = JsonPath.
-				parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-		JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
-
-	@Test
-	void "should generate tests without destination, triggered by a message"() {
-		given:
-		Contract.make {
-			label 'some_label'
-			input {
-				messageFrom('delete')
-				messageBody([
-						bookName: 'foo'
-				])
-				messageHeaders {
-					header('sample', 'header')
-				}
-				assertThat('bookWasDeleted()')
-			}
-		}
-		// generated test should look like this:
-		when:
-		messageVerifier.
-				send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-						[sample: 'header'], 'delete')
-		then:
-		bookWasDeleted()
-	}
-
 	void bookReturnedTriggered() {
 		jmsTemplate.convertAndSend("output", '''{"bookName" : "foo" }''', new MessagePostProcessor() {
 			@Override
@@ -163,12 +97,6 @@ class JmsMessagingApplicationSpec {
 				message.setStringProperty("BOOKNAME", "foo")
 				return message
 			}
-		})
-	}
-
-	void bookWasDeleted() {
-		Awaitility.await().untilAsserted( () ->  {
-			assert bookDeleter.bookSuccessfulyDeleted.get()
 		})
 	}
 

@@ -57,7 +57,7 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final AvailablePortScanner portScanner;
 
-	private final MessageVerifierSender<?> contractVerifierMessaging;
+	private final MessageVerifierSender<?> messageVerifierSender;
 
 	private final List<HttpServerStub> serverStubs;
 
@@ -65,10 +65,10 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final YamlContractConverter yamlContractConverter = new YamlContractConverter();
 
-	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifierSender<?> contractVerifierMessaging,
+	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifierSender<?> messageVerifierSender,
 			List<HttpServerStub> serverStubs) {
 		this.portScanner = portScanner;
-		this.contractVerifierMessaging = contractVerifierMessaging;
+		this.messageVerifierSender = messageVerifierSender;
 		this.serverStubs = serverStubs;
 	}
 
@@ -249,7 +249,7 @@ class StubRunnerExecutor implements StubFinder {
 		YamlContract contract = yamlContracts.get(0);
 		setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
 		// TODO: Json is harcoded here
-		this.contractVerifierMessaging.send(
+		this.messageVerifierSender.send(
 				JsonOutput
 						.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue())),
 				headers == null ? null : headers.asStubSideMap(), outputMessage.getSentTo().getClientValue(), contract);

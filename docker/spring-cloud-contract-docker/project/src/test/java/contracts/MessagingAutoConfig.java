@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
@@ -68,8 +70,8 @@ public class MessagingAutoConfig {
 
 	@Bean
 	public ContractVerifierMessaging<Message> contractVerifierMessaging(
-			MessageVerifier<Message> exchange) {
-		return new ContractVerifierCamelHelper(exchange);
+			MessageVerifierSender<Message> sender, MessageVerifierReceiver<Message> receiver) {
+		return new ContractVerifierCamelHelper(sender, receiver);
 	}
 
 	@Bean
@@ -185,8 +187,8 @@ public class MessagingAutoConfig {
 
 class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
 
-	ContractVerifierCamelHelper(MessageVerifier<Message> exchange) {
-		super(exchange);
+	ContractVerifierCamelHelper(MessageVerifierSender<Message> sender, MessageVerifierReceiver<Message> receiver) {
+		super(sender, receiver);
 	}
 
 	@Override

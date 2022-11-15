@@ -3,21 +3,8 @@ label: some_label
 name: some name
 ignored: true
 input:
-  messageFrom: foo
   triggeredBy: foo()
-  messageHeaders:
-    foo: bar
-  messageBody:
-    foo: bar
   assertThat: bar()
-  matchers:
-    body:
-      - path: $.bar
-        type: by_regex
-        value: bar
-    headers:
-      - key: foo
-        regex: bar
 outputMessage:
   sentTo: bar
   headers:

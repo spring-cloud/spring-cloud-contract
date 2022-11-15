@@ -302,45 +302,4 @@ class KafkaStubRunnerSpec {
 			}
 	// end::sample_dsl[]
 
-	Contract dsl2 =
-			// tag::sample_dsl_2[]
-			Contract.make {
-				label 'return_book_2'
-				input {
-					messageFrom('input')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-	// end::sample_dsl_2[]
-
-	Contract dsl3 =
-			// tag::sample_dsl_3[]
-			Contract.make {
-				label 'delete_book'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-	// end::sample_dsl_3[]
 }

@@ -117,9 +117,7 @@ class SingleMethodBuilder {
 
 	SingleMethodBuilder messaging() {
 		// @formatter:off
-		return given(new JavaMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
-				.given(new SpockMessagingGiven(this.blockBuilder, this.generatedClassMetaData))
-				.when(new MessagingWhen(this.blockBuilder, this.generatedClassMetaData))
+		return when(new MessagingWhen(this.blockBuilder))
 				.then(new JavaMessagingWithBodyThen(this.blockBuilder,
 						this.generatedClassMetaData))
 				.then(new SpockMessagingWithBodyThen(this.blockBuilder,

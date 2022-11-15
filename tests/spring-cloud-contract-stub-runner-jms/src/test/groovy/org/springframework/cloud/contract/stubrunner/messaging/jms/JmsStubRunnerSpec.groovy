@@ -59,31 +59,6 @@ class JmsStubRunnerSpec {
 	}
 
 	@Test
-	void 'should download the stub and register a route for it'() {
-		when:
-			// tag::client_send[]
-			jmsTemplate.
-					convertAndSend('input', new BookReturned('foo'), new MessagePostProcessor() {
-						@Override
-						Message postProcessMessage(Message message) throws JMSException {
-							message.setStringProperty("sample", "header")
-							return message
-						}
-					})
-			// end::client_send[]
-		then:
-			// tag::client_receive[]
-			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
-			// end::client_receive[]
-		and:
-			// tag::client_receive_message[]
-			assert receivedMessage != null
-			assert assertThatBodyContainsBookNameFoo(receivedMessage.getText())
-			assert receivedMessage.getStringProperty('BOOKNAME') == 'foo'
-			// end::client_receive_message[]
-	}
-
-	@Test
 	void 'should trigger a message by label'() {
 		when:
 			// tag::client_trigger[]
@@ -102,7 +77,7 @@ class JmsStubRunnerSpec {
 	}
 
 	@Test
-	void 'should trigger a label for the existing groupId:artifactId'() {
+	void 'should trigger a label for the existing groupId and artifactId'() {
 		when:
 			// tag::trigger_group_artifact[]
 			stubFinder.
@@ -219,46 +194,4 @@ class JmsStubRunnerSpec {
 				}
 			}
 	// end::sample_dsl[]
-
-	Contract dsl2 =
-			// tag::sample_dsl_2[]
-			Contract.make {
-				label 'return_book_2'
-				input {
-					messageFrom('input')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOKNAME', 'foo')
-					}
-				}
-			}
-	// end::sample_dsl_2[]
-
-	Contract dsl3 =
-			// tag::sample_dsl_3[]
-			Contract.make {
-				label 'delete_book'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-	// end::sample_dsl_3[]
 }

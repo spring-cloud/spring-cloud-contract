@@ -81,79 +81,6 @@ class IntegrationMessagingApplicationSpec {
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
-	void "should generate tests triggered by a message"() {
-		given:
-			// tag::message_trigger[]
-			def dsl = Contract.make {
-				description 'Some Description'
-				label 'some_label'
-				// input is a message
-				input {
-					// the message was received from this destination
-					messageFrom('input')
-					// has the following body
-					messageBody([
-							bookName: 'foo'
-					])
-					// and the following headers
-					messageHeaders {
-						header('sample', 'header')
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-			// end::message_trigger[]
-
-			// generated test should look like this:
-
-		when:
-			contractVerifierMessaging.send(
-					contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-					[sample: 'header'], 'input')
-		then:
-			def response = contractVerifierMessaging.receive('output')
-			response.headers.get('BOOK-NAME') == 'foo'
-		and:
-			DocumentContext parsedJson = JsonPath.
-					parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
-
-	@Test
-	void "should generate tests without destination, triggered by a message"() {
-		given:
-			def dsl = Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-
-			// generated test should look like this:
-
-		when:
-			contractVerifierMessaging.
-					send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-							[sample: 'header'], 'delete')
-		then:
-			bookWasDeleted()
-	}
-
 	// BASE CLASS WOULD HAVE THIS:
 
 	@Autowired
@@ -163,10 +90,6 @@ class IntegrationMessagingApplicationSpec {
 
 	void bookReturnedTriggered() {
 		bookService.returnBook(new BookReturned("foo"))
-	}
-
-	void bookWasDeleted() {
-		assert bookListener.bookSuccessfullyDeleted.get()
 	}
 
 }

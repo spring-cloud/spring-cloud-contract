@@ -120,9 +120,6 @@ public abstract class ContractTestsBase {
 		AmqpMetadata amqpMetadata = AmqpMetadata.fromMetadata(contract.metadata);
 		if (isMessagingType("rabbit") && hasDeclaredOutputQueue(amqpMetadata) || isMessagingType("kafka")) {
 			log.info("First will try to receive a message to setup the connection with the broker");
-			if (contract.input != null && StringUtils.hasText(contract.input.messageFrom)) {
-				setupConnection(contract.input.messageFrom, contract);
-			}
 			if (contract.outputMessage != null && StringUtils.hasText(contract.outputMessage.sentTo)){
 				setupConnection(contract.outputMessage.sentTo, contract);
 			}

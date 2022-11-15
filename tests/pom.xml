@@ -49,7 +49,6 @@
 				<module>samples-messaging-integration</module>
 				<module>samples-messaging-amqp</module>
 				<module>samples-messaging-jms</module>
-				<module>spring-cloud-contract-stub-runner-camel</module>
 				<module>spring-cloud-contract-stub-runner-boot-eureka</module>
 				<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
 				<module>spring-cloud-contract-stub-runner-context-path</module>
@@ -72,7 +71,6 @@
 				<module>samples-messaging-integration</module>
 				<module>samples-messaging-amqp</module>
 				<module>samples-messaging-jms</module>
-				<module>spring-cloud-contract-stub-runner-camel</module>
 				<module>spring-cloud-contract-stub-runner-boot-eureka</module>
 				<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
 				<module>spring-cloud-contract-stub-runner-context-path</module>

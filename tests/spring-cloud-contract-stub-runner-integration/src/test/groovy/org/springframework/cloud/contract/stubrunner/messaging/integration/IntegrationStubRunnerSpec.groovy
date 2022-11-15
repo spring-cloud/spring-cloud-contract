@@ -58,24 +58,6 @@ class IntegrationStubRunnerSpec {
 	}
 
 	@Test
-	void 'should download the stub and register a route for it'() {
-		when:
-			// tag::client_send[]
-			messaging.send(new BookReturned('foo'), [sample: 'header'], 'input')
-			// end::client_send[]
-		then:
-			// tag::client_receive[]
-			Message<?> receivedMessage = messaging.receive('outputTest')
-			// end::client_receive[]
-		and:
-			// tag::client_receive_message[]
-			assert receivedMessage != null
-			assert assertJsons(receivedMessage.payload)
-			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
-			// end::client_receive_message[]
-	}
-
-	@Test
 	void 'should trigger a message by label'() {
 		when:
 			// tag::client_trigger[]
@@ -148,26 +130,6 @@ class IntegrationStubRunnerSpec {
 			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	@Test
-	void 'should trigger a label with no output message'() {
-		when:
-			// tag::trigger_no_output[]
-			messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
-			// end::trigger_no_output[]
-	}
-
-	@Test
-	void 'should not trigger a message that does not match input'() {
-		when:
-			messaging.
-					send(new BookReturned('not_matching'), [wrong: 'header_value'], 'input')
-		then:
-			Message<?> receivedMessage = messaging.
-					receive('outputTest', 100, TimeUnit.MILLISECONDS)
-		and:
-			assert receivedMessage == null
-	}
-
 	private boolean assertJsons(Object payload) {
 		String objectAsString = payload instanceof String ? payload :
 				JsonOutput.toJson(payload)
@@ -191,48 +153,6 @@ class IntegrationStubRunnerSpec {
 				}
 			}
 	// end::sample_dsl[]
-
-	Contract dsl2 =
-			// tag::sample_dsl_2[]
-			Contract.make {
-				label 'return_book_2'
-				input {
-					messageFrom('input')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-	// end::sample_dsl_2[]
-
-	Contract dsl3 =
-			// tag::sample_dsl_3[]
-			Contract.make {
-				label 'delete_book'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-	// end::sample_dsl_3[]
 
 	@Configuration
 	@ComponentScan

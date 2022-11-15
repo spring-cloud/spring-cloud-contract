@@ -32,51 +32,14 @@ class InputDsl : CommonDsl() {
     private val delegate = Input()
 
     /**
-     * Name of a destination from which message would come to trigger action in the
-     * system.
-     */
-    var messageFrom: DslProperty<String>? = null
-
-    /**
      * Function that needs to be executed to trigger action in the system.
      */
     var triggeredBy: String? = null
 
     /**
-     * The message headers part of the contract.
-     */
-    var headers: Headers? = null
-
-    /**
-     * The contents of the incoming message.
-     */
-    var messageBody: Input.BodyType? = null
-
-    /**
      * Function that needs to be executed after the message has been received/processed by the system.
      */
     var assertThat: String? = null
-
-    /**
-     * The body matchers part of the contract.
-     */
-    var bodyMatchers: BodyMatchers? = null
-
-    fun messageFrom(messageFrom: String) = messageFrom.toDslProperty()
-
-    fun headers(headers: HeadersDsl.() -> Unit) {
-        this.headers = HeadersDsl().apply(headers).get()
-    }
-
-    fun messageBody(vararg pairs: Pair<String, Any>) = Input.BodyType(pairs.toMap())
-
-    fun messageBody(pair: Pair<String, Any>) = Input.BodyType(mapOf(pair))
-
-    fun messageBody(value: String) = Input.BodyType(value)
-
-    fun bodyMatchers(configurer: BodyMatchersDsl.() -> Unit) {
-        this.bodyMatchers = BodyMatchersDsl().apply(configurer).get()
-    }
 
     /* HELPER VARIABLES */
 
@@ -170,12 +133,8 @@ class InputDsl : CommonDsl() {
 
     internal fun get(): Input {
         val input = Input()
-        messageFrom?.also { input.messageFrom = messageFrom }
         triggeredBy?.also { input.triggeredBy(triggeredBy) }
-        headers?.also { input.messageHeaders = headers }
-        messageBody?.also { input.messageBody = messageBody }
         assertThat?.also { input.assertThat(assertThat) }
-        bodyMatchers?.also { input.bodyMatchers = bodyMatchers }
         return input
     }
 }

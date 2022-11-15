@@ -16,17 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream
 
-import java.util.concurrent.TimeUnit
-import java.util.function.Consumer
+
 import java.util.function.Function
-import java.util.function.Supplier
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.assertj.core.api.BDDAssertions
 import org.awaitility.Awaitility
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -60,26 +56,6 @@ class StreamStubRunnerSpec {
 	MessageVerifier<Message<?>> messaging
 
 	@Test
-	void 'should download the stub and register a route for it'() {
-		when:
-		// tag::client_send[]
-		messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')
-		// end::client_send[]
-		then:
-		Awaitility.await().untilAsserted(() -> {
-			// tag::client_receive[]
-			Message<?> receivedMessage = messaging.receive('returnBook')
-			// end::client_receive[]
-			and:
-			// tag::client_receive_message[]
-			assert receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
-			// end::client_receive_message[]
-		})
-	}
-
-	@Test
 	void 'should trigger a message by label'() {
 		when:
 		// tag::client_trigger[]
@@ -88,7 +64,7 @@ class StreamStubRunnerSpec {
 		then:
 		Awaitility.await().untilAsserted(() -> {
 			// tag::client_trigger_receive[]
-			Message<?> receivedMessage = messaging.receive('returnBook')
+			Message<?> receivedMessage = messaging.receive('outputToAssertBook')
 			// end::client_trigger_receive[]
 			and:
 			// tag::client_trigger_message[]
@@ -106,7 +82,7 @@ class StreamStubRunnerSpec {
 		stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')
 		// end::trigger_group_artifact[]
 		then:
-		Message<?> receivedMessage = messaging.receive('returnBook')
+		Message<?> receivedMessage = messaging.receive('outputToAssertBook')
 		and:
 		assert receivedMessage != null
 		assertJsons(receivedMessage.payload)
@@ -120,7 +96,7 @@ class StreamStubRunnerSpec {
 		stubFinder.trigger('streamService', 'return_book_1')
 		// end::trigger_artifact[]
 		then:
-		Message<?> receivedMessage = messaging.receive('returnBook')
+		Message<?> receivedMessage = messaging.receive('outputToAssertBook')
 		and:
 		assert receivedMessage != null
 		assertJsons(receivedMessage.payload)
@@ -146,29 +122,11 @@ class StreamStubRunnerSpec {
 		stubFinder.trigger()
 		// end::trigger_all[]
 		then:
-		Message<?> receivedMessage = messaging.receive('returnBook')
+		Message<?> receivedMessage = messaging.receive('outputToAssertBook')
 		and:
 		assert receivedMessage != null
 		assertJsons(receivedMessage.payload)
 		assert receivedMessage.headers.get('BOOK-NAME') == 'foo'
-	}
-
-	@Test
-	void 'should trigger a label with no output message'() {
-		when:
-		// tag::trigger_no_output[]
-		messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
-		// end::trigger_no_output[]
-	}
-
-	@Test
-	void 'should not trigger a message that does not match input'() {
-		when:
-		messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'bookStorage')
-		then:
-		Message<?> receivedMessage = messaging.receive('returnBook', 100, TimeUnit.MILLISECONDS)
-		and:
-		assert receivedMessage == null
 	}
 
 	private boolean assertJsons(Object payload) {
@@ -179,6 +137,7 @@ class StreamStubRunnerSpec {
 		return json.bookName == 'foo'
 	}
 
+	// Contract from the other service that is a producer (I'm a consumer)
 	Contract dsl =
 			// tag::sample_dsl[]
 			Contract.make {
@@ -192,44 +151,22 @@ class StreamStubRunnerSpec {
 			}
 	// end::sample_dsl[]
 
-	Contract dsl2 =
-			// tag::sample_dsl_2[]
+	// Contract from my service that is processing the input message and sending out another message (I'm a producer)
+	Contract myDsl =
+			// tag::sample_dsl[]
 			Contract.make {
 				label 'return_book_2'
-				input {
-					messageFrom('bookStorage')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders { header('sample', 'header') }
-				}
+				input { triggeredBy('gotAMessageFromFunction()') }
 				outputMessage {
-					sentTo('returnBook')
-					body([
-							bookName: 'foo'
-					])
+					sentTo('outputToAssertBook')
+					body('''{ "bookName" : "foo" }''')
 					headers { header('BOOK-NAME', 'foo') }
 				}
 			}
-	// end::sample_dsl_2[]
 
-	Contract dsl3 =
-			// tag::sample_dsl_3[]
-			Contract.make {
-				label 'delete_book'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders { header('sample', 'header') }
-					assertThat('bookWasDeleted()')
-				}
-			}
-	// end::sample_dsl_3[]
-
+	// tag::setup[]
 	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
-	@Configuration
+	@Configuration(proxyBeanMethods = true)
 	@EnableAutoConfiguration
 	protected static class Config {
 
@@ -241,19 +178,7 @@ class StreamStubRunnerSpec {
 			}
 		}
 
-		@Bean
-		Consumer<String> test2() {
-			return (input) -> {
-				println "Test 2 [${input}]"
-			}
-		}
-
-		@Bean
-		Consumer<String> test3() {
-			return (input) -> {
-				println "Test 3 [${input}]"
-			}
-		}
 	}
+	// end::setup[]
 
 }
