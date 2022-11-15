@@ -50,6 +50,8 @@
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
 		<awaitility.version>4.2.0</awaitility.version>
+		<artemis.version>${artemis-jms-server.version}</artemis.version>
+		<testcontainers.version>1.17.5</testcontainers.version>
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>4.0.0</groovy.version>
@@ -70,6 +72,7 @@
 
 		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
+		<artemis-jms-server.version>2.26.0</artemis-jms-server.version>
 	</properties>
 
 	<modules>
@@ -120,6 +123,26 @@
 				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-rabbitmq-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-direct-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-bean-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-jackson-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-core</artifactId>
 				<version>${camel.version}</version>
@@ -143,6 +166,11 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-activemq</artifactId>
 				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>artemis-jms-server</artifactId>
+				<version>${artemis-jms-server.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
@@ -477,7 +505,21 @@
 				<groupId>org.awaitility</groupId>
 				<artifactId>awaitility</artifactId>
 				<version>${awaitility.version}</version>
-				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>artemis-junit</artifactId>
+				<version>${artemis.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>rabbitmq</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${testcontainers.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -618,6 +660,24 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<!-- FIXME: 4.0 -->
+		<!-- Netflix -->
+		<!--<repository>
+			<id>netflix-snapshots</id>
+			<name>Netflix Snapshots</name>
+			<url>https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>-->
+		<repository>
+			<id>netflix-candidates</id>
+			<name>Netflix Candidates</name>
+			<url>https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates</url>
+			<snapshots>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>

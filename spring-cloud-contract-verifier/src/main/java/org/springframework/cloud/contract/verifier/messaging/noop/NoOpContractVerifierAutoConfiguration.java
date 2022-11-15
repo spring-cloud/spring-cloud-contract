@@ -22,6 +22,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -39,14 +41,14 @@ public class NoOpContractVerifierAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(MessageVerifier.class)
-	public MessageVerifier<?> contractVerifierMessageExchange() {
+	public NoOpStubMessages contractVerifierMessageExchange() {
 		return new NoOpStubMessages();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(ContractVerifierMessaging.class)
-	public ContractVerifierMessaging<?> contractVerifierMessaging(MessageVerifier<?> exchange) {
-		return new ContractVerifierMessaging<>(exchange);
+	public ContractVerifierMessaging<Object> contractVerifierMessaging(NoOpStubMessages messages) {
+		return new ContractVerifierMessaging<>(messages, messages);
 	}
 
 	@Bean

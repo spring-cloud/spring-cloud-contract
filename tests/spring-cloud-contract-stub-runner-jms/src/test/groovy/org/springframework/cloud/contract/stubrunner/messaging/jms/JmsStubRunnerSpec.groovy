@@ -16,24 +16,23 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.jms
 
-import javax.jms.JMSException
-import javax.jms.Message
-import javax.jms.TextMessage
-
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import org.apache.activemq.ActiveMQConnectionFactory
-import spock.lang.IgnoreIf
-import spock.lang.Specification
+import jakarta.jms.JMSException
+import jakarta.jms.Message
+import jakarta.jms.TextMessage
+import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.jms.annotation.EnableJms
@@ -44,21 +43,23 @@ import org.springframework.jms.core.MessagePostProcessor
  */
 @SpringBootTest(classes = Config, properties = ["debug=true"])
 @AutoConfigureStubRunner
-@IgnoreIf({ os.windows })
-class JmsStubRunnerSpec extends Specification {
+@DisabledOnOs(OS.WINDOWS)
+class JmsStubRunnerSpec {
 
 	@Autowired
 	StubFinder stubFinder
 	@Autowired
 	JmsTemplate jmsTemplate
 
-	def cleanup() {
+	@AfterEach
+	void cleanup() {
 		// ensure that message were taken from the queue
 		jmsTemplate.receive('output')
 		jmsTemplate.receive('input')
 	}
 
-	def 'should download the stub and register a route for it'() {
+	@Test
+	void 'should download the stub and register a route for it'() {
 		when:
 			// tag::client_send[]
 			jmsTemplate.
@@ -76,13 +77,14 @@ class JmsStubRunnerSpec extends Specification {
 			// end::client_receive[]
 		and:
 			// tag::client_receive_message[]
-			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
-			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			assert receivedMessage.getStringProperty('BOOKNAME') == 'foo'
 			// end::client_receive_message[]
 	}
 
-	def 'should trigger a message by label'() {
+	@Test
+	void 'should trigger a message by label'() {
 		when:
 			// tag::client_trigger[]
 			stubFinder.trigger('return_book_1')
@@ -93,13 +95,14 @@ class JmsStubRunnerSpec extends Specification {
 			// end::client_trigger_receive[]
 		and:
 			// tag::client_trigger_message[]
-			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
-			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			assert receivedMessage.getStringProperty('BOOKNAME') == 'foo'
 			// end::client_trigger_message[]
 	}
 
-	def 'should trigger a label for the existing groupId:artifactId'() {
+	@Test
+	void 'should trigger a label for the existing groupId:artifactId'() {
 		when:
 			// tag::trigger_group_artifact[]
 			stubFinder.
@@ -108,12 +111,13 @@ class JmsStubRunnerSpec extends Specification {
 		then:
 			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 		and:
-			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
-			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			assert receivedMessage.getStringProperty('BOOKNAME') == 'foo'
 	}
 
-	def 'should trigger a label for the existing artifactId'() {
+	@Test
+	void 'should trigger a label for the existing artifactId'() {
 		when:
 			// tag::trigger_artifact[]
 			stubFinder.trigger('stubs', 'return_book_1')
@@ -121,26 +125,25 @@ class JmsStubRunnerSpec extends Specification {
 		then:
 			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 		and:
-			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
-			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			assert receivedMessage.getStringProperty('BOOKNAME') == 'foo'
 	}
 
-	def 'should throw an exception when missing label is passed'() {
+	@Test
+	void 'should throw an exception when missing label is passed'() {
 		when:
-			stubFinder.trigger('missing label')
-		then:
-			thrown(IllegalArgumentException)
+		BDDAssertions.thenThrownBy(() -> stubFinder.trigger('missing label')).isInstanceOf(IllegalArgumentException)
 	}
 
-	def 'should throw an exception when missing label and artifactid is passed'() {
+	@Test
+	void 'should throw an exception when missing label and artifactid is passed'() {
 		when:
-			stubFinder.trigger('some:service', 'return_book_1')
-		then:
-			thrown(IllegalArgumentException)
+		BDDAssertions.thenThrownBy(() -> stubFinder.trigger('some:service', 'return_book_1')).isInstanceOf(IllegalArgumentException)
 	}
 
-	def 'should trigger messages by running all triggers'() {
+	@Test
+	void 'should trigger messages by running all triggers'() {
 		when:
 			// tag::trigger_all[]
 			stubFinder.trigger()
@@ -148,12 +151,13 @@ class JmsStubRunnerSpec extends Specification {
 		then:
 			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 		and:
-			receivedMessage != null
-			assertThatBodyContainsBookNameFoo(receivedMessage.getText())
-			receivedMessage.getStringProperty('BOOK-NAME') == 'foo'
+			assert receivedMessage != null
+			assert assertThatBodyContainsBookNameFoo(receivedMessage.getText())
+			assert receivedMessage.getStringProperty('BOOKNAME') == 'foo'
 	}
 
-	def 'should trigger a label with no output message'() {
+	@Test
+	void 'should trigger a label with no output message'() {
 		when:
 			// tag::trigger_no_output[]
 			jmsTemplate.
@@ -165,11 +169,10 @@ class JmsStubRunnerSpec extends Specification {
 						}
 					})
 			// end::trigger_no_output[]
-		then:
-			noExceptionThrown()
 	}
 
-	def 'should not trigger a message that does not match input'() {
+	@Test
+	void 'should not trigger a message that does not match input'() {
 		when:
 			jmsTemplate.
 					convertAndSend('input', new BookReturned('notmatching'), new MessagePostProcessor() {
@@ -182,7 +185,7 @@ class JmsStubRunnerSpec extends Specification {
 		then:
 			TextMessage receivedMessage = (TextMessage) jmsTemplate.receive('output')
 		and:
-			receivedMessage == null
+			assert receivedMessage == null
 	}
 
 	private boolean assertThatBodyContainsBookNameFoo(Object payload) {
@@ -197,16 +200,7 @@ class JmsStubRunnerSpec extends Specification {
 	@EnableAutoConfiguration
 	@EnableJms
 	static class Config {
-		@Bean
-		ActiveMQConnectionFactory activeMQConnectionFactory(@Value('${activemq.url:vm://localhost?broker.persistent=false}') String url) {
-			ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerURL: url)
-			try {
-				factory.trustAllPackages = true
-			}
-			catch (Throwable e) {
-			}
-			return factory
-		}
+
 	}
 
 	Contract dsl =
@@ -220,7 +214,7 @@ class JmsStubRunnerSpec extends Specification {
 					sentTo('output')
 					body('''{ "bookName" : "foo" }''')
 					headers {
-						header('BOOK-NAME', 'foo')
+						header('BOOKNAME', 'foo')
 					}
 				}
 			}
@@ -245,7 +239,7 @@ class JmsStubRunnerSpec extends Specification {
 							bookName: 'foo'
 					])
 					headers {
-						header('BOOK-NAME', 'foo')
+						header('BOOKNAME', 'foo')
 					}
 				}
 			}

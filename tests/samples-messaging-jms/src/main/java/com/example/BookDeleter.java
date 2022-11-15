@@ -18,13 +18,12 @@ package com.example;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-
+import jakarta.jms.JMSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,7 +45,7 @@ public class BookDeleter {
 	public void bookDeleted(Message message) throws JMSException {
 		log.info("Deleting book " + message);
 		this.bookSuccessfulyDeleted.set(true);
-		log.info("Book successfuly deleted [" + this.bookSuccessfulyDeleted + "]");
+		log.info("Book successfully deleted [" + this.bookSuccessfulyDeleted + "]");
 	}
 
 }

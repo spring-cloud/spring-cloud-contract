@@ -27,6 +27,7 @@ import org.assertj.core.api.BDDAssertions
 import org.awaitility.Awaitility
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -55,6 +56,7 @@ import org.springframework.stereotype.Component
 @DisabledOnOs(value = OS.WINDOWS)
 @EmbeddedKafka(topics = ["input", "input2", "output", "delete"])
 @Commons
+@Disabled("TODO: Migrate to middleware based approach")
 class KafkaStubRunnerSpec {
 
 	@Autowired

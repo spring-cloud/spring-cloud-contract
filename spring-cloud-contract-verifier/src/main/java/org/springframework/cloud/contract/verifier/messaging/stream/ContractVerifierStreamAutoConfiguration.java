@@ -22,6 +22,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
@@ -44,8 +46,8 @@ public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(MessageVerifier<Message<?>> exchange) {
-		return new ContractVerifierHelper(exchange);
+	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(MessageVerifierSender<Message<?>> sender, MessageVerifierReceiver<Message<?>> receiver) {
+		return new ContractVerifierHelper(sender, receiver);
 	}
 
 	@Configuration(proxyBeanMethods = false)
@@ -79,8 +81,8 @@ public class ContractVerifierStreamAutoConfiguration {
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
-	ContractVerifierHelper(MessageVerifier<Message<?>> exchange) {
-		super(exchange);
+	ContractVerifierHelper(MessageVerifierSender<Message<?>> sender, MessageVerifierReceiver<Message<?>> receiver) {
+		super(sender, receiver);
 	}
 
 	@Override

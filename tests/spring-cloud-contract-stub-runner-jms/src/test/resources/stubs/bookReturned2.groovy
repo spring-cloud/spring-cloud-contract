@@ -15,7 +15,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 				bookName: 'foo'
 		])
 		headers {
-			header('BOOK-NAME', 'foo')
+			header('BOOKNAME', 'foo')
 		}
 	}
 }

@@ -30,14 +30,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.BeansException;
+import org.springframework.boot.actuate.health.StatusAggregator;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
+import org.springframework.cloud.loadbalancer.support.SimpleObjectProvider;
 import org.springframework.cloud.netflix.eureka.CloudEurekaClient;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
+import org.springframework.cloud.netflix.eureka.EurekaHealthCheckHandler;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.cloud.netflix.eureka.InstanceInfoFactory;
 import org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration;
@@ -92,11 +95,16 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 					+ ", " + instance.getNonSecurePort() + ", " + instance.getInstanceId() + "]");
 			InstanceInfo instanceInfo = new InstanceInfoFactory().create(instance);
 			ApplicationInfoManager applicationInfoManager = new ApplicationInfoManager(instance, instanceInfo);
-			AbstractDiscoveryClientOptionalArgs args = args();
+			AbstractDiscoveryClientOptionalArgs<?> args = args();
 			EurekaClient client = new CloudEurekaClient(applicationInfoManager, this.eurekaClientConfigBean, args,
 					this.context);
 			EurekaRegistration registration = EurekaRegistration.builder(instance)
 					.with(this.eurekaClientConfigBean, this.context).with(client).build();
+			EurekaHealthCheckHandler eurekaHealthCheckHandler = new EurekaHealthCheckHandler(
+					StatusAggregator.getDefault());
+			eurekaHealthCheckHandler.setApplicationContext(context);
+			eurekaHealthCheckHandler.afterPropertiesSet();
+			registration.setHealthCheckHandler(new SimpleObjectProvider<>(eurekaHealthCheckHandler));
 			this.registrations.add(registration);
 			try {
 				this.serviceRegistry.register(registration);
@@ -110,7 +118,7 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 		}
 	}
 
-	private AbstractDiscoveryClientOptionalArgs args() {
+	private AbstractDiscoveryClientOptionalArgs<?> args() {
 		try {
 			return this.context.getBean(AbstractDiscoveryClientOptionalArgs.class);
 		}

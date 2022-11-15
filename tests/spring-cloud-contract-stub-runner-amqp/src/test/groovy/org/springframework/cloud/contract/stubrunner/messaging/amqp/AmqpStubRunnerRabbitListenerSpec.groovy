@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.amqp
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +28,7 @@ import org.springframework.test.context.ActiveProfiles
 @AutoConfigureStubRunner
 @SpringBootTest(classes = AmqpMessagingApplication)
 @ActiveProfiles("listener")
+@Disabled("TODO: Migrate to middleware based approach")
 class AmqpStubRunnerRabbitListenerSpec {
 
 	@Autowired

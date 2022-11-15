@@ -31,4 +31,9 @@ public class BookReturned implements Serializable {
 		this.bookName = bookName;
 	}
 
+	@Override
+	public String toString() {
+		return "BookReturned{" + "bookName='" + bookName + '\'' + '}';
+	}
+
 }

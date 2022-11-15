@@ -16,41 +16,35 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.FilterConfig
-import javax.servlet.ServletException
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
+import java.util.concurrent.TimeUnit
 
-import spock.lang.AutoCleanup
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.util.concurrent.PollingConditions
+import groovy.util.logging.Slf4j
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletException
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
+import org.awaitility.Awaitility
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.http.client.ClientHttpResponse
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.DefaultResponseErrorHandler
-import org.springframework.web.client.RequestCallback
-import org.springframework.web.client.ResponseExtractor
-import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -62,24 +56,24 @@ import org.springframework.web.client.RestTemplate
                 "eureka.client.enabled=true",
                 "eureka.instance.leaseRenewalIntervalInSeconds=1",
                 "ribbon.ServerListRefreshInterval=100"])
-@AutoConfigureStubRunner(ids =
-["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
- "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
- "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
+@AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+ "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer", "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
 repositoryRoot = "classpath:m2repo/repository/" ,
 stubsMode = StubRunnerProperties.StubsMode.REMOTE )
-class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
+@Slf4j
+class StubRunnerSpringCloudEurekaAutoConfigurationSpec {
 
 	@Autowired
 	StubFinder stubFinder
+
 	@Autowired
 	@LoadBalanced
 	RestTemplate restTemplate
-	@Shared
-	@AutoCleanup
-	ConfigurableApplicationContext eurekaServer
 
-	void setupSpec() {
+	static ConfigurableApplicationContext eurekaServer
+
+	@BeforeAll
+	static void setupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
 		eurekaServer = SpringApplication.run(EurekaServer,
@@ -90,44 +84,41 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 				"--spring.profiles.active=eureka")
 	}
 
-	void cleanupSpec() {
+	@AfterAll
+	static void cleanupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
 	}
 
-	PollingConditions conditions = new PollingConditions(timeout: 240, delay: 1)
-
-	def 'should make service discovery work'() {
+	@Test
+	void 'should make service discovery work'() {
 		expect: 'WireMocks are running'
-			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+			assert "${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+			assert "${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
-			conditions.eventually {
-				assert restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-			}
-			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+			log.info("Waiting for stubs to register in Eureka...")
+			Awaitility.await()
+					.pollInterval(1, TimeUnit.SECONDS)
+					.pollDelay(10, TimeUnit.SECONDS)
+					.atMost(1, TimeUnit.MINUTES)
+					.untilAsserted(() -> {
+				try {
+					assert restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+				} catch (Exception ex) {
+					throw new AssertionError(ex)
+				}
+			})
+			assert restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableEurekaClient
 	static class Config {
 
 		@Bean
 		@LoadBalanced
 		RestTemplate restTemplate() {
-			def template = new RestTemplate() {
-
-				@Override
-				protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor) throws RestClientException {
-					try {
-						return super.doExecute(url, method, requestCallback, responseExtractor)
-					}
-					catch (Exception e) {
-						throw new AssertionError(e)
-					}
-				}
-			}
+			def template = new RestTemplate()
 			template.errorHandler = new DefaultResponseErrorHandler() {
 				@Override
 				void handleError(ClientHttpResponse response) throws IOException {

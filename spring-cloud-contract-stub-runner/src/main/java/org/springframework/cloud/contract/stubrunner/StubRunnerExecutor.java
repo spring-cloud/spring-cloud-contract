@@ -41,7 +41,7 @@ import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCa
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
@@ -57,7 +57,7 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final AvailablePortScanner portScanner;
 
-	private final MessageVerifier<?> contractVerifierMessaging;
+	private final MessageVerifierSender<?> contractVerifierMessaging;
 
 	private final List<HttpServerStub> serverStubs;
 
@@ -65,7 +65,7 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final YamlContractConverter yamlContractConverter = new YamlContractConverter();
 
-	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifier<?> contractVerifierMessaging,
+	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifierSender<?> contractVerifierMessaging,
 			List<HttpServerStub> serverStubs) {
 		this.portScanner = portScanner;
 		this.contractVerifierMessaging = contractVerifierMessaging;

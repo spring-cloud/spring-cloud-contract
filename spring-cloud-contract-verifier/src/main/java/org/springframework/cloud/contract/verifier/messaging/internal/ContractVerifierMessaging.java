@@ -25,6 +25,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 
 /**
  * Wrapper around messaging. Abstracts all message related operations like sending,
@@ -38,12 +40,18 @@ public class ContractVerifierMessaging<M> {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierMessaging.class);
 
-	private final MessageVerifier<M> exchange;
+	private final MessageVerifierSender<M> sender;
 
-	public ContractVerifierMessaging(MessageVerifier<M> exchange) {
-		this.exchange = exchange;
-		if (exchange != null) {
-			log.info("The message verifier implementation is of type [" + exchange.getClass() + "]");
+	private final MessageVerifierReceiver<M> receiver;
+
+	public ContractVerifierMessaging(MessageVerifierSender<M> sender, MessageVerifierReceiver<M> receiver) {
+		this.sender = sender;
+		this.receiver = receiver;
+		if (sender != null) {
+			log.info("The message verifier sender implementation is of type [" + sender.getClass() + "]");
+		}
+		if (receiver != null) {
+			log.info("The message verifier receiver implementation is of type [" + receiver.getClass() + "]");
 		}
 	}
 
@@ -51,7 +59,7 @@ public class ContractVerifierMessaging<M> {
 		if (contract != null) {
 			setMessageType(contract, ContractVerifierMessageMetadata.MessageType.INPUT);
 		}
-		this.exchange.send(message.getPayload(), message.getHeaders(), destination, contract);
+		this.sender.send(message.getPayload(), message.getHeaders(), destination, contract);
 	}
 
 	public void send(ContractVerifierMessage message, String destination) {
@@ -62,7 +70,7 @@ public class ContractVerifierMessaging<M> {
 		if (contract != null) {
 			setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
 		}
-		return convert(this.exchange.receive(destination, contract));
+		return convert(this.receiver.receive(destination, contract));
 	}
 
 	private void setMessageType(YamlContract contract, ContractVerifierMessageMetadata.MessageType output) {

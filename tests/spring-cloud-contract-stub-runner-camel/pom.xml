@@ -32,22 +32,8 @@
 			<artifactId>camel-jackson</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.groovy</groupId>
-			<artifactId>groovy</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -58,11 +44,6 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-activemq</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-pool</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

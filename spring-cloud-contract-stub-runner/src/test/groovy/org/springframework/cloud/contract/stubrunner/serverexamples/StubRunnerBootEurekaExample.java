@@ -20,7 +20,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.contract.stubrunner.server.EnableStubRunnerServer;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 /**
  * @author Marcin Grzejszczak
@@ -28,7 +27,6 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 // tag::stubrunnereureka[]
 @SpringBootApplication
 @EnableStubRunnerServer
-@EnableEurekaClient
 @AutoConfigureStubRunner
 public class StubRunnerBootEurekaExample {
 

@@ -7,7 +7,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		sentTo('output')
 		body('''{ "bookName" : "foo" }''')
 		headers {
-			header('BOOK-NAME', 'foo')
+			header('BOOKNAME', 'foo')
 		}
 	}
 }

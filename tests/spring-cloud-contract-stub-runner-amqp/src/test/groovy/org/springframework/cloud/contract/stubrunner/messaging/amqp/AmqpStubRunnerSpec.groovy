@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.amqp
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
 
@@ -30,6 +31,7 @@ import static org.mockito.BDDMockito.then
 
 @AutoConfigureStubRunner
 @SpringBootTest(classes = AmqpMessagingApplication)
+@Disabled("TODO: Migrate to middleware based approach")
 class AmqpStubRunnerSpec {
 
 	@Autowired

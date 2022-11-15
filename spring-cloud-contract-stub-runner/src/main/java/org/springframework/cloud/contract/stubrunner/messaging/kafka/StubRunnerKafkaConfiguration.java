@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.stubrunner.messaging.kafka;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,8 +32,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
-import org.springframework.cloud.contract.verifier.messaging.kafka.ContractVerifierKafkaConfiguration;
-import org.springframework.cloud.contract.verifier.messaging.kafka.KafkaStubMessagesInitializer;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,20 +55,9 @@ import org.springframework.util.StringUtils;
 @ConditionalOnClass({ KafkaTemplate.class, EmbeddedKafkaBroker.class })
 @ConditionalOnProperty(name = "stubrunner.kafka.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnBean(EmbeddedKafkaBroker.class)
-@AutoConfigureBefore(ContractVerifierKafkaConfiguration.class)
 public class StubRunnerKafkaConfiguration {
 
 	private static final Log log = LogFactory.getLog(StubRunnerKafkaConfiguration.class);
-
-	@Bean
-	@ConditionalOnMissingBean
-	@ConditionalOnProperty(name = "stubrunner.kafka.initializer.enabled", havingValue = "true", matchIfMissing = true)
-	KafkaStubMessagesInitializer stubRunnerKafkaStubMessagesInitializer() {
-		if (log.isDebugEnabled()) {
-			log.debug("Registering a noop kafka messages initializer");
-		}
-		return (broker, kafkaProperties) -> new HashMap<>();
-	}
 
 	@Bean
 	@ConditionalOnMissingBean(name = "stubFlowRegistrar")

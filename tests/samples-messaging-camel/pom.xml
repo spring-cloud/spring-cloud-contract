@@ -16,23 +16,23 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
-			<artifactId>camel-spring-boot-starter</artifactId>
+			<artifactId>camel-rabbitmq-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jms</artifactId>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-direct-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-activemq</artifactId>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-bean-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-pool</artifactId>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-jackson-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jackson</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -50,8 +50,18 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-junit4</artifactId>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>rabbitmq</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
