@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -36,6 +35,8 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -156,9 +157,12 @@ public class StubRunnerConfiguration {
 
 }
 
+@SuppressWarnings("unchecked")
 class LazyMessageVerifier implements MessageVerifier {
 
-	private MessageVerifier<?> messageVerifier;
+	private MessageVerifierSender<?> messageVerifierSender;
+
+	private MessageVerifierReceiver<?> messageVerifierReceiver;
 
 	private final BeanFactory beanFactory;
 
@@ -166,36 +170,40 @@ class LazyMessageVerifier implements MessageVerifier {
 		this.beanFactory = beanFactory;
 	}
 
-	private MessageVerifier messageVerifier() {
-		if (this.messageVerifier == null) {
-			try {
-				this.messageVerifier = this.beanFactory.getBean(MessageVerifier.class);
-			}
-			catch (BeansException ex) {
-				this.messageVerifier = new NoOpStubMessages();
-			}
+	private MessageVerifierSender messageVerifierSender() {
+		if (this.messageVerifierSender == null) {
+			this.messageVerifierSender = this.beanFactory.getBeanProvider(MessageVerifierSender.class)
+					.getIfAvailable(NoOpStubMessages::new);
 		}
-		return this.messageVerifier;
+		return this.messageVerifierSender;
+	}
+
+	private MessageVerifierReceiver messageVerifierReceiver() {
+		if (this.messageVerifierReceiver == null) {
+			this.messageVerifierReceiver = this.beanFactory.getBeanProvider(MessageVerifierReceiver.class)
+					.getIfAvailable(NoOpStubMessages::new);
+		}
+		return this.messageVerifierReceiver;
 	}
 
 	@Override
 	public void send(Object message, String destination, YamlContract contract) {
-		messageVerifier().send(message, destination, contract);
+		messageVerifierSender().send(message, destination, contract);
 	}
 
 	@Override
 	public Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
-		return messageVerifier().receive(destination, timeout, timeUnit, contract);
+		return messageVerifierReceiver().receive(destination, timeout, timeUnit, contract);
 	}
 
 	@Override
 	public Object receive(String destination, YamlContract contract) {
-		return messageVerifier().receive(destination, contract);
+		return messageVerifierReceiver().receive(destination, contract);
 	}
 
 	@Override
 	public void send(Object payload, Map headers, String destination, YamlContract contract) {
-		messageVerifier().send(payload, headers, destination, contract);
+		messageVerifierSender().send(payload, headers, destination, contract);
 	}
 
 }

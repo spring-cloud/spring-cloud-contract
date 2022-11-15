@@ -23,141 +23,77 @@ import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import org.apache.camel.Message
 import org.apache.camel.model.ModelCamelContext
-import spock.lang.Specification
-import spock.util.concurrent.PollingConditions
+import org.junit.jupiter.api.Test
+import org.testcontainers.containers.RabbitMQContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
-import org.springframework.test.context.ContextConfiguration
-
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 /**
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
-@SpringBootTest(classes = CamelMessagingApplication)
-class CamelMessagingApplicationSpec extends Specification {
+@SpringBootTest(classes = CamelMessagingApplication, properties = 'camel.component.rabbitmq.declare=true')
+@Testcontainers
+class CamelMessagingApplicationSpec {
 
 	// ALL CASES
 	@Autowired
 	ModelCamelContext camelContext
-	@Autowired
-	BookDeleter bookDeleter
 	@Inject
 	MessageVerifier<Message> contractVerifierMessaging
 
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
-	void setupSpec() {
-		System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES", "*")
+	@Container
+	static RabbitMQContainer broker = new RabbitMQContainer("rabbitmq:3.7.25-management-alpine");
+
+	@DynamicPropertySource
+	static void setup(DynamicPropertyRegistry registry) {
+		registry.add("spring.rabbitmq.port", () -> broker.getAmqpPort());
 	}
 
-	def "should work for triggered based messaging"() {
+	@Test
+	void "should work for triggered based messaging"() {
 		given:
+			// tag::sample_dsl[]
 			Contract.make {
-				label 'some_label'
+				label 'return_book_1'
 				input {
 					triggeredBy('bookReturnedTriggered()')
 				}
 				outputMessage {
-					sentTo('activemq:output')
+					sentTo('rabbitmq:output?queue=output')
 					body('''{ "bookName" : "foo" }''')
 					headers {
 						header('BOOK-NAME', 'foo')
 					}
 				}
 			}
+			// end::sample_dsl[]
 			// generated test should look like this:
 		when:
 			bookReturnedTriggered()
 		then:
-			def response = contractVerifierMessaging.receive('activemq:output')
-			response.headers.get('BOOK-NAME') == 'foo'
+			def response = contractVerifierMessaging.receive('rabbitmq:output?queue=output')
+			assert response.headers.get('BOOK-NAME') == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.
 					parse(contractVerifierObjectMapper.writeValueAsString(response.body))
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
-
-	def "should generate tests triggered by a message"() {
-		given:
-			Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('jms:input')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-
-					}
-				}
-				outputMessage {
-					sentTo('jms:output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-			// generated test should look like this:
-		when:
-			contractVerifierMessaging.send(
-					contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-					[sample: 'header'], 'jms:input')
-		then:
-			def response = contractVerifierMessaging.receive('jms:output')
-			response.headers.get('BOOK-NAME') == 'foo'
-		and:
-			DocumentContext parsedJson = JsonPath.
-					parse(contractVerifierObjectMapper.writeValueAsString(response.body))
-			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
-
-	def "should generate tests without destination, triggered by a message"() {
-		given:
-			Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('jms:delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-			// generated test should look like this:
-		when:
-			contractVerifierMessaging.
-					send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-							[sample: 'header'], 'jms:delete')
-		then:
-			noExceptionThrown()
-			bookWasDeleted()
 	}
 
 	void bookReturnedTriggered() {
 		camelContext.createProducerTemplate().
 				sendBody('direct:start', '''{"bookName" : "foo" }''')
-	}
-
-	PollingConditions pollingConditions = new PollingConditions()
-
-	void bookWasDeleted() {
-		pollingConditions.eventually {
-			assert bookDeleter.bookSuccessfulyDeleted.get()
-		}
 	}
 
 }

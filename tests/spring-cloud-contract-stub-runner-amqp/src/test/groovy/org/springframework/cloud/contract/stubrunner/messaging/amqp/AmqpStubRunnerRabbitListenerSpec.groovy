@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.amqp
 
-
-import spock.lang.Specification
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,7 +28,8 @@ import org.springframework.test.context.ActiveProfiles
 @AutoConfigureStubRunner
 @SpringBootTest(classes = AmqpMessagingApplication)
 @ActiveProfiles("listener")
-class AmqpStubRunnerRabbitListenerSpec extends Specification {
+@Disabled("TODO: Migrate to middleware based approach")
+class AmqpStubRunnerRabbitListenerSpec {
 
 	@Autowired
 	StubTrigger stubTrigger
@@ -36,11 +37,12 @@ class AmqpStubRunnerRabbitListenerSpec extends Specification {
 	@Autowired
 	MessageSubscriberRabbitListener messageSubscriber
 
-	def "should trigger stub amqp message consumed by annotated listener"() {
+	@Test
+	void "should trigger stub amqp message consumed by annotated listener"() {
 		when:
 			stubTrigger.trigger("contract-test.person.created.event")
 		then:
-			messageSubscriber.person != null
-			messageSubscriber.person.name != null
+			assert messageSubscriber.person != null
+			assert messageSubscriber.person.name != null
 	}
 }

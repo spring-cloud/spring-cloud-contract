@@ -1,50 +1,6 @@
 label: card_rejected
 input:
-  messageFrom: input
-  messageBody:
-    duck: 123
-    alpha: "abc"
-    number: 123
-    aBoolean: true
-    date: "2017-01-01"
-    dateTime: "2017-01-01T01:23:45"
-    time: "01:02:34"
-    valueWithoutAMatcher: "foo"
-    valueWithTypeMatch: "string"
-    key:
-      "complex.key": 'foo'
-  messageHeaders:
-    sample: 'header'
-    contentType: application/json
-  matchers:
-    headers:
-      - key: contentType
-        regex: "application/json.*"
-    body:
-      - path: $.duck
-        type: by_regex
-        value: "[0-9]{3}"
-      - path: $.duck
-        type: by_equality
-      - path: $.alpha
-        type: by_regex
-        predefined: only_alpha_unicode
-      - path: $.alpha
-        type: by_equality
-      - path: $.number
-        type: by_regex
-        predefined: number
-      - path: $.aBoolean
-        type: by_regex
-        predefined: any_boolean
-      - path: $.date
-        type: by_date
-      - path: $.dateTime
-        type: by_timestamp
-      - path: $.time
-        type: by_time
-      - path: "$.['key'].['complex.key']"
-        type: by_equality
+  triggeredBy: "foo()"
 outputMessage:
   sentTo: channel
   body:

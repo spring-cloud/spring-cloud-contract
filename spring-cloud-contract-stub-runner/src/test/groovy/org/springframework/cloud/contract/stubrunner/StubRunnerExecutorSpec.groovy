@@ -77,7 +77,7 @@ class StubRunnerExecutorSpec extends Specification {
 			int port = TestSocketUtils.findAvailableTcpPort()
 			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 			stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping:
-					stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${SocketUtils.findAvailableTcpPort()}"))
+					stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${TestSocketUtils.findAvailableTcpPort()}"))
 					.build()
 		when:
 			executor.runStubs(stubRunnerOptions, repository, stub)

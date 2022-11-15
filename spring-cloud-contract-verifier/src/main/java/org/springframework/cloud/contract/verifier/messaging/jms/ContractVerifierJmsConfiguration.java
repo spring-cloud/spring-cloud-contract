@@ -34,6 +34,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationConfiguration;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -60,8 +62,9 @@ public class ContractVerifierJmsConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(MessageVerifier<Message> exchange) {
-		return new ContractVerifierJmsHelper(exchange);
+	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(MessageVerifierSender<Message> sender,
+			MessageVerifierReceiver<Message> receiver) {
+		return new ContractVerifierJmsHelper(sender, receiver);
 	}
 
 }
@@ -70,8 +73,8 @@ class ContractVerifierJmsHelper extends ContractVerifierMessaging<Message> {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierJmsHelper.class);
 
-	ContractVerifierJmsHelper(MessageVerifier<Message> exchange) {
-		super(exchange);
+	ContractVerifierJmsHelper(MessageVerifierSender<Message> sender, MessageVerifierReceiver<Message> receiver) {
+		super(sender, receiver);
 	}
 
 	@Override

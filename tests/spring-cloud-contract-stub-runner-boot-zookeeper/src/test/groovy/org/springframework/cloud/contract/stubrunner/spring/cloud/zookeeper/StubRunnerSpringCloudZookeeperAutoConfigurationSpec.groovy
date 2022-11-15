@@ -17,8 +17,9 @@
 package org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper
 
 import org.apache.curator.test.TestingServer
-import spock.lang.Ignore
-import spock.lang.Specification
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -28,26 +29,23 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.web.client.RestTemplate
 
 /**
  * @author Marcin Grzejszczak
  */
 @SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = ["stubrunner.cloud.stubbed.discovery.enabled=false",
-                "debug=true"])
-@AutoConfigureStubRunner(ids =
-["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+		properties = ["stubrunner.cloud.stubbed.discovery.enabled=false",
+				"debug=true"])
+@AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
  "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
- "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
-repositoryRoot = "classpath:m2repo/repository/" ,
-stubsMode = StubRunnerProperties.StubsMode.REMOTE )
-class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification {
+ "org.springframework.cloud.contract.verifier.stubs:bootService"] , repositoryRoot = "classpath:m2repo/repository/" , stubsMode = StubRunnerProperties.StubsMode.REMOTE )
+class StubRunnerSpringCloudZookeeperAutoConfigurationSpec {
 
 	@Autowired
 	StubFinder stubFinder
@@ -57,29 +55,32 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 	@Autowired
 	ZookeeperDiscoveryClient zookeeperServiceDiscovery
 
-	void setupSpec() {
+	@BeforeAll
+	static void setupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
 	}
 
-	void cleanupSpec() {
+	@AfterAll
+	static void cleanupSpec() {
 		setupSpec()
 	}
 
-	@Ignore
-	def 'should make service discovery work'() {
+	@Test
+	void 'should make service discovery work'() {
 		expect: 'WireMocks are running'
-			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+		"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+		"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
-			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+		assert restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+		assert restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
-	def 'should have all apps registered in Service Discovery'() {
+	@Test
+	void 'should have all apps registered in Service Discovery'() {
 		expect:
-			!zookeeperServiceDiscovery.getInstances('loanIssuance').empty
-			!zookeeperServiceDiscovery.getInstances('someNameThatShouldMapFraudDetectionServer').empty
+		assert !zookeeperServiceDiscovery.getInstances('loanIssuance').empty
+		assert !zookeeperServiceDiscovery.getInstances('someNameThatShouldMapFraudDetectionServer').empty
 	}
 
 	@Configuration
@@ -89,7 +90,7 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 
 		@Bean
 		TestingServer testingServer() {
-			return new TestingServer(SocketUtils.findAvailableTcpPort())
+			return new TestingServer(TestSocketUtils.findAvailableTcpPort())
 		}
 
 		@Bean

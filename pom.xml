@@ -30,11 +30,12 @@
 		<spring-cloud-build.version>4.0.0-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>4.0.0-SNAPSHOT</spring-cloud-zookeeper.version>
 		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-netflix.version>4.0.0-SNAPSHOT</spring-cloud-netflix.version>
 		<spring-cloud-consul.version>4.0.0-SNAPSHOT</spring-cloud-consul.version>
 		<spring-cloud-commons.version>4.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
-		<cglib.version>3.2.11</cglib.version>
-		<spock-spring.version>2.2-M1-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
+		<cglib.version>3.3.0</cglib.version>
+		<spock-spring.version>2.3-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<handlebars.version>4.3.0</handlebars.version>
@@ -42,11 +43,15 @@
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.32.0</json-unit-assertj.version>
 		<rest-assured.version>5.1.0</rest-assured.version>
+		<slf4j.version>[2.0.0,)</slf4j.version>
 
 		<junit-vintage.version>5.9.1</junit-vintage.version>
 		<junit-jupiter.version>5.9.1</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+		<awaitility.version>4.2.0</awaitility.version>
+		<artemis.version>${artemis-jms-server.version}</artemis.version>
+		<testcontainers.version>1.17.5</testcontainers.version>
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>4.0.0</groovy.version>
@@ -67,6 +72,7 @@
 
 		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
+		<artemis-jms-server.version>2.26.0</artemis-jms-server.version>
 	</properties>
 
 	<modules>
@@ -117,6 +123,26 @@
 				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-rabbitmq-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-direct-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-bean-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-jackson-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-core</artifactId>
 				<version>${camel.version}</version>
@@ -140,6 +166,11 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-activemq</artifactId>
 				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>artemis-jms-server</artifactId>
+				<version>${artemis-jms-server.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
@@ -269,6 +300,13 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
 				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-netflix-dependencies</artifactId>
+				<version>${spring-cloud-netflix.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -449,6 +487,40 @@
 				<artifactId>kotlin-compiler-embeddable</artifactId>
 				<version>${contract.kotlin.version}</version>
 			</dependency>
+
+			<!-- Ensure that we don't have 2 sets of slf4j on the classpath -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitility.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>artemis-junit</artifactId>
+				<version>${artemis.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>rabbitmq</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -588,6 +660,24 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<!-- FIXME: 4.0 -->
+		<!-- Netflix -->
+		<!--<repository>
+			<id>netflix-snapshots</id>
+			<name>Netflix Snapshots</name>
+			<url>https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>-->
+		<repository>
+			<id>netflix-candidates</id>
+			<name>Netflix Candidates</name>
+			<url>https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates</url>
+			<snapshots>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>

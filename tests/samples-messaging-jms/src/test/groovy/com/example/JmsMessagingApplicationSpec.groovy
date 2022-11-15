@@ -17,14 +17,15 @@
 package com.example
 
 import javax.inject.Inject
-import javax.jms.JMSException
-import javax.jms.Message
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
-import spock.lang.Specification
-import spock.util.concurrent.PollingConditions
+import jakarta.jms.JMSException
+import jakarta.jms.Message
+import org.awaitility.Awaitility
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -44,131 +45,59 @@ import org.springframework.test.annotation.DirtiesContext
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
 @SpringBootTest(classes = JmsMessagingApplication)
-class JmsMessagingApplicationSpec extends Specification {
+class JmsMessagingApplicationSpec {
 
-    // ALL CASES
-    @Autowired
-    JmsTemplate jmsTemplate
-    @Autowired
-    BookDeleter bookDeleter
-    @Inject
-    MessageVerifier<Message> messageVerifier
-    @Inject
-    ContractVerifierMessaging contractVerifierMessaging
-    @Inject
-    ContractVerifierObjectMapper contractVerifierObjectMapper
+	// ALL CASES
+	@Autowired
+	JmsTemplate jmsTemplate
+	@Inject
+	MessageVerifier<Message> messageVerifier
+	@Inject
+	ContractVerifierMessaging contractVerifierMessaging
+	@Inject
+	ContractVerifierObjectMapper contractVerifierObjectMapper
 
-    void setupSpec() {
-        System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES", "*")
-        System.setProperty("debug", "true")
-    }
+	@BeforeAll
+	static void setupSpec() {
+		System.setProperty("debug", "true")
+	}
 
-    def "should work for triggered based messaging"() {
-        given:
-        Contract.make {
-            label 'some_label'
-            input {
-                triggeredBy('bookReturnedTriggered()')
-            }
-            outputMessage {
-                sentTo('output')
-                body('''{ "bookName" : "foo" }''')
-                headers {
-                    header('BOOK-NAME', 'foo')
-                }
-            }
-        }
-        // generated test should look like this:
-        when:
-        bookReturnedTriggered()
-        then:
-        ContractVerifierMessage response = contractVerifierMessaging.receive('output')
-        response.getHeader('BOOK-NAME') == 'foo'
-        and:
-        DocumentContext parsedJson = JsonPath.
-                parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-        JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-    }
+	@Test
+	void "should work for triggered based messaging"() {
+		given:
+		Contract.make {
+			label 'some_label'
+			input {
+				triggeredBy('bookReturnedTriggered()')
+			}
+			outputMessage {
+				sentTo('output')
+				body('''{ "bookName" : "foo" }''')
+				headers {
+					header('BOOKNAME', 'foo')
+				}
+			}
+		}
+		// generated test should look like this:
+		when:
+		bookReturnedTriggered()
+		then:
+		ContractVerifierMessage response = contractVerifierMessaging.receive('output')
+		assert response.getHeader('BOOKNAME') == 'foo'
+		and:
+		DocumentContext parsedJson = JsonPath.
+				parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+		JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
+	}
 
-    @DirtiesContext
-    def "should generate tests triggered by a message"() {
-        given:
-        Contract.make {
-            label 'some_label'
-            input {
-                messageFrom('input2')
-                messageBody([
-                        bookName: 'foo'
-                ])
-                messageHeaders {
-                    header('sample', 'header')
-                }
-            }
-            outputMessage {
-                sentTo('output2')
-                body([
-                        bookName: 'foo'
-                ])
-                headers {
-                    header('BOOK-NAME', 'foo')
-                }
-            }
-        }
-        // generated test should look like this:
-        when:
-        messageVerifier.send(
-                contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-                [sample: 'header'], 'input2')
-        then:
-        ContractVerifierMessage response = contractVerifierMessaging.receive('output2')
-        response.getHeader('BOOK-NAME') == 'foo'
-        and:
-        DocumentContext parsedJson = JsonPath.
-                parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
-        JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-    }
-
-    def "should generate tests without destination, triggered by a message"() {
-        given:
-        Contract.make {
-            label 'some_label'
-            input {
-                messageFrom('delete')
-                messageBody([
-                        bookName: 'foo'
-                ])
-                messageHeaders {
-                    header('sample', 'header')
-                }
-                assertThat('bookWasDeleted()')
-            }
-        }
-        // generated test should look like this:
-        when:
-        messageVerifier.
-                send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-                        [sample: 'header'], 'delete')
-        then:
-        noExceptionThrown()
-        bookWasDeleted()
-    }
-
-    void bookReturnedTriggered() {
-        jmsTemplate.convertAndSend("output", '''{"bookName" : "foo" }''', new MessagePostProcessor() {
-            @Override
-            Message postProcessMessage(Message message) throws JMSException {
-                message.setStringProperty("BOOK-NAME", "foo")
-                return message
-            }
-        })
-    }
-
-    PollingConditions pollingConditions = new PollingConditions()
-
-    void bookWasDeleted() {
-        pollingConditions.eventually {
-            assert bookDeleter.bookSuccessfulyDeleted.get()
-        }
-    }
+	void bookReturnedTriggered() {
+		jmsTemplate.convertAndSend("output", '''{"bookName" : "foo" }''', new MessagePostProcessor() {
+			@Override
+			Message postProcessMessage(Message message) throws JMSException {
+				message.setStringProperty("BOOKNAME", "foo")
+				return message
+			}
+		})
+	}
 
 }

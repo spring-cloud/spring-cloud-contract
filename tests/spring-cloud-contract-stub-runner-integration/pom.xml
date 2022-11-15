@@ -15,8 +15,6 @@
 	<description>Spring Cloud Contract Stub Runner Integration</description>
 	<properties>
 		<java.version>17</java.version>
-		<!-- TODO: remove -->
-		<skipTests>true</skipTests>
 	</properties>
 	<dependencies>
 		<dependency>

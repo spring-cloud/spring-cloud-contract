@@ -4,17 +4,17 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<org.eclipse.sisu.inject.version>0.3.4</org.eclipse.sisu.inject.version>
-		<org.eclipse.sisu.plexus.version>0.3.4</org.eclipse.sisu.plexus.version>
+		<org.eclipse.sisu.inject.version>0.3.5</org.eclipse.sisu.inject.version>
+		<org.eclipse.sisu.plexus.version>0.3.5</org.eclipse.sisu.plexus.version>
 		<sisu-guice.version>4.2.0</sisu-guice.version>
 		<guice.version>5.0.0</guice.version>
 		<guava.version>30.0-jre</guava.version>
-		<asm.version>9.0</asm.version>
-		<checker.version>3.6.1</checker.version>
+		<asm.version>9.4</asm.version>
+		<checker.version>3.25.0</checker.version>
 		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
-		<!-- We need to set this cause resolvers are taking in an older version -->
-		<plexus-utils.version>3.3.0</plexus-utils.version>
+		<plexus-utils.version>3.5.0</plexus-utils.version>
+		<apache-client.version>4.5.13</apache-client.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -173,6 +173,12 @@
 			<version>${checker.version}</version>
 			<optional>true</optional>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${apache-client.version}</version>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 	<build>

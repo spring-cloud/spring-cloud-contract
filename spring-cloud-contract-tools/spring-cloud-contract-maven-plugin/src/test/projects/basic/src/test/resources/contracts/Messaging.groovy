@@ -15,13 +15,7 @@
  */ org.springframework.cloud.contract.spec.Contract.make {
 	label 'some_label'
 	input {
-		messageFrom('jms:input')
-		messageBody([
-				bookName: 'foo'
-		])
-		messageHeaders {
-			header('sample', 'header')
-		}
+		triggeredBy("hashCode()")
 	}
 	outputMessage {
 		sentTo('jms:output')

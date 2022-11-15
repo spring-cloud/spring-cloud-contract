@@ -29,9 +29,7 @@ public class BookService {
 
 	/**
 	 * Scenario for "should generate tests triggered by a method": client side: must have
-	 * a possibility to "trigger" sending of a message to the given messageFrom server
-	 * side: will run the method and await upon receiving message on the output
-	 * messageFrom. Method triggers sending a message to a source.
+	 * a possibility to "trigger" sending of a message to the given message
 	 * @param exchange - input exchange.
 	 */
 	public void returnBook(Exchange exchange) {

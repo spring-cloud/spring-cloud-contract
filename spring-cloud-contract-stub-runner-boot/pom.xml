@@ -14,7 +14,7 @@
 	<name>Spring Cloud Contract Stub Runner Boot</name>
 	<description>Spring Cloud Contract Stub Runner Boot</description>
 	<properties>
-		<thin-jar.version>1.0.27.RELEASE</thin-jar.version>
+		<thin-jar.version>1.0.28.RELEASE</thin-jar.version>
 	</properties>
 	<dependencies>
 		<dependency>

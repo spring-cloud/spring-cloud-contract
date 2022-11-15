@@ -27,6 +27,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.jms.ContractVerifierJmsConfiguration;
@@ -54,16 +56,17 @@ public class ContractVerifierCamelConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifier<Message> exchange) {
-		return new ContractVerifierCamelHelper(exchange);
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifierSender<Message> sender,
+			MessageVerifierReceiver<Message> receiver) {
+		return new ContractVerifierCamelHelper(sender, receiver);
 	}
 
 }
 
 class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
 
-	ContractVerifierCamelHelper(MessageVerifier<Message> exchange) {
-		super(exchange);
+	ContractVerifierCamelHelper(MessageVerifierSender<Message> sender, MessageVerifierReceiver<Message> receiver) {
+		super(sender, receiver);
 	}
 
 	@Override

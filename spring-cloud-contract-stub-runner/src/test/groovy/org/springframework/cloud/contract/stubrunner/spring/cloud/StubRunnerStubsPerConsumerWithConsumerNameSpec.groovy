@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 
 import java.util.function.Function
 
+import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.Test
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,7 +49,7 @@ import org.springframework.test.context.ActiveProfiles
         stubsMode = StubRunnerProperties.StubsMode.REMOTE,
         stubsPerConsumer = true)
 @ActiveProfiles("streamconsumer")
-class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
+class StubRunnerStubsPerConsumerWithConsumerNameSpec {
 // end::test[]
 
 	@Autowired
@@ -59,36 +61,37 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 
 	TestRestTemplate template = new TestRestTemplate()
 
-	def 'should start http stub servers for foo-consumer only'() {
+	@Test
+	void 'should start http stub servers for foo-consumer only'() {
 		given:
 			URL stubUrl = stubFinder.findStubUrl('producerWithMultipleConsumers')
 		when:
 			ResponseEntity entity = template.getForEntity("${stubUrl}/foo-consumer", String)
 		then:
-			entity.statusCode.value() == 200
+			assert entity.statusCode.value() == 200
 		when:
 			entity = template.getForEntity("${stubUrl}/bar-consumer", String)
 		then:
-			entity.statusCode.value() == 404
+			assert entity.statusCode.value() == 404
 	}
 
-	def 'should trigger a message by label from proper consumer'() {
+	@Test
+	void 'should trigger a message by label from proper consumer'() {
 		when:
 			stubFinder.trigger('return_book_for_foo')
 		then:
 			Message<?> receivedMessage = messaging.receive('output')
 		and:
-			receivedMessage != null
-			receivedMessage.payload == '''{"bookName":"foo_for_foo"}'''.bytes
-			receivedMessage.headers.get('BOOK-NAME') == 'foo_for_foo'
+			assert receivedMessage != null
+			assert receivedMessage.payload == '''{"bookName":"foo_for_foo"}'''.bytes
+			assert receivedMessage.headers.get('BOOK-NAME') == 'foo_for_foo'
 	}
 
-	def 'should not trigger a message by the not matching consumer'() {
+	@Test
+	void 'should not trigger a message by the not matching consumer'() {
 		when:
-			stubFinder.trigger('return_book_for_bar')
-		then:
-			IllegalArgumentException e = thrown(IllegalArgumentException)
-			e.message.contains("No label with name [return_book_for_bar] was found")
+		BDDAssertions.thenThrownBy(() -> stubFinder.trigger('return_book_for_bar')).isInstanceOf(IllegalArgumentException)
+		.hasMessageContaining("No label with name [return_book_for_bar] was found")
 	}
 
 	@Configuration

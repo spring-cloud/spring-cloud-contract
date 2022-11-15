@@ -16,9 +16,10 @@
 
 package com.example;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.activemq.ActiveMQComponent;
+import org.apache.camel.component.rabbitmq.RabbitMQComponent;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -32,26 +33,18 @@ import org.springframework.context.annotation.Configuration;
 public class BookRouteConfiguration {
 
 	@Bean
-	ActiveMQComponent activeMQComponent(@Value("${activemq.url:vm://localhost?broker.persistent=false}") String url) {
-		ActiveMQComponent component = new ActiveMQComponent();
-		component.setBrokerURL(url);
-		return component;
-	}
-
-	@Bean
-	RoutesBuilder myRouter(final BookService bookService, final BookDeleter bookDeleter) {
+	RoutesBuilder myRouter(final BookService bookService, CamelContext context,
+			@Value("${spring.rabbitmq.port}") int port) {
 		return new RouteBuilder() {
 
 			@Override
 			public void configure() throws Exception {
+				RabbitMQComponent component = context.getComponent("rabbitmq", RabbitMQComponent.class);
+				component.setAddresses("localhost:" + port);
+
 				// scenario 1 - from bean to output
 				from("direct:start").unmarshal().json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
-						.to("jms:output");
-				// scenario 2 - from input to output
-				from("jms:input").unmarshal().json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
-						.to("jms:output");
-				// scenario 3 - from input to no output
-				from("jms:delete").unmarshal().json(JsonLibrary.Jackson, BookDeleted.class).bean(bookDeleter);
+						.marshal().json(JsonLibrary.Jackson, BookReturned.class).to("rabbitmq:output?queue=output");
 			}
 
 		};

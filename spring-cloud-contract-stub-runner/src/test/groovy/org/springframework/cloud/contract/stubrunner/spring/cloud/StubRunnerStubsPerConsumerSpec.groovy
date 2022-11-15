@@ -18,12 +18,12 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 
 import java.util.function.Function
 
-import spock.lang.Specification
+import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -37,18 +37,18 @@ import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
+
 /**
  * @author Marcin Grzejszczak
  */
 // tag::test[]
 @SpringBootTest(classes = Config, properties = ["spring.application.name=bar-consumer"])
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
-        repositoryRoot = "classpath:m2repo/repository/",
-        stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-        stubsPerConsumer = true)
+		repositoryRoot = "classpath:m2repo/repository/",
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		stubsPerConsumer = true)
 @ActiveProfiles("streamconsumer")
-class StubRunnerStubsPerConsumerSpec extends Specification {
+class StubRunnerStubsPerConsumerSpec {
 // end::test[]
 
 	@Autowired
@@ -59,36 +59,36 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 	MessageVerifier<Message<?>> messaging
 	TestRestTemplate template = new TestRestTemplate()
 
-	def 'should start http stub servers for bar-consumer only'() {
+	@Test
+	void 'should start http stub servers for bar-consumer only'() {
 		given:
-			URL stubUrl = stubFinder.findStubUrl('producerWithMultipleConsumers')
+		URL stubUrl = stubFinder.findStubUrl('producerWithMultipleConsumers')
 		when:
-			ResponseEntity entity = template.getForEntity("${stubUrl}/bar-consumer", String)
+		ResponseEntity entity = template.getForEntity("${stubUrl}/bar-consumer", String)
 		then:
-			entity.statusCode.value() == 200
+		assert entity.statusCode.value() == 200
 		when:
-			entity = template.getForEntity("${stubUrl}/foo-consumer", String)
+		entity = template.getForEntity("${stubUrl}/foo-consumer", String)
 		then:
-			entity.statusCode.value() == 404
+		assert entity.statusCode.value() == 404
 	}
 
-	def 'should trigger a message by label from proper consumer'() {
+	@Test
+	void 'should trigger a message by label from proper consumer'() {
 		when:
-			stubFinder.trigger('return_book_for_bar')
+		stubFinder.trigger('return_book_for_bar')
 		then:
-			Message<?> receivedMessage = messaging.receive('output')
+		Message<?> receivedMessage = messaging.receive('output')
 		and:
-			receivedMessage != null
-			receivedMessage.payload == '''{"bookName":"foo_for_bar"}'''.bytes
-			receivedMessage.headers.get('BOOK-NAME') == 'foo_for_bar'
+		assert receivedMessage != null
+		assert receivedMessage.payload == '''{"bookName":"foo_for_bar"}'''.bytes
+		assert receivedMessage.headers.get('BOOK-NAME') == 'foo_for_bar'
 	}
 
-	def 'should not trigger a message by the not matching consumer'() {
+	@Test
+	void 'should not trigger a message by the not matching consumer'() {
 		when:
-			stubFinder.trigger('return_book_for_foo')
-		then:
-			IllegalArgumentException e = thrown(IllegalArgumentException)
-			e.message.contains("No label with name [return_book_for_foo] was found")
+		BDDAssertions.thenThrownBy(() -> stubFinder.trigger('return_book_for_foo')).isInstanceOf(IllegalArgumentException).hasMessageContaining("No label with name [return_book_for_foo] was found")
 	}
 
 	@Configuration
@@ -97,7 +97,7 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 	static class Config {
 		@Bean
 		Function output() {
-			return  { Object o ->
+			return { Object o ->
 				println(o)
 				return o
 			}
